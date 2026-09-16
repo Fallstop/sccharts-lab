@@ -14,6 +14,9 @@ import * as fs from 'fs'
 import * as https from 'https'
 import * as path from 'path'
 
+/** A `which`/`xcode-select` that has not answered by then is not going to. */
+const PROBE_TIMEOUT_MS = 5000
+
 export type CCompilerSource = 'setting' | 'downloaded' | 'PATH'
 
 export interface CCompiler {
@@ -36,9 +39,12 @@ export interface CCompilerLookupOptions {
 }
 
 export function whichProgram(program: string, platform: NodeJS.Platform = process.platform): string | undefined {
+    // These run on the UI path (the compiler is looked up before every build), and spawnSync blocks the
+    // whole extension host: a `which` that hangs on a dead network mount must not take the window with it.
     const result = spawnSync(platform === 'win32' ? 'where' : 'which', [program], {
         encoding: 'utf8',
         windowsHide: true,
+        timeout: PROBE_TIMEOUT_MS,
     })
     if (result.status !== 0) return undefined
     const first = result.stdout.split(/\r?\n/).find((line) => line.trim())
@@ -46,7 +52,7 @@ export function whichProgram(program: string, platform: NodeJS.Platform = proces
 }
 
 export function xcodeCommandLineToolsInstalled(): boolean {
-    return spawnSync('xcode-select', ['-p'], { windowsHide: true }).status === 0
+    return spawnSync('xcode-select', ['-p'], { windowsHide: true, timeout: PROBE_TIMEOUT_MS }).status === 0
 }
 
 /** Picks the C compiler in this order: explicit setting, downloaded toolchain, `gcc` on PATH. */

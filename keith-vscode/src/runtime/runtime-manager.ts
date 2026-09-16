@@ -31,6 +31,7 @@ import {
     JavaRuntime,
     REQUIRED_JAVA,
 } from './java-runtime'
+import { forceKill, spawnDetached, stopProcessTree } from './server-process'
 import { archiveKey, JVM_LOGGING_ARGS, LaunchPlan, StartupCache } from './startup-cache'
 
 export const JAVA_HOME_SETTING = 'javaHome'
@@ -68,6 +69,12 @@ export class RuntimeManager implements vscode.Disposable {
 
     private readonly installer?: W64DevkitInstaller
 
+    /**
+     * The language server this extension spawned. The language client is handed the process but never
+     * stores it (see `server-process.ts`), so this is the only reference that can end it.
+     */
+    private server?: ChildProcess
+
     /** Called after the toolchain changed so the running server picks it up. */
     restartServer?: () => Promise<void>
 
@@ -88,7 +95,12 @@ export class RuntimeManager implements vscode.Disposable {
     }
 
     dispose(): void {
-        // Subscriptions are owned by the extension context.
+        // Subscriptions are owned by the extension context. Disposal is synchronous, so a server that is
+        // somehow still running at this point gets the short version; deactivate() does the graceful stop.
+        const { server } = this
+        if (!server) return
+        this.server = undefined
+        forceKill(server)
     }
 
     private get settings(): vscode.WorkspaceConfiguration {
@@ -178,6 +190,10 @@ export class RuntimeManager implements vscode.Disposable {
      * (`HostTools` on the server reads it) and its directory is prepended to PATH for the compiled programs.
      */
     async launchServer(): Promise<ChildProcess> {
+        // Normally there is nothing left to stop; after a restart whose shutdown timed out there is, and
+        // starting on top of it would leave the user with two JVMs for one window. Done before anything
+        // else so the old heap is released before the new one is asked for.
+        await this.stopServer()
         // Resolved again on every start, so a changed javaHome setting takes effect on "Restart language server".
         const java = await this.resolveJava()
         if (!java) {
@@ -214,7 +230,16 @@ export class RuntimeManager implements vscode.Disposable {
         const server = spawn(java.command, args, {
             env: serverEnvironment(process.env, pathEntries),
             cwd: this.context.extensionPath,
+            // Its own process group, so stopServer() also reaches the compilers and simulations it starts.
+            detached: spawnDetached(),
             windowsHide: true,
+        })
+        this.server = server
+        // On this code path the language client attaches no error handler of its own, and an unhandled
+        // 'error' event (a java that vanished between the probe and the spawn) takes the host down.
+        server.on('error', (error) => this.output.appendLine(`Language server process failed: ${error.message}`))
+        server.once('exit', () => {
+            if (this.server === server) this.server = undefined
         })
         if (cache && plan) {
             // The class list is complete once the server exits; that is when the archive gets dumped.
@@ -233,6 +258,24 @@ export class RuntimeManager implements vscode.Disposable {
             this.dumpArchive(cache, java, jar)
         }
         return server
+    }
+
+    /**
+     * Ends the language server. `LanguageClient.stop()` only sends the LSP `shutdown`/`exit` over stdin
+     * and never touches the process it was handed, so a server that does not act on them -- wedged in a
+     * compile, or waiting on a simulation it spawned -- outlives the window unless this runs.
+     */
+    async stopServer(): Promise<void> {
+        const { server } = this
+        if (!server) return
+        this.server = undefined
+        const { pid } = server
+        const outcome = await stopProcessTree(server, {
+            onProblem: (message) => this.output.appendLine(`Language server shutdown: ${message}`),
+        })
+        if (outcome === 'killed') {
+            this.output.appendLine(`Language server (pid ${pid}) ignored the shutdown request and was killed.`)
+        }
     }
 
     /** The archive cache for this jar and runtime, or undefined when the setting turns it off. */

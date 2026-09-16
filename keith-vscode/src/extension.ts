@@ -48,6 +48,8 @@ const supportedFileEndings = ['sctx', 'scl', 'kico']
 let lsClient: LanguageClient
 let socket: Socket
 let settingsService: SettingsService<Settings>
+/** Kept here because it owns the server process, which has to be ended on the way out. */
+let runtimeManager: RuntimeManager | undefined
 
 // this method is called when your extension is deactivated
 export async function deactivate(): Promise<void> {
@@ -57,7 +59,14 @@ export async function deactivate(): Promise<void> {
         socket.end()
         return
     }
-    await lsClient?.stop()
+    try {
+        await lsClient?.stop()
+    } catch {
+        // stop() rejects when its own two-second shutdown times out. The JVM is then still running, so
+        // swallowing the rejection here is what keeps the kill below reachable.
+    }
+    // The client only ever asked the server to exit (see runtime/server-process.ts); this makes sure it did.
+    await runtimeManager?.stopServer()
 }
 
 /**
@@ -104,8 +113,17 @@ async function restartLanguageServer(simulation: SimulationTableDataProvider): P
             try {
                 await lsClient.restart()
                 vscode.window.setStatusBarMessage('$(check) KIELER language server restarted', 5000)
-            } catch (error) {
-                vscode.window.showErrorMessage(`KIELER language server failed to restart: ${error}`)
+            } catch {
+                // restart() gives up inside its stop() phase when the server does not act on the shutdown
+                // request, so the old JVM is still running and no new one was started. End it and retry;
+                // without this the window is left with a dead client and a server that never goes away.
+                await runtimeManager?.stopServer()
+                try {
+                    await lsClient.start()
+                    vscode.window.setStatusBarMessage('$(check) KIELER language server restarted', 5000)
+                } catch (error) {
+                    vscode.window.showErrorMessage(`KIELER language server failed to restart: ${error}`)
+                }
             }
         }
     )
@@ -123,6 +141,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     // Without a usable Java there is nothing to start; explain and stop instead of registering
     // commands that would all fail with "spawn java ENOENT".
     const runtime = new RuntimeManager(context)
+    runtimeManager = runtime
     context.subscriptions.push(runtime)
     if (typeof process.env.KEITH_LS_PORT === 'undefined' && !(await runtime.resolveJava())) {
         await runtime.reportMissingJava()
