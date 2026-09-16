@@ -4,6 +4,27 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.9.3] - 2026-09-16
+
+- **Simulating a model no longer fails on the diagram beside it.** Starting a simulation also
+  refreshes the diagram, and when no open diagram matched the model the refresh threw
+  `NullPointerException ... KGraphDiagramServer.getSourceUri()`, which surfaced as "An error
+  occurred during simulation start" on a model that compiles and simulates perfectly well. The
+  diagram is now found under either spelling of its URI -- diagrams are keyed by the client's,
+  which percent-encodes a path with spaces, while the simulation carries the decoded one -- a model
+  with no diagram open simply skips the refresh, and a refresh that fails can no longer take down
+  the start, step or stop that triggered it. Closing a preview now also drops its view context
+  under either spelling instead of leaving a stale one behind.
+- **The language server is ended when the window closes or the server is restarted.** The client
+  only asked the server to exit, so one that was busy compiling or simulating outlived the window
+  and kept its whole JVM heap until the machine was rebooted, once more for every restart. The
+  server is now ended for good, together with the compilers and simulations it started, and a
+  restart whose shutdown timed out kills the old server and starts again instead of leaving a dead
+  client behind.
+- **A hanging compiler probe no longer freezes the window.** Looking for `gcc` runs before every
+  build; `which` and `xcode-select` now give up after five seconds so a dead network mount cannot
+  block the extension host.
+
 ## [0.9.2] - 2026-09-12
 
 - **Shorter messages.** Popups and diagnostic hints (instantaneous loops, scheduling cycles,
