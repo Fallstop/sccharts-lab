@@ -4,6 +4,17 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.9.4] - 2026-09-16
+
+- **Newlines survive in string simulation inputs.** A value like `line1\nline2` appeared in the
+  input field with the newline missing, and because leaving the field committed whatever it held,
+  clicking into a string input and clicking away was enough to send the shortened value back to
+  the model -- with nothing typed and nothing to see. `\r\n` lost both characters. A single-line
+  field cannot hold a newline at all, so strings are now shown and typed escaped, using the same
+  escapes as the `chr` number format: `\n`, `\r`, `\t`, `\0`, `\xNN` and `\\`. Table cells show
+  them too, instead of collapsing a newline into a space, and a newline can now be entered in the
+  first place. An input nobody typed in is never written back.
+
 ## [0.9.3] - 2026-09-16
 
 - **Simulating a model no longer fails on the diagram beside it.** Starting a simulation also
