@@ -134,3 +134,22 @@ function codePointOf(text: string): number | undefined {
     const codePoints = Array.from(text)
     return codePoints.length === 1 ? codePoints[0].codePointAt(0) : undefined
 }
+
+const TEXT_ESCAPES: Record<string, string> = { '\\': '\\', n: '\n', r: '\r', t: '\t', '0': '\0' }
+
+/**
+ * Renders a string so that every character survives a single-line text field, which cannot hold a
+ * newline at all. Backslashes and control characters use the same escapes as the `char` format.
+ */
+export function escapeText(value: string): string {
+    return Array.from(value)
+        .map((char) => (char === '\\' ? '\\\\' : printable(char.codePointAt(0) ?? 0)))
+        .join('')
+}
+
+/** Inverse of {@link escapeText}. An unrecognised escape stays the literal characters that were typed. */
+export function unescapeText(text: string): string {
+    return text.replace(/\\(x[0-9a-fA-F]{2}|[\s\S])/g, (match, escape: string) =>
+        escape.length === 3 ? String.fromCharCode(parseInt(escape.slice(1), 16)) : TEXT_ESCAPES[escape] ?? match
+    )
+}

@@ -17,7 +17,7 @@
 
 /* global document, HTMLElement, HTMLElementTagNameMap, Node */
 
-import { NumberFormat, formatNumber } from './format'
+import { NumberFormat, escapeText, formatNumber } from './format'
 import { ICONS } from './icons'
 
 type Child = Node | string | null | undefined | false
@@ -86,7 +86,8 @@ export function formatValue(value: unknown, format: NumberFormat = 'dec'): strin
         return '–'
     }
     if (typeof value === 'string') {
-        return value
+        // Escaped, so a newline reads as `\n` instead of collapsing into a space in a table cell.
+        return escapeText(value)
     }
     if (typeof value === 'number') {
         return formatNumber(value, format)

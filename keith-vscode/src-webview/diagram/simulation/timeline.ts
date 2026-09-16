@@ -20,7 +20,7 @@
 import { SimulationVariableState, SimulationViewCommand, SimulationViewState } from '../../../src/simulation/protocol'
 import { isCompatibleInput } from '../../../src/simulation/input-value'
 import { formatValue, h, replaceChildren, sameValue } from './dom'
-import { NumberFormat, describeFormat, parseNumber } from './format'
+import { NumberFormat, describeFormat, parseNumber, unescapeText } from './format'
 
 type GroupKey = 'input' | 'output' | 'local' | 'internal'
 
@@ -42,6 +42,19 @@ export interface FormatStore {
 }
 
 const EDIT_TITLE = 'Type a value and press Enter; the model reads it at the next tick'
+
+/** A single-line field cannot hold a newline, so string inputs are typed and shown escaped. */
+const TEXT_EDIT_TITLE = `${EDIT_TITLE}. Use \\n, \\r, \\t, \\0, \\xNN and \\\\ for special characters`
+
+function editTitle(variable: SimulationVariableState): string {
+    return typeof variable.next === 'string' ? TEXT_EDIT_TITLE : EDIT_TITLE
+}
+
+/**
+ * The text the view last put in an input, read back after the browser sanitised it. A field the
+ * user never touched therefore compares equal and is never committed back over the real value.
+ */
+const shownText = new WeakMap<HTMLInputElement, string>()
 
 /** How long a clicked switch shows its new value while the server has not yet confirmed it. */
 const CONFIRM_WINDOW_MS = 1500
@@ -300,9 +313,10 @@ export class Timeline {
         if (control instanceof HTMLInputElement) {
             if (document.activeElement === control) return
             control.value = editValue(variable.next, format)
+            shownText.set(control, control.value)
             control.classList.remove('kv-invalid')
             control.removeAttribute('aria-invalid')
-            control.title = EDIT_TITLE
+            control.title = editTitle(variable)
             return
         }
         const on = variable.next === true
@@ -355,17 +369,19 @@ export class Timeline {
         const input = h('input.kv-input', {
             type: 'text',
             'data-id': id,
-            title: EDIT_TITLE,
+            title: editTitle(variable),
             'aria-label': `Next value for ${variable.label}`,
             spellcheck: 'false',
         })
-        let committed = false
+        shownText.set(input, input.value)
         const commit = (): boolean => {
             const current = this.latest.get(id)
             if (!current || !input.isConnected) {
                 // The table was rebuilt underneath the input; the edit stays in the field.
                 return false
             }
+            // Nothing was typed, so there is no edit to commit and nothing to report as invalid.
+            if (shownText.get(input) === input.value) return true
             const format = this.formats.get(id)
             const parsed = parseLike(input.value, current.next, format)
             if (parsed === undefined) {
@@ -376,8 +392,8 @@ export class Timeline {
             }
             input.classList.remove('kv-invalid')
             input.removeAttribute('aria-invalid')
-            input.title = EDIT_TITLE
-            committed = true
+            input.title = editTitle(current)
+            shownText.set(input, input.value)
             if (!sameValue(parsed, current.next)) {
                 this.send({ kind: 'setInput', id, value: parsed })
             }
@@ -389,16 +405,13 @@ export class Timeline {
             } else if (event.key === 'Escape') {
                 const current = this.latest.get(id)
                 input.value = editValue(current?.next, this.formats.get(id))
-                committed = true
+                shownText.set(input, input.value)
                 input.blur()
             }
             event.stopPropagation()
         })
-        input.addEventListener('input', () => {
-            committed = false
-        })
         input.addEventListener('blur', () => {
-            if (!committed) commit()
+            commit()
         })
         return input
     }
@@ -427,7 +440,7 @@ export function parseLike(text: string, like: unknown, format: NumberFormat = 'd
         return parseNumber(trimmed, format)
     }
     if (typeof like === 'string') {
-        return text
+        return unescapeText(text)
     }
     try {
         const value: unknown = JSON.parse(trimmed)
@@ -439,5 +452,6 @@ export function parseLike(text: string, like: unknown, format: NumberFormat = 'd
 
 function editValue(value: unknown, format: NumberFormat): string {
     // Composite values remain JSON so changing the number format never corrupts an array edit.
+    // Scalars go through formatValue, which escapes a string for the same reason parseLike unescapes one.
     return value !== null && typeof value === 'object' ? JSON.stringify(value) : formatValue(value, format)
 }

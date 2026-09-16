@@ -327,3 +327,44 @@ test('a clicked switch holds its value against a state from before the click, un
     toggle.click()
     assert.deepEqual(sent.at(-1), { kind: 'setInput', id: 'flag', value: true }, 'the click toggles from the shown value')
 })
+
+test('text escapes round-trip every character a single-line field cannot hold', () => {
+    const { escapeText, unescapeText } = load('src-webview/diagram/simulation/format.ts')
+    for (const value of ['line1\nline2', 'a\r\nb', 'tab\there', 'C:\next', 'nul\0end', 'bell\x07', 'plain', '', '\\n']) {
+        assert.equal(unescapeText(escapeText(value)), value, JSON.stringify(value))
+    }
+    assert.equal(escapeText('a\nb'), 'a\\nb')
+    assert.equal(escapeText('C:\next'), 'C:\\next')
+    assert.equal(unescapeText('\\x41'), 'A')
+    assert.equal(unescapeText('\\q'), '\\q')
+})
+
+test('string inputs show newlines as escapes and round-trip them unchanged', () => {
+    const { Timeline, parseLike } = load('src-webview/diagram/simulation/timeline.ts')
+    const sent = []
+    const timeline = new Timeline((command) => sent.push(command))
+    document.body.append(timeline.el)
+    timeline.render(state({ tick: 1, variables: [{ ...input('line1\nline2'), history: ['line1\nline2'] }] }))
+    const editor = timeline.el.querySelector('input')
+    assert.equal(editor.value, 'line1\\nline2')
+    assert.equal(timeline.el.querySelector('.kv-value').textContent, 'line1\\nline2')
+    assert.equal(parseLike(editor.value, ''), 'line1\nline2')
+    editor.focus()
+    editor.value = 'a\\r\\nb\\tc'
+    editor.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    assert.deepEqual(sent, [{ kind: 'setInput', id: 'input', value: 'a\r\nb\tc' }])
+})
+
+test('reading an input without editing it never writes the value back', () => {
+    const { Timeline } = load('src-webview/diagram/simulation/timeline.ts')
+    const sent = []
+    const timeline = new Timeline((command) => sent.push(command))
+    document.body.append(timeline.el)
+    for (const value of ['line1\nline2', 'plain', 12, [1, 2]]) {
+        timeline.render(state({ variables: [input(value)] }))
+        const editor = timeline.el.querySelector('input')
+        editor.focus()
+        editor.dispatchEvent(new window.Event('blur'))
+        assert.deepEqual(sent, [], `focusing and leaving ${JSON.stringify(value)} sent a value`)
+    }
+})
