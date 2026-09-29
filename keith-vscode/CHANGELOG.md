@@ -4,6 +4,17 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.9.5] - 2026-09-29
+
+- **Compiling no longer reads the model while an edit is changing it.** A compilation started from
+  the editor walked and copied the open document's model on its own thread with no lock, while
+  typing could reparse that same model underneath it. Copying also resolves references, which
+  writes to the model, so the two threads could corrupt its internal bookkeeping. That is one way
+  to end up with errors like `NullPointerException ... "adapter" is null` and an empty preview. The
+  compilation now takes its copy as a proper read of the document, waiting for any edit in
+  progress, and uses the model as it stands after that edit rather than the one it was asked
+  about.
+
 ## [0.9.4] - 2026-09-16
 
 - **Newlines survive in string simulation inputs.** A value like `line1\nline2` appeared in the

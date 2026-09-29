@@ -18,8 +18,10 @@ async function main() {
     const connection = createMessageConnection(new StreamMessageReader(server.stdout), new StreamMessageWriter(server.stdin))
     const waiters = new Set()
     const progress = []
+    const failedRequests = []
     connection.onNotification((method, params) => {
         if (method === 'keith/kicool/progress') progress.push(params)
+        if (method === 'window/logMessage' && params.type === 1) failedRequests.push(params.message)
         for (const waiter of waiters) if (waiter.method === method && waiter.accept(params)) waiter.resolve(params)
     })
     connection.onRequest('workspace/configuration', params => params.items.map(() => null))
@@ -92,6 +94,22 @@ async function main() {
         assert.ok(partial.currentProcessor.id && partial.currentProcessor.name, 'snapshot updates name their processor')
         await waitFor('keith/kicool/didCompile', p => p.finished)
         console.log(`Timings: ${results.processorCount} processors, ${results.totalMs} ms total, slowest ${[...results.processors].sort((a, b) => b.durationMs - a.durationMs)[0].name}.`)
+
+        // --- Compiling while the document is edited ------------------------------------------------------
+        // The compilation copies the open document's model under the read lock; an edit that cancels the
+        // queued read must delay the compilation, not fail it.
+        let version = 1
+        for (let round = 0; round < 5; round++) {
+            const compiled = waitFor('keith/kicool/didCompile', result => result.finished && sameFile(result.uri, uri))
+            await connection.sendNotification('keith/kicool/compile', { uri, command: 'de.cau.cs.kieler.sccharts.simulation.tts.netlist.c', clientId: 'keith-diagram_sprotty', inplace: true, showResultingModel: false, snapshot: false })
+            for (let edit = 1; edit <= 4; edit++) {
+                await connection.sendNotification('textDocument/didChange', { textDocument: { uri, version: ++version }, contentChanges: [{ text: text + '\n'.repeat(edit) }] })
+            }
+            const { results } = await compiled
+            assert.deepEqual(results.files.flat().flatMap(stage => stage.errors ?? []), [], `round ${round}`)
+        }
+        assert.deepEqual(failedRequests, [])
+        console.log('Edits during compilation: 5 compilations, each chased by 4 edits, finish without errors.')
 
         // A failing compilation: the stages after the failure are reported as skipped, not silently absent.
         const brokenFile = path.join(workspace, 'broken.sctx')
