@@ -33,7 +33,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   repository: ${{ vars.SCCHARTS_SERVER_REPO || 'Fallstop/sccharts-lite-server' }}
-                  ref: ${{ vars.SCCHARTS_SERVER_REF || 'ec2cb4e35308e54d2d88d9d635996d991914067d' }}
+                  ref: ${{ vars.SCCHARTS_SERVER_REF || 'fd9e041db2da8117dc01d22fb1d6c0e9b4a239b4' }}
                   path: sccharts-lite-server
             - uses: actions/setup-java@v5
               with:

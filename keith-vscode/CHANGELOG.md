@@ -4,7 +4,7 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [0.9.6] - 2026-10-02
+## [0.9.6] - 2026-10-03
 
 - **Invalid source produces useful diagnostics before it reaches the compiler.** Empty models,
   syntax errors, unresolved names (including in imports) and invalid region structure are rejected with source locations.
@@ -12,6 +12,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   Unexpected compiler exceptions now identify the failed processor, preserve the stack trace and
   finish the build so the next compilation can recover.
   Unavailable compilation systems now offer an actionable error instead of a compiler exception.
+  Imported source locations retain Windows drive letters and network-share hosts.
 - **Copy a diagnostic report from the preview or Command Palette.** The report includes the
   extension, Java and server versions, source version, compiler issues, technical details and
   processor timings. Internal compiler errors also offer it from the editor's lightbulb.

@@ -143,7 +143,7 @@ export class DiagnosticView {
             {},
             ...issue.locations.map((location, index) =>
                 this.button(
-                    location.uri === report.uri ? location.label : `Generated C: ${location.label}`,
+                    location.uri === report.uri ? location.label : `${sourceKind(location.uri)}: ${location.label}`,
                     () => this.send({ kind: 'source', build: report.id, issue: issue.id, location: index }),
                     !usable
                 )
@@ -175,4 +175,17 @@ export class DiagnosticView {
     private button(label: string, onclick: () => void, disabled = false): HTMLElement {
         return h('button.kd-button', { type: 'button', onclick, disabled }, label)
     }
+}
+
+function sourceKind(uri: string): string {
+    const extension = uri
+        .split(/[?#]/)[0]
+        .match(/\.(\w+)$/)?.[1]
+        ?.toLowerCase()
+    if (extension === 'sctx') return 'Related SCChart'
+    if (extension === 'scl') return 'Related SCL'
+    if (extension === 'kico') return 'Related compilation system'
+    if (extension === 'java') return 'Generated Java'
+    if (extension === 'c' || extension === 'h') return 'Generated C'
+    return 'Related source'
 }

@@ -153,3 +153,19 @@ test('synthetic source failures omit compiler-stage navigation while keeping tec
     assert.deepEqual(actions, ['Technical details'])
     dom.window.close()
 })
+
+test('preview distinguishes imported SCCharts from generated C and Java source links', () => {
+    const dom = new JSDOM('<div class="kv-root"><header class="kv-toolbar"></header></div>')
+    for (const name of ['document', 'window', 'HTMLElement', 'Event']) global[name] = dom.window[name]
+    const { DiagnosticView } = createLoader()('src-webview/diagram/diagnostics/view.ts')
+    const sent = []
+    const view = new DiagnosticView({ onNotification() {}, sendNotification: (_, __, command) => sent.push(command) })
+    const issue = { id: '5:0', stage: 'Source Validation', message: 'Related source failure.', severity: 'error', code: 'source-validation', cycle: [], snapshotIndex: -1,
+        locations: ['file:///base.sctx', 'file:///generated.c', 'file:///Generated.java'].map(uri => ({ uri, offset: 0, length: 7, label: 'Missing' })) }
+    view.render({ id: 5, uri, version: 1, status: 'failed', issues: [issue], rawCount: 1 })
+    const sources = [...view.el.querySelectorAll('.kd-sources button')]
+    assert.deepEqual(sources.map(button => button.textContent), ['Related SCChart: Missing', 'Generated C: Missing', 'Generated Java: Missing'])
+    sources[0].click()
+    assert.deepEqual(sent.pop(), { kind: 'source', build: 5, issue: '5:0', location: 0 })
+    dom.window.close()
+})

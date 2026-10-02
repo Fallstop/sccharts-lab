@@ -93,6 +93,49 @@ test('synthetic validation failures have no compiler snapshot to navigate to', a
     assert.equal(report.issues[0].snapshotIndex, -1, 'Stage 0 from an older build must never be used')
 })
 
+test('imported SCCharts diagnostics show the exact source token and navigate by its offset', async () => {
+    const { diagnostics, document, entries, stage } = setup()
+    const model = document('file:///demo.sctx')
+    const source = 'scchart Base {\n initial state Idle\n do "😀é" go to Missing\n}'
+    const imported = document('file:///C:/models/base.sctx', source)
+    const offset = source.indexOf('Missing')
+    const line = 2
+    const column = source.slice(0, offset).split('\n').at(-1).length
+    const location = { uri: 'file:/C:/models/base.sctx', offset, length: 7, line, column, label: 'Missing' }
+    await diagnostics.begin(model.uri.toString())
+    const report = diagnostics.finish(model.uri.toString(), stage([location], { code: 'source-validation', message: 'Unknown state Missing' }), false)
+    const [problem] = entries.get(imported.uri.toString())
+    assert.deepEqual(problem.range.start, { line, character: column })
+    assert.deepEqual(problem.range.end, { line, character: column + 7 })
+    assert.equal(source.split('\n')[line].slice(problem.range.start.character, problem.range.end.character), 'Missing')
+    const navigation = diagnostics.range(report.issues[0].locations[0], imported)
+    assert.deepEqual(navigation, problem.range, 'UTF-16 source columns must not be interpreted as native byte columns')
+})
+
+test('open imported source ranges preserve multiline nodes rather than extending beyond one line', async () => {
+    const { diagnostics, document, entries, stage } = setup()
+    const model = document('file:///demo.sctx')
+    const source = 'scchart Base {\n initial state Idle\n do result = true\n}'
+    const imported = document('file:///base.sctx', source)
+    const offset = source.indexOf('initial')
+    const end = source.indexOf('}')
+    await diagnostics.begin(model.uri.toString())
+    diagnostics.finish(model.uri.toString(), stage([{ uri: imported.uri.toString(), offset, length: end - offset, line: 1, column: 1, label: 'State Idle' }]), false)
+    const [problem] = entries.get(imported.uri.toString())
+    assert.deepEqual(problem.range.start, { line: 1, character: 1 })
+    assert.deepEqual(problem.range.end, { line: 3, character: 0 })
+})
+
+test('unopened imported source uses a bounded marker at its known start', async () => {
+    const { diagnostics, document, entries, stage } = setup()
+    const uri = document('file:///demo.sctx').uri.toString()
+    await diagnostics.begin(uri)
+    diagnostics.finish(uri, stage([{ uri: 'file:///closed.sctx', offset: 200, length: 5000, line: 5, column: 6, label: 'Multiline node' }]), false)
+    const [problem] = entries.get('file:///closed.sctx')
+    assert.deepEqual(problem.range.start, { line: 5, character: 6 })
+    assert.deepEqual(problem.range.end, { line: 5, character: 7 })
+})
+
 test('edits invalidate diagnostics and late build results cannot restore stale errors', async () => {
     const { diagnostics, changes, entries, document, stage } = setup()
     const doc = document('file:///demo.sctx')

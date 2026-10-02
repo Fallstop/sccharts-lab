@@ -86,13 +86,15 @@ async function main() {
         }
         const baseFile = path.join(workspace, 'base.sctx')
         const baseUri = pathToFileURL(baseFile).href
-        const brokenBase = "scchart Base { initial state Start\n go to Missing\n}"
+        const brokenBase = "scchart Base { initial state Start\n /* café 🌿 */ go to Missing\n}"
+        const missingOffset = brokenBase.indexOf('Missing')
+        const missingColumn = missingOffset - brokenBase.lastIndexOf('\n', missingOffset) - 1
         fs.writeFileSync(baseFile, brokenBase)
         await connection.sendNotification('textDocument/didOpen', { textDocument: { uri: baseUri, languageId: 'sctx', version: 1, text: brokenBase } })
         const derived = "import \"base.sctx\"\nscchart Derived extends Base {}"
         await change(derived)
         const imported = await compile()
-        assert.ok(issuesOf(imported).some(issue => issue.code === 'source-validation' && issue.locations.some(location => sameFile(location.uri, baseUri) && brokenBase.slice(location.offset, location.offset + location.length) === 'Missing')), 'Imported failures point to the imported source token: ' + JSON.stringify(issuesOf(imported)))
+        assert.ok(issuesOf(imported).some(issue => issue.code === 'source-validation' && issue.locations.some(location => sameFile(location.uri, baseUri) && brokenBase.slice(location.offset, location.offset + location.length) === 'Missing' && location.line === 1 && location.column === missingColumn)), 'Imported failures point to the imported source token and Problems range: ' + JSON.stringify(issuesOf(imported)))
         const fixedBase = brokenBase.replace('Missing', 'Start')
         fs.writeFileSync(baseFile, fixedBase)
         await connection.sendNotification('textDocument/didChange', { textDocument: { uri: baseUri, version: 2 }, contentChanges: [{ text: fixedBase }] })
@@ -124,6 +126,42 @@ async function main() {
         }
         assert.ok((await Promise.all(analyses)).every(result => !result.issues.some(issue => issue.code === 'internal-compiler-error')))
         console.log('Live queue: three concurrently opened documents each receive their own analysis.')
+
+        const uriCheckFile = path.join(workspace, 'ImportUriCheck.java')
+        fs.writeFileSync(uriCheckFile, `
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import de.cau.cs.kieler.sccharts.SCChartsFactory;
+import de.cau.cs.kieler.sccharts.text.SCTXResource;
+class ImportUriCheck {
+    static class Probe extends SCTXResource {
+        URI captured;
+        @Override protected void importResource(URI value, String name) { captured = value; }
+        URI resolve(String source) {
+            setURI(URI.createURI(source));
+            new ResourceSetImpl().getResources().add(this);
+            var chart = SCChartsFactory.eINSTANCE.createSCCharts();
+            chart.getImports().add("base.sctx");
+            updateImports(chart);
+            return captured;
+        }
+    }
+    public static void main(String[] args) {
+        String[] directories = {
+            "file:///C:/Users/Lab%20User/project/", "file:/C:/Users/Lab/project/",
+            "file://server/share/project/", "file:///C:/", "file:///tmp/project/"
+        };
+        for (String directory : directories) {
+            URI actual = new Probe().resolve(directory + "main.sctx");
+            if (actual == null || !actual.equals(URI.createURI(directory + "base.sctx"))) {
+                throw new AssertionError(directory + " -> " + actual);
+            }
+        }
+    }
+}`)
+        const uriCheck = spawnSync('java', ['-cp', classpath, uriCheckFile], { encoding: 'utf8', timeout: 60000 })
+        assert.equal(uriCheck.status, 0, uriCheck.stderr || 'ImportUriCheck timed out')
+        console.log('Import paths: Windows drives, network-share hosts, encoded directories and root folders are preserved.')
 
         const checkFile = path.join(workspace, 'CompilerFailureCheck.java')
         fs.writeFileSync(checkFile, "import de.cau.cs.kieler.language.server.kicool.SourceValidation;\nclass CompilerFailureCheck {\n public static void main(String[] args) throws Exception {\n  var failure = new IllegalStateException(\"outer failure\", new NullPointerException(\"root cause\"));\n  var issue = SourceValidation.internalFailure(\"Dependency\", failure, null, \"file:///failure.sctx\");\n  if (!issue.code.equals(\"internal-compiler-error\") || !issue.message.contains(\"Dependency\") || !issue.details.contains(\"Caused by: java.lang.NullPointerException: root cause\") || issue.locations.isEmpty() || !issue.hint.contains(\"report\")) throw new AssertionError(issue.details);\n  var result = SourceValidation.failed(\"file:///failure.sctx\", failure, null);\n  if (result.files.isEmpty() || result.files.get(0).get(0).getErrors().isEmpty() || result.generatedFiles != null) throw new AssertionError(\"missing terminal failure\");\n  var read = SourceValidation.capture(() -> { throw failure; });\n  try { read.getValue(); throw new AssertionError(\"failure lost\"); } catch (IllegalStateException expected) { if (expected != failure) throw new AssertionError(\"cause replaced\"); }\n }\n}")

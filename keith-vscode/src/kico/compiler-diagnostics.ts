@@ -273,9 +273,9 @@ export class CompilerDiagnostics implements vscode.Disposable {
     }
 }
 
-/** The editor range of a source location: a generated-file line/column, or an offset into the SCTX document. */
+/** Source documents use UTF-16 offsets; native generated files report UTF-8 line columns. */
 export function rangeOf(location: SourceLocation, document: vscode.TextDocument): vscode.Range {
-    if ((location.line ?? -1) >= 0) {
+    if ((location.line ?? -1) >= 0 && !isSourceUri(document.uri.toString())) {
         const line = Math.min(location.line!, document.lineCount - 1)
         const { text } = document.lineAt(line)
         const column = utf8ColumnOffset(text, Math.max(0, location.column ?? 0))
@@ -287,15 +287,22 @@ export function rangeOf(location: SourceLocation, document: vscode.TextDocument)
     )
 }
 
+function isSourceUri(uri: string): boolean {
+    return /\.(sctx|scl|kico)$/i.test(vscode.Uri.parse(uri).path)
+}
+
 function rangeIn(location: SourceLocation, modelUri: string, document: vscode.TextDocument): vscode.Range {
-    return location.uri === modelUri
-        ? rangeOf(location, document)
-        : new vscode.Range(
-              Math.max(0, location.line ?? 0),
-              Math.max(0, location.column ?? 0),
-              Math.max(0, location.line ?? 0),
-              Math.max(0, location.column ?? 0) + 1
-          )
+    const target =
+        location.uri === modelUri
+            ? document
+            : vscode.workspace.textDocuments.find((entry) => entry.uri.toString() === location.uri)
+    if (target) return rangeOf(location, target)
+    return new vscode.Range(
+        Math.max(0, location.line ?? 0),
+        Math.max(0, location.column ?? 0),
+        Math.max(0, location.line ?? 0),
+        Math.max(0, location.column ?? 0) + 1
+    )
 }
 
 /**
