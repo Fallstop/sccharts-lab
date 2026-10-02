@@ -116,6 +116,13 @@ is known. Use **Technical details** for the original output or **View scheduler 
 **Highlight in diagram** returns to the original SCCharts diagram and selects the
 involved operations. Source links reuse the model's existing editor tab.
 
+For an internal compiler failure, use **Copy diagnostic report** in the preview or
+**SCCharts: Copy Diagnostics Report** in the Command Palette. The report includes the
+extension and Java versions, the server fingerprint, source version, failed processors,
+timings and technical details, without exporting the model or generated files. It stays
+with the selected model even when another editor is open. Syntax, reference and type
+errors should be corrected in Problems before compiling again.
+
 A **Potential instantaneous loop** warning comes from the compiler's loop analyzer: control
 flow or a data dependency can return to the listed operations without crossing a tick
 boundary. Timed transitions (`if elapsed >= t`) produce this warning on every cycle of
@@ -242,6 +249,10 @@ tracked in this repository. `yarn build:server` builds it (JDK 21 and Maven requ
 checkout is taken from `SCCHARTS_SERVER_SRC`, by default a sibling `kieler-server-fork`
 directory) and places `server/sccharts-lite-server.jar`, or copies a prebuilt JAR given as
 `SCCHARTS_SERVER_JAR`.
+
+CI and releases pin the server revision in `.github/workflows/ci.yml` and
+`.github/workflows/release.yml`. Update both pins when shipping server changes so
+the published extension uses the tested sources.
 
 `yarn package` produces the universal `sccharts-lab.vsix`. `yarn package:platform
 linux-x64` (any of `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`, `win32-x64`,

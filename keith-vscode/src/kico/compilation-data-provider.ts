@@ -93,6 +93,12 @@ export class CompilationDataProvider {
     /** Compiles started by the Compile command still owe the user the resulting model or code. */
     private readonly pendingResults = new Map<string, boolean>()
 
+    private preparingCompilation = false
+
+    private generation = 0
+
+    private completionNotified = false
+
     editor: vscode.TextEditor | undefined = undefined
 
     requestedSystems = false
@@ -110,6 +116,8 @@ export class CompilationDataProvider {
     compiling = false
 
     generatingCode = false
+
+    preparingSimulation = false
 
     lastInvokedCompilation = ''
 
@@ -182,7 +190,15 @@ export class CompilationDataProvider {
     ) {
         // Output channel
         this.output = vscode.window.createOutputChannel('KIELER Compilation')
-        this.context.subscriptions.push(this.diagnostics, this.output, this.stageChangedEmitter)
+        this.context.subscriptions.push(
+            this.diagnostics,
+            this.output,
+            this.stageChangedEmitter,
+            this.compilationStartedEmitter,
+            this.compilationFinishedEmitter,
+            this.showedNewSnapshotEmitter,
+            this.newSimulationCommandsEmitter
+        )
 
         // Status bar item for compilation
         this.requestSystems = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
@@ -225,6 +241,8 @@ export class CompilationDataProvider {
                         params.currentIndex,
                         params.maxIndex,
                         params.currentProcessor
+                    ).catch((error) =>
+                        this.output.appendLine(`[ERROR]\tCould not handle compilation results: ${error}`)
                     )
                 }
             )
@@ -239,13 +257,11 @@ export class CompilationDataProvider {
         // Bind event executed after a new snapshot is shown.
         this.context.subscriptions.push(
             this.showedNewSnapshot(() => {
-                this.requestSystemDescriptions()
+                this.requestSystemDescriptions().catch((error) => this.output.appendLine(String(error)))
             })
         )
 
-        this.context.subscriptions.push(
-            vscode.workspace.onDidChangeTextDocument(this.onDidChangeTextDocument.bind(this))
-        )
+        this.context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(this.onDidSaveTextDocument.bind(this)))
         // Request compilation systems at the start, since onDidChangeActiveTextEditor does not fire at the beginning
         const editor = vscode.window.activeTextEditor
         if (editor) {
@@ -418,18 +434,30 @@ export class CompilationDataProvider {
      * other final model is shown in the diagram (when the setting asks for it). The server is never
      * asked to show the result itself, so a code container no longer replaces the model diagram.
      */
-    async compileAndPresent(systemId: string, snapshot: boolean): Promise<void> {
-        const uri = this.editor?.document.uri.toString()
+    async compileAndPresent(systemId: string, snapshot: boolean, source = this.editor?.document.uri): Promise<void> {
+        const uri = source?.toString()
         if (!uri) {
             vscode.window.showErrorMessage('Open a model to compile it.')
             return
         }
-        this.pendingResults.set(uri, this.settings.get('showResultingModel.enabled'))
+        if (this.preparingCompilation || this.compiling || this.generatingCode || this.preparingSimulation) {
+            vscode.window.showInformationMessage('A compilation is already in progress.')
+            return
+        }
+        this.preparingCompilation = true
+        const { generation } = this
         try {
+            const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(uri))
+            if (document.isDirty && !(await document.save())) throw new Error('Save the model before compiling it.')
+            if (generation !== this.generation) return
+            if (document.isDirty) throw new Error('The model changed while saving. Save it and compile again.')
+            this.pendingResults.set(uri, this.settings.get('showResultingModel.enabled'))
             await this.compile(systemId, this.settings.get('compileInplace.enabled'), false, snapshot, uri)
         } catch (error) {
             this.pendingResults.delete(uri)
             vscode.window.showErrorMessage(`Could not compile: ${error instanceof Error ? error.message : error}`)
+        } finally {
+            this.preparingCompilation = false
         }
     }
 
@@ -467,7 +495,9 @@ export class CompilationDataProvider {
         if (index === undefined || index < 0 || !results) return undefined
         const stages = results.files.flat()
         const stage = stages[index]
-        return stage ? { name: stage.name, index, count: stages.length } : undefined
+        return stage && stage.processorId !== 'source-validation'
+            ? { name: stage.name, index, count: stages.length }
+            : undefined
     }
 
     private setShownStage(uri: string, index: number): void {
@@ -511,6 +541,10 @@ export class CompilationDataProvider {
         results.files.forEach((group) => {
             const groupName = group.length > 1 ? group[0].name : undefined
             group.forEach((stage) => {
+                if (stage.processorId === 'source-validation') {
+                    index++
+                    return
+                }
                 const problems = stage.errors?.length
                     ? '$(error) '
                     : stage.warnings?.length
@@ -585,22 +619,19 @@ export class CompilationDataProvider {
         }
     }
 
-    onDidChangeTextDocument(event: vscode.TextDocumentChangeEvent): void {
+    onDidSaveTextDocument(document: vscode.TextDocument): void {
         // don't autocompile, if autocompile is off, document is not saved or it is not the last compiled file
         if (
             this.generatingCode ||
+            this.preparingCompilation ||
+            this.preparingSimulation ||
             this.compiling ||
             !this.settings.get('autocompile.enabled') ||
-            event.document.isDirty ||
-            event.document.uri.toString() !== this.lastCompiledUri
+            document.isDirty ||
+            document.uri.toString() !== this.lastCompiledUri
         )
             return
-        this.compile(
-            this.lastInvokedCompilation,
-            this.settings.get('compileInplace.enabled'),
-            this.settings.get('showResultingModel.enabled'),
-            false
-        )
+        this.compileAndPresent(this.lastInvokedCompilation, false, document.uri)
     }
 
     async requestSystemDescriptions(): Promise<void> {
@@ -612,8 +643,14 @@ export class CompilationDataProvider {
             this.requestedSystems = true
             const uri = this.editor.document.uri.toString()
             // Check if language client was already initialized and wait till it is
-            await this.lsClient.start()
-            await this.lsClient.sendNotification(GET_SYSTEMS, uri)
+            try {
+                await this.lsClient.start()
+                await this.lsClient.sendNotification(GET_SYSTEMS, uri)
+            } catch (error) {
+                this.requestedSystems = false
+                this.requestSystems.hide()
+                throw error
+            }
         } else {
             this.systems = []
         }
@@ -626,8 +663,14 @@ export class CompilationDataProvider {
      */
     public show(uri: string, index: number): Promise<void> {
         const run = async () => {
+            if (index >= 0 && this.resultMap.get(uri)?.files.flat()[index]?.processorId === 'source-validation') {
+                throw new Error(
+                    'Source validation failed before any compilation stage was created. Fix the model and compile again.'
+                )
+            }
             await this.lsClient.start()
             const delivered = this.awaitDiagram?.()
+            delivered?.catch(() => undefined)
             const result = await this.lsClient.sendRequest(SHOW, { uri, clientId: `${diagramType}_sprotty`, index })
             if (result === 'ERR') throw new Error('The compiler diagram could not be opened.')
             this.indexMap.set(uri, index)
@@ -656,19 +699,29 @@ export class CompilationDataProvider {
         uri = this.editor?.document.uri.toString()
     ): Promise<void> {
         if (!uri) throw new Error(EDITOR_UNDEFINED_MESSAGE)
+        if (!command) throw new Error('Choose a compilation system first.')
         if (this.compiling) throw new Error('A compilation is already in progress.')
+        const generation = ++this.generation
+        this.completionNotified = false
         this.startTime = Date.now()
         this.compiling = true
         this.cancellingCompilation = false
+        this.compilation.text = '$(spinner) Preparing compilation'
+        this.compilation.tooltip = 'Preparing compilation...'
+        this.compilation.show()
         this.lastInvokedCompilation = command
         this.lastCompiledUri = uri
         try {
             await this.diagnostics?.begin(uri)
-            await this.executeCompile(command, inplace, showResultingModel, snapshot, uri)
+            if (generation !== this.generation) throw new Error('The language server restarted. Compile again.')
+            await this.executeCompile(command, inplace, showResultingModel, snapshot, uri, generation)
         } catch (error) {
+            if (generation !== this.generation) throw error
             this.compiling = false
+            this.compilation.text = '$(error) Compilation failed'
+            this.compilation.tooltip = error instanceof Error ? error.message : String(error)
             this.diagnostics?.finish(uri, [[{ name: 'Language server', index: 0, errors: [String(error)] }]], false)
-            this.compilationFinishedEmitter.fire(false)
+            this.finishCompilation(false)
             throw error
         }
     }
@@ -678,10 +731,12 @@ export class CompilationDataProvider {
         inplace: boolean,
         showResultingModel: boolean,
         snapshot: boolean,
-        uri = this.sourceModelPath
+        uri = this.sourceModelPath,
+        generation = this.generation
     ): Promise<void> {
         // The status bar item shows the compilation's progress; no popup is needed.
         await this.lsClient.start()
+        if (generation !== this.generation) throw new Error('The language server restarted. Compile again.')
         await this.lsClient.sendNotification(COMPILE, {
             uri,
             clientId: `${diagramType}_sprotty`,
@@ -704,6 +759,9 @@ export class CompilationDataProvider {
         maxIndex: number,
         currentProcessor?: ProcessorInfo
     ): Promise<void> {
+        uri = vscode.Uri.parse(uri).toString()
+        if (!this.compiling && this.completionNotified) return
+        if (this.lastCompiledUri && uri !== this.lastCompiledUri && this.compiling) return
         results ??= {
             files: [
                 [
@@ -743,16 +801,13 @@ export class CompilationDataProvider {
                     index++
                 })
             })
-            this.compilationFinishedEmitter.fire(
-                !errorOccurred && !this.cancellingCompilation && report?.status !== 'stale'
-            )
-            await this.presentResult(uri, results, errorOccurred || this.cancellingCompilation)
-
             this.endTime = Date.now()
+            const cancelled = this.cancellingCompilation || report?.status === 'cancelled' || currentIndex < maxIndex
+            const success = !errorOccurred && !cancelled && report?.status !== 'stale' && report?.status !== 'failed'
             // The server's wall time covers exactly the processors; the client's own clock is the fallback.
             const summary = finishedSummary({
-                success: currentIndex >= maxIndex && !errorOccurred,
-                cancelled: currentIndex < maxIndex && !errorOccurred,
+                success,
+                cancelled: cancelled && !errorOccurred,
                 totalMs: results.totalMs ?? this.endTime - this.startTime,
                 processors: results.processors,
                 processorCount: results.processorCount,
@@ -772,6 +827,9 @@ export class CompilationDataProvider {
                         if (choice === 'Compiler output') this.output.show()
                     })
             }
+            const presentation = this.presentResult(uri, results, !success)
+            this.finishCompilation(success)
+            await presentation
         } else {
             // A snapshot names the processor that produced it; the next progress notification replaces this.
             this.compilation.show()
@@ -785,6 +843,7 @@ export class CompilationDataProvider {
     /** The server announces every processor as it starts; the status bar shows which one is running. */
     handleProgress(progress: CompileProgress): void {
         if (!this.compiling) return
+        if (this.lastCompiledUri && vscode.Uri.parse(progress.uri).toString() !== this.lastCompiledUri) return
         this.compilation.show()
         this.compilation.text = progressText(progress)
         this.compilation.tooltip = progressTooltip(progress)
@@ -794,10 +853,16 @@ export class CompilationDataProvider {
      * Notifies the LS to cancel the compilation.
      */
     public async requestCancelCompilation(): Promise<void> {
+        const { generation } = this
         await this.lsClient.start()
+        if (!this.compiling || generation !== this.generation) return
         this.cancellingCompilation = true
-        await this.lsClient.sendNotification(CANCEL_COMPILATION)
-        this.compilationFinishedEmitter.fire(false)
+        try {
+            await this.lsClient.sendNotification(CANCEL_COMPILATION)
+        } catch (error) {
+            this.cancellingCompilation = false
+            throw error
+        }
     }
 
     /**
@@ -805,77 +870,95 @@ export class CompilationDataProvider {
      * @param success wether cancelling the compilation was successful
      */
     public async cancelCompilation(success: boolean): Promise<void> {
+        if (!this.cancellingCompilation) return
         this.cancellingCompilation = false
         if (success) {
             this.compiling = false
             this.diagnostics?.cancel(this.lastCompiledUri)
+            this.pendingResults.delete(this.lastCompiledUri)
+            this.finishCompilation(false)
         }
     }
 
-    // TODO
+    private finishCompilation(success: boolean): void {
+        if (this.completionNotified) return
+        this.completionNotified = true
+        this.compilationFinishedEmitter.fire(success)
+    }
+
+    /** Compiler snapshots belong to the server process that created them. */
+    resetForRestart(): void {
+        this.generation++
+        this.compiling = false
+        this.cancellingCompilation = false
+        this.lastCompiledUri = ''
+        this.snapshots = undefined
+        this.requestedSystems = false
+        this.systems = []
+        this.snapshotSystems = []
+        this.pendingResults.clear()
+        this.isCompiled.clear()
+        this.sourceURI.clear()
+        this.resultMap.clear()
+        this.indexMap.clear()
+        this.lengthMap.clear()
+        this.shownStage.clear()
+        this.diagnostics?.reset()
+        this.requestSystems.hide()
+        this.compilation.hide()
+        this.finishCompilation(false)
+        this.stageChangedEmitter.fire()
+    }
+
     registerShowNext(): void {
-        vscode.commands.registerCommand(SHOW_NEXT.command, () => {
-            if (!this.editor) {
-                // this.messageService.error(EDITOR_UNDEFINED_MESSAGE)
-                return false
-            }
-            const uri = this.sourceModelPath
-            if (!this.isCompiled.get(uri)) {
-                // this.messageService.error(uri + " was not compiled")
-                return false
-            }
-            const lastIndex = this.indexMap.get(uri)
-            if (lastIndex !== 0 && !lastIndex) {
-                // this.messageService.error("Index is undefined")
-                return false
-            }
-            const length = this.lengthMap.get(uri)
-            if (length !== 0 && !length) {
-                // this.messageService.error("Length is undefined")
-                return false
-            }
-            if (lastIndex === length - 1) {
-                // No show necessary, since the last snapshot is already drawn.
-                return false
-            }
-            return this.show(uri, Math.min(lastIndex + 1, length - 1))
-        })
-        // TODO
-        // this.keybindingRegistry.registerKeybinding({
-        //     command: SHOW_NEXT.id,
-        //     context: this.kicoolKeybindingContext.id,
-        //     keybinding: SHOW_NEXT_KEYBINDING
-        // })
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand(SHOW_NEXT.command, () => {
+                if (!this.editor) {
+                    return false
+                }
+                const uri = this.sourceModelPath
+                if (!this.isCompiled.get(uri)) {
+                    return false
+                }
+                const lastIndex = this.indexMap.get(uri)
+                if (lastIndex !== 0 && !lastIndex) {
+                    return false
+                }
+                const length = this.lengthMap.get(uri)
+                if (length !== 0 && !length) {
+                    return false
+                }
+                if (lastIndex === length - 1) {
+                    // No show necessary, since the last snapshot is already drawn.
+                    return false
+                }
+                return this.show(uri, Math.min(lastIndex + 1, length - 1))
+            })
+        )
     }
 
     registerShowPrevious(): void {
-        vscode.commands.registerCommand(SHOW_PREVIOUS.command, () => {
-            if (!this.editor) {
-                // this.messageService.error(EDITOR_UNDEFINED_MESSAGE)
-                return false
-            }
-            const uri = this.sourceModelPath
-            if (!this.isCompiled.get(uri)) {
-                // this.messageService.error(uri + ' was not compiled')
-                return false
-            }
-            const lastIndex = this.indexMap.get(uri)
-            if (lastIndex !== 0 && !lastIndex) {
-                // this.messageService.error('Index is undefined')
-                return false
-            }
-            if (lastIndex === -1) {
-                // No show necessary, since the original model is already drawn.
-                return true
-            }
-            // Show for original model is on the lower bound of -1.
-            return this.show(uri, Math.max(lastIndex - 1, -1))
-        })
-        // this.keybindingRegistry.registerKeybinding({
-        //     command: SHOW_PREVIOUS.id,
-        //     context: this.kicoolKeybindingContext.id,
-        //     keybinding: SHOW_PREVIOUS_KEYBINDING
-        // })
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand(SHOW_PREVIOUS.command, () => {
+                if (!this.editor) {
+                    return false
+                }
+                const uri = this.sourceModelPath
+                if (!this.isCompiled.get(uri)) {
+                    return false
+                }
+                const lastIndex = this.indexMap.get(uri)
+                if (lastIndex !== 0 && !lastIndex) {
+                    return false
+                }
+                if (lastIndex === -1) {
+                    // No show necessary, since the original model is already drawn.
+                    return true
+                }
+                // Show for original model is on the lower bound of -1.
+                return this.show(uri, Math.max(lastIndex - 1, -1))
+            })
+        )
     }
 }
 
@@ -978,18 +1061,3 @@ export interface CompilationResults {
     /** Every processor of the system in execution order, including the ones that never ran. */
     processors?: ProcessorTiming[]
 }
-
-// /**
-//  * (name, snapshotId) should be unique. GroupId for bundling in phases
-//  */
-// export class Snapshot {
-//     name: string;
-//     snapshotIndex: number;
-//     errors?: string[];
-//     warnings?: string[];
-//     infos?: string[];
-//     constructor(name: string, snapshotIndex: number) {
-//         this.name = name
-//         this.snapshotIndex = snapshotIndex
-//     }
-// }

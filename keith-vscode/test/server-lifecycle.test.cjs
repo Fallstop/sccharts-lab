@@ -39,6 +39,10 @@ function fakeSpawn(calls) {
                 this.exitCode = code
                 for (const listener of listeners.get('exit') ?? []) listener(code, null)
             },
+            emitError(error) {
+                for (const listener of listeners.get('error') ?? []) listener(error)
+            },
+            unref() {},
             hasHandlerFor: (event) => (listeners.get(event) ?? []).length > 0,
         }
         calls.push(child)
@@ -164,4 +168,38 @@ test('disposing kills a server that is somehow still running', async () => {
         manager.dispose()
         assert.deepEqual(sent, [[-server.pid, 'SIGKILL']])
     })
+})
+
+function pendingCache() {
+    return {
+        dumpLog: '/nonexistent/sccharts-cache/dump.log',
+        launchArguments: () => ({ state: 'classlist', args: [] }),
+        needsDump: () => true, beginDump() {}, dumpArguments: () => ['-Xshare:dump'],
+        completeDump() {},
+    }
+}
+
+test('a failed archive process cannot take down the extension host', async () => {
+    const { manager, spawned, log } = createManager()
+    const cache = pendingCache()
+    let completed
+    cache.completeDump = succeeded => { completed = succeeded }
+    manager.startupCache = () => cache
+    await manager.launchServer()
+    assert.equal(spawned.length, 2)
+    const dump = spawned[1]
+    assert.ok(dump.hasHandlerFor('error'))
+    dump.emitError(new Error('spawn java ENOENT'))
+    assert.equal(completed, false)
+    assert.ok(log.some(line => /Startup cache process failed: spawn java ENOENT/.test(line)))
+})
+
+test('clearing the cache while an archive builds cannot throw from its exit callback', async () => {
+    const { manager, spawned, log } = createManager()
+    const cache = pendingCache()
+    cache.completeDump = () => { throw new Error('cache directory removed') }
+    manager.startupCache = () => cache
+    await manager.launchServer()
+    assert.doesNotThrow(() => spawned[1].emitExit(0))
+    assert.ok(log.some(line => /could not save the archive: cache directory removed/.test(line)))
 })

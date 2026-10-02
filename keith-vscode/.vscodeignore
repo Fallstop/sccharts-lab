@@ -11,6 +11,7 @@ src/**
 vsc-extension-quickstart.md
 **/webpack.config.js
 **/tsconfig.json
+**/tsconfig.*.json
 **/.eslintrc.json
 **/*.map
 **/*.ts
@@ -18,3 +19,15 @@ vsc-extension-quickstart.md
 scripts/**
 !scripts/uninstall.cjs
 
+server/**
+!server/sccharts-lite-server.jar
+!server/runtime-manifest.json
+!server/jre/**
+
+dist/**
+!dist/extension.js
+!dist/extension.js.LICENSE.txt
+pack/**
+!pack/webview.js
+!pack/webview.js.LICENSE.txt
+!pack/*.ttf

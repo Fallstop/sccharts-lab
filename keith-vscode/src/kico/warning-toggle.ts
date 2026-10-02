@@ -61,6 +61,7 @@ export class WarningToggle implements vscode.Disposable {
             vscode.window.onDidChangeActiveTextEditor(() => this.refresh()),
             vscode.workspace.onDidOpenTextDocument(() => this.refresh()),
             vscode.workspace.onDidCloseTextDocument(() => this.refresh()),
+            vscode.workspace.onDidChangeTextDocument(() => this.refresh()),
             vscode.workspace.onDidChangeConfiguration((event) => {
                 if (event.affectsConfiguration(`${settingsKey}.${SETTING}`)) this.refresh()
             }),
@@ -115,7 +116,8 @@ export class WarningToggle implements vscode.Disposable {
             report &&
             report.version === document.version &&
             (report.status === 'succeeded' || report.status === 'failed')
-        const issues = current ? report.issues : this.live.get(uri)?.issues ?? []
+        const live = this.live.get(uri)
+        const issues = current ? report.issues : live?.version === document.version ? live.issues : []
         return issues.filter((issue) => issue.severity === 'warning').length
     }
 }

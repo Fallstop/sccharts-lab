@@ -74,6 +74,10 @@ export class DiagnosticBridge implements vscode.Disposable {
             await vscode.commands.executeCommand('workbench.actions.view.problems')
             return
         }
+        if (command.kind === 'copy') {
+            await vscode.commands.executeCommand('keith-vscode.copy-diagnostics', vscode.Uri.parse(report.uri))
+            return
+        }
         const issue = report.issues.find((entry) => entry.id === command.issue)
         if (!issue) return
         if (command.kind === 'details') {
@@ -86,16 +90,18 @@ export class DiagnosticBridge implements vscode.Disposable {
             await vscode.window.showTextDocument(document, { preview: true, viewColumn: vscode.ViewColumn.Beside })
             return
         }
-        if (report.status === 'stale' || report.status === 'compiling') return
+        const current = () =>
+            this.diagnostics.get(report.uri) === report && (report.status === 'failed' || report.status === 'succeeded')
+        if (!current()) return
         if (command.kind === 'stage') {
+            if (issue.snapshotIndex < 0) return
             this.clearHighlights()
             await this.showStage(report.uri, issue.snapshotIndex)
             return
         }
         if (command.kind === 'highlight') {
             await this.showStage(report.uri, -1)
-            if (this.diagnostics.get(report.uri) !== report || this.diagnostics.get(report.uri)?.status === 'stale')
-                return
+            if (!current()) return
             this.diagrams.sendToDiagram(diagnosticHighlight, {
                 traceUris: issue.locations
                     .map((location) => location.traceUris ?? [])
@@ -106,6 +112,7 @@ export class DiagnosticBridge implements vscode.Disposable {
         const location = issue.locations[command.location ?? 0]
         if (!location || vscode.Uri.parse(location.uri).scheme !== 'file') return
         const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(location.uri))
+        if (!current()) return
         if (location.uri === report.uri && document.version !== report.version) return
         const range = this.diagnostics.range(location, document)
         const visible = vscode.window.visibleTextEditors.find((entry) => entry.document.uri.toString() === location.uri)
@@ -120,6 +127,7 @@ export class DiagnosticBridge implements vscode.Disposable {
             selection: range,
             preserveFocus: false,
         })
+        if (!current() || (location.uri === report.uri && document.version !== report.version)) return
         editor.setDecorations(
             this.decoration,
             issue.locations.filter((l) => l.uri === location.uri).map((l) => this.diagnostics.range(l, document))

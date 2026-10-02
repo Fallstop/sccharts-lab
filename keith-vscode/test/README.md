@@ -14,6 +14,11 @@ server should run on; `npm run build:jre` followed by
 `SCCHARTS_JAVA=server/jre/bin/java npm run test:server` exercises the bundled runtime image
 with exactly the modules that ship in the platform packages.
 
+`node test/server-compiler-recovery.cjs` covers empty and malformed models, unresolved
+states and variables, missing initial states, unknown compilation systems, cancellation,
+multiple open models receiving live diagnostics and successful compilation after failures.
+It also checks that internal compiler exceptions keep their processor, source and stack trace.
+
 The server suite also generates C and Java through the real protocol, checks that source
 files stay in memory, compiles exported fixtures with GCC and `javac`, and exercises invalid
 input, incompatible host code, scheduler failure and recovery. Run `node test/server-codegen.cjs`

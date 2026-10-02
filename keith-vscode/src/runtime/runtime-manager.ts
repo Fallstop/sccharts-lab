@@ -302,8 +302,13 @@ export class RuntimeManager implements vscode.Disposable {
      * (a few seconds), so the next server start maps it. Does nothing unless a list is waiting.
      */
     private dumpArchive(cache: StartupCache, java: JavaRuntime, jar: string): void {
-        if (!cache.needsDump()) return
-        cache.beginDump()
+        try {
+            if (!cache.needsDump()) return
+            cache.beginDump()
+        } catch (error) {
+            this.output.appendLine(`Startup cache unavailable: ${error instanceof Error ? error.message : error}`)
+            return
+        }
         const args = [...JVM_LOGGING_ARGS, ...cache.dumpArguments(jar)]
         this.output.appendLine(`Startup cache: building the class-data archive: ${java.command} ${args.join(' ')}`)
         let log: number | 'ignore' = 'ignore'
@@ -324,9 +329,26 @@ export class RuntimeManager implements vscode.Disposable {
         } catch {
             // Not fatal: the dump merely competes with the starting server for a few seconds.
         }
+        let completed = false
+        const complete = (succeeded: boolean) => {
+            if (completed) return
+            completed = true
+            try {
+                cache.completeDump(succeeded)
+            } catch (error) {
+                // Clearing the cache or closing the window can remove the directory during a dump.
+                this.output.appendLine(
+                    `Startup cache could not save the archive: ${error instanceof Error ? error.message : error}`
+                )
+            }
+        }
+        dump.once('error', (error) => {
+            complete(false)
+            this.output.appendLine(`Startup cache process failed: ${error.message}`)
+        })
         dump.once('exit', (code, signal) => {
             const succeeded = code === 0
-            cache.completeDump(succeeded)
+            complete(succeeded)
             this.output.appendLine(
                 succeeded
                     ? `Startup cache: archive ready at ${cache.archive}; the next server start uses it`

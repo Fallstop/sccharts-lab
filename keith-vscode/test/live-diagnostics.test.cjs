@@ -23,7 +23,7 @@ function setup() {
     const documents = []
     const mock = {
         Uri: URI, EventEmitter, Range,
-        DiagnosticSeverity: { Error: 0, Warning: 1 },
+        DiagnosticSeverity: { Error: 0, Warning: 1, Information: 2 },
         Diagnostic: class { constructor(range, message, severity) { Object.assign(this, { range, message, severity }) } },
         DiagnosticRelatedInformation: class { constructor(location, message) { Object.assign(this, { location, message }) } },
         Location: class { constructor(uri, range) { Object.assign(this, { uri, range }) } },
@@ -80,6 +80,22 @@ test('live results show for the current version and are dropped for a version th
     assert.equal(collections['kieler-live'].has(uri), false, 'A clean result clears the squiggles')
 })
 
+test('editing clears live results immediately even when the model has never been compiled', () => {
+    const { live, document, issue, changes, collections } = setup()
+    const doc = document('file:///demo.sctx')
+    const uri = doc.uri.toString()
+    live.accept({ uri, version: 1, issues: [issue()], durationMs: 300 })
+    let updates = 0
+    live.onDidChange(() => updates++)
+    doc.version++
+    changes.fire({ document: doc })
+    assert.equal(collections['kieler-live'].has(uri), false, 'No obsolete underline remains during debounce')
+    assert.equal(live.get(uri), undefined, 'Status counts cannot use the old result')
+    assert.equal(updates, 1)
+    assert.equal(live.accept({ uri, version: 1, issues: [issue()], durationMs: 300 }), false)
+    assert.equal(collections['kieler-live'].has(uri), false, 'A delayed old result cannot restore it')
+})
+
 test('a current compile report takes precedence and live results return once it goes stale', async () => {
     const { live, compiler, document, issue, changes, collections } = setup()
     const doc = document('file:///demo.sctx')
@@ -116,6 +132,19 @@ test('configuration reaches the server and disabling clears everything', async (
     assert.equal(collections['kieler-live'].has(uri), false, 'Closing the document clears its live squiggles')
 })
 
+test('a server restart forgets held live results before resetting compiler precedence', async () => {
+    const { live, compiler, document, issue, collections } = setup()
+    const doc = document('file:///demo.sctx')
+    const uri = doc.uri.toString()
+    live.accept({ uri, version: 1, issues: [issue()], durationMs: 20 })
+    await compiler.begin(uri)
+    assert.equal(collections['kieler-live'].has(uri), false)
+    live.reset()
+    compiler.reset()
+    assert.equal(live.get(uri), undefined)
+    assert.equal(collections['kieler-live'].size, 0, 'Old server results cannot reappear after compiler reset')
+})
+
 test('loop warnings explained by a live cycle error are folded into it', () => {
     const { live, document, issue, collections } = setup()
     const doc = document('file:///demo.sctx')
@@ -144,4 +173,28 @@ test('warning squiggles can be switched off for compile and live results alike; 
     assert.equal(compiler.get(uri).issues.length, 2, 'the report itself keeps the warning')
     compiler.setShowWarnings(true)
     assert.deepEqual(collections['kieler-compiler'].get(uri).map((d) => d.severity).sort(), [0, 1])
+})
+
+test('information keeps its severity and stays visible when warnings are hidden', () => {
+    const { live, compiler, document, issue, collections } = setup()
+    const doc = document('file:///demo.sctx')
+    const uri = doc.uri.toString()
+    compiler.setShowWarnings(false)
+    live.accept({ uri, version: 1, issues: [
+        issue({ code: 'note', severity: 'info', message: 'A helpful note.' }),
+        issue({ code: 'warning', severity: 'warning', message: 'A warning.' }),
+    ], durationMs: 30 })
+    assert.deepEqual(collections['kieler-live'].get(uri).map(d => d.severity), [2])
+})
+
+test('live diagnostics for a shared generated file survive editing another owner', () => {
+    const { live, document, issue, changes, collections } = setup()
+    const a = document('file:///a.sctx')
+    const b = document('file:///b.sctx')
+    const location = { uri: 'file:///shared.c', line: 0, column: 0, offset: 0, length: 1, label: 'Generated' }
+    for (const doc of [a, b]) live.accept({ uri: doc.uri.toString(), version: 1, issues: [issue({ message: doc.uri.path, locations: [location] })], durationMs: 10 })
+    assert.equal(collections['kieler-live'].get(location.uri).length, 2)
+    a.version++
+    changes.fire({ document: a })
+    assert.deepEqual(collections['kieler-live'].get(location.uri).map(d => d.message), ['/b.sctx\nGive x one owner.'])
 })

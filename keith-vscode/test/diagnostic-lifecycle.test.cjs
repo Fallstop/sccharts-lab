@@ -18,13 +18,14 @@ function setup() {
         intersection() { return this }
     }
     const changes = new EventEmitter()
+    const closes = new EventEmitter()
     const deletes = new EventEmitter()
     const entries = new Map()
     const documents = []
     let actions
     const mock = {
         Uri: URI, EventEmitter, Range,
-        DiagnosticSeverity: { Error: 0, Warning: 1 },
+        DiagnosticSeverity: { Error: 0, Warning: 1, Information: 2 },
         Diagnostic: class { constructor(range, message, severity) { Object.assign(this, { range, message, severity }) } },
         DiagnosticRelatedInformation: class { constructor(location, message) { Object.assign(this, { location, message }) } },
         Location: class { constructor(uri, range) { Object.assign(this, { uri, range }) } },
@@ -39,6 +40,7 @@ function setup() {
             textDocuments: documents,
             openTextDocument: async uri => documents.find(doc => doc.uri.toString() === uri.toString()),
             onDidChangeTextDocument: changes.event,
+            onDidCloseTextDocument: closes.event,
             onDidDeleteFiles: deletes.event,
         },
     }
@@ -52,8 +54,87 @@ function setup() {
         return doc
     }
     const stage = (locations = [], overrides = {}) => [[{ name: 'Compiler', index: 0, errors: ['raw error'], diagnostics: [{ code: 'c-compiler', message: 'Compiler failed', severity: 'error', locations, cycle: [], ...overrides }] }]]
-    return { diagnostics, changes, deletes, entries, document, stage, actions }
+    return { diagnostics, changes, closes, deletes, entries, document, stage, actions }
 }
+
+test('identical warning and error messages retain the error and distinct diagnostic codes', async () => {
+    const { diagnostics, document, entries } = setup()
+    const uri = document('file:///demo.sctx').uri.toString()
+    const issue = { code: 'first', severity: 'warning', message: 'Cannot process this model.', locations: [], cycle: [] }
+    await diagnostics.begin(uri)
+    const report = diagnostics.finish(uri, [[
+        { name: 'Early analyzer', index: 0, diagnostics: [issue, issue] },
+        { name: 'Compiler', index: 1, diagnostics: [{ ...issue, severity: 'error' }, { ...issue, code: 'second' }] },
+    ]], false)
+    assert.equal(report.status, 'failed', 'Deduplication must never turn a failing compile into success')
+    assert.equal(report.issues.length, 3)
+    assert.deepEqual(entries.get(uri).map(issue => issue.severity), [1, 0, 1])
+})
+
+test('empty structured diagnostics cannot hide a stage failure', async () => {
+    const { diagnostics, document, entries } = setup()
+    const uri = document('file:///demo.sctx').uri.toString()
+    await diagnostics.begin(uri)
+    const report = diagnostics.finish(uri, [[{ name: 'Compiler', index: 0, diagnostics: [], errors: ['Raw failure\nstack details'] }]], false)
+    assert.equal(report.status, 'failed')
+    assert.equal(report.issues[0].details, 'Raw failure\nstack details')
+    assert.equal(entries.get(uri)[0].message, 'Raw failure')
+})
+
+test('synthetic validation failures have no compiler snapshot to navigate to', async () => {
+    const { diagnostics, document } = setup()
+    const uri = document('file:///demo.sctx').uri.toString()
+    await diagnostics.begin(uri)
+    const report = diagnostics.finish(uri, [[{
+        name: 'Source Validation', index: 0, processorId: 'source-validation',
+        errors: ['Missing initial state'],
+        diagnostics: [{ code: 'source-validation', severity: 'error', message: 'Missing initial state', locations: [], cycle: [] }],
+    }]], false)
+    assert.equal(report.issues[0].snapshotIndex, -1, 'Stage 0 from an older build must never be used')
+})
+
+test('imported SCCharts diagnostics show the exact source token and navigate by its offset', async () => {
+    const { diagnostics, document, entries, stage } = setup()
+    const model = document('file:///demo.sctx')
+    const source = 'scchart Base {\n initial state Idle\n do "😀é" go to Missing\n}'
+    const imported = document('file:///C:/models/base.sctx', source)
+    const offset = source.indexOf('Missing')
+    const line = 2
+    const column = source.slice(0, offset).split('\n').at(-1).length
+    const location = { uri: 'file:/C:/models/base.sctx', offset, length: 7, line, column, label: 'Missing' }
+    await diagnostics.begin(model.uri.toString())
+    const report = diagnostics.finish(model.uri.toString(), stage([location], { code: 'source-validation', message: 'Unknown state Missing' }), false)
+    const [problem] = entries.get(imported.uri.toString())
+    assert.deepEqual(problem.range.start, { line, character: column })
+    assert.deepEqual(problem.range.end, { line, character: column + 7 })
+    assert.equal(source.split('\n')[line].slice(problem.range.start.character, problem.range.end.character), 'Missing')
+    const navigation = diagnostics.range(report.issues[0].locations[0], imported)
+    assert.deepEqual(navigation, problem.range, 'UTF-16 source columns must not be interpreted as native byte columns')
+})
+
+test('open imported source ranges preserve multiline nodes rather than extending beyond one line', async () => {
+    const { diagnostics, document, entries, stage } = setup()
+    const model = document('file:///demo.sctx')
+    const source = 'scchart Base {\n initial state Idle\n do result = true\n}'
+    const imported = document('file:///base.sctx', source)
+    const offset = source.indexOf('initial')
+    const end = source.indexOf('}')
+    await diagnostics.begin(model.uri.toString())
+    diagnostics.finish(model.uri.toString(), stage([{ uri: imported.uri.toString(), offset, length: end - offset, line: 1, column: 1, label: 'State Idle' }]), false)
+    const [problem] = entries.get(imported.uri.toString())
+    assert.deepEqual(problem.range.start, { line: 1, character: 1 })
+    assert.deepEqual(problem.range.end, { line: 3, character: 0 })
+})
+
+test('unopened imported source uses a bounded marker at its known start', async () => {
+    const { diagnostics, document, entries, stage } = setup()
+    const uri = document('file:///demo.sctx').uri.toString()
+    await diagnostics.begin(uri)
+    diagnostics.finish(uri, stage([{ uri: 'file:///closed.sctx', offset: 200, length: 5000, line: 5, column: 6, label: 'Multiline node' }]), false)
+    const [problem] = entries.get('file:///closed.sctx')
+    assert.deepEqual(problem.range.start, { line: 5, character: 6 })
+    assert.deepEqual(problem.range.end, { line: 5, character: 7 })
+})
 
 test('edits invalidate diagnostics and late build results cannot restore stale errors', async () => {
     const { diagnostics, changes, entries, document, stage } = setup()
@@ -76,6 +157,21 @@ test('edits invalidate diagnostics and late build results cannot restore stale e
     assert.equal(entries.size, 0)
 })
 
+test('closing and reopening with a reused version cannot make an obsolete report current', async () => {
+    const { diagnostics, closes, entries, document, stage, actions } = setup()
+    const old = document('file:///demo.sctx', 'scchart Old {}')
+    const uri = old.uri.toString()
+    await diagnostics.begin(uri)
+    diagnostics.finish(uri, stage([], { code: 'internal-compiler-error', details: 'Retained technical details' }), false)
+    closes.fire(old)
+    const reopened = document(uri, 'scchart Changed {}')
+    assert.equal(reopened.version, diagnostics.get(uri).version, 'VS Code can reuse version 1 after reopening')
+    assert.equal(diagnostics.get(uri).status, 'stale')
+    assert.equal(diagnostics.get(uri).issues[0].details, 'Retained technical details')
+    assert.equal(entries.size, 0)
+    assert.deepEqual(actions.provideCodeActions(reopened, {}), [])
+})
+
 test('rebuild, cancellation, deletion and restart clear owned errors without affecting another model', async () => {
     const { diagnostics, deletes, entries, document, stage } = setup()
     const a = document('file:///a.sctx').uri.toString()
@@ -96,6 +192,33 @@ test('rebuild, cancellation, deletion and restart clear owned errors without aff
     assert.equal(diagnostics.get(b), undefined)
     diagnostics.reset()
     assert.equal(diagnostics.get(a), undefined)
+})
+
+test('shared generated-file diagnostics retain each model owner when another model rebuilds', async () => {
+    const { diagnostics, entries, document, stage } = setup()
+    const a = document('file:///a.sctx').uri.toString()
+    const b = document('file:///b.sctx').uri.toString()
+    const location = { uri: 'file:///shared.c', line: 0, column: 0, offset: 0, length: 1, label: 'Generated code' }
+    await diagnostics.begin(a)
+    diagnostics.finish(a, stage([location], { message: 'Failure from a' }), false)
+    await diagnostics.begin(b)
+    diagnostics.finish(b, stage([location], { message: 'Failure from b' }), false)
+    assert.deepEqual(entries.get(location.uri).map(issue => issue.message), ['Failure from a', 'Failure from b'])
+    await diagnostics.begin(a)
+    assert.deepEqual(entries.get(location.uri).map(issue => issue.message), ['Failure from b'])
+    diagnostics.cancel(a)
+    assert.deepEqual(entries.get(location.uri).map(issue => issue.message), ['Failure from b'])
+})
+
+test('internal compiler errors offer a report-copy action bound to the source model', async () => {
+    const { diagnostics, document, stage, actions, entries } = setup()
+    const doc = document('file:///demo.sctx')
+    const uri = doc.uri.toString()
+    await diagnostics.begin(uri)
+    diagnostics.finish(uri, stage([], { code: 'internal-compiler-error' }), false)
+    const [action] = actions.provideCodeActions(doc, entries.get(uri)[0].range)
+    assert.equal(action.command.command, 'keith-vscode.copy-diagnostics')
+    assert.equal(action.command.arguments[0], doc.uri)
 })
 
 test('mapped array errors keep generated related information and a version-bound quick fix', async () => {

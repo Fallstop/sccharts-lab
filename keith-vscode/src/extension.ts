@@ -33,6 +33,7 @@ import { WarningToggle } from './kico/warning-toggle'
 import { handlePerformAction, PerformActionAction, performActionKind } from './perform-action-handler'
 import { RuntimeManager } from './runtime/runtime-manager'
 import { SettingsService } from './settings'
+import { registerSupportDiagnostics } from './support-diagnostics'
 import { RESTART_LANGUAGE_SERVER } from './simulation/commands'
 import { SimulationTableDataProvider } from './simulation/simulation-table-data-provider'
 import { SimulationViewBridge } from './simulation/simulation-view-bridge'
@@ -197,6 +198,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     )
     // The server analyses open SCCharts after every edit; the findings show as squiggles without a compile.
     const liveDiagnostics = new LiveDiagnostics(lsClient, compilationDataProvider.diagnostics)
+    registerSupportDiagnostics(context, compilationDataProvider, runtime, () => diagrams.currentUri, liveDiagnostics)
     const showWarnings = () => settingsService.get('diagnostics.showWarnings') ?? true
     compilationDataProvider.diagnostics.setShowWarnings(showWarnings())
     const liveConfiguration = () => ({
@@ -253,10 +255,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     context.subscriptions.push(
         lsClient.onDidChangeState((event) => {
             if (event.newState === State.Stopped) {
-                compilationDataProvider.diagnostics.reset()
-                compilationDataProvider.compiling = false
-                compilationDataProvider.lastCompiledUri = ''
-                compilationDataProvider.compilationFinishedEmitter.fire(false)
+                liveDiagnostics.reset()
+                compilationDataProvider.resetForRestart()
+                simulationDataProvider.resetForRestart()
                 vscode.commands.executeCommand('setContext', 'keith.vscode:compilationReady', false)
             }
             if (event.newState !== State.Running) {

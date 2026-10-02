@@ -24,13 +24,26 @@ export async function reportConflictingExtensions(
         return false
     }
     const names = conflicts.map((extension) => extension.name).join(', ')
+    const uninstall = 'Uninstall and reload'
     const show = 'Show conflicting extension'
     const choice = await window.showErrorMessage(
-        `SCCharts Lab cannot run beside ${names}. Disable it, then reload the window.`,
+        `SCCharts Lab cannot run beside ${names}. Uninstall it, then reload the window.`,
+        uninstall,
         show
     )
-    if (choice === show) {
-        await commands.executeCommand('workbench.extensions.search', `@installed ${conflicts[0].id}`)
+    if (choice === uninstall) {
+        try {
+            for (const extension of conflicts) {
+                // eslint-disable-next-line no-await-in-loop -- VS Code uninstalls one extension at a time.
+                await commands.executeCommand('workbench.extensions.uninstallExtension', extension.id)
+            }
+            await commands.executeCommand('workbench.action.reloadWindow')
+        } catch (error) {
+            window.showErrorMessage(`Could not uninstall ${names}: ${error instanceof Error ? error.message : error}`)
+            await commands.executeCommand('workbench.extensions.search', `@id:${conflicts[0].id}`)
+        }
+    } else if (choice === show) {
+        await commands.executeCommand('workbench.extensions.search', `@id:${conflicts[0].id}`)
     }
     return true
 }

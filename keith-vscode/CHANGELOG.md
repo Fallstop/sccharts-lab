@@ -4,6 +4,34 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.9.6] - 2026-10-03
+
+- **Invalid source produces useful diagnostics before it reaches the compiler.** Empty models,
+  syntax errors, unresolved names (including in imports) and invalid region structure are rejected with source locations.
+  An empty document and a transition to an unknown state previously caused null-pointer failures.
+  Unexpected compiler exceptions now identify the failed processor, preserve the stack trace and
+  finish the build so the next compilation can recover.
+  Unavailable compilation systems now offer an actionable error instead of a compiler exception.
+  Imported source locations retain Windows drive letters and network-share hosts.
+- **Copy a diagnostic report from the preview or Command Palette.** The report includes the
+  extension, Java and server versions, source version, compiler issues, technical details and
+  processor timings. Internal compiler errors also offer it from the editor's lightbulb.
+- **Compile saves the selected model first.** Auto-compile runs after a save and targets the saved
+  file even if another tab is active. Edited, cancelled and obsolete builds cannot open old generated
+  code or start a simulation; server restarts clear the old compiler and simulation state.
+- **Diagnostics clear as soon as their source changes.** Warning counts follow the current document
+  version, informational findings keep their severity, and an error cannot disappear behind a
+  duplicate warning. Models sharing a generated path keep their own findings when another closes
+  or recompiles. Live analysis also gives each open model its turn.
+- **Simulation and generation recover from interrupted preparation.** Cancellation during server
+  startup, edits during toolchain setup and a simulation stop that never answers release their
+  controls and report the next action. Background startup-cache failures no longer crash the host.
+- **Smaller packages.** Obsolete language-server jars, Jetty libraries and old webview builds are
+  excluded, removing about 97 MB from the unpacked extension on a checkout that still holds them.
+  Platform packages retain their bundled Java runtime.
+- **Conflicting KIELER extensions can be uninstalled in one click,** followed by a window reload.
+  Opening the conflict in Extensions now searches its exact identifier.
+
 ## [0.9.5] - 2026-09-29
 
 - **Compiling no longer reads the model while an edit is changing it.** A compilation started from

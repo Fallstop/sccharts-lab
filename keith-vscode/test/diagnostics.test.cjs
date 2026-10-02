@@ -5,7 +5,7 @@ const path = require('node:path')
 const { JSDOM } = require('jsdom')
 const createLoader = require('./load-typescript.cjs')
 const load = createLoader()
-const { mapNativeLocation, arrayCopyFix } = load('src/kico/source-mapping.ts')
+const { mapNativeLocation, arrayCopyFix, utf8ColumnOffset } = load('src/kico/source-mapping.ts')
 const uri = 'file:///demo.sctx'
 
 test('embedded C diagnostics map escaped quotes and UTF-8 columns to source offsets', () => {
@@ -14,6 +14,13 @@ test('embedded C diagnostics map escaped quotes and UTF-8 columns to source offs
     const mapped = mapNativeLocation(uri, source, { generatedLine, column: Buffer.byteLength(generatedLine.slice(0, generatedLine.indexOf('missing'))), label: 'unknown identifier' })
     assert.equal(source.slice(mapped.offset, mapped.offset + mapped.length), 'missing')
     assert.equal(mapped.uri, uri)
+})
+
+test('UTF-8 byte columns round down inside a code point and account for surrogate pairs', () => {
+    assert.equal(utf8ColumnOffset('éx', 1), 0)
+    assert.equal(utf8ColumnOffset('éx', 2), 1)
+    assert.equal(utf8ColumnOffset('😀x', 3), 0)
+    assert.equal(utf8ColumnOffset('😀x', 4), 2)
 })
 
 test('ambiguous host lines and generated names stay in the generated file', () => {
@@ -103,18 +110,62 @@ test('the preview panel hides and shows warnings with the editor, and says how m
     view.render(report, true)
     assert.match(view.el.querySelector('[role="status"]').textContent, /Compiled with 1 warning/)
     assert.ok(view.el.querySelector('.kd-warnings'), 'the warning list is there')
-    assert.deepEqual(buttons(), ['Hide warnings', 'Problems'])
+    assert.deepEqual(buttons(), ['Hide warnings', 'Problems', 'Copy diagnostics'])
     view.el.querySelector('.kd-heading button').click()
     assert.deepEqual(sent.pop(), { kind: 'showWarnings', enabled: false })
     view.render(report, false)
     assert.equal(view.el.hidden, false, 'the panel stays, so the warnings can be brought back from here')
     assert.match(view.el.querySelector('[role="status"]').textContent, /Compiled, 1 warning hidden/)
     assert.equal(view.el.querySelector('.kd-warnings'), null, 'no warning list while hidden')
-    assert.deepEqual(buttons(), ['Show warnings', 'Problems'])
+    assert.deepEqual(buttons(), ['Show warnings', 'Problems', 'Copy diagnostics'])
     view.el.querySelector('.kd-heading button').click()
     assert.deepEqual(sent.pop(), { kind: 'showWarnings', enabled: true })
     // With no warnings there is nothing to toggle.
     view.render({ ...report, issues: [{ ...warning, severity: 'error', stage: 'Scheduler' }] }, false)
-    assert.deepEqual(buttons(), ['Problems'])
+    assert.deepEqual(buttons(), ['Problems', 'Copy diagnostics'])
+    dom.window.close()
+})
+
+test('preview information stays visible independently of warnings and diagnostics can be copied', () => {
+    const dom = new JSDOM('<div class="kv-root"><header class="kv-toolbar"></header></div>')
+    for (const name of ['document', 'window', 'HTMLElement', 'Event']) global[name] = dom.window[name]
+    const { DiagnosticView } = createLoader()('src-webview/diagram/diagnostics/view.ts')
+    const sent = []
+    const view = new DiagnosticView({ onNotification() {}, sendNotification: (_, __, command) => sent.push(command) })
+    const note = { id: '3:0', stage: 'Compiler', message: 'A helpful note.', severity: 'info', code: 'note', locations: [], cycle: [] }
+    view.render({ id: 3, uri, version: 1, status: 'succeeded', issues: [note], rawCount: 0 }, false)
+    assert.match(view.el.textContent, /Compiled with 1 note/)
+    assert.match(view.el.textContent, /A helpful note/)
+    const copy = [...view.el.querySelectorAll('.kd-heading button')].find(button => button.textContent === 'Copy diagnostics')
+    copy.click()
+    assert.deepEqual(sent.pop(), { kind: 'copy', build: 3 })
+    dom.window.close()
+})
+
+test('synthetic source failures omit compiler-stage navigation while keeping technical details', () => {
+    const dom = new JSDOM('<div class="kv-root"><header class="kv-toolbar"></header></div>')
+    for (const name of ['document', 'window', 'HTMLElement', 'Event']) global[name] = dom.window[name]
+    const { DiagnosticView } = createLoader()('src-webview/diagram/diagnostics/view.ts')
+    const view = new DiagnosticView({ onNotification() {}, sendNotification() {} })
+    const issue = { id: '4:0', stage: 'Source Validation', message: 'Missing initial state.', severity: 'error', code: 'source-validation', locations: [], cycle: [], snapshotIndex: -1 }
+    view.render({ id: 4, uri, version: 1, status: 'failed', issues: [issue], rawCount: 1 })
+    const actions = [...view.el.querySelectorAll('.kd-issue .kd-actions button')].map(button => button.textContent)
+    assert.deepEqual(actions, ['Technical details'])
+    dom.window.close()
+})
+
+test('preview distinguishes imported SCCharts from generated C and Java source links', () => {
+    const dom = new JSDOM('<div class="kv-root"><header class="kv-toolbar"></header></div>')
+    for (const name of ['document', 'window', 'HTMLElement', 'Event']) global[name] = dom.window[name]
+    const { DiagnosticView } = createLoader()('src-webview/diagram/diagnostics/view.ts')
+    const sent = []
+    const view = new DiagnosticView({ onNotification() {}, sendNotification: (_, __, command) => sent.push(command) })
+    const issue = { id: '5:0', stage: 'Source Validation', message: 'Related source failure.', severity: 'error', code: 'source-validation', cycle: [], snapshotIndex: -1,
+        locations: ['file:///base.sctx', 'file:///generated.c', 'file:///Generated.java'].map(uri => ({ uri, offset: 0, length: 7, label: 'Missing' })) }
+    view.render({ id: 5, uri, version: 1, status: 'failed', issues: [issue], rawCount: 1 })
+    const sources = [...view.el.querySelectorAll('.kd-sources button')]
+    assert.deepEqual(sources.map(button => button.textContent), ['Related SCChart: Missing', 'Generated C: Missing', 'Generated Java: Missing'])
+    sources[0].click()
+    assert.deepEqual(sent.pop(), { kind: 'source', build: 5, issue: '5:0', location: 0 })
     dom.window.close()
 })

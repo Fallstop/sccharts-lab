@@ -1,10 +1,12 @@
 import * as vscode from 'vscode'
 import { BuildIssue, BuildReport, CompilerIssue, SourceLocation } from './diagnostic-protocol'
-import { arrayCopyFix, mapNativeLocation } from './source-mapping'
+import { arrayCopyFix, mapNativeLocation, utf8ColumnOffset } from './source-mapping'
+import { OwnedDiagnostics } from './owned-diagnostics'
 
 interface Stage {
     name: string
     index: number
+    processorId?: string
     errors?: string[]
     warnings?: string[]
     diagnostics?: CompilerIssue[]
@@ -26,7 +28,7 @@ export function withoutExplainedLoops<T extends CompilerIssue>(issues: T[]): T[]
 }
 
 export class CompilerDiagnostics implements vscode.Disposable {
-    private readonly collection = vscode.languages.createDiagnosticCollection('kieler-compiler')
+    private readonly collection = new OwnedDiagnostics('kieler-compiler')
 
     private readonly changed = new vscode.EventEmitter<void>()
 
@@ -35,8 +37,6 @@ export class CompilerDiagnostics implements vscode.Disposable {
     private readonly reports = new Map<string, BuildReport>()
 
     private readonly sources = new Map<number, string>()
-
-    private readonly published = new Map<string, Set<string>>()
 
     private nextId = 0
 
@@ -49,13 +49,13 @@ export class CompilerDiagnostics implements vscode.Disposable {
         this.subscriptions = [
             vscode.workspace.onDidChangeTextDocument(({ document }) => {
                 const report = this.get(document.uri.toString())
-                if (report && report.version !== document.version) {
-                    report.status = 'stale'
-                    this.clearPublished(report.uri)
-                    this.changed.fire()
-                }
+                if (report && report.version !== document.version) this.invalidate(report.uri)
             }),
-            vscode.workspace.onDidDeleteFiles(({ files }) => files.forEach((uri) => this.remove(uri.toString()))),
+            vscode.workspace.onDidCloseTextDocument((document) => this.invalidate(document.uri.toString())),
+            vscode.workspace.onDidDeleteFiles(({ files }) => {
+                files.forEach((uri) => this.remove(uri.toString()))
+                this.changed.fire()
+            }),
             vscode.languages.registerCodeActionsProvider(
                 'sctx',
                 { provideCodeActions: (document, range) => this.codeActions(document, range) },
@@ -96,31 +96,34 @@ export class CompilerDiagnostics implements vscode.Disposable {
         const source = this.sources.get(report.id) ?? ''
         let flatIndex = 0
         const issues: BuildIssue[] = []
+        const seen = new Set<string>()
         report.rawCount = 0
         files.forEach((stages) =>
             stages.forEach((stage) => {
                 report.rawCount += (stage.errors?.length ?? 0) + (stage.warnings?.length ?? 0)
-                const diagnostics = stage.diagnostics ?? [
-                    ...(stage.errors ?? []).map(
-                        (message): CompilerIssue => ({
-                            code: 'compiler',
-                            message: message.split('\n')[0],
-                            severity: 'error',
-                            details: message,
-                            locations: [],
-                            cycle: [],
-                        })
-                    ),
-                    ...(stage.warnings ?? []).map(
-                        (message): CompilerIssue => ({
-                            code: 'compiler',
-                            message,
-                            severity: 'warning',
-                            locations: [],
-                            cycle: [],
-                        })
-                    ),
-                ]
+                const diagnostics = stage.diagnostics?.length
+                    ? stage.diagnostics
+                    : [
+                          ...(stage.errors ?? []).map(
+                              (message): CompilerIssue => ({
+                                  code: 'compiler',
+                                  message: message.split('\n')[0],
+                                  severity: 'error',
+                                  details: message,
+                                  locations: [],
+                                  cycle: [],
+                              })
+                          ),
+                          ...(stage.warnings ?? []).map(
+                              (message): CompilerIssue => ({
+                                  code: 'compiler',
+                                  message,
+                                  severity: 'warning',
+                                  locations: [],
+                                  cycle: [],
+                              })
+                          ),
+                      ]
                 diagnostics.forEach((diagnostic) => {
                     const normalized = diagnostic.locations.map((location) =>
                         this.normalizeLocation(location, report.uri)
@@ -144,17 +147,14 @@ export class CompilerDiagnostics implements vscode.Disposable {
                         })),
                         id: `${report.id}:${issues.length}`,
                         stage: stage.name,
-                        snapshotIndex: flatIndex,
+                        snapshotIndex: stage.processorId === 'source-validation' ? -1 : flatIndex,
                     }
                     // Messages arrive final from the analyzer that found the problem; nothing is rephrased here.
-                    if (
-                        !issues.some(
-                            (other) =>
-                                other.message === issue.message &&
-                                JSON.stringify(other.locations) === JSON.stringify(issue.locations)
-                        )
-                    )
+                    const key = JSON.stringify([issue.code, issue.severity, issue.message, issue.locations])
+                    if (!seen.has(key)) {
+                        seen.add(key)
                         issues.push(issue)
+                    }
                 })
                 flatIndex++
             })
@@ -185,7 +185,6 @@ export class CompilerDiagnostics implements vscode.Disposable {
         this.collection.clear()
         this.reports.clear()
         this.sources.clear()
-        this.published.clear()
         this.changed.fire()
     }
 
@@ -193,6 +192,15 @@ export class CompilerDiagnostics implements vscode.Disposable {
         const report = this.get(uri)
         if (!report || report.status !== 'compiling') return
         report.status = 'cancelled'
+        this.clearPublished(report.uri)
+        this.changed.fire()
+    }
+
+    private invalidate(uri: string): void {
+        const report = this.get(uri)
+        if (!report || report.status === 'stale') return
+        report.status = 'stale'
+        this.sources.delete(report.id)
         this.clearPublished(report.uri)
         this.changed.fire()
     }
@@ -206,8 +214,7 @@ export class CompilerDiagnostics implements vscode.Disposable {
     }
 
     private clearPublished(uri: string): void {
-        this.published.get(uri)?.forEach((file) => this.collection.delete(vscode.Uri.parse(file)))
-        this.published.delete(uri)
+        this.collection.remove(uri)
     }
 
     private normalizeLocation(location: SourceLocation, modelUri: string): SourceLocation {
@@ -226,17 +233,27 @@ export class CompilerDiagnostics implements vscode.Disposable {
         const source = this.sources.get(report.id) ?? ''
         const document = vscode.workspace.textDocuments.find((doc) => doc.uri.toString() === report.uri)
         if (!document || document.version !== report.version) return
-        const issues = report.issues.filter((issue) => this.showWarnings || issue.severity === 'error')
+        const issues = report.issues.filter((issue) => this.showWarnings || issue.severity !== 'warning')
         const byFile = renderIssues(issues, report.uri, document, source, (issue) => `KIELER · ${issue.stage}`)
-        this.clearPublished(report.uri)
-        byFile.forEach((diagnostics, uri) => this.collection.set(vscode.Uri.parse(uri), diagnostics))
-        this.published.set(report.uri, new Set(byFile.keys()))
+        this.collection.publish(report.uri, byFile)
     }
 
     private codeActions(document: vscode.TextDocument, range: vscode.Range): vscode.CodeAction[] {
         const report = this.get(document.uri.toString())
         if (!report || report.status !== 'failed' || report.version !== document.version) return []
         return report.issues.flatMap((issue) => {
+            if (issue.code === 'internal-compiler-error') {
+                const locations = issue.locations.filter((location) => location.uri === report.uri)
+                const affected = locations.length ? locations : [{ uri: report.uri, offset: 0, length: 1, label: '' }]
+                if (!affected.some((location) => this.range(location, document).intersection(range))) return []
+                const action = new vscode.CodeAction('Copy compiler diagnostics report', vscode.CodeActionKind.QuickFix)
+                action.command = {
+                    command: 'keith-vscode.copy-diagnostics',
+                    title: action.title,
+                    arguments: [document.uri],
+                }
+                return [action]
+            }
             if (
                 issue.code !== 'c-compiler' ||
                 !/array type.*not assignable|assignment to expression with array type/.test(issue.message)
@@ -256,14 +273,12 @@ export class CompilerDiagnostics implements vscode.Disposable {
     }
 }
 
-/** The editor range of a source location: a generated-file line/column, or an offset into the SCTX document. */
+/** Source documents use UTF-16 offsets; native generated files report UTF-8 line columns. */
 export function rangeOf(location: SourceLocation, document: vscode.TextDocument): vscode.Range {
-    if ((location.line ?? -1) >= 0) {
+    if ((location.line ?? -1) >= 0 && !isSourceUri(document.uri.toString())) {
         const line = Math.min(location.line!, document.lineCount - 1)
         const { text } = document.lineAt(line)
-        const column = Buffer.from(text, 'utf8')
-            .subarray(0, Math.max(0, location.column ?? 0))
-            .toString('utf8').length
+        const column = utf8ColumnOffset(text, Math.max(0, location.column ?? 0))
         return document.validateRange(new vscode.Range(line, column, line, column + 1))
     }
     return new vscode.Range(
@@ -272,15 +287,22 @@ export function rangeOf(location: SourceLocation, document: vscode.TextDocument)
     )
 }
 
+function isSourceUri(uri: string): boolean {
+    return /\.(sctx|scl|kico)$/i.test(vscode.Uri.parse(uri).path)
+}
+
 function rangeIn(location: SourceLocation, modelUri: string, document: vscode.TextDocument): vscode.Range {
-    return location.uri === modelUri
-        ? rangeOf(location, document)
-        : new vscode.Range(
-              Math.max(0, location.line ?? 0),
-              Math.max(0, location.column ?? 0),
-              Math.max(0, location.line ?? 0),
-              Math.max(0, location.column ?? 0) + 1
-          )
+    const target =
+        location.uri === modelUri
+            ? document
+            : vscode.workspace.textDocuments.find((entry) => entry.uri.toString() === location.uri)
+    if (target) return rangeOf(location, target)
+    return new vscode.Range(
+        Math.max(0, location.line ?? 0),
+        Math.max(0, location.column ?? 0),
+        Math.max(0, location.line ?? 0),
+        Math.max(0, location.column ?? 0) + 1
+    )
 }
 
 /**
@@ -315,7 +337,11 @@ export function renderIssues<T extends CompilerIssue>(
             const diagnostic = new vscode.Diagnostic(
                 rangeIn(location, modelUri, document),
                 `${issue.message}${issue.hint ? `\n${issue.hint}` : ''}`,
-                issue.severity === 'error' ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
+                issue.severity === 'error'
+                    ? vscode.DiagnosticSeverity.Error
+                    : issue.severity === 'warning'
+                      ? vscode.DiagnosticSeverity.Warning
+                      : vscode.DiagnosticSeverity.Information
             )
             diagnostic.source = sourceLabel(issue)
             diagnostic.code = issue.code
