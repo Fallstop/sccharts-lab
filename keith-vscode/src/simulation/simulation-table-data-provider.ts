@@ -471,40 +471,52 @@ export class SimulationTableDataProvider {
      * starts over. Falls back to the system prompt when nothing was built yet.
      */
     async rebuildSimulation(): Promise<boolean> {
-        if (this.pickingSystem || this.phase === 'starting' || this.phase === 'stopping' || this.kico.compiling)
+        if (
+            this.pickingSystem ||
+            this.phase === 'starting' ||
+            this.phase === 'stopping' ||
+            this.kico.compiling ||
+            this.kico.generatingCode ||
+            this.kico.preparingSimulation
+        )
             return false
         const uri = this.modelUri ?? this.kico.lastCompiledUri
         const system = this.lastSystem
         if (!uri || !system) return this.compileAndSimulate(false, uri ? vscode.Uri.parse(uri) : undefined)
         this.pickingSystem = true
+        this.kico.preparingSimulation = true
         try {
             if (this.simulationRunning && !(await this.stopSimulation())) return false
-            const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(uri))
             const { generation } = this
+            const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(uri))
+            if (generation !== this.generation) return false
             if (document.isDirty && !(await document.save())) throw new Error('The model could not be saved.')
             if (generation !== this.generation) return false
-            await this.startBuild(document, system.id, system.snapshot)
-            return true
+            return await this.startBuild(document, system.id, system.snapshot)
         } catch (error) {
             this.fail(`The simulation could not be rebuilt: ${error}`)
             return false
         } finally {
             this.pickingSystem = false
+            this.kico.preparingSimulation = false
         }
     }
 
-    /** Compiles the saved model for simulation; the compilation-finished event starts the run. */
     /**
      * Checks that the tools the build needs are present (and may install them) before the compile request
      * is sent. Set by the extension; a false result cancels the build quietly, the hook has already reported.
      */
     prepareBuild?: (systemId: string, label?: string) => Promise<boolean>
 
-    private async startBuild(document: vscode.TextDocument, systemId: string, snapshot: boolean): Promise<void> {
+    /** The compilation-finished event starts the run once the saved model was built. */
+    private async startBuild(document: vscode.TextDocument, systemId: string, snapshot: boolean): Promise<boolean> {
+        const { generation } = this
         if (this.prepareBuild) {
             const label = [...this.systems, ...this.snapshotSystems].find((system) => system.id === systemId)?.label
-            if (!(await this.prepareBuild(systemId, label))) return
+            if (!(await this.prepareBuild(systemId, label))) return false
         }
+        if (generation !== this.generation) return false
+        if (document.isDirty) throw new Error('The model changed while preparing the build. Save it and try again.')
         this.lastError = undefined
         this.modelUri = document.uri.toString()
         this.compiledText = document.getText()
@@ -513,6 +525,7 @@ export class SimulationTableDataProvider {
         this.compilingSimulation = true
         this.setPhase('starting')
         await this.kico.compile(systemId, true, false, snapshot, this.modelUri)
+        return true
     }
 
     private setStale(stale: boolean): void {
@@ -574,7 +587,14 @@ export class SimulationTableDataProvider {
     }
 
     async compileAndSimulate(snapshot: boolean, uri?: vscode.Uri): Promise<boolean> {
-        if (this.pickingSystem || this.phase === 'starting' || this.phase === 'stopping' || this.kico.compiling)
+        if (
+            this.pickingSystem ||
+            this.phase === 'starting' ||
+            this.phase === 'stopping' ||
+            this.kico.compiling ||
+            this.kico.generatingCode ||
+            this.kico.preparingSimulation
+        )
             return false
         this.pickingSystem = true
         const { generation } = this
@@ -609,18 +629,19 @@ export class SimulationTableDataProvider {
                 { title: snapshot ? 'Simulate diagram snapshot' : 'Simulate model' }
             )
             if (!selected || generation !== this.generation) return false
+            this.kico.preparingSimulation = true
             if (this.simulationRunning && !(await this.stopSimulation())) return false
             const preparedGeneration = this.generation
             if (editor.document.isDirty && !(await editor.document.save()))
                 throw new Error('The model could not be saved.')
             if (preparedGeneration !== this.generation) return false
-            await this.startBuild(editor.document, selected.system.id, snapshot)
-            return true
+            return await this.startBuild(editor.document, selected.system.id, snapshot)
         } catch (error) {
             this.fail(`The simulation could not be prepared: ${error}`)
             return false
         } finally {
             this.pickingSystem = false
+            this.kico.preparingSimulation = false
         }
     }
 
@@ -679,7 +700,10 @@ export class SimulationTableDataProvider {
             if (successful) {
                 this.simulate(this.modelUri)
             } else {
-                this.lastError = 'The model could not be compiled for simulation. See the KIELER Compiler panel.'
+                this.compiledText = undefined
+                this.setStale(true)
+                this.lastError =
+                    'The model could not be compiled for simulation. See Problems or KIELER Compilation output.'
                 this.setPhase('idle')
             }
         } else {
@@ -769,7 +793,17 @@ export class SimulationTableDataProvider {
             this.fail(`The simulation could not be started: ${startMessage.error}`)
             return
         }
-        if (!startMessage.dataPool || !startMessage.propertySet) {
+        if (
+            !startMessage.dataPool ||
+            typeof startMessage.dataPool !== 'object' ||
+            Array.isArray(startMessage.dataPool) ||
+            !startMessage.propertySet ||
+            typeof startMessage.propertySet !== 'object' ||
+            Array.isArray(startMessage.propertySet) ||
+            Object.values(startMessage.propertySet).some(
+                (symbols) => !Array.isArray(symbols) || symbols.some((symbol) => typeof symbol !== 'string')
+            )
+        ) {
             this.fail('The language server returned an invalid simulation configuration.')
             return
         }
@@ -870,7 +904,7 @@ export class SimulationTableDataProvider {
     /**
      * Request a simulation stop from the LS.
      */
-    public async stopSimulation(): Promise<boolean> {
+    public async stopSimulation(timeoutMs = 30000): Promise<boolean> {
         if (this.stopRequest) return this.stopRequest
         if (!this.simulationRunning && !this.starting && !this.compilingSimulation) return false
         this.stepper.reset()
@@ -886,8 +920,20 @@ export class SimulationTableDataProvider {
         this.simulationStatus.text = '$(loading~spin) Stopping simulation...'
         this.simulationStatus.show()
         const request = (async () => {
+            let timer: ReturnType<typeof setTimeout> | undefined
             try {
-                const message = await this.lsClient.sendRequest<SimulationStoppedMessage>('keith/simulation/stop')
+                const message = await Promise.race([
+                    this.lsClient.sendRequest<SimulationStoppedMessage>('keith/simulation/stop'),
+                    new Promise<never>((_, reject) => {
+                        timer = setTimeout(
+                            () =>
+                                reject(
+                                    new Error('Stopping the simulation timed out. Restart the KIELER language server.')
+                                ),
+                            timeoutMs
+                        )
+                    }),
+                ])
                 if (generation !== this.generation) return false
                 if (!message.successful) throw new Error(message.message)
                 this.setValuesToStopSimulation()
@@ -897,6 +943,8 @@ export class SimulationTableDataProvider {
             } catch (error) {
                 if (generation === this.generation) this.fail(`The simulation could not be stopped: ${error}`)
                 throw error
+            } finally {
+                clearTimeout(timer)
             }
         })()
         this.stopRequest = request

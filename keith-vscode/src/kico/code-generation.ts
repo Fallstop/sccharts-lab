@@ -12,7 +12,7 @@ export function registerCodeGeneration(context: vscode.ExtensionContext, compile
     context.subscriptions.push(
         documents,
         vscode.commands.registerCommand(GENERATE_CODE, async (uri?: vscode.Uri, preset?: CodeTarget) => {
-            if (running || compiler.compiling) {
+            if (running || compiler.compiling || compiler.preparingSimulation) {
                 vscode.window.showInformationMessage('A compilation is already in progress.')
                 return
             }

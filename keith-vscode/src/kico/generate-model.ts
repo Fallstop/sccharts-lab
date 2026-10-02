@@ -24,6 +24,7 @@ export function generateModel(
     const { version } = document
     return new Promise((resolve, reject) => {
         let sent = false
+        let stopRequested = false
         let settled = false
         const finish = (files?: GeneratedFile[], error?: Error) => {
             if (settled) return
@@ -63,9 +64,13 @@ export function generateModel(
             return finish(result.generatedFiles)
         })
         const cancel = () => {
+            stopRequested = true
             if (sent) compiler.requestCancelCompilation().catch((error) => finish(undefined, new Error(String(error))))
         }
-        const cancelled = token.onCancellationRequested(cancel)
+        const cancelled = token.onCancellationRequested(() => {
+            cancel()
+            finish([])
+        })
         const timeout = setTimeout(() => {
             finish(undefined, new Error('Code generation timed out. Restart the language server before trying again.'))
             cancel()
@@ -73,7 +78,7 @@ export function generateModel(
         compiler.compile(systems[target], false, false, false, uri).then(
             () => {
                 sent = true
-                if (token.isCancellationRequested) cancel()
+                if (stopRequested || token.isCancellationRequested) cancel()
             },
             (error) => finish(undefined, error instanceof Error ? error : new Error(String(error)))
         )

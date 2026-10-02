@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 import type { LanguageClient } from 'vscode-languageclient/node'
 import { CompilerDiagnostics, renderIssues, withoutExplainedLoops } from './compiler-diagnostics'
 import { CompilerIssue } from './diagnostic-protocol'
+import { OwnedDiagnostics } from './owned-diagnostics'
 
 /** `keith/diagnostics/live`: what the server's live analysis found in one version of an open document. */
 export interface LiveDiagnosticsParam {
@@ -9,7 +10,7 @@ export interface LiveDiagnosticsParam {
     version?: number | null
     issues: CompilerIssue[]
     durationMs: number
-    reason?: 'clean' | 'syntax' | 'disabled' | 'closed' | 'cancelled' | null
+    reason?: 'clean' | 'syntax' | 'source' | 'internal' | 'disabled' | 'closed' | 'cancelled' | null
 }
 
 export interface LiveDiagnosticsConfig {
@@ -27,10 +28,7 @@ export const configureLiveDiagnosticsMethod = 'keith/diagnostics/configure'
  * stale. Results for a document version the editor has moved past are dropped.
  */
 export class LiveDiagnostics implements vscode.Disposable {
-    private readonly collection = vscode.languages.createDiagnosticCollection('kieler-live')
-
-    /** Files that currently carry diagnostics, per model document. */
-    private readonly published = new Map<string, Set<string>>()
+    private readonly collection = new OwnedDiagnostics('kieler-live')
 
     /** The last accepted result per document, kept so it can return once a compile report goes stale. */
     private readonly latest = new Map<string, LiveDiagnosticsParam>()
@@ -51,6 +49,10 @@ export class LiveDiagnostics implements vscode.Disposable {
         this.subscriptions = [
             // A compile that starts or finishes takes over; one that goes stale hands back to the live result.
             compiler.onDidChange(() => this.reconcile()),
+            vscode.workspace.onDidChangeTextDocument(({ document }) => {
+                const uri = document.uri.toString()
+                if (this.latest.get(uri)?.version !== document.version) this.forget(uri)
+            }),
             vscode.workspace.onDidCloseTextDocument((document) => this.forget(document.uri.toString())),
         ]
     }
@@ -61,13 +63,23 @@ export class LiveDiagnostics implements vscode.Disposable {
         this.subscriptions.forEach((subscription) => subscription.dispose())
     }
 
+    /** Results belong to the server process that analyzed the document. */
+    reset(): void {
+        this.latest.clear()
+        this.collection.clear()
+        this.changed.fire()
+    }
+
     get configuration(): LiveDiagnosticsConfig {
         return this.config
     }
 
     /** Sends the configuration to the server; called on start and whenever the settings change. */
     async configure(config: LiveDiagnosticsConfig): Promise<void> {
-        this.config = { enabled: config.enabled, debounceMs: Math.max(0, Math.round(config.debounceMs)) }
+        this.config = {
+            enabled: config.enabled,
+            debounceMs: Number.isFinite(config.debounceMs) ? Math.max(0, Math.round(config.debounceMs)) : 400,
+        }
         if (!this.config.enabled) {
             ;[...this.latest.keys()].forEach((uri) => this.forget(uri))
         }
@@ -111,11 +123,9 @@ export class LiveDiagnostics implements vscode.Disposable {
             this.clear(uri)
             return false
         }
-        const issues = params.issues.filter((issue) => this.compiler.showWarnings || issue.severity === 'error')
+        const issues = params.issues.filter((issue) => this.compiler.showWarnings || issue.severity !== 'warning')
         const byFile = renderIssues(issues, uri, document, document.getText(), () => 'KIELER · live')
-        this.clear(uri)
-        byFile.forEach((diagnostics, file) => this.collection.set(vscode.Uri.parse(file), diagnostics))
-        this.published.set(uri, new Set(byFile.keys()))
+        this.collection.publish(uri, byFile)
         return true
     }
 
@@ -132,8 +142,7 @@ export class LiveDiagnostics implements vscode.Disposable {
     }
 
     private clear(uri: string): void {
-        this.published.get(uri)?.forEach((file) => this.collection.delete(vscode.Uri.parse(file)))
-        this.published.delete(uri)
+        this.collection.remove(uri)
     }
 
     private forget(uri: string): void {

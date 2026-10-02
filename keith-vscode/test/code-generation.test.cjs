@@ -90,6 +90,37 @@ test('cancellation during startup waits until compilation was sent, then discard
     assert.equal(s.compiler.cancelled, undefined)
     started()
     assert.deepEqual(await pending, [])
+    await Promise.resolve()
+    await Promise.resolve()
+    assert.equal(s.compiler.cancelled, true)
+    assert.equal(s.completed.size, 0)
+})
+
+test('a generation timeout during server startup still cancels when its request eventually dispatches', async () => {
+    const s = generation()
+    let started
+    s.compiler.compile = async function (_, __, ___, ____, uri) {
+        this.lastCompiledUri = uri
+        await new Promise(resolve => { started = resolve })
+    }
+    await assert.rejects(s.run('c', 10), /timed out/)
+    assert.equal(s.compiler.cancelled, undefined)
+    started()
+    await Promise.resolve()
+    await Promise.resolve()
+    assert.equal(s.compiler.cancelled, true)
+    assert.equal(s.completed.size, 0)
+    assert.equal(s.cancelled.size, 0)
+})
+
+test('cancelled generation returns promptly even when server cancellation is never acknowledged', async () => {
+    const s = generation()
+    s.compiler.requestCancelCompilation = async () => { s.compiler.cancelled = true }
+    const pending = s.run()
+    await Promise.resolve()
+    s.token.isCancellationRequested = true
+    s.cancelled.fire()
+    assert.deepEqual(await pending, [])
     assert.equal(s.compiler.cancelled, true)
     assert.equal(s.completed.size, 0)
 })

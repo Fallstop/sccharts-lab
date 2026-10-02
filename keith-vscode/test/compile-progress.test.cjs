@@ -1,8 +1,10 @@
 const assert = require('node:assert/strict')
 const { test } = require('node:test')
+const { URI } = require('vscode-uri')
 const createLoader = require('./load-typescript.cjs')
 
 const load = createLoader({ vscode: {
+    Uri: URI,
     TreeItem: class {}, TreeItemCollapsibleState: { None: 0 }, ThemeIcon: class {},
     commands: { getCommands: async () => [] },
     window: { showErrorMessage: async () => undefined },

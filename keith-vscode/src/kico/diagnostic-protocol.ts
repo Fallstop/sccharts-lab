@@ -52,6 +52,7 @@ export const diagnosticState: NotificationType<{ modelUri?: string; report?: Bui
 export type DiagnosticCommand =
     | { kind: 'request' }
     | { kind: 'problems'; build: number }
+    | { kind: 'copy'; build: number }
     | { kind: 'showWarnings'; enabled: boolean }
     | { kind: 'source' | 'stage' | 'details' | 'highlight'; build: number; issue: string; location?: number }
 

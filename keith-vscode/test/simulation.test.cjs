@@ -143,6 +143,92 @@ test('failed stop prevents restart from starting another server simulation', asy
     assert.match(sim.lastError, /could not be stopped/)
 })
 
+test('unanswered stop requests time out, recover controls and ignore a late successful response', async (t) => {
+    const { sim, client, start } = setup(t)
+    await start()
+    const response = deferred()
+    client.sendRequest = () => response.promise
+    await assert.rejects(sim.stopSimulation(10), /timed out/)
+    assert.equal(sim.phase, 'idle')
+    assert.equal(sim.stopRequest, undefined)
+    assert.match(sim.lastError, /Restart the KIELER language server/)
+    response.resolve({ successful: true })
+    await Promise.resolve()
+    assert.equal(sim.phase, 'idle')
+})
+
+test('malformed simulation properties fail cleanly instead of leaving startup stuck', async (t) => {
+    const { sim } = setup(t)
+    for (const propertySet of [{ input: null }, { output: 'value' }, { input: [1] }, []]) {
+        await sim.simulate()
+        await sim.handleSimulationStarted({ successful: true, dataPool: { value: 0 }, propertySet })
+        assert.equal(sim.phase, 'idle')
+        assert.match(sim.lastError, /invalid simulation configuration/)
+    }
+})
+
+test('cancelled tool preparation does not report that a simulation build started', async (t) => {
+    const { sim, compiler } = setup(t)
+    sim.registerSimulationCommands({ systems: [{ id: 'sim', label: 'Sim' }], snapshotSystems: [] })
+    compiler.editor.document.getText = () => 'scchart A {}'
+    compiler.compile = async () => assert.fail('Cancelled preparation must not compile')
+    sim.prepareBuild = async () => false
+    assert.equal(await sim.compileAndSimulate(false), false)
+    assert.equal(sim.phase, 'idle')
+})
+
+test('saving a simulation build reserves the compiler so auto-compilation cannot compete', async (t) => {
+    const { sim, compiler } = setup(t)
+    sim.registerSimulationCommands({ systems: [{ id: 'sim', label: 'Sim' }], snapshotSystems: [] })
+    const document = compiler.editor.document
+    document.isDirty = true
+    document.getText = () => 'scchart A {}'
+    document.save = async () => {
+        assert.equal(compiler.preparingSimulation, true)
+        document.isDirty = false
+        return true
+    }
+    sim.prepareBuild = async () => {
+        assert.equal(compiler.preparingSimulation, true)
+        return true
+    }
+    assert.equal(await sim.compileAndSimulate(false), true)
+    assert.equal(compiler.preparingSimulation, false)
+})
+
+test('edits or server restart during tool preparation cannot compile obsolete simulation state', async (t) => {
+    const { sim, compiler } = setup(t)
+    sim.registerSimulationCommands({ systems: [{ id: 'sim', label: 'Sim' }], snapshotSystems: [] })
+    compiler.editor.document.getText = () => 'scchart A {}'
+    compiler.compile = async () => assert.fail('Obsolete preparation must not compile')
+    for (const action of ['edit', 'restart']) {
+        const prepared = deferred()
+        sim.prepareBuild = () => prepared.promise
+        const pending = sim.compileAndSimulate(false)
+        await Promise.resolve()
+        if (action === 'edit') compiler.editor.document.isDirty = true
+        else sim.resetForRestart()
+        prepared.resolve(true)
+        assert.equal(await pending, false)
+        assert.equal(sim.phase, 'idle')
+        compiler.editor.document.isDirty = false
+    }
+})
+
+test('server restart while opening the rebuild source cannot revive an old build', async (t) => {
+    const { sim, compiler, vscode } = setup(t)
+    sim.lastSystem = { id: 'sim', snapshot: false }
+    const opened = deferred()
+    vscode.workspace.openTextDocument = () => opened.promise
+    compiler.compile = async () => assert.fail('The old rebuild must not survive a server restart')
+    const pending = sim.rebuildSimulation()
+    sim.resetForRestart()
+    opened.resolve({ uri: compiler.editor.document.uri, isDirty: false, getText: () => 'scchart A {}' })
+    assert.equal(await pending, false)
+    assert.equal(sim.phase, 'idle')
+    assert.equal(compiler.preparingSimulation, false)
+})
+
 test('server reset cancels a start waiting for the client and clears queued values', async (t) => {
     const { sim, client, sent } = setup(t)
     const ready = deferred()
@@ -352,4 +438,29 @@ test('editing the simulated model marks the run stale and Restart rebuilds it wi
     await sim.handleSimulationStarted(started)
     assert.equal(sim.phase, 'running')
     assert.equal(sent.filter((message) => message.name === 'keith/simulation/start').length, 2)
+})
+
+test('Restart after a failed simulation build recompiles instead of reusing the previous executable', async (t) => {
+    const { sim, compiler, sent, started, edit } = setup(t)
+    sim.registerSimulationCommands({ systems: [{ id: 'sim', label: 'Sim' }], snapshotSystems: [] })
+    const document = compiler.editor.document
+    let text = 'scchart A {}'
+    document.getText = () => text
+    const builds = []
+    compiler.compile = async (...args) => builds.push(args)
+    assert.equal(await sim.compileAndSimulate(false), true)
+    sim.compilationFinished(true)
+    await sim.handleSimulationStarted(started)
+    text = 'scchart A { invalid }'
+    assert.equal(await sim.rebuildSimulation(), true)
+    sim.compilationFinished(false)
+    assert.equal(sim.stale, true)
+    assert.equal(sim.phase, 'idle')
+    text = 'scchart A { still invalid }'
+    edit(document)
+    assert.equal(sim.stale, true, 'A failed build has no executable that later edits can make current')
+    await sim.restartSimulation()
+    assert.equal(builds.length, 3)
+    assert.equal(sent.filter((message) => message.name === 'keith/simulation/start').length, 1)
+    assert.equal(sim.phase, 'starting')
 })

@@ -37,7 +37,7 @@ export function hostBlocks(source: string): HostBlock[] {
     return blocks
 }
 
-function columnOffset(line: string, byteColumn: number): number {
+export function utf8ColumnOffset(line: string, byteColumn: number): number {
     let bytes = 0
     let offset = 0
     for (const char of line) {
@@ -59,7 +59,7 @@ export function mapNativeLocation(uri: string, source: string, location: SourceL
         let offset = 0
         for (const embedded of block.code.split('\n')) {
             if (embedded.replace(/\r$/, '') === line.replace(/\r$/, '')) {
-                const column = columnOffset(line, Math.max(0, location.column ?? 0))
+                const column = utf8ColumnOffset(line, Math.max(0, location.column ?? 0))
                 const position = block.offsets[offset + column]
                 const token = line.slice(column).match(/^[A-Za-z_][\w]*/)?.[0] ?? line[column] ?? ''
                 const last = block.offsets[offset + column + Math.max(0, token.length - 1)]

@@ -12,6 +12,7 @@ function setup() {
     }
     const configChanges = new EventEmitter()
     const editorChanges = new EventEmitter()
+    const documentChanges = new EventEmitter()
     const commands = {}
     const contexts = {}
     const status = { shown: false, show() { this.shown = true }, hide() { this.shown = false }, dispose() {} }
@@ -33,6 +34,7 @@ function setup() {
             textDocuments: documents,
             onDidOpenTextDocument: () => ({ dispose() {} }),
             onDidCloseTextDocument: () => ({ dispose() {} }),
+            onDidChangeTextDocument: documentChanges.event,
             onDidChangeConfiguration: configChanges.event,
         },
     }
@@ -56,7 +58,7 @@ function setup() {
         editorChanges.fire(mock.window.activeTextEditor)
         return document
     }
-    return { toggle, commands, contexts, status, provider, values, open, reports, liveResults, compilerChanges, liveChanges }
+    return { toggle, commands, contexts, status, provider, values, open, reports, liveResults, compilerChanges, liveChanges, documentChanges }
 }
 
 const diagnostic = (severity, source = 'KIELER · live') => ({ severity, source })
@@ -74,7 +76,7 @@ test('a warning squiggle offers to hide the warnings; the status bar counts them
 
     const document = open('demo.sctx')
     const uri = document.uri.toString()
-    liveResults.set(uri, { issues: [{ severity: 'warning' }, { severity: 'warning' }, { severity: 'error' }] })
+    liveResults.set(uri, { version: 1, issues: [{ severity: 'warning' }, { severity: 'warning' }, { severity: 'error' }] })
     liveChanges.fire()
     assert.equal(status.shown, false, 'nothing shows while warnings are visible')
     await commands['keith-vscode.hide-warnings']()
@@ -91,9 +93,21 @@ test('a warning squiggle offers to hide the warnings; the status bar counts them
     assert.equal(status.text, '$(eye-closed) 1 warning hidden')
     document.version = 2
     compilerChanges.fire()
-    assert.equal(status.text, '$(eye-closed) 2 warnings hidden')
+    assert.equal(status.text, '$(eye-closed) Warnings hidden', 'An old live result must not inflate the count')
     await commands['keith-vscode.show-warnings']()
     assert.equal(values['diagnostics.showWarnings'], true)
     assert.equal(status.shown, false)
     assert.equal(contexts['keith.vscode:warningsHidden'], false)
+})
+
+test('the hidden warning count updates on an edit without a compiler change event', async () => {
+    const { commands, status, open, liveResults, liveChanges, documentChanges } = setup()
+    const document = open('demo.sctx')
+    liveResults.set(document.uri.toString(), { version: 1, issues: [{ severity: 'warning' }] })
+    liveChanges.fire()
+    await commands['keith-vscode.hide-warnings']()
+    assert.equal(status.text, '$(eye-closed) 1 warning hidden')
+    document.version++
+    documentChanges.fire({ document })
+    assert.equal(status.text, '$(eye-closed) Warnings hidden')
 })

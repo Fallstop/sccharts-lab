@@ -50,6 +50,7 @@ export class DiagnosticView {
         }
         const errors = report.issues.filter((issue) => issue.severity === 'error')
         const warnings = report.issues.filter((issue) => issue.severity === 'warning')
+        const notes = report.issues.filter((issue) => issue.severity === 'info')
         const stale = report.status === 'stale'
         const heading = stale
             ? 'Source changed. Compile again to refresh diagnostics.'
@@ -61,9 +62,11 @@ export class DiagnosticView {
                   ? `${errors.length === 1 ? 'Compilation failed' : `${errors.length} compilation issues`} · ${
                         errors[0].stage
                     }`
-                  : showWarnings
-                    ? `Compiled with ${warnings.length} warning${warnings.length === 1 ? '' : 's'}`
-                    : `Compiled, ${warnings.length} warning${warnings.length === 1 ? '' : 's'} hidden`
+                  : !warnings.length
+                    ? `Compiled with ${notes.length} note${notes.length === 1 ? '' : 's'}`
+                    : showWarnings
+                      ? `Compiled with ${warnings.length} warning${warnings.length === 1 ? '' : 's'}`
+                      : `Compiled, ${warnings.length} warning${warnings.length === 1 ? '' : 's'} hidden`
         this.el.classList.toggle('kd-stale', stale)
         // The warnings are hidden and shown from here as well as from the editor; it is one setting.
         const warningToggle =
@@ -79,7 +82,8 @@ export class DiagnosticView {
                 'div.kd-actions',
                 {},
                 warningToggle,
-                this.button('Problems', () => this.send({ kind: 'problems', build: report.id }))
+                this.button('Problems', () => this.send({ kind: 'problems', build: report.id })),
+                this.button('Copy diagnostics', () => this.send({ kind: 'copy', build: report.id }))
             )
         )
         const warningList =
@@ -95,6 +99,7 @@ export class DiagnosticView {
             this.el,
             title,
             ...errors.map((issue) => this.issue(report, issue)),
+            ...notes.map((issue) => this.issue(report, issue)),
             this.highlightStatus,
             warningList
         )
@@ -102,7 +107,7 @@ export class DiagnosticView {
     }
 
     private issue(report: BuildReport, issue: BuildIssue): HTMLElement {
-        const usable = report.status !== 'stale' && report.status !== 'compiling'
+        const usable = report.status === 'failed' || report.status === 'succeeded'
         const send = (kind: 'details' | 'stage' | 'highlight') => this.send({ kind, build: report.id, issue: issue.id })
         const locations = issue.locations.filter((location) => location.uri === report.uri)
         const trace =
@@ -156,11 +161,12 @@ export class DiagnosticView {
                 {},
                 locations.some((location) => location.traceUris?.length) &&
                     this.button('Highlight in diagram', () => send('highlight'), !usable),
-                this.button(
-                    issue.code === 'scheduling-cycle' ? 'View scheduler graph' : 'View compiler stage',
-                    () => send('stage'),
-                    !usable
-                ),
+                issue.snapshotIndex >= 0 &&
+                    this.button(
+                        issue.code === 'scheduling-cycle' ? 'View scheduler graph' : 'View compiler stage',
+                        () => send('stage'),
+                        !usable
+                    ),
                 this.button('Technical details', () => send('details'))
             )
         )
