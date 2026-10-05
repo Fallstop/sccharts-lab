@@ -4,6 +4,11 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.9.7] - 2026-10-05
+
+Stable release of 0.9.6, which shipped on the pre-release channel. No changes since 0.9.6; its
+notes follow.
+
 ## [0.9.6] - 2026-10-03
 
 - **Invalid source produces useful diagnostics before it reaches the compiler.** Empty models,
