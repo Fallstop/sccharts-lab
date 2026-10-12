@@ -25,6 +25,13 @@ input, incompatible host code, scheduler failure and recovery. Run `node test/se
 for just these checks. Client tests cover virtual preview lifetime,
 Save As, grouped export, overwrite protection, save errors, cancellation and stale builds.
 
+`node test/server-kieler-crashes.cjs` compiles charts that crash or hang the official KIELER compiler
+(recursive references and methods, trigger-less suspends, emitting a variable, constant division by
+zero, unusable for-region ranges, value-less annotations, body-less Java methods, shapes the priority
+and state-based compilers cannot handle). Each must give a located compile error with a hint instead of an
+internal compiler error, near misses KIELER compiles must still compile, and a bare `pre(x)` action trigger,
+which the lab compiles although KIELER cannot, must carry a `kieler-divergence` warning.
+
 `node test/server-compile-ide.cjs` checks the per-processor progress notifications and the
 timings in `didCompile` (order, status, skipped stages after a failure), and the SCTX editor
 services on `test/fixtures/hover.sctx`: hover cards for declarations, references, states,

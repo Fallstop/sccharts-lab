@@ -93,6 +93,31 @@ async function main() {
 
         const dualHost = '#hostcode-java "// Java implementation"\n' + cOnly
         assert.equal(outputs(await compile(dualHost, 'java')).length, 1, 'Matching host implementations are allowed')
+        // Documentation comments become annotations without a name; the host-language check must skip them.
+        const documented = '/** The chart */\n' + model
+            .replace('input bool', '/** An input */\n  input bool')
+            .replace('initial state', '/** Waiting */\n  initial state')
+            .replace('if trigger', '/** Activates */\n  if trigger')
+        for (const target of ['c', 'java']) {
+            const result = await compile(documented, target)
+            assert.deepEqual(errors(result), [], `Documentation comments must not stop ${target} generation`)
+            assert.equal(outputs(result).length, target === 'c' ? 2 : 1)
+        }
+        // The editor marks a strong abort below a weak transition as an error, but KIELER still generates code for it.
+        const lowPriorityAbort = `scchart LowPriorityAbort {
+  input bool a, b
+  initial state A {
+    initial state B
+    go to B
+  }
+  if a go to C
+  if b abort to D
+  state C
+  state D
+}`
+        for (const target of ['c', 'java']) {
+            assert.deepEqual(errors(await compile(lowPriorityAbort, target)), [], `Semantic validator errors do not stop ${target} generation, as in KIELER`)
+        }
         const invalid = await compile(model.replace('output bool result', 'output nonexistent result'))
         assert.equal(outputs(invalid).length, 0, 'Invalid source must never be exported')
         assert.ok(errors(invalid).length > 0 || invalid.results?.generationError)

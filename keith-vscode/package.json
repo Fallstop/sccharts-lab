@@ -2,7 +2,7 @@
   "name": "sccharts-lab",
   "displayName": "SCCharts Lab",
   "description": "Edit, visualise, simulate tick by tick, and debug SCCharts models in VS Code. Independent fork of the KIELER VS Code extension (keith-vscode).",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "publisher": "qinnovate",
   "author": "Jasper Miller-Waugh",
   "contributors": [
@@ -872,7 +872,7 @@
     "lint": "eslint .",
     "lint-fix": "eslint --fix .",
     "test": "node --test test/*.test.cjs",
-    "test:server": "node test/server-smoke.cjs && node test/server-compiler-recovery.cjs && node test/server-diagnostics.cjs && node test/server-codegen.cjs && node test/server-live-diagnostics.cjs && node test/server-highlight.cjs && node test/server-cursor-sync.cjs && node test/server-compile-ide.cjs && node test/server-startup.cjs && node test/server-simulation-debug.cjs && node test/server-workspace-kico.cjs && node test/server-completion.cjs",
+    "test:server": "node test/server-smoke.cjs && node test/server-compiler-recovery.cjs && node test/server-diagnostics.cjs && node test/server-codegen.cjs && node test/server-kieler-crashes.cjs && node test/server-live-diagnostics.cjs && node test/server-highlight.cjs && node test/server-cursor-sync.cjs && node test/server-compile-ide.cjs && node test/server-startup.cjs && node test/server-simulation-debug.cjs && node test/server-workspace-kico.cjs && node test/server-completion.cjs",
     "build": "webpack --mode production",
     "watch": "webpack --watch",
     "package": "node scripts/package-extension.cjs",

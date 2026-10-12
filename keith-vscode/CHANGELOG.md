@@ -4,6 +4,41 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.9.8] - 2026-10-12
+
+- **C and Java export works on charts with documentation comments.** Generating code for any chart
+  with a `/** ... */` comment failed with `Cannot invoke "String.equalsIgnoreCase(String)" because
+  the return value of "...Annotation.getName()" is null`. The export's check for `@C` and `@Java`
+  host code read the name of every annotation, and a documentation comment is an annotation without
+  one. The official KIELER compiler exports these charts, and now the lab does too. The comment
+  boxes stay in the diagram.
+- **Export no longer refuses charts that KIELER exports.** C and Java export stopped on any error the
+  editor showed, such as a strong abort below a weak transition, a `const` without a value or a
+  float tested for presence. Compilation and simulation went ahead on those charts, and KIELER
+  generates code for all of them. Export now stops only for the source errors that also stop
+  compilation: syntax errors, unresolved names, regions without an initial state and connectors
+  without an outgoing transition.
+- **Charts that crash or hang the official compiler get an error that says why.** We ran about
+  37,000 compilations through both the lab and the official KIELER compiler. Where KIELER itself
+  crashes, the lab used to say "The compiler failed during …" and suggest retrying. These charts
+  still do not compile, because KIELER cannot compile them either. The error now names the
+  construct, points at it and says how to rewrite the chart. This covers:
+  - recursive references (KIELER never finishes; the lab's compilation never answered and held up
+    the next one) and methods that call themselves;
+  - `suspend` without `if`, and emitting a variable (`do b` for a `bool b`);
+  - dividing by zero in a `const`, and concatenating three strings in a `const`;
+  - for-regions that end at a variable;
+  - `@DefaultSleep`, `#code.naming` or `@eval` written without values;
+  - Java methods without a body;
+  - shapes the priority and state-based compilers fail on: an empty first chart, a region left
+    with only a final state, and two states that hand over to each other every tick.
+- **`entry`, `during` and `exit if pre(x)` compile, with a warning that KIELER cannot.** KIELER
+  accepts `pre(x)` inside an expression there (`if !pre(x)`, `if pre(x) == true`), but crashes when a
+  bare `pre(x)` is the whole trigger. The lab now compiles the bare form the same way. It also warns
+  (`kieler-divergence`) that the chart will not compile in KIELER and suggests `if pre(x) == true`.
+  `pre(...)` in call arguments, return statements and declarations is still an error, now located
+  on the `pre`.
+
 ## [0.9.7] - 2026-10-05
 
 Stable release of 0.9.6, which shipped on the pre-release channel. No changes since 0.9.6; its
