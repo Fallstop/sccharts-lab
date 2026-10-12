@@ -118,6 +118,16 @@ async function main() {
         for (const target of ['c', 'java']) {
             assert.deepEqual(errors(await compile(lowPriorityAbort, target)), [], `Semantic validator errors do not stop ${target} generation, as in KIELER`)
         }
+        // An assignment that reads its own target is scheduled as an update; the warning spells out the infix form.
+        const digitsFile = path.join(workspace, 'digits.sctx')
+        const digits = 'scchart Digits {\n  input int rx\n  output int acc = 0\n  initial state Read\n  do acc = (acc * 10) + (rx - 48) go to Read\n}'
+        fs.writeFileSync(digitsFile, digits)
+        const digitsUri = pathToFileURL(digitsFile).href
+        const published = waitFor('textDocument/publishDiagnostics', params => sameFile(params.uri, digitsUri) && params.diagnostics.length > 0)
+        await connection.sendNotification('textDocument/didOpen', { textDocument: { uri: digitsUri, languageId: 'sctx', version: 1, text: digits } })
+        const relativeWrite = (await published).diagnostics.find(diagnostic => diagnostic.message.includes('relative write'))
+        assert.match(relativeWrite?.message ?? '', /update of acc[\s\S]*acc \*= 10; acc \+= \(rx - 48\)/, 'The relative write warning names the infix form')
+        await connection.sendNotification('textDocument/didClose', { textDocument: { uri: digitsUri } })
         const invalid = await compile(model.replace('output bool result', 'output nonexistent result'))
         assert.equal(outputs(invalid).length, 0, 'Invalid source must never be exported')
         assert.ok(errors(invalid).length > 0 || invalid.results?.generationError)
