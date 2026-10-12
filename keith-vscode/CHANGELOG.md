@@ -4,6 +4,15 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.9.9] - 2026-10-12
+
+- **The "old relative write SC syntax" warning explains itself.** It fires on assignments that read
+  their own target, such as `acc = (acc * 10) + (rx - CH_0)`, and told you to use an infix
+  assignment operator, which no single operator can express there. The compiler does schedule such an
+  assignment as an update of `acc` (a relative write). The warning now says so, says that this only
+  matters when another region writes `acc` in the same tick, and spells out the infix form that means
+  the same: `acc *= 10; acc += (rx - CH_0)`.
+
 ## [0.9.8] - 2026-10-12
 
 - **C and Java export works on charts with documentation comments.** Generating code for any chart
