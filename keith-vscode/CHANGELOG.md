@@ -4,6 +4,22 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.9.10] - 2026-10-14
+
+- **Errors in an imported file are reported in that file.** When a chart used another chart through
+  `is`, the importing file showed the imported file's errors at the wrong positions, on unrelated
+  lines. They now appear only in the file that has them.
+- **The import line says which imported file is broken.** The importing file gets one error on the
+  import, such as *The imported file TrafficLightDisplay.sctx has errors. Line 3: Couldn't resolve
+  reference to State 'LedConstants'.* This also works through imports of imports. Fixing the
+  imported file clears it; before, the importing file kept its error until you edited it.
+- **A missing import names the file.** *Broken import: there is no LedConstants.sctx next to this
+  file.* replaces a message that didn't say what was missing.
+- **Compile errors from an imported file say so.** The hint names the file to fix and which file
+  imports it.
+- **No more NullPointerException when opening a diagram for a chart with errors.** The diagram now
+  shows the errors, with their line numbers.
+
 ## [0.9.9] - 2026-10-12
 
 - **The "old relative write SC syntax" warning explains itself.** It fires on assignments that read

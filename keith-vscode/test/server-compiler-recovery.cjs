@@ -103,6 +103,34 @@ async function main() {
         await change(good)
         console.log('Recovery: an imported broken transition points to its own file and compiles after correction.')
 
+        // A chart used through `is` is pre-linked by its importer; its errors must stay in its own file.
+        const displayFile = path.join(workspace, 'display.sctx')
+        const displayUri = pathToFileURL(displayFile).href
+        const brokenDisplay = 'import "gone"\nscchart Display extends Gone {\n input int lights = 0\n initial state Idle\n}'
+        fs.writeFileSync(displayFile, brokenDisplay)
+        const displayPublished = waitFor('textDocument/publishDiagnostics', params => sameFile(params.uri, displayUri) && params.diagnostics.length > 0)
+        await connection.sendNotification('textDocument/didOpen', { textDocument: { uri: displayUri, languageId: 'sctx', version: 1, text: brokenDisplay } })
+        assert.ok((await displayPublished).diagnostics.some(d => d.message.includes('Broken import: there is no gone.sctx next to this file.') && d.range.start.line === 0), 'A missing import names the file it looked for')
+        const user = 'import "display"\nscchart User {\n output int out = 0\n initial state Lights is Display(out to lights)\n}'
+        const userPublished = waitFor('textDocument/publishDiagnostics', params => sameFile(params.uri, uri) && params.diagnostics.length > 0)
+        await change(user)
+        const userDiagnostics = (await userPublished).diagnostics
+        assert.equal(userDiagnostics.length, 1, 'The importer only reports the broken import: ' + JSON.stringify(userDiagnostics))
+        assert.match(userDiagnostics[0].message, /The imported file display\.sctx has errors\. Line 2: Couldn't resolve reference to State 'Gone'/)
+        assert.deepEqual([userDiagnostics[0].range.start, userDiagnostics[0].range.end], [{ line: 0, character: 7 }, { line: 0, character: 16 }], 'The error sits on the import')
+        const usedIssues = issuesOf(await compile())
+        assert.ok(usedIssues.length > 0 && usedIssues.every(issue => issue.locations.every(location => sameFile(location.uri, displayUri))), 'Compile errors of a used chart point to its file: ' + JSON.stringify(usedIssues))
+        assert.ok(usedIssues.every(issue => issue.hint.includes('display.sctx, which recovery.sctx imports')), 'The hint names the imported file')
+        const fixedDisplay = brokenDisplay.replace('import "gone"\n', '').replace(' extends Gone', '')
+        fs.writeFileSync(displayFile, fixedDisplay)
+        const userCleared = waitFor('textDocument/publishDiagnostics', params => sameFile(params.uri, uri) && params.diagnostics.length === 0)
+        await connection.sendNotification('textDocument/didChange', { textDocument: { uri: displayUri, version: 2 }, contentChanges: [{ text: fixedDisplay }] })
+        await userCleared
+        assert.deepEqual((await compile()).files.flat().flatMap(stage => stage.errors ?? []), [], 'Fixing the used chart permits compilation')
+        await connection.sendNotification('textDocument/didClose', { textDocument: { uri: displayUri } })
+        await change(good)
+        console.log('Recovery: a used chart with a missing import reports on the import line and clears after correction.')
+
         const unavailable = await compile('sccharts.missing.system')
         assert.ok(issuesOf(unavailable).some(issue => issue.code === 'compilation-system' && issue.message.includes('sccharts.missing.system') && issue.hint), JSON.stringify(issuesOf(unavailable)))
         assert.deepEqual((await compile()).files.flat().flatMap(stage => stage.errors ?? []), [])

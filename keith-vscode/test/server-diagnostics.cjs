@@ -104,6 +104,15 @@ async function main() {
         assert.ok(!/NullPointerException|ConcurrentModificationException|Java-level deadlock/.test(stderr), stderr)
         console.log('Diagram concurrency: overlapping show and model requests neither hang nor fail.')
 
+        // A diagram opened on a source with errors has no previous root to keep, so it must show the error message.
+        const unlinkedText = 'scchart Unlinked {\n initial state A\n go to Missing\n}'
+        const unlinkedUri = pathToFileURL(path.join(workspace, 'unlinked.sctx')).href
+        await connection.sendNotification('textDocument/didOpen', { textDocument: { uri: unlinkedUri, languageId: 'sctx', version: 1, text: unlinkedText } })
+        const messageShown = waitFor('diagram/accept', message => message.clientId === 'unlinked-diagram' && !!message.action?.newRoot)
+        await connection.sendNotification('diagram/accept', { clientId: 'unlinked-diagram', action: { kind: 'requestModel', requestId: 'unlinked', options: { sourceUri: unlinkedUri, diagramType: 'keith-diagram', needsClientLayout: false, needsServerLayout: true } } })
+        assert.match(JSON.stringify((await messageShown).action.newRoot), /Line 3: Couldn't resolve reference to State 'Missing'/)
+        console.log('Diagram: a first diagram of a source with errors shows the located error message.')
+
         const timed = await compile('timed', fs.readFileSync(path.join(__dirname, 'fixtures/timed-loop.sctx'), 'utf8'))
         assert.deepEqual(timed.errors, [], 'A delayed clock loop still compiles')
         const advisory = timed.issues.filter(issue => issue.code === 'instantaneous-loop')
