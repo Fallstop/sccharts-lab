@@ -1,0 +1,14 @@
+scchart Microwave {
+  input bool start, door
+  output bool heating = false
+
+  initial state Idle
+    if door go to DoorOpen
+    if start do heating = true go to Cooking
+
+  state DoorOpen
+    if !door go to Idle
+
+  state Cooking
+    if door do heating = false go to DoorOpen
+}

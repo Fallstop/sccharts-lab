@@ -1,0 +1,33 @@
+{
+  "hash": "d2cd5d3c2c3bf77dbdbaffd0b26225cc68a03d58",
+  "chart": "tests/conformance/structure/90-netlist-rejects-guarded-loop.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _cg1",
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _g1",
+    "Can't schedule from _g1 to _g3",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [T, S]",
+      "line": 9,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [T, S]",
+      "line": 7,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

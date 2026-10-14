@@ -1,0 +1,32 @@
+scchart VisitorsExit {
+  input bool clear, north, south, leaving
+  output int inside
+  output bool crowded
+
+  region Display {
+    initial state Calm
+      if inside >= 3 do crowded = true go to Crowded
+    state Crowded
+      if inside < 3 do crowded = false go to Calm
+  }
+
+  region Clear {
+    initial state Ready
+      if clear do inside = 0 go to Ready
+  }
+
+  region North {
+    initial state Counting
+      if north do inside++ go to Counting
+  }
+
+  region South {
+    initial state Counting
+      if south do inside++ go to Counting
+  }
+
+  region Exit {
+    initial state Counting
+      if leaving do inside-- go to Counting
+  }
+}

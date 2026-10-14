@@ -1,0 +1,93 @@
+{
+  "hash": "44ce90ade459de71fd9a7207d4df63ba598bff7c",
+  "chart": "tests/engine/kieler/rare/probe-goto-back-loop.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name bump is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "m": 0,
+        "n": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "m": 2,
+        "n": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "m": 4,
+        "n": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "m": 4,
+        "n": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

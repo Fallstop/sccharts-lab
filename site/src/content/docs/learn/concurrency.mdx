@@ -1,0 +1,284 @@
+---
+title: "Concurrent regions"
+description: "Several state machines side by side in one chart: they react in the same tick, talk to each other within it, and can finish together."
+sidebar:
+  order: 8
+---
+
+import { Chart, Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+
+A house has a hall lamp and a porch lamp, each with its own button. With the states and superstates
+you know so far, one state machine would need a state for every combination: both off, hall on, porch on, both on. A
+third lamp makes eight states, a fourth sixteen. Real controllers do many things at once (watch
+sensors, count, drive outputs), and writing out every combination does not scale.
+
+**Regions** solve this. A region is a state machine of its own, and a chart or a superstate can
+contain several regions side by side. Each region is in one of its states at any time, and all of
+them react in every tick. That is concurrency in SCCharts, and this chapter is about how regions run,
+how they communicate within a tick, and how they finish together.
+
+## Two machines side by side
+
+<Sim example="learn/concurrency/lamps" view="both" caption="In tick 4 both buttons are pressed, and both regions react in that one tick." />
+
+Each `region` block is a complete state machine with its own initial state. Tick 1 enters the
+initial state of every region, so `TwoLamps` starts in two states at once: `Off` in the region
+`Hall` and `Off` in the region `Porch`. The two regions have an `Off` and an `On` each; the region a
+state belongs to keeps them apart.
+
+From then on, every region reacts in every tick. `Hall` looks at `hallButton`, `Porch` at
+`porchButton`, and in tick 4, when both buttons are down, both lamps switch in the same tick. A
+region with nothing enabled stays where it is, as `Porch` does in tick 2.
+
+How to write regions:
+
+- A region is `region Name { … }`. The name is optional (`region { … }`), but named regions are
+  easier to talk about, and KIELER shows the name in the diagram, where each region is a box of its
+  own.
+- KIELER also accepts the braces left out: `region Name:` followed by the region's states. The
+  region then runs to the next `region` line or to the end of the enclosing state. The KIELER wiki
+  writes its examples this way, so you will meet it.
+- Regions can sit at the top of a chart, as here, or inside a superstate. Entering a superstate
+  enters the initial state of each of its regions, all in the same tick.
+- A state with one region can write its states directly, as in [Superstates](/learn/hierarchy/).
+  A state with several regions writes each of them as a `region` block. The two styles do not mix:
+  states written next to a `region` block in the same state are a syntax error, such as
+  `mismatched input 'region' expecting '}'`.
+
+## Talking within a tick
+
+Regions often need each other's results. In this burglar alarm the region `Door` notices the door
+opening and sets `intruder`; the region `Siren` sounds the siren as soon as `intruder` is true.
+`intruder` is declared at the top of the chart without `input` or `output`: it is a local of the
+chart, shared by both regions.
+
+<Sim example="learn/concurrency/alarm" caption="In tick 3 the door opens and the siren sounds in the same tick, although `Siren` is written before `Door`." />
+
+In tick 3 the door opens. `Door` sets `intruder` to true, and `Siren` reads `intruder` in the same
+tick and sees true: the siren sounds in the very tick the door opened. Nothing waits for the next
+tick.
+
+How can that work when `Siren` is written first? Regions do not run in the order you write them.
+Within a tick, KIELER orders the regions' actions by the data they share, and the basic rule is:
+**every write of a variable comes before every read of it.** `Siren`'s test of `intruder` waits
+until `Door` has done whatever it does with `intruder` in this tick. Swap the two regions and
+nothing changes:
+
+<Compare a="learn/concurrency/alarm" b="learn/concurrency/alarm-swapped" scenario="learn/concurrency/alarm-compare" caption="The same alarm with its regions in the other order. The door opens in tick 3, and both charts sound the siren in that tick." />
+
+The same holds for signals (see [Signals](/learn/signals/)). Emitting a signal counts as a write (an
+update, to be exact, as the next section explains) and testing it as a read, so if any region emits
+a signal in a tick, every region that tests the signal in that tick sees it present.
+
+Inside a single region nothing is reordered. A region's transitions and effects run in the order you
+wrote them, like the statements of a sequential program, and a region never waits for itself: if a
+region reads a variable before it writes it, the read sees the old value. The order between regions
+is the compiler's business; the order within a region is yours.
+
+## Several writers: initialise, update, read
+
+Writes before reads is half of the rule. What happens when several regions write the same variable
+in the same tick? Here is a visitor counter for a shop with two doors. `North` and `South` each add
+one to `inside` when someone comes in, `Clear` resets the count, and `Display` reports a crowd from
+three visitors on.
+
+<Sim example="learn/concurrency/visitors" caption="Tick 5: `inside` is set to 0, then both doors add one, and `Display` sees only the result, 2." />
+
+In tick 4 both doors fire, and both updates count: `inside` goes from 2 to 4, and `Display`, which
+reads after both, reports a crowd in that same tick. In tick 5 `clear` arrives as well, and `inside`
+ends at 2: not 0, and not 1.
+
+The precise rule behind this is the **initialise–update–read** protocol. Within a tick, KIELER orders
+the accesses to each variable in three phases:
+
+1. **Initialise**: absolute writes, which set a value outright, such as `inside = 0`.
+2. **Update**: relative writes, which change the current value, such as `inside++` or `inside += 2`.
+   Emitting a signal is an update too.
+3. **Read**: everything that uses the value, such as the trigger `inside >= 3`.
+
+Each region keeps its own order throughout. The protocol is the core of SCCharts' *sequentially
+constructive* model of computation; [Why the compiler says no](/learn/causality/) tells the whole
+story.
+
+Several updates of one variable in the same tick are only accepted if their order cannot matter:
+any mix of `+=`, `-=`, `++` and `--`, or several updates with the same operator, such as two `*=`. A
+`+=` in one region and a `*=` in another would give different results in different orders, and
+KIELER rejects that combination.
+
+Valued signals follow the same logic. With a [combine function](/learn/signals/#emitting-more-than-once-in-a-tick),
+such as `combine +`, every region's emission counts. Without one, two regions may emit the signal in
+the same tick only in exactly the same way, `V(1)` in both: `V(a)` in one region and `V(b)` in the
+other are rejected even when `a` and `b` are equal, because the compiler compares what you wrote, not
+the values.
+
+Write updates with `++`, `+=` and their relatives. An old-style `inside = inside + 1` counts as an
+update too, but KIELER warns about it, for a good reason that
+[Why the compiler says no](/learn/causality/) explains.
+
+## Finishing together: ABRO
+
+ABRO is the classic first example of synchronous programming. It comes from Esterel, the
+synchronous language whose ideas SCCharts inherits, and its specification fits in two sentences:
+wait for two inputs, `A` and `B`, in any order, and as soon as both have arrived, emit `O`. Whenever
+`R` arrives, start again from the beginning. Concurrency makes the first sentence easy. Here it is, step by step.
+
+### Wait for A
+
+One region waits for `A`, then rests in a final state: done, nothing more to do. `A` is a signal, so
+`if A` asks whether `A` is present in this tick.
+
+```sctx
+region HandleA {
+  initial state WaitA
+    if A go to DoneA
+  final state DoneA
+}
+```
+
+### Wait for A and B
+
+Put two such regions into one superstate, `WaitAB`, and they wait at the same time:
+
+```sctx
+initial state WaitAB {
+  region HandleA {
+    initial state WaitA
+      if A go to DoneA
+    final state DoneA
+  }
+  region HandleB {
+    initial state WaitB
+      if B go to DoneB
+    final state DoneB
+  }
+}
+```
+
+Whichever input arrives first, its region finishes and rests in its final state until the other one
+arrives. If both arrive in the same tick, both regions finish in that tick.
+
+### Then emit O
+
+When has `WaitAB` finished? **A superstate with several regions terminates when all of its regions
+are in final states at the same time.** Its `join to` then fires in that same tick, exactly as with
+one region in [Superstates](/learn/hierarchy/):
+
+<Sim example="learn/concurrency/abo" caption="`A` in tick 2, `B` in tick 4: `O` is present in tick 4, the tick in which the second region finishes." />
+
+"At the same time" is meant literally. Termination looks at where the regions are at the end of the
+tick, and a final state is a place, not a flag: a region that leaves its final state again (a final
+state can have outgoing transitions) no longer counts. If only some regions of a state have final
+states at all, a region without a final state never finishes, so its superstate never terminates,
+and KIELER warns:
+
+```text wrap
+All or none concurrent regions should have final states.
+```
+
+### Start again on R
+
+The second sentence of the specification, "whenever `R` arrives, start again", needs a way out of
+everything at once. You know one from [Superstates](/learn/hierarchy/): a transition on a superstate
+leaves it from wherever it is inside. ABRO wraps the whole behaviour into a superstate, `ABO`, and
+gives it a transition back to itself:
+
+<Sim example="learn/concurrency/abro" caption="Tick 6: `R` leaves `ABO` and enters it again, and both regions are back in their waiting states." />
+
+The new keyword in the last line is `abort to`, a *strong abort*. For now read `if R abort to ABO`
+as "whenever `R` is present, leave `ABO` and enter it again". Entering `ABO` enters `WaitAB`, and
+entering `WaitAB` puts both regions back into their initial states. Why ABRO uses `abort to` here,
+and not the `go to` you know, is a question for the next chapter, [Aborts](/learn/preemption/), which
+comes back to ABRO at its end.
+
+## Determinate, or rejected
+
+In C, Java or Python, concurrency usually means threads, and threads can race: run the same program
+twice and you can get two different results. SCCharts regions are different. KIELER orders every
+tick by the data the regions share, not by the order in which you wrote them, so the same inputs
+always give the same outputs: an SCChart is *determinate*, as
+[Thinking in ticks](/learn/ticks/#the-same-inputs-the-same-outputs) promised. (One hole remains: old-style updates
+such as `x = x + 1` in two regions. [Why the compiler says no](/learn/causality/) shows it, and
+writing `+=` and `++` avoids it.)
+
+The price is that some charts have no good order at all, and KIELER rejects them rather than pick
+one. The most common case is two regions setting the same variable to different values:
+
+<Chart example="learn/concurrency/conflict" caption="`SwitchOn` sets `light` and `SwitchOff` clears it. KIELER rejects the chart." />
+
+If `on` and `off` arrive in the same tick, which write should count? Neither order is better than
+the other, so KIELER refuses the chart with `The SCG is NOT asc-schedulable!`, after a list of
+`Can't schedule from …` lines that use the compiler's own names.
+
+The other kind of rejected chart has regions waiting for each other. Say region `P` sets `x` only if
+`y` is false, and region `Q` sets `y` only if `x` is false. `P` cannot read `y` before `Q` has
+decided whether to write it, and `Q` cannot decide that before it has read `x`, which in turn waits
+for `P`. Each region waits for the other, and KIELER rejects the chart with the same messages.
+[Why the compiler says no](/learn/causality/) explains these messages, and the ways to change a chart
+that KIELER refuses, starting with `Conflict`. When several regions really do need one thing, such
+as a printer, [Sharing a resource](/patterns/arbiter/) shows how to let them take turns.
+
+## Try it
+
+<TryIt example="learn/concurrency/abo" solution="learn/concurrency/abco" title="A third input">
+Extend `ABO` to `ABCO`: emit `O` once `A`, `B` and `C` have all arrived, in any order and in any
+combination of ticks.
+</TryIt>
+
+<TryIt example="learn/concurrency/visitors" solution="learn/concurrency/visitors-exit" title="People leave too">
+The shop's visitor counter only ever goes up. Add an input `leaving` and a region `Exit` that takes
+one off `inside` whenever someone leaves. Then simulate a tick in which one person comes in while
+another leaves: KIELER should accept the chart, and `inside` should not change in that tick.
+</TryIt>
+
+## Check your understanding
+
+A game starts when both players are ready at the same time. Player A can also leave the lobby again
+after getting ready.
+
+<Predict example="learn/concurrency/lobby" ask={[{ tick: 3, value: 'playing' }, { tick: 4, value: 'playing' }]} caption="In tick 3, player A leaves while player B gets ready." />
+
+<details>
+<summary>Explanation</summary>
+
+`playing` is false after tick 3 and true after tick 4. In tick 3 player A leaves `ReadyA` while player
+B reaches `ReadyB`, so at the end of the tick only `PlayerB` is in a final state, and `Gathering` has
+not terminated. In tick 4 player A is ready again: now both regions are in final states at the same
+time, the join fires, and `playing` becomes true. Termination looks at where the regions are at the end
+of a tick.
+
+</details>
+
+<Quiz
+  question="Three regions react in the same tick: region `P` does `x = 10`, region `Q` does `x += 1`, and region `R` does `y = x`. Nothing else writes `x` or `y`. What is `y` after the tick?"
+  options={['10', '11', 'It depends on the order of the regions in the file', 'The value `x` had in the previous tick']}
+  answer={1}
+>
+Initialise, update, read: the absolute write `x = 10` comes first, then the update `x += 1`, and the
+read in `R` comes last and sees 11. The order of the regions in the file plays no part.
+</Quiz>
+
+<Quiz
+  question="Two regions share a variable, and every update of it is written with `+=` or `++`. You move one region from the bottom of the chart's source to the top. What can change in the chart's behaviour?"
+  options={['Which region reacts first in each tick, and so the outputs', 'The values the moved region reads', 'Nothing']}
+  answer={2}
+>
+KIELER orders the actions of concurrent regions by the data they share, not by their order in the
+file. The two alarm charts above differ only in the order of their regions and behave identically.
+The question's condition matters: with old-style updates such as `x = x + 1` in two regions, the
+order in the file can decide the result, a trap shown in [Why the compiler says no](/learn/causality/).
+</Quiz>
+
+<KeyIdeas>
+- A region is a state machine of its own. A chart or a superstate can have several, side by side;
+  each is in one state at a time, and all of them react in every tick.
+- Regions communicate within a tick. For each variable, absolute writes come first, then updates,
+  then reads. The order of the regions in the file does not matter, as long as you write updates
+  with `+=` and `++`.
+- A superstate with regions terminates when all of them are in final states at the same time, and
+  its `join to` fires in that tick.
+- The same inputs always give the same outputs. A chart without a valid order, such as two regions
+  setting one output to different values, is rejected.
+</KeyIdeas>
+
+Next, [Aborts](/learn/preemption/): leaving a superstate while its inside is still busy, and what the
+inside may still do in that tick.

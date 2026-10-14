@@ -1,0 +1,17 @@
+scchart FridgeMonitor {
+  input int temperature
+  output bool warm
+  output bool alarm = false
+
+  dataflow {
+    warm = temperature > 5
+  }
+
+  region {
+    initial state Normal
+      if warm do alarm = true go to Alarm
+
+    state Alarm
+      if !warm do alarm = false go to Normal
+  }
+}

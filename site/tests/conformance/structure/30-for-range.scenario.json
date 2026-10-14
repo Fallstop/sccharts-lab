@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": 0
+      },
+      "note": "Tick 1 enters Waiting and its three copies of R, which wait for I == 1, 2 and 3 (their transitions are delayed)."
+    },
+    {
+      "inputs": {
+        "I": 2
+      },
+      "note": "I = 2: the copy with i = 2 moves to its final state D. The other two keep waiting."
+    },
+    {
+      "inputs": {
+        "I": 1
+      },
+      "note": "The copy with i = 1 finishes. O is still false."
+    },
+    {
+      "inputs": {
+        "I": 3
+      },
+      "note": "The last copy finishes, all regions are final and the join fires in the same tick: **O = true**."
+    }
+  ],
+  "expect": "ok"
+}

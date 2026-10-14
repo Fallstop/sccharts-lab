@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "front": false, "back": false }, "note": "Tick 1 enters both bells." },
+    { "inputs": { "front": true }, "note": "With explicit bindings, `front` really is the bell's `button`: `frontRings` = 1." },
+    { "inputs": { "front": false }, "note": "Quiet again." },
+    { "inputs": { "back": true }, "note": "`backRings` = 1." },
+    { "inputs": { "back": false }, "note": "Quiet." }
+  ],
+  "expect": "ok"
+}

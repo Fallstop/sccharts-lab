@@ -1,0 +1,17 @@
+scchart RoomsHistory {
+  input bool walk, out, back
+  output int room = 0
+
+  initial state House {
+    initial state Hall {
+      entry do room = 1
+    }
+    if walk do room = 2 go to Kitchen deferred
+
+    state Kitchen
+  }
+  if out do room = 9 go to Garden
+
+  state Garden
+  if back go to House history
+}

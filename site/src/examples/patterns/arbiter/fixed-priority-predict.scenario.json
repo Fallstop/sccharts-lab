@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": { "reqA": true, "reqB": true, "done": false },
+      "note": "Both computers have a job in tick 1. `Free`'s immediate transitions are checked in the entry tick, and A's comes first."
+    },
+    {
+      "inputs": { "reqA": false },
+      "note": "A's job prints; B's job waits."
+    },
+    {
+      "inputs": { "done": true, "reqA": true },
+      "note": "A's job is finished, and in the same tick A sends a new one. Both requests are there when `Free` decides, and A wins again."
+    },
+    {
+      "inputs": { "done": false, "reqA": false },
+      "note": "A's second job prints; B is still waiting."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "Finished, and only B is waiting: at last B prints."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,8 @@
+// Without a declaration of abs in host code, the C compiler (gcc) rejects the generated code.
+scchart St79Extern {
+  input int a
+  output int x = 0
+  extern "abs" absf
+  initial state S
+  do x = absf(a) go to S
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "A's immediate transition fires in tick 1 and the reaction stops in B, whose transition is delayed. taken = [1, 0, 0]."},
+    {"inputs": {"I": true}, "note": "B's delayed transition fires (x = 1); C and A are passed through immediately and B is entered again in the same tick. B was just entered, so its delayed transition waits for the next tick: the cycle is not an instantaneous loop. taken = [1, 1, 1]."},
+    {"inputs": {}, "note": "I is still true: one more trip round the cycle, x = 2."},
+    {"inputs": {"I": false}, "note": "I is false: the reaction stays in B, x = 2."}
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,214 @@
+{
+  "hash": "b6feaf614350028d7f724e061d3cd8d8a10998df",
+  "chart": "src/examples/learn/actions/alarm-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "code": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "door": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "panic": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "window": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "siren": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "door": false,
+        "window": false,
+        "code": false,
+        "panic": false
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "panic": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "window": true
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "panic": false,
+        "window": true,
+        "siren": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "window": false,
+        "code": true
+      },
+      "values": {
+        "code": true,
+        "door": false,
+        "panic": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "code": false
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "panic": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "code": true
+      },
+      "values": {
+        "code": true,
+        "door": false,
+        "panic": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "code": false
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "panic": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "panic": true
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "panic": true,
+        "window": false,
+        "siren": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "panic": false
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "panic": false,
+        "window": false,
+        "siren": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+// Inheritance: St24Hold extends St24Base and overrides its region Count; "region is super.Count" puts the
+// base behaviour back inside the overriding region, here under a suspend.
+scchart St24Hold extends St24Base {
+  input bool hold
+  override region Count {
+    suspend if hold
+    region is super.Count
+  }
+}
+
+scchart St24Base {
+  output int o = 0
+  region Count {
+    initial state S
+    do o++ go to S
+  }
+}

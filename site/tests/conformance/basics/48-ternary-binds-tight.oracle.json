@@ -1,0 +1,78 @@
+{
+  "hash": "997f262f6d2d2d02c20d18bffc6053469c9bd831",
+  "chart": "tests/conformance/basics/48-ternary-binds-tight.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 3
+      },
+      "values": {
+        "A": 3,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": 3,
+        "y": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": 1
+      },
+      "values": {
+        "A": 1,
+        "y": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": -5
+      },
+      "values": {
+        "A": -5,
+        "y": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

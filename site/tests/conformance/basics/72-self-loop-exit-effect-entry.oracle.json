@@ -1,0 +1,71 @@
+{
+  "hash": "089b2a0671e378d6f3e718fd891fe8075180e3c1",
+  "chart": "tests/conformance/basics/72-self-loop-exit-effect-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).\nWrite it as log *= 10; log += 3 to say so. In one region it means the same.\nIt only matters when another region also writes log in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 5,
+      "column": 14
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).\nWrite it as log *= 10; log += 1 to say so. In one region it means the same.\nIt only matters when another region also writes log in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 6,
+      "column": 13
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).\nWrite it as log *= 10; log += 2 to say so. In one region it means the same.\nIt only matters when another region also writes log in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 8,
+      "column": 6
+    }
+  ],
+  "interface": {
+    "log": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "log": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "log": 3123
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "log": 3123123
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "power": false, "menu": false, "home": false, "right": false }, "note": "Tick 1 enters `Off` in both (`screen` = −1)." },
+    { "inputs": { "power": true }, "note": "Power on: the first visit to `On` starts in `Home` (0)." },
+    { "inputs": { "menu": true }, "note": "The first visit to `Settings`: `Brightness` (11)." },
+    { "inputs": { "menu": false, "right": true }, "note": "`Contrast` (12)." },
+    { "inputs": { "right": false, "home": true }, "note": "`Home` (0)." },
+    { "inputs": { "home": false, "menu": true }, "note": "Back to `Settings` with history. `MenuNested`: surprise, `Settings` starts again in `Brightness` (11). `On` is not the target of a history transition, so KIELER silently treats `go to Settings history` as a plain `go to Settings`. `MenuNestedFixed`: `On` is a history target (from `Off`), so the history inside it works: `Contrast` (12)." },
+    { "inputs": { "menu": false, "power": false }, "note": "Power off: `Off` (−1)." },
+    { "inputs": { "power": true }, "note": "Power on. `MenuNested` starts `On` in `Home` (0). `MenuNestedFixed` enters `On` with `shallow history`, so it resumes in `Settings`, which starts again in `Brightness` (11). The fix changed what switching on does." },
+    { "inputs": {}, "note": "`Home` in `MenuNested`, `Brightness` in `MenuNestedFixed`." }
+  ],
+  "expect": "ok"
+}

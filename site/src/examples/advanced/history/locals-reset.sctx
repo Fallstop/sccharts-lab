@@ -1,0 +1,15 @@
+scchart ResumeLocals {
+  input bool call, hangUp
+  output int shown = 0
+
+  initial state Playing {
+    int seconds = 0
+
+    initial state Track
+      if true do seconds++; shown = seconds go to Track
+  }
+  if call go to OnCall
+
+  state OnCall
+    if hangUp go to Playing history
+}

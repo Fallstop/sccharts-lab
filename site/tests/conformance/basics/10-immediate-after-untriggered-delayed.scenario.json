@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "In the entry tick only immediate transitions are candidates, so the priority-2 immediate transition fires although priority 1 has no trigger: x = 2, state C. KIELER does not flag it as unreachable."},
+    {"inputs": {}, "note": "C has no transitions; x stays 2."}
+  ],
+  "expect": "ok"
+}

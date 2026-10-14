@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "idle": false, "touch": false, "next": false, "open": false }, "note": "Tick 1 shows the news headlines (`screen` = 11)." },
+    { "inputs": { "next": true }, "note": "The weather page, today (21)." },
+    { "inputs": { "next": false, "open": true }, "note": "The week's forecast (22)." },
+    { "inputs": { "open": false, "idle": true }, "note": "Nobody is looking: the screensaver (0)." },
+    { "inputs": { "idle": false, "touch": true }, "note": "A touch wakes the kiosk, which starts again on the news headlines (11)." },
+    { "inputs": { "touch": false }, "note": "Headlines." }
+  ],
+  "expect": "ok"
+}

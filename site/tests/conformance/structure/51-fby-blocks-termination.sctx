@@ -1,0 +1,29 @@
+// fby (and ->) can be used outside dataflow too. KIELER implements fby with an extra region that never
+// finishes, so a superstate using fby never terminates: the join below never fires. -> does not have this problem.
+scchart St51Fby {
+  input int I
+  output int X = 0, Y = 0
+  output bool doneX = false, doneY = false
+  region {
+    initial state S {
+      initial state A
+      immediate do X = 0 fby I go to B
+      final state B
+    }
+    join to T
+    state T {
+      entry do doneX = true
+    }
+  }
+  region {
+    initial state S {
+      initial state A
+      immediate do Y = 0 -> I go to B
+      final state B
+    }
+    join to T
+    state T {
+      entry do doneY = true
+    }
+  }
+}

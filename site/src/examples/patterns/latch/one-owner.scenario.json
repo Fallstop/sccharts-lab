@@ -1,0 +1,70 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "hallButton": false,
+        "carButton": false,
+        "arrived": false
+      },
+      "note": "Tick 1: nothing."
+    },
+    {
+      "inputs": {
+        "hallButton": true
+      },
+      "note": "The hall button: `Hall` emits `request`, and `Latch`, in the same tick, registers the call."
+    },
+    {
+      "inputs": {
+        "hallButton": false
+      },
+      "note": "Released: `Latch` remembers."
+    },
+    {
+      "inputs": {
+        "carButton": true
+      },
+      "note": "Someone inside the car presses the button for this floor too: `Car` emits `request`, which `Waiting` ignores."
+    },
+    {
+      "inputs": {
+        "carButton": false,
+        "arrived": true
+      },
+      "note": "The lift arrives: `Latch` clears the lamp. It is the only region that writes `lamp`."
+    },
+    {
+      "inputs": {
+        "arrived": false
+      },
+      "note": "The lift leaves."
+    },
+    {
+      "inputs": {
+        "hallButton": true,
+        "carButton": true
+      },
+      "note": "Both buttons in the same tick: both regions emit `request`. Several regions may emit one signal; the emissions simply add up to \"present\"."
+    },
+    {
+      "inputs": {
+        "hallButton": false,
+        "carButton": false
+      },
+      "note": "Waiting."
+    },
+    {
+      "inputs": {
+        "arrived": true
+      },
+      "note": "Served."
+    },
+    {
+      "inputs": {
+        "arrived": false
+      },
+      "note": "Idle."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,1220 @@
+---
+title: "Compiler messages"
+description: "KIELER’s error and warning messages explained: what each one means, a chart that triggers it, and how to fix it."
+sidebar:
+  order: 4
+---
+
+import { Chart, Sim } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Every message on this page was produced by KIELER, most of them from the small example chart given
+with them: by the compiler inside the *KIELER VS Code* extension, by SCCharts Lab's build of KIELER's
+current sources, or by both. An entry says when a message comes from only one of them. Search the
+page for the words of your message (Ctrl+F, or ⌘F on a Mac); the parts that change from chart to
+chart, such as a variable name, appear as they do in the example.
+
+Every example opens in the playground, where you can try the fix. The playground checks charts with
+this guide's own engine, which explains each problem in a sentence of its own. For the examples on
+this page, KIELER's own words follow, as they are quoted here; for a chart of your own, the guide
+gives KIELER's wording where it knows it. If your chart compiles but does not do what you meant, see
+[My chart does not do what I expect](/reference/troubleshooting/) instead.
+
+<Aside type="tip" title="The messages you will meet first">
+- [`no viable alternative at input 'x'`](#no-viable-alternative-at-input-x): usually a missing `do`,
+  or `=` where `==` belongs.
+- [`mismatched input 'bool' expecting 'primitive'`](#mismatched-input-bool-expecting-primitive): a `;`
+  after a declaration, or a reserved word as a name.
+- [`Couldn't resolve reference to ValuedObject 'x'.`](#couldnt-resolve-reference-to-valuedobject-button):
+  a name that is misspelt or not declared where it is used.
+- [`Every region must have an initial state.`](#every-region-must-have-an-initial-state): a forgotten
+  `initial`.
+- [`The SCG is NOT asc-schedulable!`](#the-scg-is-not-asc-schedulable): two regions set the same
+  variable, or wait for each other.
+</Aside>
+
+## Reading a message
+
+### Where messages come from
+
+A chart passes through several stages on its way to a running simulation, and each stage has its own
+kind of message. Knowing the stage tells you what kind of mistake to look for.
+
+| Stage, and what it checks | Typical message |
+| --- | --- |
+| **Parser**: the spelling and order of the text | `no viable alternative at input 'x'` |
+| **Linker**: that every name refers to something | `Couldn't resolve reference to ValuedObject 'x'.` |
+| **Validator**: rules about the chart's structure | `Every region must have an initial state.` |
+| **Compiler**: that each tick can be scheduled | `The SCG is NOT asc-schedulable!` |
+| **C compiler**: the generated C code | `Compiler did not return success (exit value != 0)` |
+
+The editor shows the messages of the first three stages while you type. The last two appear when
+you compile the chart or start a simulation.
+
+Errors stop the chart from compiling. Warnings do not: the chart still runs, but KIELER suspects a
+mistake. A few warnings (a duplicate declaration, emitting a variable) are followed by an error from
+a later stage; those are explained together with the error.
+
+<Aside type="tip" title="Live checks in SCCharts Lab">
+SCCharts Lab runs the compiler's scheduling analysis about half a second after you stop typing, so
+scheduling errors appear as squiggles marked *KIELER · live* before you compile. In KIELER's own
+VS Code extension they appear only when you compile or start a simulation.
+</Aside>
+
+### Fix the first message first
+
+One mistake often produces several messages. The parser reports where it got stuck, tries to carry
+on, and then stumbles over the rest of the line: `extraneous input 'go' expecting 'to'` nearly always
+follows another syntax error on the same line, and disappears when that one is fixed. A transition
+whose target could not be read adds
+`The required feature 'targetState' of '…TransitionImpl@…' must be set`.
+
+KIELER's VS Code extension goes further: if you compile a chart that has a syntax or name error, it
+still tries, and often adds a pile of Java exceptions such as `java.lang.NullPointerException`,
+`java.lang.ClassCastException` or `References objects are not contained in the resource!`. They
+describe the compiler tripping over the broken model, not further mistakes in your chart. Fix the
+first message, the one with a line and column, and they go away. SCCharts Lab stops after the first
+stage that fails, so it does not show them.
+
+For some syntax errors, the KIELER VS Code extension (0.3.0) never finishes compiling at all: the
+simulation does not start and no message comes. A keyword used as a name (`input bool reset`), a
+number that is too large and `if 3 == level` are known cases. The editor still marks the syntax
+errors as you type: fix those, and compile again.
+
+### KIELER and SCCharts Lab
+
+SCCharts Lab compiles with KIELER's own compiler and keeps its messages, but rewrites a few into
+plainer English and adds some of its own where KIELER would crash or say nothing useful. Where the
+two differ, both texts are given below, KIELER's first. The two are also built from different
+versions of KIELER (the one inside the *KIELER VS Code* extension 0.3.0 dates from 2024; SCCharts Lab
+follows KIELER's current sources), and for a few syntax errors that alone changes the wording; those
+cases are noted too.
+
+## Syntax errors
+
+The parser reads the chart from top to bottom and stops at the first word (token) that cannot come
+next. That word is the one quoted in the message, and the mistake is at it or just before it.
+`<EOF>` means the end of the file.
+
+### `no viable alternative at input 'x'`
+
+The parser could not make sense of the word `x` at that position. This is the most common syntax
+message, and it has many causes. The example forgets the `do` before an effect:
+
+```sctx {2}
+initial state Idle
+  if A x = 1 go to Busy
+```
+
+KIELER reports `no viable alternative at input 'x'` and then `extraneous input 'go' expecting 'to'`
+for the same line. The fix is `if A do x = 1 go to Busy`.
+[Open `missing-do` in the playground](/playground/?example=reference/errors/missing-do).
+
+Each row of this table was checked with KIELER. For every row, KIELER's first message is
+`no viable alternative at input '…'`, with the word that the second column names.
+
+| You wrote | Where KIELER stops, and the fix |
+| --- | --- |
+| `if A x = 1 go to B` | at `'x'`; write `if A do x = 1 go to B` |
+| `entry x = 1` | at `'x'`; write `entry do x = 1` |
+| `goto B` | at `'goto'`; write `go to B` |
+| `--> B` | at `'--'`; write `go to B` |
+| `if I = 3 go to B` | at `'='`; write `if I == 3 go to B` |
+| `if A and B go to C` | at `'and'`; write `if A && B go to C` |
+| `do x = 1, y = 2` | at `','`; write `do x = 1; y = 2` |
+| `do x = 1; go to B` | at `'go'`; write `do x = 1 go to B` |
+| `do x = 1 do y = 2` | at `'do'`; write `do x = 1; y = 2` |
+| `do x = 1 if A go to B` | at `'if'`; write `if A do x = 1 go to B` |
+| `if go to B` | at `'go'`; write `go to B` |
+| `do b == true` | at `'=='`; write `do b = true` |
+| `if 3 == level` | at `'=='`; write `if level == 3` ([why](#a-count-delay-in-disguise)) |
+| `if lo < I < hi` | at the second `'<'`; write `if lo < I && I < hi` |
+| `if 1 < I && I < 3` | at the first `'<'`: the `1` is a count delay ([why](#a-count-delay-in-disguise)); write `if I > 1 && I < 3` |
+| `if A == B == C` | at `'=='`; write `if A == B && B == C` |
+| `x = !A + 1` | at `'+'`; write `x = (!A) + 1` |
+| `x = A ? B ? 1 : 2 : 3` | at `'?'`; write `x = A ? (B ? 1 : 2) : 3` |
+| `x = I++` | at `'++'`; write `x = I; I++` |
+| `x = +1` | at `'='`; write `x = 1` (no unary `+`) |
+| `x min = 3` | at `'min'`; write `x min= 3` |
+| `do emit S` | at `'S'`; write `do S` |
+| `input bool A B` | at `'B'`; write `input bool A, B` |
+| `int x;` | at `';'`; write `int x` |
+| `initial state A;` | at `';'`; write `initial state A` |
+| a declaration after a state | at `'int'`; put declarations first |
+| an `entry` action after a state | at `'entry'`; put actions before states |
+| `immediate entry do x = 1` | at `'entry'`; write `entry do x = 1` |
+| `entry if 2 A do x = 1` | at `'A'`; actions take no count delays |
+| `suspend if A do x = 1` | at `'do'`; a suspend takes no effects |
+| `initial state Zustandü` | at `'ü'`; use ASCII names only |
+| `go to B //* x` | at `'//* x\n'`; `//*` belongs at the end of a declaration ([comments](/advanced/annotations/#doc-comments-in-the-diagram)) |
+
+The [operators page](/reference/operators/) explains the expression rules behind several of these
+rows, and the [cheat sheet](/reference/cheatsheet/) gives the order of the parts of a transition.
+
+#### A count delay in disguise
+
+A number straight after `if` is a *count delay*: `if 3 A go to B` fires the third time `A` holds. So
+in `if 3 == level` the parser reads `3` as a count and then finds `==` where it expected the trigger.
+Write the variable first: `if level == 3`. The same goes for a range test: `if 1 < I && I < 3` stops
+at the first `<`, and `if I > 1 && I < 3` works.
+[Open `count-delay-compare`](/playground/?example=reference/errors/count-delay-compare).
+
+### `extraneous input 'go' expecting 'to'`
+
+An extra word where the parser expected something else. When it follows another syntax error on the
+same line, as `'go' expecting 'to'` usually does, it is only a consequence of that error: fix the
+first message and this one disappears.
+
+On its own it usually means a stray closing brace. This chart closes twice:
+
+```sctx {8-9}
+scchart ExtraBrace {
+  input bool A
+
+  initial state Idle
+    if A go to Done
+
+  state Done
+}
+}
+```
+
+KIELER reports `extraneous input '}' expecting EOF` on the last line: the chart was already complete,
+so the parser expected the end of the file. Delete the extra `}`.
+[Open `extra-brace`](/playground/?example=reference/errors/extra-brace).
+
+Words in the wrong order give the message too: `bool input button`, with the type first, reports
+`extraneous input 'input' expecting RULE_ID`. Write `input bool button`.
+
+### `mismatched input 'bool' expecting 'primitive'`
+
+A declaration could not be read. The message looks baffling because the parser tries every kind of
+declaration it knows, and the last one it tries (a rarely used `primitive` declaration) is the one it
+reports. Three mistakes cause it:
+
+- **A semicolon after a declaration.** Declarations in a chart do not end with `;`:
+
+  ```sctx
+  input bool A;      // wrong
+  input bool A       // right
+  ```
+
+  KIELER also reports `no viable alternative at input ';'` for the same line.
+  [Open `decl-semicolon`](/playground/?example=reference/errors/decl-semicolon).
+- **A reserved word as the name**, as in `input bool reset` (see
+  [the next message](#mismatched-input-reset-expecting-rule_id)).
+- **Modifiers in the wrong order.** `output input bool x` gives the same message with the misplaced
+  word, `mismatched input 'input' expecting 'primitive'`. Write `input output bool x`.
+
+The KIELER inside the KIELER VS Code extension says `no viable alternative at input 'bool'` (and
+`'input'`) for the same mistakes; SCCharts Lab and KIELER's current sources say
+`mismatched input 'bool' expecting 'primitive'`.
+
+### `mismatched input 'reset' expecting RULE_ID`
+
+`RULE_ID` means "a name". The word in quotes is a keyword of SCTX, so it cannot be the name of a
+variable, signal, state or chart. This chart calls an input `reset`, which is a keyword (it belongs to
+`go to S reset`):
+
+```sctx {2}
+scchart ReservedName {
+  input bool reset
+  output int count
+
+  initial state Counting
+    if reset do count = 0 go to Counting
+}
+```
+
+KIELER reports `mismatched input 'reset' expecting RULE_ID` and
+`mismatched input 'bool' expecting 'primitive'` for the declaration, `no viable alternative at input
+'reset'` for the transition, and the follow-on `The required feature 'targetState' … must be set`.
+Rename the input, for example to `clear`. The variant `missing RULE_ID at 'period'` means the same.
+In the KIELER VS Code extension, compiling this chart never finishes; the editor's messages are all you
+get. [Open `reserved-name`](/playground/?example=reference/errors/reserved-name).
+
+These words are reserved. Each was tried as a variable name, and KIELER rejected it:
+
+> `abort` `auto` `bool` `calls` `class` `clock` `combine` `commuting` `conflicting` `connector`
+> `const` `dataflow` `deferred` `delayed` `do` `during` `else` `entry` `enum` `exit`
+> `expression` `extends` `extern` `false` `fby` `final` `float` `for` `global` `go` `goto`
+> `history` `host` `if` `immediate` `import` `initial` `input` `int` `is` `join` `json` `label`
+> `max` `method` `min` `module` `nondeterministic` `none` `null` `ode` `once` `output` `override`
+> `period` `policy` `Pr` `pre` `primitive` `print` `private` `protected` `public` `pure` `random`
+> `randomize` `ref` `region` `reset` `return` `scchart` `schedule` `scope` `seq` `sfby` `signal`
+> `state` `static` `strong` `string` `struct` `suspend` `this` `to` `true` `undefined` `val`
+> `violation` `void` `weak` `while`
+
+The ones beginners trip over most are `reset`, `go`, `to`, `max`, `min`, `period`, `clock`, `label`,
+`history`, `entry`, `exit` and `final`. (`deep` and `shallow` are not in the list: they work as names,
+but [not before a space](#mismatched-character-eof-expecting-), as in `deep = 1`, so avoid them too.)
+An input called `go` gives
+`mismatched input 'go' expecting RULE_ID`, and every transition that tests it adds messages of its
+own; call it `start` or `go1` instead. Ordinary words such as `and`, `or`, `not`, `then`, `end`, `done`,
+`count`, `timer`, `mode`, `start`, `stop`, `on` and `off` are fine.
+
+Names that are keywords of C pass KIELER's checks but break the generated C code; see
+[`Compiler did not return success`](#compiler-did-not-return-success-exit-value--0).
+
+### `missing 'to' at 'Done'`
+
+A keyword is missing before the quoted word. Here the transition says `go Done` instead of
+`go to Done`:
+
+```sctx {2}
+initial state Idle
+  if A go Done
+```
+
+Add the missing word. The message names whatever is missing, for example `missing '{' at 'initial'`
+when the `{` after `scchart Name` has been forgotten.
+[Open `missing-to`](/playground/?example=reference/errors/missing-to).
+
+### `mismatched input '<EOF>' expecting '}'`
+
+The file ended while a `{` was still open: a superstate, a region or the chart itself is missing its
+closing brace.
+
+```sctx {4-11}
+scchart MissingBrace {
+  input bool A
+
+  initial state Idle {
+    initial state Inner
+      if A go to Done
+    final state Done
+
+  join to Finished
+
+  state Finished
+}
+```
+
+The `}` that should close `Idle` before `join to Finished` is missing, so the last `}` closes `Idle`
+and the chart itself is never closed. KIELER points at the very end of the file, which is rarely
+where the brace belongs: look for the superstate whose body runs on too far. Here it also reports
+`A state with a termination transition must have inner behaviour.`, because it now reads
+`join to Finished` as a transition of `Done`, a simple state inside `Idle`.
+[Open `missing-brace`](/playground/?example=reference/errors/missing-brace).
+
+### `missing EOF at 'if'`
+
+Something follows the end of the chart. `EOF` is the end of the file: the parser had finished the
+last `scchart` and expected nothing more. Here a transition was written after the closing brace:
+
+```sctx {3-4}
+  initial state Idle
+}
+    if A go to Idle
+```
+
+Move the text inside the chart, or delete the `}` that ends the chart too early. A pragma such as
+`#hostcode` after the chart gives `missing EOF at '#'`: pragmas and imports go before the first
+`scchart`. [Open `outside-chart`](/playground/?example=reference/errors/outside-chart).
+
+### `mismatched input 'region' expecting '}'`
+
+A chart or a superstate contains either plain states or regions, never both. Once a state has been
+written without a `region` line in front of it, the parser no longer expects a region.
+
+```sctx {4,7}
+scchart StatesAndRegions {
+  input bool A, B
+
+  initial state Idle
+    if A go to Idle
+
+  region Other:
+    initial state Waiting
+      if B go to Waiting
+}
+```
+
+Put the first states in a region of their own: write `region Main:` before `initial state Idle`.
+[Open `states-and-regions`](/playground/?example=reference/errors/states-and-regions).
+
+### `For input string: "3000000000"`
+
+An integer literal is too large. `int` is a 32-bit C `int`, so the largest literal is 2147483647.
+KIELER also reports the follow-on `The required feature 'value' … must be set`, and in the KIELER VS
+Code extension the compilation then never finishes. Use a smaller number.
+[Open `int-too-large`](/playground/?example=reference/errors/int-too-large).
+
+### `mismatched character '<EOF>' expecting '*'`
+
+The lexer, which splits the text into words before the parser sees it, reached the end of the file
+inside something that was never closed. `expecting '*'` means an unclosed `/*` comment;
+`expecting '"'` an unclosed string. Close the comment with `*/` or the string with `"`.
+[Open `unclosed-comment`](/playground/?example=reference/errors/unclosed-comment).
+
+Other `mismatched character` messages come from words that begin like a two-word keyword. `deep`
+begins `deep deferred`, so a variable called `deep` (which is allowed) fails as soon as a space
+follows it: `deep = 1` gives `mismatched character '=' expecting 'd'`. For the same reason `deep  deferred` with two spaces
+gives `mismatched character ' ' expecting 'd'`. Write `deep deferred` and `shallow history` with
+exactly one space, and don't call anything `deep` or `shallow`.
+
+### `Missing Semicolon`
+
+Inside a code block `{ … }` and in a method body, an assignment (`x = 1`, `x++`, `x += 2`) must end
+with `;` when another statement follows it. A line break is not enough:
+
+```sctx {2}
+initial state Idle
+  if A do { x = 1 y = 2 } go to Done
+```
+
+Write `{ x = 1; y = 2 }`. An assignment followed by an `if` needs the `;` too:
+`{ x = 1; if (A) { y = 2 } }`. Declarations, method calls and `if` or `for` blocks need none:
+`{ clear() y = 1 }` and `{ if (A) { y = 2 } z = 3 }` are accepted.
+[Open `code-semicolon`](/playground/?example=reference/errors/code-semicolon), and see
+[semicolons](/advanced/methods/#semicolons) for the whole rule.
+
+Outside code blocks the rule is the other way round: declarations, states and transitions take no
+`;`, and effects are separated by `;` with none after the last one.
+
+## Name errors
+
+The linker connects every name to its declaration. These messages mean it found none.
+
+### `Couldn't resolve reference to ValuedObject 'Button'.`
+
+A name is used that is not declared where it is used. (*Valued object* is KIELER's word for a
+variable or signal.)
+
+```sctx {2,6}
+scchart UnknownVariable {
+  input bool button
+  output bool light
+
+  initial state Off
+    if Button do light = true go to On
+
+  state On
+}
+```
+
+Names are case-sensitive, and the input is `button`. The usual causes:
+
+- a typing mistake or different capitals, including `TRUE` for `true`;
+- a variable declared in one region and used in another, or declared inside a superstate and used in
+  a state outside it: a declaration is visible only inside the state or region that contains it;
+- a word from another language, such as `emit` (in SCTX you emit a signal by writing its name);
+- a misspelt name in a reference binding, as in `is Blinker(A to nope)`.
+
+[Open `unknown-variable`](/playground/?example=reference/errors/unknown-variable). The
+[superstates](/learn/hierarchy/) chapter explains where declarations are visible.
+
+### `Couldn't resolve reference to State 'Done'.`
+
+A transition's target was not found. Apart from typing mistakes, the cause is nearly always that the
+target is in a different region: a transition can only connect states of the same region, so a state
+inside a superstate cannot go to a state outside it.
+
+<Chart example="reference/errors/unknown-state" caption="The transition on line 6, `if A go to Done`, is missing from the diagram because `Done` is not in its region, so `Inner`, where it starts, carries the error mark; `Outer`'s own transition to `Done` is fine." />
+
+To leave a superstate when something happens inside it, let the inside reach a final state and give
+the superstate a `join to`:
+
+```sctx
+initial state Outer {
+  initial state Inner
+    if A go to InnerDone
+  final state InnerDone
+}
+join to Done
+```
+
+Or put the transition on the superstate itself (`if A go to Done` after `Outer`'s closing brace).
+[Superstates](/learn/hierarchy/) covers both.
+
+### `Couldn't resolve reference to NamedObject 'Blinkr'.`
+
+A referenced chart was not found: `state S is Blinkr(…)` names a chart that does not exist, or one
+that lives in another file without an `import`. Here the chart is called `Blinker`:
+
+```sctx {5-6}
+scchart UnknownChart {
+  input bool tick
+  output bool light
+
+  initial state Blinking
+    is Blinkr(tick to tick, light to light)
+}
+```
+
+KIELER then cannot check the bindings either and adds `Couldn't resolve reference to ValuedObject
+'tick'.` and the same for `light`. Fix the chart's name, or add `import "file"` at the top of the file
+(see [reusing charts](/advanced/references/)). `region R is Chart` gives the same message, because
+`region … is` does not instantiate a chart.
+[Open `unknown-chart`](/playground/?example=reference/errors/unknown-chart).
+
+## Structure errors
+
+The validator checks rules about the structure of the chart. Its messages are short sentences that
+say what is wrong.
+
+### `Every region must have an initial state.`
+
+A region has no state marked `initial`, so it has nowhere to start. The top level of the chart counts
+as a region, and so does the inside of every superstate.
+
+```sctx {2}
+// should be: initial state Idle
+state Idle
+  if A go to Busy
+state Busy
+```
+
+Mark exactly one state of the region `initial`. When it compiles the example, the KIELER VS Code
+extension also throws an `ArrayIndexOutOfBoundsException`; that is a consequence, not a second
+mistake. A region without any states (`region R:` followed directly by another region) gives the same
+message.
+[Open `no-initial`](/playground/?example=reference/errors/no-initial).
+
+### `Every region must not have more than one initial state.`
+
+Two states of one region are marked `initial`. A region starts in exactly one state; to start in two
+places at once, use two regions. [Open `two-initial`](/playground/?example=reference/errors/two-initial).
+
+### `A state with a termination transition must have inner behaviour.`
+
+`join to` waits until everything inside a superstate has finished, so it only makes sense on a state
+that has an inside. On a simple state there is nothing to wait for.
+
+```sctx {2}
+initial state Idle
+  join to Done
+```
+
+To leave in the next tick, write `go to Done`. To wait for something, give the state an inside with a
+final state. [Open `join-simple`](/playground/?example=reference/errors/join-simple).
+
+### `Causality problem! Strong abort transitions must have a higher priority than weak abort or termination transitions.`
+
+On a state's list of outgoing transitions, every `abort to` must come before every `go to` and
+`join to`. (The message has a line break after `Causality problem!`.)
+
+<Chart example="reference/errors/strong-after-weak" caption="The strong abort (red dot) has priority 2, after the weak abort: rejected." />
+
+A strong abort is decided before the inside of the state runs in a tick, a weak abort after it, so a
+weak abort cannot outrank a strong one. Move the `abort to` transitions to the top. The
+[aborts](/learn/preemption/) chapter explains the difference.
+
+### `Non-variables cannot be used in an assignment.`
+
+A signal was assigned like a variable. Signals are emitted, not assigned:
+
+```sctx
+// done is a signal. Wrong:
+if A do done = true go to Idle
+// right: emit it
+if A do done go to Idle
+```
+
+The same message appears for `V++` on a signal and for a signal on the left of a dataflow equation.
+KIELER then also fails to schedule the chart (`The SCG is NOT asc-schedulable!`); that error goes
+away with this one. [Open `assign-signal`](/playground/?example=reference/errors/assign-signal).
+
+### `Float tests must have a comparison operator!`
+
+A `float` was used as a condition on its own, as in `if level go to High`. An `int` may be used that
+way (it means "not zero"); a `float` may not. Compare it: `if level > 0.5 go to High`.
+[Open `float-trigger`](/playground/?example=reference/errors/float-trigger).
+
+### `You cannot assign a value to a const object.`
+
+A `const` is a name for a value that is fixed when the chart is compiled, so it cannot be changed.
+KIELER adds a second error, `Cannot replace left hand side of assignment by a value. (Trying to
+replace … LIMIT by … (value: 10) in … LIMIT = 20)`: it has already replaced the name by its value.
+Use an ordinary variable for a value that changes.
+[Open `assign-const`](/playground/?example=reference/errors/assign-const).
+
+### `A const declaration must have an initialization part!`
+
+`const int LIMIT` without a value. Write `const int LIMIT = 10`.
+[Open `const-no-init`](/playground/?example=reference/errors/const-no-init).
+
+### `Array cardinalities must be an int literal or a reference to a constant int object.`
+
+The size of an array must be known when the chart is compiled: a number, or a `const` whose value is
+a number. A variable (`int values[n]`) or a calculation (`int values[1 + 2]`) is not allowed. KIELER
+adds `Cannot initialize array with non integer cardinality: values`. Write `const int N = 3` and
+`int values[N]`. [Open `array-size`](/playground/?example=reference/errors/array-size).
+
+### `Initial value of an array can not be a single value.`
+
+`output int values[3] = 0` gives an array a single number. Use a vector: `= {0, 0, 0}`. (Without an
+initial value the elements start at 0 anyway.) The C compiler then fails too, with
+`assignment to expression with array type`.
+[Open `array-scalar-init`](/playground/?example=reference/errors/array-scalar-init).
+
+### `Cardinalities do not match.`
+
+A vector `{…}` has more elements than the array it is given to, in a declaration
+(`int arr[2] = {1, 2, 3}`) or in an assignment. The full message says where:
+`Cardinalities do not match. arr at dimension 0 is an array of size 2 but a vector of size 3 is
+given.` It appears when the chart is compiled. A shorter vector is allowed; see
+[arrays](/learn/variables/#arrays).
+
+### `Cannot insert const array element.`
+
+The full message continues `ValuedObjectReferenceImpl@… I is not a valid index (integer value).` A
+`const` array is indexed with a variable, as in `LIMITS[I]`. KIELER replaces constants by their values
+when it compiles the chart, so the index must be a number it knows then. Index a `const` array with
+numbers only, or drop the `const`.
+
+### `A count delay of 0 is not allowed on a trigger.`
+
+`if 0 A go to B`. A count delay counts how often the trigger has held, starting at 1, and `if 1 A`
+is the same as `if A`. [Open `count-zero`](/playground/?example=reference/errors/count-zero).
+
+### `Connector states must have an outgoing transition.`
+
+Control passes through a connector state in zero time, so it needs a way out. Give it outgoing
+transitions, the last one without a trigger:
+
+```sctx
+connector state Choice
+  immediate if B go to Left
+  immediate go to Right
+```
+
+KIELER also warns `Connector states should have an outgoing transition without trigger.`
+[Open `connector-dead-end`](/playground/?example=reference/errors/connector-dead-end), and see
+[connector states](/advanced/connectors/).
+
+### `The referencing binding is erroneous!`
+
+A reference `state S is Other(…)` does not connect the other chart's inputs and outputs properly. The
+second line of the message says what is wrong:
+
+- `Valued object in the referenced scope was not bound properly: light`: `light` is not bound, and no
+  variable of that name is visible to bind it to implicitly.
+- `A Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced
+  scope: extra`: more arguments than the chart has inputs and outputs.
+- `It is not possible to bind the literal false` … `to the output beep !`: a constant passed to an
+  output; constants can only go to inputs.
+- `It is not possible to bind array a to scalar v!`: an array passed where a single value is declared.
+
+In the example, the referenced chart `Flasher` has an output `light`, but the binding connects only
+`tick`:
+
+```sctx
+// light is not bound:
+initial state Blinking
+  is Flasher(tick to tick)
+// fixed:
+initial state Blinking
+  is Flasher(tick to tick, lamp to light)
+```
+
+When compiling, KIELER repeats the problem as `There are binding errors in a referenced state!` and
+adds follow-on errors such as `The valued object reference points to a valued object (light) that is
+not contained in the model!`. An expression as an argument (`Other(a && b)`) is reported only when
+compiling: `A binding for the valued object reference "…" exists, but the type
+"…OperatorExpressionImpl" is not supported.` Compute the expression into a variable and pass that.
+[Open `binding-unbound`](/playground/?example=reference/errors/binding-unbound), and see
+[reusing charts](/advanced/references/).
+
+### `Pure types are only allowed if used in combination with signals.`
+
+`pure flag` declares a variable of type `pure`, which only signals can have: write `signal flag` (a
+pure signal). The same message also follows other declarations that could not be read, such as
+`output const int` in the KIELER VS Code extension, where it means "this declaration is broken".
+[Open `pure-variable`](/playground/?example=reference/errors/pure-variable).
+
+### Enums, structs, classes and methods
+
+The validator's messages about [enums, structs and classes](/advanced/data-types/) and about
+[methods and code effects](/advanced/methods/), with what each means:
+
+```text wrap
+Cannot assign enum value of an incompatible type.
+```
+
+An enum variable was given a number (`speed = 1`), arithmetic (`speed = speed + 1`) or a value of
+another enum. Assign a value of its own enum: `speed = Speed.LOW`. The KIELER VS Code extension says
+the same for `b = a` between two variables of one enum, which current KIELER accepts.
+
+```text wrap
+Assignments to class/struct types are not supported. Please specify a member.
+```
+
+A whole instance was assigned, `highest = latest`. Each side of that assignment also gets the
+partner message, and so does an instance used as a whole anywhere else, as in `highest == latest`:
+
+```text wrap
+Referencing class/struct types is not supported. Please specify a member.
+```
+
+Copy and compare member by member: `highest.value = latest.value`.
+
+```text wrap
+Methods must be used with call syntax using parenthesis.
+```
+
+A method named without parentheses, `home.add` or `n = home.get`. Write `home.add()`.
+
+```text wrap
+Number of arguments does not match required parameters in definition.
+```
+
+A call with more or fewer arguments than the method has parameters. The KIELER VS Code extension
+accepts too many and ignores the extra ones.
+
+```text wrap
+All members of a struct must be publicly accessible.
+```
+
+`private` (or `protected`) inside a `struct`. Only a `class` may hide members.
+
+`A class/struct must have a unique name.` A struct or class without a type name, `struct { … } latest`.
+Name it: `struct Reading { … } latest`.
+
+```text wrap
+The method does not return any value!
+```
+
+A method with a return type (`method int twice(int v)`) has no `return`. Give every path through it
+one, written last in its block and without a `;`: a method that returns on some paths only compiles,
+but KIELER's simulation stops working when it ends without a value.
+
+```text wrap
+Return statements can only be used in method bodies.
+```
+
+`return` in a [code effect](/advanced/methods/#code-effects), `do { … return x }`. A code effect gives
+no value back; assign the result to a variable instead.
+
+```text wrap
+State access expressions are only permissible in methods bodies.
+```
+
+`state(Control.Busy)`, which is true while the state `Busy` of the region `Control` is active, written
+in a trigger or an effect. KIELER adds `Couldn't resolve reference to NamedObject 'Busy'.` (and the
+same for `Control`), and the KIELER VS Code extension then never finishes compiling. A state access
+works only inside a method body: `method bool busy() { return state(Control.Busy) }`, then
+`if busy()`. A variable that `Control` sets is usually the clearer way to tell other regions its
+state.
+
+One warning belongs here too:
+
+```text wrap
+A class/struct should have at least one variable defined (Type definitions are not supported).
+```
+
+A struct or class needs its instances after its closing brace, `} latest, highest`; without them it
+declares nothing the chart can use.
+
+## Scheduling errors
+
+After the validator, KIELER compiles the chart into a graph of operations (the SCG, *sequentially
+constructive graph*) and tries to put the operations of a tick in an order that respects every
+dependency. When no such order exists, the chart is rejected. The
+[causality chapter](/learn/causality/) explains the rules in full.
+
+### `The SCG is NOT asc-schedulable!`
+
+The operations of one tick cannot be put in order. KIELER reports a list of errors such as
+`Can't schedule from _g4 to _g9`, then `The SCG is NOT asc-schedulable!`, usually with the warning
+`Instantaneous loop detected!`. SCCharts Lab adds a line that names the variable when it can,
+`Circular dependency involving mode prevents scheduling this tick.` (or
+`Circular dependency prevents scheduling this tick.`), and words the warning
+`Potential instantaneous loop through mode.`
+
+There are three common causes.
+
+**A cycle of immediate transitions.** If immediate transitions lead from a state back to itself, a
+single tick could go round the cycle for ever. KIELER does not look at the triggers: it rejects the
+cycle even when, as here, `A` and `!A` can never both hold.
+
+<Chart example="reference/errors/instant-loop" caption="Both transitions are dashed (immediate), so `Ping` → `Pong` → `Ping` is a cycle within one tick." />
+
+Make one transition on the cycle delayed by dropping its `immediate`: `if !A go to Ping`. The
+validator also warns about such a cycle, see
+[`There is an immediate loop`](#there-is-an-immediate-loop-the-model-is-not-sasc).
+
+**Two regions write the same variable.** Concurrent regions run in the same tick, so if both can set
+`mode` to different values in one tick, there is no right answer. KIELER rejects the chart even if
+the two writes could never happen in the same tick.
+
+<Chart example="reference/errors/write-conflict" caption="`First` and `Second` both assign `mode`." />
+
+Give the variable one owner: let a single region decide its value (for example one state with
+`if A do mode = 1 go to Wait` and `if B do mode = 2 go to Wait`, where the first one written wins),
+or use a valued signal with a combine function, such as `output signal int mode combine max`, which
+merges the values emitted in a tick. Increments from several regions (`count += 1` in each) are
+allowed: they add up.
+
+**Regions that wait for each other.** A read of a variable, or a test of a signal, waits until every
+write or emission of it in the tick is done. If two regions each wait for the other, neither can go
+first:
+
+<Chart example="reference/errors/signal-cycle" caption="`Left` tests `Q` before it emits `P`; `Right` tests `P` before it emits `Q`." />
+
+Break the cycle with the previous tick's value: `if !pre(Q) do P` reads what `Q` was in the last
+tick, which is already known. Or merge the two decisions into one region. Emitting a valued signal
+with a value computed from its own `val()` in the same tick is the same kind of cycle:
+`V(val(V) + 1)` is rejected, `V(pre(val(V)) + 1)` works.
+
+One more cause needs no concurrency at all: a count delay, such as `if 3 knock`, anywhere inside a
+state that has a self-loop, such as a reset `if restart abort to Door`. Count by hand instead, as
+[Count delays inside a reset loop](/learn/pre/#count-delays-inside-a-reset-loop) shows.
+
+### `Can't schedule from _g1 to _g7`
+
+Part of the scheduling error above. `_g1` and `_g7` are names of operations in KIELER's internal
+graph, not in your chart, so the numbers do not tell you where to look: read
+[`The SCG is NOT asc-schedulable!`](#the-scg-is-not-asc-schedulable). SCCharts Lab links the
+operations involved to the source and can highlight them in the diagram.
+
+### `Circular dependency involving mode prevents scheduling this tick.`
+
+SCCharts Lab's summary of the scheduling error, naming the variable or signal on the cycle. See
+[`The SCG is NOT asc-schedulable!`](#the-scg-is-not-asc-schedulable).
+
+### `There is an immediate loop. The model is not SASC.`
+
+A warning from the validator on each transition of a cycle of immediate transitions, with a second
+line listing the states, such as `Involved states: [Ping, Pong]` (the order varies). The compiler then
+rejects the chart with the scheduling error above. A cycle that contains at least one delayed
+transition is fine.
+
+### `Instantaneous loop detected!`
+
+A warning from the compiler's loop analysis: some operation may be able to reach itself within one
+tick. SCCharts Lab words it `Potential instantaneous loop.`, `Potential instantaneous loop through n.`
+or `Potential instantaneous loop through the timed transitions on t.`
+
+When the chart is rejected, the warning comes with the scheduling error and points at the same
+cycle. But it also appears on many charts that are correct. Typical false alarms are a superstate
+with a transition back to itself (a reset) and charts with clocks:
+
+<Sim example="reference/errors/reset-loop-warning" caption="KIELER warns about this chart, yet it compiles and counts correctly, also across the reset in tick 3." />
+
+For a chart with a clock, SCCharts Lab's wording names the clock,
+`Potential instantaneous loop through the timed transitions on t.`, and the warning appears on charts
+as plain as this timeout:
+
+<Sim example="reference/errors/timed-warning" caption="KIELER warns about the timed transitions on `t`, yet the timeout fires once, in tick 5, as it should." />
+
+When KIELER compiles the chart, the warning is usually a false alarm, as in both examples. The known
+exception is a superstate that can finish in the tick it is entered, inside a state that a reset
+transition enters again: KIELER compiles such a chart but can lose the termination. Let the inner
+states wait at least one tick in that case (see [the immediate variant of ABRO](/patterns/abro/#the-immediate-variant)).
+
+### `The SCG is not IASC-schedulable!`
+
+The same kind of scheduling failure, reported by KIELER's *priority-based* compiler, which is used
+only if you select it instead of the default, netlist-based compiler. The priority-based compiler
+accepts some charts that the default one rejects; this guide uses the default throughout.
+
+## C compiler errors
+
+KIELER turns the chart into C code and compiles that with a C compiler (gcc). Nearly every chart that
+passes KIELER's own checks also compiles in C, but not all.
+
+### `Compiler did not return success (exit value != 0)`
+
+The full message reads `Compiler did not return success (exit value != 0)` /
+`Either the source code cannot be compiled or the gcc command is not available on PATH.` /
+`Please check the KiCo log for further details.` It means that the generated C code did not compile.
+
+The KIELER VS Code extension shows only this message; the C compiler's own error is in the KiCo log.
+SCCharts Lab shows the C compiler's message as well, and links it to the generated code and, where it
+can, to your chart. These are the causes found while writing this guide, listed by the C compiler's
+message:
+
+- `duplicate member ‘count’`: the same name is declared twice in one scope
+  ([example](/playground/?example=reference/errors/duplicate-decl)).
+- `expected identifier or ‘(’ before ‘default’`: a name that is a keyword of C, such as `default`,
+  `case`, `switch`, `register`, `typedef`, `sizeof`, `break`, `continue` or `inline`
+  ([example](/playground/?example=reference/errors/c-keyword-name)). For the names of C types
+  (`char`, `double`, `long`, `short`, `signed`, `unsigned`) and for `volatile`, gcc words it
+  differently: `expected identifier before ‘long’`, and for `char` and `double` also
+  `two or more data types in declaration specifiers`. A variable called `union` gives
+  `expected ‘{’ before ‘;’ token`, followed by a cascade of `‘TickData’ has no member named …`.
+- `expected expression before ‘>’ token`: the shift `>>>` or `>>>=`, which C does not have
+  ([example](/playground/?example=reference/errors/unsigned-shift)).
+- `implicit declaration of function ‘val’`: `val(pre(V))`, or `val()` of something that is not a
+  valued signal.
+- `assignment to expression with array type`: an array assigned as a whole (`b = a`, `arr = 5`).
+- `invalid operands to binary + (have ‘char *’ and ‘char *’)`: two strings joined with `+`.
+- `invalid operands to binary % (have ‘double’ and ‘double’)`: `%` on floats; KIELER warns first
+  with `You are using modulo with floats. …`.
+- `implicit declaration of function ‘abs’`: an `extern` function without its C header (an error from
+  gcc 14 on; older versions of gcc only warn).
+- `redefinition of ‘clamp’`: a function defined in `#hostcode`, which is pasted into both the header and
+  the C file; define it in `#hostcode-c` instead.
+- `unknown type name ‘int64’`: a `host` type that the C compiler does not know; add its `typedef` or
+  `#include` with `#hostcode`.
+- `‘_’ undeclared (first use in this function)`: `_`, the ignore value, in a vector assignment.
+- `‘__CONDSELF__’ undeclared (first use in this function)`: a conditional without an else part
+  (`(c) ? a`) where KIELER has nothing to put in its place: in `print`, in the arguments of a call
+  written on its own, in an array index you assign to, or in a method KIELER keeps as a C function.
+  Write the else part: `(c) ? a : b`.
+- `invalid operands to binary * (have ‘int *’ and ‘int’)`: a defect of KIELER's code generator. In
+  a condition, an array element with a variable index loses its index when a plain variable comes
+  after it and none before it (`ov[n] * 2 > 1 && a`), and the C code computes with the array itself.
+  Put the plain variable first, or copy the element into a variable of its own before the test.
+- `missing terminating " character`: the escape `\n` inside a string literal (an escaped quote `\"`
+  breaks the C code too).
+- `‘d’ redeclared as different kind of symbol` (a local variable) or `conflicting types for ‘d’` (a
+  parameter): a variable called `d` in a method that KIELER keeps as a C function, where `d` already
+  names the chart's data ([methods](/advanced/methods/#what-kieler-makes-of-a-method)).
+- `missing terminating ' character`: a variable or signal with a prime in its name, `output int x'`.
+  KIELER's parser accepts the prime, but a C name cannot contain one.
+- `expected identifier or ‘(’ before ‘^’ token`: a variable whose name is written with a `^`
+  (`output int ^max`); one declared inside a state gives
+  `expected ‘:’, ‘,’, ‘;’, ‘}’ or ‘__attribute__’ before ‘^’ token` instead. The `^` lets a keyword
+  pass KIELER's parser, but it reaches the C code as it is. A state may be called `^state`; a variable
+  needs a name that is not a keyword.
+
+Rename variables that clash with C keywords; write `>>` instead of `>>>`; write `pre(val(V))` instead
+of `val(pre(V))`; assign arrays element by element or with a vector `{…}`; and give host functions
+their header with `#hostcode "#include <stdlib.h>"` (see [host code](/advanced/host-code/)).
+
+### `The variable is declared multiple times in this scope.`
+
+A warning on the second declaration of a name in the same scope (here `output int count` twice). The
+chart then fails in the C compiler, with `duplicate member ‘count’`; the KIELER VS Code extension
+adds `java.lang.IllegalArgumentException: Cannot initialize using an ambiguous VariableStore.` Delete
+one of the declarations. (Declaring the same name again in a *nested* state is allowed, without any
+warning: the inner declaration hides the outer one.)
+[Open `duplicate-decl`](/playground/?example=reference/errors/duplicate-decl).
+
+### `Non-signals should not be used in an emission.`
+
+A variable was "emitted": an effect consisting of just a name emits a signal, and `done` is a
+variable.
+
+```sctx
+// done is a variable. Wrong:
+if A do done go to Finished
+// right: assign it
+if A do done = true go to Finished
+```
+
+In KIELER this is a warning, and the compiler then fails with
+`java.lang.NullPointerException: Assigned valued object is null or not supported` and further Java
+exceptions. SCCharts Lab reports an error instead:
+`done is an output bool variable, not a signal, so it cannot be emitted.` The same warning also
+appears as a side effect of syntax errors in effects (such as `do x min = 3`), and disappears with
+them. [Open `emit-variable`](/playground/?example=reference/errors/emit-variable).
+
+## Internal errors
+
+Some charts make KIELER's compiler crash instead of reporting a mistake. The message is then the name
+of a Java exception, which says nothing about your chart. These are the crashes this guide has met,
+with their real causes.
+
+### `The compiler failed during compilation setup.`
+
+SCCharts Lab's message for a crash inside the compiler. In the KIELER VS Code extension the same chart
+fails with a `java.lang.NullPointerException`, and the compilation never reports back. The example has
+a `join to` on a superstate whose only region has no final state, and the join leads to a simple state
+with an entry action:
+
+```sctx {1-6}
+initial state Work {
+  initial state Step1
+    if A go to Step2
+  state Step2
+}
+join to Done
+
+state Done {
+  entry do done = true
+}
+```
+
+A `join to` waits for every region to reach a final state, so give the region one
+(`final state Step2`). KIELER's warning `Every region should have a final state whenever its parent
+state has a termination transition.` points at the same problem. If `Done` has no entry or during action, the chart compiles with that
+warning instead, and the join never fires. A region that consists of nothing but an `initial final state`, under a `join to`, crashes
+whatever the join leads to.
+[Open `join-no-final`](/playground/?example=reference/errors/join-no-final).
+
+The same message comes from an [inlined method](/advanced/methods/#what-kieler-makes-of-a-method)
+that assigns one of its parameters, called with a number or an expression as the argument
+(`zap(3)`, `zap(o + 1)`): copy the parameter into a local variable and change that instead.
+
+### `UnsupportedConstructException: Unhandled parameter types: [null]`
+
+SCCharts Lab reports `de.cau.cs.kieler.core.diagnostics.UnsupportedConstructException: Unhandled
+parameter types: [null]`; in the KIELER VS Code extension the compilation never finishes, and no
+message appears at all. The known cause is a valued `float` signal with a combine function, such as
+`output signal float level combine +`: KIELER has no starting value for combining floats. Drop the
+combine function, or use an `int` signal.
+[Open `float-combine`](/playground/?example=reference/errors/float-combine).
+
+### `Cannot serialize simulation interface. Unsupported type: UNKNOWN`
+
+KIELER could not give one of the chart's variables a type that its simulation understands. The known
+cause is a `->` or `fby` that mixes `bool` and `int`, such as `high = false -> (level > 3)` with
+`level` an `int`: KIELER cannot type the helper variable it creates for the delay (the KIELER VS Code
+extension adds `Compiler did not return success`; SCCharts Lab adds a line naming the helper). Compute the
+comparison into a `bool` first (`over = level > 3`, then `high = false -> over`); see
+[dataflow regions](/advanced/dataflow/#looking-back---fby-and-pre). A variable of type `pure` gives
+`Unsupported type: pure`, after
+[`Pure types are only allowed …`](#pure-types-are-only-allowed-if-used-in-combination-with-signals).
+
+### `Can't copy valued object. Valued object is null!`
+
+Reported as `java.lang.IllegalArgumentException: Can't copy valued object. Valued object is null!`.
+Known causes: a `for` region nested in another `for` region, a declaration at the top of a `for` region
+whose initial value uses the counter (`int k = i`), and a `global` declaration in the chart that is
+simulated. For the two `for`-region causes only SCCharts Lab gives this message; in the KIELER VS Code
+extension the compilation never finishes and no message appears. A `global` in the root chart gives it in
+both. See [arrays and for regions](/advanced/for-regions/).
+
+### `Cannot replace left hand side of assignment by a value.`
+
+KIELER tried to replace a constant by its value and found it on the left of an assignment. It follows
+[`You cannot assign a value to a const object.`](#you-cannot-assign-a-value-to-a-const-object), and
+also appears when a `for` region assigns its counter (`i = 5`).
+
+### `Recursive reference: chart Main uses itself (Main -> Main).`
+
+SCCharts Lab's message for a reference that leads back to its own chart, directly
+(`state S is Main` inside `Main`) or through other charts. A chart cannot contain itself: KIELER would
+copy it for ever. In the KIELER VS Code extension the compilation never finishes and no message
+appears. See [reusing charts](/advanced/references/#other-forms-you-may-meet).
+
+### `The for-region range "for i : 1 to N" ends at N, which is not an integer literal.`
+
+SCCharts Lab's message for a `for` region whose bound is a name, such as a `const`. The KIELER VS Code
+extension crashes on it with `java.lang.ClassCastException: … ValuedObjectReferenceImpl cannot be
+cast to class … IntValue`. Write the bounds as numbers, or let the region run over an array:
+`for i : ARR`. A bound without `to` (`for i : 3`) gives
+`The for-region range "for i : 3" has a start value but no end value.` See
+[arrays and for regions](/advanced/for-regions/#limits).
+
+### `This suspend has no trigger. KIELER cannot compile a suspend without an if condition.`
+
+SCCharts Lab's message for a `suspend` or `weak suspend` without `if`. The KIELER VS Code extension
+fails with an internal error in its code generator instead. Write the condition you mean:
+`suspend if pause`. See [suspension](/advanced/suspend/#the-rule).
+
+### `There is no SCChart to compile. Add a scchart declaration first.`
+
+SCCharts Lab's message for a file without any `scchart`, for example a new, empty file. KIELER's own
+extension compiles nothing and gives no message. If the file does contain a chart, a syntax error in
+front of it (such as `missing EOF at 'hello'`) can hide it.
+[Open `empty-file`](/playground/?example=reference/errors/empty-file).
+
+## Timed SCCharts
+
+### `Cannot handle concurrent timed automata using the same clock.`
+
+The full message is `Cannot handle concurrent timed automata using the same clock. Add @ClocksUseSD
+annotation for experimental support based on schduling directives.` (sic). SCCharts Lab says
+`Clock t is read by several concurrent regions of ClockShared.` Two concurrent regions test the same
+clock:
+
+```sctx
+clock t
+region Left:
+  initial state L
+    if t >= 100 do a = true go to L
+region Right:
+  initial state R
+    if t >= 200 do b = true go to R
+```
+
+Give each region its own clock, declared in the region: `clock t1` after `region Left:`, `clock t2`
+after `region Right:`. A clock tested both on a superstate's transitions and inside it is rejected in
+the same way, with `Cannot handle hierarchical timed automata. …` (SCCharts Lab:
+`Clock t is read both by Outer and inside it.`).
+[Open `clock-shared`](/playground/?example=reference/errors/clock-shared), and see
+[time](/advanced/time/).
+
+### `A variable with name deltaT already exists and is not an input variable of type float`
+
+A chart with a clock gets an input `deltaT` (and an output `sleepT`) automatically. A variable of your
+own called `deltaT` with another type or direction clashes with it; rename it.
+
+## Warnings
+
+The chart compiles and runs, but KIELER suspects a mistake. Most warnings are worth reading; a few are
+harmless and are marked as such.
+
+### `The transition is not reachable.`
+
+The transition can never fire, because a transition before it on the same state always fires first.
+Typically a transition without a trigger was written before the others:
+
+<Sim example="reference/errors/unreachable-transition" caption="`go to Busy` has no trigger and priority 1, so `if A do x = 1 go to Busy` is never taken: `x` stays 0." />
+
+Put the transition without a trigger last. (An `immediate` transition after an untriggered delayed
+one is reachable and not flagged: it is tried in the tick the state is entered.)
+
+### `The state is not reachable.`
+
+No transition leads to the state, so it is never entered: often a typing mistake in a transition's
+target, or a forgotten `initial`.
+[Open `unreachable-state`](/playground/?example=reference/errors/unreachable-state).
+
+### `This assignment looks like old relative write SC syntax and is considered deprecated.`
+
+The message continues `If you want to create a relative write in new syntax, please use an infix
+assignment operator.` It appears on assignments that read their own target, such as
+`count = count + 1`. SCCharts Lab explains it at more length:
+`This assignment reads count, so the compiler treats it as an update of count (a relative write, as
+in the deprecated old SC syntax).` / `Write it as count += 1 to say so. In one region it means the
+same.` / `It only matters when another region also writes count in the same tick: …`
+
+Within one region, `count = count + 1` and `count += 1` do the same. Between concurrent regions,
+KIELER treats both as updates, which it orders after the tick's plain assignments of the variable.
+Write `+=`, `-=`, `++` and so on, and the warning goes away.
+[Open `relative-write`](/playground/?example=reference/errors/relative-write).
+
+### `All or none concurrent regions should have final states.`
+
+Some regions of a state have final states and others do not. A superstate terminates only when all its
+regions are in final states at the same time, so a region without one keeps it from ever terminating.
+With a `join to`, KIELER adds the next warning too.
+
+<Sim example="reference/errors/regions-final-mismatch" caption="Region `Two` has no final state, so `join to End` never fires." />
+
+### `Every region should have a final state whenever its parent state has a termination transition.`
+
+The state has a `join to`, but one of its regions has no final state, so the termination can never
+fire. Add a final state to the region, or leave the superstate with a triggered `go to` instead.
+When the superstate has a single region and its join leads to a simple state with an entry or during
+action, KIELER even crashes (see
+[`The compiler failed during compilation setup.`](#the-compiler-failed-during-compilation-setup)).
+
+### `Abort transitions should have a trigger.`
+
+A `go to` or `abort to` without a trigger on a superstate. It leaves the superstate in the tick after
+it was entered (in the same tick, if `immediate`), however far the inside has got, which is rarely
+what was meant. To leave when the inside has finished, use `join to`.
+[Open `abort-no-trigger`](/playground/?example=reference/errors/abort-no-trigger).
+
+### `Outgoing transitions of connector states should be marked as immediate.`
+
+Transitions out of a connector are always immediate, whether or not they say so; KIELER asks you to
+write `immediate` to make that visible. The chart behaves the same either way.
+[Open `connector-not-immediate`](/playground/?example=reference/errors/connector-not-immediate).
+
+### `Connector states should have an outgoing transition without trigger.`
+
+If none of a connector's transitions is enabled, control stays in the connector like in an ordinary
+state and tries again in the next tick. Give the connector a last transition without a trigger.
+[Open `connector-no-default`](/playground/?example=reference/errors/connector-no-default).
+
+### `Valued Objects are bound implicitly!`
+
+The second line lists names, each followed by a comma: `tick, light, `. A reference
+`state S is Other` (or `Other()`, or with only some bindings) leaves inputs or outputs of `Other`
+unbound, and KIELER binds each to the variable of the same name in the referencing chart. That works,
+but breaks silently when names change. Bind them explicitly: `is Other(tick to tick, light to light)`.
+[Open `implicit-binding`](/playground/?example=reference/errors/implicit-binding).
+
+### `The referenced SCChart does not terminate, but you are using a termination to proceed.`
+
+A `join to` follows a referenced chart that has no final state, so the termination never fires.
+[Open `reference-no-termination`](/playground/?example=reference/errors/reference-no-termination).
+
+### `You are using an external reference without call syntax. If you want to generate a call, you must add parentheses.`
+
+An `extern` function is named without parentheses, as in `distance = absolute` after
+`extern "abs" absolute`. Only the warning comes from KIELER; the C compiler then fails with
+`‘absolute’ undeclared (first use in this function)`. Write the call: `distance = absolute(x)`. See
+[host code](/advanced/host-code/#calling-host-functions-extern).
+
+### `Min or max combine operators are currently not supported.`
+
+On `combine max` and `combine min`. Despite the warning they work: KIELER combines the values emitted
+in a tick as expected. [Open `combine-max`](/playground/?example=reference/errors/combine-max).
+
+### `Count Delays on During Actions are not supported yet. The valued will be ignored by the transformation.`
+
+(sic) In `during if 2 A do …` the count is ignored, and the action runs every time `A` holds. Count
+with a transition (`if 2 A go to …`) or a counter variable.
+[Open `during-count-delay`](/playground/?example=reference/errors/during-count-delay).
+
+### `A count delay was recognized in front of an unary operation.`
+
+The message continues `If this is not intended, use parentheses to surround your expression.` In
+`if 3 -I > 0`, KIELER reads `3` as a count delay and `-I > 0` as the trigger, not `3 - I > 0`. Write
+`if (3 - I) > 0` for the subtraction.
+[Open `count-unary`](/playground/?example=reference/errors/count-unary).
+
+### `Valued input signals currently do not support emission (overwriting).`
+
+The chart emits one of its own valued input signals. The presence is set, but the value is dropped.
+Inputs belong to the environment; copy the value into a variable or an output signal instead.
+[Open `emit-valued-input`](/playground/?example=reference/errors/emit-valued-input).
+
+### `Static variables should be initialized.`
+
+A `static` variable without an initial value. It starts at 0 anyway, but KIELER wants it said:
+`static int visits = 0`. [Open `static-no-init`](/playground/?example=reference/errors/static-no-init).
+
+### `Actions in regions are highly experimental and may not produce the expected results.`
+
+An `entry`, `during` or `exit` action is written in a region that has a final state, instead of in a
+state. Move the action to the state that contains the region.
+[Open `region-action`](/playground/?example=reference/errors/region-action).
+
+### `Broken Import: There is no SCCharts model with the given name.`
+
+`import "nothere"` names a file that does not exist next to the chart (`.sctx` is added for you). It
+is only a warning; what fails are the references to charts the file should have provided, with
+`Couldn't resolve reference to NamedObject …`. The folder form `import "dir/*"` gives
+`Broken Import: There are no SCCharts models in the given directory.`
+[Open `broken-import`](/playground/?example=reference/errors/broken-import).
+
+### `There are multiple root states with the same name.`
+
+Two charts in one file have the same name (given in quotes after the message). KIELER simulates the
+first chart in the file, whatever the names.
+[Open `duplicate-chart-names`](/playground/?example=reference/errors/duplicate-chart-names).
+
+### `There are multiple regions with the same name.`
+
+Two regions of one state have the same name. Harmless for the behaviour, confusing in the diagram.
+[Open `duplicate-region-names`](/playground/?example=reference/errors/duplicate-region-names).
+
+### `ValuedObject with name _HSteps is contained in the model but not in VariableStore.`
+
+Harmless. KIELER creates helper variables for some constructs (history transitions, sequential
+dataflow equations, methods, `extern` functions) and warns that its simulator does not track them.
+The name is one KIELER made up (starting with `_`), or the name of an `extern` declaration. Ignore it.
+[Open `history-warning`](/playground/?example=reference/errors/history-warning).
+
+### `You do a calculation inside a print call effect. You should use printf syntax to be safe on different code generators.`
+
+The first argument of `print` is a calculation, as in `print(I / 2)`. The chart runs; the warning is
+about other code generators.
+[Open `print-calculation`](/playground/?example=reference/errors/print-calculation).
+
+### `Layout annotations must have the format '@layout[id] value'`
+
+A diagram annotation without its key, such as `@layout RIGHT`. Write `@layout[elk.direction] RIGHT`.
+It affects only the diagram.
+[Open `layout-annotation`](/playground/?example=reference/errors/layout-annotation).
+
+### `The trigger of this action is hidden by the label.`
+
+Not a warning but a hint (also `The effects of this action are hidden by the label.`): a transition or
+action has a `label "…"`, so the diagram shows the label instead of the trigger and effects. They
+still run.
+
+### C compiler warnings in SCCharts Lab
+
+SCCharts Lab passes on the C compiler's warnings, which KIELER's extension does not show. Each points
+at a real mistake:
+
+- `suggest parentheses around comparison in operand of ‘&’`: `A & 3 == 2`, which means
+  `A & (3 == 2)` ([operators](/reference/operators/#--and--bind-weaker-than-)).
+- `logical not is only applied to the left hand side of comparison`: `!A == B`, which means
+  `(!A) == B` ([operators](/reference/operators/#-and--apply-only-to-atoms)).
+- `comparison with string literal results in unspecified behavior [-Waddress]`: a `string` compared
+  with `==`, which compares where the strings are stored, not their text
+  ([variables](/learn/variables/#strings-compare-as-pointers)).
+- `division by zero [-Wdiv-by-zero]`: a division by the literal `0`. Nothing warns about a divisor
+  that only becomes 0 while the chart runs; KIELER's simulation then silently stops
+  ([operators](/reference/operators/#arithmetic)).

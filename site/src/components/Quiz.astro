@@ -1,0 +1,297 @@
+---
+/**
+ * <Quiz question="…" options={["…", "…"]} answer={1}>Explanation (Markdown)</Quiz>
+ *
+ * A multiple-choice question. `answer` is the 0-based index of the correct option. `question` and
+ * `options` accept inline Markdown (`code`, **bold**, *italic*). The children explain the answer.
+ *
+ * With JavaScript: the reader picks an option and checks it; the frame says whether it was right and
+ * opens the explanation. Without JavaScript: the options are still selectable and "Show the answer"
+ * (a details element) reveals the answer and the explanation. Keyboard: Tab to the options, arrow keys
+ * to choose, Tab to "Check answer".
+ */
+import { inlineMd } from './frame/inline-md'
+import { icons } from './frame/icons'
+import { nextId } from './frame/ids'
+
+interface Props {
+	question: string
+	options: string[]
+	answer: number
+}
+const { question, options, answer } = Astro.props
+if (!Array.isArray(options) || options.length < 2) {
+	throw new Error(`<Quiz question="${question}">: "options" needs at least two entries.`)
+}
+if (!Number.isInteger(answer) || answer < 0 || answer >= options.length) {
+	throw new Error(`<Quiz question="${question}">: "answer" must be the 0-based index of an option (0 to ${options.length - 1}), got ${answer}.`)
+}
+const uid = nextId('scq-')
+const letter = (i: number) => String.fromCharCode(65 + i)
+---
+
+<div class="sc-quiz not-content" data-sc-quiz data-answer={answer}>
+	<fieldset class="sc-quiz__set">
+		<legend class="sc-quiz__q">
+			<span class="sc-quiz__question" set:html={inlineMd(question)} />
+		</legend>
+		<div class="sc-quiz__options">
+			{
+				options.map((o, i) => (
+					<label class="sc-quiz__option" data-index={i}>
+						<input type="radio" name={uid} value={i} />
+						<span class="sc-quiz__letter" aria-hidden="true">
+							{letter(i)}
+						</span>
+						<span class="sc-quiz__text" set:html={inlineMd(o)} />
+						<span class="sc-quiz__mark" aria-hidden="true">
+							<span class="sc-quiz__mark-yes" set:html={icons.check} />
+							<span class="sc-quiz__mark-no" set:html={icons.cross} />
+						</span>
+						<span class="sc-quiz__verdict sc-visually-hidden" />
+					</label>
+				))
+			}
+		</div>
+	</fieldset>
+	<div class="sc-quiz__check" hidden>
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--initial" data-check>Check answer</button>
+		<p class="sc-quiz__feedback" role="status" aria-live="polite"></p>
+	</div>
+	<details class="sc-quiz__answer" data-pagefind-ignore="all">
+		<summary>Show the answer</summary>
+		<div class="sc-quiz__answer-body">
+			<p class="sc-quiz__correct">
+				<strong>Answer {letter(answer)}:</strong> <span set:html={inlineMd(options[answer])} />
+			</p>
+			{Astro.slots.has('default') && <div class="sc-quiz__explain"><slot /></div>}
+		</div>
+	</details>
+</div>
+
+<script>
+	function enhance(quiz: HTMLElement) {
+		if (quiz.dataset.enhanced) return
+		quiz.dataset.enhanced = ''
+		const answer = Number(quiz.dataset.answer)
+		const check = quiz.querySelector<HTMLElement>('.sc-quiz__check')!
+		const button = quiz.querySelector<HTMLButtonElement>('[data-check]')!
+		const feedback = quiz.querySelector<HTMLElement>('.sc-quiz__feedback')!
+		const details = quiz.querySelector<HTMLDetailsElement>('.sc-quiz__answer')!
+		const options = [...quiz.querySelectorAll<HTMLLabelElement>('.sc-quiz__option')]
+		const letter = (i: number) => String.fromCharCode(65 + i)
+		check.hidden = false
+
+		const clear = () => {
+			quiz.removeAttribute('data-result')
+			feedback.textContent = ''
+			for (const o of options) {
+				o.classList.remove('is-right', 'is-wrong', 'is-answer')
+				o.querySelector('.sc-quiz__verdict')!.textContent = ''
+			}
+		}
+		quiz.addEventListener('change', (e) => {
+			if ((e.target as HTMLElement).matches('input[type="radio"]')) clear()
+		})
+		button.addEventListener('click', () => {
+			const chosen = options.findIndex((o) => o.querySelector<HTMLInputElement>('input')!.checked)
+			clear()
+			if (chosen < 0) {
+				feedback.textContent = 'Choose an answer first.'
+				quiz.dataset.result = 'none'
+				return
+			}
+			const right = chosen === answer
+			quiz.dataset.result = right ? 'right' : 'wrong'
+			options[chosen].classList.add(right ? 'is-right' : 'is-wrong')
+			options[chosen].querySelector('.sc-quiz__verdict')!.textContent = right ? ' (your answer, correct)' : ' (your answer, not correct)'
+			if (!right) {
+				options[answer].classList.add('is-answer')
+				options[answer].querySelector('.sc-quiz__verdict')!.textContent = ' (the correct answer)'
+			}
+			feedback.textContent = right ? 'Correct.' : `Not quite: the answer is ${letter(answer)}.`
+			details.open = true
+		})
+	}
+	const run = () => document.querySelectorAll<HTMLElement>('[data-sc-quiz]').forEach(enhance)
+	run()
+	document.addEventListener('astro:page-load', run)
+</script>
+
+<style>
+	.sc-quiz {
+		margin-block: 2rem;
+		max-width: var(--measure);
+		padding: 1.125rem 1.25rem 1.25rem;
+		border: 1px solid var(--c-rule-strong);
+		border-radius: var(--radius-frame);
+		background-color: var(--c-sheet);
+	}
+	.sc-quiz__set {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		min-width: 0;
+	}
+	.sc-quiz__q {
+		display: grid;
+		gap: 0.25rem;
+		padding: 0;
+		margin-bottom: 0.875rem;
+	}
+	.sc-quiz__question {
+		font-size: var(--text-lg);
+		font-weight: 700;
+		line-height: 1.35;
+		color: var(--c-ink);
+		text-wrap: pretty;
+	}
+	.sc-quiz :global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
+		padding: 0.05em 0.3em;
+		border-radius: var(--radius-xs);
+		background-color: var(--sl-color-bg-inline-code);
+		color: var(--c-ink);
+	}
+
+	.sc-quiz__options {
+		display: grid;
+		gap: 0.5rem;
+	}
+	.sc-quiz__option {
+		position: relative;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 0.75rem;
+		min-height: 2.75rem;
+		padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+		border: 1.5px solid var(--c-rule-strong);
+		border-radius: var(--radius-md);
+		background-color: var(--c-paper);
+		color: var(--c-text);
+		line-height: 1.45;
+		cursor: pointer;
+	}
+	.sc-quiz__option:hover {
+		border-color: var(--c-control);
+	}
+	/* The native radio stays in the accessibility tree and keyboard order; the letter shows its state. */
+	.sc-quiz__option input {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.sc-quiz__option:has(input:focus-visible) {
+		outline: 2px solid var(--c-accent-bright);
+		outline-offset: 2px;
+	}
+	/* The letter is drawn as a simple state; once chosen it gets the heavy outline of an initial state. */
+	.sc-quiz__letter {
+		display: inline-grid;
+		place-items: center;
+		width: 2rem;
+		height: 1.625rem;
+		border-radius: var(--radius-capsule);
+		border: 1.5px solid var(--sc-state-stroke);
+		background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+		color: var(--sc-state-text);
+		font-size: var(--text-xs);
+		font-weight: 800;
+	}
+	.sc-quiz__option:has(input:checked) {
+		border-color: var(--c-accent-bright);
+		background-color: var(--c-accent-soft);
+		color: var(--c-ink);
+	}
+	.sc-quiz__option:has(input:checked) .sc-quiz__letter {
+		border-width: 3px;
+	}
+	.sc-quiz__mark {
+		display: inline-grid;
+		width: 1.25rem;
+	}
+	.sc-quiz__mark > span {
+		display: none;
+	}
+	.sc-quiz__option.is-right {
+		border-color: var(--c-go);
+		background-color: var(--c-go-soft);
+	}
+	.sc-quiz__option.is-right .sc-quiz__mark-yes,
+	.sc-quiz__option.is-answer .sc-quiz__mark-yes {
+		display: inline-flex;
+		color: var(--c-go);
+	}
+	.sc-quiz__option.is-wrong {
+		border-color: var(--c-signal);
+		background-color: var(--c-signal-soft);
+	}
+	.sc-quiz__option.is-wrong .sc-quiz__mark-no {
+		display: inline-flex;
+		color: var(--c-signal);
+	}
+	.sc-quiz__option.is-answer {
+		border-color: var(--c-go);
+		border-style: dashed;
+	}
+
+	.sc-quiz__check {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 1rem;
+		margin-top: 1rem;
+	}
+	.sc-quiz__check[hidden] {
+		display: none;
+	}
+	.sc-quiz__feedback {
+		margin: 0;
+		font-weight: 700;
+		color: var(--c-ink);
+	}
+	[data-result='right'] .sc-quiz__feedback {
+		color: var(--c-go);
+	}
+	[data-result='wrong'] .sc-quiz__feedback {
+		color: var(--c-signal);
+	}
+
+	.sc-quiz__answer {
+		margin-top: 1rem;
+		border-top: 1px solid var(--c-rule);
+		padding-top: 0.75rem;
+	}
+	.sc-quiz__answer summary {
+		cursor: pointer;
+		font-size: var(--text-sm);
+		font-weight: 700;
+		color: var(--c-accent);
+	}
+	.sc-quiz__answer summary:hover {
+		color: var(--c-accent-strong);
+	}
+	.sc-quiz__answer-body {
+		margin-top: 0.75rem;
+		color: var(--c-text);
+	}
+	.sc-quiz__answer-body > * + *,
+	.sc-quiz__explain > :global(* + *) {
+		margin-top: 0.75rem;
+	}
+	.sc-quiz__correct {
+		margin: 0;
+	}
+	.sc-quiz__correct strong {
+		color: var(--c-ink);
+	}
+	.sc-quiz__explain :global(a) {
+		color: var(--c-accent);
+	}
+</style>

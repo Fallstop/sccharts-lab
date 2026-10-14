@@ -1,0 +1,9 @@
+scchart Thermostat {
+  input int temperature
+  output bool heating = false
+
+  initial state Idle
+    if temperature = 17 do heating = true go to Heating
+
+  state Heating
+}

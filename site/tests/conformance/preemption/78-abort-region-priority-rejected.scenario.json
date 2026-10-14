@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "The priority-based compiler does not support abort regions."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Support for abort regions is not enabled in this compilation chain!",
+  "system": "priority"
+}

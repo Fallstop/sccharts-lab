@@ -1,0 +1,102 @@
+{
+  "hash": "6fe21007cee203c409747ded816ab2dc4927e8c2",
+  "chart": "src/examples/advanced/references/bad-order-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "back": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "front": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "backRings": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "frontRings": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "front": false,
+        "back": false
+      },
+      "values": {
+        "back": false,
+        "front": false,
+        "backRings": 0,
+        "frontRings": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "front": true
+      },
+      "values": {
+        "back": false,
+        "front": true,
+        "backRings": 0,
+        "frontRings": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "front": false
+      },
+      "values": {
+        "back": false,
+        "front": false,
+        "backRings": 0,
+        "frontRings": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "back": true
+      },
+      "values": {
+        "back": true,
+        "front": false,
+        "backRings": 0,
+        "frontRings": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "back": false
+      },
+      "values": {
+        "back": false,
+        "front": false,
+        "backRings": 0,
+        "frontRings": 0
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz08 {
+  input bool t
+  output int a = 0, b = 0
+  region for i : 1 to 2 {
+    initial state R is Dz08C(t, a)
+  }
+}
+scchart Dz08C {
+  input bool g
+  output int c
+  initial state S
+  if g do c++ go to S
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 1300 }, "note": "The same chart, but now the environment ticks it every 1300 ms. Tick 1: `t` = 0. The timeout is 3000 away, but `sleepT` never asks for more than 1000: `sleepT` = 1000." },
+    { "inputs": { "deltaT": 1300 }, "note": "`t` = 1300. Still more than 1000 to go: `sleepT` = 1000." },
+    { "inputs": { "deltaT": 1300 }, "note": "`t` = 2600. Now the chart knows exactly when it wants to be woken: in 400 ms, `sleepT` = 400." },
+    { "inputs": { "deltaT": 1300 }, "note": "The environment ignored the request and waited 1300 ms: `t` = 3900 ≥ 3000, so `ring` comes on now, 900 ms late." }
+  ],
+  "expect": "ok"
+}

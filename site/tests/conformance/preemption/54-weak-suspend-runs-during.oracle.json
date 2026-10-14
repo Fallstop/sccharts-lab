@@ -1,0 +1,101 @@
+{
+  "hash": "5debeb7eeea8643898b9c0c7c613ad6faeabcf28",
+  "chart": "tests/conformance/preemption/54-weak-suspend-runs-during.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "moves": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "ticks": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "moves": 0,
+        "ticks": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "moves": 1,
+        "ticks": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "moves": 2,
+        "ticks": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "S": true,
+        "moves": 3,
+        "ticks": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "moves": 4,
+        "ticks": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

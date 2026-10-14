@@ -1,0 +1,22 @@
+scchart IIIRO {
+  input int I
+  input bool R
+  output bool O
+
+  initial state IIO {
+    entry do O = false
+
+    initial state II {
+      region main for i : 1 to 3 {
+        initial state IWait
+        if I == i go to IDone
+    
+        final state IDone
+      }
+    }
+    do O = true join to Done 
+        
+    state Done
+  }
+  if R go to IIO 
+}

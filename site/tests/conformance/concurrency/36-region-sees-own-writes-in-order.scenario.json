@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: nothing fires."
+    },
+    {
+      "inputs": {},
+      "note": "Inside one region, effects run in order: `sawZero = x == 0` reads the old `x` (true), then `x = 5`, then `y = x + 1` reads the new value (6). The immediate transition from `B` then sees `x == 5` in the same tick and makes `y = 60`."
+    },
+    {
+      "inputs": {},
+      "note": "In `C`: no change."
+    }
+  ],
+  "expect": "ok"
+}

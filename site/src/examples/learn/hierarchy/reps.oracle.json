@@ -1,0 +1,202 @@
+{
+  "hash": "fb4226569a6305f0c4e7083d84fa172cfe773cab",
+  "chart": "src/examples/learn/hierarchy/reps.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "press": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "rest": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "shown": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "press": false,
+        "rest": false
+      },
+      "values": {
+        "press": false,
+        "rest": false,
+        "shown": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "rest": false,
+        "shown": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "rest": false,
+        "shown": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "rest": false,
+        "shown": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "rest": false,
+        "shown": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "rest": true
+      },
+      "values": {
+        "press": false,
+        "rest": true,
+        "shown": 2
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "rest": false,
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "rest": false,
+        "shown": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "rest": false,
+        "shown": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "rest": false,
+        "shown": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "rest": false,
+        "shown": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

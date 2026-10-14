@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "again": false
+      },
+      "note": "Tick 1 enters **A**: its entry action runs (entries = 1, entryAt = 1)."
+    },
+    {
+      "inputs": {
+        "again": true
+      },
+      "note": "The self-loop fires. A is left and entered again: exit (exits = 1, exitAt = 2), effect (effectAt = 3), entry (entries = 2, entryAt = 4)."
+    },
+    {
+      "inputs": {
+        "again": false
+      },
+      "note": "No transition: nothing changes."
+    },
+    {
+      "inputs": {
+        "again": true
+      },
+      "note": "The self-loop fires again: exitAt = 5, effectAt = 6, entryAt = 7; entries = 3, exits = 2."
+    }
+  ],
+  "expect": "ok"
+}

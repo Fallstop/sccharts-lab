@@ -1,0 +1,12 @@
+scchart CountAbort {
+  input bool A
+  output int inner = 0, effect = 0
+
+  initial state M {
+    initial state I
+    if A do inner += 1 go to I
+  }
+  if 3 A do effect = 1 abort to Done
+
+  state Done
+}

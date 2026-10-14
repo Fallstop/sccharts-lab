@@ -1,0 +1,13 @@
+scchart SharedClock {
+  output int a = 0
+  output int b = 0
+  clock t = 0
+  region First {
+    initial state Wait
+    if t > 2 do t = 0; a = a + 1 go to Wait
+  }
+  region Second {
+    initial state Idle
+    if t > 4 do b = b + 1 go to Idle
+  }
+}

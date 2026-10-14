@@ -1,0 +1,74 @@
+{
+  "hash": "f5e0b3e617e5116934d275c73bbd55c810dc6469",
+  "chart": "tests/conformance/preemption/37-immediate-count-delay.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fired": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "fired": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "fired": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "fired": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "fired": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

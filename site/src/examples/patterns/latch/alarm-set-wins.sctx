@@ -1,0 +1,13 @@
+scchart AlarmSetWins {
+  input bool fault, ack
+  output bool alarm
+
+  initial state Normal
+    if fault go to Alarm
+
+  state Alarm {
+    entry do alarm = true
+    exit do alarm = false
+  }
+  if ack && !fault go to Normal
+}

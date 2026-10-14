@@ -1,0 +1,111 @@
+{
+  "hash": "86ce0866e65e531e3ec336688a7c8dcb90d9c2a4",
+  "chart": "tests/conformance/preemption/04-nesting-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "effectAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerEntryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerExitAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerExitAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "effectAt": 0,
+        "innerEntryAt": 2,
+        "innerExitAt": 0,
+        "outerEntryAt": 1,
+        "outerExitAt": 0,
+        "step": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "effectAt": 5,
+        "innerEntryAt": 2,
+        "innerExitAt": 3,
+        "outerEntryAt": 1,
+        "outerExitAt": 4,
+        "step": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "effectAt": 5,
+        "innerEntryAt": 2,
+        "innerExitAt": 3,
+        "outerEntryAt": 1,
+        "outerExitAt": 4,
+        "step": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

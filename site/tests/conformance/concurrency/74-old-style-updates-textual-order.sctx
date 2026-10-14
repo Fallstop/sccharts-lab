@@ -1,0 +1,18 @@
+// Old-style updates (`x = x <op> e`, the target read once) all carry the assignment operator `=`, so KIELER
+// treats any two of them as commuting, even when the result depends on their order. They are applied in the
+// textual order of the regions (not by region name, not by operator).
+scchart OldStyleOrder {
+  output int x = 1, y = 1
+
+  region Second {
+    initial state A
+    do x = x * 2; y = y + 3 go to B
+    state B
+  }
+
+  region First {
+    initial state A
+    do x = x + 3; y = y * 2 go to B
+    state B
+  }
+}

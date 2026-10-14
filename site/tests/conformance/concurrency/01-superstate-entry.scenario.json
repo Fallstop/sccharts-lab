@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "enter": false
+      },
+      "note": "Tick 1 enters `Outside`; its transition is delayed, so `step` stays 0."
+    },
+    {
+      "inputs": {
+        "enter": true
+      },
+      "note": "`enter` holds: `Outside` → `Inside`. Entering the superstate runs its entry action (`step = 1`) and enters its initial state `A` in the same tick; `A`'s immediate transition also fires (`step = 12`). `B`'s delayed transition waits."
+    },
+    {
+      "inputs": {
+        "enter": false
+      },
+      "note": "`B` → `C` fires a tick after `B` was entered: `step = 123`."
+    },
+    {
+      "inputs": {
+        "enter": false
+      },
+      "note": "`C` has no transitions: nothing changes (`step = 123`)."
+    }
+  ],
+  "expect": "ok"
+}

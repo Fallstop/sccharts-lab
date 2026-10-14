@@ -1,0 +1,12 @@
+// The trigger of an immediate transition.
+scchart CondNoElseImmediate {
+  input bool c, a
+  output int n = 0
+  initial state A
+    if true go to B
+  state B
+    immediate if (c) ? a do n++ go to C
+    go to A
+  state C
+    go to A
+}

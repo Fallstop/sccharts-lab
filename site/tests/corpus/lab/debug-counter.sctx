@@ -1,0 +1,20 @@
+scchart Counter {
+  input bool start
+  output int count = 0
+  output bool done = false
+
+  initial state Idle
+  if start go to Counting
+
+  state Counting {
+    initial state Tick
+    if count >= 3 go to Full
+    do count++ go to Tick
+
+    final state Full
+  }
+  do done = true join to Finished
+
+  state Finished
+  if !start do done = false; count = 0 go to Idle
+}

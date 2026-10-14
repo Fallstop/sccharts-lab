@@ -1,0 +1,14 @@
+scchart ConnectorNotImmediate {
+  input bool A
+  output int x = 0, y = 0
+
+  initial state S
+  do x = 1 go to C
+
+  connector state C
+  if A do y = 1 go to X
+  do y = 2 go to Y
+
+  state X
+  state Y
+}

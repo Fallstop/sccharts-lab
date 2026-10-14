@@ -1,0 +1,17 @@
+scchart Sign {
+  input int value
+  output int s = 0
+
+  method int sign(int v) {
+    if (v < 0) {
+      return -1
+    }
+    if (v > 0) {
+      return 1
+    }
+    return 0
+  }
+
+  initial state Watch
+    do s = sign(value) go to Watch
+}

@@ -1,0 +1,20 @@
+scchart ImmediateStrongAbort {
+  input bool S
+  output int outerEntry = 0, innerEntry = 0, chained = 0, innerExit = 0, outerExit = 0, effect = 0
+
+  initial state M {
+    entry do outerEntry = 1
+    exit do outerExit = 1
+
+    initial state I1 {
+      entry do innerEntry = 1
+      exit do innerExit = 1
+    }
+    immediate do chained = 1 go to I2
+
+    state I2
+  }
+  immediate if S do effect = 1 abort to Done
+
+  state Done
+}

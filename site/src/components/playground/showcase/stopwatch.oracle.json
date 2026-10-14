@@ -1,0 +1,276 @@
+{
+  "hash": "bbcb51b92a7a17d18ea5405e2fa42c596b6fbb0b",
+  "chart": "src/components/playground/showcase/stopwatch.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "clear": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "lap": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "startStop": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "display": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "time": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "startStop": false,
+        "clear": false,
+        "lap": false
+      },
+      "values": {
+        "clear": false,
+        "lap": false,
+        "startStop": false,
+        "display": 0,
+        "time": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "startStop": true
+      },
+      "values": {
+        "clear": false,
+        "lap": false,
+        "startStop": true,
+        "display": 0,
+        "time": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "startStop": false
+      },
+      "values": {
+        "clear": false,
+        "lap": false,
+        "startStop": false,
+        "display": 1,
+        "time": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "clear": false,
+        "lap": false,
+        "startStop": false,
+        "display": 2,
+        "time": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "lap": true
+      },
+      "values": {
+        "clear": false,
+        "lap": true,
+        "startStop": false,
+        "display": 3,
+        "time": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "lap": false
+      },
+      "values": {
+        "clear": false,
+        "lap": false,
+        "startStop": false,
+        "display": 3,
+        "time": 4
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "clear": false,
+        "lap": false,
+        "startStop": false,
+        "display": 3,
+        "time": 5
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "lap": true
+      },
+      "values": {
+        "clear": false,
+        "lap": true,
+        "startStop": false,
+        "display": 6,
+        "time": 6
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "lap": false,
+        "startStop": true
+      },
+      "values": {
+        "clear": false,
+        "lap": false,
+        "startStop": true,
+        "display": 7,
+        "time": 7
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "startStop": false,
+        "clear": true
+      },
+      "values": {
+        "clear": true,
+        "lap": false,
+        "startStop": false,
+        "display": 0,
+        "time": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "clear": false
+      },
+      "values": {
+        "clear": false,
+        "lap": false,
+        "startStop": false,
+        "display": 0,
+        "time": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

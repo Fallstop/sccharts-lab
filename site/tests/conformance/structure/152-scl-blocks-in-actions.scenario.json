@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Tick 1 enters S: the entry block runs: **e = 1, d = 0**."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "The during block (delayed): **d = 1**."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "d = 2, then S is left: the exit block sets x = 20, then the transition: p = 1, q = 2, x = 22: **x = 22, p = 1, q = 2**."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "T goes back to S: the entry block runs again: **e = 2, d = 0**."
+    }
+  ],
+  "expect": "ok"
+}

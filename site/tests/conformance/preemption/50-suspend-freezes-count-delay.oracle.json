@@ -1,0 +1,115 @@
+{
+  "hash": "67ebfd228e224c42ee13546cb22a132b5e7768fe",
+  "chart": "tests/conformance/preemption/50-suspend-freezes-count-delay.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fired": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "S": false,
+        "fired": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "S": false,
+        "fired": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "A": true,
+        "S": true,
+        "fired": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "S": true,
+        "fired": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "A": true,
+        "S": false,
+        "fired": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "S": false,
+        "fired": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

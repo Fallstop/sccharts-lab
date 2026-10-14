@@ -1,0 +1,93 @@
+{
+  "hash": "1fb5c4b3240ee15f8068c40a1df001a929e626d5",
+  "chart": "src/examples/advanced/methods/methods.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_percent_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_tooHot_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "reading": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "hot": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "shown": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reading": 42
+      },
+      "values": {
+        "reading": 42,
+        "hot": false,
+        "shown": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "reading": 250
+      },
+      "values": {
+        "reading": 250,
+        "hot": true,
+        "shown": 100
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "reading": -7
+      },
+      "values": {
+        "reading": -7,
+        "hot": false,
+        "shown": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "reading": 90
+      },
+      "values": {
+        "reading": 90,
+        "hot": true,
+        "shown": 90
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

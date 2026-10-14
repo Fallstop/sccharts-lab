@@ -1,0 +1,15 @@
+{
+  "needs": [
+    "c-hostcode"
+  ],
+  "ticks": [
+    {
+      "inputs": {
+        "a": -5
+      },
+      "note": "Rejected by gcc: \"implicit declaration of function ‘abs’ [-Wimplicit-function-declaration]\" and \"Compiler did not return success (exit value != 0)\"."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "implicit declaration of function"
+}

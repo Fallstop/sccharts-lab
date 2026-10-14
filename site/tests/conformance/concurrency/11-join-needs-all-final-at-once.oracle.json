@@ -1,0 +1,157 @@
+{
+  "hash": "95c7c3b6a409d2ec36e3e0ecd15779e9e5f83fde",
+  "chart": "tests/conformance/concurrency/11-join-needs-all-final-at-once.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "done": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "done": true
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "done": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

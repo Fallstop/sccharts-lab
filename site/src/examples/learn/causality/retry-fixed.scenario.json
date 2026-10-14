@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": {}, "note": "Tick 1 enters `Try`. The self-loop is delayed now, so it waits." },
+    { "inputs": {}, "note": "One try per tick: the self-loop fires, `tries` is 1, and `Try` is entered again for the next tick." },
+    { "inputs": {}, "note": "The second try: `tries` is 2." },
+    { "inputs": {}, "note": "The third try: `tries` is 3." },
+    { "inputs": {}, "note": "`tries < 3` is false: the chart rests in `Try`." }
+  ],
+  "expect": "ok"
+}

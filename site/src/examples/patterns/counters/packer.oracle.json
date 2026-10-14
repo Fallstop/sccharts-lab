@@ -1,0 +1,255 @@
+{
+  "hash": "bebe4e85c3841c09684bc664683923c2802d5708",
+  "chart": "src/examples/patterns/counters/packer.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "sensor": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "boxFull": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "inBox": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "sensor": false
+      },
+      "values": {
+        "sensor": false,
+        "boxFull": false,
+        "inBox": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "sensor": true
+      },
+      "values": {
+        "sensor": true,
+        "boxFull": false,
+        "inBox": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "sensor": false
+      },
+      "values": {
+        "sensor": false,
+        "boxFull": false,
+        "inBox": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "sensor": true
+      },
+      "values": {
+        "sensor": true,
+        "boxFull": false,
+        "inBox": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "sensor": true
+      },
+      "values": {
+        "sensor": true,
+        "boxFull": false,
+        "inBox": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "sensor": false
+      },
+      "values": {
+        "sensor": false,
+        "boxFull": false,
+        "inBox": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "sensor": true
+      },
+      "values": {
+        "sensor": true,
+        "boxFull": false,
+        "inBox": 3
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "sensor": false
+      },
+      "values": {
+        "sensor": false,
+        "boxFull": false,
+        "inBox": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "sensor": true
+      },
+      "values": {
+        "sensor": true,
+        "boxFull": true,
+        "inBox": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "sensor": false
+      },
+      "values": {
+        "sensor": false,
+        "boxFull": false,
+        "inBox": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "sensor": true
+      },
+      "values": {
+        "sensor": true,
+        "boxFull": false,
+        "inBox": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "sensor": false
+      },
+      "values": {
+        "sensor": false,
+        "boxFull": false,
+        "inBox": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "sensor": true
+      },
+      "values": {
+        "sensor": true,
+        "boxFull": false,
+        "inBox": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "sensor": false
+      },
+      "values": {
+        "sensor": false,
+        "boxFull": false,
+        "inBox": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

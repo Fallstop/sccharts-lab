@@ -1,0 +1,9 @@
+scchart Counter {
+  input bool tick
+  output int count = 0
+  output bool wrap = false
+
+  initial state Counting
+    if tick && count == 9 do count = 0; wrap = true go to Counting
+    if tick do count++; wrap = false go to Counting
+}

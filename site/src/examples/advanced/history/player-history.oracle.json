@@ -1,0 +1,224 @@
+{
+  "hash": "8b5fe588810d47d0d5474aedd0fb3b547d1b7f67",
+  "chart": "src/examples/advanced/history/player-history.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HPlaying is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "call": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "hangUp": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "track": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "next": false,
+        "call": false,
+        "hangUp": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": false,
+        "track": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": true,
+        "track": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "next": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": false,
+        "track": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "call": true
+      },
+      "values": {
+        "call": true,
+        "hangUp": false,
+        "next": false,
+        "track": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "call": false,
+        "hangUp": true
+      },
+      "values": {
+        "call": false,
+        "hangUp": true,
+        "next": false,
+        "track": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "hangUp": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": false,
+        "track": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "next": true,
+        "call": true
+      },
+      "values": {
+        "call": true,
+        "hangUp": false,
+        "next": true,
+        "track": 0
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "next": false,
+        "call": false,
+        "hangUp": true
+      },
+      "values": {
+        "call": false,
+        "hangUp": true,
+        "next": false,
+        "track": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "hangUp": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": false,
+        "track": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

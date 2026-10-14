@@ -1,0 +1,13 @@
+// A code effect "do { ... }" is an anonymous method body: statements run in order, with SCL syntax (";" after
+// each statement, if/else allowed).
+scchart St76Block {
+  output int a = 0, b = 0
+  initial state S
+  do {
+    a++;
+    b = a * 2;
+    if (a > 2) {
+      b = 0;
+    }
+  } go to S
+}

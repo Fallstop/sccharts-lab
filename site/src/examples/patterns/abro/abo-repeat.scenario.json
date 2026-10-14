@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false }, "note": "Tick 1 enters `WaitAB`." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` finishes." },
+    { "inputs": { "A": false, "B": true }, "note": "`B`: the join emits `O` and goes back to `WaitAB`, which is entered afresh." },
+    { "inputs": { "B": false }, "note": "`WaitAB` waits for a new `A` and `B`." },
+    { "inputs": { "A": true, "B": true }, "note": "Both in one tick: `O` again." },
+    { "inputs": { "A": true, "B": true }, "note": "Still both: `WaitAB` was re-entered in the last tick, so its regions react to this tick's `A` and `B`: `O` once more." },
+    { "inputs": { "A": false, "B": false }, "note": "Quiet." }
+  ],
+  "expect": "ok"
+}

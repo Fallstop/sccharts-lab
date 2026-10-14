@@ -1,0 +1,13 @@
+scchart Grouping {
+  input int A
+  input bool B
+  output int wrong, right, plus, masked, maskedRight
+
+  immediate during do wrong = A > 2 ? A : 0
+  immediate during do right = (A > 2) ? A : 0
+  immediate during do plus = B ? 10 : 20 + 1
+  immediate during do masked = A & 3 == 2
+  immediate during do maskedRight = (A & 3) == 2
+
+  initial state Calc
+}

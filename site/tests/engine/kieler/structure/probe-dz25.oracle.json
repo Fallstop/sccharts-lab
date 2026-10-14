@@ -1,0 +1,76 @@
+{
+  "hash": "d4e1b87c5e03c97bdab5d93894a1db084a12af66",
+  "chart": "tests/engine/kieler/structure/probe-dz25.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _Dz25_local_seq0 is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads I, so the compiler treats it as an update of I (a relative write, as in the deprecated old SC syntax).\nWrite it as I += 0 to say so. In one region it means the same.\nIt only matters when another region also writes I in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 11,
+      "column": 8
+    }
+  ],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 0
+      },
+      "values": {
+        "I": 0,
+        "X": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "X": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "X": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

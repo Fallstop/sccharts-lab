@@ -1,0 +1,173 @@
+{
+ "sourceHash": "4c29eaab849c480b",
+ "states": [
+  {
+   "path": [
+    "Blinker"
+   ],
+   "rows": [
+    [
+     "Blinker"
+    ],
+    [
+     "output int ",
+     "phase = 0"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    435.9,
+    242.4
+   ]
+  },
+  {
+   "path": [
+    "Blinker",
+    0,
+    "Slow"
+   ],
+   "rows": [
+    [
+     "Slow"
+    ]
+   ],
+   "box": [
+    10,
+    95.4,
+    53.8,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Blinker",
+    0,
+    "Fast"
+   ],
+   "rows": [
+    [
+     "Fast"
+    ]
+   ],
+   "box": [
+    180.4,
+    60.1,
+    49.8,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Blinker",
+    0,
+    "Pause"
+   ],
+   "rows": [
+    [
+     "Pause"
+    ]
+   ],
+   "box": [
+    350.8,
+    95.4,
+    62.3,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Blinker",
+    0
+   ],
+   "label": [],
+   "rows": [
+    [
+     "clock ",
+     "x = 0"
+    ]
+   ],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    49.4,
+    422.3,
+    187.4
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NBlinker$$N0$NSlow$EFast0",
+   "source": [
+    "Blinker",
+    0,
+    "Slow"
+   ],
+   "target": [
+    "Blinker",
+    0,
+    "Fast"
+   ],
+   "text": "x > 10 / x = 0; phase = 1",
+   "lines": [
+    "x > 10",
+    "/ x = 0;",
+    "  phase = 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NBlinker$$N0$NFast$EPause0",
+   "source": [
+    "Blinker",
+    0,
+    "Fast"
+   ],
+   "target": [
+    "Blinker",
+    0,
+    "Pause"
+   ],
+   "text": "x > 5 / x = 0; phase = 2",
+   "lines": [
+    "x > 5",
+    "/ x = 0;",
+    "  phase = 2"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NBlinker$$N0$NPause$ESlow0",
+   "source": [
+    "Blinker",
+    0,
+    "Pause"
+   ],
+   "target": [
+    "Blinker",
+    0,
+    "Slow"
+   ],
+   "text": "x > 3 / x = 0; phase = 0",
+   "lines": [
+    "x > 3",
+    "/ x = 0;",
+    "  phase = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

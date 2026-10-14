@@ -1,0 +1,22 @@
+{
+  "hash": "fbf3474ecf2911e484e8f340e2412e062d6b2985",
+  "chart": "tests/conformance/concurrency/59-val-then-emit-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g4b to _g7",
+    "Can't schedule from _g7 to _cg7",
+    "Can't schedule from _g4 to _g8",
+    "Can't schedule from _g8 to _g4",
+    "Can't schedule from _g4 to _g4b",
+    "Can't schedule from _g4b to _g2",
+    "Can't schedule from _g7 to _g10",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "ticks": []
+}

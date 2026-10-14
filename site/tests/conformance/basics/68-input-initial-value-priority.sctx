@@ -1,0 +1,10 @@
+scchart InputInitialValuePriority {
+  input int I = 42
+  input int J = 42
+  input bool B = true
+  output int x, y
+  output bool b
+
+  initial state A
+  do x = I; y = J; b = B go to A
+}

@@ -1,0 +1,80 @@
+{
+  "hash": "6f115ce7173c49523e98da1739c3b105c0719876",
+  "chart": "tests/engine/kieler/probe-sfr-d.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 2,
+      "column": 20
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "done": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "done": false
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

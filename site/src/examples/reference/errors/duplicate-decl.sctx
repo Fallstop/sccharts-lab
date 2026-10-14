@@ -1,0 +1,8 @@
+scchart DuplicateDecl {
+  input bool A
+  output int count
+  output int count
+
+  initial state Idle
+    if A do count++ go to Idle
+}

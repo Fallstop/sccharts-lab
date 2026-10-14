@@ -1,0 +1,8 @@
+// Inputs too: a[2] of input int a[2] is the input z.
+scchart OverflowInput {
+  input int a[2]
+  input int z
+  output int r = 0
+  initial state Run
+    do r = a[2] go to Run
+}

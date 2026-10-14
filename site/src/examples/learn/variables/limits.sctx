@@ -1,0 +1,8 @@
+scchart Limits {
+  input int flow, drain
+  output int volume = 0
+  const int CAPACITY = 500
+
+  initial state Filling
+    do volume += flow - drain go to Filling
+}

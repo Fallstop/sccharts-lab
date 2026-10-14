@@ -1,0 +1,71 @@
+{
+  "hash": "195b17bfc10c0446b4b5edb82caaf05fde6f30d0",
+  "chart": "src/examples/reference/errors/emit-valued-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Valued input signals currently do not support emission (overwriting).",
+      "line": 6,
+      "column": 36
+    }
+  ],
+  "interface": {
+    "level": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "level_val": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "seen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "level": true,
+        "level_val": 7
+      },
+      "values": {
+        "level": true,
+        "level_val": 7,
+        "seen": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "level": true,
+        "level_val": 7,
+        "seen": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

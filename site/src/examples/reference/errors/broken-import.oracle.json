@@ -1,0 +1,39 @@
+{
+  "hash": "4de9275105ed81f693e0d406bf64262e40cc60a0",
+  "chart": "src/examples/reference/errors/broken-import.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Broken Import: There is no SCCharts model with the given name.",
+      "line": 1,
+      "column": 8
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

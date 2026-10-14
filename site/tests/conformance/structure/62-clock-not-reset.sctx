@@ -1,0 +1,10 @@
+// Without a reset the clock keeps counting: after the first timeout every later test is already true, so the
+// chart toggles every tick.
+scchart St62Runaway {
+  output bool on = false
+  clock t
+  initial state Off
+  if t >= 500 do on = true go to On
+  state On
+  if t >= 200 do on = false go to Off
+}

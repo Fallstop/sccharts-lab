@@ -1,0 +1,16 @@
+scchart SuspendSkipsEntry {
+  input bool G
+  output int entries = 0, exits = 0
+
+  initial state M {
+    suspend if false
+    entry do entries += 1
+    exit do exits += 1
+
+    initial state I
+  }
+  if G go to N
+
+  state N
+  if G go to M
+}

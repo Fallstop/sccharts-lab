@@ -1,0 +1,496 @@
+/*
+ * SCCharts diagrams in KIELER's notation (markup from src/diagram/render.ts).
+ *
+ * Colours come only from the --sc-* custom properties of the site theme (src/styles/tokens.css); the
+ * fallbacks are KIELER's own light colours, so a diagram also looks right without the theme.
+ *
+ * Highlight classes a simulation toggles on elements with a data-id:
+ *   is-active   state active after the tick            is-taken   transition fired this tick
+ *   is-entered  state entered this tick                is-exited  state left this tick
+ *   is-focus    linked with the cursor in the source   is-error   named by a diagnostic
+ *   is-dimmed   de-emphasised
+ * Every highlight changes more than the colour (stroke width, glow, a tint, a marker). No highlight of the
+ * simulation dashes anything: in KIELER's notation a dashed transition is an immediate one, so each edge keeps
+ * its own dash pattern (an immediate transition that fired stays dashed, a delayed one solid). Only is-focus (the
+ * pointer or keyboard, not the simulation) outlines a state with dashes; it draws transitions solid.
+ */
+
+/* ----- Canvas and text ----------------------------------------------------------------------------- */
+
+.sc-diagram {
+	overflow: visible;
+	font-family: var(--sc-font, 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', system-ui, sans-serif);
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+.sc-diagram text {
+	/* The layout measures text without kerning or ligatures; render it the same way. */
+	font-kerning: none;
+	font-variant-ligatures: none;
+	font-feature-settings: 'kern' 0, 'liga' 0, 'calt' 0;
+	font-optical-sizing: none;
+	letter-spacing: 0;
+	word-spacing: 0;
+	text-rendering: geometricPrecision;
+	white-space: pre;
+	fill: var(--sc-decl-text, #000);
+	font-weight: 400;
+}
+
+.sc-diagram .sc-bold,
+.sc-diagram .sc-kw {
+	font-weight: 700;
+}
+.sc-diagram .sc-kw,
+.sc-diagram .sc-hl {
+	fill: var(--sc-keyword, #730041);
+}
+.sc-diagram .sc-sd {
+	fill: #28997e;
+}
+.sc-diagram .sc-mono {
+	font-family: var(--sc-font-mono, 'Atkinson Hyperlegible Mono Variable', 'Atkinson Hyperlegible Mono', ui-monospace, monospace);
+}
+
+.sc-diagram .sc-title,
+.sc-diagram .sc-state-label {
+	fill: var(--sc-state-text, #000);
+}
+.sc-diagram .sc-action {
+	fill: var(--sc-action-text, #000);
+}
+.sc-diagram .sc-region-label {
+	fill: var(--sc-region-label, #696969);
+}
+.sc-diagram .sc-edge-label {
+	fill: var(--sc-edge-label, #000);
+}
+.sc-diagram .sc-comment {
+	fill: var(--sc-comment-text, #000);
+}
+
+/* ----- States -------------------------------------------------------------------------------------- */
+
+/* Simple states and superstates: KIELER's grey outline, in the token that keeps it visible on both grounds. */
+.sc-diagram .sc-shape {
+	stroke: var(--sc-state-outline, var(--sc-region-stroke, #bebebe));
+	stroke-width: 1;
+	transition: stroke 120ms ease-out, fill 120ms ease-out, stroke-width 120ms ease-out;
+}
+.sc-diagram .sc-initial > .sc-shape,
+.sc-diagram .sc-final > .sc-shape {
+	stroke: var(--sc-state-stroke, #000);
+}
+/* KIELER: initial states have a 3 px border (the outer one, for final initial states). */
+.sc-diagram .sc-initial > .sc-shape:not(.sc-final-inner) {
+	stroke-width: 3;
+}
+.sc-diagram .sc-halt > .sc-shape {
+	stroke: var(--sc-state-stroke, #000);
+}
+.sc-diagram .sc-halt > .sc-final-outer {
+	stroke-width: 2;
+}
+/* The outer ring of a final state is drawn on the background colour. */
+.sc-diagram .sc-final > .sc-final-outer {
+	fill: var(--sc-region-fill, #fff);
+}
+.sc-diagram .sc-final > .sc-final-inner {
+	stroke-width: 1;
+}
+.sc-diagram .sc-connector > .sc-shape {
+	fill: var(--sc-state-stroke, #000);
+	stroke: var(--sc-state-stroke, #000);
+}
+.sc-diagram .sc-shadow {
+	fill: var(--sc-edge, #000);
+	opacity: 0.12;
+	pointer-events: none;
+}
+
+/* Fills: KIELER's vertical gradient as the end colour under the top colour faded out by a mask. */
+.sc-diagram .sc-shape {
+	fill: none;
+}
+.sc-diagram .sc-root > .sc-shape {
+	fill: var(--sc-root-fill, #f8f9fd);
+	stroke: var(--sc-root-stroke, #bebebe);
+}
+.sc-diagram .sc-fill-top,
+.sc-diagram .sc-fill {
+	stroke: none;
+	pointer-events: none;
+	transition: fill 120ms ease-out;
+}
+.sc-diagram .sc-fill { fill: var(--sc-state-fill-end, #cddcf3); }
+.sc-diagram .sc-fill-top { fill: var(--sc-state-fill, #f8f9fd); }
+.sc-diagram .sc-superstate > .sc-fill { fill: var(--sc-superstate-fill-end, #cddcf3); }
+.sc-diagram .sc-superstate > .sc-fill-top { fill: var(--sc-superstate-fill, #f8f9fd); }
+/* KIELER draws reference states with a violet gradient and violation states with a red one. */
+.sc-diagram .sc-reference > .sc-fill { fill: color-mix(in srgb, var(--sc-superstate-fill-end, #e6cbf2) 70%, #b05cd6); }
+.sc-diagram .sc-reference > .sc-fill-top { fill: color-mix(in srgb, var(--sc-superstate-fill, #fcf7fc) 88%, #b05cd6); }
+.sc-diagram .sc-violation > .sc-fill { fill: color-mix(in srgb, var(--sc-state-fill-end, #f5a0a3) 45%, #f5a0a3); }
+.sc-diagram .sc-violation > .sc-fill-top { fill: color-mix(in srgb, var(--sc-state-fill, #fdf4f0) 85%, #f5a0a3); }
+
+/* ----- Regions ------------------------------------------------------------------------------------- */
+
+.sc-diagram .sc-region-frame {
+	fill: var(--sc-region-fill, #fff);
+	stroke: var(--sc-region-stroke, #bebebe);
+	stroke-width: 1;
+}
+.sc-diagram .sc-region-frame-inner {
+	fill: none;
+}
+.sc-diagram .sc-abort-region > .sc-region-frame {
+	stroke: var(--sc-strong-abort, #f00);
+	stroke-width: 1.3;
+}
+.sc-diagram .sc-override-region > .sc-region-frame {
+	stroke: #aad400;
+	stroke-width: 1.3;
+}
+.sc-diagram .sc-reference > .sc-region > .sc-region-frame,
+.sc-diagram .sc-reference-region > .sc-region-frame {
+	stroke: #efa2ff;
+	stroke-width: 1.3;
+}
+/* MethodSynthesis: methods are grey regions (METHOD_BACKGROUND / METHOD_FOREGROUND), dashed when abstract. */
+.sc-diagram .sc-method > .sc-region-frame {
+	fill: color-mix(in srgb, var(--sc-region-fill, #fff) 85%, var(--sc-region-stroke, #bebebe));
+	stroke: color-mix(in srgb, var(--sc-region-stroke, #bebebe) 40%, var(--sc-state-stroke, #000));
+}
+.sc-diagram .sc-method-abstract > .sc-region-frame {
+	stroke-dasharray: 4 2;
+}
+.sc-diagram .sc-region-corner {
+	fill: var(--sc-region-stroke, #bebebe);
+}
+.sc-diagram .sc-region-corner-mark {
+	stroke: var(--sc-region-fill, #fff);
+	stroke-width: 1.4;
+	fill: none;
+}
+
+/* ----- Transitions --------------------------------------------------------------------------------- */
+
+.sc-diagram .sc-edge,
+.sc-diagram .sc-edge-hit {
+	fill: none;
+	stroke-linecap: butt;
+}
+.sc-diagram .sc-edge {
+	stroke: var(--sc-edge, #000);
+	stroke-width: 2;
+	transition: stroke 120ms ease-out, stroke-width 120ms ease-out;
+}
+.sc-diagram .sc-immediate > .sc-edge {
+	stroke-dasharray: 7 3;
+}
+.sc-diagram .sc-edge-hit {
+	stroke: transparent;
+	stroke-width: 12;
+	pointer-events: stroke;
+}
+.sc-diagram .sc-arrow {
+	fill: var(--sc-edge, #000);
+	stroke: var(--sc-edge, #000);
+	stroke-width: 2;
+	stroke-linejoin: round;
+}
+.sc-diagram .sc-nondeterministic > .sc-edge { stroke: #ea9a56; }
+.sc-diagram .sc-nondeterministic > .sc-arrow { fill: #ea9a56; stroke: #ea9a56; }
+.sc-diagram .sc-probabilistic > .sc-edge { stroke: #5c9ad3; }
+.sc-diagram .sc-probabilistic > .sc-arrow { fill: #5c9ad3; stroke: #5c9ad3; }
+
+.sc-diagram .sc-strong-marker {
+	fill: var(--sc-strong-abort, #f00);
+	stroke: var(--sc-region-stroke, #bebebe);
+	stroke-width: 1;
+}
+.sc-diagram .sc-termination-marker {
+	fill: var(--sc-termination, #0f0);
+	stroke: var(--sc-region-stroke, #bebebe);
+	stroke-width: 1;
+	stroke-linejoin: round;
+}
+.sc-diagram .sc-history-marker circle {
+	fill: var(--sc-history, #3c3c3c);
+}
+.sc-diagram .sc-history-letter,
+.sc-diagram .sc-history-star {
+	fill: none;
+	stroke: var(--sc-region-fill, #fff);
+	stroke-width: 2;
+}
+.sc-diagram .sc-history-star {
+	stroke-width: 1.2;
+}
+.sc-diagram .sc-deferred-marker circle {
+	fill: var(--sc-strong-abort, #f00);
+	stroke: var(--sc-region-stroke, #bebebe);
+	stroke-width: 1;
+}
+.sc-diagram .sc-deferred-star {
+	stroke: var(--sc-region-fill, #fff);
+	stroke-width: 1;
+}
+
+/* On-edge labels (KIELER's default "Label Side: On edge"). */
+.sc-diagram .sc-label-bg {
+	fill: var(--sc-edge-label-bg, rgb(255 255 255 / 0.86));
+}
+.sc-diagram .sc-label-bars {
+	stroke: var(--sc-region-stroke, #bebebe);
+	stroke-width: 1;
+	fill: none;
+}
+.sc-diagram .sc-label-arrow {
+	fill: var(--sc-region-stroke, #bebebe);
+}
+
+/* ----- Comments and dataflow ------------------------------------------------------------------------- */
+
+.sc-diagram .sc-comment-box {
+	fill: var(--sc-comment-fill, #ffffcc);
+	stroke: var(--sc-comment-stroke, #f0f024);
+	stroke-width: 1;
+}
+.sc-diagram .sc-comment-edge {
+	fill: none;
+	stroke: var(--sc-comment-stroke, #f0f024);
+	stroke-width: 1;
+}
+.sc-diagram .sc-df-shape {
+	fill: var(--sc-state-fill-end, #cddcf3);
+	stroke: var(--sc-region-stroke, #bebebe);
+	stroke-width: 1;
+}
+.sc-diagram .sc-df-operator > .sc-df-shape {
+	fill: var(--sc-state-fill, #f8f9fd);
+}
+.sc-diagram .sc-df-actor > .sc-df-shape {
+	fill: color-mix(in srgb, var(--sc-superstate-fill-end, #e6cbf2) 70%, #b05cd6);
+}
+.sc-diagram .sc-df-divider {
+	stroke: var(--sc-region-stroke, #bebebe);
+	stroke-width: 1;
+}
+.sc-diagram .sc-df-port {
+	fill: var(--sc-region-label, #696969);
+}
+.sc-diagram .sc-wire {
+	fill: none;
+	stroke: var(--sc-edge, #000);
+	stroke-width: 1;
+}
+
+/* ----- Highlights ---------------------------------------------------------------------------------- */
+
+/* Active state: a thick border in the signal colour with a glow. The root is always active, so it stays calm. */
+.sc-diagram .sc-state.is-active:not(.sc-root) > .sc-shape {
+	stroke: var(--sc-active-stroke, #d3202f);
+	stroke-width: 3;
+	filter: drop-shadow(0 0 4px var(--sc-active-glow, rgb(211 32 47 / 0.45)));
+}
+.sc-diagram .sc-state.is-active.sc-initial > .sc-shape {
+	stroke-width: 4.5;
+}
+.sc-diagram .sc-simple.is-active > .sc-fill,
+.sc-diagram .sc-simple.is-active > .sc-fill-top {
+	fill: var(--sc-active-fill, #ffe9ec);
+}
+.sc-diagram .sc-final.is-active > .sc-final-inner {
+	stroke: var(--sc-active-stroke, #d3202f);
+	stroke-width: 1.5;
+	filter: none;
+}
+.sc-diagram .sc-connector.is-active > .sc-shape {
+	fill: var(--sc-active-stroke, #d3202f);
+}
+.sc-diagram .sc-state.is-active > .sc-state-label {
+	font-weight: 800;
+}
+
+/* Entered this tick: a short pulse of the entry colour around an active state. */
+.sc-diagram .sc-state.is-entered:not(.sc-root) > .sc-shadow {
+	fill: var(--sc-entered, #2b6cc4);
+	opacity: 0.35;
+	animation: sc-entered 900ms ease-out 1;
+}
+/* Left this tick (or entered and left again within it: a transient state of an immediate chain): a solid outline
+ * in the entry colour and a tint of it that fades, never dashes (dashes are the notation of immediate transitions). */
+.sc-diagram .sc-state.is-exited:not(.is-active):not(.sc-root) > .sc-shape {
+	stroke: var(--sc-entered, #2b6cc4);
+	stroke-width: 2;
+}
+.sc-diagram .sc-state.is-exited:not(.is-active):not(.sc-root) > :is(.sc-fill, .sc-fill-top) {
+	fill: color-mix(in srgb, var(--sc-entered, #2b6cc4) 16%, var(--sc-state-fill, #f8f9fd));
+	animation: sc-exited 1200ms ease-out 1;
+}
+.sc-diagram .sc-superstate.is-exited:not(.is-active):not(.sc-root) > :is(.sc-fill, .sc-fill-top) {
+	fill: color-mix(in srgb, var(--sc-entered, #2b6cc4) 8%, var(--sc-superstate-fill, #f8f9fd));
+}
+
+/* Taken transition: the 'taken' colour, a heavier stroke and a glow (and the one-off pulse along it when it fires,
+ * .sc-edge-pulse below). Its dash pattern stays its own: solid when delayed, dashed when immediate. */
+.sc-diagram .sc-transition.is-taken > .sc-edge {
+	stroke: var(--sc-taken, #2b6cc4);
+	stroke-width: 4;
+	filter: drop-shadow(0 0 3px color-mix(in srgb, var(--sc-taken, #2b6cc4) 55%, transparent));
+}
+.sc-diagram .sc-transition.is-taken > .sc-arrow {
+	fill: var(--sc-taken, #2b6cc4);
+	stroke: var(--sc-taken, #2b6cc4);
+	stroke-width: 2.5;
+}
+.sc-diagram .sc-transition.is-taken .sc-label-bg {
+	stroke: var(--sc-taken, #2b6cc4);
+	stroke-width: 1.5;
+}
+.sc-diagram .sc-transition.is-taken .sc-label-bars {
+	stroke: var(--sc-taken, #2b6cc4);
+}
+
+/* Focus (linked with the source code): an outline in the keyword colour. */
+.sc-diagram .sc-state.is-focus > .sc-shape,
+.sc-diagram .sc-region.is-focus > .sc-region-frame {
+	stroke: var(--sc-keyword, #730041);
+	stroke-width: 2.5;
+	stroke-dasharray: 6 3;
+}
+.sc-diagram .sc-transition.is-focus > .sc-edge {
+	stroke: var(--sc-keyword, #730041);
+	stroke-width: 3.5;
+}
+.sc-diagram .sc-transition.is-focus > .sc-arrow {
+	fill: var(--sc-keyword, #730041);
+	stroke: var(--sc-keyword, #730041);
+}
+.sc-diagram .sc-transition.is-focus .sc-label-bg {
+	stroke: var(--sc-keyword, #730041);
+	stroke-width: 1.5;
+}
+.sc-diagram text.is-focus {
+	text-decoration: underline;
+	text-decoration-thickness: 1.5px;
+	font-weight: 700;
+}
+
+/* Error: a solid stroke in the diagnostic colour with a glow, and a marker (a disc with "!", .sc-error-marker, added
+ * by src/components/sim/link.ts markErrors next to the state or the transition's label or arrowhead). */
+.sc-diagram .sc-state.is-error > .sc-shape,
+.sc-diagram .sc-region.is-error > .sc-region-frame {
+	stroke: var(--sc-error, #e8590c);
+	stroke-width: 3;
+	stroke-dasharray: none;
+	filter: drop-shadow(0 0 3px color-mix(in srgb, var(--sc-error, #e8590c) 60%, transparent));
+}
+.sc-diagram .sc-transition.is-error > .sc-edge {
+	stroke: var(--sc-error, #e8590c);
+	stroke-width: 3.5;
+	filter: drop-shadow(0 0 3px color-mix(in srgb, var(--sc-error, #e8590c) 55%, transparent));
+}
+.sc-diagram .sc-transition.is-error > .sc-arrow {
+	fill: var(--sc-error, #e8590c);
+	stroke: var(--sc-error, #e8590c);
+}
+.sc-diagram .sc-transition.is-error .sc-label-bg {
+	stroke: var(--sc-error, #e8590c);
+	stroke-width: 1.5;
+}
+.sc-diagram text.is-error {
+	fill: var(--sc-error, #e8590c);
+	text-decoration: underline;
+	text-decoration-style: wavy;
+}
+.sc-diagram .sc-error-marker {
+	pointer-events: none;
+}
+.sc-diagram .sc-error-marker circle {
+	fill: var(--sc-error, #e8590c);
+	stroke: var(--sc-region-fill, #fff);
+	stroke-width: 1.5;
+}
+.sc-diagram .sc-error-marker path {
+	fill: none;
+	stroke: var(--sc-region-fill, #fff);
+	stroke-width: 1.8;
+	stroke-linecap: round;
+}
+
+/* A for-region's state active in several of its copies: a badge with the number of copies (×3), added by
+ * src/components/sim/link.ts markCopies (the diagram draws the region once). */
+.sc-diagram .sc-copy-badge {
+	pointer-events: none;
+}
+.sc-diagram .sc-copy-badge rect {
+	fill: var(--sc-active-stroke, #d3202f);
+	stroke: var(--sc-region-fill, #fff);
+	stroke-width: 1.5;
+}
+.sc-diagram .sc-copy-badge text {
+	fill: var(--sc-region-fill, #fff);
+	font-size: 9.5px;
+	font-weight: 800;
+	text-anchor: middle;
+	dominant-baseline: central;
+}
+
+.sc-diagram .is-dimmed {
+	opacity: 0.35;
+	transition: opacity 150ms ease-out;
+}
+
+@keyframes sc-entered {
+	0% { opacity: 0.8; }
+	100% { opacity: 0.35; }
+}
+/* The tint of a state just left starts strong and settles. */
+@keyframes sc-exited {
+	0% { fill: color-mix(in srgb, var(--sc-entered, #2b6cc4) 36%, var(--sc-state-fill, #f8f9fd)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sc-diagram .sc-state.is-entered > .sc-shadow,
+	.sc-diagram .sc-state.is-exited > :is(.sc-fill, .sc-fill-top) {
+		animation: none;
+	}
+	.sc-diagram .sc-shape,
+	.sc-diagram .sc-edge {
+		transition: none;
+	}
+}
+
+/* A pulse runs once along a transition when it fires (src/components/sim/link.ts adds the path and removes
+ * it when the animation ends; transitions of an immediate chain pulse one after the other). */
+.sc-diagram .sc-edge-pulse {
+	fill: none;
+	stroke: var(--sc-taken, #2b6cc4);
+	stroke-width: 6;
+	stroke-linecap: round;
+	stroke-dasharray: 14 120;
+	stroke-dashoffset: 14;
+	opacity: 0.9;
+	pointer-events: none;
+	animation: sc-edge-pulse 520ms ease-in-out 1 both;
+}
+@keyframes sc-edge-pulse {
+	from {
+		stroke-dashoffset: 14;
+	}
+	to {
+		stroke-dashoffset: -100;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.sc-diagram .sc-edge-pulse {
+		display: none;
+	}
+}
+
+/* An initial state that was just left keeps its heavy outline (the colour and the tint say "left"). */
+.sc-diagram .sc-state.sc-initial.is-exited:not(.is-active):not(.sc-root) > .sc-shape:not(.sc-final-inner) {
+	stroke-width: 3;
+}

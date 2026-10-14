@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "temp": 20 }, "note": "Rejected: `Heater` reads `cutOut` before it writes `heating`, and `Sensor` reads `heating` before it writes `cutOut`." }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

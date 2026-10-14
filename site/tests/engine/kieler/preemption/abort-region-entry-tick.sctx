@@ -1,0 +1,44 @@
+// An abort region that finishes in the tick its state is entered: the regions after it do not start (M);
+// written last (N), it finishes after the other region started.
+scchart EntryTick {
+  input bool A
+  output int work = 0, work2 = 0, done = 0
+
+  initial state Start
+  go to M
+
+  state M {
+    abort region Watch {
+      initial state W
+      immediate if A go to F
+      final state F
+    }
+    region Main {
+      initial state I {
+        entry do work += 1
+      }
+      if true do work += 10 go to I
+    }
+  }
+  join to N
+
+  state N {
+    region Main {
+      initial state I {
+        entry do work2 += 1
+      }
+      if true do work2 += 10 go to I
+    }
+    abort region Watch {
+      initial state W
+      immediate if A go to F
+      final state F
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done += 1
+  }
+  go to Start
+}

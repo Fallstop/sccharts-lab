@@ -1,0 +1,93 @@
+{
+  "hash": "91b724d074ed2ad9a7a3d096ed3d0ec7eb90c66f",
+  "chart": "tests/conformance/preemption/84-deferred-immediate-count-delay.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fired": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false,
+        "B": true
+      },
+      "values": {
+        "B": true,
+        "G": false,
+        "fired": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "B": true,
+        "G": true,
+        "fired": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "B": true,
+        "G": false,
+        "fired": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "B": true,
+        "G": false,
+        "fired": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

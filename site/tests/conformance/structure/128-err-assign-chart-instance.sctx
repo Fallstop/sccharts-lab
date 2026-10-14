@@ -1,0 +1,10 @@
+// A chart instance cannot be assigned (except in dataflow regions, S-33).
+scchart St128Assign {
+  ref St128C c, d
+  initial state A
+  do c = d go to A
+}
+
+scchart St128C {
+  int v
+}

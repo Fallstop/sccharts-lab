@@ -1,0 +1,17 @@
+#hostcode-java-inner "enum Bit {ZERO,ONE}"
+#hostcode-c-header "enum Bit {ZERO,ONE};"
+
+scchart HostEnum {
+  host enum Bit { ZERO, ONE }
+  
+  ref Bit b = Bit.ZERO
+  
+  initial state A
+   do b = Bit.ONE go to B
+   
+  state B
+   if b != Bit.ZERO go to C
+   
+  final state C
+
+}

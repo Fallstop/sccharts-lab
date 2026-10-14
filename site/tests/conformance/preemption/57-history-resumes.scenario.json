@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false
+      },
+      "note": "Tick 1 enters M and I (where = 1)."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "I → J (where = 2)."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "P": true
+      },
+      "note": "M is left (where = 9)."
+    },
+    {
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "note": "`go to M history` resumes M in J, the state it was in when it was left. J is entered again, so its entry action runs (where = 2)."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "In J."
+    }
+  ],
+  "expect": "ok"
+}

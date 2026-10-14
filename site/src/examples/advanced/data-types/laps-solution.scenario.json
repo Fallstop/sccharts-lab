@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "lap": false
+      },
+      "note": "Tick 1 enters `Racing`."
+    },
+    {
+      "inputs": {
+        "lap": true
+      },
+      "note": "Lap 1."
+    },
+    {
+      "inputs": {
+        "lap": false
+      },
+      "note": "No lap."
+    },
+    {
+      "inputs": {
+        "lap": true
+      },
+      "note": "Lap 2."
+    },
+    {
+      "inputs": {
+        "lap": false
+      },
+      "note": "No lap."
+    },
+    {
+      "inputs": {
+        "lap": true
+      },
+      "note": "Lap 3: `count` is now 3, but `counter.done()` was checked before the lap was added, so the chart stays in `Racing` for this tick."
+    },
+    {
+      "inputs": {
+        "lap": false
+      },
+      "note": "`counter.done()` is true: the chart goes to `Finished` and terminates."
+    },
+    {
+      "inputs": {
+        "lap": true
+      },
+      "note": "The race is over: lap 4 does not count."
+    }
+  ],
+  "expect": "ok"
+}

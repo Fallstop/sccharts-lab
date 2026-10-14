@@ -1,0 +1,126 @@
+{
+  "hash": "9a3c65fd2d56247fa64f1afe13d17f4e5e7b71b5",
+  "chart": "tests/engine/kieler/rare/probe-index-dropped-not.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "the comparison will always evaluate as ‘true’ for the address of ‘ok’ will never be NULL [-Waddress]"
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "ok": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0,
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "n": 0,
+        "ok": [
+          false,
+          false
+        ],
+        "y": 0,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 0,
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "ok": [
+          false,
+          false
+        ],
+        "y": 0,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 1,
+        "a": true,
+        "b": true
+      },
+      "values": {
+        "a": true,
+        "n": 1,
+        "ok": [
+          false,
+          false
+        ],
+        "y": 0,
+        "b": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 0,
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "ok": [
+          false,
+          false
+        ],
+        "y": 0,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

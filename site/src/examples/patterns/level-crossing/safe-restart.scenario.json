@@ -1,0 +1,59 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": false,
+        "restart": false
+      },
+      "note": "Tick 1: `Working` starts in `Raising`, whose entry action asks for flashing and commands the barrier up. The lamps start in the next tick (`Lights` waits a tick in `Dark`)."
+    },
+    {
+      "inputs": {},
+      "note": "No `isUp` yet: the lamps flash while the barrier is commanded up."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "`isUp`: `Open`, and the lamps go dark."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Both limit switches at once: `Fault`."
+    },
+    {
+      "inputs": {
+        "isUp": false,
+        "restart": true
+      },
+      "note": "`restart` with the barrier down: `Working` starts in `Raising` again. `Fault`'s exit action clears `flashing`, and `Raising`'s entry action sets it again in the same tick, so the lamps keep flashing while the barrier rises."
+    },
+    {
+      "inputs": {
+        "restart": false
+      },
+      "note": "Rising, lamps flashing."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "The barrier leaves its lower limit switch."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "`isUp`: now it is safe to go dark."
+    },
+    {
+      "inputs": {},
+      "note": "Open."
+    }
+  ],
+  "expect": "ok"
+}

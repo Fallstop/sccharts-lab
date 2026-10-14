@@ -1,0 +1,275 @@
+{
+ "sourceHash": "369aca35591088b9",
+ "states": [
+  {
+   "path": [
+    "IIIRO"
+   ],
+   "rows": [
+    [
+     "IIIRO"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "input bool ",
+     "R"
+    ],
+    [
+     "output bool ",
+     "O"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    311.8,
+    437.3
+   ]
+  },
+  {
+   "path": [
+    "IIIRO",
+    0,
+    "IIO"
+   ],
+   "rows": [
+    [
+     "IIO"
+    ],
+    [
+     "entry ",
+     "/ O = false"
+    ]
+   ],
+   "box": [
+    10,
+    53.6,
+    278.3,
+    284.7
+   ]
+  },
+  {
+   "path": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "II"
+   ],
+   "rows": [
+    [
+     "II"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    241.1,
+    109.6
+   ]
+  },
+  {
+   "path": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "II",
+    "main",
+    "IWait"
+   ],
+   "rows": [
+    [
+     "IWait"
+    ]
+   ],
+   "box": [
+    10,
+    23,
+    55.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "II",
+    "main",
+    "IDone"
+   ],
+   "rows": [
+    [
+     "IDone"
+    ]
+   ],
+   "box": [
+    146.1,
+    20,
+    67,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "Done"
+   ],
+   "rows": [
+    [
+     "Done"
+    ]
+   ],
+   "box": [
+    102.3,
+    183.1,
+    56.5,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "IIIRO",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    83.2,
+    298.3,
+    348.3
+   ]
+  },
+  {
+   "path": [
+    "IIIRO",
+    0,
+    "IIO",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    49.4,
+    261.1,
+    227.7
+   ]
+  },
+  {
+   "path": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "II",
+    "main"
+   ],
+   "label": [
+    "main ",
+    "| ",
+    "i [ 1, 3 ]"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    9,
+    30.6,
+    223.1,
+    70.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NIIIRO$$N0$NIIO$$N0$NII$Nmain$NIWait$EIDone0",
+   "source": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "II",
+    "main",
+    "IWait"
+   ],
+   "target": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "II",
+    "main",
+    "IDone"
+   ],
+   "text": "I == i",
+   "lines": [
+    "I == i"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NIIIRO$$N0$NIIO$$N0$NII$EDone0",
+   "source": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "II"
+   ],
+   "target": [
+    "IIIRO",
+    0,
+    "IIO",
+    0,
+    "Done"
+   ],
+   "text": "/ O = true",
+   "lines": [
+    "/ O = true"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  },
+  {
+   "id": "$root$NIIIRO$$N0$NIIO$EIIO0",
+   "source": [
+    "IIIRO",
+    0,
+    "IIO"
+   ],
+   "target": [
+    "IIIRO",
+    0,
+    "IIO"
+   ],
+   "text": "R",
+   "lines": [
+    "R"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

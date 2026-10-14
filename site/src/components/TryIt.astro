@@ -1,0 +1,200 @@
+---
+/**
+ * <TryIt example="…" solution="…">Task description (Markdown)</TryIt>: an exercise.
+ *
+ * Props: example (the starter chart, required), solution (an example id, optional), title (a short
+ * name for the exercise, shown as the box's heading; default "Try it"), hint (inline Markdown, optional: a nudge
+ * for a reader who is stuck; a blank line starts a new paragraph). The starter opens in the playground (with a
+ * solution, the link carries `&solution=<solution id>`, so the playground can compare the reader's chart with the
+ * model solution); the starter's source, the hint and the solution are one click away, in that order (details
+ * elements, closed, so they work without JavaScript).
+ */
+import SourceView from './frame/SourceView.astro'
+import { icons } from './frame/icons'
+import { nextId } from './frame/ids'
+import { loadExample, playgroundHref } from './frame/examples'
+import { inlineMd } from './frame/inline-md'
+
+interface Props {
+	example: string
+	solution?: string
+	title?: string
+	/** Inline Markdown: `code`, **bold**, *italic*, [links](/x/). A blank line starts a new paragraph. */
+	hint?: string
+}
+const { title } = Astro.props
+if (Astro.props.hint !== undefined && (typeof Astro.props.hint !== 'string' || !Astro.props.hint.trim())) {
+	throw new Error(`<TryIt example="${Astro.props.example}">: "hint" must be a non-empty string of inline Markdown.`)
+}
+const hint = Astro.props.hint
+	?.trim()
+	.split(/\n\s*\n/)
+	.map((paragraph) => inlineMd(paragraph.replace(/\s*\n\s*/g, ' ')))
+const starter = loadExample(Astro.props.example, `<TryIt example="${Astro.props.example}">`)
+const solution = Astro.props.solution ? loadExample(Astro.props.solution, `<TryIt solution="${Astro.props.solution}">`) : undefined
+const id = nextId('sct-')
+---
+
+<section class="sc-tryit not-content" aria-labelledby={id}>
+	<header class="sc-tryit__head">
+		<span class="sc-tryit__glyph" aria-hidden="true"></span>
+		<h3 class="sc-tryit__title" id={id}>{title ?? 'Try it'}</h3>
+	</header>
+	<div class="sc-tryit__task">
+		<slot />
+	</div>
+	<div class="sc-tryit__actions">
+		<a class="sc-btn sc-btn--sm sc-btn--initial" href={playgroundHref(starter.id, solution?.id)}>
+			<Fragment set:html={icons.open} />Open the starter in the playground
+		</a>
+	</div>
+	<details class="sc-tryit__more" data-pagefind-ignore="all">
+		<summary>Show the starter chart</summary>
+		<div class="sc-tryit__code"><SourceView source={starter.source} /></div>
+	</details>
+	{
+		hint && (
+			<details class="sc-tryit__more sc-tryit__hint" data-pagefind-ignore="all">
+				<summary>Show a hint</summary>
+				<div class="sc-tryit__hint-body">
+					{hint.map((paragraph) => <p set:html={paragraph} />)}
+				</div>
+			</details>
+		)
+	}
+	{
+		solution && (
+			<details class="sc-tryit__more" data-pagefind-ignore="all">
+				<summary>Show a solution</summary>
+				<div class="sc-tryit__code">
+					<SourceView source={solution.source} />
+				</div>
+				<p class="sc-tryit__solution-link">
+					<a href={playgroundHref(solution.id)}>Open the solution in the playground</a>
+				</p>
+			</details>
+		)
+	}
+</section>
+
+<style>
+	.sc-tryit {
+		margin-block: 2rem;
+		max-width: var(--measure);
+		padding: 1rem 1.25rem 0.75rem;
+		border: 1px solid var(--c-rule-strong);
+		border-inline-start: 4px solid var(--c-accent-bright);
+		border-radius: var(--radius-md);
+		background-color: var(--c-sheet);
+	}
+	.sc-tryit__head {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+	}
+	/* An initial state: heavy outline. The reader starts here. */
+	.sc-tryit__glyph {
+		flex: none;
+		width: 1.25rem;
+		height: 0.875rem;
+		border-radius: var(--radius-capsule);
+		border: 3px solid var(--sc-state-stroke);
+		background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	}
+	.sc-tryit__title {
+		margin: 0;
+		font-size: var(--text-lg);
+		font-weight: 700;
+		line-height: 1.3;
+		color: var(--c-ink);
+	}
+	.sc-tryit__task {
+		margin-top: 0.625rem;
+		color: var(--c-text);
+	}
+	.sc-tryit__task :global(* + *) {
+		margin-top: 0.75rem;
+	}
+	.sc-tryit__task :global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
+		padding: 0.05em 0.3em;
+		border-radius: var(--radius-xs);
+		background-color: var(--sl-color-bg-inline-code);
+		color: var(--c-ink);
+	}
+	.sc-tryit__task :global(a) {
+		color: var(--c-accent);
+	}
+	.sc-tryit__task :global(ul),
+	.sc-tryit__task :global(ol) {
+		padding-inline-start: 1.25rem;
+	}
+	.sc-tryit__actions {
+		margin-top: 1rem;
+	}
+	.sc-tryit__actions .sc-btn {
+		white-space: normal;
+		text-align: start;
+	}
+	.sc-tryit__more {
+		margin-top: 0.75rem;
+		border-top: 1px solid var(--c-rule);
+		padding-top: 0.625rem;
+	}
+	.sc-tryit__more + .sc-tryit__more {
+		margin-top: 0.625rem;
+	}
+	.sc-tryit__more summary {
+		cursor: pointer;
+		font-size: var(--text-sm);
+		font-weight: 700;
+		color: var(--c-accent);
+	}
+	.sc-tryit__more summary:hover {
+		color: var(--c-accent-strong);
+	}
+	.sc-tryit__hint-body {
+		margin-top: 0.5rem;
+		color: var(--c-text);
+	}
+	.sc-tryit__hint-body p {
+		margin: 0;
+	}
+	.sc-tryit__hint-body p + p {
+		margin-top: 0.5rem;
+	}
+	.sc-tryit__hint-body :global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
+		padding: 0.05em 0.3em;
+		border-radius: var(--radius-xs);
+		background-color: var(--sl-color-bg-inline-code);
+		color: var(--c-ink);
+	}
+	.sc-tryit__hint-body :global(a) {
+		color: var(--c-accent);
+	}
+	.sc-tryit__code {
+		margin-top: 0.625rem;
+		border: 1px solid var(--c-rule);
+		border-radius: var(--radius-md);
+		overflow: hidden;
+	}
+	.sc-tryit__code :global(.expressive-code .frame) {
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+	}
+	.sc-tryit__code :global(.expressive-code pre) {
+		border: 0;
+	}
+	.sc-tryit__solution-link {
+		margin: 0.5rem 0 0.25rem;
+		font-size: var(--text-sm);
+	}
+	.sc-tryit__solution-link a {
+		color: var(--c-accent);
+		font-weight: 700;
+	}
+</style>

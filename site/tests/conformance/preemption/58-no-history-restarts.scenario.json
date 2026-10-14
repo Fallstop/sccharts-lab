@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false
+      },
+      "note": "Tick 1 enters M and I (where = 1)."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "I → J (where = 2)."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "P": true
+      },
+      "note": "M is left (where = 9)."
+    },
+    {
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "note": "Without `history` (the default, which can also be written `reset`) M starts again in its initial state I (where = 1)."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "In I."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,14 @@
+scchart Kettle {
+  input bool switchedOn
+  input int temperature
+  output bool heating = false
+
+  initial state Off
+    if switchedOn do heating = true go to Heating
+
+  state Heating
+    if !switchedOn do heating = false go to Off
+    if temperature >= 100 do heating = false go to Boiled
+
+  final state Boiled
+}

@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "`int c = 5` is declared in region `R`. Tick 1 enters `S`, `R` and `A`: `seen = 0`."
+    },
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "`A` → `B`: `c = 6`, `seen = 6`."
+    },
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "`B` → `A` re-enters `A`, the initial state of `R`, but `c` is not re-initialised (KIELER hoists region declarations into the parent state `S`): `seen` stays 6."
+    },
+    {
+      "inputs": {
+        "r": true
+      },
+      "note": "`r` holds: the inner `A` → `B` runs first (weak abort): `c = 7`, `seen = 7`. Then `S` is re-entered, re-initialising `c = 5`."
+    },
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "`A` → `B` again: `c = 6`, `seen = 6`."
+    }
+  ],
+  "expect": "ok"
+}

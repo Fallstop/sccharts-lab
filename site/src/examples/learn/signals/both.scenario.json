@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Tick 1 enters `Watch`. Its transitions are delayed."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A` is present and `B` absent: priority 1 (`A && B`) fails, priority 2 (`A && !B`) fires and emits `onlyA`."
+    },
+    {
+      "inputs": {
+        "B": true
+      },
+      "note": "Both present: priority 1 emits `both`. `onlyA` is absent again, because nothing emitted it in this tick."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "`A` is absent, so neither transition fires and neither output is present."
+    },
+    {
+      "note": "`B` alone still triggers nothing."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,290 @@
+{
+  "hash": "35b8a03a7acb3b03d65decb77d61e44e11f1769a",
+  "chart": "src/examples/patterns/watchdog/watchdog-inside-counter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "beat": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "demand": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "motor": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "quiet": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "starts": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "expired": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "beat": false,
+        "demand": false
+      },
+      "values": {
+        "beat": false,
+        "demand": false,
+        "alarm": false,
+        "motor": false,
+        "quiet": 0,
+        "starts": 0,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "demand": false,
+        "alarm": false,
+        "motor": false,
+        "quiet": 0,
+        "starts": 0,
+        "expired": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "beat": false,
+        "demand": true
+      },
+      "values": {
+        "beat": false,
+        "demand": true,
+        "alarm": false,
+        "motor": true,
+        "quiet": 1,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "demand": true,
+        "alarm": false,
+        "motor": true,
+        "quiet": 0,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "demand": true,
+        "alarm": false,
+        "motor": true,
+        "quiet": 1,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "beat": false,
+        "demand": true,
+        "alarm": false,
+        "motor": true,
+        "quiet": 2,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "beat": false,
+        "demand": true,
+        "alarm": false,
+        "motor": true,
+        "quiet": 3,
+        "starts": 1,
+        "expired": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "beat": false,
+        "demand": true,
+        "alarm": false,
+        "motor": true,
+        "quiet": 3,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "demand": false
+      },
+      "values": {
+        "beat": false,
+        "demand": false,
+        "alarm": false,
+        "motor": true,
+        "quiet": 3,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "demand": false,
+        "alarm": false,
+        "motor": true,
+        "quiet": 3,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

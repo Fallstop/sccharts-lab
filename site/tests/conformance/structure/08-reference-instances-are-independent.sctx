@@ -1,0 +1,16 @@
+// Each reference is a separate copy (macro expansion): locals of the referenced chart are not shared between
+// instances. KIELER renames such locals (e.g. _St08Main_local_k), so they are hidden from the data pool.
+scchart St08Main {
+  input bool step
+  output int a = 0, b = 0
+  region { initial state R1 is St08Count(step, a) }
+  region { initial state R2 is St08Count(true, b) }
+}
+
+scchart St08Count {
+  input bool t
+  output int n
+  int k = 0
+  initial state S
+  if t do k++; n = k go to S
+}

@@ -1,0 +1,141 @@
+{
+ "sourceHash": "5ff14e2e3c61a3fe",
+ "states": [
+  {
+   "path": [
+    "DebounceCounter"
+   ],
+   "rows": [
+    [
+     "DebounceCounter"
+    ],
+    [
+     "input bool ",
+     "raw"
+    ],
+    [
+     "output bool ",
+     "pressed"
+    ],
+    [
+     "const int ",
+     "N = 3"
+    ],
+    [
+     "int ",
+     "run = 0"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    166,
+    331
+   ]
+  },
+  {
+   "path": [
+    "DebounceCounter",
+    0,
+    "Filter"
+   ],
+   "rows": [
+    [
+     "Filter"
+    ]
+   ],
+   "box": [
+    47.4,
+    180.4,
+    57.4,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "DebounceCounter",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    100.1,
+    152.2,
+    225
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NDebounceCounter$$N0$NFilter$EFilter0",
+   "source": [
+    "DebounceCounter",
+    0,
+    "Filter"
+   ],
+   "target": [
+    "DebounceCounter",
+    0,
+    "Filter"
+   ],
+   "text": "1: raw == pressed / run = 0",
+   "lines": [
+    "1: raw == pressed",
+    "/ run = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NDebounceCounter$$N0$NFilter$EFilter1",
+   "source": [
+    "DebounceCounter",
+    0,
+    "Filter"
+   ],
+   "target": [
+    "DebounceCounter",
+    0,
+    "Filter"
+   ],
+   "text": "2: run < N - 1 / run++",
+   "lines": [
+    "2: run < N - 1",
+    "/ run++"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NDebounceCounter$$N0$NFilter$EFilter2",
+   "source": [
+    "DebounceCounter",
+    0,
+    "Filter"
+   ],
+   "target": [
+    "DebounceCounter",
+    0,
+    "Filter"
+   ],
+   "text": "3: / pressed = raw; run = 0",
+   "lines": [
+    "3: / pressed = raw;",
+    "     run = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

@@ -1,0 +1,7 @@
+scchart DiceSeeded {
+  output float r = 0
+  entry do randomize()
+
+  initial state Roll
+    do r = random() go to Roll
+}

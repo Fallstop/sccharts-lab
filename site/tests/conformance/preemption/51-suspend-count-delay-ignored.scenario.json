@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "A count delay on a suspend is accepted but ignored (without a warning): M is suspended at the first A (moves = 0)."
+    },
+    {
+      "inputs": {},
+      "note": "Suspended."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Resumed: moves = 1."
+    }
+  ],
+  "expect": "ok"
+}

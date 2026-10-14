@@ -1,0 +1,15 @@
+scchart DeclarationOrder {
+  input bool leave
+  output int step = 0
+  output int entry1At = 0, entry2At = 0, exit1At = 0, exit2At = 0
+
+  initial state A {
+    entry do step += 1; entry1At = step
+    entry do step += 1; entry2At = step
+    exit do step += 1; exit1At = step
+    exit do step += 1; exit2At = step
+  }
+  if leave go to B
+
+  state B
+}

@@ -1,0 +1,149 @@
+{
+  "hash": "ed9902bca615e9dd6c037a5d2f7f284c46497f22",
+  "chart": "src/examples/advanced/history/history-deferred.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HHouse is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "back": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "out": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "walk": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "room": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "walk": false,
+        "out": false,
+        "back": false
+      },
+      "values": {
+        "back": false,
+        "out": false,
+        "walk": false,
+        "room": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "walk": true
+      },
+      "values": {
+        "back": false,
+        "out": false,
+        "walk": true,
+        "room": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "back": false,
+        "out": false,
+        "walk": false,
+        "room": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "out": true
+      },
+      "values": {
+        "back": false,
+        "out": true,
+        "walk": false,
+        "room": 9
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "out": false,
+        "back": true
+      },
+      "values": {
+        "back": true,
+        "out": false,
+        "walk": false,
+        "room": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "back": false
+      },
+      "values": {
+        "back": false,
+        "out": false,
+        "walk": false,
+        "room": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "hash": "85f79aec1bfac9f5c9b49a3db11f0c0bb395a5ff",
+  "chart": "tests/engine/kieler/structure/probe-dz26.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "x": 0,
+        "S": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "x": 0,
+        "S": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "x": 1,
+        "S": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "values": {
+        "A": false,
+        "B": true,
+        "x": 2,
+        "S": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "x": 3,
+        "S": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

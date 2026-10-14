@@ -1,0 +1,11 @@
+scchart P159 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  entry do O = 0
+  during do O++
+  initial state S0
+}

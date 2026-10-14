@@ -1,0 +1,8 @@
+// An enum variable only accepts values of its enum: an int literal (or arithmetic like "c = c + 1") is
+// rejected.
+scchart St104EnumInt {
+  enum Color { RED, GREEN, BLUE }
+  ref Color c = Color.RED
+  initial state A
+  do c = 2 go to A
+}

@@ -1,0 +1,120 @@
+{
+  "hash": "fda950275b003682d6818524dfb57792f643e71d",
+  "chart": "tests/engine/kieler/structure/probe-dz46.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "e": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "stop": false
+      },
+      "values": {
+        "stop": false,
+        "e": 0,
+        "o": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "stop": false
+      },
+      "values": {
+        "stop": false,
+        "e": 0,
+        "o": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "stop": false
+      },
+      "values": {
+        "stop": false,
+        "e": 0,
+        "o": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "stop": false
+      },
+      "values": {
+        "stop": false,
+        "e": 10,
+        "o": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "stop": true
+      },
+      "values": {
+        "stop": true,
+        "e": 11,
+        "o": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "stop": false
+      },
+      "values": {
+        "stop": false,
+        "e": 11,
+        "o": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

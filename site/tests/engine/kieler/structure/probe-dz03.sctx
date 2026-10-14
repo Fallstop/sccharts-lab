@@ -1,0 +1,21 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz03 {
+  input bool gate
+  output int a = 0, b = 0
+  output bool done = false
+  initial state Run {
+    region { initial state R1 is Dz03Count(gate, a) join to F1 final state F1 }
+    region { initial state R2 is Dz03Count(true, b) join to F2 final state F2 }
+  }
+  join to D
+  state D { entry do done = true }
+}
+scchart Dz03Count {
+  input bool t
+  output int n = 10
+  initial state A
+  if t do n++ go to B
+  state B
+  if t do n++ go to C
+  final state C
+}

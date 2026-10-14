@@ -1,0 +1,114 @@
+{
+  "hash": "3608fa5507344bb8449836b40cfc24127c6b4595",
+  "chart": "src/examples/start/welcome/kettle.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "switchedOn": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "temperature": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "heating": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "switchedOn": false,
+        "temperature": 20
+      },
+      "values": {
+        "switchedOn": false,
+        "temperature": 20,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "switchedOn": true
+      },
+      "values": {
+        "switchedOn": true,
+        "temperature": 20,
+        "heating": true
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "temperature": 60
+      },
+      "values": {
+        "switchedOn": true,
+        "temperature": 60,
+        "heating": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "temperature": 100
+      },
+      "values": {
+        "switchedOn": true,
+        "temperature": 100,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "switchedOn": true,
+        "temperature": 100,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

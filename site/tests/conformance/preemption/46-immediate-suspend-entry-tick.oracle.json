@@ -1,0 +1,116 @@
+{
+  "hash": "b9b98c4e0bf4f529a81b937f7c12ed422b652764",
+  "chart": "tests/conformance/preemption/46-immediate-suspend-entry-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chained": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "entry1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "iticks": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "ticks": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "chained": 0,
+        "entry1": 0,
+        "innerEntry": 0,
+        "iticks": 0,
+        "ticks": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": true,
+        "chained": 0,
+        "entry1": 0,
+        "innerEntry": 0,
+        "iticks": 0,
+        "ticks": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "chained": 1,
+        "entry1": 0,
+        "innerEntry": 0,
+        "iticks": 1,
+        "ticks": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "chained": 1,
+        "entry1": 0,
+        "innerEntry": 0,
+        "iticks": 2,
+        "ticks": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

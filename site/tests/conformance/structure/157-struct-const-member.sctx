@@ -1,0 +1,10 @@
+// A const member is a constant of the struct: usable as c.MAX, but not in the pool (official KIELER 0.3.0 shows
+// it there).
+scchart St157ConstMember {
+  struct Cfg {
+    const int MAX = 3
+    int v
+  } c
+  initial state A
+  if c.v < c.MAX do c.v++ go to A
+}

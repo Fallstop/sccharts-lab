@@ -1,0 +1,36 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "gold": false,
+        "silver": false
+      },
+      "note": "Tick 1 enters `Play`."
+    },
+    {
+      "inputs": {
+        "gold": true
+      },
+      "note": "Gold only: 10."
+    },
+    {
+      "inputs": {
+        "silver": true
+      },
+      "note": "Both: with `combine +` the two emissions add up, 10 + 5 = 15."
+    },
+    {
+      "inputs": {
+        "gold": false
+      },
+      "note": "Silver only: 5."
+    },
+    {
+      "inputs": {
+        "silver": false
+      },
+      "note": "Nothing emitted: `points` is absent and keeps its value, 5."
+    }
+  ],
+  "expect": "ok"
+}

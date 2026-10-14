@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "temp": 20 }, "note": "Tick 1. In `Rising` the `immediate during` action runs at once and compares 20 with `pre(temp)`, which is 0 in tick 1: `rising` is true. In `RisingFromTick2` the plain `during` action waits for the next tick, so `rising` stays false." },
+    { "inputs": {}, "note": "From here on both charts compare `temp` with its real previous value, and agree." },
+    { "inputs": { "temp": 21 }, "note": "21 after 20: rising, in both." },
+    { "inputs": { "temp": 23 }, "note": "23 after 21: rising." },
+    { "inputs": { "temp": 22 }, "note": "22 after 23: not rising." }
+  ],
+  "expect": "ok"
+}

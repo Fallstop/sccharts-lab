@@ -1,0 +1,16 @@
+scchart P115 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0
+  if A && !B || (I > 3) go to S1
+  if pre(A) go to S1
+  if S go to S1
+  if V go to S1
+  if val(V) == 3 go to S1
+  state S1
+
+}

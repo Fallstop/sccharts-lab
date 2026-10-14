@@ -1,0 +1,66 @@
+{
+  "hash": "cc1f6adec0563e79fdfdb01ce9812b360b6a81bb",
+  "chart": "src/examples/advanced/dataflow/feedback-fixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "X": 1,
+        "Y": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "X": 2,
+        "Y": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "X": 4,
+        "Y": 4
+      },
+      "terminated": false
+    }
+  ]
+}

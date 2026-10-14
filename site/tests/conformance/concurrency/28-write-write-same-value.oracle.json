@@ -1,0 +1,78 @@
+{
+  "hash": "54fc580311a03cd2b90da5ac48fc46972b0105b5",
+  "chart": "tests/conformance/concurrency/28-write-write-same-value.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 4
+      },
+      "values": {
+        "i": 4,
+        "x": 0,
+        "y": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 5
+      },
+      "values": {
+        "i": 5,
+        "x": 3,
+        "y": 5
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 6
+      },
+      "values": {
+        "i": 6,
+        "x": 3,
+        "y": 5
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

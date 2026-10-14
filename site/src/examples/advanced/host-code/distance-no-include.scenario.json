@@ -1,0 +1,8 @@
+{
+  "needs": ["c-hostcode"],
+  "ticks": [
+    { "inputs": { "position": -5 }, "note": "Rejected by the C compiler: nothing declares `abs`, because the `#include <stdlib.h>` is missing." }
+  ],
+  "expect": "error",
+  "errorIncludes": "implicit declaration of function"
+}

@@ -1,0 +1,41 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true,
+        "B": true
+      },
+      "note": "Tick 1 enters `Choose`. In a state's entry tick only its immediate transitions are candidates, so priority 1 (`if A`, delayed) is skipped although `A` is true. Priority 2 (`immediate if B`) fires: `path` is 2."
+    },
+    {
+      "inputs": {
+        "B": false
+      },
+      "note": "`Done`'s transition has no trigger, so it fires in the tick after `Done`'s entry tick: back to `Choose`. This is `Choose`'s entry tick again, so only the immediate transition counts, and `B` is false. `A` is true, but the delayed transition must wait."
+    },
+    {
+      "inputs": {
+        "B": true
+      },
+      "note": "`Choose` was entered in an earlier tick, so now *both* transitions are candidates, checked in priority order. `A` is true, so priority 1, the delayed one, wins: `path` is 1. The immediate transition was enabled too, but priority decides."
+    },
+    {
+      "inputs": {},
+      "note": "Two transitions in one tick. `Done` → `Choose` fires (`Done` was entered in tick 3). `Choose` has just been entered, so its immediate transition is checked at once: `B` is true, it fires, and `path` is 2."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "`Done` → `Choose` again. Both inputs are false, so the chart stays in `Choose`."
+    },
+    {
+      "inputs": {
+        "B": true
+      },
+      "note": "`Choose` is no longer in its entry tick. `A` is false, so priority 1 fails, and priority 2 fires: an immediate transition is checked in later ticks too, not only on entry."
+    }
+  ],
+  "expect": "ok"
+}

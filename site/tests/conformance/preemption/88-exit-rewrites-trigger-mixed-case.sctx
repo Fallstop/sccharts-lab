@@ -1,0 +1,20 @@
+scchart ExitChangesTargetMixed {
+  input bool A, W
+  output bool y = false
+  output int target = 0
+
+  initial state M {
+    exit do y = true
+
+    initial state I
+  }
+  if A && !y abort to B
+  immediate if W go to C
+
+  state B {
+    entry do target = 1
+  }
+  state C {
+    entry do target = 2
+  }
+}

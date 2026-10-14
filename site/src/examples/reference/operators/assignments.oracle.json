@@ -1,0 +1,100 @@
+{
+  "hash": "a99bbb3347170a207f5f255bf61dd7dd8fe655ab",
+  "chart": "src/examples/reference/operators/assignments.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "hi": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "lo": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "scaled": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 5
+      },
+      "values": {
+        "I": 5,
+        "hi": 0,
+        "lo": 0,
+        "n": 0,
+        "scaled": 0,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 5,
+        "hi": 5,
+        "lo": 5,
+        "n": 1,
+        "scaled": 7,
+        "x": 16
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": -4
+      },
+      "values": {
+        "I": -4,
+        "hi": 5,
+        "lo": -4,
+        "n": 2,
+        "scaled": 7,
+        "x": -2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "hash": "e6f11929e4188d3911a1097f585ca11a5be21bc2",
+  "chart": "tests/conformance/preemption/74-delayed-and-conditional-termination.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "delayedAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "guardedAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "plainAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "tick": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "delayedAt": 0,
+        "guardedAt": 0,
+        "plainAt": 1,
+        "tick": 1
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "delayedAt": 2,
+        "guardedAt": 2,
+        "plainAt": 1,
+        "tick": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "delayedAt": 2,
+        "guardedAt": 2,
+        "plainAt": 1,
+        "tick": 3
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

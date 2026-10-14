@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "start": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`Idle` to `Busy` fires, and `immediate during` runs in the entry tick too: `n` is 1 at once." },
+    { "note": "`n` is 2." },
+    { "note": "`n` is 3: always one ahead of the plain `during` version." }
+  ],
+  "expect": "ok"
+}

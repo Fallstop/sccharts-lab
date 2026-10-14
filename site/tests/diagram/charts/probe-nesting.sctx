@@ -1,0 +1,24 @@
+scchart P4 {
+  input bool g
+  output int count = 0
+
+  initial state Idle
+  if g go to Busy
+
+  state Busy {
+    region R1:
+    initial state W1
+    if g go to D1
+    final state D1
+
+    region R2:
+    initial state W2 {
+      initial state X
+      if g go to Y
+      final state Y
+    }
+    join to D2
+    final state D2
+  }
+  join to Idle
+}

@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "play": false, "pause": false, "stop": false }, "note": "Tick 1: `mode` is 0, stopped." },
+    { "inputs": { "play": true }, "note": "`play`: `mode` is 1, playing, and `sound` is on." },
+    { "inputs": { "play": false, "pause": true }, "note": "`pause` while playing: 2, and `sound` is off." },
+    { "inputs": { "pause": false }, "note": "Paused: nothing changes." },
+    { "inputs": { "stop": true }, "note": "`stop`: 0." }
+  ],
+  "expect": "ok"
+}

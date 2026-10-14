@@ -1,0 +1,107 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Tick 1: off."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "First contact: `Debounce` goes to `MaybePressed`."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Bounce."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Contact."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Contact."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Bounce."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Contact."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Contact."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Third reading in a row: `Debounce` emits `press`, and `Toggle`, which reads `press` in the same tick, switches the light on."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Held."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Held."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Release begins."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Release bounce: back to `Pressed`, no `press`."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Released."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Released."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Third false reading in a row: `Debounce` goes back to `Released`."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "One press, one toggle."
+    }
+  ],
+  "expect": "ok"
+}

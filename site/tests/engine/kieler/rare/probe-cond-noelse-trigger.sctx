@@ -1,0 +1,7 @@
+// In a trigger the missing branch is the trigger's previous result (KIELER's guard variable keeps it).
+scchart CondNoElseTrigger {
+  input bool c, a
+  output int n = 0
+  initial state S
+    if (c) ? a do n++ go to S
+}

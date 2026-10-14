@@ -1,0 +1,28 @@
+{
+  "hash": "47d02fd430dcd0111d98b084ccf99c17fdca74aa",
+  "chart": "tests/conformance/structure/116-err-class-private-field.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "11:8 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@1ab539fa{file:///tmp/sccharts-oracle-SUiAS8/m16/116-err-class-private-field.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@reference/@subReference}' must be set",
+    "Couldn't resolve reference to ValuedObject 'v'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'v'.",
+      "line": 11,
+      "column": 8,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@1ab539fa{file:///tmp/sccharts-oracle-SUiAS8/m16/116-err-class-private-field.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@reference/@subReference}' must be set",
+      "line": 11,
+      "column": 8,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

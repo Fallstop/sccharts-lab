@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`val(pre(V))` is not translated (only `val` applied directly to a valued signal is), so the generated C calls an undefined `val` function and gcc fails (\"implicit declaration of function 'val'\"). Write `pre(val(V))`."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "val"
+}

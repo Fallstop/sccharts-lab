@@ -1,0 +1,17 @@
+scchart WeakAbortLastWish {
+  input bool A, W
+  output int inner = 0, chained = 0, effect = 0
+
+  initial state M {
+    initial state I1
+    if A do inner = 1 go to I2
+
+    state I2
+    immediate do chained = 1 go to I3
+
+    state I3
+  }
+  if W do effect = 1 go to Done
+
+  state Done
+}

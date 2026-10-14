@@ -1,0 +1,33 @@
+{
+ "ticks": [
+  {
+   "inputs": {
+    "i": 1,
+    "c": false
+   },
+   "note": "An input set by the entry action of an initial state that a transition returns to: KIELER's GO block ends before it, so the assignment runs in tick 1 and wins over the environment."
+  },
+  {
+   "inputs": {
+    "i": 2,
+    "c": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "i": 3,
+    "c": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "i": 4,
+    "c": false
+   },
+   "note": "Next tick."
+  }
+ ],
+ "expect": "ok"
+}

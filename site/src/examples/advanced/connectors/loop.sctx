@@ -1,0 +1,14 @@
+scchart ConnectorCycle {
+  input bool coin
+  output int coins = 0
+
+  initial state Waiting
+    if coin go to Add
+
+  connector state Add
+    immediate if coins < 3 do coins++ go to Check
+    immediate go to Waiting
+
+  connector state Check
+    immediate go to Add
+}

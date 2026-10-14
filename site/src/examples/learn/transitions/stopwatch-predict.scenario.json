@@ -1,0 +1,43 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "stop": false
+      },
+      "note": "Tick 1 enters `Stopped`."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start`: `Stopped` to `Running`. No count in the tick `Running` is entered."
+    },
+    {
+      "note": "`start` is still true, but `Running` never looks at `start`. `stop` is false, so the untriggered transition counts: 1."
+    },
+    {
+      "note": "2."
+    },
+    {
+      "inputs": {
+        "start": false,
+        "stop": true
+      },
+      "note": "`stop`: back to `Stopped`. `elapsed` stays 2."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start` is true and `Stopped` only looks at `start`, so the chart goes to `Running`, even though `stop` is still true."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "`stop` is still true (nobody switched it off), so transition 1 fires at once: `Stopped`, and `elapsed` is still 2."
+    }
+  ],
+  "expect": "ok"
+}

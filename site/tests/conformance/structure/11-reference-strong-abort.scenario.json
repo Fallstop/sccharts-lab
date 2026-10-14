@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1 enters R; the instance's delayed count++ waits: **o = 0**."
+    },
+    {
+      "inputs": {},
+      "note": "The strong abort is tested first (o = 0, false), then the instance increments: **o = 1**."
+    },
+    {
+      "inputs": {},
+      "note": "Same again: **o = 2**."
+    },
+    {
+      "inputs": {},
+      "note": "At the start of the tick o is 2, so the strong abort does not fire; the instance makes **o = 3**."
+    },
+    {
+      "inputs": {},
+      "note": "Now o >= 3 holds before the instance runs: the strong abort fires and the instance is not executed: **o = 3**."
+    },
+    {
+      "inputs": {},
+      "note": "E has no behaviour: **o = 3** stays."
+    }
+  ],
+  "expect": "ok"
+}

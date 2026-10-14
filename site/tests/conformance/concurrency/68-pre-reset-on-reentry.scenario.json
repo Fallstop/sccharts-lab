@@ -1,0 +1,44 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "r": false,
+        "i": 1
+      },
+      "note": "`k` is local to `S`. Tick 1: `k = 1`, `p = pre(k) = 0`."
+    },
+    {
+      "inputs": {
+        "i": 2
+      },
+      "note": "`p = 1`."
+    },
+    {
+      "inputs": {
+        "i": 3
+      },
+      "note": "`p = 2`."
+    },
+    {
+      "inputs": {
+        "r": true,
+        "i": 4
+      },
+      "note": "`r`: the self-loop runs (weak abort), then `S` is re-entered and its immediate `X` → `Y` runs: `k = 4`, and `p = pre(k) = 0`. Re-entering the scope that declares `k` resets `pre(k)` to 0."
+    },
+    {
+      "inputs": {
+        "r": false,
+        "i": 5
+      },
+      "note": "`p = 4`."
+    },
+    {
+      "inputs": {
+        "i": 6
+      },
+      "note": "`p = 5`."
+    }
+  ],
+  "expect": "ok"
+}

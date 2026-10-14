@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false,
+        "deeper": false
+      },
+      "note": "Tick 1 enters Outer, Mid, Inner and I1: **where = 0**."
+    },
+    {
+      "inputs": {
+        "leave": false,
+        "deeper": true
+      },
+      "note": "I1 goes to I2: **where = 2**."
+    },
+    {
+      "inputs": {
+        "leave": true,
+        "deeper": false
+      },
+      "note": "Outer is left for Away: **where = 2**."
+    },
+    {
+      "inputs": {
+        "leave": false,
+        "deeper": false
+      },
+      "note": "Back with deep history: Outer resumes in I2 (no new where): **where = 2**."
+    }
+  ],
+  "expect": "ok"
+}

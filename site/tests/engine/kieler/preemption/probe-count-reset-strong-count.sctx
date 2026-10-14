@@ -1,0 +1,12 @@
+scchart CountResetStrongCount {
+  input bool tap, rst
+  output bool done = false
+  initial state Outer {
+    initial state Busy {
+      initial state X
+    }
+    if 2 tap abort to Over
+    final state Over
+  }
+  if rst abort to Outer
+}

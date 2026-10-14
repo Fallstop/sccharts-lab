@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Rejected. A and B would hand control back and forth for ever within tick 1. The validator warns \"There is an immediate loop. The model is not SASC.\" and the netlist scheduler fails with \"Can't schedule from _g1 to _g1\" and \"The SCG is NOT asc-schedulable!\"."}
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

@@ -1,0 +1,154 @@
+{
+  "hash": "47886d6633d17bf58c3b5922f5d35272a7d09961",
+  "chart": "src/examples/start/in-a-hurry/microwave-lamp.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "door": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "beep": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "heating": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "start": false,
+        "beep": false,
+        "heating": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "door": false,
+        "start": true,
+        "beep": true,
+        "heating": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "door": false,
+        "start": false,
+        "beep": false,
+        "heating": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "door": true
+      },
+      "values": {
+        "door": true,
+        "start": false,
+        "beep": false,
+        "heating": false,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "start": false,
+        "beep": false,
+        "heating": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

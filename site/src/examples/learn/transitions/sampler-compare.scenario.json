@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": { "sample": false, "reading": 0 },
+      "note": "Tick 1 enters `Waiting` in both charts; all four outputs start at 0."
+    },
+    {
+      "inputs": { "sample": true, "reading": 5 },
+      "note": "The first sample, 5. `Sampler` runs `previous = latest` first, which copies the old 0, and then stores 5 in `latest`. `SamplerSwapped` stores 5 in `latest` first, so `previous = latest` copies that 5 as well."
+    },
+    {
+      "inputs": { "sample": false, "reading": 8 },
+      "note": "`sample` is false, so neither transition fires, although `reading` is now 8."
+    },
+    {
+      "inputs": { "sample": true },
+      "note": "The second sample, 8. `Sampler` moves 5 into `previous` before it stores 8 in `latest`. `SamplerSwapped` stores 8 and then copies it: both of its outputs are 8."
+    },
+    {
+      "inputs": { "sample": false },
+      "note": "Nothing fires. `Sampler` remembers the older reading, 5; `SamplerSwapped` never holds anything but the newest."
+    }
+  ],
+  "expect": "ok"
+}

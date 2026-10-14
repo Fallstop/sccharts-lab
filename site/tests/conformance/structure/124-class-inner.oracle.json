@@ -1,0 +1,79 @@
+{
+  "hash": "432e6363b460668a1dac10cca4f1aabc73bd28c5",
+  "chart": "tests/conformance/structure/124-class-inner.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "Outer.Inner.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Outer.in": {
+      "type": "class",
+      "properties": []
+    },
+    "Outer.w": {
+      "type": "int",
+      "properties": []
+    },
+    "o": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": {
+          "in": {
+            "v": 0
+          },
+          "w": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": {
+          "in": {
+            "v": 1
+          },
+          "w": 1
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": {
+          "in": {
+            "v": 2
+          },
+          "w": 2
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

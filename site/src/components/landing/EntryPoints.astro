@@ -1,0 +1,304 @@
+---
+/**
+ * The landing page's ways in: the guide (across the full width: the way to begin), the one-page version for
+ * readers short on time, the playground, the cheat sheet, the SCCharts Lab extension for VS Code (two by two),
+ * and, across the full width again, Stuck?: the compiler messages and troubleshooting, side by side. Each glyph
+ * is a piece of SCCharts notation for what the link is: an initial state (where to begin), an immediate
+ * transition (no waiting: a dashed arrow), an active state (something running), a comment (notes), a final state,
+ * and a state marked with an error, as the diagrams mark what a compiler message is about.
+ */
+const items = [
+	{
+		href: '/start/welcome/',
+		title: 'Start learning',
+		text: 'Begin with what SCCharts is, where it comes from and how this guide works.',
+		glyph: 'initial',
+		wide: true,
+	},
+	{
+		href: '/start/in-a-hurry/',
+		title: 'Short on time?',
+		text: 'A lab tomorrow? Set up, build one small chart and meet the surprises that catch everyone, on one page.',
+		glyph: 'immediate',
+	},
+	{
+		href: '/playground/',
+		title: 'Playground',
+		text: 'Write a chart, see its diagram and run it tick by tick, all in the browser.',
+		glyph: 'active',
+	},
+	{
+		href: '/reference/cheatsheet/',
+		title: 'Cheat sheet',
+		text: 'All of the syntax on one page, for when you know what you want to write.',
+		glyph: 'comment',
+	},
+	{
+		// The setup section (install, C compiler, the KIELER VS Code conflict) rather than the Marketplace.
+		href: '/start/tools/#sccharts-lab-for-vs-code',
+		title: 'SCCharts Lab for VS Code',
+		text: 'Write charts in your editor with live diagrams, simulation and compiler diagnostics.',
+		glyph: 'final',
+		external: false,
+	},
+]
+// The last row: two ways out of trouble, under one heading.
+const stuck = {
+	title: 'Stuck?',
+	links: [
+		{
+			href: '/reference/errors/',
+			title: 'Look up a compiler message',
+			text: 'What each of KIELER’s errors and warnings means, a chart that triggers it, and the fix.',
+		},
+		{
+			href: '/reference/troubleshooting/',
+			title: 'It compiles but misbehaves',
+			text: 'From the symptom to its cause: a transition a tick late, an output stuck at true, a press counted twice.',
+		},
+	],
+}
+---
+
+<section class="sc-entry not-content" aria-labelledby="sc-entry-title" data-pagefind-ignore="all">
+	<h2 id="sc-entry-title" class="sc-landing-h2">Ways in</h2>
+	<ul class="sc-entry__list">
+		{
+			items.map((it) => (
+				<li class:list={{ 'is-wide': it.wide }}>
+					<a href={it.href} rel={it.external ? 'noopener' : undefined}>
+						{it.glyph === 'immediate' ? (
+							<svg class="sc-entry__glyph is-immediate" viewBox="0 0 40 24" aria-hidden="true">
+								<path class="sc-entry__edge" d="M2.5 12H31" />
+								<path class="sc-entry__head" d="M30 7.5L37.5 12L30 16.5Z" />
+							</svg>
+						) : it.glyph === 'comment' ? (
+							<svg class="sc-entry__glyph is-comment" viewBox="0 0 40 24" aria-hidden="true">
+								<path class="sc-entry__note" d="M8.75 1.75h17.5l5 5v15.5H8.75z" />
+								<path class="sc-entry__fold" d="M26.25 1.75v5h5" />
+								<path class="sc-entry__lines" d="M12.5 10.5h12M12.5 14.5h15M12.5 18.5h9" />
+							</svg>
+						) : (
+							<span class={`sc-entry__glyph is-${it.glyph}`} aria-hidden="true" />
+						)}
+						<span class="sc-entry__title">
+							{it.title}
+							{it.external && <span class="sc-visually-hidden"> (Visual Studio Marketplace)</span>}
+						</span>
+						<span class="sc-entry__text">{it.text}</span>
+					</a>
+				</li>
+			))
+		}
+		<li class="is-wide sc-entry__stuck">
+			<span class="sc-entry__glyph is-error" aria-hidden="true" />
+			<span class="sc-entry__title" id="sc-entry-stuck">{stuck.title}</span>
+			<ul class="sc-entry__ways" aria-labelledby="sc-entry-stuck">
+				{
+					stuck.links.map((l) => (
+						<li>
+							<a href={l.href}>
+								<span class="sc-entry__way">{l.title}</span>
+								<span class="sc-entry__text">{l.text}</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</li>
+	</ul>
+</section>
+
+<style>
+	.sc-entry {
+		padding-block: 3rem;
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-entry__list {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		margin: 1.25rem 0 0;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-entry__list li {
+		margin: 0;
+		border-bottom: 1px solid var(--c-rule);
+	}
+	.sc-entry__list a {
+		display: grid;
+		grid-template-columns: 2.75rem minmax(0, 1fr);
+		grid-template-areas: 'glyph title' 'glyph text';
+		column-gap: 0.875rem;
+		row-gap: 0.125rem;
+		/* As tall as its row's other entry, with the extra space below the text, not between title and text. */
+		align-content: start;
+		height: 100%;
+		padding: 1rem 0.5rem 1.125rem;
+		color: inherit;
+		text-decoration: none;
+	}
+	.sc-entry__list a:hover {
+		background-color: color-mix(in srgb, var(--c-rail) 80%, transparent);
+	}
+	.sc-entry__list a:hover .sc-entry__title {
+		color: var(--c-accent);
+	}
+	.sc-entry__title {
+		grid-area: title;
+		font-weight: 700;
+		font-size: var(--text-lg);
+		line-height: 1.3;
+		color: var(--c-ink);
+	}
+	.sc-entry__text {
+		grid-area: text;
+		font-size: var(--text-sm);
+		line-height: 1.5;
+		color: var(--c-muted);
+	}
+
+	/* Glyphs: an initial state, an active state, a comment, a final state. */
+	.sc-entry__glyph {
+		grid-area: glyph;
+		align-self: start;
+		margin-top: 0.25rem;
+		width: 2.5rem;
+		height: 1.5rem;
+		border-radius: var(--radius-capsule);
+		border: 1.5px solid var(--sc-state-stroke);
+		background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	}
+	.sc-entry__glyph.is-initial {
+		border-width: 3px;
+	}
+	.sc-entry__glyph.is-active {
+		border: var(--sc-active-width) solid var(--sc-active-stroke);
+		box-shadow: 0 0 0 4px var(--sc-active-glow);
+	}
+	/* An immediate transition: KIELER draws it dashed. */
+	.sc-entry__glyph:is(.is-comment, .is-immediate) {
+		border: 0;
+		border-radius: 0;
+		background: none;
+		overflow: visible;
+	}
+	.sc-entry__edge {
+		fill: none;
+		stroke: var(--sc-edge);
+		stroke-width: 2;
+		stroke-dasharray: 7 3;
+	}
+	.sc-entry__head {
+		fill: var(--sc-edge);
+		stroke: var(--sc-edge);
+		stroke-width: 1.5;
+		stroke-linejoin: round;
+	}
+	/* KIELER's comment: a yellow note with a folded corner. */
+	.sc-entry__note {
+		fill: var(--sc-comment-fill);
+		stroke: var(--sc-comment-stroke);
+		stroke-width: 1.5;
+		stroke-linejoin: round;
+	}
+	.sc-entry__fold {
+		fill: none;
+		stroke: var(--sc-comment-stroke);
+		stroke-width: 1.5;
+		stroke-linejoin: round;
+	}
+	.sc-entry__lines {
+		stroke: var(--sc-comment-text);
+		stroke-width: 1.25;
+		stroke-linecap: round;
+		opacity: 0.55;
+	}
+	.sc-entry__glyph.is-final {
+		box-shadow:
+			inset 0 0 0 2px var(--sc-state-fill),
+			inset 0 0 0 3.5px var(--sc-state-stroke);
+	}
+	/* A state a compiler message is about: the solid error outline and the marker disc with its "!" (link.ts,
+	   markErrors), as the diagrams draw it. */
+	.sc-entry__glyph.is-error {
+		position: relative;
+		border: 2.5px solid var(--sc-error);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-error) 22%, transparent);
+	}
+	.sc-entry__glyph.is-error::after {
+		content: '!';
+		position: absolute;
+		top: -0.5rem;
+		right: -0.5rem;
+		display: grid;
+		place-items: center;
+		width: 0.875rem;
+		height: 0.875rem;
+		border-radius: 50%;
+		background: var(--sc-error);
+		box-shadow: 0 0 0 1.5px var(--c-paper);
+		color: var(--c-paper);
+		font-size: 0.625rem;
+		font-weight: 800;
+		line-height: 1;
+	}
+
+	/* Stuck?: not a link itself; its two ways out are, each a block like the other entries, side by side from
+	   48rem (aligned with the columns above), one under the other on a phone. */
+	.sc-entry__stuck {
+		display: grid;
+		grid-template-columns: 2.75rem minmax(0, 1fr);
+		grid-template-areas: 'glyph title' 'ways ways';
+		column-gap: 0.875rem;
+		padding: 1rem 0.5rem 0.375rem;
+	}
+	/* Out to the row's edges (its padding), so that the two columns are those of the entries above. */
+	.sc-entry__ways {
+		grid-area: ways;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		margin: 0.25rem -0.5rem 0;
+		padding: 0;
+		list-style: none;
+	}
+	.sc-entry__ways li {
+		margin: 0;
+		border-bottom: 0;
+	}
+	.sc-entry__list .sc-entry__ways a {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas: 'title' 'text';
+		/* The text lines up with the titles of the entries above (their padding, glyph column and its gap). */
+		padding: 0.625rem 0.5rem 0.75rem calc(0.5rem + 2.75rem + 0.875rem);
+	}
+	.sc-entry__way {
+		grid-area: title;
+		font-weight: 700;
+		font-size: var(--text-md, 1.125rem);
+		line-height: 1.35;
+		color: var(--c-accent);
+	}
+	.sc-entry__list .sc-entry__ways a:hover .sc-entry__way {
+		color: var(--c-accent-strong, var(--c-accent));
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
+	@media (min-width: 48rem) {
+		.sc-entry__list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: 2rem;
+		}
+		/* The way to begin takes the whole first row; the other four sit two by two under it, and Stuck? takes the
+		   last row, its two ways in the same two columns. */
+		.sc-entry__list li.is-wide {
+			grid-column: 1 / -1;
+		}
+		.sc-entry__ways {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: 2rem;
+		}
+	}
+</style>

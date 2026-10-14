@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "buckled": [true, false, false, false] }, "note": "Tick 1 enters `Checking` and four copies of the region `Seat`, with `i` = 0, 1, 2 and 3. Seat 0 is already buckled, but the transitions are delayed, so nothing moves yet." },
+    { "note": "The copy with `i` = 0 sees `buckled[0]` and goes to `Fastened`. The other three keep waiting." },
+    { "inputs": { "buckled": [true, true, false, true] }, "note": "Seats 1 and 3 are buckled: their copies finish too, in the same tick. Only seat 2 is still open." },
+    { "inputs": { "buckled": [false, false, false, false] }, "note": "Everyone unbuckles, but the finished copies stay in `Fastened`: this simple chart only waits for each belt once." },
+    { "inputs": { "buckled": [false, false, true, false] }, "note": "Seat 2 is buckled. Now every copy is in its final state, so `Checking` terminates and `join to Ready` fires in the same tick: the chime stops." },
+    { "note": "In `Ready`." }
+  ],
+  "expect": "ok"
+}

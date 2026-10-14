@@ -1,0 +1,77 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Tick 1: `Serving`, `Ready`."
+    },
+    {
+      "inputs": {
+        "brew": true
+      },
+      "note": "`brew`: the heater goes on."
+    },
+    {
+      "inputs": {
+        "brew": false,
+        "clean": true
+      },
+      "note": "`clean` during the brew. `Serving`'s during action records the request in `cleanWanted`, and the brew carries on: `Heating` moves to `Pouring`."
+    },
+    {
+      "inputs": {
+        "clean": false
+      },
+      "note": "Pouring. The request is remembered although `clean` has been released."
+    },
+    {
+      "inputs": {},
+      "note": "The cup is done (`cups` is 1) and the chart is back in `Ready`, the safe point. `Ready` was entered in this tick, so its delayed transitions wait for the next one."
+    },
+    {
+      "inputs": {},
+      "note": "Commit: `if cleanWanted go to Stopped` fires, `Stopped` is final, so `Serving` terminates and its join clears `cleanWanted` and enters `Cleaning`, all in this tick."
+    },
+    {
+      "inputs": {},
+      "note": "Rinse, flush ..."
+    },
+    {
+      "inputs": {},
+      "note": "... done: `Cleaning` terminates and `Serving` starts again."
+    },
+    {
+      "inputs": {},
+      "note": "Ready."
+    },
+    {
+      "inputs": {
+        "brew": true,
+        "clean": true
+      },
+      "note": "`brew` and `clean` in the same tick, in `Ready`. The during action writes `cleanWanted` before `Ready` reads it, and `Ready` tries `if cleanWanted` first: cleaning wins, the brew request is ignored."
+    },
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Cleaning."
+    },
+    {
+      "inputs": {},
+      "note": "Cleaning."
+    },
+    {
+      "inputs": {},
+      "note": "Back to `Serving`."
+    },
+    {
+      "inputs": {},
+      "note": "Ready."
+    }
+  ],
+  "expect": "ok"
+}

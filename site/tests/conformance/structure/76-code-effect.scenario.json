@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1 enters S; the self-loop is delayed: **a = 0, b = 0**."
+    },
+    {
+      "inputs": {},
+      "note": "The block runs in order: a = 1, then b = a * 2: **a = 1, b = 2**."
+    },
+    {
+      "inputs": {},
+      "note": "a = 2, b = 4; the if is not taken: **a = 2, b = 4**."
+    },
+    {
+      "inputs": {},
+      "note": "a = 3, b = 6, then the if (a > 2) sets b to 0: **a = 3, b = 0**."
+    }
+  ],
+  "expect": "ok"
+}

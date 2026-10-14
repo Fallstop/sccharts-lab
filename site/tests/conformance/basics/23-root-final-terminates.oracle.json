@@ -1,0 +1,76 @@
+{
+  "hash": "740442b810464377789b7871d1c51bcc87cca6a3",
+  "chart": "tests/conformance/basics/23-root-final-terminates.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": false
+      },
+      "values": {
+        "I": false,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": false,
+        "x": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": true
+      },
+      "values": {
+        "I": true,
+        "x": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "x": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "hash": "976be2c850fdde90c57a908f8bc294e214f12509",
+  "chart": "tests/conformance/basics/58-input-array-partial.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "s": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": [
+          1,
+          2,
+          3
+        ]
+      },
+      "values": {
+        "A": [
+          1,
+          2,
+          3
+        ],
+        "s": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": [
+          1,
+          2,
+          3
+        ],
+        "s": 123
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": [
+          4
+        ]
+      },
+      "values": {
+        "A": [
+          4,
+          2,
+          3
+        ],
+        "s": 423
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "A": [
+          4,
+          2,
+          3
+        ],
+        "s": 423
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

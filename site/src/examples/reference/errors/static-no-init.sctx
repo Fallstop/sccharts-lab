@@ -1,0 +1,14 @@
+scchart StaticNoInit {
+  input bool A
+  output int shown
+
+  initial state Room {
+    static int visits
+    entry do visits++; shown = visits
+    initial state Inside
+  }
+  if A go to Hall
+
+  state Hall
+    if A go to Room
+}

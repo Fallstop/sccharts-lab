@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "finish": false
+      },
+      "note": "Actions of the `scchart` itself belong to the root state: its entry runs first (rootEntryAt = 1), then A's (aEntryAt = 2)."
+    },
+    {
+      "inputs": {
+        "finish": true
+      },
+      "note": "F is entered (finalEntryAt = 3). F is a final state of the root, so the whole chart terminates in this tick: F's exit runs (finalExitAt = 4), then the root's exit (rootExitAt = 5)."
+    },
+    {
+      "inputs": {
+        "finish": false
+      },
+      "note": "The chart has terminated: nothing runs any more."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,124 @@
+{
+ "sourceHash": "e591865934b964a5",
+ "states": [
+  {
+   "path": [
+    "P181"
+   ],
+   "rows": [
+    [
+     "P181"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    262.4,
+    194.6
+   ]
+  },
+  {
+   "path": [
+    "P181",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P181",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    203.5,
+    10,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P181",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    249.1,
+    54.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP181$$N0$NS0$ES10",
+   "source": [
+    "P181",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P181",
+    0,
+    "S1"
+   ],
+   "text": "(A && B) + 1 > 0",
+   "lines": [
+    "(A && B) + 1 > 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

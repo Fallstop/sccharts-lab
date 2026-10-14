@@ -1,0 +1,69 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true
+      },
+      "note": "Tick 1: no train, the barrier is up (`isUp`), the crossing is `Open`."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A train enters the track circuit: `occupied`. The crossing starts its warning time."
+    },
+    {
+      "inputs": {},
+      "note": "Warning, one tick counted."
+    },
+    {
+      "inputs": {},
+      "note": "Two."
+    },
+    {
+      "inputs": {},
+      "note": "Three: the warning time is over, `lower` starts the barrier motor."
+    },
+    {
+      "inputs": {
+        "isUp": false
+      },
+      "note": "The barrier leaves its upper limit switch."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "It reaches the lower one: `isDown`. The crossing is `Closed`."
+    },
+    {
+      "inputs": {},
+      "note": "The train passes."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "The track circuit is clear: the barrier is raised (`lower` false)."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "The barrier leaves the lower limit switch."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "It is up: `Open` again."
+    },
+    {
+      "inputs": {},
+      "note": "Open."
+    }
+  ],
+  "expect": "ok"
+}

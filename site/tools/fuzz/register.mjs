@@ -1,0 +1,3 @@
+// node --experimental-transform-types --no-warnings --import ./tools/fuzz/register.mjs tools/fuzz/run.ts ...
+import { register } from 'node:module'
+register('./hooks.mjs', import.meta.url)

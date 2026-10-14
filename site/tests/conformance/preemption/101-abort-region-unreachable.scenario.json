@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Tick 1 enters R0s0: **x = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "R0s0 goes to R0s2: **x = 1**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "note": "R0s2 goes back to R0s0: **x = 1**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "note": "Again to R0s2: **x = 2**; R0s1 is never entered."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,10 @@
+scchart P64 {
+  output int O
+  method int twice(int v) {
+    return v * 2
+  }
+  method void nothing()
+  private method bool yes() { return true }
+  initial state S0
+  do O = twice(3) go to S0
+}

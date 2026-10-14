@@ -1,0 +1,12 @@
+scchart WeakSuspendNoTrigger {
+  input bool A
+
+  initial state M {
+    weak suspend
+
+    initial state I
+    if A go to J
+
+    state J
+  }
+}

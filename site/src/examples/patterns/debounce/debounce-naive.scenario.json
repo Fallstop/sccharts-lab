@@ -1,0 +1,107 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Tick 1: released."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "First contact: the count delay `if 3 raw` counts its first tick."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "A bounce. The count delay does not care: it counts ticks in which `raw` is true, not ticks in a row."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Second tick with `raw` true."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Third tick with `raw` true: `pressed` is accepted, although the readings were true, false, true, true. Too early."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "The next bounce releases it at once: the release side has no filter at all."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Counting again from scratch: one ..."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "... two ..."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "... three: `pressed` again. One physical press has produced two."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Held."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Held."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "The release bounce releases `pressed` immediately."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Counting: one."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Released."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Released."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Released."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Released."
+    }
+  ],
+  "expect": "ok"
+}

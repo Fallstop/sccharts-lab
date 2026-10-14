@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": { "start": false },
+      "note": "Tick 1 enters `Waiting`."
+    },
+    {
+      "inputs": { "start": true },
+      "note": "`start` is present: `runs` is 1 and the chart enters the final state `Done`. A chart that ends a tick in a final state terminates, but this one declares a signal, and KIELER's simulator never lets such a chart terminate."
+    },
+    {
+      "note": "`start` is still present. The chart has not terminated, so `Done`'s transition is checked like any other: back to `Waiting`."
+    },
+    {
+      "note": "`Waiting` → `Done` again, and `runs` is 2."
+    },
+    {
+      "inputs": { "start": false },
+      "note": "`start` is absent, so nothing fires. The chart rests in its final state, still running."
+    }
+  ],
+  "expect": "ok"
+}

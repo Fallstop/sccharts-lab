@@ -1,0 +1,8 @@
+#hostcode "#include <stdlib.h>"
+scchart ExternNoParens {
+  input int x
+  output int distance = 0
+  extern "abs" absolute
+  initial state Run
+    do distance = absolute go to Run
+}

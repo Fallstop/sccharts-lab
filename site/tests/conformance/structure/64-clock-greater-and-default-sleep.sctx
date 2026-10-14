@@ -1,0 +1,9 @@
+// @DefaultSleep (on the root chart) caps sleepT. t > 100 is a strict test: sleepT asks for 101 - t.
+@DefaultSleep 50
+scchart St64Strict {
+  output bool a = false
+  clock t
+  initial state W
+  if t > 100 do a = true go to D
+  state D
+}

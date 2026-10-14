@@ -1,0 +1,9 @@
+// import "file" loads the charts of another .sctx file (path relative to this file, ".sctx" optional,
+// "dir/*" imports a whole folder). The imported charts are only referenceable: this file's first chart is simulated.
+import "16-st16-beep"
+
+scchart St16Main {
+  input bool second
+  output bool speaker
+  initial state R is St16Beep(second, speaker)
+}

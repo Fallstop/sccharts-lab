@@ -1,0 +1,108 @@
+{
+  "hash": "6e9f6f4792195966fb3554105ea36d5bea1c1da9",
+  "chart": "tests/conformance/structure/127-chart-class-regions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "St127Ticker11.count": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "O": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "O": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "O": 2
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "O": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "O": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

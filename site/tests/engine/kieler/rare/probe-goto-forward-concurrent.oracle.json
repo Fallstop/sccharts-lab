@@ -1,0 +1,78 @@
+{
+  "hash": "cb789eeb06e912ffdab04881ba2177d1f0736f2c",
+  "chart": "tests/engine/kieler/rare/probe-goto-forward-concurrent.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "skip": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "a": 0,
+        "b": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "skip": true
+      },
+      "values": {
+        "skip": true,
+        "a": 0,
+        "b": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "a": 1,
+        "b": 4
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

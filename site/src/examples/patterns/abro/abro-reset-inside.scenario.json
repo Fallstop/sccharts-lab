@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `WaitAB`." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` finishes." },
+    { "inputs": { "R": true, "A": false }, "note": "`R` while waiting: the strong abort restarts `WaitAB`, so the `A` of tick 2 is forgotten." },
+    { "inputs": { "R": false, "B": true }, "note": "`B` alone gives no `O`: since the reset, only `B` has happened." },
+    { "inputs": { "B": false, "A": true }, "note": "`A`: now both have happened since the reset, so `O` is emitted and the chart moves to `Done`." },
+    { "inputs": { "A": false, "R": true }, "note": "`R` now does nothing: the abort belongs to `WaitAB`, which is no longer active, and `Done` has no transitions." },
+    { "inputs": { "R": false, "A": true, "B": true }, "note": "`A` and `B` are ignored too. This chart can emit `O` only once." },
+    { "inputs": { "A": false, "B": false }, "note": "Stuck in `Done`." }
+  ],
+  "expect": "ok"
+}

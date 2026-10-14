@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": { "finish": false, "cancel": false },
+      "note": "Tick 1 enters `Task` and `Working` in both charts."
+    },
+    {
+      "inputs": { "finish": true },
+      "note": "`finish`: `Working` moves to the final state `Finished`, `Task` terminates, and `join to` leaves it. On a termination both exit actions run: `exits` is 1 in both charts."
+    },
+    {
+      "inputs": { "finish": false },
+      "note": "`Idle`'s delayed transition starts a new `Task`."
+    },
+    {
+      "inputs": { "cancel": true },
+      "note": "`cancel` leaves `Task` with `go to`, a weak abort. `PlainExit`'s exit action runs (`exits` is 2); `WeakExit`'s `weak exit` is skipped and `exits` stays 1."
+    },
+    {
+      "inputs": { "cancel": false },
+      "note": "A new `Task` again. Only a termination runs a `weak exit` on a superstate."
+    }
+  ],
+  "expect": "ok"
+}

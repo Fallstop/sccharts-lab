@@ -1,0 +1,14 @@
+// Three self-loops with wide labels on a state by itself (advanced/data-types): on four sides the labels of the
+// right and the lower loop collide, so the loops go on two sides (layout.ts, crowdedLoops).
+scchart Fan {
+  input bool button
+  output int power = 0
+
+  enum Speed { OFF, LOW, HIGH }
+  ref Speed speed = Speed.OFF
+
+  initial state Run
+    if button && speed == Speed.OFF do speed = Speed.LOW; power = 40 go to Run
+    if button && speed == Speed.LOW do speed = Speed.HIGH; power = 100 go to Run
+    if button do speed = Speed.OFF; power = 0 go to Run
+}

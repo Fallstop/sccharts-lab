@@ -1,0 +1,34 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "note": "Entry tick counts (immediate): count 1."
+    },
+    {
+      "inputs": {},
+      "note": "Count 2."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "S is left to U with count 2."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "note": "Surprise: U goes back to S and the transition fires at once (fired = 1), with A seen only once in this visit. KIELER compiles the count delay to `pre(counter) == 2 && A`, and the previous tick's counter still holds 2 from the last visit; the reset on entry only shows from the next tick."
+    },
+    {
+      "inputs": {},
+      "note": "In T."
+    }
+  ],
+  "expect": "ok"
+}

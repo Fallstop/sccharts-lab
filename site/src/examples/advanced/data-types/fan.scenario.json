@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Tick 1 enters `Run`; the self-loops are delayed. `speed` starts at `Speed.OFF`, which the trace shows as 0." },
+    { "inputs": { "button": true }, "note": "A press: `speed == Speed.OFF` holds, so the first transition sets `speed` to `Speed.LOW`, shown as 1, and `power` to 40." },
+    { "inputs": { "button": false }, "note": "No press: `speed` keeps 1." },
+    { "inputs": { "button": true }, "note": "`Speed.HIGH`, 2, and full power." },
+    { "note": "`button` is still true, so the fan steps again: back to `Speed.OFF`, 0. A held button steps once per tick; to step once per press, react to its [rising edge](/patterns/edges/)." },
+    { "inputs": { "button": false }, "note": "Off, and `speed` stays 0." }
+  ],
+  "expect": "ok"
+}

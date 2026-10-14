@@ -1,0 +1,14 @@
+scchart SessionCounter {
+  input bool start, stop, doorOpen
+  output int sessions = 0
+
+  initial state Idle
+    if start do sessions++ go to Cooking
+
+  state Cooking {
+    suspend if doorOpen
+
+    initial state Heating
+  }
+  if stop go to Idle
+}

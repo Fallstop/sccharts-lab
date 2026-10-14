@@ -1,0 +1,143 @@
+{
+  "hash": "c5fed9edd41b2944380b98230eb566233d8643bb",
+  "chart": "src/examples/learn/actions/courtesy-light.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "dark": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "doorOpen": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "light": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "doorOpen": false,
+        "dark": false
+      },
+      "values": {
+        "dark": false,
+        "doorOpen": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "doorOpen": true
+      },
+      "values": {
+        "dark": false,
+        "doorOpen": true,
+        "light": false
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "dark": true
+      },
+      "values": {
+        "dark": true,
+        "doorOpen": true,
+        "light": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "doorOpen": false
+      },
+      "values": {
+        "dark": true,
+        "doorOpen": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "doorOpen": true
+      },
+      "values": {
+        "dark": true,
+        "doorOpen": true,
+        "light": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "dark": false
+      },
+      "values": {
+        "dark": false,
+        "doorOpen": true,
+        "light": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "doorOpen": false
+      },
+      "values": {
+        "dark": false,
+        "doorOpen": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

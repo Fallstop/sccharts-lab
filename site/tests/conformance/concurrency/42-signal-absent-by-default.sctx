@@ -1,0 +1,8 @@
+scchart SignalVsBool {
+  input bool a
+  output signal S
+  output bool B
+
+  initial state X
+  if a do S; B = true go to X
+}

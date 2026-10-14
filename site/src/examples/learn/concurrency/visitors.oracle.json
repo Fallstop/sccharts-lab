@@ -1,0 +1,173 @@
+{
+  "hash": "8c269535c2036f2248fd2d5e70309ab15b2bac9b",
+  "chart": "src/examples/learn/concurrency/visitors.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "clear": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "north": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "south": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "crowded": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "inside": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "clear": false,
+        "north": false,
+        "south": false
+      },
+      "values": {
+        "clear": false,
+        "north": false,
+        "south": false,
+        "crowded": false,
+        "inside": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "north": true
+      },
+      "values": {
+        "clear": false,
+        "north": true,
+        "south": false,
+        "crowded": false,
+        "inside": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "north": false,
+        "south": true
+      },
+      "values": {
+        "clear": false,
+        "north": false,
+        "south": true,
+        "crowded": false,
+        "inside": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "north": true
+      },
+      "values": {
+        "clear": false,
+        "north": true,
+        "south": true,
+        "crowded": true,
+        "inside": 4
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "clear": true
+      },
+      "values": {
+        "clear": true,
+        "north": true,
+        "south": true,
+        "crowded": false,
+        "inside": 2
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "clear": false,
+        "north": false,
+        "south": false
+      },
+      "values": {
+        "clear": false,
+        "north": false,
+        "south": false,
+        "crowded": false,
+        "inside": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

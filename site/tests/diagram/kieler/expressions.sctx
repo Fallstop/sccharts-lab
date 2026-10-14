@@ -1,0 +1,75 @@
+scchart Expressions {
+  input bool a, b, c
+  input int x, y, z
+  input float f
+  input string s
+  output int o, arr[4]
+  output float g
+  output signal S
+  output signal int V
+  output signal bool W combine |
+  output signal int M combine max
+  output bool ok
+
+  initial state A
+  if a && b || c go to B
+  if a || b && c go to B
+  if (a || b) && c go to B
+  if !(a && b) go to B
+  if !a && !b go to B
+  if x + y * z > 3 go to B
+  if (x + y) * z > 3 go to B
+  if x - (y - z) == 0 go to B
+  if x - y - z == 0 go to B
+  if x - (y + z) == 0 go to B
+  if x + y - z == 0 go to B
+  if x * (y / z) == 0 go to B
+  if x / (y * z) == 0 go to B
+  if -(x + y) < 0 go to B
+  if -(x - y) < 0 go to B
+  if x % 2 == 1 go to B
+  if (x & 3) == 1 go to B
+  if (x | y) != 0 go to B
+  if x << 2 > y go to B
+  if (x + 1) << 2 > y go to B
+  if x >= y && y <= z go to B
+  if pre(a) go to B
+  if pre(x) + 1 > x go to B
+  if !pre(a) && b go to B
+  if 3 a go to B
+  if a == (b == c) go to B
+  if f > 1.5 go to B
+  if f < 0.1 go to B
+  if s == "hi" go to B
+  if arr[x + 1] > 0 go to B
+  if (x > 0 ? true : false) go to B
+  go to B
+
+  state B
+  do o = x + 1 go to C
+  do o += 2; o -= 1; o *= 3 go to C
+  do o++; o-- go to C
+  do S go to C
+  do V(x + 1) go to C
+  do V(3) go to C
+  do V(pre(x)) go to C
+  do W(a && b) go to C
+  do M(x) go to C
+  do arr[1] = 2; arr[x] = y go to C
+  do g = f * 2.0 go to C
+  do g = 1000000.0 go to C
+  do g = 0.0001 go to C
+  do g = 12345678.9 go to C
+  do ok = !ok go to C
+  do o = (x > 0 ? 1 : 2) go to C
+  do print(x) go to C
+  do `foo(x)` go to C
+  do o = 1 go to C label "user label"
+  immediate if a do o = 2 go to C
+  if a do o = 3 abort to C
+  if a do o = 4 join to C
+  go to C
+
+  state C
+  if a do S go to C
+}

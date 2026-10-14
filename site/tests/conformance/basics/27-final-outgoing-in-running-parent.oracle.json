@@ -1,0 +1,101 @@
+{
+  "hash": "f9951587d5ddbb5c5e262de4497226b0edbb2572",
+  "chart": "tests/conformance/basics/27-final-outgoing-in-running-parent.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 9,
+      "column": 17
+    }
+  ],
+  "interface": {
+    "I": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": false
+      },
+      "values": {
+        "I": false,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": false,
+        "x": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": true
+      },
+      "values": {
+        "I": true,
+        "x": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "x": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "x": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

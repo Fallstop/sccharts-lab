@@ -1,0 +1,88 @@
+{
+  "hash": "adef3bd5a79c434aa8f362fd6425bbf6f9b5207a",
+  "chart": "tests/engine/kieler/preemption/probe-abort-trigger-inside-weak-plain.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "beat": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "expired": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "beat": false
+      },
+      "values": {
+        "a": false,
+        "beat": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "beat": false
+      },
+      "values": {
+        "a": true,
+        "beat": false,
+        "expired": true
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "beat": true
+      },
+      "values": {
+        "a": false,
+        "beat": true,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

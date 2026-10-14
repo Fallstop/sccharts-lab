@@ -1,0 +1,18 @@
+scchart ImmediateWeakAbort {
+  input bool W
+  output int outerEntry = 0, innerEntry = 0, chained = 0, effect = 0
+
+  initial state M {
+    entry do outerEntry = 1
+
+    initial state I1 {
+      entry do innerEntry = 1
+    }
+    immediate do chained = 1 go to I2
+
+    state I2
+  }
+  immediate if W do effect = 1 go to Done
+
+  state Done
+}

@@ -1,0 +1,12 @@
+scchart ClockShared {
+  output bool a, b
+  clock t
+
+  region Left:
+    initial state L
+      if t >= 100 do a = true go to L
+
+  region Right:
+    initial state R
+      if t >= 200 do b = true go to R
+}

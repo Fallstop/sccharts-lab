@@ -1,0 +1,8 @@
+scchart InlinedD {
+  output int r = 0, x = 3
+  method int f(int d) {
+    return d * 2
+  }
+  initial state S
+    do r = f(x) go to S
+}

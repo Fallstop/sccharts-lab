@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "i": 4
+      },
+      "note": "Tick 1: nothing fires."
+    },
+    {
+      "inputs": {
+        "i": 5
+      },
+      "note": "Both regions write `x = 3` and `y = i` in the same tick. Writes of the same constant, or of the same expression, are confluent: KIELER accepts them. `x = 3`, `y = 5`."
+    },
+    {
+      "inputs": {
+        "i": 6
+      },
+      "note": "No further change (`y` keeps 5)."
+    }
+  ],
+  "expect": "ok"
+}

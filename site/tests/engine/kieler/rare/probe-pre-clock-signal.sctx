@@ -1,0 +1,9 @@
+// A signal as the clock.
+scchart PreClockSignal {
+  input int v
+  input signal c
+  output int p = 0
+  initial state S {
+    immediate during do p = pre(v, c)
+  }
+}

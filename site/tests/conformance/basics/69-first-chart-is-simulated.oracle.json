@@ -1,0 +1,64 @@
+{
+  "hash": "dfb0e5deeca5d854d8aa9ca075fc5debe4fa7754",
+  "chart": "tests/conformance/basics/69-first-chart-is-simulated.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": false
+      },
+      "values": {
+        "I": false,
+        "a": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": true
+      },
+      "values": {
+        "I": true,
+        "a": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "a": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

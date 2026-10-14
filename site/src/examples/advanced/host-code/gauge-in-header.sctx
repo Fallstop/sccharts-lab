@@ -1,0 +1,10 @@
+#hostcode "static int clamp(int v, int lo, int hi) { return v < lo ? lo : (v > hi ? hi : v); }"
+
+scchart GaugeInHeader {
+  input int reading
+  output int needle = 0
+  extern "clamp" clamp
+
+  initial state Show
+    do needle = clamp(reading, 0, 100) go to Show
+}

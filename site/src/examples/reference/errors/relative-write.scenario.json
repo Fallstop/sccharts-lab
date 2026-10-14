@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Tick 1 enters `Counting`; the self-loop is delayed. KIELER warns about `count = count + 1` but compiles the chart."
+    },
+    {
+      "note": "`A` is still true (inputs keep their value), so the self-loop fires and `count` becomes 1. In a single region, `count = count + 1` and `count += 1` behave the same."
+    },
+    {
+      "note": "`count` becomes 2."
+    }
+  ],
+  "expect": "ok"
+}

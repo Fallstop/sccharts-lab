@@ -1,0 +1,24 @@
+scchart WeakSuspendNested {
+  input bool S, A, B
+  output int enters = 0, steps = 0
+
+  initial state M {
+    weak suspend if S
+
+    initial state P {
+      initial state X
+      if A do steps += 1 go to Y
+
+      state Y {
+        entry do enters += 1
+      }
+      if A do steps += 1 go to X
+    }
+    if B go to Q
+
+    state Q {
+      entry do enters += 10
+    }
+    if B go to P
+  }
+}

@@ -1,0 +1,11 @@
+// A for loop whose counter is a variable of the chart (not declared in the loop head) breaks KIELER's C code
+// generation.
+scchart St146OuterCounter {
+  output int i = 0, steps = 0
+  initial state S
+  do {
+    for (i = 0; i < 6; i += 2) {
+      steps++
+    }
+  } go to S
+}

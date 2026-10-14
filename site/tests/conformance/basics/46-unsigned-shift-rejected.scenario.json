@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {"A": -16}, "note": "Rejected. The grammar accepts >>> (and >>>=), but the C code generator copies it into C, which has no such operator: gcc fails with \"expected expression before ‘>’ token\" and KIELER reports \"Compiler did not return success\"."}
+  ],
+  "expect": "error",
+  "errorIncludes": "Compiler did not return success"
+}

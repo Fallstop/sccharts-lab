@@ -1,0 +1,14 @@
+scchart CallButton {
+  input bool button    // the call button on this floor
+  input bool arrived   // the lift is here, doors open
+  output bool lamp     // "call registered"
+
+  initial state Idle
+    if button go to Waiting
+
+  state Waiting {
+    entry do lamp = true
+    exit do lamp = false
+  }
+  if arrived go to Idle
+}

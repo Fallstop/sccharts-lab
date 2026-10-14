@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters `Busy`: the entry action counts the entry, and the `immediate during` action also runs in this first tick."
+    },
+    {
+      "note": "The during action runs again: `ticks` = 2."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A` is true. The during action still runs in the tick `Busy` is left (`ticks` = 3); then the exit action runs (`left` = 1) and the chart goes to `Idle`."
+    },
+    {
+      "note": "`A` is still true: back to `Busy`, which runs its entry action and its immediate during action again."
+    }
+  ],
+  "expect": "ok"
+}

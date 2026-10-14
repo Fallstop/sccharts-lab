@@ -1,0 +1,96 @@
+{
+  "hash": "aa369fee7aff5a36bbe858e82d7813ff0ee277c9",
+  "chart": "tests/engine/kieler/structure/probe-dz45.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through cnt."
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "o": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "o": 6
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "o": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "o": 6
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "o": 7
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

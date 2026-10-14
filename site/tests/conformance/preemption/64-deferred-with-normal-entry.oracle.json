@@ -1,0 +1,149 @@
+{
+  "hash": "6860357c1529164695641f80704d049b75e5d3c4",
+  "chart": "tests/conformance/preemption/64-deferred-with-normal-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "H": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chained": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false,
+        "H": false
+      },
+      "values": {
+        "G": false,
+        "H": false,
+        "chained": 0,
+        "entries": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "H": false,
+        "chained": 0,
+        "entries": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "H": false,
+        "chained": 1,
+        "entries": 0
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "G": false,
+        "H": false,
+        "chained": 1,
+        "entries": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "H": true
+      },
+      "values": {
+        "G": false,
+        "H": true,
+        "chained": 2,
+        "entries": 1
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "H": false
+      },
+      "values": {
+        "G": false,
+        "H": false,
+        "chained": 2,
+        "entries": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

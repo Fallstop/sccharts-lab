@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": true }, "note": "The door is already open in tick 1, but a plain `suspend` is delayed: it is not checked in the tick `Cooking` is entered. The immediate transition `Start` to `Heating` runs and switches the heater on." },
+    { "note": "From tick 2 the suspend is checked. The door is open, so `Cooking` is frozen." },
+    { "inputs": { "doorOpen": false }, "note": "The door shuts and the countdown starts: 2." },
+    { "note": "1." }
+  ],
+  "expect": "ok"
+}

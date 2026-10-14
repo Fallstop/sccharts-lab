@@ -1,0 +1,18 @@
+// An instance can only be assigned a tuple; a scalar must go to one of its inputs.
+scchart St56Main {
+  input bool X
+  output bool O
+  ref St56And g
+  dataflow {
+    g = X
+    O = g.O
+  }
+}
+
+scchart St56And {
+  input bool A, B
+  output bool O
+  dataflow {
+    O = A && B
+  }
+}

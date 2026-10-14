@@ -1,0 +1,16 @@
+// Only variables (or signals) and literals can be bound. An expression such as a && b is accepted by the
+// editor but rejected by the compiler.
+scchart St20Main {
+  input bool a, b
+  output bool sp
+  initial state R is St20Beep(a && b to second, sp to beep)
+}
+
+scchart St20Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

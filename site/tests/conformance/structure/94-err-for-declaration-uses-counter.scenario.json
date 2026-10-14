@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Rejected: the lab server reports `java.lang.IllegalArgumentException: Can't copy valued object. Valued object is null!`; official KIELER does not answer at all. `int k = i` is a region declaration (it moves to the root state), and its initial value names the counter, which is replaced in the copies only."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Can't copy valued object"
+}

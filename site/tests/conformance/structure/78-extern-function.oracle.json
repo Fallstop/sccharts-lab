@@ -1,0 +1,71 @@
+{
+  "hash": "306d69302a69fdfaf378305654a6d3d5d9cf1268",
+  "chart": "tests/conformance/structure/78-extern-function.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name absf is contained in the model but not in VariableStore.",
+    "ValuedObject with name tw is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": -5
+      },
+      "values": {
+        "a": -5,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": -6
+      },
+      "values": {
+        "a": -6,
+        "x": 6,
+        "y": -12,
+        "z": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

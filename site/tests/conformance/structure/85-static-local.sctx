@@ -1,0 +1,15 @@
+// A static local keeps its value when its state is left and re-entered (it is initialised once, at the start).
+// A plain local is re-initialised on every entry. KIELER moves the static variable to the root and renames it
+// St85Visits_region0_A___visits, so it shows up in the data pool under that name.
+scchart St85Visits {
+  input bool leave
+  output int plain = 0, kept = 0
+  initial state A {
+    static int visits = 0
+    int fresh = 0
+    entry do visits++; fresh++; kept = visits; plain = fresh
+  }
+  if leave go to B
+  state B
+  go to A
+}

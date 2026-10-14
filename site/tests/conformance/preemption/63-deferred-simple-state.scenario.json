@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "Tick 1 enters A."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "`deferred` enters B without its immediate behaviour: no entry action, no immediate during action, no immediate transition (all 0)."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "In the next tick B behaves as if it had been entered normally one tick earlier: both during actions run (iticks = 1, ticks = 1) and the immediate transition fires (chained = 1). Its entry action never runs."
+    },
+    {
+      "inputs": {},
+      "note": "In C."
+    }
+  ],
+  "expect": "ok"
+}

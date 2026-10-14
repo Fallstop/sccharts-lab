@@ -1,0 +1,12 @@
+// An equation followed by ";" (or "seq") is sequenced before the next one. With sequential equations a
+// variable may be written several times and read in between, like statements. (KIELER also warns
+// "ValuedObject with name _St44Seq_local_seq0 is contained in the model but not in VariableStore.")
+scchart St44Seq {
+  input int I
+  output int X
+  dataflow {
+    X = I;
+    X = X * 10;
+    X = X + 1
+  }
+}

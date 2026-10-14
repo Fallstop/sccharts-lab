@@ -1,0 +1,29 @@
+// Two leading abort regions: W1 finishing stops Main at once, W2 (the region just before Main) does not
+// (KIELER's off-by-one in the depth guard of sequential preemptive forks).
+scchart TwoLeading {
+  input bool A, B
+  output int work = 0, done = 0
+
+  initial state M {
+    abort region W1 {
+      initial state W
+      if A go to F
+      final state F
+    }
+    abort region W2 {
+      initial state W
+      if B go to F
+      final state F
+    }
+    region Main {
+      initial state I
+      if true do work += 1 go to I
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done += 1
+  }
+  go to M
+}

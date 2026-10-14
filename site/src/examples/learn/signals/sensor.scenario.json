@@ -1,0 +1,37 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "sample": false,
+        "reading": 7
+      },
+      "note": "Tick 1: `level` is absent and its value is its initial value, 0."
+    },
+    {
+      "inputs": {
+        "sample": true
+      },
+      "note": "`sample` is true: the chart emits `level` with the value of `reading`, 7. `val(level)` already sees the new value in the same tick, so `last` is 7."
+    },
+    {
+      "inputs": {
+        "sample": false,
+        "reading": 9
+      },
+      "note": "Nothing emits `level`, so it is absent, but its value is still 7: `val(level)` keeps the last emitted value. `reading` changed to 9, which does not matter until the next emission."
+    },
+    {
+      "inputs": {
+        "sample": true
+      },
+      "note": "Emitted again, now with 9."
+    },
+    {
+      "inputs": {
+        "sample": false
+      },
+      "note": "Absent again; the value stays 9."
+    }
+  ],
+  "expect": "ok"
+}

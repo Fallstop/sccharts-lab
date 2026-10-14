@@ -1,0 +1,1141 @@
+/*
+ * Shared styles for the parts that go inside a widget frame (src/components/frame/WidgetFrame.astro):
+ * the simulation control bar, input controls, the trace strip, the guided-tour line, two-chart and
+ * editor layouts, and prediction forms. Global, because both build-time markup and markup the widgets
+ * create in the browser use these classes.
+ */
+
+/* ===== Control bar ================================================================================ */
+
+.sc-simctl {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.625rem 1rem;
+	width: 100%;
+}
+.sc-simctl__buttons {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+}
+/* The tick counter: tabular figures, so it does not jitter while running. */
+.sc-simctl__tick {
+	font-size: var(--text-sm);
+	color: var(--c-muted);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+.sc-simctl__tick b {
+	display: inline-block;
+	min-width: 1.5ch;
+	color: var(--c-ink);
+	font-weight: 800;
+}
+.sc-simctl__inputs {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-width: 0;
+}
+.sc-simctl__note {
+	flex-basis: 100%;
+	margin: 0;
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+}
+
+/* ===== Inputs ======================================================================================
+ * A boolean input or pure signal is a switch-like chip: the chip is "high" (filled like the area under
+ * a high waveform) while the input is true / present. A valued input is a labelled number field. */
+
+.sc-input {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: 2rem;
+	font-size: var(--text-sm);
+	color: var(--c-ink);
+}
+.sc-input__name {
+	font-family: var(--font-mono);
+	font-weight: 700;
+}
+/* The chip is a span holding the switch (a label) and, in simulations, a pulse button. Placeholder
+ * markup (a label chip with the checkbox inside) gets the same look. */
+.sc-input--bool {
+	position: relative;
+	padding: 0.125rem 0.75rem 0.125rem 0.375rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+	cursor: pointer;
+	user-select: none;
+}
+.sc-input--bool:has(.sc-input__pulse) {
+	padding-inline-end: 0.1875rem;
+	gap: 0.25rem;
+}
+.sc-input__switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: 1.75rem;
+	padding-inline-end: 0.25rem;
+	cursor: pointer;
+}
+.sc-input--bool input {
+	appearance: none;
+	-webkit-appearance: none;
+	position: relative;
+	flex: none;
+	width: 2rem;
+	height: 1.125rem;
+	margin: 0;
+	border-radius: var(--radius-capsule);
+	border: 1.5px solid var(--sc-wave-line);
+	background: var(--c-paper);
+	cursor: inherit;
+}
+/* The knob drawn as a tiny waveform level: low when off, high when on. */
+.sc-input--bool input::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 2px;
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 50%;
+	background-color: var(--sc-wave-line);
+	transform: translateY(-50%);
+	transition: left 0.12s;
+}
+.sc-input--bool input:checked {
+	background-color: var(--sc-wave-fill);
+	border-color: var(--c-ink);
+}
+.sc-input--bool input:checked::after {
+	left: calc(100% - 0.75rem - 2px);
+	background-color: var(--c-ink);
+}
+.sc-input--bool:has(input:checked) {
+	border-color: var(--c-ink);
+	background-color: color-mix(in srgb, var(--sc-wave-fill) 60%, var(--c-sheet));
+}
+/* The pulse button: a one-tick pulse glyph. Pressed (armed), it is filled like a high level, and the
+ * chip's outline turns dashed: the input is high for the next tick only. */
+.sc-input__pulse {
+	display: inline-grid;
+	place-items: center;
+	width: 2rem;
+	height: 1.625rem;
+	margin: 0;
+	padding: 0;
+	border: 1.5px solid transparent;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-ink);
+	cursor: pointer;
+}
+.sc-input__pulse svg {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.75;
+	stroke-linejoin: miter;
+}
+.sc-input__pulse:hover:not(:disabled) {
+	border-color: var(--c-control);
+}
+.sc-input__pulse[aria-pressed='true'] {
+	border-color: var(--c-ink);
+	background-color: var(--sc-wave-fill);
+}
+.sc-input__pulse[aria-pressed='true'] svg {
+	stroke-width: 2.5;
+}
+.sc-input__pulse:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+.sc-input__pulse:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 1px;
+}
+.sc-input--bool.is-pulsed {
+	border-style: dashed;
+	border-color: var(--c-ink);
+}
+.sc-input--bool:has(input:focus-visible) {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 2px;
+}
+.sc-input--bool input:focus-visible {
+	outline: none;
+}
+.sc-input--value input {
+	width: 5.5rem;
+	min-height: 2rem;
+	padding: 0.125rem 0.5rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	font-variant-numeric: tabular-nums;
+}
+/* Timed charts: "Advance by sleepT" sits right after the deltaT field. */
+.sc-input__advance {
+	margin-inline-start: -0.25rem;
+	font-variant-numeric: tabular-nums;
+}
+.sc-input__advance-by {
+	font-family: var(--font-mono);
+	font-weight: 400;
+	color: var(--c-muted);
+}
+.sc-simctl__inputs:disabled .sc-input,
+.sc-input:has(input:disabled) {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* ===== Trace strip ================================================================================= */
+
+.sc-trace {
+	position: relative;
+	padding: 0.5rem 0.75rem 0.625rem 0;
+	overflow-x: auto;
+	scrollbar-width: thin;
+}
+/* The trace is a tab stop (Left / Right go back and step): a ring inside its edge, so the frame does not clip it. */
+.sc-trace:focus {
+	outline: none;
+}
+.sc-trace:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: -2px;
+}
+
+/* ===== Guided tour (scenario narration) ============================================================ */
+
+.sc-tour {
+	display: grid;
+	gap: 0.25rem;
+}
+.sc-tour__label {
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-tour__note {
+	color: var(--c-text);
+	max-width: var(--measure);
+}
+
+/* ===== Two charts side by side (Compare) =========================================================== */
+
+.sc-compare {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+}
+.sc-compare__pane + .sc-compare__pane {
+	border-top: 1px solid var(--c-rule);
+}
+@container (min-width: 40rem) {
+	/* Not for a pair whose diagrams would not fit half the frame (Compare.astro: is-stacked). */
+	.sc-compare:not(.is-stacked) {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	}
+	.sc-compare:not(.is-stacked) > .sc-compare__pane + .sc-compare__pane {
+		border-top: 0;
+		border-inline-start: 1px solid var(--c-rule);
+	}
+}
+.sc-frame__stage {
+	container-type: inline-size;
+}
+
+/* ===== Editor and diagram (inline Playground) ====================================================== */
+
+.sc-pg-inline {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+}
+.sc-pg-inline > *,
+.sc-compare > * {
+	min-width: 0;
+}
+.sc-pg-inline__diagram {
+	border-top: 1px solid var(--c-rule);
+}
+@container (min-width: 56rem) {
+	.sc-pg-inline {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	}
+	.sc-pg-inline__diagram {
+		border-top: 0;
+		border-inline-start: 1px solid var(--c-rule);
+	}
+}
+
+/* ===== Prediction form ============================================================================= */
+
+.sc-predict {
+	display: grid;
+	gap: 1rem;
+}
+/* The caption sets the question up ("`hold` is true in ticks 3 and 4 ..."), so it comes first, before the inputs
+   and the questions, in body text. */
+.sc-predict__caption {
+	margin: 0;
+	max-width: var(--measure);
+	color: var(--c-text);
+}
+.sc-predict__caption code {
+	padding: 0.05em 0.3em;
+	border-radius: var(--radius-xs);
+	background-color: var(--sl-color-bg-inline-code);
+}
+.sc-predict__inputs {
+	overflow-x: auto;
+}
+.sc-predict table {
+	border-collapse: collapse;
+	font-size: var(--text-sm);
+	font-variant-numeric: tabular-nums;
+}
+.sc-predict__label {
+	margin: 0 0 0.375rem;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-predict :is(th, td) {
+	padding: 0.25rem 0.75rem;
+	border-bottom: 1px solid var(--c-rule);
+	text-align: start;
+}
+@media (max-width: 40rem) {
+	/* Five or six inputs still fit a phone's column. */
+	.sc-predict :is(th, td) {
+		padding-inline: 0.4rem;
+	}
+}
+.sc-predict thead th {
+	border-bottom: 2px solid var(--c-ink);
+	color: var(--c-ink);
+}
+.sc-predict tbody th {
+	color: var(--c-ink);
+	font-weight: 700;
+}
+.sc-predict code {
+	font-family: var(--font-mono);
+	font-size: 0.92em;
+	color: var(--c-ink);
+}
+/* A value that was not set in this tick, only held over from an earlier one. */
+.sc-predict td.is-held code {
+	color: var(--c-muted);
+	font-weight: 400;
+}
+.sc-predict__asks {
+	display: grid;
+	gap: 0.75rem;
+	margin: 0;
+	padding-inline-start: 1.25rem;
+}
+.sc-predict__asks li::marker {
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-predict__asks label,
+.sc-predict__asks legend {
+	color: var(--c-ink);
+	font-weight: 600;
+}
+.sc-predict__asks fieldset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 1rem;
+}
+.sc-predict__asks fieldset legend {
+	float: left;
+	margin-inline-end: 0.75rem;
+}
+.sc-predict__asks fieldset label {
+	font-weight: 400;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+}
+.sc-predict__asks li > label {
+	display: inline-block;
+	margin-inline-end: 0.75rem;
+}
+.sc-predict__asks :is(select, input[type='text'], input[type='number']) {
+	min-height: 2rem;
+	padding: 0.125rem 0.5rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font: inherit;
+	font-size: var(--text-sm);
+}
+.sc-predict__asks input[type='radio'] {
+	accent-color: var(--c-accent-bright);
+	width: 1rem;
+	height: 1rem;
+}
+.sc-predict__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 1rem;
+}
+.sc-predict__note {
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+}
+
+/* ===== Simulation panel (src/components/sim/SimPanel.svelte) ======================================
+ * Its three blocks look like the frame's own controls, trace and foot sections. */
+
+.sc-sim {
+	display: block;
+}
+.sc-sim__controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.625rem 1rem;
+	padding: 0.625rem var(--frame-pad, 1rem);
+	border-top: 1px solid var(--c-rule);
+	background-color: var(--c-rail);
+}
+.sc-sim__trace {
+	border-top: 1px solid var(--c-rule);
+	background-color: var(--c-sheet);
+	cursor: pointer;
+}
+.sc-sim__foot {
+	display: grid;
+	gap: 0.5rem;
+	padding: 0.75rem var(--frame-pad, 1rem);
+	border-top: 1px solid var(--c-rule);
+	font-size: var(--text-sm);
+	line-height: 1.5;
+	min-height: 3.25rem;
+}
+.sc-sim__errors {
+	padding: 0.75rem var(--frame-pad, 1rem);
+	border-top: 1px solid var(--c-rule);
+	font-size: var(--text-sm);
+	line-height: 1.5;
+}
+.sc-sim__failure {
+	margin: 0;
+	color: var(--c-danger-ink);
+}
+/* A run-time error stopped the simulation (SimPanel, CompareSim: `halted`): what to do now, and Restart. Marked
+ * like a diagnostic line (a solid bar in the error colour), so it reads as the end of the run, not as a tick. */
+.sc-sim__halted {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0.875rem;
+	max-width: var(--measure);
+	padding: 0.25rem 0 0.25rem 0.625rem;
+	border-inline-start: 3px solid var(--sc-error);
+}
+.sc-sim__halted-error {
+	flex: 1 1 100%;
+	margin: 0;
+	color: var(--c-danger-ink);
+}
+.sc-sim__halted-text {
+	flex: 1 1 16rem;
+	margin: 0;
+	color: var(--c-text);
+}
+.sc-sim__halted-error code {
+	font-family: var(--font-mono);
+	font-size: 0.92em;
+	color: var(--c-ink);
+	overflow-wrap: anywhere;
+}
+.sc-simctl__step {
+	min-width: 5.5rem;
+}
+.sc-simctl__of {
+	color: var(--c-muted);
+	font-weight: 400;
+}
+.sc-simctl__speed select {
+	min-height: 2rem;
+	padding: 0.125rem 0.375rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font: inherit;
+	font-size: var(--text-xs);
+}
+.sc-simctl__speed select:disabled {
+	opacity: 0.5;
+}
+.sc-input--string input,
+.sc-input--array input {
+	width: 8rem;
+}
+.sc-btn[aria-pressed='true'] {
+	border-color: var(--c-ink);
+	background-color: var(--c-accent-soft);
+}
+/* A frame that a simulation made focusable (for its keyboard shortcuts): no outline for mouse focus. */
+.sc-frame[tabindex='-1']:focus {
+	outline: none;
+}
+.sc-frame[tabindex='-1']:focus-visible > .sc-frame__box {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 2px;
+}
+
+/* ----- Keyboard focus inside diagrams, code and the foot (link.ts: enableDiagramKeys, rovingFocus) -----
+ * Focusing an element also links it (is-focus: the dashed plum outline and its source lines); the ring says
+ * where the keyboard is. Not scoped to the widgets' DiagramView: any diagram enableDiagramKeys runs on (the
+ * playground's stage too) gets the same ring. */
+svg [data-sc-nav]:focus {
+	outline: none;
+}
+/* The ring around the focused element (a rect that enableDiagramKeys draws: CSS outlines of SVG groups are
+ * drawn around a rough estimate of their strokes). */
+svg .sc-focus-ring {
+	fill: none;
+	stroke: var(--c-accent-bright);
+	stroke-width: 2px;
+	vector-effect: non-scaling-stroke;
+	pointer-events: none;
+}
+.sc-source .ec-line[data-sc-line]:focus {
+	outline: none;
+}
+.sc-source .ec-line[data-sc-line]:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: -2px;
+}
+.sc-line-status {
+	user-select: none;
+	-webkit-user-select: none;
+}
+.sc-what__list li[data-linked]:focus,
+.sc-explain__list li[data-linked]:focus {
+	outline: none;
+}
+.sc-what__list li[data-linked]:focus-visible,
+.sc-explain__list li[data-linked]:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 1px;
+	border-radius: var(--radius-xs);
+	background-color: var(--c-accent-soft);
+}
+
+/* ----- The foot: what happened, explain this tick, the guided tour ----- */
+
+.sc-what {
+	display: grid;
+	gap: 0.25rem;
+	max-width: var(--measure);
+}
+.sc-what__head {
+	margin: 0;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-what__replay {
+	margin: 0 0 0.125rem;
+	padding: 0.25rem 0.5rem;
+	border-inline-start: 3px solid var(--c-rule-strong);
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+}
+.sc-what__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	gap: 0.125rem;
+}
+.sc-what__item {
+	position: relative;
+	padding-inline-start: 1.125rem;
+	color: var(--c-text);
+}
+/* Each line is marked with a small piece of notation: a transition arrow, a state, a pulse ... */
+.sc-what__item::before {
+	content: '';
+	position: absolute;
+	left: 0.125rem;
+	top: 0.55em;
+	width: 0.625rem;
+	height: 0.4375rem;
+	border-radius: var(--radius-capsule);
+	border: 1.5px solid var(--c-muted);
+}
+.sc-what__item.is-take::before {
+	height: 0;
+	border-radius: 0;
+	border-width: 1.5px 0 0;
+	border-color: var(--sc-taken);
+	top: 0.75em;
+}
+.sc-what__item.is-enter::before,
+.sc-what__item.is-stay::before {
+	border-color: var(--sc-active-stroke);
+	border-width: 2px;
+}
+.sc-what__item.is-signal::before,
+.sc-what__item.is-value::before {
+	border-radius: 0;
+	border-width: 0 0 1.5px;
+	border-color: var(--c-ink);
+	background: linear-gradient(var(--sc-wave-fill), var(--sc-wave-fill)) center / 40% 100% no-repeat;
+}
+.sc-what__item.is-term::before {
+	border: 0;
+	border-left: 0.5rem solid var(--sc-termination);
+	border-top: 0.3rem solid transparent;
+	border-bottom: 0.3rem solid transparent;
+	border-radius: 0;
+	width: 0;
+	height: 0;
+	top: 0.45em;
+}
+.sc-what__item.is-error {
+	color: var(--c-danger-ink);
+}
+.sc-what__item.is-error::before {
+	border-color: var(--sc-error);
+	border-radius: 50%;
+	width: 0.5rem;
+	height: 0.5rem;
+}
+.sc-what__idle,
+.sc-what__term,
+.sc-tour__end {
+	margin: 0;
+	color: var(--c-muted);
+}
+.sc-what code,
+.sc-tour code,
+.sc-explain code,
+.sc-diag code {
+	font-family: var(--font-mono);
+	font-size: 0.92em;
+	color: var(--c-ink);
+	overflow-wrap: anywhere;
+}
+.sc-what strong,
+.sc-explain strong,
+.sc-tour strong {
+	color: var(--c-ink);
+}
+
+.sc-explain {
+	margin-top: 0.25rem;
+}
+.sc-explain summary {
+	width: fit-content;
+	cursor: pointer;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-accent);
+}
+.sc-explain summary:hover {
+	text-decoration: underline;
+}
+.sc-explain__list {
+	margin: 0.375rem 0 0;
+	padding-inline-start: 1.75rem;
+	display: grid;
+	gap: 0.0625rem;
+	font-size: var(--text-xs);
+	color: var(--c-text);
+	font-variant-numeric: tabular-nums;
+}
+.sc-explain__list li::marker {
+	color: var(--c-muted);
+}
+.sc-explain__list li.is-take,
+.sc-explain__list li.is-enter {
+	font-weight: 600;
+}
+.sc-explain__list li:is(.is-check, .is-pause) {
+	color: var(--c-muted);
+}
+.sc-what__item[class]:hover,
+.sc-explain__list li:hover {
+	background-color: var(--c-accent-soft);
+	border-radius: var(--radius-xs);
+}
+
+.sc-tour__nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.375rem;
+	margin-top: 0.25rem;
+}
+.sc-tour__take {
+	margin-inline-start: auto;
+}
+.sc-tour__restart {
+	justify-self: start;
+}
+
+/* ===== Diagnostics (rejected charts, warnings) ===================================================== */
+
+.sc-diag {
+	display: grid;
+	gap: 0.375rem;
+	font-size: var(--text-sm);
+	line-height: 1.5;
+	/* A compiler message can hold a long unbroken path or expression: it wraps instead of widening the list. */
+	overflow-wrap: anywhere;
+}
+.sc-diag__head {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0;
+	font-weight: 700;
+	color: var(--c-ink);
+}
+/* The mark is an error state as the diagram draws one: a capsule with a solid outline in the diagnostic colour and
+ * the error marker (a disc) at its top-right corner. */
+.sc-diag__mark {
+	position: relative;
+	flex: none;
+	width: 1.125rem;
+	height: 0.75rem;
+	border-radius: var(--radius-capsule);
+	border: 2px solid var(--sc-error);
+}
+.sc-diag__mark::after {
+	content: '';
+	position: absolute;
+	top: -0.3125rem;
+	right: -0.3125rem;
+	width: 0.4375rem;
+	height: 0.4375rem;
+	border-radius: 50%;
+	background: var(--sc-error);
+	box-shadow: 0 0 0 1.5px var(--c-sheet);
+}
+.sc-diag__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	gap: 0.5rem;
+}
+.sc-diag__list li {
+	display: grid;
+	gap: 0.125rem;
+	padding-inline-start: 1.625rem;
+}
+.sc-diag__where {
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+	font-variant-numeric: tabular-nums;
+}
+.sc-diag__msg {
+	color: var(--c-ink);
+	white-space: pre-line;
+}
+.sc-diag__kieler {
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+}
+.sc-diag__kieler q {
+	font-family: var(--font-mono);
+	color: var(--c-text);
+	quotes: none;
+	white-space: pre-line;
+}
+.sc-diag__hint {
+	color: var(--c-text);
+}
+/* A chart only the guide's checker has seen (the playground): what KIELER would do, without claiming it has. */
+.sc-diag__verdict {
+	margin: 0;
+	padding-inline-start: 1.625rem;
+	color: var(--c-muted);
+}
+/* "About this message": the section of reference/errors that explains it (frame/error-links.ts). */
+.sc-diag__about {
+	justify-self: start;
+	font-size: var(--text-xs);
+	font-weight: 600;
+	color: var(--c-accent);
+	text-underline-offset: 0.15em;
+}
+.sc-diag--warning summary {
+	cursor: pointer;
+	color: var(--c-caution-ink);
+	font-weight: 600;
+}
+.sc-diag--warning[open] summary {
+	margin-bottom: 0.375rem;
+}
+.sc-diag--warning .sc-diag__list li {
+	padding-inline-start: 1rem;
+}
+/* Only KIELER has this message: its own words are the message. */
+.sc-diag__kieler--only {
+	font-size: var(--text-sm);
+}
+/* Prominent: official KIELER differs from SCCharts Lab and the guide, or its verdict changes between runs. */
+.sc-diag--notice {
+	gap: 0.625rem;
+	padding: 0.625rem 0.75rem;
+	border: 1px solid var(--c-caution-rule);
+	border-inline-start-width: 4px;
+	border-radius: var(--radius-md);
+	background-color: var(--c-caution-bg);
+}
+.sc-diag__notice {
+	display: grid;
+	gap: 0.25rem;
+}
+.sc-diag__notice > p {
+	margin: 0;
+}
+.sc-diag__notice .sc-diag__head {
+	color: var(--c-caution-ink);
+}
+/* A caution mark: the capsule in the caution colour, without the error marker (nothing is wrong with the chart). */
+.sc-diag__mark--caution {
+	border-color: var(--c-caution-rule);
+}
+.sc-diag__mark--caution::after {
+	content: none;
+}
+:is(.sc-diag, .sc-cannot-run) + .sc-diag {
+	margin-top: 0.625rem;
+}
+
+/* ===== Source lines: numbers, and marks from the simulation and hover linking ======================
+ * Expressive Code draws each line as .ec-line (a grid with a gutter area); the number goes into the
+ * gutter. Marks use the line's left border: solid red for an active state, double blue for a transition
+ * that fired, dashed plum for the element under the pointer, dotted for a diagnostic, never colour alone. */
+
+.sc-source pre > code {
+	counter-reset: sc-ln;
+}
+.sc-source .ec-line {
+	counter-increment: sc-ln;
+	transition: background-color 120ms ease-out;
+}
+.sc-source .ec-line::before {
+	content: counter(sc-ln);
+	grid-area: gutter;
+	/* content-box: the padding must not eat the 2ch, or lines 10 and up start one character further right. */
+	box-sizing: content-box;
+	min-width: 2ch;
+	padding-inline: 0.875rem 0.5rem;
+	text-align: end;
+	color: var(--c-muted);
+	/* Quieter than the code, still 4.5:1 (tools/contrast.mjs: "line numbers"). */
+	opacity: 0.9;
+	font-variant-numeric: tabular-nums;
+	user-select: none;
+	-webkit-user-select: none;
+	pointer-events: none;
+}
+.sc-source .ec-line .code {
+	--ecGtrBrdWd: 3px;
+}
+.sc-source .ec-line:is(.is-active, .is-taken, .is-focus, .is-error)::before {
+	opacity: 1;
+	font-weight: 800;
+	color: var(--c-ink);
+}
+.sc-source .ec-line.is-active {
+	background-color: color-mix(in srgb, var(--sc-active-stroke) 11%, transparent);
+}
+.sc-source .ec-line.is-active .code {
+	--ecLineBrdCol: var(--sc-active-stroke);
+	--ecGtrBrdWd: 4px;
+}
+.sc-source .ec-line.is-taken {
+	background-color: color-mix(in srgb, var(--sc-taken) 11%, transparent);
+}
+.sc-source .ec-line.is-taken .code {
+	--ecLineBrdCol: var(--sc-taken);
+	--ecGtrBrdWd: 4px;
+	border-inline-start-style: double;
+}
+.sc-source .ec-line.is-error {
+	background-color: color-mix(in srgb, var(--sc-error) 12%, transparent);
+}
+.sc-source .ec-line.is-error .code {
+	--ecLineBrdCol: var(--sc-error);
+	--ecGtrBrdWd: 4px;
+	border-inline-start-style: dotted;
+}
+.sc-source .ec-line.is-focus {
+	background-color: color-mix(in srgb, var(--sc-keyword) 10%, transparent);
+}
+.sc-source .ec-line.is-focus .code {
+	--ecLineBrdCol: var(--sc-keyword);
+	--ecGtrBrdWd: 3px;
+	border-inline-start-style: dashed;
+}
+@media (prefers-reduced-motion: reduce) {
+	.sc-source .ec-line {
+		transition: none;
+	}
+}
+
+/* ----- Compare: chart names on the panes, the difference line, two "what happened" columns ----- */
+
+.sc-compare__name {
+	margin: 0;
+	padding: 0.5rem var(--frame-pad, 1rem) 0;
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sc-compare__diff {
+	margin: 0;
+	max-width: var(--measure);
+	color: var(--c-ink);
+	font-weight: 600;
+}
+.sc-sim--compare .sc-sim__foot {
+	container-type: inline-size;
+}
+.sc-compare__what {
+	display: grid;
+	gap: 0.75rem 1.5rem;
+	grid-template-columns: minmax(0, 1fr);
+}
+@container (min-width: 36rem) {
+	.sc-compare__what {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	}
+}
+.sc-compare__what .sc-what__head {
+	font-family: var(--font-mono);
+	color: var(--c-ink);
+}
+
+/* ----- Predict: results ----- */
+
+.sc-predict__run {
+	display: grid;
+	gap: 1rem;
+	min-width: 0;
+}
+.sc-predict__asks > li {
+	padding: 0.375rem 0.5rem;
+	margin-inline-start: -0.5rem;
+	border: 1.5px solid transparent;
+	border-radius: var(--radius-md);
+}
+.sc-predict__asks > li.is-right {
+	border-color: var(--c-go);
+	background-color: var(--c-go-soft);
+}
+.sc-predict__asks > li.is-wrong {
+	border-color: var(--c-signal);
+	border-style: dashed;
+	background-color: var(--c-danger-bg);
+}
+.sc-predict__verdict {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+	margin: 0.375rem 0 0;
+	font-size: var(--text-sm);
+	color: var(--c-ink);
+}
+.sc-predict__mark {
+	display: inline-grid;
+	color: var(--c-signal);
+}
+.is-right .sc-predict__mark {
+	color: var(--c-go);
+}
+.sc-predict__score {
+	margin: 0;
+	font-size: var(--text-sm);
+	color: var(--c-ink);
+}
+.sc-predict__trace {
+	margin-inline: calc(-1 * var(--frame-pad, 1rem));
+	border-top: 1px solid var(--c-rule);
+	cursor: pointer;
+}
+/* The legend sits right under the trace (the run's grid gap would part them). */
+.sc-predict__legend {
+	margin-top: -0.75rem;
+	padding-inline: 0;
+}
+.sc-what__note {
+	margin: 0;
+	color: var(--c-text);
+}
+.sc-what__list.is-quiet {
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+}
+.sc-what__list.is-quiet .sc-what__item {
+	color: var(--c-muted);
+}
+.sc-what__handover {
+	margin: 0;
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+	max-width: var(--measure);
+}
+.sc-what__handover code {
+	font-family: var(--font-mono);
+	color: var(--c-ink);
+	font-weight: 700;
+}
+
+/* Without JavaScript a simulation shows its guided tour as text. */
+.sc-noscript__ticks {
+	margin: 0.25rem 0 0;
+	padding-inline-start: 1.5rem;
+	display: grid;
+	gap: 0.375rem;
+	max-width: var(--measure);
+}
+.sc-noscript__ticks li::marker {
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-noscript__inputs {
+	display: block;
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+}
+.sc-noscript code {
+	font-family: var(--font-mono);
+	font-size: 0.92em;
+	color: var(--c-ink);
+}
+/* KIELER accepts the chart, the guide's simulator cannot run it: a caution note in the foot. */
+.sc-cannot-run {
+	display: grid;
+	gap: 0.25rem;
+	margin: 0;
+	max-width: var(--measure);
+	font-size: var(--text-sm);
+	line-height: 1.5;
+	color: var(--c-text);
+}
+.sc-cannot-run > p {
+	margin: 0;
+}
+.sc-cannot-run > p:last-child {
+	color: var(--c-muted);
+}
+.sc-cannot-run + .sc-diag {
+	margin-top: 0.625rem;
+}
+.sc-predict__verdict code {
+	font-family: var(--font-mono);
+	font-size: 0.92em;
+	color: var(--c-ink);
+}
+
+/* ===== Print =========================================================================================
+ * Diagrams and code print, every view one after the other with its title; the controls, the live trace and
+ * the view switch do not. A guided tour prints as text (frame/TourText.astro, `.sc-print-only`), a Predict as
+ * its questions, a Quiz as its question and options. Colours are the light theme's: a script in
+ * astro.config.mjs switches the theme while the page prints. */
+.sc-print-only {
+	display: none;
+}
+@media print {
+	.sc-print-only {
+		display: block;
+	}
+	.sc-noscript:not(.sc-print-only) {
+		display: none;
+	}
+	:root {
+		--shadow-frame: none;
+	}
+	/* A tall frame may break between its views (Starlight keeps figures whole, which leaves pages half empty). */
+	.sl-markdown-content figure.sc-frame {
+		break-inside: auto;
+	}
+	.sc-frame .sc-frame__panel,
+	.sc-frame .sc-frame__head {
+		break-inside: avoid;
+	}
+	.sc-frame .sc-frame__head {
+		break-after: avoid;
+	}
+	.sc-frame__views,
+	.sc-frame__actions,
+	.sc-dview__zoom,
+	.sc-focus-ring,
+	.sc-sim-host,
+	.sc-predict__actions,
+	.sc-predict__trace,
+	.sc-quiz__check,
+	.sc-tryit__actions {
+		display: none !important;
+	}
+	.sc-frame__panel[hidden] {
+		display: block !important;
+	}
+	.sc-frame[data-enhanced] .sc-frame__panel > .sc-frame__panel-title {
+		position: static;
+		width: auto;
+		height: auto;
+		overflow: visible;
+		clip: auto;
+		white-space: normal;
+	}
+	.sc-frame[data-enhanced] .sc-frame__stage > .sc-frame__panel + .sc-frame__panel {
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-frame .sc-dview {
+		background-image: none;
+	}
+	.sc-frame .sc-dview .sc-dview__scroll {
+		overflow: visible;
+	}
+	/* Fit the page: a wide chart shrinks rather than being cut off (on screen it scrolls). */
+	.sc-dview svg.sc-diagram {
+		min-width: 0 !important;
+		break-inside: avoid;
+	}
+	.sc-frame .sc-source__scroll {
+		max-height: none;
+		overflow: visible;
+	}
+	.sc-noscript__ticks li {
+		break-inside: avoid;
+	}
+}

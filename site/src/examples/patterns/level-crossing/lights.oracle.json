@@ -1,0 +1,411 @@
+{
+  "hash": "3815b4747c1b3d2e99775df2ba7dde24c17ee3c6",
+  "chart": "src/examples/patterns/level-crossing/lights.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "isDown": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "isUp": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "occupied": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "bell": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "lampL": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "lampR": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "lower": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "flashing": {
+      "type": "bool",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true
+      },
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": false,
+        "bell": false,
+        "lampL": false,
+        "lampR": false,
+        "lower": false,
+        "flashing": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "occupied": true
+      },
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": true,
+        "bell": true,
+        "lampL": true,
+        "lampR": false,
+        "lower": false,
+        "flashing": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": true,
+        "bell": false,
+        "lampL": false,
+        "lampR": true,
+        "lower": false,
+        "flashing": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": true,
+        "bell": true,
+        "lampL": true,
+        "lampR": false,
+        "lower": false,
+        "flashing": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": true,
+        "bell": false,
+        "lampL": false,
+        "lampR": true,
+        "lower": true,
+        "flashing": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "isUp": false
+      },
+      "values": {
+        "isDown": false,
+        "isUp": false,
+        "occupied": true,
+        "bell": true,
+        "lampL": true,
+        "lampR": false,
+        "lower": true,
+        "flashing": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "isDown": true
+      },
+      "values": {
+        "isDown": true,
+        "isUp": false,
+        "occupied": true,
+        "bell": false,
+        "lampL": false,
+        "lampR": true,
+        "lower": true,
+        "flashing": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "isDown": true,
+        "isUp": false,
+        "occupied": true,
+        "bell": true,
+        "lampL": true,
+        "lampR": false,
+        "lower": true,
+        "flashing": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "occupied": false
+      },
+      "values": {
+        "isDown": true,
+        "isUp": false,
+        "occupied": false,
+        "bell": false,
+        "lampL": false,
+        "lampR": true,
+        "lower": false,
+        "flashing": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "isDown": false
+      },
+      "values": {
+        "isDown": false,
+        "isUp": false,
+        "occupied": false,
+        "bell": true,
+        "lampL": true,
+        "lampR": false,
+        "lower": false,
+        "flashing": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "isUp": true
+      },
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": false,
+        "bell": false,
+        "lampL": false,
+        "lampR": false,
+        "lower": false,
+        "flashing": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {},
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": false,
+        "bell": false,
+        "lampL": false,
+        "lampR": false,
+        "lower": false,
+        "flashing": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

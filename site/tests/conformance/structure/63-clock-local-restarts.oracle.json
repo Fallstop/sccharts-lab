@@ -1,0 +1,164 @@
+{
+  "hash": "bd867a3f169fb26e6faf781dbc245b1eb84d3b63",
+  "chart": "tests/conformance/structure/63-clock-local-restarts.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on t."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "kick": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "timeout": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0,
+        "kick": false
+      },
+      "values": {
+        "deltaT": 0,
+        "kick": false,
+        "sleepT": 300,
+        "timeout": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "kick": false,
+        "sleepT": 200,
+        "timeout": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "kick": false,
+        "sleepT": 100,
+        "timeout": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 100,
+        "kick": true
+      },
+      "values": {
+        "deltaT": 100,
+        "kick": true,
+        "sleepT": 300,
+        "timeout": false
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 100,
+        "kick": false
+      },
+      "values": {
+        "deltaT": 100,
+        "kick": false,
+        "sleepT": 200,
+        "timeout": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "kick": false,
+        "sleepT": 100,
+        "timeout": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "kick": false,
+        "sleepT": 1000,
+        "timeout": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

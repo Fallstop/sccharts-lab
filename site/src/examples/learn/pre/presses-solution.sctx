@@ -1,0 +1,8 @@
+scchart Presses {
+  input bool button
+  output int presses = 0
+
+  initial state Count {
+    immediate during if button && !pre(button) do presses++
+  }
+}

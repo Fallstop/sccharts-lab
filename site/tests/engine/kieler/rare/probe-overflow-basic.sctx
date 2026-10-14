@@ -1,0 +1,7 @@
+// a[3] of int a[3] is the int stored after a in KIELER's struct: z.
+scchart R3ArrayOverflow {
+  output int a[3] = {0, 0, 0}
+  output int z = 0
+  initial state Run
+    do a[3] = 9 go to Run
+}

@@ -1,0 +1,189 @@
+{
+ "sourceHash": "a29f29b007059408",
+ "states": [
+  {
+   "path": [
+    "P152"
+   ],
+   "rows": [
+    [
+     "P152"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    221.7,
+    508.6
+   ]
+  },
+  {
+   "path": [
+    "P152",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ],
+    [
+     "entry ",
+     "/ O = 1"
+    ],
+    [
+     "entry ",
+     "A ",
+     "/ O = 2"
+    ],
+    [
+     "during ",
+     "/ O++"
+    ],
+    [
+     "immediate during ",
+     "B ",
+     "/ O--"
+    ],
+    [
+     "during ",
+     "A ",
+     "/ O = 0"
+    ],
+    [
+     "exit ",
+     "/ X = false"
+    ],
+    [
+     "exit ",
+     "x"
+    ],
+    [
+     "suspend ",
+     "A ",
+     ""
+    ],
+    [
+     "immediate suspend ",
+     "B ",
+     ""
+    ],
+    [
+     "weak suspend ",
+     "A ",
+     ""
+    ],
+    [
+     "immediate weak suspend ",
+     "B ",
+     ""
+    ],
+    [
+     "weak entry ",
+     "/ O = 3"
+    ],
+    [
+     "exit ",
+     "/ O = 4"
+    ],
+    [
+     "period ",
+     "2.5 ",
+     ""
+    ],
+    [
+     "ode ",
+     "/ O = 1"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    188.3,
+    348.6
+   ]
+  },
+  {
+   "path": [
+    "P152",
+    0,
+    "S0",
+    0,
+    "I"
+   ],
+   "rows": [
+    [
+     "I"
+    ]
+   ],
+   "box": [
+    68.3,
+    10,
+    34,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P152",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    208.3,
+    368.6
+   ]
+  },
+  {
+   "path": [
+    "P152",
+    0,
+    "S0",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    285.8,
+    170.7,
+    54.6
+   ]
+  }
+ ],
+ "edges": [],
+ "comments": []
+}

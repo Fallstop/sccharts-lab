@@ -1,0 +1,15 @@
+scchart Average {
+  input int samples[4]
+  output int total = 0, mean = 0
+
+  method int sum() {
+    int s = 0
+    for (int i = 0; i < 4; i++) {
+      s += samples[i]
+    }
+    return s
+  }
+
+  initial state Measure
+    do total = sum(); mean = total / 4 go to Measure
+}

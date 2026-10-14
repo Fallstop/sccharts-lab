@@ -1,0 +1,44 @@
+scchart ABROStrongVsWeak {
+  input signal A, B, R
+  output signal OStrong, OWeak
+
+  region Strong {
+    initial state ABO {
+      initial state WaitAB {
+        region {
+          initial state W
+          if A go to D
+          final state D
+        }
+        region {
+          initial state W
+          if B go to D
+          final state D
+        }
+      }
+      do OStrong join to Done
+      state Done
+    }
+    if R abort to ABO
+  }
+
+  region Weak {
+    initial state ABO {
+      initial state WaitAB {
+        region {
+          initial state W
+          if A go to D
+          final state D
+        }
+        region {
+          initial state W
+          if B go to D
+          final state D
+        }
+      }
+      do OWeak join to Done
+      state Done
+    }
+    if R go to ABO
+  }
+}

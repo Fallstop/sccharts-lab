@@ -1,0 +1,101 @@
+{
+  "hash": "b50e371370115d3087e8acf96a77a96cd25efcf2",
+  "chart": "src/examples/learn/variables/calibrate.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "reading": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "offset": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "zero": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reading": 20
+      },
+      "values": {
+        "reading": 20,
+        "offset": 0,
+        "zero": 20
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "reading": 20,
+        "offset": 0,
+        "zero": 20
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "reading": 23
+      },
+      "values": {
+        "reading": 23,
+        "offset": 3,
+        "zero": 20
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "reading": 18
+      },
+      "values": {
+        "reading": 18,
+        "offset": -2,
+        "zero": 20
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "reading": 18,
+        "offset": -2,
+        "zero": 20
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

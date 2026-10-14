@@ -1,0 +1,10 @@
+scchart RegionAction {
+  input bool A
+  output int x
+
+  region Main:
+    entry do x = 1
+    initial state Idle
+      if A do x = 2 go to Done
+    final state Done
+}

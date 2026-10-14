@@ -1,0 +1,54 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "note": "Tick 1 enters Shut; the immediate count counts the entry tick: count 1, **open = false**."
+    },
+    {
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "note": "Count 2 (one short of 3): **open = false**."
+    },
+    {
+      "inputs": {
+        "knock": false,
+        "away": true
+      },
+      "note": "Shut is left for Away with the counter at 2: **open = false**."
+    },
+    {
+      "inputs": {
+        "knock": false,
+        "away": true
+      },
+      "note": "Away, the counter stays 2: **open = false**."
+    },
+    {
+      "inputs": {
+        "knock": false,
+        "away": true
+      },
+      "note": "Still away: **open = false**."
+    },
+    {
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "note": "Away goes back to Shut, and in that same entry tick the immediate count fires: pre(counter) is still 2 from the visit three ticks ago and knock holds: **open = true** after one knock in the new visit."
+    },
+    {
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "note": "Resting in Open: **open = true**."
+    }
+  ],
+  "expect": "ok"
+}

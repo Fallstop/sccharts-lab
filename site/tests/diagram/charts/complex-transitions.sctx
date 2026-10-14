@@ -1,0 +1,25 @@
+scchart ComplexTransitions {
+  input bool CD, SH, DH, D
+  output int F, F2
+
+  initial state A {
+    initial state Init
+    immediate do F = 0 go to Count
+
+    state Count {
+      during do F++
+      initial state Init
+      immediate do F2 = 0 go to Count2
+      state Count2 {
+        during do F2++
+      }
+    }
+  }
+  if 3 CD go to Wait
+
+  state Wait
+  if SH go to A shallow history
+  if DH go to A history
+  if D go to A deferred
+  go to A
+}

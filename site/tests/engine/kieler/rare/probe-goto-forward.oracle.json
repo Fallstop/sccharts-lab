@@ -1,0 +1,90 @@
+{
+  "hash": "eee41bd204c5ef0a9be9a99a18873cd030f8a42c",
+  "chart": "tests/engine/kieler/rare/probe-goto-forward.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "skip": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "a": 0,
+        "b": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "skip": true
+      },
+      "values": {
+        "skip": true,
+        "a": 0,
+        "b": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "a": 1,
+        "b": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "a": 2,
+        "b": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "knock": false, "away": false }, "note": "Tick 1 enters `Shut`." },
+    { "inputs": { "knock": true }, "note": "A knock begins: `knock && !pre(knock)` holds, 1." },
+    { "note": "The knuckles stay on the door: no new rising edge." },
+    { "note": "Still no new edge. The plain `if 3 knock` would have opened by now." },
+    { "inputs": { "knock": false }, "note": "Pause." },
+    { "inputs": { "knock": true }, "note": "Second knock: 2." },
+    { "inputs": { "knock": false }, "note": "Pause." },
+    { "inputs": { "knock": true }, "note": "Third knock: the door opens." },
+    { "inputs": { "knock": false }, "note": "Open." }
+  ],
+  "expect": "ok"
+}

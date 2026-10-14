@@ -1,0 +1,36 @@
+scchart JoinPriority {
+  input bool a, b
+  output int first, second
+
+  region AbortFirst {
+    initial state S {
+      initial state W
+      if a go to F
+      final state F
+    }
+    if b go to X
+    join to D
+    state X {
+      entry do first = 1
+    }
+    state D {
+      entry do first = 2
+    }
+  }
+
+  region JoinFirst {
+    initial state S {
+      initial state W
+      if a go to F
+      final state F
+    }
+    join to D
+    if b go to X
+    state X {
+      entry do second = 1
+    }
+    state D {
+      entry do second = 2
+    }
+  }
+}

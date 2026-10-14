@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "KIELER rejects the chart: two concurrent regions may set `mode` to different values in the same tick, and there is no order between them that the compiler could choose."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Tick 1 enters `Off`." },
+    { "inputs": { "button": true }, "note": "A rising edge (`button && !pre(button)`): `Off` to `On`." },
+    { "note": "Still held, but `pre(button)` is true now: no edge, the light stays on." },
+    { "note": "Still held: still no edge." },
+    { "inputs": { "button": false }, "note": "Released: nothing to do." },
+    { "inputs": { "button": true }, "note": "The next press is a new rising edge: `On` to `Off`. One press, one toggle." },
+    { "inputs": { "button": false }, "note": "Released." }
+  ],
+  "expect": "ok"
+}

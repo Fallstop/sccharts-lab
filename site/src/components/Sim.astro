@@ -1,0 +1,123 @@
+---
+/**
+ * <Sim example="learn/first-chart/toggle" />: a runnable chart. Diagram and source (rendered at build time),
+ * the control bar (reset / back / step / run, inputs, tick counter), a timing diagram and what each tick
+ * did and why. Plays <example>.scenario.json as a guided tour when it exists; the reader can take over at
+ * any tick. The simulation is a Svelte island (src/components/sim/Sim.svelte) that hydrates when the reader first
+ * engages with the widget (client:engage: pointer, touch, focus or a key) and runs the guide's engine in the
+ * browser; until then everything is server-rendered.
+ *
+ * Props: example (required), scenario (another scenario file, example-style id), show (variables to trace;
+ * default: inputs and outputs; also top-level locals, what the compiler adds, such as deltaT and sleepT, and the
+ * locals of inner states and regions and members of instances: `seen`, `Outer.count`, `pt.x`; see resolveShow),
+ * caption, regions (default true: a trace lane per region), view ('diagram' | 'code' | 'both', the view
+ * shown first), references ('collapsed' | 'expanded': draw reference states with the referenced chart inside,
+ * so the simulation highlights its states too).
+ *
+ * A chart that KIELER rejects (its oracle recording says so; without a recording, the engine or the scenario's
+ * "expect": "error") is drawn with the elements in question marked, and its messages replace the controls.
+ * KIELER's warnings are listed under the simulation (collapsed); what official KIELER does differently is
+ * shown prominently.
+ */
+import WidgetFrame from './frame/WidgetFrame.astro'
+import SourceView from './frame/SourceView.astro'
+import DiagramView from './frame/DiagramView.astro'
+import Diagnostics from './frame/Diagnostics.astro'
+import SimIsland from './sim/Sim.svelte'
+import { loadExample, loadScenario, playgroundHref } from './frame/examples'
+import { diagramSvg, prepareChart, type ReferencesView } from './frame/prepare'
+import { nextId } from './frame/ids'
+import TourText from './frame/TourText.astro'
+import { showProblems } from './frame/show'
+import { inlineCode } from './frame/inline-md'
+
+interface Props {
+	example: string
+	scenario?: string
+	show?: string[]
+	caption?: string
+	regions?: boolean
+	view?: 'diagram' | 'code' | 'both'
+	references?: ReferencesView
+}
+const { caption, show, regions = true, view = 'diagram', references } = Astro.props
+const usedBy = `<Sim example="${Astro.props.example}">`
+const ex = loadExample(Astro.props.example, usedBy)
+const scenario = Astro.props.scenario ? loadScenario(Astro.props.scenario, usedBy) : ex.scenario
+const p = await prepareChart({ ...ex, scenario, references })
+if (show && p.compiled.chart) {
+	// The interface includes what the compiler adds (deltaT and sleepT of a timed chart, inherited declarations).
+	const problem = showProblems(show, [p.compiled])
+	if (problem) throw new Error(`${usedBy}: ${problem}`)
+}
+const notes = p.warnings.length > 0 || p.notices.length > 0
+const svg = diagramSvg(p, p.rejected ? p.errorIds : {})
+// The tour as text, for readers without JavaScript and on paper.
+const tour = scenario && scenario.expect !== 'error' && scenario.ticks.length ? scenario : undefined
+const key = nextId('scs-')
+const views = [
+	{ id: 'diagram', label: 'Diagram' },
+	{ id: 'code', label: 'Code' },
+	{ id: 'both', label: 'Both', show: ['diagram', 'code'] },
+]
+---
+
+<WidgetFrame
+	kind="sim"
+	name={p.name}
+	views={views}
+	defaultView={view}
+	caption={caption}
+	playground={playgroundHref(ex.id)}
+	stage="tall"
+	class={p.rejected ? 'is-rejected' : undefined}
+>
+	<div slot="view-diagram">
+		<DiagramView svg={svg} key={key} map={p.map} root={p.compiled.chart?.id} />
+	</div>
+	<div slot="view-code" data-sc-code={key} data-error-lines={p.errorLines.join(' ') || undefined}>
+		<SourceView source={ex.source} />
+	</div>
+	{
+		p.rejected ? (
+			<div slot="foot">
+				<Diagnostics prepared={p} />
+			</div>
+		) : p.cannotRun ? (
+			<div slot="foot">
+				<div class="sc-cannot-run" role="note">
+					<p class="sc-diag__head">
+						<span class="sc-diag__mark sc-diag__mark--caution" aria-hidden="true" />
+						<span set:html={inlineCode(p.cannotRun)} />
+					</p>
+					{p.cannotRunHint ? <p class="sc-diag__hint" set:html={inlineCode(p.cannotRunHint)} /> : <p>KIELER accepts this chart: open it in KIELER or SCCharts Lab to run it.</p>}
+				</div>
+				<Diagnostics prepared={p} />
+			</div>
+		) : (
+			<Fragment slot="panel">
+				<SimIsland client:engage source={ex.source} files={p.files} link={key} scenario={scenario} show={show} regions={regions} />
+				<noscript>
+					<Fragment set:html={`<style>.sc-sim-host[data-link="${key}"] :is(.sc-sim__controls, .sc-sim__trace, .sc-sim__foot) { display: none }</style>`} />
+					{
+						tour ? (
+							<TourText scenario={tour} lead={`Guided tour, ${tour.ticks.length} ${tour.ticks.length === 1 ? 'tick' : 'ticks'}. Turn on JavaScript to run the chart.`} />
+						) : (
+							<div class="sc-sim__foot sc-noscript">
+								<p class="sc-what__idle">Turn on JavaScript to run this chart.</p>
+							</div>
+						)
+					}
+				</noscript>
+				{tour && <TourText scenario={tour} lead={`Guided tour, ${tour.ticks.length} ${tour.ticks.length === 1 ? 'tick' : 'ticks'}:`} print />}
+			</Fragment>
+		)
+	}
+	{
+		!p.rejected && !p.cannotRun && notes && (
+			<div slot="foot">
+				<Diagnostics prepared={p} />
+			</div>
+		)
+	}
+</WidgetFrame>

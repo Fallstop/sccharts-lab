@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "KIELER rejects the chart: `Inner` lives inside `Outer`, and a transition can only go to a state in its own region."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Couldn't resolve reference to State 'Done'."
+}

@@ -1,0 +1,13 @@
+scchart WeakSuspendLeaves {
+  input bool S, G
+  output int left = 0
+
+  initial state M {
+    weak suspend if S
+
+    initial state I
+  }
+  if G do left = 1 go to Done
+
+  state Done
+}

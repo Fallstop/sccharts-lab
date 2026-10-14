@@ -1,0 +1,108 @@
+{
+  "hash": "969e46802adaeb78c8ff926f64f2bdf21443f2cd",
+  "chart": "src/examples/advanced/code-generation/burst-fixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "fire": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "shots": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "fire": false
+      },
+      "values": {
+        "fire": false,
+        "shots": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "fire": true
+      },
+      "values": {
+        "fire": true,
+        "shots": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "fire": true,
+        "shots": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "fire": true,
+        "shots": 3
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "fire": true,
+        "shots": 3
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "fire": false
+      },
+      "values": {
+        "fire": false,
+        "shots": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+// The padding keeps what was written there.
+scchart OverflowPadRead {
+  output bool b = false
+  output int a[2] = {0, 0}
+  output float f = 1.0
+  output int x = 0
+  initial state Run
+    do a[2] = 9 go to Read
+  state Read
+    do x = a[2] go to Read
+}

@@ -1,0 +1,161 @@
+{
+  "hash": "3ef2ff7c2f50925766b7b0d1ccf9edda0bda7597",
+  "chart": "src/examples/patterns/watchdog/watchdog-predict.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "interface": {
+    "beat": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "alarm": false
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "alarm": false
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "alarm": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

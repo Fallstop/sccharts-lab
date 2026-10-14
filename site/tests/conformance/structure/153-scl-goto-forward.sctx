@@ -1,0 +1,14 @@
+// Labels and goto: a forward jump skips statements (a jump backwards would be an instantaneous loop).
+scchart St153Goto {
+  input bool skip
+  output int O = 0, P = 0
+  initial state S
+  do {
+    if (skip) {
+      goto out
+    }
+    O++;
+    out:
+    P++
+  } go to S
+}

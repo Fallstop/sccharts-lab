@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1. The `immediate during` action runs in the tick its state (here: the chart itself) is entered, so `tickNo` is already 1. The plain `during` action waits for the next tick, so `later` is still 0."
+    },
+    {
+      "inputs": {},
+      "note": "Both actions run: `tickNo` is 2, `later` is 1."
+    },
+    {
+      "inputs": {},
+      "note": "`tickNo` is always the number of the current tick."
+    },
+    {
+      "inputs": {},
+      "note": "`later` counts the ticks after the first: one less."
+    },
+    {
+      "inputs": {},
+      "note": "Tick 5."
+    }
+  ],
+  "expect": "ok"
+}

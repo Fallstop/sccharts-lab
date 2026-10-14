@@ -1,0 +1,11 @@
+scchart Gate {
+  input bool A, B
+  input int I
+  output bool O
+  output int N
+
+  dataflow {
+    O = A && !B
+    N = I * 2 + 1
+  }
+}

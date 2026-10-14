@@ -1,0 +1,55 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "Tick 1 enters ABO and Wait: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Counted tick 1: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Counted tick 2: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Counted tick 3: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Counted tick 4: Wait goes to Done: **late present**."
+    },
+    {
+      "inputs": {
+        "R": true
+      },
+      "note": "R: ABO is left for Off: **late absent**."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "Off goes back to ABO, Wait entered again, its count restarts: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Counted tick 1 of the new visit: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Counted tick 2: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Counted tick 3: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Counted tick 4: **late present**."
+    }
+  ],
+  "expect": "ok"
+}

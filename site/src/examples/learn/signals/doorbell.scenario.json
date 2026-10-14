@@ -1,0 +1,38 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "ring": false
+      },
+      "note": "Tick 1 enters `Quiet`. The transition is delayed, and `ring` is absent anyway."
+    },
+    {
+      "inputs": {
+        "ring": true
+      },
+      "note": "`ring` is present, so the chart emits `chime` and counts the ring."
+    },
+    {
+      "note": "Nobody touched `ring`, but in the simulator an input keeps its last value, so `ring` is still present: `chime` again, and `rings` is 2."
+    },
+    {
+      "inputs": {
+        "ring": false
+      },
+      "note": "`ring` is set absent, and only now does the chiming stop."
+    },
+    {
+      "inputs": {
+        "ring": true
+      },
+      "note": "`ring` is present again: `chime`, and `rings` is 3."
+    },
+    {
+      "inputs": {
+        "ring": false
+      },
+      "note": "`ring` is absent again, so there is no chime: a press that lasts exactly one tick."
+    }
+  ],
+  "expect": "ok"
+}

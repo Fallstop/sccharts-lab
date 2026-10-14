@@ -1,0 +1,13 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz22 {
+  input bool leave
+  output int k = 0
+  region { initial state R1 is Dz22S(k) if leave go to X state X if !leave go to R1 }
+}
+scchart Dz22S {
+  output int out
+  initial state A {
+    static int visits = 0
+    entry do visits++; out = visits * 100
+  }
+}

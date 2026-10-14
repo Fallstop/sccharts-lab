@@ -1,0 +1,25 @@
+scchart TwoSensors {
+  input bool beatA, beatB, restart
+  output bool alarm
+  signal expired
+
+  region WatchA {
+    initial state Watching
+      if beatA go to Watching
+      if 3 true do expired go to Expired
+
+    state Expired
+      if restart go to Watching
+  }
+
+  region Alarm {
+    initial state Normal
+      if expired go to Raised
+
+    state Raised {
+      entry do alarm = true
+      exit do alarm = false
+    }
+    if restart go to Normal
+  }
+}

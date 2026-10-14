@@ -1,0 +1,19 @@
+{
+  "hash": "b821a4524b841189cc3553f74606ba666ae9ff6e",
+  "chart": "tests/conformance/concurrency/51-emit-variable-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "b is an output bool variable, not a signal, so it cannot be emitted."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Non-signals should not be used in an emission.",
+      "line": 5,
+      "column": 6
+    }
+  ],
+  "ticks": []
+}

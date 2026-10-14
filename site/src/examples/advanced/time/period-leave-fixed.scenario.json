@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 250, "stop": false }, "note": "The period now belongs to the region inside `Run`, not to `Run` itself. Tick 1: `samples` = 0." },
+    { "note": "250 ms." },
+    { "note": "500: `samples` = 1." },
+    { "note": "250." },
+    { "inputs": { "stop": true }, "note": "`stop` is not held back by the period: `Run` → `Stopped` fires at once. It is a weak abort, so the inside ran first in this tick (the period had elapsed): `samples` = 2." },
+    { "inputs": { "stop": false }, "note": "In `Stopped`." }
+  ],
+  "expect": "ok"
+}

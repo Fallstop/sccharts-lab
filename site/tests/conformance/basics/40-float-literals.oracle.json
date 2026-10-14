@@ -1,0 +1,127 @@
+{
+  "hash": "e6328ecff4c0ebf3b7cd2a1b570ff8584131e798",
+  "chart": "tests/conformance/basics/40-float-literals.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "F": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "c": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "d": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "e": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "j": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "k": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "F": 0.1
+      },
+      "values": {
+        "F": 0.1,
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "F": 0.1,
+        "a": 0.10000000149011612,
+        "b": 2.5,
+        "c": 0.3333333333333333,
+        "d": 0.3000000029802322,
+        "e": 1500,
+        "i": 7,
+        "j": -7,
+        "k": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "F": 0.5
+      },
+      "values": {
+        "F": 0.5,
+        "a": 0.10000000149011612,
+        "b": 2.5,
+        "c": 0.3333333333333333,
+        "d": 0.7000000029802322,
+        "e": 1500,
+        "i": 7,
+        "j": -7,
+        "k": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

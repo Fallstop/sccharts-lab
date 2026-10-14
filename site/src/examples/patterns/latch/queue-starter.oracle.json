@@ -1,0 +1,243 @@
+{
+  "hash": "3a065fd119a0afb6e37095c92865a5702a6d698a",
+  "chart": "src/examples/patterns/latch/queue-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "serve": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "take": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "waiting": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "take": false,
+        "serve": false
+      },
+      "values": {
+        "serve": false,
+        "take": false,
+        "waiting": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "take": true
+      },
+      "values": {
+        "serve": false,
+        "take": true,
+        "waiting": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "take": false
+      },
+      "values": {
+        "serve": false,
+        "take": false,
+        "waiting": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "take": true
+      },
+      "values": {
+        "serve": false,
+        "take": true,
+        "waiting": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "take": false
+      },
+      "values": {
+        "serve": false,
+        "take": false,
+        "waiting": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "serve": true
+      },
+      "values": {
+        "serve": true,
+        "take": false,
+        "waiting": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "serve": false
+      },
+      "values": {
+        "serve": false,
+        "take": false,
+        "waiting": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "take": true,
+        "serve": true
+      },
+      "values": {
+        "serve": true,
+        "take": true,
+        "waiting": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "take": false,
+        "serve": false
+      },
+      "values": {
+        "serve": false,
+        "take": false,
+        "waiting": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "serve": true
+      },
+      "values": {
+        "serve": true,
+        "take": false,
+        "waiting": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "serve": false
+      },
+      "values": {
+        "serve": false,
+        "take": false,
+        "waiting": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "serve": true
+      },
+      "values": {
+        "serve": true,
+        "take": false,
+        "waiting": 0
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "serve": false
+      },
+      "values": {
+        "serve": false,
+        "take": false,
+        "waiting": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

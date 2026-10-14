@@ -1,0 +1,289 @@
+{
+  "hash": "21973aa0e7b047be29c6ca3d0affda92365020bc",
+  "chart": "tests/engine/kieler/probe-dead-block-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 26,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 23,
+      "column": 11
+    },
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 35,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [R0s1r1s2, R0s1r1s0]",
+      "line": 32,
+      "column": 11
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [R0s1r1s2, R0s1r1s0]",
+      "line": 30,
+      "column": 11
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "d": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "T": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "V": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "V_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "V_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 3
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 3,
+        "S": false,
+        "T": false,
+        "V": false,
+        "V_val": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "V_curval": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": true,
+        "n": 0
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": true,
+        "n": 0,
+        "S": false,
+        "T": false,
+        "V": false,
+        "V_val": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "V_curval": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true,
+        "d": true,
+        "n": 2
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": true,
+        "n": 2,
+        "S": false,
+        "T": false,
+        "V": false,
+        "V_val": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "V_curval": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "d": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 2,
+        "S": false,
+        "T": false,
+        "V": false,
+        "V_val": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "V_curval": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "d": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": true,
+        "n": 2,
+        "S": false,
+        "T": false,
+        "V": false,
+        "V_val": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "V_curval": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

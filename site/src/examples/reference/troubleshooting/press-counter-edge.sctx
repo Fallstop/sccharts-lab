@@ -1,0 +1,7 @@
+scchart PressCounterEdge {
+  input bool press
+  output int count = 0
+
+  initial state Counting
+    if press && !pre(press) do count++ go to Counting
+}

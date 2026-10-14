@@ -1,0 +1,20 @@
+scchart Microwave {
+  input bool doorOpen
+  output int remaining = 3
+  output bool beep = false
+
+  initial state Cooking {
+    suspend if doorOpen
+
+    initial state Heating
+      if remaining > 1 do remaining-- go to Heating
+      if remaining == 1 do remaining-- go to Finished
+
+    final state Finished
+  }
+  join to Done
+
+  state Done {
+    entry do beep = true
+  }
+}

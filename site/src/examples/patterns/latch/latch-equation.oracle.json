@@ -1,0 +1,199 @@
+{
+  "hash": "ce6bffaa315818bd7f4670196cd8abd93cbf50a4",
+  "chart": "src/examples/patterns/latch/latch-equation.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "arrived": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": false,
+        "button": true,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": false,
+        "button": true,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "arrived": true
+      },
+      "values": {
+        "arrived": true,
+        "button": false,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": true,
+        "button": true,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": true,
+        "button": false,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": false,
+        "button": true,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "button": true,
+        "arrived": true
+      },
+      "values": {
+        "arrived": true,
+        "button": true,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": false
+      },
+      "terminated": false
+    }
+  ]
+}

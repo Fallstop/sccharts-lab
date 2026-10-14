@@ -1,0 +1,156 @@
+{
+  "hash": "124bcc4966766dc2ac5a3fc4ee6fb906d76f3d04",
+  "chart": "tests/conformance/structure/70-period-hard-reset.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on _St70Every_local_c."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "n": 0,
+        "sleepT": 300
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "n": 0,
+        "sleepT": 200
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "n": 0,
+        "sleepT": 100
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "n": 1,
+        "sleepT": 300
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "n": 1,
+        "sleepT": 200
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "n": 2,
+        "sleepT": 300
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "n": 2,
+        "sleepT": 50
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "n": 3,
+        "sleepT": 300
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz29 {
+  input int I
+  output int sum = 0
+  region for i : 0 to 2 {
+    entry do sum += 100
+    initial state W
+    if I == i do sum += i go to W
+  }
+}

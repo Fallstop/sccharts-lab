@@ -1,0 +1,18 @@
+scchart ValuedBasics {
+  input bool a
+  input int k
+  output signal int V = 5
+  output int last
+  output bool present
+
+  region Emit {
+    initial state X
+    if a do V(k) go to X
+  }
+
+  region Read {
+    initial state X {
+      immediate during do last = val(V); present = V
+    }
+  }
+}

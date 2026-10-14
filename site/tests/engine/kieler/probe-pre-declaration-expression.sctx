@@ -1,0 +1,7 @@
+scchart Q {
+  input int n
+  input bool a
+  output int y = pre(n) + 1
+  initial state A
+    do y += 1 go to A
+}

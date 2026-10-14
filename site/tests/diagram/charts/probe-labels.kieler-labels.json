@@ -1,0 +1,401 @@
+{
+ "sourceHash": "bb271da589f5e074",
+ "states": [
+  {
+   "path": [
+    "P1"
+   ],
+   "rows": [
+    [
+     "P1"
+    ],
+    [
+     "input signal ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "x"
+    ],
+    [
+     "output signal int ",
+     "V ",
+     "combine ",
+     "+"
+    ],
+    [
+     "output float ",
+     "f = 1.5"
+    ],
+    [
+     "output int ",
+     "arr[3] = {1, 2, 3}"
+    ],
+    [
+     "const int ",
+     "K = 10"
+    ],
+    [
+     "int ",
+     "c = 0"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    845.6,
+    406.7
+   ]
+  },
+  {
+   "path": [
+    "P1",
+    0,
+    "Init"
+   ],
+   "rows": [
+    [
+     "Waiting here"
+    ],
+    [
+     "entry ",
+     "/ c = 0"
+    ],
+    [
+     "entry ",
+     "A ",
+     "/ c++"
+    ]
+   ],
+   "box": [
+    10,
+    109.8,
+    102.7,
+    70.3
+   ]
+  },
+  {
+   "path": [
+    "P1",
+    0,
+    "Conn"
+   ],
+   "rows": [],
+   "box": [
+    307.8,
+    161.3,
+    10,
+    10
+   ]
+  },
+  {
+   "path": [
+    "P1",
+    0,
+    "Mid"
+   ],
+   "rows": [
+    [
+     "Mid"
+    ],
+    [
+     "during ",
+     "A ",
+     "/ c--"
+    ],
+    [
+     "exit ",
+     "/ c = 0"
+    ],
+    [
+     "suspend ",
+     "B ",
+     ""
+    ]
+   ],
+   "box": [
+    413.4,
+    24.1,
+    105.9,
+    143.6
+   ]
+  },
+  {
+   "path": [
+    "P1",
+    0,
+    "Mid",
+    0,
+    "M1"
+   ],
+   "rows": [
+    [
+     "M1"
+    ]
+   ],
+   "box": [
+    43.8,
+    10,
+    38.3,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P1",
+    0,
+    "C"
+   ],
+   "rows": [
+    [
+     "C"
+    ]
+   ],
+   "box": [
+    781.8,
+    164.6,
+    40,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P1",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    150.7,
+    831.8,
+    249.7
+   ]
+  },
+  {
+   "path": [
+    "P1",
+    0,
+    "Mid",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    7,
+    83.2,
+    92,
+    54.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP1$$N0$NMid$$N0$NM1$EM10",
+   "source": [
+    "P1",
+    0,
+    "Mid",
+    0,
+    "M1"
+   ],
+   "target": [
+    "P1",
+    0,
+    "Mid",
+    0,
+    "M1"
+   ],
+   "text": "A",
+   "lines": [
+    "A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP1$$N0$NInit$EMid0",
+   "source": [
+    "P1",
+    0,
+    "Init"
+   ],
+   "target": [
+    "P1",
+    0,
+    "Mid"
+   ],
+   "text": "1: 3 A / V((x + 1)); c += 2",
+   "lines": [
+    "1: 3 A",
+    "/ V((x + 1));",
+    "  c += 2"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP1$$N0$NInit$EC0",
+   "source": [
+    "P1",
+    0,
+    "Init"
+   ],
+   "target": [
+    "P1",
+    0,
+    "C"
+   ],
+   "text": "2: pre(B) && !(A || B) / V((c * (x - 1)))",
+   "lines": [
+    "2: pre(B) && !(A || B)",
+    "/ V((c * (x - 1)))"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP1$$N0$NInit$EConn0",
+   "source": [
+    "P1",
+    0,
+    "Init"
+   ],
+   "target": [
+    "P1",
+    0,
+    "Conn"
+   ],
+   "text": "3: A",
+   "lines": [
+    "3: A"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP1$$N0$NInit$EMid1",
+   "source": [
+    "P1",
+    0,
+    "Init"
+   ],
+   "target": [
+    "P1",
+    0,
+    "Mid"
+   ],
+   "text": "4: c > 1 / f = f * 2.0",
+   "lines": [
+    "4: c > 1",
+    "/ f = f * 2.0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle",
+    "red-circle"
+   ]
+  },
+  {
+   "id": "$root$NP1$$N0$NInit$EInit0",
+   "source": [
+    "P1",
+    0,
+    "Init"
+   ],
+   "target": [
+    "P1",
+    0,
+    "Init"
+   ],
+   "text": "5:",
+   "lines": [
+    "5: "
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "history-deep"
+   ]
+  },
+  {
+   "id": "$root$NP1$$N0$NConn$EMid0",
+   "source": [
+    "P1",
+    0,
+    "Conn"
+   ],
+   "target": [
+    "P1",
+    0,
+    "Mid"
+   ],
+   "text": "1: B / c = -c",
+   "lines": [
+    "1: B",
+    "/ c = -c"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP1$$N0$NConn$EC0",
+   "source": [
+    "P1",
+    0,
+    "Conn"
+   ],
+   "target": [
+    "P1",
+    0,
+    "C"
+   ],
+   "text": "2:",
+   "lines": [
+    "2: "
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "history-shallow"
+   ]
+  },
+  {
+   "id": "$root$NP1$$N0$NMid$EC0",
+   "source": [
+    "P1",
+    0,
+    "Mid"
+   ],
+   "target": [
+    "P1",
+    0,
+    "C"
+   ],
+   "text": "c == 2 && x != 3 || x >= 4 && !A",
+   "lines": [
+    "c == 2 && x != 3 || x >= 4 && !A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

@@ -1,0 +1,8 @@
+// The grammar allows "dataflow for", but the compiler cannot compile it.
+scchart St37Bad {
+  input int I[3]
+  output int O[3]
+  dataflow for i : 0 to 2 {
+    O[i] = I[i] + i
+  }
+}

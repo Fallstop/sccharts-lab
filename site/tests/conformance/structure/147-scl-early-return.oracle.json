@@ -1,0 +1,82 @@
+{
+  "hash": "256b30bd32de36cf4291a1c91353089950e9b4ab",
+  "chart": "tests/conformance/structure/147-scl-early-return.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_clamp_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 50
+      },
+      "values": {
+        "x": 50,
+        "y": 10
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": -3
+      },
+      "values": {
+        "x": -3,
+        "y": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "x": 7,
+        "y": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

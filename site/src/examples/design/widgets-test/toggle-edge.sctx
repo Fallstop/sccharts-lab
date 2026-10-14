@@ -1,0 +1,10 @@
+scchart ToggleEdge {
+  input bool button
+  output bool light = false
+
+  initial state Off
+    if button && !pre(button) do light = true go to On
+
+  state On
+    if button && !pre(button) do light = false go to Off
+}

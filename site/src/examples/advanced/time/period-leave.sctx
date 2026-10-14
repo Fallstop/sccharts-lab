@@ -1,0 +1,14 @@
+scchart PeriodLeave {
+  input bool stop
+  output int samples = 0
+
+  initial state Run {
+    period 500
+
+    initial state Measure
+      do samples++ go to Measure
+  }
+  if stop go to Stopped
+
+  state Stopped
+}

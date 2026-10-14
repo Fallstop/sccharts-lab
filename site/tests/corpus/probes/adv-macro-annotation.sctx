@@ -1,0 +1,6 @@
+scchart Macro {
+  input bool @macro "Button", "ENTER" button, @macro "Button", "ESCAPE" esc
+  output bool @macro "Light" light
+  initial state S
+  if button do light = true go to S
+}

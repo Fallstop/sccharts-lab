@@ -1,0 +1,80 @@
+{
+  "hash": "506cd32c6ad87a9b48ef6709f06e5a8ccf0748a2",
+  "chart": "src/examples/advanced/code-generation/burst-priority.sctx",
+  "system": "priority",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Ready, Reload]",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Ready, Reload]",
+      "line": 9,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "fire": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "shots": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "fire": false
+      },
+      "values": {
+        "fire": false,
+        "shots": 0
+      },
+      "taken": [
+        0,
+        0
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "fire": true
+      },
+      "values": {
+        "fire": true,
+        "shots": 3
+      },
+      "taken": [
+        3,
+        3
+      ]
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "fire": false
+      },
+      "values": {
+        "fire": false,
+        "shots": 3
+      },
+      "taken": [
+        0,
+        0
+      ]
+    }
+  ]
+}

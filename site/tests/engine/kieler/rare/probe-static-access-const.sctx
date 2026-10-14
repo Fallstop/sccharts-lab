@@ -1,0 +1,14 @@
+scchart StaticAccessConst {
+  input bool A
+  output int o = 0
+  output float f = 0.0
+  initial state S
+    if A && scchart(StaticConsts).ON do o = scchart(StaticConsts).MAX + scchart(StaticConsts).SUM; f = scchart(StaticConsts).HALF go to S
+}
+scchart StaticConsts {
+  const int MAX = 7
+  const int SUM = 3 * 4 + 1
+  const float HALF = 0.5
+  const bool ON = true
+  initial state I
+}

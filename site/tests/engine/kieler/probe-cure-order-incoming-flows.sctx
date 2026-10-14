@@ -1,0 +1,17 @@
+scchart C2 {
+  output signal S
+  region R0 {
+    initial state A {
+      region {
+        initial state I {
+          region { initial state P { signal L } }
+          region { initial state Q { immediate during do S } }
+        }
+      }
+    }
+      immediate abort to B
+      abort to B
+    state B
+      immediate abort to A
+  }
+}

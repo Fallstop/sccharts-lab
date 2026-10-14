@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "sample": false, "temperature": 12 }, "note": "Tick 1 enters `Log`; its transition is delayed. Every member of `latest` and `highest` starts at 0." },
+    { "inputs": { "sample": true, "temperature": 14 }, "note": "The first sample: `latest` holds 14 and sample number 1. Being the first, it is also the highest so far, so `highest` copies it, member by member: `peak` is 14, `peakNumber` 1." },
+    { "inputs": { "temperature": 11 }, "note": "Sample 2 (`sample` is still true): `latest` holds 11 and 2. 11 is not higher than `highest.value`, 14, so `highest` keeps sample 1." },
+    { "inputs": { "sample": false, "temperature": 19 }, "note": "No sample in this tick: the transition does not fire, and 19 is not recorded." },
+    { "inputs": { "sample": true }, "note": "Sample 3 reads 19, a new highest: `peak` is 19 and `peakNumber` 3. The struct remembers which sample it was, not which tick." },
+    { "inputs": { "temperature": 16 }, "note": "Sample 4 reads 16; `highest` stays at sample 3." }
+  ],
+  "expect": "ok"
+}

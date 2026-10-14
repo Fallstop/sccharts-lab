@@ -1,0 +1,14 @@
+scchart P162 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0
+  do O = 1 + 2 * 3 - 4 / 2 % 3 << 1 >> 2 >>> 1 go to S1
+  if A || B && !A | B ^ A & B go to S1
+  if I + 1 == O * 2 go to S1
+  state S1
+
+}

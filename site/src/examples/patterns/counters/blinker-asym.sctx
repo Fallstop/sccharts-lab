@@ -1,0 +1,12 @@
+scchart Blinker {
+  output bool lamp
+
+  initial state Dark
+    if 3 true go to Lit
+
+  state Lit {
+    entry do lamp = true
+    exit do lamp = false
+  }
+  go to Dark
+}

@@ -1,0 +1,12 @@
+// P-30 widened: the counter keeps its value while the state is inactive (P-36), so an immediate count delay
+// left one count short fires on the next entry however long ago it was left: here after three ticks in Away.
+scchart P97CountAway {
+  input bool knock, away
+  output bool open = false
+  initial state Shut
+  immediate if 3 knock do open = true go to Open
+  if away go to Away
+  state Away
+  if !away go to Shut
+  state Open
+}

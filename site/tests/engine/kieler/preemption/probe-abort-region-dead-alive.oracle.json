@@ -1,0 +1,108 @@
+{
+  "hash": "bc99d7bcafb6e6a89a4b2855d0487054d6e61e46",
+  "chart": "tests/engine/kieler/preemption/probe-abort-region-dead-alive.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 27,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 22,
+      "column": 13
+    }
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+scchart Celsius {
+  input int fahrenheit
+  output int celsius
+  output bool freezing
+
+  dataflow {
+    freezing = celsius <= 0
+    celsius = (fahrenheit - 32) * 5 / 9
+  }
+}

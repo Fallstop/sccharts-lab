@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    { "inputs": { "hands": false, "deltaT": 500 }, "note": "Ticks every 500 ms. Tick 1 enters `Idle`." },
+    { "inputs": { "hands": true }, "note": "Hands in: `fan` on." },
+    { "inputs": { "hands": false }, "note": "Hands out: `Drying` → `Afterrun`, and the clock is reset: `t` = 0." },
+    { "note": "`t` = 500." },
+    { "inputs": { "hands": true }, "note": "Hands back before the time is up: `Afterrun` → `Drying`, the fan keeps running." },
+    { "inputs": { "hands": false }, "note": "Out again: the clock restarts at 0." },
+    { "note": "500." },
+    { "note": "1000." },
+    { "note": "1500." },
+    { "note": "2000: the fan stops, 2000 ms after the hands left." }
+  ],
+  "expect": "ok"
+}

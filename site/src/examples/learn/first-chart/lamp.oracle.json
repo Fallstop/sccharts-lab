@@ -1,0 +1,111 @@
+{
+  "hash": "c11bbf4f00367de10800eb2a37a5120fe27695a9",
+  "chart": "src/examples/learn/first-chart/lamp.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "offButton": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "onButton": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lit": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "onButton": false,
+        "offButton": false
+      },
+      "values": {
+        "offButton": false,
+        "onButton": false,
+        "lit": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "onButton": true
+      },
+      "values": {
+        "offButton": false,
+        "onButton": true,
+        "lit": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "onButton": false
+      },
+      "values": {
+        "offButton": false,
+        "onButton": false,
+        "lit": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "offButton": true
+      },
+      "values": {
+        "offButton": true,
+        "onButton": false,
+        "lit": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "offButton": false
+      },
+      "values": {
+        "offButton": false,
+        "onButton": false,
+        "lit": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

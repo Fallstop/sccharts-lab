@@ -1,0 +1,83 @@
+{
+  "hash": "1bd2d999cbf36ea6ed01893c1e7bed98c0b47c10",
+  "chart": "tests/engine/kieler/rare/probe-static-access-initial.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "k": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "o": 3,
+        "k": [
+          0,
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "o": 4,
+        "k": [
+          0,
+          4,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "o": 5,
+        "k": [
+          0,
+          5,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

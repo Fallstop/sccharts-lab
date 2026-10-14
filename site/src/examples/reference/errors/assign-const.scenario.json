@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: `LIMIT` is a `const`, a fixed name for the value 10."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "You cannot assign a value to a const object."
+}

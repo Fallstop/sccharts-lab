@@ -1,0 +1,153 @@
+{
+ "sourceHash": "a3ba12c0dc0185fa",
+ "states": [
+  {
+   "path": [
+    "SharedClock"
+   ],
+   "rows": [
+    [
+     "SharedClock"
+    ],
+    [
+     "output int ",
+     "a = 0"
+    ],
+    [
+     "output int ",
+     "b = 0"
+    ],
+    [
+     "clock ",
+     "t = 0"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    202.3,
+    234.3
+   ]
+  },
+  {
+   "path": [
+    "SharedClock",
+    "First",
+    "Wait"
+   ],
+   "rows": [
+    [
+     "Wait"
+    ]
+   ],
+   "box": [
+    19.6,
+    100.7,
+    51.2,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "SharedClock",
+    "Second",
+    "Idle"
+   ],
+   "rows": [
+    [
+     "Idle"
+    ]
+   ],
+   "box": [
+    23.8,
+    82.1,
+    45.8,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "SharedClock",
+    "First"
+   ],
+   "label": [
+    "First"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    83.2,
+    90.3,
+    145.3
+   ]
+  },
+  {
+   "path": [
+    "SharedClock",
+    "Second"
+   ],
+   "label": [
+    "Second"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    102.3,
+    83.2,
+    93.4,
+    145.3
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NSharedClock$NFirst$NWait$EWait0",
+   "source": [
+    "SharedClock",
+    "First",
+    "Wait"
+   ],
+   "target": [
+    "SharedClock",
+    "First",
+    "Wait"
+   ],
+   "text": "t > 2 / t = 0; a = a + 1",
+   "lines": [
+    "t > 2",
+    "/ t = 0;",
+    "  a = a + 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSharedClock$NSecond$NIdle$EIdle0",
+   "source": [
+    "SharedClock",
+    "Second",
+    "Idle"
+   ],
+   "target": [
+    "SharedClock",
+    "Second",
+    "Idle"
+   ],
+   "text": "t > 4 / b = b + 1",
+   "lines": [
+    "t > 4",
+    "/ b = b + 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

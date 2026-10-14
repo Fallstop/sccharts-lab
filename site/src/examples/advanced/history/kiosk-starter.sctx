@@ -1,0 +1,35 @@
+scchart Kiosk {
+  input bool idle, touch, next, open
+  output int screen = 11
+
+  initial state Pages {
+    initial state News {
+      initial state Headlines {
+        entry do screen = 11
+      }
+      if open go to Story
+
+      state Story {
+        entry do screen = 12
+      }
+    }
+    if next go to Weather
+
+    state Weather {
+      initial state Today {
+        entry do screen = 21
+      }
+      if open go to Week
+
+      state Week {
+        entry do screen = 22
+      }
+    }
+  }
+  if idle go to Screensaver
+
+  state Screensaver {
+    entry do screen = 0
+  }
+  if touch go to Pages
+}

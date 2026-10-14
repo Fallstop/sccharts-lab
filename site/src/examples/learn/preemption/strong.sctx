@@ -1,0 +1,13 @@
+scchart StrongCancel {
+  input bool start, sheet, cancel
+  output int printed
+
+  initial state Idle
+    if start go to Job
+
+  state Job {
+    initial state Printing
+      if sheet do printed++ go to Printing
+  }
+  if cancel abort to Idle
+}

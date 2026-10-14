@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Tick 1 enters **A**; the delayed during action does not run yet: step = 0."
+    },
+    {
+      "inputs": {},
+      "note": "The during action runs: step = 1, duringAt = 1."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "`abort to` is a strong abort. A's during action counts as inner behaviour and is skipped (duringAt stays 1), but its **exit action still runs** (exitAt = 2), then the effect (effectAt = 3), then B's entry (entryAt = 4)."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Nothing changes in B."
+    }
+  ],
+  "expect": "ok"
+}

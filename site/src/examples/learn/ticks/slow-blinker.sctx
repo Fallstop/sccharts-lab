@@ -1,0 +1,15 @@
+scchart SlowBlinker {
+  output bool light = false
+
+  initial state Off1
+    go to Off2
+
+  state Off2
+    do light = true go to On1
+
+  state On1
+    go to On2
+
+  state On2
+    do light = false go to Off1
+}

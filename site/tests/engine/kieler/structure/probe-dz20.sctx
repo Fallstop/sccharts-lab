@@ -1,0 +1,9 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz20 {
+  output int count = 0, a = 0, b = 0
+  method inc() {
+    count++
+  }
+  region { initial state S do inc(); a = count go to S }
+  region { initial state S do inc(); b = count go to S }
+}

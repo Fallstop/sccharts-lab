@@ -1,0 +1,19 @@
+{
+  "hash": "65e74ad4b7628bcd6ab7e13edde4cf2e129ff993",
+  "chart": "tests/conformance/concurrency/29-write-write-conflict-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g2b to _g7b",
+    "Can't schedule from _g7b to _g2b",
+    "Can't schedule from _g2b to _g3",
+    "Can't schedule from _g7b to _g8",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving x prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through x.",
+    "Potential instantaneous loop through x."
+  ],
+  "ticks": []
+}

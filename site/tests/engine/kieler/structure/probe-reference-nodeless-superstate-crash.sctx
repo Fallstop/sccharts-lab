@@ -1,0 +1,31 @@
+// As probe-reference-nodeless-single-region, but Busy is entered by a transition: the Superfluous Fork Remover leaves
+// that transition's flow without target, and KIELER's ThreadAnalyzer throws a NullPointerException on it (the lab
+// server reports "The compiler failed during compilation setup.").
+scchart RefNodelessSuperstateCrash {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  region Read {
+    initial state Check
+    if x > 0 do y += 1 go to Check
+  }
+  region Write {
+    initial state Set
+    if a do x += 1 go to Set
+  }
+  region Ref {
+    initial state I is C(b, z)
+  }
+}
+
+scchart C {
+  input bool p
+  output int o = 0
+  initial state Wait
+  go to Busy
+  state Busy {
+    region {
+      initial state Spin
+      immediate go to Spin
+    }
+  }
+}

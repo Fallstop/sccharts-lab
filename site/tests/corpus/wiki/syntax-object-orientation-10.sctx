@@ -1,0 +1,29 @@
+#resource "Counter.java"
+
+scchart HostCounterApplicationWithPolicy {
+
+  input bool CountUp
+  output int O
+
+  host class Counter {
+    policy CounterPolicy {
+      initial state count
+        if increment go to count
+        if decrement go to count
+        if getValue: increment, decrement go to read
+        go to count
+      
+      state read
+        if getValue go to read
+        go to count
+    }
+
+    void increment()
+    void decrement()
+    int getValue()
+  } counter
+  
+  region {initial state A "" if CountUp do counter.increment() go to A}
+  region {initial state A "" if !CountUp do counter.decrement() go to A}
+  region {initial state A "" do O = counter.getValue() go to A}
+}

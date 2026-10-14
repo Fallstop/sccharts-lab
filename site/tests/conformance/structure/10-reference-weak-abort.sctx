@@ -1,0 +1,14 @@
+// A weak abort (go to) out of a referencing state: the instance still runs in the tick of the abort, and the
+// trigger sees what the instance wrote in that tick.
+scchart St10Main {
+  output int o = 0
+  initial state R is St10Counter(o)
+  if o >= 3 go to E
+  state E
+}
+
+scchart St10Counter {
+  output int count
+  initial state S
+  do count++ go to S
+}

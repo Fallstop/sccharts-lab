@@ -1,0 +1,30 @@
+// Several regions with a trailing abort region: KIELER nests them into a thread of their own; they react in
+// the tick Watch finishes (weak).
+scchart ContentTwo {
+  input bool A
+  output int one = 0, two = 0, done = 0
+
+  initial state M {
+    region Main1 {
+      initial state I
+      if true do one += 1 go to I
+    }
+    region Main2 {
+      initial state J
+      if true do two += 1 go to K
+      state K
+      if true do two += 10 go to J
+    }
+    abort region Watch {
+      initial state W
+      if A go to F
+      final state F
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done += 1
+  }
+  go to M
+}

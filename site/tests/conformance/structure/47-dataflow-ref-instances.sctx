@@ -1,0 +1,24 @@
+// Dataflow with chart instances: "ref Chart g1, g2" declares two instances. Their inputs are set with
+// g1.A = ... or all at once with a tuple g2 = {x, y} (in input declaration order; _ skips one), and their
+// outputs are read as g1.O. Unset inputs keep their default (false).
+scchart St47Gates {
+  input bool X, Y, Z
+  output bool O, P
+  ref St47And g1, g2, g3
+  dataflow {
+    g1.A = X
+    g1.B = Y
+    g2 = {g1.O, Z}
+    O = g2.O
+    g3 = {_, X}
+    P = g3.O
+  }
+}
+
+scchart St47And {
+  input bool A, B
+  output bool O
+  dataflow {
+    O = A && B
+  }
+}

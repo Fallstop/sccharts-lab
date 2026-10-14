@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "Both regions start. R2 never reaches a final state, so the root can never terminate (KIELER warns: \"All or none concurrent regions should have final states.\")."},
+    {"inputs": {}, "note": "R1 moves to its final state B. The root does not terminate because R2 is still running."},
+    {"inputs": {"I": true}, "note": "While the parent keeps running, a final state's outgoing transitions work as usual: B -> A fires, x = 1."},
+    {"inputs": {}, "note": "A -> B again (one tick later)."},
+    {"inputs": {}, "note": "B -> A again: x = 2."}
+  ],
+  "expect": "ok"
+}

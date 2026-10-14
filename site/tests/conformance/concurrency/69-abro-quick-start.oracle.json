@@ -1,0 +1,204 @@
+{
+  "hash": "99d7da2fb10c60082ee0497ebe65ba8f2c1a86a5",
+  "chart": "tests/conformance/concurrency/69-abro-quick-start.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "R": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": false,
+        "O": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "R": false,
+        "O": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "B": true,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": true,
+        "R": false,
+        "O": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": false,
+        "O": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "values": {
+        "A": true,
+        "B": true,
+        "R": false,
+        "O": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": true
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": true,
+        "O": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "values": {
+        "A": true,
+        "B": true,
+        "R": false,
+        "O": true
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": false,
+        "O": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

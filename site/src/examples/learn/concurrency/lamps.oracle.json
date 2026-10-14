@@ -1,0 +1,134 @@
+{
+  "hash": "46febb2cfbe7f37844a25631ee978f8b5921cae6",
+  "chart": "src/examples/learn/concurrency/lamps.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "hallButton": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "porchButton": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "hall": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "porch": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "hallButton": false,
+        "porchButton": false
+      },
+      "values": {
+        "hallButton": false,
+        "porchButton": false,
+        "hall": false,
+        "porch": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "hallButton": true
+      },
+      "values": {
+        "hallButton": true,
+        "porchButton": false,
+        "hall": true,
+        "porch": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "hallButton": false,
+        "porchButton": true
+      },
+      "values": {
+        "hallButton": false,
+        "porchButton": true,
+        "hall": true,
+        "porch": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "hallButton": true
+      },
+      "values": {
+        "hallButton": true,
+        "porchButton": true,
+        "hall": false,
+        "porch": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "hallButton": false,
+        "porchButton": false
+      },
+      "values": {
+        "hallButton": false,
+        "porchButton": false,
+        "hall": false,
+        "porch": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

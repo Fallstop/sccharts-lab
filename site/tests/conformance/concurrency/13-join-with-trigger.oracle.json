@@ -1,0 +1,113 @@
+{
+  "hash": "c28904ff04b7108abb1dcd925560f0c3c6eb1f96",
+  "chart": "tests/conformance/concurrency/13-join-with-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "c": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "c": true,
+        "n": 11
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "n": 11
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+---
+title: Widget test bench
+description: Every interactive widget and its edge cases, for the widget workstream's checks. Not part of the guide.
+# A draft: shown by the dev server (tools/dev-server.sh), left out of production builds (so out of the
+# sitemap and the search index too).
+draft: true
+pagefind: false
+head:
+  - tag: meta
+    attrs:
+      name: robots
+      content: noindex
+---
+
+import { Chart, Sim, Compare, Predict, TryIt } from '~components/guide'
+import HowKielerReads from '~components/HowKielerReads.astro'
+
+This page exercises every widget of the guide, including the awkward cases. The Playwright checks in
+`tests/widgets/` drive it.
+
+By hand: the simulations load their code only when you first point at, touch or tab into one (`client:engage`;
+a click before that is replayed). With the keyboard, Tab into a diagram and use the arrow keys: each state and
+transition is focused in turn, with a ring, and its source lines are marked in the **Both** view; Tab on to the
+code lines (Up and Down), the controls, the timing diagram (Left and Right go back and step) and the "What
+happened" lines (Up and Down: each marks its elements). Print the page (or its print preview): diagrams, code
+and the guided tours as text, no controls, in the light theme.
+
+## Chart
+
+<Chart example="landing/toggle" caption="A plain chart: hover a state or a line in the **Both** view." />
+
+<Chart example="design/widgets-test/abro" highlight={['WaitAB', 'ABO->1']} caption="With `highlight`: **WaitAB** and the strong abort are marked." />
+
+<Chart example="design/widgets-test/blink" caption="KIELER rejects this chart: an instantaneous loop between **Off** and **On**." />
+
+<Chart example="design/widgets-test/broken" caption="A syntax error (`go B` instead of `go to B`): whatever can be drawn is drawn." />
+
+## Sim
+
+<Sim example="landing/toggle" caption="The landing chart with its guided tour." />
+
+<Sim example="design/widgets-test/abro" caption="Concurrency: one trace lane per region." />
+
+<Sim example="design/widgets-test/scale" caption="Valued signals: presence and value." />
+
+<Sim example="design/widgets-test/counter" caption="No scenario: free play from the start. Run it for a long trace." />
+
+<Sim example="design/widgets-test/countdown" caption="A chart that terminates." />
+
+<Sim example="design/widgets-test/blink" caption="A rejected chart: the messages replace the controls." />
+
+<Sim example="design/widgets-test/divide" caption="Every kind of input field. Set `d` to 0 and step: a run-time error." />
+
+<Sim example="learn/transitions/stopwatch-unreachable" caption="KIELER accepts this chart but warns: the warning is listed under the simulation, collapsed." />
+
+<Sim example="learn/causality/retry" caption="Rejected: the scheduler's error first, with KIELER's words; the validator's warning apart." />
+
+<Sim example="advanced/references/import-main" caption="Imports: `push-switch.sctx` is compiled with the chart (the scenario's `imports`)." />
+
+<Sim example="advanced/references/lamp-panel" references="expanded" caption="`references=&quot;expanded&quot;`: the referenced chart is drawn inside each reference state, and its states light up." />
+
+<Sim example="advanced/time/egg-timer" show={['deltaT', 't', 'sleepT', 'ring']} caption="A timed chart: `show` names `deltaT` and `sleepT`, which the compiler adds. **Advance by sleepT** sets `deltaT` to the time the chart asked for and steps." />
+
+<Sim example="advanced/host-code/backticks" caption="KIELER accepts this chart, but host code cannot run in the browser: a notice instead of the controls." />
+
+<Sim example="design/widgets-test/pre-trigger" caption="Official KIELER fails on `pre(press)` as the whole trigger of a during action; SCCharts Lab and the guide compile it. The divergence is shown prominently under the simulation." />
+
+<Sim example="advanced/for-regions/seatbelts" caption="A for-region: with the engine's per-copy report, one trace lane per copy (`Seat i=0` ...) and a count on each state of the region (`×3`)." />
+
+<Sim example="learn/hierarchy/shadow" show={['press', 'count', 'Outer.count', 'seen']} caption="`show` names an inner local: `Outer.count` is the local of `Outer` that shadows the output `count` (traced from the engine's `trace`)." />
+
+<Sim example="advanced/data-types/scoreboard" show={['homeGoal', 'awayGoal', 'homeScore', 'home.count', 'away.count']} caption="`show` names members of class instances: `home.count` and `away.count`." />
+
+<Sim example="advanced/suspend/microwave" caption="Suspension: the `Cooking` lane is hatched in the ticks the door is open, with a legend under the trace." />
+
+## Compare
+
+<Compare a="landing/toggle" b="design/widgets-test/toggle-edge" caption="Level against edge: hold `button` for two ticks and watch `light`." />
+
+<Compare a="design/widgets-test/counter" b="design/widgets-test/abro" caption="Two charts with different inputs: each gets its own." />
+
+<Compare a="learn/immediate/stairs" b="learn/immediate/lift" scenario={false} caption="`scenario={false}`: free play, although `stairs` has a scenario." />
+
+<Compare a="advanced/time/egg-timer-coarse" b="advanced/time/egg-timer-equal" scenario="b" caption="`scenario=&quot;b&quot;`: the tour of the second chart, on both. Timed charts get **Advance by sleepT** (the earlier deadline of the two)." />
+
+<Compare a="learn/signals/once" b="learn/signals/once-bool" scenario="learn/signals/once-compare" show={['start', 'runs']} caption="`show` traces the named variables; each chart's termination is a triangle in its own caption row, and the difference line says which terminated: in tick 2, `OnceBool` does and `Once` does not." />
+
+<Compare a="advanced/time/blink" b="advanced/time/blink-forgetful" scenario={false} caption="Both charts get KIELER's loop warning at the same place: one warnings box, one line naming both charts." />
+
+## Predict
+
+<Predict example="landing/toggle" ask={[{ tick: 2, value: "light" }, { tick: 3, state: "On" }, { tick: 5, value: "light" }]} />
+
+<Predict example="landing/toggle" view="both" ask={[{ tick: 2, value: "light" }]} caption="`view=&quot;both&quot;`: diagram and code together from the start." />
+
+<Predict example="advanced/suspend/pre-not-frozen" ask={[{ tick: 3, value: 'change' }, { tick: 5, value: 'change' }]} caption="The caption sets the question up, so it comes first, above the inputs. After the check the trace has exactly the scenario's five ticks, and the hatched ticks are explained." />
+
+<Predict example="advanced/host-code/backticks" ask={[{ tick: 2, value: "x" }, { tick: 2, value: "y" }, { tick: 2, state: "Run" }]} caption="The guide's engine cannot run host code: the answers about values are checked against KIELER's recorded run; the state question cannot be checked." />
+
+## TryIt
+
+<TryIt example="landing/toggle" solution="design/widgets-test/toggle-edge" title="Light on the press, not the hold" hint={'Which input should the transition react to: `button` now, or `button` now and not `pre(button)`?\n\nA second paragraph: [the `pre` chapter](/learn/pre/) has the pattern.'}>
+Change the chart so that `light` toggles once per press, however long `button` is held.
+</TryIt>
+
+<TryIt example="landing/toggle" title="No solution, no hint">
+Only the starter: no hint box, no solution box.
+</TryIt>
+
+## How KIELER reads it
+
+<HowKielerReads caption="Type an expression, an effect or a trigger, or load a trap: KIELER's grouping, fully parenthesised and as a tree, or the syntax error." />
+
+<HowKielerReads initial="!A + 1" seeds={[]} caption="`initial` with no buttons (`seeds={[]}`): a syntax error, server-rendered." />

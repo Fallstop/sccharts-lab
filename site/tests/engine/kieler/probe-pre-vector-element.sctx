@@ -1,0 +1,9 @@
+scchart Q {
+  input int n
+  input bool a
+  output int x = 0, y = 0
+  output int arr[2]
+  output signal int S
+  initial state A
+    do arr = {pre(n), 1} go to A
+}

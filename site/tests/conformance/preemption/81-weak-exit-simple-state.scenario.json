@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Tick 1 enters M, a simple state (no inner states)."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "On a simple state a `weak exit` behaves like a plain exit: both run, even on a strong abort (plainExit = 1, weakExit = 1). Compare chart 15, where M is a superstate."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

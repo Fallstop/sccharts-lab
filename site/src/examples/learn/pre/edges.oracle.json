@@ -1,0 +1,120 @@
+{
+  "hash": "973d9e6eeb7f8b307b90c6c83a4c04db02b2d6cd",
+  "chart": "src/examples/learn/pre/edges.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "pressed": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "released": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "pressed": false,
+        "released": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "pressed": true,
+        "released": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "pressed": false,
+        "released": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "pressed": false,
+        "released": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "pressed": false,
+        "released": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "button": false,
+        "pressed": false,
+        "released": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "pressed": true,
+        "released": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "pressed": false,
+        "released": true
+      },
+      "terminated": false
+    }
+  ]
+}

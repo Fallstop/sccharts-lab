@@ -1,0 +1,42 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true,
+        "R": false
+      },
+      "note": "Tick 1: `ABO` and `WaitA` are entered, `A` holds, so `W` → `F` fires immediately and `WaitA` terminates in its entry tick. Its trigger-less join should fire now and emit `O`, but KIELER's netlist code does not take it: `O` is absent. The trigger is the reset loop `if R go to ABO` (an abort back into the same state): without it, or with an abort to a different state, `O` is emitted in tick 1. The priority-based compiler rejects this chart (not IASC-schedulable), and with a bool assignment instead of the emission the netlist compiler rejects it too."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "The lost join is not retried: `O` stays absent although `WaitA`'s region is final."
+    },
+    {
+      "inputs": {
+        "R": true
+      },
+      "note": "`R` holds: the weak abort fires and re-enters `ABO`. `A` is absent, so `WaitA` now waits in `W`."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "Nothing happens."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A` holds in a later tick than `WaitA`'s entry: `W` → `F` and the join both fire, `O` is present. The defect only affects termination in the entry tick."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In `Done`: `O` is absent again."
+    }
+  ],
+  "expect": "ok"
+}

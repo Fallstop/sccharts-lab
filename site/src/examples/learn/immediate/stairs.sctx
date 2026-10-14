@@ -1,0 +1,12 @@
+scchart Stairs {
+  input bool up
+  output int floor = 0
+
+  initial state Ground
+    if up do floor = 1 go to First
+
+  state First
+    if up do floor = 2 go to Second
+
+  state Second
+}

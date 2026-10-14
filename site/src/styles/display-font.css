@@ -1,0 +1,23 @@
+/*
+ * The display face: Archivo (SIL Open Font License 1.1, copyright The Archivo Project Authors,
+ * https://github.com/Omnibus-Type/Archivo). It sets page titles, the landing headline and the header's
+ * "SCCharts", always at font-stretch 112% (--display-stretch) and weights 580 to 650 (--display-weight, the
+ * header). So this is @fontsource-variable/archivo's latin build (files/archivo-latin-wdth-normal.woff2, 90 kB)
+ * pinned to that width and weight range, 27 kB, made with fontTools:
+ *
+ *   fonttools ttLib.woff2 decompress -o a.ttf archivo-latin-wdth-normal.woff2
+ *   fonttools varLib.instancer a.ttf wdth=112 wght=580:650 -o b.ttf
+ *   fonttools ttLib.woff2 compress -o archivo-display-latin.woff2 b.ttf
+ *
+ * Change --display-stretch or use another weight, and the file has to be made again. Characters outside the
+ * latin range fall back to the text face. src/components/overrides/Head.astro preloads it.
+ */
+@font-face {
+	font-family: 'Archivo Variable';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 580 650;
+	font-stretch: 112%;
+	src: url(./fonts/archivo-display-latin.woff2) format('woff2-variations');
+	unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}

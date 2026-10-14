@@ -1,0 +1,21 @@
+scchart CombineFunctions {
+  input bool a
+  output signal int Sum combine +
+  output signal int Prod combine *
+  output signal int Max combine max
+  output signal int Min combine min
+  output signal int Or combine |
+  output signal int And combine &
+  output signal bool BOr combine |
+  output signal bool BAnd combine &
+
+  region R1 {
+    initial state X
+    if a do Sum(5); Prod(5); Max(5); Min(5); Or(5); And(5); BOr(true); BAnd(true) go to X
+  }
+
+  region R2 {
+    initial state X
+    if a do Sum(6); Prod(6); Max(6); Min(6); Or(6); And(6); BOr(false); BAnd(false) go to X
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "hash": "7a856e2735f4ad5fb958bf3b3a2811e9a85f7a49",
+  "chart": "tests/conformance/concurrency/50-assign-to-signal-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "5:6 Non-variables cannot be used in an assignment.",
+    "Can't schedule from _g2b to _g7",
+    "Can't schedule from _g7 to _g2b",
+    "Can't schedule from _g2b to _g3",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving S prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through S.",
+    "Potential instantaneous loop through S."
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Non-variables cannot be used in an assignment.",
+      "line": 5,
+      "column": 6
+    }
+  ],
+  "ticks": []
+}

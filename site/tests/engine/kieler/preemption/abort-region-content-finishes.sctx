@@ -1,0 +1,26 @@
+// The par-or join: M is done when Main finishes too, and Watch (after Main) still reacts in that tick.
+scchart ContentFinishes {
+  input bool A, B
+  output int work = 0, done = 0, watched = 0
+
+  initial state M {
+    region Main {
+      initial state I
+      if B do work += 100 go to Fin
+      if true do work += 1 go to I
+      final state Fin
+    }
+    abort region Watch {
+      initial state W
+      if A go to F
+      if true do watched += 1 go to W
+      final state F
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done += 1
+  }
+  go to M
+}

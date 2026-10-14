@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "door": false, "window": false, "code": false, "panic": false }, "note": "Tick 1 enters `Armed`." },
+    { "inputs": { "window": true }, "note": "A window opens: entering `Ringing` sounds the siren." },
+    { "inputs": { "window": false, "code": true }, "note": "The code: leaving `Ringing` stops the siren." },
+    { "inputs": { "code": false }, "note": "Disarmed." },
+    { "inputs": { "code": true }, "note": "Armed again." },
+    { "inputs": { "code": false }, "note": "Armed." },
+    { "inputs": { "panic": true }, "note": "The panic button is a third way into `Ringing`, and it needed no new `siren = true`." },
+    { "inputs": { "panic": false }, "note": "Still ringing until the code is entered." }
+  ],
+  "expect": "ok"
+}

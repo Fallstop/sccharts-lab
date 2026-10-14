@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "up": true
+      },
+      "note": "Tick 1 enters `Ground`. `up` is already true, but `Ground`'s transition is delayed, and a delayed transition is never checked in the tick its state was entered (the state's *entry tick*)."
+    },
+    {
+      "note": "`Ground` was entered in an earlier tick, so now its transition is checked. `up` is still true (an input keeps its value), so the chart moves to `First` and `floor` becomes 1. This is `First`'s entry tick, so `First`'s delayed transition waits."
+    },
+    {
+      "note": "`First`'s transition may fire now: `up` is true, so the chart climbs to `Second` and `floor` is 2. A chain of delayed transitions moves at most one step per tick."
+    },
+    {
+      "note": "`Second` has no outgoing transitions, so the chart stays there."
+    }
+  ],
+  "expect": "ok"
+}

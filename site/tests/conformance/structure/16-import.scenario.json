@@ -1,0 +1,18 @@
+{
+  "imports": [
+    "16-st16-beep.sctx"
+  ],
+  "ticks": [
+    {
+      "inputs": {
+        "second": true
+      },
+      "note": "St16Beep comes from the imported file. Tick 1: **speaker = false**."
+    },
+    {
+      "inputs": {},
+      "note": "second holds, so the imported chart's A → B fires: **speaker = true**."
+    }
+  ],
+  "expect": "ok"
+}

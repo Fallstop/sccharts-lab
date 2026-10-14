@@ -1,0 +1,143 @@
+{
+  "hash": "da6fa9f296e0a7a03439ab950dadc696a3649060",
+  "chart": "src/examples/patterns/latch/alarm-reset-wins.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "ack": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fault": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "fault": false,
+        "ack": false
+      },
+      "values": {
+        "ack": false,
+        "fault": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "fault": true
+      },
+      "values": {
+        "ack": false,
+        "fault": true,
+        "alarm": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "ack": true
+      },
+      "values": {
+        "ack": true,
+        "fault": true,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "ack": false
+      },
+      "values": {
+        "ack": false,
+        "fault": true,
+        "alarm": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "fault": false
+      },
+      "values": {
+        "ack": false,
+        "fault": false,
+        "alarm": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "ack": true
+      },
+      "values": {
+        "ack": true,
+        "fault": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "ack": false
+      },
+      "values": {
+        "ack": false,
+        "fault": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

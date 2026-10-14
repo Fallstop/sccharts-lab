@@ -1,0 +1,108 @@
+{
+  "hash": "0b498b2a4354a06d29a319808335c7e2ab578cfd",
+  "chart": "tests/engine/kieler/rare/probe-trigger-int-char.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "k": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "k": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 256
+      },
+      "values": {
+        "n": 256,
+        "k": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 257
+      },
+      "values": {
+        "n": 257,
+        "k": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 512
+      },
+      "values": {
+        "n": 512,
+        "k": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": -256
+      },
+      "values": {
+        "n": -256,
+        "k": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "k": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "hash": "8ca16be6f7b2d97133ebb04734f23d6009dd84bb",
+  "chart": "tests/conformance/preemption/91-suspend-inner-entries-run.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "deeper": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outer": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "deeper": 1,
+        "inner": 1,
+        "outer": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "deeper": 1,
+        "inner": 1,
+        "outer": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "deeper": 2,
+        "inner": 2,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "deeper": 2,
+        "inner": 2,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

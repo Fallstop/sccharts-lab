@@ -1,0 +1,17 @@
+// join to after a reference whose chart cannot terminate: KIELER warns
+// "The referenced SCChart does not terminate, but you are using a termination to proceed." and the join never fires.
+scchart St23Main {
+  input bool start
+  output bool done = false
+  initial state R is St23Loop(start)
+  join to D
+  state D {
+    entry do done = true
+  }
+}
+
+scchart St23Loop {
+  input bool trigger
+  initial state W
+  if trigger go to W
+}

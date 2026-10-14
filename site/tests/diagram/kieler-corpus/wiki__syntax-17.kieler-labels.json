@@ -1,0 +1,375 @@
+{
+ "sourceHash": "232bf3ac486c4c61",
+ "states": [
+  {
+   "path": [
+    "ComplexTransitions"
+   ],
+   "rows": [
+    [
+     "ComplexTransitions"
+    ],
+    [
+     "input bool ",
+     "CD, SH, DH, D"
+    ],
+    [
+     "output int ",
+     "F, F2"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    497.1,
+    377.6
+   ]
+  },
+  {
+   "path": [
+    "ComplexTransitions",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    318.8,
+    285.6
+   ]
+  },
+  {
+   "path": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Init"
+   ],
+   "rows": [
+    [
+     "Init"
+    ]
+   ],
+   "box": [
+    129,
+    10,
+    43.2,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Count"
+   ],
+   "rows": [
+    [
+     "Count"
+    ],
+    [
+     "during ",
+     "/ F++"
+    ]
+   ],
+   "box": [
+    10,
+    108.1,
+    281.1,
+    128.4
+   ]
+  },
+  {
+   "path": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Count",
+    0,
+    "Init"
+   ],
+   "rows": [
+    [
+     "Init"
+    ]
+   ],
+   "box": [
+    10,
+    19.4,
+    43.2,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Count",
+    0,
+    "Count2"
+   ],
+   "rows": [
+    [
+     "Count2"
+    ],
+    [
+     "during ",
+     "/ F2++"
+    ]
+   ],
+   "box": [
+    154.1,
+    10,
+    103.8,
+    53.4
+   ]
+  },
+  {
+   "path": [
+    "ComplexTransitions",
+    0,
+    "Wait"
+   ],
+   "rows": [
+    [
+     "Wait"
+    ]
+   ],
+   "box": [
+    422,
+    135.5,
+    51.2,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "ComplexTransitions",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    483.1,
+    305.6
+   ]
+  },
+  {
+   "path": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    30.6,
+    301.1,
+    246.6
+   ]
+  },
+  {
+   "path": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Count",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    49.4,
+    268,
+    73.4
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NComplexTransitions$$N0$NA$$N0$NCount$$N0$NInit$ECount20",
+   "source": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Count",
+    0,
+    "Init"
+   ],
+   "target": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Count",
+    0,
+    "Count2"
+   ],
+   "text": "/ F2 = 0",
+   "lines": [
+    "/ F2 = 0"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NComplexTransitions$$N0$NA$$N0$NInit$ECount0",
+   "source": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Init"
+   ],
+   "target": [
+    "ComplexTransitions",
+    0,
+    "A",
+    0,
+    "Count"
+   ],
+   "text": "/ F = 0",
+   "lines": [
+    "/ F = 0"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NComplexTransitions$$N0$NA$EWait0",
+   "source": [
+    "ComplexTransitions",
+    0,
+    "A"
+   ],
+   "target": [
+    "ComplexTransitions",
+    0,
+    "Wait"
+   ],
+   "text": "3 CD",
+   "lines": [
+    "3 CD"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NComplexTransitions$$N0$NWait$EA0",
+   "source": [
+    "ComplexTransitions",
+    0,
+    "Wait"
+   ],
+   "target": [
+    "ComplexTransitions",
+    0,
+    "A"
+   ],
+   "text": "1: SH",
+   "lines": [
+    "1: SH"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "history-shallow"
+   ]
+  },
+  {
+   "id": "$root$NComplexTransitions$$N0$NWait$EA1",
+   "source": [
+    "ComplexTransitions",
+    0,
+    "Wait"
+   ],
+   "target": [
+    "ComplexTransitions",
+    0,
+    "A"
+   ],
+   "text": "2: DH",
+   "lines": [
+    "2: DH"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "history-deep"
+   ]
+  },
+  {
+   "id": "$root$NComplexTransitions$$N0$NWait$EA2",
+   "source": [
+    "ComplexTransitions",
+    0,
+    "Wait"
+   ],
+   "target": [
+    "ComplexTransitions",
+    0,
+    "A"
+   ],
+   "text": "3: D",
+   "lines": [
+    "3: D"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle"
+   ]
+  },
+  {
+   "id": "$root$NComplexTransitions$$N0$NWait$EA3",
+   "source": [
+    "ComplexTransitions",
+    0,
+    "Wait"
+   ],
+   "target": [
+    "ComplexTransitions",
+    0,
+    "A"
+   ],
+   "text": "4:",
+   "lines": [
+    "4: "
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

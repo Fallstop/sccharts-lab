@@ -1,0 +1,11 @@
+scchart StaticAccessInitial {
+  input bool A
+  output int o = scchart(StaticInit).MAX
+  int k[scchart(StaticInit).MAX]
+  initial state S
+    if A do o++; k[1] = o go to S
+}
+scchart StaticInit {
+  const int MAX = 3
+  initial state I
+}

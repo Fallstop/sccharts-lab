@@ -1,0 +1,14 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz33 {
+  input bool A
+  output bool done = false
+  output int X = 0
+  initial state S {
+    dataflow once {
+      X = 7
+    }
+  }
+  join to T
+  state T { entry do done = true }
+  if A go to S
+}

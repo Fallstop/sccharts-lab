@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"F": 0.1}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and lit holds the rounded literal 0.10000000149011612."},
+    {"inputs": {}, "note": "The input F is the double 0.1, but the literal 0.1 is rounded to single precision (0.10000000149011612): F == 0.1 is false and F < 0.1 is true. lit was initialised from the same rounded literal, so lit == 0.1 is true. F * 4 == 0.4 is false too."},
+    {"inputs": {"F": 0.5}, "note": "0.5 is exact in single precision: F < 0.1 is false; F * 4 == 0.4 is still false (2 versus 0.4)."}
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,140 @@
+---
+/**
+ * <Compare a="…" b="…" caption="…" />: two charts side by side, stepped together with the same inputs.
+ *
+ * Both diagrams are rendered at build time; the simulation (src/components/sim/CompareSim.svelte) runs both
+ * charts in the browser with one control bar. The inputs are the union of both charts' inputs (each chart
+ * gets the ones it declares). The timing diagram shows the inputs once, then each chart's outputs and
+ * active states under its name; an output both charts have is marked in the ticks where they differ.
+ *
+ * Props: a, b (example ids, required), caption, scenario: the guided tour, which plays the same scripted
+ * inputs on both charts with the scenario's per-tick notes (Previous / Next / Take over, as in <Sim>).
+ * 'a' (the default: a's scenario, when it has one) or 'b' (that chart's scenario), an example-style id of
+ * another scenario file, or false (no tour: free play from the start). references ('collapsed' |
+ * 'expanded'), as for <Sim>. show: the variables to trace, as for <Sim> (default: inputs and outputs); each chart
+ * traces the names it declares, and a local both charts have is compared like an output.
+ *
+ * KIELER's warnings for either chart are listed under the simulation (collapsed); a chart KIELER rejects
+ * shows its messages instead of the simulation.
+ */
+import WidgetFrame from './frame/WidgetFrame.astro'
+import SourceView from './frame/SourceView.astro'
+import DiagramView from './frame/DiagramView.astro'
+import Diagnostics from './frame/Diagnostics.astro'
+import CompareSim from './sim/CompareSim.svelte'
+import { loadExample, loadScenario, type Scenario } from './frame/examples'
+import { diagramSvg, prepareChart, type ReferencesView } from './frame/prepare'
+import { nextId } from './frame/ids'
+import TourText from './frame/TourText.astro'
+import { showProblems } from './frame/show'
+import { inlineCode } from './frame/inline-md'
+
+interface Props {
+	a: string
+	b: string
+	caption?: string
+	scenario?: 'a' | 'b' | string | false
+	references?: ReferencesView
+	show?: string[]
+}
+const { caption, references, show } = Astro.props
+const usedBy = `<Compare a="${Astro.props.a}" b="${Astro.props.b}">`
+const a = loadExample(Astro.props.a, `<Compare a="${Astro.props.a}">`)
+const b = loadExample(Astro.props.b, `<Compare b="${Astro.props.b}">`)
+const choice = Astro.props.scenario
+let scenario: Scenario | undefined
+if (choice === undefined) scenario = a.scenario
+else if (choice === 'a' || choice === 'b') {
+	const ex = choice === 'a' ? a : b
+	if (!ex.scenario) throw new Error(`${usedBy}: scenario="${choice}", but ${ex.file} has no scenario. Create src/examples/${ex.id}.scenario.json, or name another scenario file.`)
+	scenario = ex.scenario
+} else if (choice) scenario = loadScenario(choice, usedBy)
+if (scenario?.expect === 'error') scenario = undefined
+const pa = await prepareChart({ ...a, references })
+const pb = await prepareChart({ ...b, references })
+if (show && pa.compiled.chart && pb.compiled.chart) {
+	// As <Sim>: names the compiler adds (deltaT, sleepT) count; a name neither chart declares is a typo.
+	const problem = showProblems(show, [pa.compiled, pb.compiled])
+	if (problem) throw new Error(`${usedBy}: ${problem}`)
+}
+const svgA = diagramSvg(pa, pa.errorIds)
+const svgB = diagramSvg(pb, pb.errorIds)
+// Side by side, each diagram gets half the frame (about 330 px on a desktop). A diagram wider than 400 px would
+// shrink below about 80 % there (its labels under 9 px), or be cut off at the pane's edge once it reaches its
+// 60 % minimum (prepare.ts, minScale): such pairs are stacked, one above the other, at every width.
+const naturalWidth = (svg?: string) => Number(/data-natural-width="([\d.]+)"/.exec(svg ?? '')?.[1] ?? 0)
+const stacked = Math.max(naturalWidth(svgA), naturalWidth(svgB)) > 400
+const ka = nextId('scx-')
+const kb = nextId('scx-')
+const rejected = pa.rejected || pb.rejected
+const cannotRun = !rejected && (pa.cannotRun || pb.cannotRun)
+const notes = [pa, pb].some((p) => p.warnings.length > 0 || p.notices.length > 0)
+const views = [
+	{ id: 'diagram', label: 'Diagrams' },
+	{ id: 'code', label: 'Code' },
+]
+// The tour as text, for readers without JavaScript and on paper.
+const tour = scenario?.ticks.length ? scenario : undefined
+const host = nextId('scxh-')
+---
+
+<WidgetFrame kind="compare" name={`${pa.name} and ${pb.name}`} views={views} caption={caption}>
+	<div slot="view-diagram" class:list={['sc-compare', { 'is-stacked': stacked }]}>
+		<div class="sc-compare__pane">
+			<p class="sc-compare__name">{pa.name}</p>
+			<DiagramView svg={svgA} key={ka} map={pa.map} root={pa.compiled.chart?.id} compact />
+		</div>
+		<div class="sc-compare__pane">
+			<p class="sc-compare__name">{pb.name}</p>
+			<DiagramView svg={svgB} key={kb} map={pb.map} root={pb.compiled.chart?.id} compact />
+		</div>
+	</div>
+	<div slot="view-code" class="sc-compare">
+		<div class="sc-compare__pane" data-sc-code={ka}><p class="sc-compare__name">{pa.name}</p><SourceView source={a.source} /></div>
+		<div class="sc-compare__pane" data-sc-code={kb}><p class="sc-compare__name">{pb.name}</p><SourceView source={b.source} /></div>
+	</div>
+	{
+		rejected ? (
+			<div slot="foot">
+				{pa.rejected && <Diagnostics prepared={pa} name={pa.name} />}
+				{pb.rejected && <Diagnostics prepared={pb} name={pb.name} />}
+			</div>
+		) : cannotRun ? (
+			<div slot="foot">
+				{[pa, pb].filter((p) => p.cannotRun).map((p) => (
+					<div class="sc-cannot-run" role="note">
+						<p class="sc-diag__head">
+							<span class="sc-diag__mark sc-diag__mark--caution" aria-hidden="true" />
+							<span>
+								<code>{p.name}</code>: <Fragment set:html={inlineCode(p.cannotRun!)} />
+							</span>
+						</p>
+						{p.cannotRunHint ? <p class="sc-diag__hint" set:html={inlineCode(p.cannotRunHint)} /> : <p>KIELER accepts this chart: open it in KIELER or SCCharts Lab to run it.</p>}
+					</div>
+				))}
+			</div>
+		) : (
+			<Fragment slot="panel">
+				<div class="sc-sim-host" data-link={host}>
+					<CompareSim client:engage a={{ source: a.source, link: ka, files: pa.files }} b={{ source: b.source, link: kb, files: pb.files }} scenario={scenario} show={show} />
+				</div>
+				{
+					tour && (
+						<noscript>
+							<Fragment set:html={`<style>.sc-sim-host[data-link="${host}"] :is(.sc-sim__controls, .sc-sim__trace, .sc-sim__foot) { display: none }</style>`} />
+							<TourText scenario={tour} lead={`Guided tour, ${tour.ticks.length} ${tour.ticks.length === 1 ? 'tick' : 'ticks'}, the same inputs for both charts. Turn on JavaScript to run them.`} />
+						</noscript>
+					)
+				}
+				{tour && <TourText scenario={tour} lead={`Guided tour, ${tour.ticks.length} ${tour.ticks.length === 1 ? 'tick' : 'ticks'}, the same inputs for both charts:`} print />}
+			</Fragment>
+		)
+	}
+	{
+		!rejected && notes && (
+			<div slot="foot">
+				<Diagnostics charts={[{ name: pa.name, prepared: pa }, { name: pb.name, prepared: pb }]} />
+			</div>
+		)
+	}
+</WidgetFrame>

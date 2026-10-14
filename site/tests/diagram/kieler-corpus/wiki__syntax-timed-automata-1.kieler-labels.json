@@ -1,0 +1,159 @@
+{
+ "sourceHash": "c02272179f52784d",
+ "states": [
+  {
+   "path": [
+    "SimpleTimes"
+   ],
+   "rows": [
+    [
+     "SimpleTimes"
+    ],
+    [
+     "clock ",
+     "c"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    520.1,
+    145.7
+   ]
+  },
+  {
+   "path": [
+    "SimpleTimes",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    10,
+    42.8,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "SimpleTimes",
+    0,
+    "B"
+   ],
+   "rows": [
+    [
+     "B"
+    ]
+   ],
+   "box": [
+    183.5,
+    42.8,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "SimpleTimes",
+    0,
+    "C"
+   ],
+   "rows": [
+    [
+     "C"
+    ]
+   ],
+   "box": [
+    408.8,
+    39.8,
+    40,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "SimpleTimes",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    49.4,
+    506.1,
+    90.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NSimpleTimes$$N0$NA$EB0",
+   "source": [
+    "SimpleTimes",
+    0,
+    "A"
+   ],
+   "target": [
+    "SimpleTimes",
+    0,
+    "B"
+   ],
+   "text": "c >= 5 / c = 0",
+   "lines": [
+    "c >= 5",
+    "/ c = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSimpleTimes$$N0$NB$EC0",
+   "source": [
+    "SimpleTimes",
+    0,
+    "B"
+   ],
+   "target": [
+    "SimpleTimes",
+    0,
+    "C"
+   ],
+   "text": "c >= 10",
+   "lines": [
+    "c >= 10"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": [
+  {
+   "path": [
+    "SimpleTimes",
+    0,
+    2
+   ],
+   "text": "Will be reached at time T+5"
+  },
+  {
+   "path": [
+    "SimpleTimes",
+    0,
+    4
+   ],
+   "text": "Will be reached at time T+15"
+  }
+ ]
+}

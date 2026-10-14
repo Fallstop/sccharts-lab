@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": { "start": false, "ground": false, "full": false },
+      "note": "Tick 1 enters `Idle`."
+    },
+    {
+      "inputs": { "start": true },
+      "note": "`start` enters `Make`, and with it `Make`'s initial state `Grinding`."
+    },
+    {
+      "inputs": { "start": false, "ground": true },
+      "note": "The beans are ground: `Grinding` → `Brew`. Entering `Brew` enters its initial state `Pouring` in the same tick. Three states are active now, one inside the other: `Make`, `Brew` and `Pouring`."
+    },
+    {
+      "inputs": { "ground": false },
+      "note": "`full` is still false: `Pouring` waits, and `Make`, `Brew` and `Pouring` stay active."
+    },
+    {
+      "inputs": { "full": true },
+      "note": "The cup is full, and termination travels outwards in one tick: `Pouring` → `Poured` makes `Brew` terminate; `Brew`'s join (`cups` is 1) leads to `Served`, a final state of `Make`, so `Make` terminates too; and `Make`'s join emits `ready` and returns to `Idle`."
+    },
+    {
+      "inputs": { "full": false },
+      "note": "Back in `Idle`, ready for the next cup."
+    }
+  ],
+  "expect": "ok"
+}

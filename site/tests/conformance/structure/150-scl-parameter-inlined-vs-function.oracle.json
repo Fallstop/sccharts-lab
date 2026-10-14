@@ -1,0 +1,94 @@
+{
+  "hash": "ad362e79b96ab0295666cde6df0df1864222fa70",
+  "chart": "tests/conformance/structure/150-scl-parameter-inlined-vs-function.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name function is contained in the model but not in VariableStore.",
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_inlined_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "ya": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "yb": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": 1,
+        "b": 1
+      },
+      "values": {
+        "a": 1,
+        "b": 1,
+        "ya": 0,
+        "yb": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": 4,
+        "b": 4
+      },
+      "values": {
+        "a": 9,
+        "b": 4,
+        "ya": 9,
+        "yb": 9
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": 4,
+        "b": 4
+      },
+      "values": {
+        "a": 9,
+        "b": 4,
+        "ya": 9,
+        "yb": 9
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

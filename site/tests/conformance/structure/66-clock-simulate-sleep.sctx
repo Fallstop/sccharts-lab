@@ -1,0 +1,9 @@
+// @SimulateSleep: the chart assumes that exactly the requested sleep time passed (deltaT = pre(sleepT)),
+// so it jumps from timeout to timeout without any deltaT from the environment.
+@SimulateSleep
+scchart St66Jump {
+  output int n = 0
+  clock t
+  initial state S
+  if t >= 300 do n++; t = 0 go to S
+}

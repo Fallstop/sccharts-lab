@@ -1,0 +1,17 @@
+scchart ImplicitPanel {
+  input bool press
+  output bool lit = false
+
+  initial state Switch is ImplicitSwitch()
+}
+
+scchart ImplicitSwitch {
+  input bool press
+  output bool lit = false
+
+  initial state Off
+    if press do lit = true go to On
+
+  state On
+    if press do lit = false go to Off
+}

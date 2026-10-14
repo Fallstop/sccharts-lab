@@ -1,0 +1,77 @@
+{
+  "hash": "ff5082ab25e753935320b745cf81924fef7d9688",
+  "chart": "tests/engine/kieler/rare/probe-goto-back-call.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _effect0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "m": 0,
+        "n": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "m": 0,
+        "n": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "m": 0,
+        "n": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

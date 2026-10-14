@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "KIELER rejects the chart: two concurrent regions test the same clock `t`. Give each region its own clock."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Clock t is read by several concurrent regions"
+}

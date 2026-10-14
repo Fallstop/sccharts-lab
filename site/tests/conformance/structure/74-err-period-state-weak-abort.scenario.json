@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0,
+        "A": false
+      },
+      "note": "Rejected: \"Can't schedule from ... to ...\", \"The SCG is NOT asc-schedulable!\", \"Circular dependency prevents scheduling this tick.\" (the priority compiler: \"The SCG is not IASC-schedulable!\")."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

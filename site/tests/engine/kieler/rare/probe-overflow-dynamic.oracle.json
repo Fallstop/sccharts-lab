@@ -1,0 +1,136 @@
+{
+  "hash": "1d2434d88efa5686192b1ab6766a43e7dc891c06",
+  "chart": "tests/engine/kieler/rare/probe-overflow-dynamic.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "w": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "w": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 3,
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "w": 0,
+        "z": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 4
+      },
+      "values": {
+        "i": 4,
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "w": 7,
+        "z": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": -1
+      },
+      "values": {
+        "i": 7,
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "w": 7,
+        "z": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "a": [
+          0,
+          7,
+          0
+        ],
+        "w": 7,
+        "z": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

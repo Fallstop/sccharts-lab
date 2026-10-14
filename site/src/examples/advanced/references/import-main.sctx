@@ -1,0 +1,8 @@
+import "push-switch"
+
+scchart HallLights {
+  input bool switchA
+  output bool hall = false
+
+  initial state Hall is ImportedSwitch(switchA to press, hall to lit)
+}

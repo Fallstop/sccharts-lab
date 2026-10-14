@@ -1,0 +1,15 @@
+scchart FixedPriority {
+  input bool reqA, reqB   // computer A or B has a job waiting
+  input bool done         // the printer has finished its job
+  output int user = 0     // who is printing: 0 nobody, 1 A, 2 B
+
+  initial state Free
+    immediate if reqA do user = 1 go to PrintingA
+    immediate if reqB do user = 2 go to PrintingB
+
+  state PrintingA
+    if done do user = 0 go to Free
+
+  state PrintingB
+    if done do user = 0 go to Free
+}

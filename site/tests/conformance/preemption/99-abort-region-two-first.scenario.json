@@ -1,0 +1,47 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Tick 1 enters M: **work = 0, done = 0**."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Main reacts: **work = 1**."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "note": "W1 finishes: M is done before Main reacts: **work = 1, done = 1**."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Done goes back to M: **work = 1**."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "**work = 2**."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "W2 finishes, but Main (just after it) still reacts: **work = 3, done = 2**."
+    }
+  ],
+  "expect": "ok"
+}

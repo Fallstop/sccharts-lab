@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "door": false }, "note": "Tick 1 enters `Quiet` and `Watching` in both charts. `intruder` is a local of each chart, shared by its two regions; it starts false." },
+    { "inputs": {}, "note": "The door stays shut. All four regions react, and nothing is enabled." },
+    { "inputs": { "door": true }, "note": "The door opens. In both charts `Door` sets `intruder`, and `Siren` reads it *in the same tick*, sees true and sounds the siren. In `Alarm` `Siren` is written first, in `AlarmSwapped` second: the reader waits for the writer either way." },
+    { "inputs": { "door": false }, "note": "The door closes again, but both regions have moved on: `siren` stays true in both charts." }
+  ],
+  "expect": "ok"
+}

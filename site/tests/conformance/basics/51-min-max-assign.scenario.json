@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"I": 4}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "x min= e stores the smaller of x and e, x max= e the larger: lowest = 4, highest = 10 (5 is smaller than 10), fl = 1.5."},
+    {"inputs": {"I": 20}, "note": "lowest stays 4, highest = 21, fl = 1.5."},
+    {"inputs": {"I": -3}, "note": "lowest = -3, highest = 21, fl = -3."}
+  ],
+  "expect": "ok"
+}

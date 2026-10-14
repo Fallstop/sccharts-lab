@@ -1,0 +1,11 @@
+scchart Testing {
+    @layout[algorithm]
+          org.eclipse.elk.graphviz.circo
+    region:
+    initial final state A
+    --> B;
+    state B
+    --> C;
+    state C
+    --> A;
+}

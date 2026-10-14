@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Tick 1 enters `Off`. KIELER warns that `On` is not reachable, which is the only hint that something is wrong." },
+    { "inputs": { "button": true }, "note": "The button is pressed, but `light` stays false: the line `if button do light = true go to On` was swallowed by the empty `//` above it, so `Off` has no outgoing transition." },
+    { "inputs": { "button": false }, "note": "Nothing will ever happen in this chart." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "cancel": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true, "cancel": true }, "note": "`start` while `cancel` is held down. `Job` is entered and `busy` is true. The abort is delayed, so it is not checked in the tick `Job` was entered." },
+    { "inputs": { "start": false }, "note": "`cancel` is still true, and now the abort may fire: `Job` is left and `busy` is false." },
+    { "inputs": { "cancel": false }, "note": "Idle." }
+  ],
+  "expect": "ok"
+}

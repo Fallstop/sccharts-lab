@@ -1,0 +1,30 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": true,
+        "A": true
+      },
+      "note": "Weakly suspended already in the entry tick: the immediate transition runs (moves = 1, entersJ = 1) but the region stays in I."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Still in I."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Resumed, in I."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "I's immediate transition fires again: moves = 2, entersJ = 2."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "hold": false, "sensor": 10 }, "note": "Tick 1 enters `Measuring`. The delayed self-loop waits, so `change` is still 0." },
+    { "inputs": { "sensor": 12 }, "note": "`change` = `sensor - pre(sensor)` = 12 − 10 = 2." },
+    { "inputs": { "hold": true, "sensor": 15 }, "note": "`hold` suspends `Measuring`: the transition does not run and `change` stays 2." },
+    { "inputs": { "sensor": 20 }, "note": "Still suspended. `sensor` keeps changing, and `pre` keeps track of it." },
+    { "inputs": { "hold": false, "sensor": 26 }, "note": "Resumed: `pre(sensor)` is 20, the value in the previous tick (a suspended one), not 12 from the last tick that ran. So `change` = 26 − 20 = 6." },
+    { "inputs": { "sensor": 27 }, "note": "27 − 26 = 1." }
+  ],
+  "expect": "ok"
+}

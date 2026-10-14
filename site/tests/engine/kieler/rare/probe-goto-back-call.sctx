@@ -1,0 +1,18 @@
+// A code block with a call is a C function: the backward goto is dropped.
+scchart GotoBackCall {
+  input bool start
+  output int n = 0, m = 0
+
+  method int one() {
+    return 1
+  }
+
+  initial state S
+    if start do {
+      again:
+      n += one();
+      if (n % 3 != 0) {
+        goto again
+      }
+    } go to S
+}

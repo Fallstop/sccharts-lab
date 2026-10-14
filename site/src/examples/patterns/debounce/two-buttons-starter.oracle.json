@@ -1,0 +1,300 @@
+{
+  "hash": "ddd4505cbfad183b6abd1a9327f8931945852216",
+  "chart": "src/examples/patterns/debounce/two-buttons-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "rawA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "rawB": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "pressedA": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "pressedB": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "values": {
+        "rawA": false,
+        "rawB": false,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "rawA": true,
+        "rawB": false
+      },
+      "values": {
+        "rawA": true,
+        "rawB": false,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "values": {
+        "rawA": false,
+        "rawB": false,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "rawA": true,
+        "rawB": false
+      },
+      "values": {
+        "rawA": true,
+        "rawB": false,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "rawA": true,
+        "rawB": true
+      },
+      "values": {
+        "rawA": true,
+        "rawB": true,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "rawA": true,
+        "rawB": true
+      },
+      "values": {
+        "rawA": true,
+        "rawB": true,
+        "pressedA": true,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "rawA": false,
+        "rawB": true
+      },
+      "values": {
+        "rawA": false,
+        "rawB": true,
+        "pressedA": true,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "rawA": false,
+        "rawB": true
+      },
+      "values": {
+        "rawA": false,
+        "rawB": true,
+        "pressedA": true,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "values": {
+        "rawA": false,
+        "rawB": false,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "values": {
+        "rawA": false,
+        "rawB": false,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "values": {
+        "rawA": false,
+        "rawB": false,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "values": {
+        "rawA": false,
+        "rawB": false,
+        "pressedA": false,
+        "pressedB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

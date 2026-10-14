@@ -1,0 +1,107 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Tick 1: `Released`, `pressed` is false."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "First contact: `Released` moves to `MaybePressed`. Nothing is accepted yet."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "A bounce: `if !raw` goes straight back to `Released`, and the count is forgotten."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Contact: `MaybePressed` again, entered afresh."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Second reading in a row: `if 2 raw` has counted one tick."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "A bounce: back to `Released`."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Contact: `MaybePressed`."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Second true reading in a row."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Third true reading in a row: `if 2 raw` completes, and `pressed` becomes true."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Held: `Pressed` waits for a false reading."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Held."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "The release starts: `MaybeReleased`. `pressed` stays true."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "A bounce on the way out: back to `Pressed`, and the release count is forgotten."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "False: `MaybeReleased`."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Second false reading in a row."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Third false reading in a row: `pressed` becomes false."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Released. One press, one `pressed` pulse of seven ticks."
+    }
+  ],
+  "expect": "ok"
+}

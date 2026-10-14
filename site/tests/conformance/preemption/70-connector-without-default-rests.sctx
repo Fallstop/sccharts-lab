@@ -1,0 +1,12 @@
+scchart ConnectorRests {
+  input bool A
+  output int target = 0
+
+  initial state S
+  go to C
+
+  connector state C
+  immediate if A do target = 1 go to X
+
+  state X
+}

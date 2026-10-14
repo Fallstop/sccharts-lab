@@ -1,0 +1,112 @@
+{
+  "hash": "de65bb3577d1455481ac3afb2b4bfbd87c5c53bb",
+  "chart": "src/examples/design/widgets-test/countdown.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "n": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "n": 3
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "start": true,
+        "n": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "start": true,
+        "n": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "start": true,
+        "n": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": true
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "start": true,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

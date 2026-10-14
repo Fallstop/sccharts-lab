@@ -1,0 +1,109 @@
+{
+  "hash": "cff5ecf03562eded73363ab7d9d3558a8df5685e",
+  "chart": "src/examples/reference/errors/combine-max.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Min or max combine operators are currently not supported.",
+      "line": 3,
+      "column": 21
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "peak": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "peak_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "peak_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": 3,
+        "b": 5
+      },
+      "values": {
+        "a": 3,
+        "b": 5,
+        "peak": false,
+        "peak_val": 0,
+        "peak_curval": -2147483648
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": 3,
+        "b": 5,
+        "peak": true,
+        "peak_val": 5,
+        "peak_curval": 5
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": 9
+      },
+      "values": {
+        "a": 9,
+        "b": 5,
+        "peak": true,
+        "peak_val": 9,
+        "peak_curval": 9
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "hash": "826a7b7fbdbffd352bf8416afaf11a326bec8c8f",
+  "chart": "tests/engine/kieler/structure/probe-class-instances.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn2_c1_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn3_c2_add_k is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads pt.x, so the compiler treats it as an update of pt.x (a relative write, as in the deprecated old SC syntax).\nWrite it as pt.x += 1 to say so. In one region it means the same.\nIt only matters when another region also writes pt.x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 23,
+      "column": 23
+    }
+  ],
+  "interface": {
+    "up": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "P": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Counter.count": {
+      "type": "int",
+      "properties": []
+    },
+    "Point.x": {
+      "type": "int",
+      "properties": []
+    },
+    "Point.y": {
+      "type": "int",
+      "properties": []
+    },
+    "c1": {
+      "type": "class",
+      "properties": []
+    },
+    "c2": {
+      "type": "class",
+      "properties": []
+    },
+    "pt": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "up": true,
+        "O": 0,
+        "P": 0,
+        "c1": {
+          "count": 2
+        },
+        "c2": {
+          "count": 2
+        },
+        "pt": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "up": true,
+        "O": 0,
+        "P": 0,
+        "c1": {
+          "count": 3
+        },
+        "c2": {
+          "count": 2
+        },
+        "pt": {
+          "x": 1,
+          "y": 0
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "up": false
+      },
+      "values": {
+        "up": false,
+        "O": 3,
+        "P": 6,
+        "c1": {
+          "count": 3
+        },
+        "c2": {
+          "count": 5
+        },
+        "pt": {
+          "x": 1,
+          "y": 0
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "up": false
+      },
+      "values": {
+        "up": false,
+        "O": 3,
+        "P": 9,
+        "c1": {
+          "count": 3
+        },
+        "c2": {
+          "count": 8
+        },
+        "pt": {
+          "x": 1,
+          "y": 0
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "up": true,
+        "O": 3,
+        "P": 9,
+        "c1": {
+          "count": 4
+        },
+        "c2": {
+          "count": 8
+        },
+        "pt": {
+          "x": 2,
+          "y": 0
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

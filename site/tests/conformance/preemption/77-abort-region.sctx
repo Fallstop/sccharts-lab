@@ -1,0 +1,21 @@
+scchart AbortRegion {
+  input bool A
+  output int work = 0, done = 0
+
+  initial state M {
+    region Main {
+      initial state I
+      if true do work += 1 go to I
+    }
+    abort region Watch {
+      initial state W
+      if A go to F
+      final state F
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done = 1
+  }
+}

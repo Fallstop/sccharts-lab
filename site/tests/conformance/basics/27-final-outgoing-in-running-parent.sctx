@@ -1,0 +1,16 @@
+scchart FinalOutgoingInRunningParent {
+  input bool I
+  output int x = 0
+
+  region R1 {
+    initial state A
+    go to B
+
+    final state B
+    if I do x += 1 go to A
+  }
+
+  region R2 {
+    initial state C
+  }
+}

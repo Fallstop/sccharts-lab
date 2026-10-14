@@ -1,0 +1,34 @@
+{
+  "hash": "323194524133df59f16028b42518a8f5d76d4945",
+  "chart": "tests/conformance/structure/137-err-class-extends.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "mismatched input 'extends' expecting '{'",
+    "missing EOF at 'b'"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "mismatched input 'extends' expecting '{'",
+      "line": 4,
+      "column": 11,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 1,
+      "message": "missing EOF at 'b'",
+      "line": 6,
+      "column": 5,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 2,
+      "message": "A class/struct should have at least one variable defined (Type definitions are not supported).",
+      "line": 4,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

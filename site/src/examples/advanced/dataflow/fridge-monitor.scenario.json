@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "temperature": 3 }, "note": "3 degrees: the equation makes `warm` false. The control-flow region enters `Normal`." },
+    { "inputs": { "temperature": 7 }, "note": "The equation and the region run concurrently, and the region reads `warm` only after the equation has written it. So `warm` becomes true and `Normal` → `Alarm` fires in the same tick: `alarm` = true." },
+    { "inputs": { "temperature": 8 }, "note": "Still warm: the chart stays in `Alarm`." },
+    { "inputs": { "temperature": 4 }, "note": "Back to 4 degrees: `warm` is false and `Alarm` → `Normal` fires in this tick, clearing `alarm`." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 1300 }, "note": "Tick 1: `t` = 0." },
+    { "inputs": { "deltaT": 1300 }, "note": "`t` = 1300." },
+    { "inputs": { "deltaT": 1300 }, "note": "`t` = 2600. With `==` there is no bound to sleep towards, so `sleepT` stays 1000." },
+    { "inputs": { "deltaT": 1300 }, "note": "`t` = 3900: the clock jumped over 3000, so `t == 3000` was never true. `ring` stays false, and it always will." }
+  ],
+  "expect": "ok"
+}

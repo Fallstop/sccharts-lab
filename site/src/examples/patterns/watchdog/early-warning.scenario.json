@@ -1,0 +1,59 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Tick 1."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat: `late` stays false."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Quiet: 1."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Quiet: 2, so `late` becomes true."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat just in time: `quiet` and `late` are reset."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "1."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "2: late."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "The alarm; `late` goes back to false."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Expired."
+    }
+  ],
+  "expect": "ok"
+}

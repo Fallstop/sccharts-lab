@@ -1,0 +1,9 @@
+scchart CountDelay {
+  input bool A
+  output int fired = 0
+
+  initial state S
+  if 3 A do fired = 1 go to T
+
+  state T
+}

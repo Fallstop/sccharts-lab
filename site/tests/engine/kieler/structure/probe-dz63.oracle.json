@@ -1,0 +1,94 @@
+{
+  "hash": "be5086d80c58518f33ed98a8b40466f4ff54c31a",
+  "chart": "tests/engine/kieler/structure/probe-dz63.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 0,
+        "stop": false
+      },
+      "values": {
+        "I": 0,
+        "stop": false,
+        "X": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 1,
+        "stop": false
+      },
+      "values": {
+        "I": 1,
+        "stop": false,
+        "X": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 2,
+        "stop": true
+      },
+      "values": {
+        "I": 2,
+        "stop": true,
+        "X": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 3,
+        "stop": false
+      },
+      "values": {
+        "I": 3,
+        "stop": false,
+        "X": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+// "global" in the simulated chart itself crashes KIELER's compiler.
+scchart St87Main {
+  output int o = 0
+  global int g = 0
+  initial state S
+  do g++; o = g go to S
+}

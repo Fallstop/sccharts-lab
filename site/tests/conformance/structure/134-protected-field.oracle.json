@@ -1,0 +1,70 @@
+{
+  "hash": "c44f9556a9c7d392bf7bc7e05024b3610f2864f5",
+  "chart": "tests/conformance/structure/134-protected-field.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "St134Sub1.St134Base_secret": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    },
+    "s": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "O": 0,
+        "s": {
+          "St134Base_secret": 21
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "O": 42,
+        "s": {
+          "St134Base_secret": 21
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "O": 42,
+        "s": {
+          "St134Base_secret": 21
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

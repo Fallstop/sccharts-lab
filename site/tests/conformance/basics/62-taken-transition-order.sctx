@@ -1,0 +1,30 @@
+scchart TakenTransitionOrder {
+  input bool a, b, c, d, e, f
+
+  region R1 {
+    initial state P {
+      region X {
+        initial state X1
+        if a go to X2
+        state X2
+      }
+      region Y {
+        initial state Y1
+        if b go to Y2
+        state Y2
+      }
+    }
+    if c go to Q
+    if f go to Q
+
+    state Q
+    if d go to P
+  }
+
+  region R2 {
+    initial state U
+    if e go to V
+
+    state V
+  }
+}

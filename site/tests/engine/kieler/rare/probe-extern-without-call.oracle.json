@@ -1,0 +1,22 @@
+{
+  "hash": "378b63f148a6e53422a1a411442d656d398c8696",
+  "chart": "tests/engine/kieler/rare/probe-extern-without-call.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "\u2018absolute\u2019 undeclared (first use in this function)",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name absolute is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "You are using an external reference without call syntax. If you want to generate a call, you must add parentheses.",
+      "line": 7,
+      "column": 19
+    }
+  ],
+  "ticks": []
+}

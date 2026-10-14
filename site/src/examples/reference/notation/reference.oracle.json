@@ -1,0 +1,55 @@
+{
+  "hash": "7c52a9a29a65dff7a17b4bfa705a7f1bcaa8a224",
+  "chart": "src/examples/reference/notation/reference.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "tick": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "tick": false
+      },
+      "values": {
+        "tick": false,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "tick": true
+      },
+      "values": {
+        "tick": true,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "tick": true,
+        "lamp": false
+      },
+      "terminated": false
+    }
+  ]
+}

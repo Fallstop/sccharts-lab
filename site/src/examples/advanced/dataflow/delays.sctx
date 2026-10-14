@@ -1,0 +1,11 @@
+scchart Delays {
+  input int level
+  output int now, start, late, before
+
+  dataflow {
+    now = level
+    start = 100 -> level
+    late = 100 fby level
+    before = pre(level)
+  }
+}

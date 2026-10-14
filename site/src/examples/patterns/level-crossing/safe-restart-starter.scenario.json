@@ -1,0 +1,59 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": false,
+        "restart": false
+      },
+      "note": "Tick 1, and the barrier has not reported `isUp`: nobody knows where it is. The starter is `Open` at once, with the lamps dark. Your version should start in `Raising`: lamps flashing, barrier commanded up."
+    },
+    {
+      "inputs": {},
+      "note": "Still no `isUp`, and the starter's lamps stay dark. (Your version flashes.)"
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "`isUp`: the barrier is up. (Your version goes dark only now.)"
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Both limit switches at once: an impossible reading, so `Fault` from this tick."
+    },
+    {
+      "inputs": {
+        "isUp": false,
+        "restart": true
+      },
+      "note": "The barrier is down (`isDown`, not `isUp`) and the maintainer turns the key. The starter goes straight to `Open`: `lower` is false, so the barrier rises, with the lamps dark. Your version should keep the lamps flashing."
+    },
+    {
+      "inputs": {
+        "restart": false
+      },
+      "note": "The barrier is rising, and the starter's road has no warning."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "The barrier leaves its lower limit switch."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "`isUp`: up. Your version goes dark here."
+    },
+    {
+      "inputs": {},
+      "note": "Open."
+    }
+  ],
+  "expect": "ok"
+}

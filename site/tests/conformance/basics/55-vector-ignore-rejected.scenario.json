@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Rejected, although the KIELER wiki documents _ as \"leave this element unchanged\": the C code generator writes the _ into the C code and gcc fails (\"‘_’ undeclared\", then \"Compiler did not return success\"). Assign the elements one by one instead."}
+  ],
+  "expect": "error",
+  "errorIncludes": "Compiler did not return success"
+}

@@ -1,0 +1,8 @@
+// Campaign 5 (objects-51-212, reduced): a class method with a parameter and an empty body. KIELER's C code refers to the parameter as a member of its tick data: gcc fails ('TickData' has no member named 'k').
+scchart A {
+  class Cnt {
+    void bump(int k) {
+    }
+  } cnt
+  initial state S
+}

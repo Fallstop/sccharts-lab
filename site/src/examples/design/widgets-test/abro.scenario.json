@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `ABO`, `WaitAB` and both regions' initial states, `WaitA` and `WaitB`. `O` is false." },
+    { "inputs": { "A": true }, "note": "`A` is true: `WaitA` → `DoneA` fires. `HandleB` still waits for `B`." },
+    { "inputs": { "A": false, "B": true }, "note": "`B` is true: `WaitB` → `DoneB`. Now both regions are in final states, so `WaitAB` terminates and the termination transition fires in the same tick: `O` becomes true." },
+    { "inputs": { "B": false }, "note": "Nothing to do: `Done` waits for `R`." },
+    { "inputs": { "R": true }, "note": "`R` aborts `ABO` and enters it again: its entry action sets `O` back to false." },
+    { "inputs": { "R": false }, "note": "Back to waiting for `A` and `B`." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,132 @@
+{
+  "hash": "c501da37369ab2e5954a5586ea80a481646c0a12",
+  "chart": "src/examples/advanced/annotations/labels.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 6,
+      "column": 8
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 6,
+      "column": 17
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 9,
+      "column": 13
+    },
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 11,
+      "column": 6
+    },
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 12,
+      "column": 6
+    }
+  ],
+  "interface": {
+    "boiling": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lever": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "heater": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "lever": false,
+        "boiling": false
+      },
+      "values": {
+        "boiling": false,
+        "lever": false,
+        "heater": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "lever": true
+      },
+      "values": {
+        "boiling": false,
+        "lever": true,
+        "heater": true
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "boiling": true
+      },
+      "values": {
+        "boiling": true,
+        "lever": true,
+        "heater": false
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "boiling": false,
+        "lever": false
+      },
+      "values": {
+        "boiling": false,
+        "lever": false,
+        "heater": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

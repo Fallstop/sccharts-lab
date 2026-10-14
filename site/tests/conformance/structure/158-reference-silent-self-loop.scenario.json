@@ -1,0 +1,54 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "d": false,
+        "b": true
+      },
+      "note": "Tick 1 enters the instance in C0xs0: **x = 0**."
+    },
+    {
+      "inputs": {
+        "d": true,
+        "b": true
+      },
+      "note": "C0xs0 goes to C0xs1, whose region starts in C0xs1r0s0: **x = 0**."
+    },
+    {
+      "inputs": {
+        "d": true,
+        "b": true
+      },
+      "note": "C0xs1r0s0 goes to C0xs1r0s1 (o += 1). Its untriggered immediate self-loop has no code in the copy, so the region simply ends there; the delayed go to leaves C0xs1: **x = 1**."
+    },
+    {
+      "inputs": {
+        "d": false,
+        "b": false
+      },
+      "note": "C0xs2 goes back to C0xs0: **x = 1**."
+    },
+    {
+      "inputs": {
+        "d": false,
+        "b": true
+      },
+      "note": "C0xs0 goes to C0xs1 again: **x = 1**."
+    },
+    {
+      "inputs": {
+        "d": true,
+        "b": false
+      },
+      "note": "As in tick 3: one increment, and C0xs1 is left: **x = 2**."
+    },
+    {
+      "inputs": {
+        "d": false,
+        "b": false
+      },
+      "note": "C0xs2 goes back to C0xs0: **x = 2**."
+    }
+  ],
+  "expect": "ok"
+}

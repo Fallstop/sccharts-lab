@@ -1,0 +1,7 @@
+scchart StringTab {
+  input bool A
+  output string s
+  initial state S
+    if A do s = "a\tb" go to T
+  state T
+}

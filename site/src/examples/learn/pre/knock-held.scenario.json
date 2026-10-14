@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "knock": true, "away": false }, "note": "`knock` is true from tick 1 and stays true. Tick 1 is `Shut`'s entry tick, and a delayed count delay does not count it." },
+    { "note": "`knock` holds: 1." },
+    { "note": "`knock` holds: 2." },
+    { "note": "`knock` holds: 3. The door opens in this tick, although nobody knocked three separate times." },
+    { "note": "Open." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,10 @@
+scchart InstantLoop {
+  input bool A
+  output int x
+
+  initial state Ping
+    immediate if A do x++ go to Pong
+
+  state Pong
+    immediate if !A go to Ping
+}

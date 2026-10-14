@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "start": true, "door": false }, "note": "Tick 1 enters `Idle`. `start` is already true, but a transition is not checked in the tick its state is entered, so nothing else happens." },
+    { "inputs": {}, "note": "`start` is still true: an input keeps its value until it is changed. Now `Idle`'s transition is checked. It fires, sets `heating` to true and moves to `Cooking`, all in this tick." },
+    { "inputs": { "start": false }, "note": "`start` is released. `Cooking` only reacts to `door`, so nothing fires, and `heating` keeps the value it was given in tick 2." },
+    { "inputs": { "door": true }, "note": "The door opens. The transition back to `Idle` fires and switches `heating` off in the same tick." },
+    { "inputs": { "door": false }, "note": "The door shuts. `Idle` waits for the next `start`." }
+  ],
+  "expect": "ok"
+}

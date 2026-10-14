@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "preview": false, "next": false }, "note": "Tick 1 enters `Slides` and `Page1`; `page` = 1." },
+    { "inputs": { "preview": true, "next": true }, "note": "`weak suspend` holds, but unlike `suspend` the inside still runs: `Page1` goes to `Page2` and its entry action sets `page` = 2. At the end of the tick, though, the region is put back into `Page1`." },
+    { "inputs": { "next": false }, "note": "The chart is in `Page1` while `page` still says 2: the data change was kept, the state change was not." },
+    { "inputs": { "preview": false }, "note": "No longer suspended. Still in `Page1`." },
+    { "inputs": { "next": true }, "note": "`Page1` to `Page2` again: `page` = 2." },
+    { "note": "`next` is still true, so `Page2` moves on to `Page3`: `page` = 3." }
+  ],
+  "expect": "ok"
+}

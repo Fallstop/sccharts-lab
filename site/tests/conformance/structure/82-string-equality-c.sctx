@@ -1,0 +1,11 @@
+// strings are char* in KIELER's C simulation: == compares pointers, so a string input never equals a literal
+// (gcc warns "comparison with string literal results in unspecified behavior"). The Java simulation compares
+// contents and gives true here.
+scchart St82Cmd {
+  input string cmd
+  output string mode = "idle"
+  output bool hit = false
+  initial state S
+  if cmd == "go" do hit = true; mode = "running" go to T
+  state T
+}

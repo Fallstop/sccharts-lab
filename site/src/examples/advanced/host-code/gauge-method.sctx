@@ -1,0 +1,17 @@
+scchart Gauge {
+  input int reading
+  output int needle = 0
+
+  method int clamp(int v, int lo, int hi) {
+    if (v < lo) {
+      return lo
+    }
+    if (v > hi) {
+      return hi
+    }
+    return v
+  }
+
+  initial state Show
+    do needle = clamp(reading, 0, 100) go to Show
+}

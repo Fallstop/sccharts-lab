@@ -1,0 +1,514 @@
+---
+/**
+ * The outer frame every interactive widget sits in (Chart, Sim, Compare, Playground, Predict, HowKielerReads,
+ * and the landing page's live chart). It owns the look; widgets own what goes inside. Anatomy (see
+ * docs-internal/DESIGN.md, "Widget frame"):
+ *
+ *   figure.sc-frame
+ *     header.sc-frame__head     chart name (an identifier, so monospaced), widget kind, then
+ *                               div.sc-frame__tools: view switch, actions (slot "actions", "Open in the
+ *                               playground"); the tools wrap as one, and a narrow head puts them on a row of
+ *                               their own, the views at the start and the link at the end
+ *     div.sc-frame__stage       one panel per view (slot "view-<id>", div.sc-frame__panel: a tabpanel, its title
+ *                               a p, not a heading, so a page's heading list is not "Diagram, Code" ten times),
+ *                               or the default slot
+ *     (slot "panel")            a widget's own controls / trace / foot blocks (the SimPanel island)
+ *     div.sc-frame__controls    slot "controls": step / back / reset / run, inputs, tick counter
+ *     div.sc-frame__trace       slot "trace": the timing diagram
+ *     div.sc-frame__foot        slot "foot": notes, scenario narration, results
+ *   figcaption                  the caption, outside the frame
+ *
+ * Views: pass `views=[{ id: 'diagram', label: 'Diagram' }, { id: 'code', label: 'Code' }]` and fill
+ * `slot="view-diagram"` and `slot="view-code"`. With JavaScript the header shows a tab switch; without
+ * it every view is shown, one after the other. A view `{ id: 'both', label: 'Both', show: ['diagram',
+ * 'code'] }` has no panel of its own and shows the listed panels together.
+ */
+import { nextId } from './ids'
+import { inlineMd } from './inline-md'
+
+export type FrameKind = 'chart' | 'sim' | 'compare' | 'playground' | 'predict' | 'hero' | 'reads'
+
+interface Props {
+	kind: FrameKind
+	/** The chart's name, e.g. the `scchart` name. */
+	name?: string
+	/** Overrides the kind's label ("Simulation", ...). */
+	label?: string
+	/** Tabs. A view with `show` has no panel of its own: it shows those panels together ("Both"). */
+	views?: { id: string; label: string; show?: string[] }[]
+	defaultView?: string
+	/** Inline Markdown (`code`, **bold**, *italic*, [links](…)). */
+	caption?: string
+	/** Adds an "Open in the playground" link to the header. */
+	playground?: string
+	class?: string
+	/** Stage height policy: 'auto' grows with content; 'tall' reserves room for diagrams. */
+	stage?: 'auto' | 'tall'
+}
+
+const KIND_LABEL: Record<FrameKind, string> = {
+	chart: 'Chart',
+	sim: 'Simulation',
+	compare: 'Comparison',
+	playground: 'Playground',
+	predict: 'Prediction',
+	hero: 'Simulation',
+	reads: 'How KIELER reads it',
+}
+
+const { kind, name, label = KIND_LABEL[kind], views = [], caption, playground, stage = 'auto' } = Astro.props
+const defaultView = Astro.props.defaultView ?? views[0]?.id
+const uid = nextId('scf-')
+
+const panels = await Promise.all(
+	views.filter((v) => !v.show).map(async (v) => ({
+		...v,
+		html: Astro.slots.has(`view-${v.id}`) ? await Astro.slots.render(`view-${v.id}`) : '',
+	}))
+)
+const hasControls = Astro.slots.has('controls')
+const hasTrace = Astro.slots.has('trace')
+// A slot filled with an expression that renders nothing (`{cond && <div slot="foot">}`) still counts as
+// present; render it first so an empty section is not drawn.
+const footHtml = Astro.slots.has('foot') ? (await Astro.slots.render('foot')).trim() : ''
+const hasFoot = footHtml.length > 0
+const hasActions = Astro.slots.has('actions')
+const hasPanel = Astro.slots.has('panel')
+const panelIds = (v: { id: string; show?: string[] }) => (v.show ?? [v.id]).map((id) => `${uid}-panel-${id}`).join(' ')
+---
+
+<figure
+	class:list={['sc-frame', `sc-frame--${kind}`, Astro.props.class, 'not-content']}
+	data-sc-frame
+	data-stage={stage}
+	aria-labelledby={name ? `${uid}-name` : undefined}
+>
+	<div class="sc-frame__box" data-pagefind-ignore="all">
+		<header class="sc-frame__head">
+			<div class="sc-frame__id">
+				<span class="sc-frame__glyph" aria-hidden="true"></span>
+				{name && <span class="sc-frame__name" id={`${uid}-name`}>{name}</span>}
+				<span class="sc-frame__kind">{label}</span>
+			</div>
+			{
+				(views.length > 1 || playground || hasActions) && (
+					<div class="sc-frame__tools">
+						{views.length > 1 && (
+							<div class="sc-frame__views" role="tablist" aria-label="View" hidden>
+								{views.map((v) => (
+									<button
+										type="button"
+										role="tab"
+										id={`${uid}-tab-${v.id}`}
+										aria-controls={panelIds(v)}
+										aria-selected={v.id === defaultView ? 'true' : 'false'}
+										tabindex={v.id === defaultView ? 0 : -1}
+										data-view={v.id}
+										data-show={v.show?.join(' ')}
+									>
+										{v.label}
+									</button>
+								))}
+							</div>
+						)}
+						{(playground || hasActions) && (
+							<div class="sc-frame__actions">
+								<slot name="actions" />
+								{playground && (
+									<a class="sc-frame__open" href={playground}>
+										<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+											<path d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8a1.5 1.5 0 0 0 1.5-1.5V10M9 2h5v5M14 2 7.5 8.5" />
+										</svg>
+										<span>Open in the playground</span>
+									</a>
+								)}
+							</div>
+						)}
+					</div>
+				)
+			}
+		</header>
+
+		<div class="sc-frame__stage">
+			{
+				panels.length > 0 ? (
+					panels.map((p) => (
+						<div
+							class="sc-frame__panel"
+							role={views.length > 1 ? 'tabpanel' : undefined}
+							id={`${uid}-panel-${p.id}`}
+							aria-labelledby={views.length > 1 ? `${uid}-tab-${p.id}` : undefined}
+							data-view={p.id}
+							data-default={p.id === defaultView ? '' : undefined}
+						>
+							<p class="sc-frame__panel-title">{p.label}</p>
+							<Fragment set:html={p.html} />
+						</div>
+					))
+				) : (
+					<slot />
+				)
+			}
+		</div>
+
+		{hasPanel && <slot name="panel" />}
+		{
+			hasControls && (
+				<div class="sc-frame__controls">
+					<slot name="controls" />
+				</div>
+			)
+		}
+		{
+			hasTrace && (
+				<div class="sc-frame__trace">
+					<slot name="trace" />
+				</div>
+			)
+		}
+		{
+			hasFoot && (
+				<div class="sc-frame__foot">
+					<Fragment set:html={footHtml} />
+				</div>
+			)
+		}
+	</div>
+	{caption && <figcaption class="sc-frame__caption" set:html={inlineMd(caption)} />}
+</figure>
+
+<script>
+	// View switching (ARIA tabs). Without this script every panel stays visible.
+	function enhance(frame: HTMLElement) {
+		if (frame.dataset.enhanced) return
+		const list = frame.querySelector<HTMLElement>('.sc-frame__views')
+		if (!list) return
+		const tabs = [...list.querySelectorAll<HTMLButtonElement>('[role="tab"]')]
+		const panels = [...frame.querySelectorAll<HTMLElement>(':scope > .sc-frame__box > .sc-frame__stage > .sc-frame__panel')]
+		const select = (view: string, focus = false) => {
+			let shown = [view]
+			for (const t of tabs) {
+				const on = t.dataset.view === view
+				t.setAttribute('aria-selected', String(on))
+				t.tabIndex = on ? 0 : -1
+				if (on && focus) t.focus()
+				if (on && t.dataset.show) shown = t.dataset.show.split(' ')
+			}
+			for (const p of panels) p.hidden = !shown.includes(p.dataset.view ?? '')
+			frame.dataset.view = view
+			frame.toggleAttribute('data-multi', shown.length > 1)
+			frame.dispatchEvent(new CustomEvent('sc-frame-view', { detail: { view, shown }, bubbles: true }))
+		}
+		list.hidden = false
+		frame.dataset.enhanced = ''
+		const initial = tabs.find((t) => t.getAttribute('aria-selected') === 'true')?.dataset.view ?? tabs[0]?.dataset.view
+		if (initial) select(initial)
+		list.addEventListener('click', (e) => {
+			const tab = (e.target as HTMLElement).closest<HTMLButtonElement>('[role="tab"]')
+			if (tab?.dataset.view) select(tab.dataset.view)
+		})
+		list.addEventListener('keydown', (e) => {
+			const i = tabs.findIndex((t) => t === document.activeElement)
+			if (i < 0) return
+			let j = -1
+			if (e.key === 'ArrowRight') j = (i + 1) % tabs.length
+			else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length
+			else if (e.key === 'Home') j = 0
+			else if (e.key === 'End') j = tabs.length - 1
+			if (j < 0) return
+			e.preventDefault()
+			const view = tabs[j].dataset.view
+			if (view) select(view, true)
+		})
+	}
+	const run = () => document.querySelectorAll<HTMLElement>('[data-sc-frame]').forEach(enhance)
+	run()
+	document.addEventListener('astro:page-load', run)
+</script>
+
+<style>
+	.sc-frame {
+		--frame-pad: 1rem;
+		margin: 0;
+		max-width: 100%;
+	}
+	/* Spacing between the frame and the prose around it, matching Starlight's block rhythm. */
+	:global(.sl-markdown-content) .sc-frame {
+		margin-block: 1.75rem;
+	}
+
+	.sc-frame__box {
+		border: 1px solid var(--c-rule-strong);
+		border-radius: var(--radius-frame);
+		background-color: var(--c-sheet);
+		box-shadow: var(--shadow-frame);
+		overflow: hidden;
+	}
+
+	/* ----- Header ----- */
+	.sc-frame__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.875rem;
+		min-height: 2.875rem;
+		padding: 0.4375rem 0.5rem 0.4375rem var(--frame-pad);
+		background-color: var(--c-rail);
+		border-bottom: 1px solid var(--c-rule);
+		/* The head's own width decides its layout (below): a frame is as wide as the column it sits in. */
+		container-type: inline-size;
+	}
+	/* The view switch and the actions wrap together, never the link alone. On one row with the name they sit at
+	   the end (the name's auto margin); wrapped, at the start of their own row. */
+	.sc-frame__tools {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem 0.875rem;
+		min-width: 0;
+	}
+	/* A narrow head (a phone, a tablet's column) with views and a link: the name on the first row, the tools on
+	   the second, the views at the start and the link at the end. Without views (no JavaScript, one view) the
+	   link stays beside the name; views alone (Compare, the landing chart) wrap only when they must. */
+	@container (max-width: 36rem) {
+		.sc-frame__tools:has(> .sc-frame__views:not([hidden])):has(> .sc-frame__actions),
+		:global(:root[data-theme]) .sc-frame:not([data-enhanced]) .sc-frame__tools:has(> .sc-frame__views):has(> .sc-frame__actions) {
+			flex-basis: 100%;
+			justify-content: space-between;
+			margin-inline-start: 0;
+		}
+	}
+	/* Inline flow, so that the kind follows a long name that wraps ("EggTimer and / EggTimerEqual Comparison"). */
+	.sc-frame__id {
+		min-width: 0;
+		margin-inline-end: auto;
+		line-height: 1.5;
+	}
+	/* A small simple state as the frame's badge: every widget holds a chart. */
+	.sc-frame__glyph {
+		display: inline-block;
+		vertical-align: -0.0625rem;
+		margin-inline-end: 0.625rem;
+		width: 1.125rem;
+		height: 0.75rem;
+		border-radius: var(--radius-capsule);
+		border: 1.75px solid var(--sc-state-stroke);
+		background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	}
+	.sc-frame--sim .sc-frame__glyph,
+	.sc-frame--hero .sc-frame__glyph,
+	.sc-frame--playground .sc-frame__glyph {
+		border-color: var(--sc-active-stroke);
+		box-shadow: 0 0 0 2.5px var(--sc-active-glow);
+	}
+	/* A long name (a Compare's "EggTimer and EggTimerEqual") wraps instead of being cut off. */
+	.sc-frame__name {
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		font-weight: 700;
+		color: var(--c-ink);
+		overflow-wrap: anywhere;
+	}
+	.sc-frame__kind {
+		margin-inline-start: 0.625rem;
+		font-size: var(--text-xs);
+		color: var(--c-muted);
+		white-space: nowrap;
+	}
+
+	/* View switch: a segmented capsule. */
+	.sc-frame__views {
+		display: inline-flex;
+		padding: 2px;
+		border: 1px solid var(--c-control);
+		border-radius: var(--radius-capsule);
+		background-color: var(--c-sheet);
+	}
+	.sc-frame__views[hidden] {
+		display: none;
+	}
+	/* With JavaScript (Starlight's theme script sets data-theme on <html> before the first paint), a frame is drawn
+	   as the script below will make it: the view switch, the default view alone and no panel titles. A page drawn
+	   before its scripts run (a slow connection) would otherwise jump by a panel's height per frame. */
+	@media screen {
+		:global(:root[data-theme]) .sc-frame:not([data-enhanced]) .sc-frame__views[hidden] {
+			display: inline-flex;
+		}
+		:global(:root[data-theme]) .sc-frame:not([data-enhanced]) .sc-frame__stage:has(> .sc-frame__panel[data-default]) > .sc-frame__panel:not([data-default]) {
+			display: none;
+		}
+		:global(:root[data-theme]) .sc-frame:not([data-enhanced]) .sc-frame__stage:has(> .sc-frame__panel[data-default]) > .sc-frame__panel + .sc-frame__panel {
+			border-top: 0;
+		}
+		:global(:root[data-theme]) .sc-frame:not([data-enhanced]):has(.sc-frame__views) .sc-frame__panel-title {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+	}
+	.sc-frame__views button {
+		min-height: 1.875rem;
+		padding: 0.125rem 0.875rem;
+		border: 0;
+		border-radius: var(--radius-capsule);
+		background: none;
+		color: var(--c-muted);
+		font: inherit;
+		font-size: var(--text-xs);
+		font-weight: 700;
+		cursor: pointer;
+	}
+	.sc-frame__views button:hover {
+		color: var(--c-ink);
+	}
+	.sc-frame__views button[aria-selected='true'] {
+		background-color: var(--c-ink);
+		color: var(--c-paper);
+	}
+	.sc-frame__views button:focus-visible {
+		outline-offset: 1px;
+	}
+
+	.sc-frame__actions {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.sc-frame__open {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.375rem;
+		min-height: 2rem;
+		padding: 0.25rem 0.625rem;
+		border-radius: var(--radius-capsule);
+		color: var(--c-accent);
+		font-size: var(--text-xs);
+		font-weight: 700;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	.sc-frame__open:hover {
+		background-color: var(--c-accent-soft);
+		color: var(--c-accent);
+	}
+	.sc-frame__open svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.5;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	/* ----- Stage ----- */
+	.sc-frame__stage {
+		position: relative;
+		background-color: var(--c-inset);
+	}
+	.sc-frame__panel {
+		position: relative;
+	}
+	.sc-frame__panel + .sc-frame__panel {
+		border-top: 1px solid var(--c-rule);
+	}
+	[data-enhanced] .sc-frame__panel + .sc-frame__panel {
+		border-top: 0;
+	}
+	[data-multi] .sc-frame__panel:not([hidden]) ~ .sc-frame__panel:not([hidden]) {
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-frame__panel[hidden] {
+		display: none;
+	}
+	/* Panel titles help when every view is shown (no JavaScript); with tabs they are redundant. */
+	.sc-frame__panel-title {
+		margin: 0;
+		padding: 0.625rem var(--frame-pad) 0;
+		font-size: var(--text-xs);
+		font-weight: 700;
+		color: var(--c-muted);
+	}
+	[data-enhanced] .sc-frame__panel-title {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+	[data-stage='tall'] .sc-frame__panel {
+		min-height: 14rem;
+	}
+
+	/* Code inside a frame: no second frame around it. */
+	.sc-frame__stage :global(.expressive-code) {
+		margin: 0;
+	}
+	.sc-frame__stage :global(.expressive-code .frame) {
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+	}
+	.sc-frame__stage :global(.expressive-code pre) {
+		border: 0;
+		border-radius: 0;
+		background-color: var(--c-sheet);
+	}
+
+	/* ----- Controls, trace, foot ----- */
+	.sc-frame__controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.625rem 1rem;
+		padding: 0.625rem var(--frame-pad);
+		border-top: 1px solid var(--c-rule);
+		background-color: var(--c-rail);
+	}
+	.sc-frame__trace {
+		border-top: 1px solid var(--c-rule);
+		background-color: var(--c-sheet);
+		overflow-x: auto;
+	}
+	.sc-frame__foot {
+		padding: 0.75rem var(--frame-pad);
+		border-top: 1px solid var(--c-rule);
+		font-size: var(--text-sm);
+		line-height: 1.5;
+	}
+
+	.sc-frame__caption {
+		margin-top: 0.625rem;
+		padding-inline: 0.25rem;
+		max-width: var(--measure);
+		font-size: var(--text-sm);
+		line-height: 1.5;
+		color: var(--c-muted);
+	}
+	.sc-frame__caption :global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.92em;
+		color: var(--c-ink);
+	}
+
+	@media (max-width: 30em) {
+		.sc-frame {
+			--frame-pad: 0.75rem;
+		}
+		.sc-frame__head {
+			gap: 0.5rem 0.625rem;
+		}
+		.sc-frame__views button {
+			padding-inline: 0.5rem;
+		}
+		.sc-frame__open span {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+	}
+</style>

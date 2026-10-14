@@ -1,0 +1,182 @@
+{
+  "hash": "001fd6034cd353d3a888bd22aad01aafa013cbe1",
+  "chart": "src/examples/patterns/arbiter/remember.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "done": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "reqA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "reqB": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "user": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "last": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reqA": false,
+        "reqB": false,
+        "done": false
+      },
+      "values": {
+        "done": false,
+        "reqA": false,
+        "reqB": false,
+        "user": 0,
+        "last": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "reqA": true
+      },
+      "values": {
+        "done": false,
+        "reqA": true,
+        "reqB": false,
+        "user": 1,
+        "last": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "reqA": false
+      },
+      "values": {
+        "done": false,
+        "reqA": false,
+        "reqB": false,
+        "user": 1,
+        "last": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "reqA": false,
+        "reqB": false,
+        "user": 0,
+        "last": 1
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "done": false,
+        "reqA": true,
+        "reqB": true
+      },
+      "values": {
+        "done": false,
+        "reqA": true,
+        "reqB": true,
+        "user": 2,
+        "last": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "done": false,
+        "reqA": true,
+        "reqB": true,
+        "user": 2,
+        "last": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "reqA": true,
+        "reqB": true,
+        "user": 1,
+        "last": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

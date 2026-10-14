@@ -1,0 +1,230 @@
+{
+ "sourceHash": "4638070e55972157",
+ "states": [
+  {
+   "path": [
+    "P3"
+   ],
+   "rows": [
+    [
+     "P3"
+    ],
+    [
+     "input bool ",
+     "a"
+    ],
+    [
+     "output bool ",
+     "b"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    270.8,
+    218.4
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    "main",
+    "R"
+   ],
+   "rows": [
+    [
+     "R ",
+     "@ ",
+     "Inner (a, b)"
+    ]
+   ],
+   "box": [
+    27,
+    20,
+    120.5,
+    59
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    "main",
+    "Done"
+   ],
+   "rows": [
+    [
+     "Done"
+    ]
+   ],
+   "box": [
+    167.5,
+    29.2,
+    62.5,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    1,
+    "source"
+   ],
+   "rows": [
+    [
+     "a"
+    ]
+   ],
+   "box": [
+    7,
+    25,
+    25,
+    17.9
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    1,
+    "operator"
+   ],
+   "rows": [],
+   "box": [
+    42,
+    24,
+    23,
+    20
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    1,
+    "operator"
+   ],
+   "rows": [
+    [
+     "!"
+    ]
+   ],
+   "box": [
+    97,
+    24,
+    20,
+    20
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    1,
+    "operator"
+   ],
+   "rows": [
+    [
+     "&&"
+    ]
+   ],
+   "box": [
+    150.3,
+    21,
+    26.7,
+    20
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    1,
+    "source"
+   ],
+   "rows": [
+    [
+     "b"
+    ]
+   ],
+   "box": [
+    225,
+    22,
+    25,
+    17.9
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P3",
+    "main"
+   ],
+   "label": [
+    "main"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    257,
+    89
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    "main",
+    "R",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "UNDEFINED",
+   "box": [
+    9,
+    30.6,
+    102.9,
+    20
+   ]
+  },
+  {
+   "path": [
+    "P3",
+    1
+   ],
+   "label": [
+    "DF"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    160.3,
+    257,
+    52.4
+   ],
+   "dataflow": true
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP3$Nmain$NR$EDone0",
+   "source": [
+    "P3",
+    "main",
+    "R"
+   ],
+   "target": [
+    "P3",
+    "main",
+    "Done"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  }
+ ],
+ "comments": []
+}

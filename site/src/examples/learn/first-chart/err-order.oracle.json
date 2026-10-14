@@ -1,0 +1,36 @@
+{
+  "hash": "e4dfa0467024a812cb131745431a456b3889fa07",
+  "chart": "src/examples/learn/first-chart/err-order.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "5:18 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@3f92036{file:///tmp/sccharts-oracle-aHR6Rf/m11/err-order.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@reference}' must be set",
+    "no viable alternative at input 'output'",
+    "Couldn't resolve reference to ValuedObject 'level'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "no viable alternative at input 'output'",
+      "line": 9,
+      "column": 3,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'level'.",
+      "line": 5,
+      "column": 18,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@3f92036{file:///tmp/sccharts-oracle-aHR6Rf/m11/err-order.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@reference}' must be set",
+      "line": 5,
+      "column": 18,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

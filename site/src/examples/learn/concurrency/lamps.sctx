@@ -1,0 +1,18 @@
+scchart TwoLamps {
+  input bool hallButton, porchButton
+  output bool hall, porch
+
+  region Hall {
+    initial state Off
+      if hallButton do hall = true go to On
+    state On
+      if hallButton do hall = false go to Off
+  }
+
+  region Porch {
+    initial state Off
+      if porchButton do porch = true go to On
+    state On
+      if porchButton do porch = false go to Off
+  }
+}

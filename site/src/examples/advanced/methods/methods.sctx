@@ -1,0 +1,22 @@
+scchart Thermometer {
+  input int reading
+  output int shown = 0
+  output bool hot = false
+
+  method int percent(int v) {
+    if (v < 0) {
+      return 0
+    }
+    if (v > 100) {
+      return 100
+    }
+    return v
+  }
+
+  method bool tooHot(int v) {
+    return v > 80
+  }
+
+  initial state Display
+    do shown = percent(reading); hot = tooHot(reading) go to Display
+}

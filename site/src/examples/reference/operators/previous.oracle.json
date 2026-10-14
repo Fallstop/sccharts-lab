@@ -1,0 +1,75 @@
+{
+  "hash": "c0c4a797582e992a8ea2dca694dc6b1d7913e50b",
+  "chart": "src/examples/reference/operators/previous.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "before": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "now": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "twoAgo": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 5
+      },
+      "values": {
+        "I": 5,
+        "before": 0,
+        "now": 5,
+        "twoAgo": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 6
+      },
+      "values": {
+        "I": 6,
+        "before": 5,
+        "now": 6,
+        "twoAgo": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 7
+      },
+      "values": {
+        "I": 7,
+        "before": 6,
+        "now": 7,
+        "twoAgo": 5
+      },
+      "terminated": false
+    }
+  ]
+}

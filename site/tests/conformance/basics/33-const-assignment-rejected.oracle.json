@@ -1,0 +1,20 @@
+{
+  "hash": "cc5a5d303b9dfabb6a400ad997da73f515aeedf7",
+  "chart": "tests/conformance/basics/33-const-assignment-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "5:6 You cannot assign a value to a const object.",
+    "Cannot replace left hand side of assignment by a value. (Trying to replace ValuedObjectImpl@1cf8b84d N by de.cau.cs.kieler.kexpressions.impl.IntValueImpl@7d89406c (value: 3) in AssignmentImpl@36b14535 N = 4)"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "You cannot assign a value to a const object.",
+      "line": 5,
+      "column": 6
+    }
+  ],
+  "ticks": []
+}

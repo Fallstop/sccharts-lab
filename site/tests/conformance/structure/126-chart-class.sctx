@@ -1,0 +1,22 @@
+// A chart without inputs and outputs used as a class: "ref St126Counter c" is an instance; the chart's
+// declarations are its fields (the private one too, in the pool) and its methods are called as c.m(). A field
+// that is not private can be read and written from outside.
+scchart St126Main {
+  output int O = 0
+  ref St126Counter c
+  initial state A
+  do c.increment(); O = c.getValue() go to B
+  state B
+  do c.step = 5; c.increment(); O = c.getValue() go to B
+}
+
+scchart St126Counter {
+  private int counter
+  int step = 1
+  method increment() {
+    counter += step
+  }
+  method int getValue() {
+    return counter
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "level": 5 }, "note": "The first tick is special: `start` and `late` take their first operand, 100. `pre(level)` has no previous tick to look at, so `before` is 0, the default of `int`." },
+    { "inputs": { "level": 6 }, "note": "From now on `->` gives its second operand as it is now: `start` = 6. `fby` gives its second operand as it was one tick ago: `late` = 5. `before` is also last tick's `level`: 5." },
+    { "inputs": { "level": 9 }, "note": "`now` and `start` follow `level` (9); `late` and `before` are one tick behind (6)." },
+    { "inputs": { "level": 9 }, "note": "`level` stays at 9, so after one more tick the delayed outputs catch up: everything is 9." }
+  ],
+  "expect": "ok"
+}

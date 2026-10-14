@@ -1,0 +1,94 @@
+{
+  "hash": "e093df03a30e542188702e2e997da7c4c3b890a3",
+  "chart": "src/examples/advanced/dataflow/fridge-monitor.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "temperature": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "warm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "temperature": 3
+      },
+      "values": {
+        "temperature": 3,
+        "alarm": false,
+        "warm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "temperature": 7
+      },
+      "values": {
+        "temperature": 7,
+        "alarm": true,
+        "warm": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "temperature": 8
+      },
+      "values": {
+        "temperature": 8,
+        "alarm": true,
+        "warm": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "temperature": 4
+      },
+      "values": {
+        "temperature": 4,
+        "alarm": false,
+        "warm": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

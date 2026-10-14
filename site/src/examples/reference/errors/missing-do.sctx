@@ -1,0 +1,9 @@
+scchart MissingDo {
+  input bool A
+  output int x
+
+  initial state Idle
+    if A x = 1 go to Busy
+
+  state Busy
+}

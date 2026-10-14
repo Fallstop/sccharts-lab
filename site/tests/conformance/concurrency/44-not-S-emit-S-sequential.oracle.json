@@ -1,0 +1,61 @@
+{
+  "hash": "c48076626c738165db676534601f532976bf654b",
+  "chart": "tests/conformance/concurrency/44-not-S-emit-S-sequential.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "took": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "S": true,
+        "took": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "took": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "took": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

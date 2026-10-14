@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"A": 3}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "Surprise: without parentheses this parses as A > (2 ? A : 0), that is 3 > 3, which is false, so y = 0 (0, not 3). Write (A > 2) ? A : 0."},
+    {"inputs": {"A": 1}, "note": "1 > (2 ? 1 : 0) is 1 > 1: false, y = 0."},
+    {"inputs": {"A": -5}, "note": "-5 > -5 is false: y = 0. This expression is false for every A."}
+  ],
+  "expect": "ok"
+}

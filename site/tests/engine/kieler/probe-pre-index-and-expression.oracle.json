@@ -1,0 +1,162 @@
+{
+  "hash": "9d82cae2e2a4c64cd946d3dee19c7cf3c5b9b811",
+  "chart": "tests/engine/kieler/probe-pre-index-and-expression.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "S_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "arr": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "S_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "n": 1,
+        "S": false,
+        "S_val": 0,
+        "arr": [
+          0,
+          0
+        ],
+        "x": 0,
+        "y": 0,
+        "S_curval": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 2,
+        "S": false,
+        "S_val": 0,
+        "arr": [
+          0,
+          1
+        ],
+        "x": 2,
+        "y": 0,
+        "S_curval": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 3,
+        "S": false,
+        "S_val": 0,
+        "arr": [
+          1,
+          1
+        ],
+        "x": 3,
+        "y": 0,
+        "S_curval": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "n": 4,
+        "S": false,
+        "S_val": 0,
+        "arr": [
+          1,
+          1
+        ],
+        "x": 4,
+        "y": 0,
+        "S_curval": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

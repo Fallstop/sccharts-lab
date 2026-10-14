@@ -1,0 +1,21 @@
+scchart SiblingScopes {
+  output int y1, y2
+
+  region R1 {
+    initial state S {
+      int k = 1
+      initial state A
+      do k++; y1 = k go to B
+      state B
+    }
+  }
+
+  region R2 {
+    initial state S {
+      int k = 100
+      initial state A
+      do k++; y2 = k go to B
+      state B
+    }
+  }
+}

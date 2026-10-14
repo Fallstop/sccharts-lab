@@ -1,0 +1,82 @@
+{
+  "hash": "dbb02763797b569c19812208b49d32d9bbf85e4f",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-inline-call-effect.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_add_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "r": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "r": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "r": 10
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "r": 13
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "r": 26
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

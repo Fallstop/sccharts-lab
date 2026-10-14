@@ -1,0 +1,15 @@
+scchart Transitions {
+  input bool A, B
+  output int x
+
+  initial state Wait
+    if A && B do x = 3 go to Both
+    if A do x = 1 go to Fast
+    if 2 B go to Wait
+
+  state Fast
+    immediate do x++ go to Both
+
+  state Both
+    go to Wait
+}

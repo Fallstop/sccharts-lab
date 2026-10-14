@@ -1,0 +1,21 @@
+scchart DeferredSuperstate {
+  input bool G
+  output int outerEntry = 0, innerEntry = 0, step1 = 0, step2 = 0
+
+  initial state A
+  if G go to B deferred
+
+  state B {
+    entry do outerEntry = 1
+
+    initial state I {
+      entry do innerEntry = 1
+    }
+    if true do step1 = 1 go to J
+
+    state J
+    if true do step2 = 1 go to K
+
+    state K
+  }
+}

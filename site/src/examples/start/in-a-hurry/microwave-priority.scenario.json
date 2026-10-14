@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "door": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true, "door": true }, "note": "The door is open and `start` is pressed, in the same tick. Both of `Idle`'s transitions are enabled. The one written first, numbered 1 in the diagram, wins: the chart goes to `DoorOpen`, and `heating` stays false." },
+    { "inputs": { "start": false, "door": false }, "note": "The door shuts, and `DoorOpen` goes back to `Idle`." },
+    { "inputs": { "start": true }, "note": "`start` with the door shut. Only transition 2 is enabled now, and the oven heats." },
+    { "inputs": { "start": false, "door": true }, "note": "The door opens while the oven is cooking. `heating` goes off, and the chart waits in `DoorOpen`." },
+    { "inputs": { "door": false }, "note": "The door shuts, and the chart is back in `Idle`. It does not carry on cooking: that takes another `start`." }
+  ],
+  "expect": "ok"
+}

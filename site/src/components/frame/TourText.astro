@@ -1,0 +1,36 @@
+---
+/**
+ * A guided tour as text: the scripted inputs and the note of every tick. <Sim> and <Compare> show it to readers
+ * without JavaScript (in their `noscript`) and on paper (`print`: hidden on screen, shown by the print styles in
+ * widgets.css, while the live controls are not printed).
+ */
+import type { Scenario } from './examples'
+import { inlineMd } from './inline-md'
+
+interface Props {
+	scenario: Scenario
+	/** The line before the list (inline Markdown). */
+	lead: string
+	print?: boolean
+}
+const { scenario, lead, print = false } = Astro.props
+const fmt = (v: unknown) => (typeof v === 'string' ? JSON.stringify(v) : String(v))
+const ticks = scenario.ticks.map((t) => ({
+	inputs: Object.entries(t.inputs ?? {}).map(([k, v]) => `${k} = ${fmt(v)}`).join(', '),
+	note: t.note,
+}))
+---
+
+<div class:list={['sc-sim__foot sc-noscript', { 'sc-print-only': print }]}>
+	<p class="sc-tour__label" set:html={inlineMd(lead)} />
+	<ol class="sc-noscript__ticks">
+		{
+			ticks.map((t) => (
+				<li>
+					{t.inputs && <span class="sc-noscript__inputs">{t.inputs}</span>}
+					{t.note && <span set:html={inlineMd(t.note)} />}
+				</li>
+			))
+		}
+	</ol>
+</div>

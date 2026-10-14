@@ -1,0 +1,18 @@
+scchart SameTickDelayed {
+  input bool start
+  output int served = 0
+  signal req, ack
+
+  region Client {
+    initial state Idle
+      if start do req go to Waiting
+
+    state Waiting
+      if ack do served++ go to Idle
+  }
+
+  region Server {
+    initial state Listening
+      if req do ack go to Listening
+  }
+}

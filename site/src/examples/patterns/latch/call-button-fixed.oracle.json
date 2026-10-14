@@ -1,0 +1,255 @@
+{
+  "hash": "93479eb06208183760d6ce332477fef765f4c0e5",
+  "chart": "src/examples/patterns/latch/call-button-fixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "arrived": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": false,
+        "button": true,
+        "lamp": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": false,
+        "button": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "arrived": true
+      },
+      "values": {
+        "arrived": true,
+        "button": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": true,
+        "button": true,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": true,
+        "button": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": false,
+        "button": true,
+        "lamp": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "button": true,
+        "arrived": true
+      },
+      "values": {
+        "arrived": true,
+        "button": true,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

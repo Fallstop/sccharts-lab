@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "armed": false, "door": false, "window": false }, "note": "Equations run in every tick, the first one included. Everything is shut, so `ready` is true; the alarm is not armed, so `siren` is false." },
+    { "inputs": { "door": true }, "note": "The door opens. `ready` drops to false in this same tick. `siren` stays false: the alarm is still not armed." },
+    { "inputs": { "armed": true }, "note": "Arming with the door open: `armed && (door || window)` is true, so `siren` is true at once. There is no state to move to and no delay." },
+    { "inputs": { "door": false }, "note": "The door shuts and both outputs follow immediately: `siren` false, `ready` true." },
+    { "inputs": { "window": true }, "note": "A window opens while armed: `siren` true, `ready` false, again in the tick the input changed." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,12 @@
+scchart FirstTick {
+  input bool I
+  output int x = 0
+
+  initial state A
+  immediate do x += 1 go to B
+
+  state B
+  if I do x += 10 go to C
+
+  state C
+}

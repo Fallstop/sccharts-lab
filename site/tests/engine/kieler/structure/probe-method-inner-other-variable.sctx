@@ -1,0 +1,13 @@
+// As probe-method-inner-update-conflict, but the loop updates another variable: no dependency, accepted.
+scchart F4 {
+  input bool a
+  output int y = 0, z = 0
+  region {
+    initial state A
+      do z += 1 go to A
+  }
+  region {
+    initial state S
+      if a do { for (int j = 0; j < 2; j++) { y += 1; } } go to S
+  }
+}

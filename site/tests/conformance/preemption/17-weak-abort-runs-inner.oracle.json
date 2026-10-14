@@ -1,0 +1,102 @@
+{
+  "hash": "5a5c85b57e596c739ce1972575e3bcd3f7f7c0ce",
+  "chart": "tests/conformance/preemption/17-weak-abort-runs-inner.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chained": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "effect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "W": false
+      },
+      "values": {
+        "A": false,
+        "W": false,
+        "chained": 0,
+        "effect": 0,
+        "inner": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true,
+        "W": true
+      },
+      "values": {
+        "A": true,
+        "W": true,
+        "chained": 1,
+        "effect": 1,
+        "inner": 1
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "W": false
+      },
+      "values": {
+        "A": false,
+        "W": false,
+        "chained": 1,
+        "effect": 1,
+        "inner": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

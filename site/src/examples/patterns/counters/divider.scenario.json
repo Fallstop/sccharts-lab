@@ -1,0 +1,45 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: `Count` is entered; `phase` is 0. Its transitions are delayed, so nothing else happens."
+    },
+    {
+      "inputs": {},
+      "note": "`phase` is 0, not 2: the untriggered transition counts up to 1."
+    },
+    {
+      "inputs": {},
+      "note": "2."
+    },
+    {
+      "inputs": {},
+      "note": "`phase == 2`: `beat` is emitted and `phase` starts again at 0."
+    },
+    {
+      "inputs": {},
+      "note": "1."
+    },
+    {
+      "inputs": {},
+      "note": "2."
+    },
+    {
+      "inputs": {},
+      "note": "`beat`: every third tick."
+    },
+    {
+      "inputs": {},
+      "note": "1."
+    },
+    {
+      "inputs": {},
+      "note": "2."
+    },
+    {
+      "inputs": {},
+      "note": "`beat`."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,24 @@
+{
+  "ticks": [
+    { "inputs": { "left": false, "right": false }, "note": "Tick 1 enters `Watch`, and `Top` with the ram at the top." },
+    { "inputs": { "left": true }, "note": "One hand is not enough: `Hands` emits nothing." },
+    { "inputs": { "right": true }, "note": "Both buttons are held, and in tick 2 they were not: `Hands` emits `start`, and `Ram` goes to `Down` in the same tick." },
+    { "inputs": {}, "note": "The during action of `Down` runs from the tick after its entry: `pos` is 1." },
+    { "inputs": {}, "note": "`pos` is 2." },
+    { "inputs": {}, "note": "`pos` reaches 3, so the weak transition fires after the during action: `strokes` is 1, and `Ram` goes to `Up`." },
+    { "inputs": {}, "note": "`Up` brings the ram back to the top: `pos` is 0." },
+    { "inputs": {}, "note": "Both buttons are still held, but they were held in tick 7 too: no `start`. Without `pre`, the press would begin another stroke here." },
+    { "inputs": {}, "note": "Still held, still no stroke." },
+    { "inputs": { "right": false }, "note": "The operator lets go of `right`." },
+    { "inputs": { "right": true }, "note": "A new press: both held, and in tick 10 they were not. `start` again." },
+    { "inputs": {}, "note": "`pos` is 1." },
+    { "inputs": { "left": false }, "note": "`left` is let go: the strong abort leaves `Down` before its during action runs, so `pos` stays 1. A weak abort would have moved the ram to 2 first." },
+    { "inputs": {}, "note": "Back at the top." },
+    { "inputs": { "left": true }, "note": "Both held again after `left` was let go: `start`." },
+    { "inputs": {}, "note": "`pos` is 1." },
+    { "inputs": {}, "note": "`pos` is 2." },
+    { "inputs": { "right": false }, "note": "`right` is let go in the very tick the ram would reach the bottom. The strong abort wins: `pos` stays 2, and the stroke does not count." },
+    { "inputs": {}, "note": "Back at the top, after one stroke in all." }
+  ],
+  "expect": "ok"
+}

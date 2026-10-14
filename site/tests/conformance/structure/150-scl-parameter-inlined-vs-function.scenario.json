@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": 1,
+        "b": 1
+      },
+      "note": "Tick 1 enters S; the self-loop is delayed: **ya = 0, yb = 0**."
+    },
+    {
+      "inputs": {
+        "a": 4,
+        "b": 4
+      },
+      "note": "Both compute 4 * 2 + 1: **ya = 9, yb = 9**; the inlined method wrote its parameter into the input: **a = 9**, while **b = 4**."
+    },
+    {
+      "inputs": {
+        "a": 4,
+        "b": 4
+      },
+      "note": "The environment sets a = 4 again: the same: **a = 9, b = 4**."
+    }
+  ],
+  "expect": "ok"
+}

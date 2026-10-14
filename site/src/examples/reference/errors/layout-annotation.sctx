@@ -1,0 +1,8 @@
+scchart LayoutAnnotation {
+  input bool A
+
+  @layout RIGHT
+  region Main:
+    initial state Idle
+      if A go to Idle
+}

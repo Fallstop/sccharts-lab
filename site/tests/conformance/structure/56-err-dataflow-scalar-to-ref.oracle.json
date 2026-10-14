@@ -1,0 +1,21 @@
+{
+  "hash": "4a6e18ae5ecdf133106a120db9a90ba71e900f96",
+  "chart": "tests/conformance/structure/56-err-dataflow-scalar-to-ref.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "7:5 You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar.",
+    "The valued object reference points to a valued object (g) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar.",
+      "line": 7,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

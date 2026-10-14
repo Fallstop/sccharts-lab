@@ -1,0 +1,18 @@
+scchart ExitKeepsChoice {
+  input bool A, X
+  output bool y = false
+  output int target = 0
+
+  initial state M {
+    exit do y = true
+  }
+  if A && !y abort to B
+  if X abort to C
+
+  state B {
+    entry do target = 1
+  }
+  state C {
+    entry do target = 2
+  }
+}

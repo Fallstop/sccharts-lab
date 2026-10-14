@@ -1,0 +1,15 @@
+scchart ActionOrder {
+  input bool leave
+  output int step = 0
+  output int duringAt = 0, exitAt = 0, effectAt = 0, entryAt = 0
+
+  initial state A {
+    during do step++; duringAt = step
+    exit do step++; exitAt = step
+  }
+  if leave do step++; effectAt = step go to B
+
+  state B {
+    entry do step++; entryAt = step
+  }
+}

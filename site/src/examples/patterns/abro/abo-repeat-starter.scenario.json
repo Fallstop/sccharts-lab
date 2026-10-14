@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false }, "note": "Tick 1 enters `WaitAB`." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` finishes." },
+    { "inputs": { "A": false, "B": true }, "note": "`B`: the join emits `O` and the starter goes to `Done`, where it stays." },
+    { "inputs": { "B": false }, "note": "The starter rests in `Done`: it waits for nothing any more." },
+    { "inputs": { "A": true, "B": true }, "note": "Both in one tick, but the starter is in `Done` and ignores them. Your version should emit `O` here." },
+    { "inputs": { "A": true, "B": true }, "note": "Still both. Your version emits `O` again: its `WaitAB` was entered afresh in the last tick." },
+    { "inputs": { "A": false, "B": false }, "note": "Quiet." }
+  ],
+  "expect": "ok"
+}

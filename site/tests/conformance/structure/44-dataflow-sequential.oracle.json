@@ -1,0 +1,48 @@
+{
+  "hash": "a0a007f893cb06cf9831656258c6ad990e634375",
+  "chart": "tests/conformance/structure/44-dataflow-sequential.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _St44Seq_local_seq0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "X": 21
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 5
+      },
+      "values": {
+        "I": 5,
+        "X": 51
+      },
+      "terminated": false
+    }
+  ]
+}

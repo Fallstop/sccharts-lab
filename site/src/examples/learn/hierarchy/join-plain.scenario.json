@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "ready": true }, "note": "Tick 1 enters `Idle`. `ready` is true from the start (this chart does not even read it)." },
+    { "inputs": { "start": true }, "note": "`start`: `Work` is entered, `Begin` → `Done` fires at once, and the trigger-less join fires in the same tick and sets `left`. `Work` was entered and left in one tick." },
+    { "inputs": { "start": false }, "note": "The chart rests in `After`." }
+  ],
+  "expect": "ok"
+}

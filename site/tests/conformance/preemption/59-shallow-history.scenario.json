@@ -1,0 +1,47 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "P": false,
+        "R": false
+      },
+      "note": "Tick 1: M, I (outer = 1)."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "I → J; J's inner region starts in X (outer = 2, inner = 1)."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "X → Y (inner = 2)."
+    },
+    {
+      "inputs": {
+        "B": false,
+        "P": true
+      },
+      "note": "M is left from J/Y."
+    },
+    {
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "note": "`shallow history` restores only M's own level: J is resumed (outer = 2), but J's inner region starts again in X (inner = 1)."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "In J/X."
+    }
+  ],
+  "expect": "ok"
+}

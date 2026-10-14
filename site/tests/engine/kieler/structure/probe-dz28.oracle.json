@@ -1,0 +1,62 @@
+{
+  "hash": "db2b3f80e603a66eec032ee09134d5c9a137f651",
+  "chart": "tests/engine/kieler/structure/probe-dz28.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads s, so the compiler treats it as an update of s (a relative write, as in the deprecated old SC syntax).\nWrite it as s *= 10; s += k; s += 1 to say so. In one region it means the same.\nIt only matters when another region also writes s in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 6,
+      "column": 18
+    }
+  ],
+  "interface": {
+    "s": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "s": 321
+      },
+      "taken": [
+        3,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "s": 321321
+      },
+      "taken": [
+        3,
+        3
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "s": 321321321
+      },
+      "taken": [
+        3,
+        3
+      ],
+      "terminated": false
+    }
+  ]
+}

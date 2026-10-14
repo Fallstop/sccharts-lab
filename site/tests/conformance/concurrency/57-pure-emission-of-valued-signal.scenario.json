@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Tick 1: nothing emitted."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "`a`: `P(4)` and `N(4)`: both values 4."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "note": "`b`: `P` and `N` are emitted without a value. `P` has a combine function, so its value becomes the neutral element 0 (`P_val = 0`). `N` has none and keeps 4. Both are present."
+    },
+    {
+      "inputs": {
+        "b": false
+      },
+      "note": "Nothing emitted: values persist (`P_val = 0`, `N_val = 4`)."
+    }
+  ],
+  "expect": "ok"
+}

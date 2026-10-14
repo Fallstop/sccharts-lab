@@ -1,0 +1,32 @@
+// Two leading abort regions and two other regions (nested): W1 stops them at once, W2 does not.
+scchart ContentTwoLeading {
+  input bool A, B
+  output int one = 0, two = 0, done = 0
+
+  initial state M {
+    abort region W1 {
+      initial state W
+      if A go to F
+      final state F
+    }
+    abort region W2 {
+      initial state W
+      if B go to F
+      final state F
+    }
+    region Main1 {
+      initial state I
+      if true do one += 1 go to I
+    }
+    region Main2 {
+      initial state J
+      if true do two += 1 go to J
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done += 1
+  }
+  go to M
+}

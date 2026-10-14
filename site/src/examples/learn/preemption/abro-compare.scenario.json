@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `ABO`, `WaitAB`, `WaitA` and `WaitB` in both charts." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` is done in both charts." },
+    { "inputs": { "A": false }, "note": "Both wait for `B`." },
+    { "inputs": { "B": true, "R": true }, "note": "`B` and `R` in the same tick. `ABRO`'s strong reset leaves `ABO` before anything inside it moves: `HandleB` never sees this `B`, the join does not happen and `O` is absent. `ABROWeak`'s weak reset lets the inside finish its tick first: `HandleB` sees `B`, `WaitAB` terminates and `O` is emitted. Then both charts enter `ABO` again, with both regions waiting." },
+    { "inputs": { "B": false, "R": false }, "note": "Both wait for `A` and `B` again." },
+    { "inputs": { "A": true, "B": true }, "note": "`A` and `B` together: both regions finish in this tick, and both charts emit `O`." },
+    { "inputs": { "A": false, "B": false }, "note": "In `Done` until the next `R`." }
+  ],
+  "expect": "ok"
+}

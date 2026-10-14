@@ -1,0 +1,34 @@
+{
+  "hash": "20b84f8713df111e1b157143c215d5ce3bc67d1a",
+  "chart": "src/examples/advanced/connectors/loop.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g4 to _cg4",
+    "Can't schedule from _g4 to _g5",
+    "Can't schedule from _g5 to _g4",
+    "Can't schedule from _g4 to _g6",
+    "Can't schedule from _g6 to _g1",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Check, Add]",
+      "line": 13,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Check, Add]",
+      "line": 9,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

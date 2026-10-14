@@ -1,0 +1,9 @@
+scchart FloatModuloMethod {
+  input float F
+  output float r
+  method float wrap(float x) {
+    return x % 2.0
+  }
+  initial state S
+    do r = wrap(F) go to S
+}

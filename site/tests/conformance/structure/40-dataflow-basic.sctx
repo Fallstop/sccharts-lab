@@ -1,0 +1,8 @@
+// A dataflow region holds equations that are all (re)computed in every tick.
+scchart St40And {
+  input bool A, B
+  output bool O
+  dataflow {
+    O = A && B
+  }
+}

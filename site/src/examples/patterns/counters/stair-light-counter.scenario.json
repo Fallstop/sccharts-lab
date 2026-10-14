@@ -1,0 +1,107 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1: both lights are off, and `left` is 0."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed. `StairLight` enters `On`, whose entry action switches the light on. `StairLightCounter` switches it on in the transition and sets `left` to 4."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "`StairLight`'s count delay counts its first tick: the entry tick does not count. `StairLightCounter`'s transitions are delayed too, so they are tried for the first time now: `left` counts down to 3."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Two ticks counted; `left` is 2."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Three; `left` is 1."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Both switch off: `if 4 true` completes in `StairLight`, and `left == 1` fires in `StairLightCounter`, which sets `left` back to 0. The light was on in ticks 2 to 5."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Dark."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: both lights on, `left` is 4."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "One tick counted; `left` is 3."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Two; `left` is 2."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed again before the timeout. In both charts the press is `On`'s first transition, a self-loop. In `StairLight` the re-entry restarts the count delay; `StairLightCounter` sets `left` back to 4. The light stays on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "One tick counted from the new press; `left` is 3."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Two; `left` is 2."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Three; `left` is 1."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Off in both, four ticks after the second press."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Dark."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Dark."
+    }
+  ],
+  "expect": "ok"
+}

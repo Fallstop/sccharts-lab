@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "aWants": false, "bWants": false }, "note": "`RobotA` no longer reads `bGoes`. The dependency runs one way, from A's writes of `aGoes` to B's read, so there is no cycle." },
+    { "inputs": { "aWants": true, "bWants": true }, "note": "Both want to go. A goes; B's trigger is evaluated after A's write, sees `aGoes`, and B waits." },
+    { "note": "A is through and clears `aGoes`. B reads it after that write, in the same tick, and goes." },
+    { "note": "B is through." },
+    { "note": "Both are through: nothing else happens." }
+  ],
+  "expect": "ok"
+}

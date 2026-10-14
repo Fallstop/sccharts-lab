@@ -1,0 +1,19 @@
+scchart StateAccessInner {
+  input bool step
+  output int n = 0
+  initial state Outer {
+    method bool inB() {
+      return state(B)
+    }
+    region {
+      initial state A
+        if step go to B
+      state B
+        if step go to A
+    }
+    region {
+      initial state W
+        if inB() do n++ go to W
+    }
+  }
+}

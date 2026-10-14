@@ -1,0 +1,14 @@
+scchart TriggerSeesEarlierEffects {
+  output int x = 0, y = 0
+
+  initial state A
+  immediate do x = 1 go to B
+
+  state B
+  immediate if x == 1 do y = 1 go to C
+  immediate do y = 2 go to D
+
+  state C
+
+  state D
+}

@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "up": true
+      },
+      "note": "Tick 1 enters `Ground`. Its transition is immediate, so it is checked at once: `up` is true, the chart moves to `First` and `floor` is 1. `First` has just been entered and its transition is immediate too, so it is checked in the same tick: the chart moves on to `Second`, `floor` 2. Both floors in tick 1."
+    },
+    {
+      "note": "`Second` has no outgoing transitions, so nothing happens."
+    },
+    {
+      "note": "Nothing happens."
+    },
+    {
+      "note": "Nothing happens."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,14 @@
+scchart StrongBeatsWeak {
+  input bool S, W
+  output int strongEffect = 0, weakEffect = 0, inner = 0
+
+  initial state M {
+    initial state I
+    if true do inner += 1 go to I
+  }
+  if S do strongEffect = 1 abort to X
+  if W do weakEffect = 1 go to Y
+
+  state X
+  state Y
+}

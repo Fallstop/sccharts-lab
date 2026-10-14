@@ -1,0 +1,7 @@
+scchart BellSignal {
+  input bool press
+  output signal ding
+
+  initial state Waiting
+    if press do ding go to Waiting
+}

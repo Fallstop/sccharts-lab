@@ -1,0 +1,9 @@
+// ov[n] * 2 > 1 && a: gcc rejects the multiplication of the array's address.
+scchart IdxMul {
+  input int n
+  input bool a
+  output int y = 0
+  output int ov[2] = {0, 0}
+  initial state A
+    if ov[n] * 2 > 1 && a do y++ go to A
+}

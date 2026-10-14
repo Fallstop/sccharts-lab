@@ -1,0 +1,205 @@
+{
+  "hash": "4bb9c310c9d78808bce7fca2285148f014bbaf55",
+  "chart": "tests/conformance/concurrency/71-abro-strong-vs-weak-reset.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "R": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "OStrong": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "OWeak": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": false,
+        "OStrong": false,
+        "OWeak": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "R": false,
+        "OStrong": false,
+        "OWeak": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "B": true,
+        "R": true
+      },
+      "values": {
+        "A": false,
+        "B": true,
+        "R": true,
+        "OStrong": false,
+        "OWeak": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": false,
+        "OStrong": false,
+        "OWeak": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "values": {
+        "A": true,
+        "B": true,
+        "R": false,
+        "OStrong": true,
+        "OWeak": true
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": false,
+        "OStrong": false,
+        "OWeak": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

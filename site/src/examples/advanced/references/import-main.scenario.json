@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "switchA": false }, "note": "`import \"push-switch\"` loads `push-switch.sctx` from the same folder, so its chart `ImportedSwitch` can be referenced. This file's first chart, `HallLights`, is the one simulated." },
+    { "inputs": { "switchA": true }, "note": "The imported switch turns `hall` on." },
+    { "inputs": { "switchA": false }, "note": "On." }
+  ],
+  "imports": ["push-switch.sctx"],
+  "expect": "ok"
+}

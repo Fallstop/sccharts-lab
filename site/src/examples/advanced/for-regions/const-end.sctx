@@ -1,0 +1,10 @@
+scchart ConstEnd {
+  const int N = 3
+  output int sum = 0
+
+  region for i : 1 to N {
+    initial state W
+      immediate do sum += i go to D
+    final state D
+  }
+}

@@ -1,0 +1,15 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz27 {
+  input signal int V
+  output signal int W combine +
+  output int last = 0
+  region { initial state R1 is Dz27Fw(V, W) }
+  region { initial state R2 is Dz27Fw(V, W) }
+  region { initial state L if W do last = val(W) go to L }
+}
+scchart Dz27Fw {
+  input signal int I
+  output signal int O combine +
+  initial state S
+  if I do O(val(I) + 1) go to S
+}

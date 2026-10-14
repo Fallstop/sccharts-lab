@@ -1,0 +1,8 @@
+{
+  "needs": ["c-hostcode"],
+  "ticks": [
+    { "inputs": { "reading": 42 }, "note": "Rejected by the C compiler: `#hostcode` text goes into the generated header and the C file, and the C file includes the header, so `clamp` is defined twice." }
+  ],
+  "expect": "error",
+  "errorIncludes": "redefinition of"
+}

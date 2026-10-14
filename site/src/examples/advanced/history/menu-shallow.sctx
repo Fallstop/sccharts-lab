@@ -1,0 +1,36 @@
+@layout[elk.direction] DOWN
+scchart MenuShallow {
+  input bool menu, home, down, right
+  output int screen = 0
+
+  initial state Home {
+    entry do screen = 0
+  }
+  if menu go to Settings shallow history
+
+  state Settings {
+    initial state Display {
+      initial state Brightness {
+        entry do screen = 11
+      }
+      if right go to Contrast
+
+      state Contrast {
+        entry do screen = 12
+      }
+    }
+    if down go to Sound
+
+    state Sound {
+      initial state Volume {
+        entry do screen = 21
+      }
+      if right go to Balance
+
+      state Balance {
+        entry do screen = 22
+      }
+    }
+  }
+  if home go to Home
+}

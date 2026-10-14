@@ -1,0 +1,11 @@
+// An array of instances: cs[0] and cs[1] each have their own field. The pool shows an array of objects.
+scchart St125Array {
+  class C {
+    int v
+    void inc() {
+      v++
+    }
+  } cs[2]
+  initial state A
+  do cs[0].inc() go to A
+}

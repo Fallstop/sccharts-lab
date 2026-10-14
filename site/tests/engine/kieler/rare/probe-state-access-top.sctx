@@ -1,0 +1,12 @@
+scchart StateAccessTop {
+  input bool start
+  output bool seen = false
+  output int n = 0
+  method bool busy() {
+    return state(Busy)
+  }
+  initial state Idle
+    if start go to Busy
+  state Busy
+    if busy() do seen = true; n++ go to Busy
+}

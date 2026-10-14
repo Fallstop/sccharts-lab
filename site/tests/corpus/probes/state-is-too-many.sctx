@@ -1,0 +1,8 @@
+scchart P84 {
+  input bool A
+  initial state R is Sub5(A, A)
+}
+scchart Sub5 {
+  input bool a
+  initial state W
+}

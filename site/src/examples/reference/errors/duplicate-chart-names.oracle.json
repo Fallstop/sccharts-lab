@@ -1,0 +1,60 @@
+{
+  "hash": "4c83d72a7d99744ec9357e5872231f3aea000e65",
+  "chart": "src/examples/reference/errors/duplicate-chart-names.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There are multiple root states with the same name. 'Lamp'",
+      "line": 11,
+      "column": 9
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "on": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "on": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "on": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

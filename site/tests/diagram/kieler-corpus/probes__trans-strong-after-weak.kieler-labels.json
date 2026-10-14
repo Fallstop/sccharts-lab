@@ -1,0 +1,183 @@
+{
+ "sourceHash": "c7d64812d8be985a",
+ "states": [
+  {
+   "path": [
+    "P129"
+   ],
+   "rows": [
+    [
+     "P129"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    211,
+    253.6
+   ]
+  },
+  {
+   "path": [
+    "P129",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    71.3,
+    93.6
+   ]
+  },
+  {
+   "path": [
+    "P129",
+    0,
+    "S0",
+    0,
+    "I"
+   ],
+   "rows": [
+    [
+     "I"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P129",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    152,
+    39.5,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P129",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    197.6,
+    113.6
+   ]
+  },
+  {
+   "path": [
+    "P129",
+    0,
+    "S0",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    30.6,
+    54,
+    54.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP129$$N0$NS0$ES10",
+   "source": [
+    "P129",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P129",
+    0,
+    "S1"
+   ],
+   "text": "1: A",
+   "lines": [
+    "1: A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP129$$N0$NS0$ES11",
+   "source": [
+    "P129",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P129",
+    0,
+    "S1"
+   ],
+   "text": "2: B",
+   "lines": [
+    "2: B"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle"
+   ]
+  }
+ ],
+ "comments": []
+}

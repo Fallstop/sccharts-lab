@@ -1,0 +1,27 @@
+scchart Scoreboard {
+  input bool homeGoal, awayGoal, newMatch
+  output int homeScore = 0, awayScore = 0
+
+  class Counter {
+    private int count = 0
+    void add() {
+      count++
+    }
+    void clear() {
+      count = 0
+    }
+    int get() {
+      return count
+    }
+  } home, away
+
+  region Home:
+  initial state CountHome
+    if newMatch do home.clear(); homeScore = home.get() go to CountHome
+    if homeGoal do home.add(); homeScore = home.get() go to CountHome
+
+  region Away:
+  initial state CountAway
+    if newMatch do away.clear(); awayScore = away.get() go to CountAway
+    if awayGoal do away.add(); awayScore = away.get() go to CountAway
+}

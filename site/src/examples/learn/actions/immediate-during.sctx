@@ -1,0 +1,11 @@
+scchart ImmediateDuringCount {
+  input bool start
+  output int n = 0
+
+  initial state Idle
+    if start go to Busy
+
+  state Busy {
+    immediate during do n++
+  }
+}

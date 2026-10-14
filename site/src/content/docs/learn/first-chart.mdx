@@ -1,0 +1,347 @@
+---
+title: "Your first SCChart"
+description: "Write a complete chart from an empty file, read its diagram, run it, and recognise the first compiler errors you will meet."
+sidebar:
+  order: 2
+---
+
+import { Chart, Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import Playground from '~components/Playground.astro'
+import { Aside } from '@astrojs/starlight/components'
+
+In [Thinking in ticks](/learn/ticks/) you watched charts run. Now you will write one. Some bedside
+lamps have a single touch button that steps through brightness levels: touch once for a dim light,
+again for full brightness, a third time for off. In this chapter you will write that lamp as an
+SCChart, starting from an empty file, one piece at a time. Along the way you will meet
+every part of a chart's text, see how each part shows up in the diagram, and run the result.
+
+## Building the chart, piece by piece
+
+SCCharts are written as text, in files that end in `.sctx` (the SCCharts textual syntax). The
+diagram is drawn from the text automatically; you never draw it yourself.
+
+### The chart
+
+Every chart starts with the keyword `scchart`, a name, and a pair of braces:
+
+```sctx title="dimmer.sctx"
+scchart Dimmer {
+}
+```
+
+The name is an identifier: letters, digits and underscores, not starting with a digit. By convention
+a chart's name is capitalised. Everything else goes between the braces. This empty chart already
+compiles; it does nothing, because there is nothing in it.
+
+A file may contain several charts, one after the other. KIELER compiles and simulates **the first
+one in the file**; the others only matter when the first one uses them
+([Reusing charts](/advanced/references/) shows how). Until then, keep one chart per file.
+
+### The interface
+
+Next comes the chart's **interface**: the variables through which it talks to its environment.
+
+```sctx title="dimmer.sctx" {2-3}
+scchart Dimmer {
+  input bool button
+  output int level = 0
+}
+```
+
+Each declaration has a direction, a type, a name, and optionally an initial value:
+
+- `input` variables are written by the environment and read by the chart. The lamp's touch button is
+  an input: the environment sets it to true while the button is touched.
+- `output` variables are written by the chart and read by the environment. The brightness is an
+  output: some driver outside the chart reads `level` after each tick and sets the lamp to it.
+- `bool` holds `true` or `false`; `int` holds whole numbers.
+- `= 0` gives `level` its initial value, the value it has when the chart starts in tick 1.
+
+Without `= 0`, `level` would start at 0 anyway: an `int` starts at 0 and a `bool` at `false` unless
+you say otherwise. Writing the initial value of an output makes your intention visible, so the
+examples in this guide usually do. You can declare several variables of the same kind in one line, `input bool up, down`.
+Other types, variables that belong to the chart alone, and constants come in
+[chapter 5](/learn/variables/).
+
+Notice what is missing: there is **no semicolon** at the end of a declaration. A declaration ends
+where the next one begins.
+
+### The states
+
+The lamp has three states: off, dim and bright. Each one is a line `state` followed by a name, and
+exactly one of them is the **initial state**, the state the chart is in from tick 1:
+
+```sctx {5-7}
+scchart Dimmer {
+  input bool button
+  output int level = 0
+
+  initial state Off
+  state Dim
+  state Bright
+}
+```
+
+This is already a chart you can look at:
+
+<Chart example="learn/first-chart/dimmer-states" caption="The initial state, `Off`, has the heavy outline. Nothing connects the states yet." />
+
+The diagram shows the chart as a large box with its name and declarations at the top. Inside are the
+three states, drawn as rounded boxes. `Off` has a thick border because it is the initial state.
+
+This chart compiles, but KIELER warns twice: `The state is not reachable.`, once for `Dim` and once
+for `Bright`. A **warning** does not stop the chart from compiling or running; it tells you that
+something is probably not what you meant. Here it is right: no transition leads to `Dim` or
+`Bright`, so the chart can never get there.
+
+### The transitions
+
+A **transition** takes the chart from one state to another. Write each transition directly under the
+state it leaves:
+
+```sctx {6,9,12}
+scchart Dimmer {
+  input bool button
+  output int level = 0
+
+  initial state Off
+    if button do level = 30 go to Dim
+
+  state Dim
+    if button do level = 100 go to Bright
+
+  state Bright
+    if button do level = 0 go to Off
+}
+```
+
+Read the first transition as a sentence: *if `button` is true, set `level` to 30 and go to `Dim`*. It
+has three parts, always in this order:
+
+- `if button` is the **trigger**: a condition that must hold for the transition to fire.
+- `do level = 30` is the **effect**: what the transition does as it fires.
+- `go to Dim` names the **target**, the state the chart moves to.
+
+The trigger and the effect are both optional; `go to` and the target are not.
+[Chapter 3](/learn/transitions/) explores all the combinations. A transition belongs to the state
+written above it, its **source** state. The indentation is only for human readers: SCCharts ignores
+spaces and line breaks between words, so you could write the whole chart on one line (please don't).
+
+That is the complete chart. Change it and watch the diagram follow: dim to 50 instead of 30, say, or
+add a fourth state between `Bright` and `Off`.
+
+<Playground example="learn/first-chart/dimmer" caption="The finished `Dimmer`, in an editor: the diagram and the simulation follow your changes." />
+
+## Reading the diagram
+
+Here is the chart you have written, ready to run:
+
+<Sim example="learn/first-chart/dimmer" caption="Press `button` for one tick at a time and watch the active state move round the loop." />
+
+Its diagram shows everything the text says:
+
+- The outer box is the chart, labelled `Dimmer`. Its declarations are listed under the name, with the
+  keywords in bold.
+- Each rounded box is a state; the one with the heavy outline, `Off`, is the initial state.
+- Each arrow is a transition, from its source state to its target state. The label next to it reads
+  `button / level = 30`: the trigger, then a slash, then the effect. A transition without a trigger
+  starts its label with the slash; a transition without an effect has no slash at all.
+
+When the chart runs, the diagram adds colour. The active state is outlined in red, and in each tick the
+transition that fired is drawn in blue. [Diagram notation](/reference/notation/) lists every symbol you
+will meet in later chapters.
+
+<Aside type="tip">
+In SCCharts Lab, open the diagram next to the editor with the preview button in the editor's title bar
+(or **Open Diagram Preview**, `Ctrl+Alt+V`). It redraws as you type, and it follows your cursor: put
+the cursor on a state or a transition and the diagram selects it. Clicking an element in the diagram
+selects its text.
+</Aside>
+
+## Running it
+
+The guided tour presses the button three times, letting go in between:
+
+| Tick | `button` | State after | `level` after |
+| ---: | --- | --- | --- |
+| 1 | false | Off | 0 |
+| 2 | true | Dim | 30 |
+| 3 | false | Dim | 30 |
+| 4 | true | Bright | 100 |
+| 5 | false | Bright | 100 |
+| 6 | true | Off | 0 |
+| 7 | false | Off | 0 |
+
+In every tick, only the active state's transition is considered. In tick 4 the chart is in `Dim`,
+so only the transition from `Dim` can fire, even though all three transitions have the same trigger.
+Between presses, in ticks 3 and 5, `level` keeps its value: a variable changes only when an effect
+writes it.
+
+What if you keep the button pressed? Predict it, run it, then open the explanation:
+
+<Predict example="learn/first-chart/dimmer-held" ask={[{ tick: 3, value: 'level' }, { tick: 4, state: 'Off' }]} caption="`button` is switched on in tick 2 and stays on until tick 5." />
+
+<details>
+<summary>Explanation</summary>
+
+As with the lamp in [Thinking in ticks](/learn/ticks/), a held button is true in every tick, so the
+dimmer steps round its loop once per tick: `Dim` in tick 2, `Bright` in tick 3 (`level` is 100), and
+`Off` in tick 4.
+
+</details>
+
+## The shape of a `.sctx` file
+
+Inside a chart's braces, the parts come in a fixed order:
+
+```sctx
+scchart Name {
+  // 1. declarations: input, output and other variables
+  // 2. actions of the chart itself (entry, during, exit: chapter 10)
+  // 3. states, each followed by its transitions
+}
+```
+
+Declarations first, then actions (you will meet them in [chapter 10](/learn/actions/)), then states.
+The order of the states among themselves doesn't matter: a transition may target a state written
+further down. Comments are written as in C or Java: `//` to the end of the line, or `/* ... */` around
+any stretch of text. The [cheat sheet](/reference/cheatsheet/) has every part of a `.sctx` file on one
+page, for when you know what you want to write.
+
+## When it does not compile
+
+Everyone gets these. Here are the messages you will see, word for word as KIELER prints them, and what
+they mean. SCCharts Lab prints the same messages: it underlines them in the editor while you type and
+lists them in the Problems panel. The KIELER inside the *KIELER VS Code* extension (0.3.0) is older and
+words a few syntax errors differently; where that matters, both are given. This site's playground
+describes the problems in plainer words of its own and, where it can, quotes KIELER's next to them.
+
+### A semicolon after a declaration
+
+<Chart example="learn/first-chart/err-semicolon" view="code" caption="One semicolon too many. The frame lists the errors KIELER reports, with the guide's explanation." />
+
+The frame puts the culprit first: `no viable alternative at input ';'`, at the semicolon. KIELER
+reports a second error on the same line, and lists it first: `mismatched input 'bool' expecting
+'primitive'`. It is a side effect of the way the parser recovers from the mistake, and it points at
+`bool`, which is not wrong at all. (KIELER VS Code 0.3.0 words this one
+`no viable alternative at input 'bool'`.)
+
+Delete the `;`. Declarations never end with a semicolon. (Semicolons do appear in charts, between the
+effects of a transition: [chapter 3](/learn/transitions/).)
+
+### A declaration after the states
+
+```sctx {8}
+scchart Dimmer {
+  input bool button
+
+  initial state Off
+    if button do level = 30 go to Dim
+
+  state Dim
+  output int level = 0
+}
+```
+
+KIELER reports `no viable alternative at input 'output'` on the line of the late declaration, and
+`Couldn't resolve reference to ValuedObject 'level'.` wherever the chart uses the variable. A *valued
+object* is KIELER's name for a variable. Once the first state begins, the parser no longer accepts
+declarations, so `level` is never declared. Move all declarations to the top.
+[Open this chart in the playground](/playground/?example=learn/first-chart/err-order) to see the
+messages.
+
+### No initial state
+
+<Chart example="learn/first-chart/err-no-initial" caption="No state has the heavy outline: the chart has no initial state." />
+
+KIELER reports `Every region must have an initial state.`, and warns `The state is not reachable.` on
+every state, since without an initial state none of them can be reached. A *region* is a group of states
+of which exactly one is active; so far each chart has a single region holding all its states, and
+[chapter 8](/learn/concurrency/) shows charts with several. Mark one state `initial`. Mark two, and the
+message is `Every region must not have more than one initial state.`
+
+### More first mistakes
+
+- **A name with the wrong capitals.** `go to dim`, when the state is called `Dim`, gives
+  `Couldn't resolve reference to State 'dim'.` Names are case-sensitive: write them exactly as you
+  declared them.
+- **A variable you forgot to declare.** `do level = 30` without a declaration of `level` gives
+  `Couldn't resolve reference to ValuedObject 'level'.` Declare every variable at the top of the
+  chart.
+- **`goto`.** `goto Dim` gives `no viable alternative at input 'goto'`: `go to` is two words.
+- **A keyword as a name.** `input bool go` gives `mismatched input 'go' expecting RULE_ID`
+  (`RULE_ID` means a name), plus the same side effect on `bool` as the semicolon. `go` is a keyword,
+  and keywords can't be names; others that tempt beginners are `reset`, `label` and `state`. Choose
+  another name. KIELER VS Code 0.3.0 shows these errors and then never finishes compiling the chart,
+  so if a compilation there seems to hang, look for a keyword used as a name.
+
+When KIELER reports several errors at once, start with the earliest line it complains about, and look
+again after each fix: the other messages are often consequences of the first mistake. When you compile
+a chart that still has errors, KIELER may also print messages such as
+`The required feature 'valuedObject' of '...' must be set`. They come from deep inside the compiler,
+follow from an error like the ones above, and disappear with it.
+
+A chart that compiles can still do something you did not mean.
+[My chart does not do what I expect](/reference/troubleshooting/) goes through the usual causes.
+
+## Try it
+
+<TryIt title="Fix the lamp" example="learn/first-chart/lamp-broken" solution="learn/first-chart/lamp">
+This lamp has an on button and an off button, and three mistakes. Open it in the playground, read the
+error messages (the playground lists all three, as KIELER does), and fix them one at a time until the
+chart compiles. Then run it: `onButton` should light the lamp and `offButton` should switch it off.
+</TryIt>
+
+<TryIt title="The turnstile, from scratch" example="learn/first-chart/turnstile-start" solution="learn/first-chart/turnstile">
+On the [welcome page](/start/welcome/) you played with a turnstile. Write it yourself. The starter
+declares its interface: inputs `coin` and `push`, output `unlocked`. Add two states, `Locked` (the
+initial state) and `Unlocked`. A coin unlocks a locked turnstile and sets `unlocked` to true; a push
+locks an unlocked one and sets `unlocked` to false.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="Which of these declarations does KIELER accept?"
+  options={['`input bool button;`', '`input bool button`', '`bool input button`', '`input button: bool`']}
+  answer={1}
+>
+A declaration is direction, type, name, with no semicolon. KIELER rejects the other three: the
+semicolon with `no viable alternative at input ';'`, the swapped keywords with
+`extraneous input 'input' expecting RULE_ID`, and the colon form with
+`mismatched input ':' expecting RULE_ID`, among others.
+</Quiz>
+
+<Quiz
+  question="The dimmer is in `Dim`. In which part of the chart's text does KIELER look to decide what happens next?"
+  options={['At every transition in the chart whose trigger holds', 'Only at the transitions written under `state Dim`', 'At the transitions of `Dim` and of the initial state']}
+  answer={1}
+>
+Each transition belongs to the state written above it. In a tick, only the transitions of the active
+state are considered, so in `Dim` only `if button do level = 100 go to Bright` can fire.
+</Quiz>
+
+<Quiz
+  question="A file contains two charts: `Main` first, then `Helper`. You press Simulate. Which chart runs?"
+  options={['`Main`, because it comes first', '`Helper`, because it comes last', 'Both, side by side']}
+  answer={0}
+>
+KIELER always compiles and simulates the first chart in the file. The other charts are only used
+when the first one refers to them ([Reusing charts](/advanced/references/)). To run `Helper` on its
+own, move it to the top or into a file of its own.
+</Quiz>
+
+<KeyIdeas>
+- A chart is `scchart Name { ... }` in a `.sctx` file. If a file has several, the first one is run.
+- Inside the braces: declarations first (`input bool button`, `output int level = 0`, no
+  semicolons), then actions, then states.
+- Exactly one state is `initial`; the chart starts there in tick 1.
+- A transition is written under its source state: `if trigger do effect go to Target`. Trigger and
+  effect are optional.
+- In the diagram, the initial state has a heavy outline and each transition is labelled
+  `trigger / effect`.
+- Start with the earliest line KIELER complains about; the other messages often follow from it.
+</KeyIdeas>
+
+Next, [Triggers, effects and priority](/learn/transitions/): conditions on numbers, several effects at
+once, and states with more than one way out.

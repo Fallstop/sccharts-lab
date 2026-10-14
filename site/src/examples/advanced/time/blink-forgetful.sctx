@@ -1,0 +1,10 @@
+scchart BlinkForgetful {
+  output bool led = false
+  clock t
+
+  initial state Off
+    if t >= 500 do led = true go to On
+
+  state On
+    if t >= 500 do led = false go to Off
+}

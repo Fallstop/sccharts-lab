@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Tick 1: the chart asks to sleep until its timeout: **sleepT = 300**."
+    },
+    {
+      "inputs": {},
+      "note": "deltaT is computed as the previous sleepT (300): the timeout fires at once: **n = 1**."
+    },
+    {
+      "inputs": {},
+      "note": "deltaT is again the previous sleepT (300) and the timeout fires again: **n = 2**."
+    }
+  ],
+  "expect": "ok"
+}

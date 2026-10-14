@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "ok": true
+      },
+      "note": "Tick 1 enters `Check`. Both transitions are delayed, so the chart cannot decide in tick 1, although `ok` is true."
+    },
+    {
+      "inputs": {},
+      "note": "`Check` was entered in tick 1, so now its transitions are checked: `ok` is true, `running` becomes true, and the chart is in `Ready`. One tick late."
+    },
+    {
+      "inputs": {},
+      "note": "`Ready` has no outgoing transitions."
+    }
+  ],
+  "expect": "ok"
+}

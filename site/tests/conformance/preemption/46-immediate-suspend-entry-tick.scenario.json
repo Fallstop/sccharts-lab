@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "`immediate suspend` already applies in the entry tick: M's entry action, the inner state's entry action, the immediate during action and the immediate inner transition are all suppressed (all 0)."
+    },
+    {
+      "inputs": {},
+      "note": "Still suspended."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Resumed: the immediate inner transition I → J fires now (chained = 1) and both during actions run (ticks = 1, iticks = 1). The skipped entry actions never run (entry1 = 0, innerEntry = 0)."
+    },
+    {
+      "inputs": {},
+      "note": "ticks = 2, iticks = 2."
+    }
+  ],
+  "expect": "ok"
+}

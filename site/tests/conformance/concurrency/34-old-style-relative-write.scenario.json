@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "`x = x + 2` reads its own target exactly once, so KIELER treats it as a relative write (old SC syntax, with a deprecation warning). Tick 1: `x = 1`."
+    },
+    {
+      "inputs": {},
+      "note": "Both regions update `x`: `x = 1 + 2 + 3 = 6`, accepted like `x += 2` and `x += 3`."
+    },
+    {
+      "inputs": {},
+      "note": "No further change."
+    }
+  ],
+  "expect": "ok"
+}

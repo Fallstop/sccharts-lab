@@ -1,0 +1,199 @@
+{
+  "hash": "7e33b893547ab53336a1ea1054dd657a7af24f2c",
+  "chart": "src/examples/advanced/data-types/logger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "sample": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "temperature": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "peak": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "peakNumber": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Reading.number": {
+      "type": "int",
+      "properties": []
+    },
+    "Reading.value": {
+      "type": "int",
+      "properties": []
+    },
+    "highest": {
+      "type": "struct",
+      "properties": []
+    },
+    "latest": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "sample": false,
+        "temperature": 12
+      },
+      "values": {
+        "sample": false,
+        "temperature": 12,
+        "peak": 0,
+        "peakNumber": 0,
+        "highest": {
+          "number": 0,
+          "value": 0
+        },
+        "latest": {
+          "number": 0,
+          "value": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "sample": true,
+        "temperature": 14
+      },
+      "values": {
+        "sample": true,
+        "temperature": 14,
+        "peak": 14,
+        "peakNumber": 1,
+        "highest": {
+          "number": 1,
+          "value": 14
+        },
+        "latest": {
+          "number": 1,
+          "value": 14
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "temperature": 11
+      },
+      "values": {
+        "sample": true,
+        "temperature": 11,
+        "peak": 14,
+        "peakNumber": 1,
+        "highest": {
+          "number": 1,
+          "value": 14
+        },
+        "latest": {
+          "number": 2,
+          "value": 11
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "sample": false,
+        "temperature": 19
+      },
+      "values": {
+        "sample": false,
+        "temperature": 19,
+        "peak": 14,
+        "peakNumber": 1,
+        "highest": {
+          "number": 1,
+          "value": 14
+        },
+        "latest": {
+          "number": 2,
+          "value": 11
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "sample": true
+      },
+      "values": {
+        "sample": true,
+        "temperature": 19,
+        "peak": 19,
+        "peakNumber": 3,
+        "highest": {
+          "number": 3,
+          "value": 19
+        },
+        "latest": {
+          "number": 3,
+          "value": 19
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "temperature": 16
+      },
+      "values": {
+        "sample": true,
+        "temperature": 16,
+        "peak": 19,
+        "peakNumber": 3,
+        "highest": {
+          "number": 3,
+          "value": 19
+        },
+        "latest": {
+          "number": 4,
+          "value": 16
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+// A method with a loop is kept as a C function, and a code effect with a loop too, but the causality analysis
+// still sees what their bodies write: the Reader region, written first, reads after both writers.
+scchart St154Functions {
+  output int seen = 0, seenTotal = 0
+  int data[2]
+  int total = 0
+  method fill() {
+    for (int i = 0; i < 2; i++) {
+      data[i] = data[i] + 5
+    }
+  }
+  region Reader {
+    initial state A
+    do seen = data[0]; seenTotal = total go to A
+  }
+  region Filler {
+    initial state A
+    do fill() go to A
+  }
+  region Counter {
+    initial state A
+    do {
+      for (int i = 0; i < 2; i++) {
+        total++
+      }
+    } go to A
+  }
+}

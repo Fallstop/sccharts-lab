@@ -1,0 +1,11 @@
+scchart AbortWithoutTrigger {
+  input bool unused
+  output int left = 0
+
+  initial state M {
+    initial state I
+  }
+  do left = 1 go to Done
+
+  state Done
+}

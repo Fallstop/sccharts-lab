@@ -1,0 +1,950 @@
+/*
+ * The SCCharts guide's theme on top of Starlight. Tokens live in tokens.css; the rationale and the rules
+ * for content writers are in docs-internal/DESIGN.md.
+ *
+ * This file is unlayered, so it wins over Starlight's layered styles (@layer starlight.*) without
+ * specificity tricks. Selectors that reach into Starlight's markup are kept shallow and say what they
+ * style. Component styles live with their components (src/components/**).
+ */
+
+/* ===== Base ======================================================================================= */
+
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+body {
+	font-family: var(--font-text);
+	font-size: var(--text-md);
+	line-height: var(--leading-body);
+	color: var(--c-text);
+	background-color: var(--c-paper);
+	font-optical-sizing: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+	background-color: var(--c-selection);
+	color: var(--c-ink);
+}
+
+:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 2px;
+}
+
+/* ===== Header: site title, search, theme, and the tick ruler ======================================= */
+
+header.header {
+	border-bottom: 0;
+	background-color: color-mix(in srgb, var(--c-paper) 90%, transparent);
+	-webkit-backdrop-filter: saturate(1.4) blur(10px);
+	backdrop-filter: saturate(1.4) blur(10px);
+}
+
+/* The tick ruler: the header's bottom edge is a time axis, a baseline with a short tick every --tick
+ * and a taller one every eighth. It is the guide's signature motif (a tick is the unit of time). */
+header.header::after {
+	content: '';
+	position: absolute;
+	inset-inline: 0;
+	bottom: 0;
+	height: 6px;
+	pointer-events: none;
+	background:
+		linear-gradient(var(--c-rule-strong), var(--c-rule-strong)) bottom / 100% 1px no-repeat,
+		repeating-linear-gradient(to right, var(--c-rule-strong) 0 1px, transparent 1px calc(var(--tick) * 8))
+			bottom / 100% 6px no-repeat,
+		repeating-linear-gradient(to right, var(--c-rule) 0 1px, transparent 1px var(--tick)) bottom / 100%
+			3px no-repeat;
+}
+
+/* Search trigger: an icon button on phones, a capsule field from 50rem. */
+site-search button[data-open-modal] {
+	width: 2.5rem;
+	justify-content: center;
+	border-radius: var(--radius-capsule);
+	color: var(--c-ink);
+}
+site-search button[data-open-modal]:hover {
+	background-color: color-mix(in srgb, var(--c-rule) 60%, transparent);
+}
+@media (min-width: 50rem) {
+	site-search button[data-open-modal] {
+		width: 100%;
+		justify-content: flex-start;
+		border: 1px solid var(--c-control);
+		background-color: var(--c-sheet);
+		color: var(--c-muted);
+		font-size: var(--text-sm);
+	}
+	site-search button[data-open-modal]:hover {
+		border-color: var(--c-accent-bright);
+		background-color: var(--c-sheet);
+		color: var(--c-ink);
+	}
+}
+site-search button[data-open-modal] kbd {
+	background-color: var(--c-rail);
+	border-radius: var(--radius-sm);
+	font-family: var(--font-text);
+}
+
+/* Theme select. */
+starlight-theme-select label {
+	color: var(--c-muted);
+}
+starlight-theme-select label:hover {
+	color: var(--c-ink);
+}
+starlight-theme-select select {
+	font-family: var(--font-text);
+}
+
+/* Pagefind search dialog. */
+site-search dialog {
+	border: 1px solid var(--c-rule-strong);
+	background-color: var(--c-paper);
+	border-radius: var(--radius-frame);
+	box-shadow: var(--shadow-pop);
+}
+#starlight__search {
+	--pagefind-ui-primary: var(--c-accent);
+	--pagefind-ui-text: var(--c-text);
+	--pagefind-ui-font: var(--font-text);
+	--pagefind-ui-background: var(--c-sheet);
+	--pagefind-ui-border: var(--c-control);
+	--pagefind-ui-tag: var(--c-rail);
+	--sl-search-result-bg: var(--c-sheet);
+	--sl-search-result-hover-bg: var(--c-accent-soft);
+}
+
+/* ===== Sidebar ===================================================================================== */
+
+.sidebar-pane {
+	border-inline-end-color: var(--c-rule) !important;
+}
+
+.sidebar-content {
+	padding-top: var(--space-5);
+	padding-bottom: var(--space-6);
+}
+
+/* Group headings ("Start here", "Learn", ...). */
+.sidebar-content summary {
+	padding-block: 0.25rem;
+}
+.sidebar-content .group-label .large {
+	font-size: var(--text-sm);
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sidebar-content .top-level > li + li {
+	margin-top: var(--space-4);
+}
+
+/* Links. Starlight draws a hairline left of nested lists; the guide indents without it. */
+.sidebar-content ul ul li {
+	border-inline-start: 0;
+	margin-inline-start: 0;
+	padding-inline-start: 0;
+}
+.sidebar-content ul ul {
+	margin-top: 0.125rem;
+}
+.sidebar-content a {
+	font-size: var(--text-sm);
+	color: var(--c-text);
+	padding: 0.3rem 0.75rem;
+	border-radius: var(--radius-capsule);
+	line-height: 1.35;
+}
+.sidebar-content a.large {
+	font-size: var(--text-sm);
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sidebar-content a:hover {
+	color: var(--c-ink);
+	background-color: color-mix(in srgb, var(--c-rule) 60%, transparent);
+}
+
+/* "You are here" is drawn like a state: a capsule with a firm outline. */
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+	color: var(--c-accent);
+	background-color: var(--c-accent-soft);
+	box-shadow: inset 0 0 0 1.5px var(--c-accent-bright);
+	font-weight: 700;
+}
+
+/* The Learn chapters are read in order, so they are numbered and joined into a chain: a small box per
+ * chapter on a vertical line. The numbers come from a CSS counter, so they always follow the sidebar
+ * order. The links get the class from astro.config.mjs (autogenerate.attrs). */
+.sidebar-content ul:has(> li > a.sc-step) {
+	position: relative;
+	counter-reset: sc-step;
+}
+.sidebar-content ul:has(> li > a.sc-step)::before {
+	content: '';
+	position: absolute;
+	inset-inline-start: calc(0.5rem + 0.75rem - 0.5px);
+	top: 0.9rem;
+	bottom: 0.9rem;
+	width: 1px;
+	background-color: var(--c-rule-strong);
+}
+.sidebar-content a.sc-step {
+	counter-increment: sc-step;
+	position: relative;
+	display: grid;
+	grid-template-columns: 1.5rem 1fr;
+	align-items: baseline;
+	column-gap: 0.625rem;
+	padding-inline-start: 0.5rem;
+}
+.sidebar-content a.sc-step::before {
+	content: counter(sc-step);
+	display: inline-grid;
+	place-items: center;
+	align-self: center;
+	width: 1.5rem;
+	height: 1.375rem;
+	border-radius: var(--radius-sm);
+	border: 1px solid var(--c-rule-strong);
+	background-color: var(--c-rail);
+	color: var(--c-muted);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.02em;
+	line-height: 1;
+}
+.sidebar-content a.sc-step[aria-current='page']::before {
+	background-color: var(--c-accent-bright);
+	border-color: var(--c-accent-bright);
+	color: var(--c-on-strong);
+}
+
+/* The playground link stands apart from the chapter groups: a capsule like a simple state. */
+.sidebar-content a.sc-sidebar-playground {
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
+	font-weight: 700;
+	color: var(--c-ink);
+	border: 1px solid var(--c-control);
+	background-color: var(--c-sheet);
+	padding-block: 0.45rem;
+}
+.sidebar-content a.sc-sidebar-playground::before {
+	content: '';
+	flex: none;
+	width: 1.125rem;
+	height: 0.75rem;
+	border-radius: var(--radius-capsule);
+	border: 2px solid currentColor;
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+}
+.sidebar-content a.sc-sidebar-playground:hover {
+	border-color: var(--c-accent-bright);
+	background-color: var(--c-sheet);
+}
+
+/* The mobile menu footer (theme select). */
+.mobile-preferences {
+	border-top-color: var(--c-rule) !important;
+}
+
+/* ===== Right sidebar: on this page ================================================================= */
+
+.right-sidebar {
+	border-inline-start-color: var(--c-rule) !important;
+}
+starlight-toc nav > h2,
+.right-sidebar-panel h2 {
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+starlight-toc a {
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+	position: relative;
+	line-height: 1.35;
+}
+starlight-toc a:hover {
+	color: var(--c-ink);
+}
+starlight-toc a[aria-current='true'] {
+	color: var(--c-accent);
+	font-weight: 700;
+}
+starlight-toc a[aria-current='true']::before {
+	content: '';
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0.3rem;
+	bottom: 0.3rem;
+	width: 2px;
+	border-radius: 2px;
+	background-color: var(--c-accent-bright);
+}
+
+/* Mobile "On this page" bar. */
+mobile-starlight-toc nav {
+	background-color: color-mix(in srgb, var(--c-paper) 94%, transparent) !important;
+	-webkit-backdrop-filter: blur(8px);
+	backdrop-filter: blur(8px);
+	border-bottom-color: var(--c-rule) !important;
+}
+mobile-starlight-toc summary {
+	font-size: var(--text-sm);
+}
+mobile-starlight-toc .toggle {
+	border-radius: var(--radius-capsule) !important;
+	border-color: var(--c-control) !important;
+	color: var(--c-text) !important;
+}
+mobile-starlight-toc .dropdown {
+	background-color: var(--c-sheet) !important;
+	border-color: var(--c-rule-strong) !important;
+	border-radius: var(--radius-md) !important;
+}
+
+/* ===== Page title (see components/overrides/PageTitle.astro) ======================================= */
+
+/* Page titles are the one place the display face appears in a chapter: Archivo, expanded, like the
+ * lettering on an instrument panel. */
+.content-panel h1#_top,
+.sc-display {
+	font-family: var(--font-display);
+	font-stretch: var(--display-stretch);
+	font-weight: var(--display-weight);
+	letter-spacing: -0.012em;
+	line-height: 1.06;
+	color: var(--c-ink);
+	text-wrap: balance;
+}
+.content-panel h1#_top {
+	font-size: var(--sl-text-h1);
+}
+
+/* Starlight separates the title panel from the body with a hairline; the guide keeps the gap only. */
+.content-panel + .content-panel {
+	border-top: 0;
+}
+main > .content-panel:first-of-type {
+	padding-bottom: 0;
+}
+
+/* ===== Long-form content =========================================================================== */
+
+.sl-markdown-content {
+	font-size: var(--text-md);
+	line-height: var(--leading-body);
+	color: var(--c-text);
+}
+
+/* Prose keeps a readable measure even though the column is wider (widgets use the full width). */
+.sl-markdown-content :where(p, ul, ol, dl, blockquote, h2, h3, h4, h5, h6):not(:where(.not-content *)) {
+	max-width: var(--measure);
+}
+
+.sl-markdown-content p:not(:where(.not-content *)) {
+	text-wrap: pretty;
+}
+
+.sl-markdown-content :is(h2, h3, h4, h5, h6):not(:where(.not-content *)) {
+	color: var(--c-ink);
+	font-weight: 700;
+	letter-spacing: -0.012em;
+	text-wrap: balance;
+}
+/* With anchor links on, Starlight makes the heading inline inside .sl-heading-wrapper, where text-wrap and
+ * max-width have no effect; the block wrapper takes them, so a heading's last word never wraps alone. */
+.sl-markdown-content .sl-heading-wrapper:not(:where(.not-content *)) {
+	max-width: var(--measure);
+	text-wrap: balance;
+}
+.sl-markdown-content h2:not(:where(.not-content *)) {
+	font-size: var(--sl-text-h2);
+	line-height: 1.15;
+	letter-spacing: -0.018em;
+}
+.sl-markdown-content h3:not(:where(.not-content *)) {
+	font-size: var(--sl-text-h3);
+	line-height: 1.2;
+}
+.sl-markdown-content h4:not(:where(.not-content *)) {
+	font-size: var(--sl-text-h4);
+	line-height: 1.3;
+	letter-spacing: -0.005em;
+}
+.sl-markdown-content :is(h5, h6):not(:where(.not-content *)) {
+	font-size: var(--text-md);
+	letter-spacing: 0;
+}
+
+/* Heading rhythm: more space above than below, so a heading belongs to what follows. Starlight wraps
+ * headings in .sl-heading-wrapper when anchor links are on, so both forms are covered. :where keeps
+ * the specificity at one class, so the first-child rule below wins; components (.not-content) keep
+ * their own spacing. */
+.sl-markdown-content :where(h2, .sl-heading-wrapper.level-h2):not(:where(.not-content *)) {
+	margin-top: 2.75rem;
+}
+.sl-markdown-content :where(h3, .sl-heading-wrapper.level-h3):not(:where(.not-content *)) {
+	margin-top: 2.125rem;
+}
+.sl-markdown-content
+	:where(h4, h5, h6, .sl-heading-wrapper.level-h4, .sl-heading-wrapper.level-h5):not(
+		:where(.not-content *)
+	) {
+	margin-top: 1.75rem;
+}
+.sl-markdown-content :where(h2, h3, h4, h5, h6, .sl-heading-wrapper) + :where(*):not(:where(.not-content *)) {
+	margin-top: 0.625rem;
+}
+.sl-markdown-content > :first-child {
+	margin-top: 0;
+}
+
+/* Heading anchor links. */
+.sl-markdown-content .sl-anchor-link {
+	color: var(--c-faint);
+}
+.sl-markdown-content .sl-anchor-link:hover {
+	color: var(--c-accent);
+}
+
+/* Links. */
+.sl-markdown-content a:not(:where(.not-content *)) {
+	color: var(--c-accent);
+	text-decoration-line: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+	text-decoration-color: color-mix(in srgb, var(--c-accent) 45%, transparent);
+	transition: text-decoration-color 0.12s;
+}
+.sl-markdown-content a:hover:not(:where(.not-content *)) {
+	color: var(--c-accent-strong);
+	text-decoration-color: currentColor;
+	text-decoration-thickness: 2px;
+}
+
+.sl-markdown-content strong {
+	font-weight: 700;
+	color: var(--c-ink);
+}
+
+/* Lists. */
+.sl-markdown-content :is(ul, ol):not(:where(.not-content *)) {
+	padding-inline-start: 1.375rem;
+}
+.sl-markdown-content li::marker {
+	color: var(--c-muted);
+}
+.sl-markdown-content ol > li::marker {
+	font-variant-numeric: tabular-nums;
+	font-weight: 700;
+}
+.sl-markdown-content li + li:not(:where(.not-content *)) {
+	margin-top: 0.375rem;
+}
+
+/* Inline code: identifiers in charts are often one letter (A, I, l, O). */
+.sl-markdown-content code:not(:where(.not-content *)) {
+	font-family: var(--font-mono);
+	font-size: 0.9em;
+	color: var(--c-ink);
+	background-color: var(--sl-color-bg-inline-code);
+	border-radius: var(--radius-xs);
+	padding: 0.1em 0.28em;
+	margin-block: 0;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+}
+.sl-markdown-content a code:not(:where(.not-content *)) {
+	color: inherit;
+}
+/* Short inline code never breaks inside (`->` would split after the hyphen, `x += 1` would stop being one
+ * expression): astro.config.mjs and inline-md.ts mark spans of up to 12 characters, and of up to 16 without spaces. */
+code.sc-nobr {
+	white-space: nowrap;
+}
+
+kbd {
+	font-family: var(--font-text);
+	font-size: 0.85em;
+	font-weight: 600;
+	padding: 0.05em 0.45em;
+	border-radius: var(--radius-sm);
+	border: 1px solid var(--c-control);
+	border-bottom-width: 2px;
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+}
+
+.sl-markdown-content blockquote:not(:where(.not-content *)) {
+	border-inline-start: 3px solid var(--c-rule-strong);
+	padding-inline-start: var(--space-4);
+	color: var(--c-muted);
+}
+
+/* A horizontal rule is a short stretch of the tick ruler. */
+.sl-markdown-content hr:not(:where(.not-content *)) {
+	border: 0;
+	height: 6px;
+	margin-block: var(--space-7);
+	max-width: calc(var(--tick) * 24 + 1px);
+	background:
+		repeating-linear-gradient(to right, var(--c-rule-strong) 0 1px, transparent 1px calc(var(--tick) * 8))
+			bottom / 100% 6px no-repeat,
+		repeating-linear-gradient(to right, var(--c-rule-strong) 0 1px, transparent 1px var(--tick)) bottom /
+			100% 3px no-repeat,
+		linear-gradient(var(--c-rule-strong), var(--c-rule-strong)) bottom / 100% 1px no-repeat;
+}
+
+/* Images and figures. */
+.sl-markdown-content figure:not(:where(.not-content *)) {
+	margin-inline: 0;
+}
+.sl-markdown-content figcaption:not(:where(.not-content *)) {
+	margin-top: var(--space-2);
+	font-size: var(--text-sm);
+	color: var(--c-muted);
+}
+
+/* ===== Tables ======================================================================================
+ * The guide uses tables mostly for tick-by-tick traces: "tick | inputs | state after | outputs".
+ * Numbers line up (tabular figures), the head is set off by a firm rule, rows by hairlines. A table
+ * that is too wide scrolls inside itself (Starlight makes tables display: block with overflow). */
+
+.sl-markdown-content table:not(:where(.not-content *)) {
+	font-size: var(--text-sm);
+	line-height: 1.45;
+	font-variant-numeric: tabular-nums;
+	border-collapse: separate;
+	border-spacing: 0;
+	max-width: 100%;
+	width: max-content;
+	min-width: min(100%, 24rem);
+	/* A table that scrolls says so: a soft shadow at the edge with more to see. Two covers in the colour behind the
+	 * table scroll with the content (local) and hide each shadow while that edge is reached; the shadows stay put
+	 * (scroll). --sc-table-bg is the surface the table sits on. */
+	--sc-table-bg: var(--c-paper);
+	--sc-table-shadow: color-mix(in srgb, var(--c-ink) 22%, transparent);
+	background:
+		linear-gradient(to right, var(--sc-table-bg) 35%, transparent) left center / 1.75rem 100% no-repeat local,
+		linear-gradient(to left, var(--sc-table-bg) 35%, transparent) right center / 1.75rem 100% no-repeat local,
+		radial-gradient(farthest-side at 0 50%, var(--sc-table-shadow), transparent) left center / 0.625rem 100% no-repeat scroll,
+		radial-gradient(farthest-side at 100% 50%, var(--sc-table-shadow), transparent) right center / 0.625rem 100% no-repeat scroll;
+}
+.sl-markdown-content details table:not(:where(.not-content *)) {
+	--sc-table-bg: var(--c-sheet);
+}
+.starlight-aside--note table { --sc-table-bg: var(--c-note-bg); }
+.starlight-aside--tip table { --sc-table-bg: var(--c-tip-bg); }
+.starlight-aside--caution table { --sc-table-bg: var(--c-caution-bg); }
+.starlight-aside--danger table { --sc-table-bg: var(--c-danger-bg); }
+.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+	padding: 0.5rem 0.875rem;
+	border-bottom: 1px solid var(--c-rule);
+	vertical-align: baseline;
+}
+.sl-markdown-content :is(th:first-child, td:first-child):not(:where(.not-content *)) {
+	padding-inline-start: 0.25rem;
+}
+.sl-markdown-content :is(th:last-child, td:last-child):not(:where(.not-content *)) {
+	padding-inline-end: 0.25rem;
+}
+.sl-markdown-content th:not(:where(.not-content *)) {
+	color: var(--c-ink);
+	font-weight: 700;
+	border-bottom: 2px solid var(--c-ink);
+	white-space: nowrap;
+	background: none;
+}
+.sl-markdown-content tbody tr:hover td:not(:where(.not-content *)) {
+	background-color: color-mix(in srgb, var(--c-rail) 70%, transparent);
+}
+.sl-markdown-content td code:not(:where(.not-content *)) {
+	white-space: nowrap;
+}
+/* On a phone a six-column trace has to fit a 358 px column: tighter cells, headings that may wrap, and code
+ * in cells that may break at its spaces (short code still never breaks: code.sc-nobr). */
+@media (max-width: 40rem) {
+	.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+		padding-inline: 0.375rem;
+	}
+	.sl-markdown-content :is(th, td) code:not(:where(.not-content *)) {
+		padding-inline: 0.18em;
+	}
+	.sl-markdown-content th:not(:where(.not-content *)),
+	.sl-markdown-content td code:not(.sc-nobr):not(:where(.not-content *)) {
+		white-space: normal;
+	}
+}
+/* A cell that starts with a glyph (an inline SVG: reference/notation's "At a glance") keeps the glyph and its label
+ * on one line, as long as the glyph sits beside the label (below 40rem the page puts it above). */
+@media (min-width: 40rem) {
+	.sl-markdown-content td:has(> svg:first-child):not(:where(.not-content *)) {
+		white-space: nowrap;
+	}
+}
+/* Narrower still (a 390 px phone): a size smaller, and a long name or token (more than 16 characters without
+ * spaces) may break anywhere rather than push the table wider than the column. Code with spaces (.sc-words,
+ * astro.config.mjs) breaks only at its spaces; code of up to 12 characters (.sc-nobr) never breaks. */
+@media (max-width: 30rem) {
+	.sl-markdown-content table:not(:where(.not-content *)) {
+		font-size: 0.875rem;
+	}
+	.sl-markdown-content :is(th, td) code:not(.sc-nobr, .sc-words):not(:where(.not-content *)) {
+		overflow-wrap: anywhere;
+	}
+}
+
+/* ===== Asides ====================================================================================== */
+
+.starlight-aside {
+	border-radius: var(--radius-md);
+	border: 1px solid color-mix(in srgb, var(--sl-color-asides-border) 35%, transparent);
+	border-inline-start: 4px solid var(--sl-color-asides-border);
+	padding: 0.875rem 1.125rem 1rem;
+	color: var(--c-text);
+	max-width: var(--measure);
+}
+.starlight-aside__title {
+	font-size: var(--text-md);
+	font-weight: 700;
+	color: var(--sl-color-asides-text-accent);
+}
+.starlight-aside__icon {
+	font-size: 1.15em;
+}
+.starlight-aside__content {
+	font-size: var(--text-md);
+}
+.starlight-aside__content > * + * {
+	margin-top: 0.75rem;
+}
+.starlight-aside__content a {
+	color: var(--sl-color-asides-text-accent);
+}
+.starlight-aside--note {
+	--sl-color-asides-text-accent: var(--c-note-ink);
+	--sl-color-asides-border: var(--c-note-rule);
+	background-color: var(--c-note-bg);
+}
+/* Starlight draws tips in purple; in the guide purple is the accent (links, keywords), so a tip is
+ * green, like a termination: the good way through. */
+.starlight-aside--tip {
+	--sl-color-asides-text-accent: var(--c-tip-ink);
+	--sl-color-asides-border: var(--c-tip-rule);
+	background-color: var(--c-tip-bg);
+}
+.starlight-aside--caution {
+	--sl-color-asides-text-accent: var(--c-caution-ink);
+	--sl-color-asides-border: var(--c-caution-rule);
+	background-color: var(--c-caution-bg);
+}
+.starlight-aside--danger {
+	--sl-color-asides-text-accent: var(--c-danger-ink);
+	--sl-color-asides-border: var(--c-danger-rule);
+	background-color: var(--c-danger-bg);
+}
+
+/* ===== Tabs ======================================================================================== */
+
+starlight-tabs [role='tablist'] {
+	border-bottom: 1px solid var(--c-rule-strong);
+	gap: 0.25rem;
+}
+starlight-tabs .tab > [role='tab'] {
+	box-shadow: none;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -1px;
+	padding: 0.4rem 0.875rem;
+	color: var(--c-muted);
+	font-size: var(--text-sm);
+	font-weight: 600;
+}
+starlight-tabs .tab > [role='tab']:hover {
+	color: var(--c-ink);
+}
+starlight-tabs .tab [role='tab'][aria-selected='true'] {
+	color: var(--c-ink);
+	border-bottom-color: var(--c-accent-bright);
+	font-weight: 700;
+}
+
+/* ===== Steps: drawn as a chain of states ===========================================================
+ * Each step's number sits in a state; the first is an initial state (heavy outline), the last a final
+ * state (double outline), joined by the guideline like transitions. */
+
+.sl-steps > li::before {
+	color: var(--sc-state-text);
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	box-shadow: inset 0 0 0 1.5px var(--sc-state-stroke);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+.sl-steps > li:first-child::before {
+	box-shadow: inset 0 0 0 3px var(--sc-state-stroke);
+}
+.sl-steps > li:last-child:not(:first-child)::before {
+	box-shadow:
+		inset 0 0 0 1.5px var(--sc-state-stroke),
+		inset 0 0 0 3.5px var(--sc-state-fill),
+		inset 0 0 0 5px var(--sc-state-stroke);
+}
+.sl-steps > li::after {
+	width: 1.5px;
+	background-color: var(--sc-edge);
+	opacity: 0.55;
+}
+.sl-steps > li:last-child::after {
+	display: none;
+}
+
+/* ===== Details / summary in prose ================================================================== */
+
+.sl-markdown-content details:not(:where(.not-content *)) {
+	border: 1px solid var(--c-rule);
+	border-radius: var(--radius-md);
+	padding: 0.5rem 1rem;
+	background-color: var(--c-sheet);
+	max-width: var(--measure);
+}
+.sl-markdown-content details[open]:not(:where(.not-content *)) {
+	padding-bottom: 1rem;
+}
+/* On a phone a box loses less of the column to its padding (its tables and code need the width). */
+@media (max-width: 40rem) {
+	.sl-markdown-content details:not(:where(.not-content *)) {
+		padding-inline: 0.625rem;
+	}
+}
+.sl-markdown-content summary:not(:where(.not-content *)) {
+	font-weight: 700;
+	color: var(--c-ink);
+	cursor: pointer;
+}
+
+/* ===== Code blocks ================================================================================= */
+
+.sl-markdown-content .expressive-code {
+	max-width: 100%;
+}
+.expressive-code .frame .header {
+	font-weight: 600;
+}
+
+/* ===== Cards, link cards, badges, link buttons (Starlight user components) ======================== */
+
+.card.sl-flex {
+	border: 1px solid var(--c-rule);
+	border-radius: var(--radius-frame);
+	background-color: var(--c-sheet);
+	box-shadow: none;
+}
+.card .icon {
+	color: var(--c-accent);
+}
+.sl-link-card {
+	border: 1px solid var(--c-rule) !important;
+	border-radius: var(--radius-frame) !important;
+	background-color: var(--c-sheet) !important;
+	box-shadow: none !important;
+}
+.sl-link-card:hover {
+	border-color: var(--c-accent-bright) !important;
+}
+/* Badges: soft fills with dark text (light mode) or light text (dark mode), not white on a strong fill. */
+:root {
+	--sl-badge-default-border: var(--c-accent-bright);
+	--sl-badge-default-bg: var(--c-accent-soft);
+	--sl-badge-default-text: var(--c-accent);
+	--sl-badge-note-border: var(--c-note-rule);
+	--sl-badge-note-bg: var(--c-note-bg);
+	--sl-badge-note-text: var(--c-note-ink);
+	--sl-badge-tip-border: var(--c-tip-rule);
+	--sl-badge-tip-bg: var(--c-tip-bg);
+	--sl-badge-tip-text: var(--c-tip-ink);
+	--sl-badge-success-border: var(--c-tip-rule);
+	--sl-badge-success-bg: var(--c-tip-bg);
+	--sl-badge-success-text: var(--c-tip-ink);
+	--sl-badge-caution-border: var(--c-caution-rule);
+	--sl-badge-caution-bg: var(--c-caution-bg);
+	--sl-badge-caution-text: var(--c-caution-ink);
+	--sl-badge-danger-border: var(--c-danger-rule);
+	--sl-badge-danger-bg: var(--c-danger-bg);
+	--sl-badge-danger-text: var(--c-danger-ink);
+}
+.sl-badge {
+	font-family: var(--font-text);
+	font-weight: 700;
+	font-size: 0.8125em;
+	padding: 0.0625rem 0.5rem;
+	border-radius: var(--radius-capsule);
+	vertical-align: 0.0625em;
+}
+
+/* Starlight's <LinkButton>: capsules, like the guide's own buttons. */
+.sl-link-button {
+	border-radius: var(--radius-capsule) !important;
+	font-weight: 700 !important;
+}
+
+/* ===== Footer, pagination ========================================================================== */
+
+footer .meta {
+	color: var(--c-muted);
+}
+
+.pagination-links {
+	margin-top: var(--space-7);
+	gap: var(--space-4) !important;
+}
+.pagination-links > a {
+	border: 1px solid var(--c-rule-strong) !important;
+	border-radius: var(--radius-frame) !important;
+	box-shadow: none !important;
+	background-color: var(--c-sheet);
+	color: var(--c-muted) !important;
+	font-size: var(--text-sm);
+	padding: 0.875rem 1.125rem !important;
+	transition: border-color 0.12s;
+}
+.pagination-links > a:hover {
+	border-color: var(--c-accent-bright) !important;
+}
+.pagination-links > a .link-title {
+	font-size: var(--text-lg) !important;
+	font-weight: 700;
+	color: var(--c-ink) !important;
+	letter-spacing: -0.008em;
+	line-height: 1.25;
+}
+.pagination-links > a svg {
+	color: var(--c-muted);
+}
+.pagination-links > a:hover svg {
+	color: var(--c-accent);
+}
+
+/* ===== Buttons ===================================================================================== */
+
+/* Buttons used by the guide's components and pages. A button looks like a simple state: a capsule with
+ * KIELER's state gradient. The primary action looks like an initial state: the same capsule with a
+ * heavy outline. */
+.sc-btn {
+	--btn-border: 1.5px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	min-height: 2.5rem;
+	padding: 0.45rem 1.25rem;
+	border-radius: var(--radius-capsule);
+	border: var(--btn-border) solid var(--sc-state-stroke);
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	color: var(--sc-state-text);
+	font: inherit;
+	font-size: var(--text-md);
+	font-weight: 700;
+	line-height: 1.2;
+	text-decoration: none;
+	cursor: pointer;
+	white-space: nowrap;
+	transition:
+		box-shadow 0.15s,
+		transform 0.15s;
+}
+.sc-btn:hover {
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--sc-state-fill-end) 55%, transparent);
+	color: var(--sc-state-text);
+}
+.sc-btn:active {
+	transform: translateY(1px);
+}
+.sc-btn--initial {
+	--btn-border: 3px;
+	padding-inline: 1.375rem;
+}
+.sc-btn--quiet {
+	background: var(--c-sheet);
+	border-color: var(--c-control);
+	color: var(--c-ink);
+}
+.sc-btn--quiet:hover {
+	border-color: var(--c-accent-bright);
+	box-shadow: none;
+	color: var(--c-ink);
+}
+.sc-btn--sm {
+	min-height: 2rem;
+	padding: 0.25rem 0.875rem;
+	font-size: var(--text-sm);
+}
+.sc-btn--icon {
+	padding-inline: 0;
+	width: 2.25rem;
+	min-height: 2.25rem;
+}
+.sc-btn svg {
+	flex: none;
+}
+.sc-btn[disabled],
+.sc-btn[aria-disabled='true'] {
+	opacity: 0.5;
+	cursor: not-allowed;
+	box-shadow: none;
+	transform: none;
+}
+
+/* ===== Utilities =================================================================================== */
+
+.sc-visually-hidden {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+@media print {
+	header.header::after {
+		display: none;
+	}
+}
+
+/* ===== Landing page ================================================================================ */
+
+.sc-landing-h2 {
+	margin: 0;
+	font-size: var(--text-2xl);
+	font-weight: 700;
+	line-height: 1.15;
+	letter-spacing: -0.018em;
+	color: var(--c-ink);
+	text-wrap: balance;
+}

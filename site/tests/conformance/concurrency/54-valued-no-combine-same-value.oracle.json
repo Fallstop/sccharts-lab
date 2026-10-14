@@ -1,0 +1,78 @@
+{
+  "hash": "5e8d73c272dc10c8626876e0e3792c466b798262",
+  "chart": "tests/conformance/concurrency/54-valued-no-combine-same-value.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "V": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "V_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "V_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "V": false,
+        "V_val": 0,
+        "V_curval": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "V": true,
+        "V_val": 1,
+        "V_curval": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "V": false,
+        "V_val": 1,
+        "V_curval": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "kielerBug": "A chain a sfby b sfby c never yields c (observed: a, b, b, ...); the expansion in SequentialFollowedBy.xtend does not produce the sequence its name promises.",
+  "ticks": [
+    {
+      "inputs": {
+        "I": 1
+      },
+      "note": "First tick: both take their first operand: **two = 1** (I), **chain = 1**."
+    },
+    {
+      "inputs": {
+        "I": 2
+      },
+      "note": "**two = 20** (current I * 10), **chain = 2**."
+    },
+    {
+      "inputs": {
+        "I": 3
+      },
+      "note": "two follows the current I: **two = 30**. The chain is stuck: **chain = 2**, never 3."
+    },
+    {
+      "inputs": {
+        "I": 4
+      },
+      "note": "**two = 40, chain = 2**: the chain stays at its second value for ever."
+    }
+  ],
+  "expect": "ok"
+}

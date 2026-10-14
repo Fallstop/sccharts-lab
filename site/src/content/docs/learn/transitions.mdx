@@ -1,0 +1,300 @@
+---
+title: "Triggers, effects and priority"
+description: "When a transition fires, what it does on the way, and which one wins when several could fire at once."
+sidebar:
+  order: 3
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Every transition answers three questions. *When* may the chart leave this state? That is the
+trigger. *What* does it do on the way? Those are the effects. *Where* does it go? That is the target.
+In [the previous chapter](/learn/first-chart/) each state had a single transition with a simple
+trigger and one effect. Real controllers need more: conditions on numbers, several effects at once,
+and states with more than one way out. This chapter covers all of that.
+
+## Triggers
+
+A thermostat keeps a room warm without switching the heater on and off every few seconds. It turns
+the heater on when the room drops below 18 degrees, and off again only once it reaches 21. Between
+the two, it keeps doing whatever it was doing:
+
+<Sim example="learn/transitions/thermostat" caption="Compare ticks 3 and 5: the same temperature, 19 degrees, with the heater on in one and off in the other." />
+
+| Tick | `temperature` | State after | `heating` after |
+| ---: | --- | --- | --- |
+| 1 | 20 | Idle | false |
+| 2 | 17 | Heating | true |
+| 3 | 19 | Heating | true |
+| 4 | 21 | Idle | false |
+| 5 | 19 | Idle | false |
+
+A **trigger** is any condition you can write as a boolean expression over the chart's variables:
+inputs, outputs and, later in the guide, local variables. `temperature < 18` compares an `int` input
+with a number. You can combine conditions with `&&` (and), `||` (or) and `!` (not), and compare with
+`==`, `!=`, `<`, `<=`, `>` and `>=`. Arithmetic works too: `if a + b > 10`. The operators behave as
+they do in C; [Operators](/reference/operators/) lists them all, with their precedence.
+
+In each tick, the chart checks the triggers of the active state's transitions, with that tick's
+values. It never looks at the transitions of other states. That is why ticks 3 and 5 differ: in
+tick 3 the chart is in `Heating` and waits for `temperature >= 21`, in tick 5 it is in `Idle` and
+waits for `temperature < 18`, and 19 satisfies neither. The state is the chart's memory of what has
+happened so far.
+
+<Aside type="caution" title="An assignment in a trigger">
+`=` assigns and `==` compares, as in C. Writing `if temperature = 17` is a syntax error, and KIELER
+reports `no viable alternative at input '='`, followed by `mismatched input 'do' expecting 'to'` as
+the parser loses its way. Write `if temperature == 17`.
+</Aside>
+
+## Effects
+
+An **effect** is an assignment, written after `do`: `do heating = true`. It runs only when its
+transition fires, and it can use any expression on the right-hand side: `do average = (a + b) / 2`
+reads two variables and writes a third. A variable keeps its value until an effect writes it, which is
+why `heating` stays true for the whole time the thermostat is in `Heating`.
+
+A transition can also have no effect at all (`if fault go to Blocked`), or several.
+
+### Several effects
+
+Separate several effects with semicolons. They run **one after another, left to right**, and each one
+sees the values written by the effects before it.
+
+This chart records two readings: when `sample` is true it shifts the latest reading into `previous`
+and stores the new one in `latest`. The second chart is identical except for the order of its two
+effects. The guided tour feeds both the same inputs and samples twice, first a 5 and then an 8:
+
+<Compare a="learn/transitions/sampler" b="learn/transitions/sampler-swapped" scenario="learn/transitions/sampler-compare" caption="The same two effects in a different order: only `Sampler` ever remembers an older reading." />
+
+`reading` is 5 in tick 2 and 8 from tick 3 on. After each tick, `latest` is the same in both charts,
+but `previous` is not (*Swapped* is `SamplerSwapped`):
+
+| Tick | `sample` | `latest` | Sampler `previous` | Swapped `previous` |
+| ---: | --- | --- | --- | --- |
+| 1 | false | 0 | 0 | 0 |
+| 2 | true | 5 | 0 | 5 |
+| 3 | false | 5 | 0 | 5 |
+| 4 | true | 8 | 5 | 8 |
+| 5 | false | 8 | 5 | 8 |
+
+In `Sampler`, `previous = latest` runs first and copies the old value; then `latest = reading`
+overwrites `latest`. In `SamplerSwapped`, `latest = reading` runs first, so `previous = latest` copies
+the value that was written a moment earlier. There is no "all at once" assignment in SCCharts: the
+effects of a transition are a small sequential program, run top to bottom, all within the tick. (So
+`do a = b; b = a` does not swap `a` and `b`; both end up with `b`'s old value.) In the diagram, each
+effect of a transition gets its own line of the label.
+
+Both charts also have something you haven't seen yet: their transition leads from `Waiting` back to
+`Waiting`. That is a *self-loop*; it gets its own section below.
+
+<Aside type="caution" title="Punctuation in effect lists">
+A semicolon goes *between* effects, never after the last one.
+`do previous = latest; latest = reading; go to Waiting` gives `no viable alternative at input 'go'`. Commas don't separate effects either:
+`do previous = latest, latest = reading` gives `no viable alternative at input ','`.
+</Aside>
+
+## Several transitions out of one state: priority
+
+A pump starts when `start` is true, and must never run while a sensor reports a `fault`. So `Idle` has
+two transitions: one for the fault, one for starting. What should happen in a tick in which *both*
+inputs are true?
+
+SCCharts answers with **priority**. A state's outgoing transitions are tried in the order in which they
+are written: the first one whose trigger holds fires, and the others are ignored for this tick. Their
+effects do not run. In the diagram the order appears as a number in front of each label, `1:`,
+`2:` and so on. (KIELER only shows the numbers when a state has more than one outgoing transition.)
+
+Here are two pumps that differ only in the order of `Idle`'s two transitions. In tick 2 of the guided
+tour, `start` and `fault` both become true:
+
+<Compare a="learn/transitions/pump" b="learn/transitions/pump-start-first" scenario="learn/transitions/pump-compare" caption="Both inputs true in tick 2: `Pump` goes straight to `Blocked`, `PumpStartFirst` runs for one tick first." />
+
+Each chart's state after the tick (*StartFirst* is `PumpStartFirst`). In both, `pumping` is true
+exactly while the pump is in `Running`:
+
+| Tick | `start` | `fault` | Pump | StartFirst |
+| ---: | --- | --- | --- | --- |
+| 1 | false | false | Idle | Idle |
+| 2 | true | true | Blocked | Running |
+| 3 | true (held) | true (held) | Blocked | Blocked |
+
+In `Pump` the fault check is transition 1, so in tick 2 it wins and the pump never starts. In
+`PumpStartFirst` the start is transition 1: the pump starts in tick 2 despite the fault, and it takes
+until tick 3 for `Running`'s own fault check to stop it.
+
+Why not in tick 2 itself? Because `Running` was only entered in tick 2, and a state's transitions are
+checked from the tick after it was entered (you saw this for the initial state in
+[Thinking in ticks](/learn/ticks/)). So with the transitions you know so far, a chart moves **at most
+one step per tick**: one transition fires out of the active state, and the state it enters waits for
+the next tick. [Chapter 4](/learn/immediate/) shows how `immediate` transitions change that.
+
+The rule, precisely:
+
+- The transitions of a state have priorities 1, 2, 3, ... in the order they are written. There is no
+  other way to set a priority: to change it, reorder the lines.
+- In a tick, the first transition (in priority order) whose trigger holds is taken. At most one
+  transition leaves a state per tick, and only the taken transition's effects run.
+- If no trigger holds, nothing happens and the state stays active.
+
+When several conditions can hold at once, put the one that must win first. Safety checks, like
+`fault`, go at the top.
+
+## Self-loops
+
+A transition may lead back to the state it leaves: the samplers' `go to Waiting` does that. A
+**self-loop** is an ordinary transition whose target happens to be its source. When it fires, the
+chart **leaves the state**, runs the effects, and **enters the state again**.
+
+With what you know so far, a re-entered state looks just like a state that stayed active. The
+difference matters once states have more inside them: a re-entered state runs its entry actions
+again ([chapter 10](/learn/actions/)), and it resets the variables declared inside it and restarts the
+states nested inside it ([chapter 7](/learn/hierarchy/)). So use a self-loop when you mean "do this, and start this state over",
+and not merely to stay put.
+
+You never need a transition in order to stay in a state: a state with no enabled transition
+stays active. A transition like this one
+
+```sctx {2}
+initial state Off
+  if !button go to Off
+  if button do light = true go to On
+```
+
+is not harmless decoration. From tick 2 on it fires in every tick in which `button` is false, and each
+time the chart leaves `Off` and enters it again. Leave it out.
+
+## Transitions without a trigger
+
+A transition without a trigger, such as `go to Next` or `do x = 1 go to Next`, fires as soon as it is
+allowed to: in the first tick after its state was entered, every time. You saw this in the blinker of
+[Thinking in ticks](/learn/ticks/), which switched state in every tick.
+
+Because it is always enabled, a transition without a trigger is a good **last** transition of a state:
+it says "otherwise". In this stopwatch, `Running` first checks whether `stop` was pressed, and
+otherwise counts one tick and loops back. Its effect `elapsed++` adds one to `elapsed`; it is one of
+several assignment shorthands (`+=`, `-=` and friends) that [chapter 5](/learn/variables/) introduces
+properly.
+
+<Sim example="learn/transitions/stopwatch" caption="Watch which of `Running`'s two transitions fires: the self-loop counts, until `stop` takes priority in tick 6." />
+
+| Tick | `start` | `stop` | State after | `elapsed` after |
+| ---: | --- | --- | --- | --- |
+| 1 | false | false | Stopped | 0 |
+| 2 | true | false (held) | Running | 0 |
+| 3 | false | false (held) | Running | 1 |
+| 4 | false (held) | false (held) | Running | 2 |
+| 5 | false (held) | false (held) | Running | 3 |
+| 6 | false (held) | true | Stopped | 3 |
+| 7 | false (held) | false | Stopped | 3 |
+| 8 | true | false (held) | Running | 3 |
+| 9 | false | false (held) | Running | 4 |
+
+Three things to notice:
+
+- In tick 2 the stopwatch starts but does not count: `Running` was entered in that tick, so its
+  transitions wait until tick 3.
+- From tick 3 on, the self-loop fires in every tick, and `elapsed++` counts the ticks.
+- In tick 6 both of `Running`'s transitions could fire: `stop` is true, and the self-loop needs no
+  trigger at all. Transition 1 wins, so the chart stops, and the count does not run.
+
+[Chapter 10](/learn/actions/) shows a tidier way to do something in every tick while staying in a state.
+
+## When a transition can never fire
+
+Swap the two transitions of `Running` and the stopwatch can no longer be stopped:
+
+```sctx {3-4}
+state Running
+  do elapsed++ go to Running
+  if stop go to Stopped
+```
+
+The untriggered self-loop is now transition 1, and it is enabled in every tick, so transition 2 never
+gets a chance. KIELER notices and warns on the `if stop` line: `The transition is not reachable.`
+Try it: press `stop` in the simulation below and the count carries on.
+
+<Sim example="learn/transitions/stopwatch-unreachable" caption="`stop` is true from tick 4, and the stopwatch keeps counting." />
+
+<Aside type="caution" title="A default transition placed first">
+`The transition is not reachable.` is only a warning, so the chart compiles and runs, but it is almost
+always a bug: a transition without a trigger hides every transition after it. Move the transition
+without a trigger to the end. SCCharts Lab underlines the dead transition while you type.
+</Aside>
+
+KIELER's warning covers only this case, where an earlier transition has no trigger at all. It does not
+analyse your conditions. In
+
+```sctx
+initial state Start
+  if a || b do choice = 1 go to Done
+  if a do choice = 2 go to Done
+```
+
+the second transition can never fire either, since whenever `a` is true `a || b` is true as well, but
+the chart compiles without a word. When you order transitions, put the more specific condition first.
+
+## Try it
+
+<TryIt title="Close the window first" example="learn/transitions/thermostat" solution="learn/transitions/thermostat-window">
+Heating a room with the window open wastes energy. Add an input `bool windowOpen` to the thermostat.
+While the window is open, the heater must be off: it must not switch on, and if it is on when the window
+opens, it must switch off. Once the window is shut again, the thermostat works as before. Test it with
+the temperature at 17 while you open and shut the window.
+</TryIt>
+
+<TryIt title="A clear button" example="learn/transitions/stopwatch" solution="learn/transitions/stopwatch-clear">
+Add an input `clear` to the stopwatch. Pressing `clear` sets `elapsed` back to 0 and leaves the
+stopwatch in `Stopped`, whether it was running or not. If `clear` and `stop` are pressed in the same
+tick, `clear` should win. Think about where each new transition goes in its state's list.
+</TryIt>
+
+## Check your understanding
+
+<Predict example="learn/transitions/stopwatch-predict" ask={[{ tick: 4, value: 'elapsed' }, { tick: 6, state: 'Running' }, { tick: 7, state: 'Running' }]} caption="Inputs keep their values: look closely at `stop` in ticks 6 and 7." />
+
+<details>
+<summary>Explanation</summary>
+
+After tick 4, `elapsed` is 2: `Running` was entered in tick 2 and counted in ticks 3 and 4. In tick 5
+`stop` stops it. In tick 6 `start` is true while the chart is in `Stopped`. `Stopped` only looks at
+`start`, so the stopwatch starts, although `stop` is still switched on from tick 5: `Running` is
+active. In tick 7 `Running` checks `stop` first, finds it still true, and stops again without
+counting.
+
+</details>
+
+<Quiz
+  question="A transition fires with the effects `do x = 1; y = x + 1; x = 5`. Before the tick, `x` and `y` are both 0. What are they after it?"
+  options={['`x` is 5 and `y` is 6', '`x` is 5 and `y` is 2', '`x` is 1 and `y` is 2', '`x` is 5 and `y` is 1']}
+  answer={1}
+>
+The effects run left to right. `x = 1` writes 1; `y = x + 1` reads that 1 and writes 2; `x = 5`
+overwrites `x`. `y` is not recomputed when `x` changes later: an effect is an assignment, not an
+equation.
+</Quiz>
+
+<Quiz
+  question="`Idle` has two transitions: `if fault go to Blocked`, then `if start do pumping = true go to Running`. Both `fault` and `start` are true. What happens?"
+  options={['Both fire: `pumping` becomes true, and the chart ends in `Blocked`', 'Neither fires, because they conflict', 'Only the first transition fires, and `pumping` stays false']}
+  answer={2}
+>
+Transitions are tried in written order and the first enabled one wins. At most one transition leaves
+a state per tick, and the effects of the others do not run, so `pumping = true` never happens.
+</Quiz>
+
+<KeyIdeas>
+- A **trigger** is a boolean expression over the chart's variables. Only the active state's triggers
+  count, with the current tick's values.
+- An **effect** is an assignment. Several effects are separated by `;` and run left to right, each
+  seeing the writes before it.
+- A state's transitions are tried in written order; the first whose trigger holds fires, and only its
+  effects run. The diagram numbers them when there are several.
+- A transition without a trigger fires in the first tick after its state was entered. Put it last.
+- A self-loop leaves its state and enters it again. To stay in a state, you need no transition.
+- `The transition is not reachable.` means an untriggered transition is hiding the ones after it.
+</KeyIdeas>
+
+Next, [Delayed and immediate transitions](/learn/immediate/): why a chart takes at most one step per
+tick so far, and how `immediate` lets it take several.

@@ -1,0 +1,401 @@
+{
+  "hash": "d221f154aad0e0d3428ff772af773b083b154a30",
+  "chart": "src/examples/learn/causality/press-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "left": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "right": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "pos": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "strokes": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "left": false,
+        "right": false
+      },
+      "values": {
+        "left": false,
+        "right": false,
+        "pos": 0,
+        "strokes": 0,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "left": true
+      },
+      "values": {
+        "left": true,
+        "right": false,
+        "pos": 0,
+        "strokes": 0,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "right": true
+      },
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 0,
+        "strokes": 0,
+        "start": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 1,
+        "strokes": 0,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 2,
+        "strokes": 0,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 3,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 0,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 0,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 0,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "right": false
+      },
+      "values": {
+        "left": true,
+        "right": false,
+        "pos": 0,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "right": true
+      },
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 0,
+        "strokes": 1,
+        "start": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 1,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "left": false
+      },
+      "values": {
+        "left": false,
+        "right": true,
+        "pos": 1,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {},
+      "values": {
+        "left": false,
+        "right": true,
+        "pos": 0,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {
+        "left": true
+      },
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 0,
+        "strokes": 1,
+        "start": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 16,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 1,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 17,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 2,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 18,
+      "inputs": {
+        "right": false
+      },
+      "values": {
+        "left": true,
+        "right": false,
+        "pos": 2,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 19,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": false,
+        "pos": 0,
+        "strokes": 1,
+        "start": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "coin10": false,
+        "coin20": false
+      },
+      "note": "Tick 1 enters `Waiting`. This chart behaves exactly like `Vending`, but without the connector."
+    },
+    {
+      "inputs": {
+        "coin20": true
+      },
+      "note": "A 20c coin. The matching transition adds 20 to `credit` and goes to `Waiting`: without a connector, every coin needs its own pair of transitions, one that vends and one that does not."
+    },
+    {
+      "inputs": {
+        "coin20": false
+      },
+      "note": "No coin. `Waiting` waits."
+    },
+    {
+      "inputs": {
+        "coin10": true
+      },
+      "note": "A 10c coin with 20c of credit: the first 10c transition's guard, `credit + 10 >= 30`, holds, so it adds the coin, takes the price off and emits `vend`."
+    },
+    {
+      "inputs": {
+        "coin10": false
+      },
+      "note": "`vend` is a signal, so it is present only in the tick it was emitted."
+    },
+    {
+      "inputs": {
+        "coin20": true
+      },
+      "note": "20c again (`credit` = 20)."
+    },
+    {
+      "inputs": {
+        "coin20": false
+      },
+      "note": "No coin."
+    },
+    {
+      "inputs": {
+        "coin10": true,
+        "coin20": true
+      },
+      "note": "Both coins in one tick: the 20c transitions come first, and `credit + 20 >= 30` holds, so the machine vends and keeps 10c, exactly like `Vending`."
+    },
+    {
+      "inputs": {
+        "coin10": false,
+        "coin20": false
+      },
+      "note": "Back in `Waiting` with 10c of credit."
+    }
+  ],
+  "expect": "ok"
+}

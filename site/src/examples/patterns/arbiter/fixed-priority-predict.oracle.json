@@ -1,0 +1,135 @@
+{
+  "hash": "cf260f6e4fc2ef185b0bc2cbac9236d015a5271d",
+  "chart": "src/examples/patterns/arbiter/fixed-priority-predict.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "done": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "reqA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "reqB": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "user": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reqA": true,
+        "reqB": true,
+        "done": false
+      },
+      "values": {
+        "done": false,
+        "reqA": true,
+        "reqB": true,
+        "user": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "reqA": false
+      },
+      "values": {
+        "done": false,
+        "reqA": false,
+        "reqB": true,
+        "user": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "done": true,
+        "reqA": true
+      },
+      "values": {
+        "done": true,
+        "reqA": true,
+        "reqB": true,
+        "user": 1
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "done": false,
+        "reqA": false
+      },
+      "values": {
+        "done": false,
+        "reqA": false,
+        "reqB": true,
+        "user": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "reqA": false,
+        "reqB": true,
+        "user": 2
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

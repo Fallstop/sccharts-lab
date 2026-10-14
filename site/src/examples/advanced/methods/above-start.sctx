@@ -1,0 +1,8 @@
+scchart Above {
+  input int samples[4]
+  input int threshold
+  output int high = 0
+
+  initial state Measure
+    do high = 0 go to Measure
+}

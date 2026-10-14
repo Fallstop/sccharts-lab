@@ -1,0 +1,8 @@
+scchart Edges {
+  input bool button
+  output bool rise, fall, change
+
+  immediate during do rise = button && !pre(button)     // was up, is down
+  immediate during do fall = !button && pre(button)     // was down, is up
+  immediate during do change = button != pre(button)    // either
+}

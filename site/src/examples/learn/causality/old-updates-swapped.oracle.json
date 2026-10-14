@@ -1,0 +1,68 @@
+{
+  "hash": "89dd4d0f5a326a3502b84d0ce42ddf9f416e3e9c",
+  "chart": "src/examples/learn/causality/old-updates-swapped.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nWrite it as x *= 3 to say so. In one region it means the same.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 6,
+      "column": 10
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nWrite it as x += 2 to say so. In one region it means the same.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 12,
+      "column": 10
+    }
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 5
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 5
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

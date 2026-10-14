@@ -1,0 +1,14 @@
+scchart StairLight {
+  input bool button
+  output bool light
+
+  initial state Off
+    if button go to On
+
+  state On {
+    entry do light = true
+    exit do light = false
+  }
+  if button go to On
+  if 4 true go to Off
+}

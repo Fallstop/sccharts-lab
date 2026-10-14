@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: control passes through a connector in zero time, so it needs a way out."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Connector states must have an outgoing transition."
+}

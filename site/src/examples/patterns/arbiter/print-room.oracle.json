@@ -1,0 +1,360 @@
+{
+  "hash": "892ddaadba1e3d6421e4035eb380ce6e583f556c",
+  "chart": "src/examples/patterns/arbiter/print-room.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "done": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "jobA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "jobB": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "user": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "reqA": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "reqB": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "startA": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "startB": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "jobA": false,
+        "jobB": false,
+        "done": false
+      },
+      "values": {
+        "done": false,
+        "jobA": false,
+        "jobB": false,
+        "user": 0,
+        "reqA": false,
+        "reqB": false,
+        "startA": false,
+        "startB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "jobA": true
+      },
+      "values": {
+        "done": false,
+        "jobA": true,
+        "jobB": false,
+        "user": 1,
+        "reqA": true,
+        "reqB": false,
+        "startA": true,
+        "startB": false
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "jobA": false,
+        "jobB": true
+      },
+      "values": {
+        "done": false,
+        "jobA": false,
+        "jobB": true,
+        "user": 1,
+        "reqA": false,
+        "reqB": true,
+        "startA": false,
+        "startB": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "jobB": false
+      },
+      "values": {
+        "done": false,
+        "jobA": false,
+        "jobB": false,
+        "user": 1,
+        "reqA": false,
+        "reqB": true,
+        "startA": false,
+        "startB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "jobA": false,
+        "jobB": false,
+        "user": 2,
+        "reqA": false,
+        "reqB": true,
+        "startA": false,
+        "startB": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "done": false
+      },
+      "values": {
+        "done": false,
+        "jobA": false,
+        "jobB": false,
+        "user": 2,
+        "reqA": false,
+        "reqB": false,
+        "startA": false,
+        "startB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "jobA": true
+      },
+      "values": {
+        "done": false,
+        "jobA": true,
+        "jobB": false,
+        "user": 2,
+        "reqA": true,
+        "reqB": false,
+        "startA": false,
+        "startB": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "jobA": false
+      },
+      "values": {
+        "done": false,
+        "jobA": false,
+        "jobB": false,
+        "user": 2,
+        "reqA": true,
+        "reqB": false,
+        "startA": false,
+        "startB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "jobA": false,
+        "jobB": false,
+        "user": 1,
+        "reqA": true,
+        "reqB": false,
+        "startA": true,
+        "startB": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "done": false
+      },
+      "values": {
+        "done": false,
+        "jobA": false,
+        "jobB": false,
+        "user": 1,
+        "reqA": false,
+        "reqB": false,
+        "startA": false,
+        "startB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "jobA": false,
+        "jobB": false,
+        "user": 0,
+        "reqA": false,
+        "reqB": false,
+        "startA": false,
+        "startB": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

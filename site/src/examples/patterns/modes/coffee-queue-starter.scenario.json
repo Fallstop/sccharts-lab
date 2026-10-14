@@ -1,0 +1,51 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Tick 1."
+    },
+    {
+      "inputs": {
+        "clean": true
+      },
+      "note": "`clean`: cleaning starts at once."
+    },
+    {
+      "inputs": {
+        "clean": false,
+        "brew": true
+      },
+      "note": "`brew` during cleaning: the starter forgets it. Your version should remember it."
+    },
+    {
+      "inputs": {
+        "brew": false
+      },
+      "note": "Cleaning ends; `Serving` starts again."
+    },
+    {
+      "inputs": {},
+      "note": "Your version starts the remembered brew here: heater on."
+    },
+    {
+      "inputs": {},
+      "note": "(Your version: heating.)"
+    },
+    {
+      "inputs": {},
+      "note": "(Your version: pouring.)"
+    },
+    {
+      "inputs": {},
+      "note": "(Your version: the cup is done, `cups` is 1.)"
+    },
+    {
+      "inputs": {},
+      "note": "The starter has made no coffee at all."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,81 @@
+{
+  "hash": "5aa3eb6e0a02e95d480af59992c05e3dab37e534",
+  "chart": "tests/conformance/preemption/25-termination-beats-later-weak-abort.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "inX": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "inY": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "inX": 0,
+        "inY": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "inX": 0,
+        "inY": 1
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "inX": 0,
+        "inY": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

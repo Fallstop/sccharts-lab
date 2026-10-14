@@ -1,0 +1,28 @@
+{
+  "hash": "f8093b8b66ebc35babf7d57d58e100c1a15c74f2",
+  "chart": "tests/conformance/structure/135-err-protected-outside.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "6:12 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@535e1022{file:///tmp/sccharts-oracle-SUiAS8/m35/135-err-protected-outside.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@expression/@subReference}' must be set",
+    "Couldn't resolve reference to ValuedObject 'secret'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'secret'.",
+      "line": 6,
+      "column": 12,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@535e1022{file:///tmp/sccharts-oracle-SUiAS8/m35/135-err-protected-outside.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@expression/@subReference}' must be set",
+      "line": 6,
+      "column": 12,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

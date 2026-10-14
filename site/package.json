@@ -1,0 +1,45 @@
+{
+  "name": "sccharts-guide",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "A beginner-friendly, interactive guide to the SCCharts language (sccharts.jmw.nz)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "oracle": "node tools/oracle/oracle.mjs",
+    "oracle:record": "node tools/oracle/record.mjs"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.42.6",
+    "@astrojs/svelte": "9.0.1",
+    "@codemirror/autocomplete": "6.20.3",
+    "@codemirror/commands": "6.11.1",
+    "@codemirror/language": "6.13.1",
+    "@codemirror/lint": "6.9.7",
+    "@codemirror/search": "6.7.2",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.14",
+    "@fontsource-variable/archivo": "5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-mono": "5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "5.3.0",
+    "@lezer/highlight": "1.2.5",
+    "astro": "7.3.8",
+    "codemirror": "6.0.2",
+    "elkjs": "0.12.0",
+    "lz-string": "1.5.0",
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "4.13.0",
+    "@types/node": "26.6.5",
+    "playwright": "1.64.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3",
+    "vscode-jsonrpc": "9.0.3"
+  }
+}

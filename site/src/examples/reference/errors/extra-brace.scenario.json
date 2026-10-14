@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: the chart is already closed by the first `}` on its own line, so the last `}` has nothing to close."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "extraneous input '}' expecting EOF"
+}

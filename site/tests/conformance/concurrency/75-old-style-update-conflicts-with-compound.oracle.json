@@ -1,0 +1,27 @@
+{
+  "hash": "58f97d6f21dca42416f3e366e7746c14290842d6",
+  "chart": "tests/conformance/concurrency/75-old-style-update-conflicts-with-compound.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g2b to _g7b",
+    "Can't schedule from _g7b to _g2b",
+    "Can't schedule from _g2b to _g3",
+    "Can't schedule from _g7b to _g8",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving x prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through x.",
+    "Potential instantaneous loop through x."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nWrite it as x += 1 to say so. In one region it means the same.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 8,
+      "column": 8
+    }
+  ],
+  "ticks": []
+}

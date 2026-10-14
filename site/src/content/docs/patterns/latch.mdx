@@ -1,0 +1,194 @@
+---
+title: "Latches"
+description: "Remembering a request until it has been served, with one writer per variable, and deciding what happens when a request and its service coincide."
+sidebar:
+  order: 5
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A request is often over long before anyone can act on it. You press a lift's call button for a fraction
+of a second; the lift may take half a minute to come. Something has to remember that the button was
+pressed, show it (the lamp in the button), and forget it again once the lift has arrived. That
+something is a **latch**: it is *set* by a request and *reset* by the service.
+
+This page builds a latch for a lift call button, looks at the two questions every latch has to answer
+(who wins when a request and its service arrive in the same tick, and who may write the remembered
+value), and shows the same latch as a one-line equation.
+
+## A latch with two states
+
+The memory is a state. `Idle` means "no call", `Waiting` means "a call is registered". The lamp is on
+exactly while `Waiting` is active, thanks to its entry and exit actions:
+
+<Sim example="patterns/latch/call-button" caption="The press in tick 2 lasts one tick; the lamp stays on until the lift arrives in tick 7. Then watch ticks 8 and 9." />
+
+The press in tick 2 lasts a single tick, but the chart stays in `Waiting` until `arrived`, so the lamp
+stays on. A second press while waiting (tick 5) changes nothing, because `Waiting` has no transition that
+looks at the button. That is usually what you want: a lift call is either registered or it is not.
+
+Ticks 8 and 9 show a flaw. The lift is standing at the floor with its doors open when somebody presses
+the button. `Idle` sees the press and registers a call, and in the next tick, the doors still being open,
+`Waiting` serves it again. The lamp flashes for one tick, for a call that never needed registering.
+
+## When the request and the service coincide
+
+Every latch has to decide what happens when the set and the reset arrive together. There are two
+places where they can meet:
+
+- **In `Idle`**: a press while the lift is already here. The press is served at once, so it should not
+  be registered: `if button && !arrived go to Waiting`.
+- **In `Waiting`**: the lift arrives in the very tick someone presses again. The lift is here, so this
+  press is served together with the call that was waiting: `if arrived go to Idle` stays as it is.
+
+<Compare a="patterns/latch/call-button" b="patterns/latch/call-button-fixed" scenario="b" caption="Tick 8: a press while the doors are open. Only the fixed version leaves the lamp off." />
+
+**First** and **Fixed** are `lamp` in `CallButton` and in `CallButtonFixed`:
+
+| Tick | Inputs | First | Fixed |
+| ---: | --- | --- | --- |
+| 7 | `arrived` | false | false |
+| 8 | `button`, `arrived` (held) | true | false |
+| 9 | `arrived` (held) | false | false |
+| 13 | `button`, `arrived` | false | false |
+
+Here the reset wins in both places. That is right for a lift, but it is a decision, not a law. A latch
+whose reset wins is called **reset-dominant**; one whose set wins is **set-dominant**.
+
+### A latch where the set must win
+
+Think of an alarm that a fault switches on and an operator acknowledges with `ack`. If the operator
+acknowledges while the fault is still present, a reset-dominant latch switches the alarm off, and the
+still-present fault switches it straight back on in the next tick. The acknowledgement is wasted, and the
+alarm flickers. A set-dominant latch refuses the acknowledgement for as long as the fault lasts:
+
+<Compare a="patterns/latch/alarm-reset-wins" b="patterns/latch/alarm-set-wins" scenario="b" caption="Tick 3: `ack` while the fault is still present. The reset-dominant alarm goes off and comes back; the set-dominant one stays on." />
+
+In both charts the alarm stays latched after the fault itself has gone (tick 5): the operator must still
+acknowledge it. That is the point of a latch.
+
+In SCCharts, *who wins* is decided by the triggers you write, and by priority when several transitions
+of one state are enabled together: the transition written first is taken. So decide the coincidence
+explicitly, and put a tick in your test scenario where the two arrive together.
+
+## One writer per variable
+
+So far one region does all the work. It is tempting to split it: one region that switches the lamp on
+when the button is pressed, another that switches it off when the lift arrives. KIELER refuses:
+
+<Sim example="patterns/latch/two-writers" caption="KIELER rejects this chart: two concurrent regions write `lamp`." />
+
+Official KIELER reports `Can't schedule from …` (several times) and `The SCG is NOT asc-schedulable!`;
+SCCharts Lab adds the readable version:
+
+```text wrap
+Circular dependency involving lamp prevents scheduling this tick.
+```
+
+Two concurrent regions may not write different values to the same variable, and KIELER checks that
+without looking at the triggers: it does not matter that `button` and `arrived` might never be true
+together. ([Why the compiler says no](/learn/causality/) explains the rule and its exceptions; writing
+the *same* value from several regions, `lamp = true` and `lamp = true`, is allowed.)
+
+The cure is a principle worth adopting everywhere: **every variable has exactly one owner**, the one
+region that writes it. Other regions do not write the variable; they send requests to its owner, and a
+signal is the natural way to send one:
+
+<Sim example="patterns/latch/one-owner" caption="Two buttons, one owner: `Hall` and `Car` emit `request`, and only `Latch` writes `lamp`." />
+
+`Hall` and `Car` each emit `request`, and several regions may emit the same signal in one tick (tick
+7): a signal is present if anyone emits it. `Latch` reads `request` in the same tick, after every
+emission, and owns `lamp` alone. The owner is also the one place where the coincidence rules live, which
+is a good reason to keep it that way. A shared device works the same way: the
+[arbiter](/patterns/arbiter/) that hands a printer to one computer at a time is the one owner of the
+variable that says who has it.
+
+## The latch as an equation
+
+If you have met latches in digital logic, you may prefer to write one as an equation. The lamp is on if
+it was on in the previous tick or the button is pressed, unless the lift is here:
+
+<Sim example="patterns/latch/latch-equation" caption="Tick for tick the same as `CallButtonFixed` for these inputs." />
+
+`pre(lamp)` is the lamp's value at the end of the previous tick, so the equation holds the lamp on from
+one tick to the next; `&& !arrived` makes it reset-dominant. To make it set-dominant, move the button
+outside: `lamp = button || (pre(lamp) && !arrived)`. The two equations differ only in a tick where a
+press and the lift come together:
+
+<Compare a="patterns/latch/latch-equation" b="patterns/latch/latch-equation-set" scenario="b" caption="Tick 4: a press while the lift is here. The reset-dominant `LatchEquation` keeps the lamp off; the set-dominant `LatchEquationSet` keeps it on." />
+
+The equation is compact, and it is easy to get the dominance wrong by moving a bracket. The two-state
+version is easier to extend, for example with a state for "lamp blinking because the lift is on its
+way". There is one more difference: the equation runs in an `immediate during` action, so it already
+reacts to a press in tick 1, whereas the delayed transition out of `Idle` does not.
+
+## Try it
+
+<TryIt example="patterns/latch/two-floors-starter" solution="patterns/latch/two-floors" title="Two floors">
+The starter registers calls on floor 1. Extend it to floor 2, with its own button, lamp and arrival
+input (`button2`, `lamp2`, `at2`). The two calls must be independent: serving floor 1 must not clear the
+call on floor 2. Keep one writer per lamp. To test it: a call on floor 1 in tick 2 and on floor 2 in
+tick 3; the lift at floor 1 in tick 5 clears `lamp1` only, and at floor 2 in tick 7 clears `lamp2`.
+</TryIt>
+
+<TryIt example="patterns/latch/queue-starter" solution="patterns/latch/queue" title="Take a number">
+A latch remembers one request. A queue counter remembers how many: customers take tickets (`take`),
+the counter calls them (`serve`), and `waiting` says how many are waiting. The starter forgets a
+service when `take` and `serve` arrive in the same tick: it counts the new ticket and ignores the
+call. Fix it, and make sure that `serve` with nobody waiting changes nothing. To test it: `take` in
+ticks 2 and 4 and `serve` in tick 6 leave `waiting` at 1; `take` and `serve` together in tick 8
+should keep it at 1 (the starter says 2); `serve` in ticks 10 and 12 should give 0, then still 0.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/latch/call-button-predict"
+  ask={[{ tick: 4, value: 'lamp' }, { tick: 6, value: 'lamp' }, { tick: 7, value: 'lamp' }]}
+  caption="`CallButtonFixed`, from the comparison above. In tick 4 a press comes together with the lift; in tick 6 someone presses while the doors are open, and holds the button as the lift leaves in tick 7. Is the lamp on after ticks 4, 6 and 7?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+The lamp is off after ticks 4 and 6 and on after tick 7. In tick 4 the press comes with the lift:
+`Waiting` looks only at `arrived`, so the call is served and the exit action switches the lamp off. In
+tick 6 the doors are open, and `Idle`'s `if button && !arrived` is false. In tick 7 the lift leaves
+while the button is still held: now `button && !arrived` holds, and the call is registered.
+
+</details>
+
+<Quiz
+  question="An alarm is latched with an equation. Which one is set-dominant, so that a fault wins over an acknowledgement in the same tick?"
+  options={['`alarm = (pre(alarm) || fault) && !ack`', '`alarm = pre(alarm) || fault || !ack`', '`alarm = fault || (pre(alarm) && !ack)`']}
+  answer={2}
+>
+With `fault` outside the bracket, a fault switches the alarm on whatever `ack` says, and `ack` can only
+clear an alarm that is held from the previous tick. The first equation is reset-dominant: `&& !ack`
+switches the alarm off even while the fault lasts. The third is no latch at all: with `|| !ack` the
+alarm is on in every tick without an acknowledgement.
+</Quiz>
+
+<Quiz
+  question="Two regions both contain a transition with the effect `alarm = true`, triggered by different sensors. A third region resets the alarm with `alarm = false`. What does KIELER say?"
+  options={['It rejects the chart: concurrent regions write different values', 'It accepts the chart: the writes happen in different ticks', 'It accepts the chart: `true` and `false` are constants']}
+  answer={0}
+>
+The two `alarm = true` writes agree and would be accepted on their own. But `alarm = false` in a
+concurrent region writes a different value, and KIELER rejects that, whatever the triggers say. Give
+`alarm` one owner and let the other regions emit signals to it.
+</Quiz>
+
+<KeyIdeas>
+- A latch remembers a request until it is served. A state is the simplest memory; entry and exit
+  actions keep an output in step with it.
+- Decide what happens when the request and the service arrive in the same tick (reset-dominant or
+  set-dominant), write the decision into the triggers, and test that tick.
+- One writer per variable: concurrent regions may not assign different values to the same variable, even
+  if they never do it in the same tick. Send requests to the owner with signals.
+- `x = (pre(x) || set) && !reset` is a reset-dominant latch in one line; `x = set || (pre(x) && !reset)`
+  is set-dominant.
+</KeyIdeas>
+
+Next, [Mode switching](/patterns/modes/): leaving one mode for another without cutting a job short.

@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "S is entered and its local c gets its default value 0 (c has no initialiser). seen = 0."},
+    {"inputs": {"I": true}, "note": "The inner self-loop fires (c = 1, seen = 1) and, in the same tick, the outer weak abort S -> T fires too: a weak abort lets the inner behaviour run first. taken = [1, 1, 0]: S's own transition has index 0, then the transitions inside S, then T's."},
+    {"inputs": {"I": false}, "note": "T waits; seen stays 1."},
+    {"inputs": {"I": true}, "note": "T -> S re-enters S: c is set back to 0, even though it was never written by an initialiser. seen = 1."},
+    {"inputs": {"I": false}, "note": "The inner self-loop fires: c = 1 again, so seen = 1 (it would be 2 if c had kept its value)."},
+    {"inputs": {}, "note": "The inner self-loop fires again: c = 2, seen = 2."}
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Tick 1 enters A; the self-loop is delayed, x = 0."},
+    {"inputs": {}, "note": "The self-loop fires: x = 1. It leaves A and enters A again, so in the next tick the delayed self-loop can fire again."},
+    {"inputs": {}, "note": "The self-loop fires again: x = 2."},
+    {"inputs": {}, "note": "x = 3: a delayed self-loop without trigger fires in every tick from tick 2 on."}
+  ],
+  "expect": "ok"
+}

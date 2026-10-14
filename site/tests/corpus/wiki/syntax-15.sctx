@@ -1,0 +1,12 @@
+scchart Suspension {
+  input bool S1, S2, S3, S4
+  output int O = 0
+  
+  suspend if S1
+  immediate suspend if S2
+  weak suspend if S3
+  immediate weak suspend if S3
+  
+  initial state A
+    do O++ go to A
+}

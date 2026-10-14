@@ -1,0 +1,6 @@
+scchart Retry {
+  output int tries = 0
+
+  initial state Try
+    immediate if tries < 3 do tries++ go to Try
+}

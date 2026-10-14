@@ -1,0 +1,6 @@
+scchart CaretPlain {
+  input bool A
+  output int ^count = 0
+  initial state S
+    if A do ^count++ go to S
+}

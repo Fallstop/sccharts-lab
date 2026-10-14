@@ -1,0 +1,23 @@
+// period guards every action inside the state, entry actions included, so even the initial inner state's entry
+// action waits for the first period. "immediate period" lets the contents run in the tick the state is entered.
+scchart St72Guards {
+  output int e1 = 0, n1 = 0, e2 = 0, n2 = 0
+  region {
+    initial state Plain {
+      period 300
+      initial state A {
+        entry do e1++
+      }
+      do n1++ go to A
+    }
+  }
+  region {
+    initial state Immediate {
+      immediate period 300
+      initial state A {
+        entry do e2++
+      }
+      do n2++ go to A
+    }
+  }
+}

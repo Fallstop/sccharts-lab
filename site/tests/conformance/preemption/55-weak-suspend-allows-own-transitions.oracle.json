@@ -1,0 +1,78 @@
+{
+  "hash": "8f833f33ef832b65108e481576fcc129c6d12bfb",
+  "chart": "tests/conformance/preemption/55-weak-suspend-allows-own-transitions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "left": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "S": false,
+        "left": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": true,
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "S": true,
+        "left": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": false,
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "S": false,
+        "left": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

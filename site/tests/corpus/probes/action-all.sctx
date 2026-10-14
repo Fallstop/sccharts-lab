@@ -1,0 +1,26 @@
+scchart P152 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0 {
+    entry do O = 1
+    entry if A do O = 2
+    during do O++
+    immediate during if B do O--
+    during if 2 A do O = 0
+    exit do X = false
+    exit if A do X = true label "x"
+    suspend if A
+    immediate suspend if B
+    weak suspend if A
+    immediate weak suspend if B
+    weak entry do O = 3
+    strong exit do O = 4
+    period 2.5
+    ode O = 1
+    initial state I
+  }
+}

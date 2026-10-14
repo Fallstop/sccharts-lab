@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false }, "note": "Tick 1: the inside of `Prepare` reaches `Ready`, but the `suspend` adds a condition to `Prepare`'s termination, and a termination with a condition is delayed. `heater` stays false, although the door is shut." },
+    { "note": "One tick late, `Prepare` terminates: `heater` = true." },
+    { "note": "In `Heating`." }
+  ],
+  "expect": "ok"
+}

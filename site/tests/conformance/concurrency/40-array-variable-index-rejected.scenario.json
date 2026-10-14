@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "i": 0
+      },
+      "note": "`a[i] = 1` might hit the same cell as `a[1] = 2`, so KIELER treats it as a conflicting write to the whole array: rejected as \"NOT asc-schedulable\"."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

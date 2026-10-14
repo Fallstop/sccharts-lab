@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "The chart starts in Start; A is false, so Start → R does not fire: taken = [0, 0]."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Start → R fires (taken[0] = 1); the instance is entered, its delayed transition waits: **X = false**."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "The instance sets X = true and the weak abort R → Done, evaluated afterwards, fires in the same tick: **X = true**, taken[1] = 1. The instance's own transition is not counted."
+    }
+  ],
+  "expect": "ok"
+}

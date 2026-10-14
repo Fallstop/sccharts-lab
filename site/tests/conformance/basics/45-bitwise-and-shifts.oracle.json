@@ -1,0 +1,129 @@
+{
+  "hash": "74c30eb63cc96d40d1751783811730c5736c45b9",
+  "chart": "tests/conformance/basics/45-bitwise-and-shifts.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "and": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "neg": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "not": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "or": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "shl": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "shr": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "xor": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 12,
+        "B": 10
+      },
+      "values": {
+        "A": 12,
+        "B": 10,
+        "and": 0,
+        "neg": 0,
+        "not": 0,
+        "or": 0,
+        "shl": 0,
+        "shr": 0,
+        "xor": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": 12,
+        "B": 10,
+        "and": 8,
+        "neg": -12,
+        "not": -13,
+        "or": 14,
+        "shl": 48,
+        "shr": -6,
+        "xor": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": 1,
+        "B": 3
+      },
+      "values": {
+        "A": 1,
+        "B": 3,
+        "and": 1,
+        "neg": -1,
+        "not": -2,
+        "or": 3,
+        "shl": 4,
+        "shr": -1,
+        "xor": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

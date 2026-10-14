@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "stop": false,
+        "pause": false,
+        "A": false
+      },
+      "note": "Tick 1 enters `Run` and its initial state `Work`."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A` is true: `Work` goes to the final state `Finished`. The only region of `Run` is now final, so the termination (green triangle, `join to`) fires in the same tick and the chart goes to `Complete`."
+    }
+  ],
+  "expect": "ok"
+}

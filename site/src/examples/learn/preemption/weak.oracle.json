@@ -1,0 +1,146 @@
+{
+  "hash": "07129c21f49ffe6c5ddcb93d5c6ee8a1956add5e",
+  "chart": "src/examples/learn/preemption/weak.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "cancel": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "sheet": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "printed": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "sheet": false,
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "sheet": false,
+        "start": false,
+        "printed": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "cancel": false,
+        "sheet": false,
+        "start": true,
+        "printed": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false,
+        "sheet": true
+      },
+      "values": {
+        "cancel": false,
+        "sheet": true,
+        "start": false,
+        "printed": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "cancel": false,
+        "sheet": true,
+        "start": false,
+        "printed": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "cancel": true
+      },
+      "values": {
+        "cancel": true,
+        "sheet": true,
+        "start": false,
+        "printed": 3
+      },
+      "taken": [
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "cancel": false,
+        "sheet": false
+      },
+      "values": {
+        "cancel": false,
+        "sheet": false,
+        "start": false,
+        "printed": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+// Four self-loops on a state by itself (advanced/connectors): one on each side, each label beside its loop.
+scchart VendingWithout {
+  input bool coin10, coin20
+  output signal vend
+  output int credit = 0
+
+  initial state Waiting
+    if coin20 && credit + 20 >= 30 do credit += 20; credit -= 30; vend go to Waiting
+    if coin20 do credit += 20 go to Waiting
+    if coin10 && credit + 10 >= 30 do credit += 10; credit -= 30; vend go to Waiting
+    if coin10 do credit += 10 go to Waiting
+}

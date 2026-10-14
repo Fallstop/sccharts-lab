@@ -1,0 +1,89 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "sensor": false
+      },
+      "note": "Tick 1: empty box."
+    },
+    {
+      "inputs": {
+        "sensor": true
+      },
+      "note": "An item passes the sensor: 1."
+    },
+    {
+      "inputs": {
+        "sensor": false
+      },
+      "note": "Gap."
+    },
+    {
+      "inputs": {
+        "sensor": true
+      },
+      "note": "Item: 2."
+    },
+    {
+      "inputs": {
+        "sensor": true
+      },
+      "note": "The same item is still in front of the sensor: no new edge."
+    },
+    {
+      "inputs": {
+        "sensor": false
+      },
+      "note": "Gap."
+    },
+    {
+      "inputs": {
+        "sensor": true
+      },
+      "note": "Item: 3."
+    },
+    {
+      "inputs": {
+        "sensor": false
+      },
+      "note": "Gap."
+    },
+    {
+      "inputs": {
+        "sensor": true
+      },
+      "note": "Item: 4. Your version should emit `boxFull` here and start a new box."
+    },
+    {
+      "inputs": {
+        "sensor": false
+      },
+      "note": "Gap."
+    },
+    {
+      "inputs": {
+        "sensor": true
+      },
+      "note": "Item: the starter keeps counting."
+    },
+    {
+      "inputs": {
+        "sensor": false
+      },
+      "note": "Gap."
+    },
+    {
+      "inputs": {
+        "sensor": true
+      },
+      "note": "Item."
+    },
+    {
+      "inputs": {
+        "sensor": false
+      },
+      "note": "Gap."
+    }
+  ],
+  "expect": "ok"
+}

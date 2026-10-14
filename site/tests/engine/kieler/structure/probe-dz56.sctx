@@ -1,0 +1,9 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz56 {
+  input float deltaT
+  output float sleepT
+  output int n = 0
+  clock t
+  initial state W
+  if t >= 1.5 do n++; t = 0 go to W
+}

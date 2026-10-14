@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "An `abort region` (netlist compilation only; the priority-based compiler rejects it) terminates its parent as soon as it reaches a final state, whatever the other regions do."
+    },
+    {
+      "inputs": {},
+      "note": "work = 1."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Watch reaches F: M terminates in this tick, after Main has run once more (work = 2, done = 1)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

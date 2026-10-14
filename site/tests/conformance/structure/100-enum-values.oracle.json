@@ -1,0 +1,100 @@
+{
+  "hash": "d5754c443b29edbd340a65b47fc655367d1118ff",
+  "chart": "tests/conformance/structure/100-enum-values.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "isGreen": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "c": {
+      "type": "int",
+      "properties": [
+        "enum"
+      ]
+    },
+    "d": {
+      "type": "int",
+      "properties": [
+        "enum"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "isGreen": false,
+        "n": 0,
+        "c": 2,
+        "d": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "isGreen": false,
+        "n": 1,
+        "c": 0,
+        "d": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "isGreen": false,
+        "n": 2,
+        "c": 1,
+        "d": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "isGreen": true,
+        "n": 2,
+        "c": 1,
+        "d": 0
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

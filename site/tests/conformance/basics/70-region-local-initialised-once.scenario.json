@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "A variable declared inside a region belongs to the region's parent: it is initialised when the parent is entered (here the root, in tick 1), not each time the region's initial state is entered. seen = 0."},
+    {"inputs": {}, "note": "A -> B: c = 1, seen = 1."},
+    {"inputs": {}, "note": "B -> A: c = 11, seen = 11."},
+    {"inputs": {}, "note": "A is entered again but c is not reset: c = 12, seen = 12."},
+    {"inputs": {}, "note": "B -> A: c = 22, seen = 22."}
+  ],
+  "expect": "ok"
+}

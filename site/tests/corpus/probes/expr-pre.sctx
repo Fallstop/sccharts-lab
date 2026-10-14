@@ -1,0 +1,12 @@
+scchart P173 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0
+  if pre(A) && pre(pre(B)) || pre(val(V)) == 1 || val(pre(V)) > 0 || pre(I, O) > 0 go to S1
+  state S1
+
+}

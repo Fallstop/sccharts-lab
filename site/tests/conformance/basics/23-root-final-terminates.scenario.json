@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "Tick 1 enters A; its transition is delayed. x = 0, not terminated."},
+    {"inputs": {}, "note": "The transition into the final state B runs its effect (x = 1). Every region of the root is now in a final state, so the root terminates: terminated (_TERM) is true in this tick."},
+    {"inputs": {"I": true}, "note": "After termination nothing reacts any more. _TERM is false again: it marks only the tick in which the root terminated. x keeps its value 1."},
+    {"inputs": {}, "note": "Still nothing; x = 1, terminated = false."}
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,8 @@
+scchart MixedTypes {
+  input int level
+  output bool high
+
+  dataflow {
+    high = false -> (level > 3)
+  }
+}

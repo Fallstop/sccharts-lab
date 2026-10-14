@@ -1,0 +1,173 @@
+{
+  "hash": "6a1f71f8b5543dd62c190e6e94b625d27e860afc",
+  "chart": "tests/engine/kieler/structure/probe-dz01.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "S": false,
+        "x": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "S": false,
+        "x": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "S": false,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "S": false,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "S": true,
+        "x": 4
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "S": true,
+        "x": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "S": false,
+        "x": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "S": false,
+        "x": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

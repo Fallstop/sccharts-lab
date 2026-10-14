@@ -1,0 +1,15 @@
+{
+  "needs": [
+    "c-hostcode"
+  ],
+  "ticks": [
+    {
+      "inputs": {
+        "a": 1
+      },
+      "note": "Rejected by gcc: \"redefinition of ‘twice’\"."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "redefinition of"
+}

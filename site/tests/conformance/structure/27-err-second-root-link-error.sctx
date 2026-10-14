@@ -1,0 +1,13 @@
+// Only the first chart is compiled, but the whole file is parsed, linked and validated: an unknown variable in
+// the second chart rejects the file. (Scheduling problems in the second chart, by contrast, go unnoticed.)
+scchart St27First {
+  output int o = 0
+  initial state S
+  do o++ go to S
+}
+
+scchart St27Second {
+  output int p
+  initial state S
+  do q = 1 go to S
+}

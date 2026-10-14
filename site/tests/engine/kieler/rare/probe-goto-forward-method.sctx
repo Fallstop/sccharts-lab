@@ -1,0 +1,17 @@
+// A forward goto in an inlined method.
+scchart GotoForwardMethod {
+  input bool skip
+  output int a = 0, b = 0
+
+  method void step() {
+    if (skip) {
+      goto done
+    }
+    a++;
+    done:
+    b++
+  }
+
+  initial state S
+    if true do step() go to S
+}

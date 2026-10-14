@@ -1,0 +1,131 @@
+{
+  "hash": "6b0923c2bd744ec40570b88d3a8b19cc5297e142",
+  "chart": "src/examples/learn/variables/divide.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "quotient": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "remainder": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": 7,
+        "b": 2
+      },
+      "values": {
+        "a": 7,
+        "b": 2,
+        "quotient": 0,
+        "remainder": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": 7,
+        "b": 2,
+        "quotient": 3,
+        "remainder": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": -7
+      },
+      "values": {
+        "a": -7,
+        "b": 2,
+        "quotient": -3,
+        "remainder": -1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "b": -2
+      },
+      "values": {
+        "a": -7,
+        "b": -2,
+        "quotient": 3,
+        "remainder": -1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": 7
+      },
+      "values": {
+        "a": 7,
+        "b": -2,
+        "quotient": -3,
+        "remainder": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "b": 0
+      },
+      "values": {
+        "a": 7,
+        "b": 0,
+        "quotient": -3,
+        "remainder": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

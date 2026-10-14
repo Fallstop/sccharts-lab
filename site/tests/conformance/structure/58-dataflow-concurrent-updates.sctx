@@ -1,0 +1,17 @@
+// Several equations may update one variable when KIELER considers the updates commuting: old-style updates
+// (`X = X <op> e`, all with operator `=`) with each other, applied in textual order; `+=` with `+=`; and an
+// absolute write followed by updates (initialise, then update).
+scchart St58Updates {
+  input int I
+  output int X = 1, Y = 1, Z = 0, W = 0
+  dataflow {
+    X = X * 2
+    X = X + 3
+    Y = Y + 3
+    Y = Y * 2
+    Z += I
+    Z += 2
+    W = I
+    W = W * 10
+  }
+}

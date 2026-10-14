@@ -1,0 +1,13 @@
+scchart NestedFor {
+  output int sum = 0
+
+  region for i : 1 to 2 {
+    initial state Row {
+      region for j : 1 to 3 {
+        initial state W
+          immediate do sum += j go to D
+        final state D
+      }
+    }
+  }
+}

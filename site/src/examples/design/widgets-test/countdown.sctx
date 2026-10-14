@@ -1,0 +1,13 @@
+scchart Countdown {
+  input bool start
+  output int n = 3
+
+  initial state Idle
+    if start go to Running
+
+  state Running
+    if n == 1 do n = 0 go to Finished
+    if start do n-- go to Running
+
+  final state Finished
+}

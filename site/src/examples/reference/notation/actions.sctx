@@ -1,0 +1,14 @@
+scchart Actions {
+  input bool A
+  output int entered, ticks, left
+
+  initial state Busy {
+    entry do entered++
+    immediate during do ticks++
+    exit do left++
+  }
+  if A go to Idle
+
+  state Idle
+    if A go to Busy
+}

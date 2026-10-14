@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "stop": false
+      },
+      "note": "Tick 1 enters `Stopped`."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Started: `Running`."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "The untriggered transition is first, so it fires: 1."
+    },
+    {
+      "inputs": {
+        "stop": true
+      },
+      "note": "`stop` is pressed, but transition 1 has no trigger and always wins. Transition 2 is never even checked: `elapsed` is 2 and the stopwatch keeps running."
+    },
+    {
+      "note": "Still running: 3. There is no way to stop it."
+    }
+  ],
+  "expect": "ok"
+}

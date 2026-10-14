@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beat": false,
+        "demand": false
+      },
+      "note": "KIELER rejects this chart: the abort out of `Running` reads `expired`, which the watchdog emits inside `Running` on a transition with a count delay, and KIELER cannot put the two in an order."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

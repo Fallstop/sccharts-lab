@@ -1,0 +1,13 @@
+scchart SimpleTimes {
+  clock c
+    
+  initial state A
+  if c >= 5 do c = 0 go to B 
+  
+  /** Will be reached at time T+5 */
+  state B
+  if c >= 10 go to C
+
+  /** Will be reached at time T+15 */
+  final state C
+}

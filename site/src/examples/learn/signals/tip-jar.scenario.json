@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": { "tip": false, "amount": 0 },
+      "note": "Tick 1 enters `Open`. Nothing is emitted: `received` is absent with its initial value, 0, and `thanks` is absent."
+    },
+    {
+      "inputs": { "tip": true, "amount": 2 },
+      "note": "A tip of 2. The transition emits `received` with the value 2, and `thanks`: both are present."
+    },
+    {
+      "inputs": { "amount": 5 },
+      "note": "Nobody switched `tip` off, so it is still present: the transition fires again, with `amount` 5. `received` is 5 and `thanks` is present again."
+    },
+    {
+      "inputs": { "tip": false, "amount": 1 },
+      "note": "No tip: nothing is emitted, so `received` and `thanks` are absent. `received` keeps its last value, 5; the new `amount` is not emitted."
+    }
+  ],
+  "expect": "ok"
+}

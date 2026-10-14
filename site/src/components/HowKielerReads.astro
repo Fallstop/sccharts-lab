@@ -1,0 +1,46 @@
+---
+/**
+ * <HowKielerReads />: "How KIELER reads it". The reader types an expression, an effect or a trigger and sees how
+ * KIELER's grammar groups it: fully parenthesised (`A > 2 ? A : 0` is `A > (2 ? A : 0)`) and as a tree, or the
+ * syntax error, with a link to the compiler messages page. Buttons load the traps of reference/operators (the
+ * ternary, `->`, `fby`, `!`, `&`, count delays, `==` chains). The reading is the guide's engine (KIELER's grammar,
+ * checked against KIELER), in the browser; the island hydrates when the reader engages with it (client:engage), and
+ * the first example is server-rendered.
+ *
+ * Props: initial (the text shown first; default: the first trap), mode ('auto': an expression, else an effect;
+ * 'trigger': the text after `if`, where a leading number is a count delay), seeds (the buttons:
+ * `[{ label: '`->`', text: '0 -> I + 1', mode?: 'trigger' }]`; `[]` for none), caption.
+ *
+ * Import it on its own (its styles stay off pages that do not use it):
+ *   import HowKielerReads from '~components/HowKielerReads.astro'
+ */
+import WidgetFrame from './frame/WidgetFrame.astro'
+import Island from './reads/HowKielerReads.svelte'
+import type { ReadMode, Seed } from './reads/reading'
+import { nextId } from './frame/ids'
+
+interface Props {
+	initial?: string
+	mode?: ReadMode
+	seeds?: Seed[]
+	caption?: string
+}
+const { initial, mode, seeds, caption } = Astro.props
+const id = nextId('scr-')
+---
+
+<WidgetFrame kind="reads" caption={caption}>
+	<div class="sc-reads-host">
+		<Island client:engage initial={initial} mode={mode} seeds={seeds} id={id} />
+		<noscript><p class="sc-reads-host__nojs">Turn on JavaScript to read your own expressions.</p></noscript>
+	</div>
+</WidgetFrame>
+
+<style>
+	.sc-reads-host__nojs {
+		margin: 0;
+		padding: 0 var(--frame-pad, 1rem) 0.75rem;
+		font-size: var(--text-sm);
+		color: var(--c-muted);
+	}
+</style>

@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1 enters both regions. The root's `during` action is delayed, so it does not run in tick 1: `n = 0`."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `R1` reaches `F`; `R2`'s delayed transition also reaches `F`. Both regions of the root are final, so the chart terminates in this tick (`terminated` is true in this tick only). The root's during action still ran in this tick: `n = 1`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "After termination nothing runs any more: `n` stays 1 and `terminated` is false again (KIELER's `_TERM` flag is a one-tick pulse)."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "Still nothing: `n = 1`."
+    }
+  ],
+  "expect": "ok"
+}

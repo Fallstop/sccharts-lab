@@ -1,0 +1,7 @@
+scchart StringInit {
+  input bool A
+  output string s = "x\ny"
+  output int n = 0
+  initial state S
+    if A do n++ go to S
+}

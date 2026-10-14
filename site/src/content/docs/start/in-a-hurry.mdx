@@ -1,0 +1,173 @@
+---
+title: "Short on time?"
+description: "For the evening before a lab: set up in three steps, build one small chart in five, meet the eight surprises that catch everyone, and revise every chapter’s key ideas."
+sidebar:
+  order: 2
+---
+
+import { Sim } from '~components/guide'
+import KeyIdeasDigest from '~components/KeyIdeasDigest.astro'
+import { Steps } from '@astrojs/starlight/components'
+
+Every part links to the chapter with the full story. If you only want to revise, skip to
+[the key ideas](#revision-the-key-ideas) at the end. When you have more time,
+[Learn](/learn/ticks/) teaches all of it properly, with exercises.
+
+## Set up in three steps
+
+<Steps>
+
+1. Install [VS Code](https://code.visualstudio.com/), then the **SCCharts Lab** extension from the
+   Extensions view (`Ctrl+Shift+X`, or `Cmd+Shift+X` on a Mac). If KIELER's own extension,
+   *KIELER VS Code*, is installed, disable or uninstall it and reload the window: the two cannot run
+   side by side.
+
+2. Make sure there is a C compiler, because simulation compiles your chart to C. On Windows the first
+   simulation offers to download one. On Linux install `gcc` with your package manager. On macOS run
+   this in a terminal:
+
+   ```sh
+   xcode-select --install
+   ```
+
+   Java comes with the extension on Windows (x64), Apple Silicon Macs and Linux (x64).
+
+3. Save a chart as a file ending in `.sctx`, open the diagram preview (`Ctrl+Alt+V`), press
+   **Simulate…** and choose **Netlist-based Simulation (C)**. Then **Step** runs one tick.
+
+</Steps>
+
+[Getting SCCharts](/start/tools/) has the details, a chart to [check your setup](/start/tools/#check-your-setup)
+with, and the other tools. Everything below also runs in this page, and in the
+[playground](/playground/), with nothing installed.
+
+## One chart in five steps
+
+The chart is a microwave oven: a `start` button, a `door`, a heater and a lamp. Each step adds one idea
+to the version before. Press **Step** to run a tick yourself, or **Next** to follow the guided tour,
+which explains every tick.
+
+### States, inputs and outputs
+
+<Sim example="start/in-a-hurry/microwave-states" view="both" caption="`start` is already true in tick 1, but the oven only starts heating in tick 2." />
+
+A chart is `scchart Name { … }`. Declarations come first, without semicolons: an `input` is set by
+the environment (you, in the simulator), an `output` by the chart. Then the states, one of them
+`initial`. Under each state come its transitions, written `if trigger do effect go to Target`.
+
+Each tick the chart reads its inputs, checks the transitions of the state it is in, takes the first
+whose trigger holds, and writes its outputs. Tick 1 only enters the initial state: a transition is checked from the tick
+*after* its state was entered. [Thinking in ticks](/learn/ticks/) and
+[Your first SCChart](/learn/first-chart/) explain both.
+
+### A transition that wins
+
+The first version has a flaw. Press `start` with the door open and it heats anyway: with both inputs
+left on, it switches the heater on and off in alternate ticks. The fix is a second transition out of
+`Idle`, written first:
+
+<Sim example="start/in-a-hurry/microwave-priority" caption="Tick 2: the door is open and `start` is pressed. Transition 1 wins, so the oven does not heat." />
+
+When several transitions of a state could fire in the same tick, the one written first wins; the
+diagram numbers them `1:`, `2:`. Write the one that must win, here the door, first.
+[Triggers, effects and priority](/learn/transitions/#several-transitions-out-of-one-state-priority)
+has the rules.
+
+### A signal
+
+The oven should beep when it starts. A beep is an event, not a setting, so it is a **signal**:
+
+<Sim example="start/in-a-hurry/microwave-beep" caption="`beep` is present only in tick 2, the tick that emits it; `heating` stays true." />
+
+`output signal beep` declares it, and naming it as an effect, `do heating = true; beep`, emits it.
+Several effects are separated by `;`. A signal is present only in a tick in which something emits it.
+A variable such as `heating` keeps its last value until something writes it again. That difference
+is the subject of [Signals](/learn/signals/#signals-or-variables).
+
+### A second region
+
+The lamp inside the oven is on while the door is open or the oven is heating. It gets a state machine
+of its own, a second **region**, next to the oven's:
+
+<Sim example="start/in-a-hurry/microwave-lamp" caption="Tick 2: `Oven` sets `heating`, and `Lamp` sees it in the same tick." />
+
+Each `region Name { … }` is in one of its own states, and every region reacts in every tick. Regions
+talk through variables within the tick: `Lamp` reads `heating` after `Oven` has written it, whichever
+region comes first in the file. Give each variable one writer: if two regions could set the same
+variable to different values, KIELER rejects the chart. [Concurrent regions](/learn/concurrency/) and
+[Why the compiler says no](/learn/causality/) explain why.
+
+### Timing, an abort and an edge
+
+The finished oven cooks for three seconds, stops when the door opens, and starts only on a fresh
+press of `start`:
+
+<Sim example="start/in-a-hurry/microwave" caption="Ticks 3 to 7 count three seconds; tick 11 opens the door in the middle of cooking." />
+
+- **A count delay.** `if 3 second go to Done` fires in the third tick in which `second` is true,
+  counted from the tick after `Heat` was entered. Ticks are not seconds, so the oven needs an input
+  that says when a second has passed, which a hardware timer would provide; in the simulator you set
+  it yourself. [The previous tick](/learn/pre/#count-delays) covers count delays and
+  [Counters and timeouts](/patterns/counters/) other ways to time things.
+- **A superstate and an abort.** `Cooking` has states inside it. Its own transitions, written after
+  its closing brace, leave it whatever the inside is doing: `if door … abort to DoorOpen` stops the
+  cooking at once, before the inside reacts (a strong abort; with `go to` the inside would react
+  first). See [Superstates](/learn/hierarchy/) and [Aborts](/learn/preemption/).
+- **Termination.** When the inside reaches its final state `Done`, the transition
+  `do heating = false; beep join to Idle` fires, in the same tick.
+- **An edge.** `start && !pre(start)` is true only in the tick in which `start` *becomes* true:
+  `pre(start)` is its value in the previous tick. Without it, a `start` left on would start the oven
+  again the moment it finished. [The previous tick](/learn/pre/#edges-and-pulses) explains `pre`.
+
+Each frame's **Open in the playground** link opens its chart in an editor, where you can change it and
+run your version.
+
+## Eight surprises
+
+Nearly everyone meets these in their first week.
+
+1. **Tick 1 only enters.** In tick 1 the chart enters its initial states; their transitions are
+   checked from tick 2 on. [What happens in tick 1](/learn/ticks/#what-happens-in-tick-1)
+2. **Transitions wait a tick unless they are `immediate`.** A transition is not checked in the tick
+   its state is entered, so a chain of states moves one step per tick; an `immediate` transition can
+   fire in the entry tick. [Delayed and immediate transitions](/learn/immediate/)
+3. **Inputs keep their value.** In the simulators an input stays as you set it until you change it,
+   so a button you switched on is pressed in every tick that follows.
+   [Inputs keep their value](/learn/variables/#inputs-keep-their-value)
+4. **Signals vanish, variables stay.** A signal is present only in a tick that emits it; a variable
+   keeps the last value written to it. [Signals or variables?](/learn/signals/#signals-or-variables)
+5. **Two regions cannot set one variable to different values.** KIELER rejects the chart, with
+   `The SCG is NOT asc-schedulable!`, even if the two writes could never happen in the same tick.
+   [Write–write conflicts](/learn/causality/#writewrite-conflicts)
+6. **Effects need `do`, and comparisons need `==`.** `if A x = 1 go to B` and `if x = 3 go to B` are
+   both syntax errors; write `if A do x = 1 go to B` and `if x == 3 go to B`.
+   [Grammar traps](/reference/cheatsheet/#grammar-traps)
+7. **No `;` after a declaration.** `input bool A;` is a syntax error, reported as
+   `no viable alternative at input ';'` together with a puzzling message about `bool`:
+   `mismatched input 'bool' expecting 'primitive'` in SCCharts Lab,
+   `no viable alternative at input 'bool'` in KIELER VS Code.
+   [A semicolon after a declaration](/learn/first-chart/#a-semicolon-after-a-declaration)
+8. **The first chart in the file is the one that runs.** With several `scchart`s in one file, KIELER
+   simulates the first, not the one you are looking at.
+   [Several charts in one file](/advanced/references/#several-charts-in-one-file)
+
+## When it fails
+
+- **A message.** Search [Compiler messages](/reference/errors/) for its words. The box at the top of
+  that page, *The messages you will meet first*, covers the five that come up most. When there are
+  several messages, start with the earliest line KIELER complains about, fix it, and look again.
+- **No message, wrong behaviour.** [My chart does not do what I expect](/reference/troubleshooting/)
+  goes through the usual symptoms, from "nothing happens in tick 1" to "my output stays true".
+- **Syntax you half remember.** The [cheat sheet](/reference/cheatsheet/) has all of it on one page,
+  and its [grammar traps](/reference/cheatsheet/#grammar-traps) list the mistakes the parser punishes.
+
+## Revision: the key ideas
+
+The summaries that end the twelve Learn chapters, in one place. If a line surprises you, its chapter
+is one click away.
+
+<KeyIdeasDigest />
+
+When the lab is over, start properly with [Thinking in ticks](/learn/ticks/). At the end of Learn,
+[Put it together](/learn/causality/#put-it-together) asks you to write a whole chart from its
+interface alone.

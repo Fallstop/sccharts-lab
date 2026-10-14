@@ -1,0 +1,17 @@
+scchart AlarmSwapped {
+  input bool door
+  output bool siren
+  bool intruder
+
+  region Door {
+    initial state Watching
+      if door do intruder = true go to Alarmed
+    state Alarmed
+  }
+
+  region Siren {
+    initial state Quiet
+      if intruder do siren = true go to Sounding
+    state Sounding
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "hash": "f76fa1cb5877cc0a0f411cc0fd144cd7d9d11f0b",
+  "chart": "src/examples/learn/causality/press-start.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "left": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "right": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "pos": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "strokes": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "left": false,
+        "right": false
+      },
+      "values": {
+        "left": false,
+        "right": false,
+        "pos": 0,
+        "strokes": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "left": true
+      },
+      "values": {
+        "left": true,
+        "right": false,
+        "pos": 0,
+        "strokes": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "right": true
+      },
+      "values": {
+        "left": true,
+        "right": true,
+        "pos": 0,
+        "strokes": 0
+      },
+      "terminated": false
+    }
+  ]
+}

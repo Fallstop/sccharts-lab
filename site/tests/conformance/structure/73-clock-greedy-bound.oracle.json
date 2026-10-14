@@ -1,0 +1,106 @@
+{
+  "hash": "31d88e6810286b79848a40395a97f0333edc5556",
+  "chart": "tests/conformance/structure/73-clock-greedy-bound.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on x."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "x": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "n": 0,
+        "sleepT": 1000,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 500
+      },
+      "values": {
+        "deltaT": 500,
+        "n": 0,
+        "sleepT": 500,
+        "x": 500
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 499
+      },
+      "values": {
+        "deltaT": 499,
+        "n": 1,
+        "sleepT": 1,
+        "x": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "n": 1,
+        "sleepT": 900,
+        "x": 100
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

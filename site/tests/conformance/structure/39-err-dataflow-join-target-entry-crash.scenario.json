@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": { "I": 1 },
+      "note": "Rejected: the lab server reports \"The compiler failed during compilation setup.\"; official KIELER never reports back. Without T's entry action, with an entry action on S instead, or with `dataflow once` (which terminates), the chart compiles."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "The compiler failed"
+}

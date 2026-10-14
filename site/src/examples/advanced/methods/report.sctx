@@ -1,0 +1,7 @@
+scchart Report {
+  input int level
+  output int reports = 0
+
+  initial state Watch
+    do print("level is", level); reports++ go to Watch
+}

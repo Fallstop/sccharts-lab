@@ -1,0 +1,60 @@
+{
+  "hash": "106541f691759591d8c00a1f249e59dcb08c26ba",
+  "chart": "src/examples/learn/transitions/effects-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "press": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "x": 0,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "x": 5,
+        "y": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

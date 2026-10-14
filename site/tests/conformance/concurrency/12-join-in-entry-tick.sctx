@@ -1,0 +1,17 @@
+scchart JoinInEntryTick {
+  output int n
+
+  initial state P
+  do n = 1 go to S
+
+  state S {
+    initial state W
+    immediate do n = n * 10 + 2 go to F
+    final state F
+  }
+  join to D
+
+  state D {
+    entry do n = n * 10 + 3
+  }
+}

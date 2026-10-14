@@ -1,0 +1,13 @@
+// The order of equations does not matter: each is a concurrent region, and a variable is written before it is
+// read (initialise-update-read). Two dataflow regions communicate the same way.
+scchart St41Chain {
+  input int I
+  output int X, Y, Z
+  dataflow {
+    Y = X * 2
+    X = I + 1
+  }
+  dataflow {
+    Z = Y - 1
+  }
+}

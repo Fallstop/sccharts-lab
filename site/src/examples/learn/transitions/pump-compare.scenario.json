@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": { "start": false, "fault": false },
+      "note": "Tick 1 enters `Idle` in both charts. Their transitions are delayed, so nothing else happens."
+    },
+    {
+      "inputs": { "start": true, "fault": true },
+      "note": "`start` and `fault` are both true, so both of `Idle`'s transitions could fire. `Pump` tries `fault` first: it goes to `Blocked` and never starts. `PumpStartFirst` tries `start` first: it starts pumping, despite the fault."
+    },
+    {
+      "note": "The inputs are unchanged. `PumpStartFirst` entered `Running` in tick 2, so only now does it check `fault`: the pump stops and goes to `Blocked`. `Pump` has been in `Blocked` since tick 2, and `Blocked` has no transitions."
+    },
+    {
+      "inputs": { "start": false, "fault": false },
+      "note": "Both inputs are back to false. Both charts are in `Blocked`, which has no way out."
+    }
+  ],
+  "expect": "ok"
+}

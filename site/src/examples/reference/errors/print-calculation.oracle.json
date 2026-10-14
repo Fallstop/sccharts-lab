@@ -1,0 +1,58 @@
+{
+  "hash": "676921d03c15ccad2d38093ca488dd92c3a71ed1",
+  "chart": "src/examples/reference/errors/print-calculation.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "You do a calculation inside a print call effect. You should use printf syntax to be safe on different code generators.",
+      "line": 6,
+      "column": 25
+    }
+  ],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "doubled": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 6
+      },
+      "values": {
+        "I": 6,
+        "doubled": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 6,
+        "doubled": 12
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+// The order of random() calls is the netlist's schedule: B's block (y = 1 and its random()) runs before A's conditional reads y, and so before A's random().
+scchart RandomDependency {
+  output float ra = 0, rb = 0
+  output int y = 0
+  region A {
+    initial state S
+    if y > 0 do ra = random() go to S
+  }
+  region B {
+    initial state S
+    do y = 1; rb = random() go to S
+  }
+}

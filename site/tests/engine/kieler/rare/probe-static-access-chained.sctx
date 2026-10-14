@@ -1,0 +1,11 @@
+scchart StaticAccessChained {
+  input bool A
+  output int o = 0
+  initial state S
+    if A do o = scchart(StaticChain).TWICE go to S
+}
+scchart StaticChain {
+  const int BASE = 2
+  const int TWICE = BASE * 3
+  initial state I
+}

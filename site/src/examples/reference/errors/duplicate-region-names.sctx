@@ -1,0 +1,12 @@
+scchart DuplicateRegionNames {
+  input bool A, B
+  output bool a, b
+
+  region Wait:
+    initial state W
+      if A do a = true go to W
+
+  region Wait:
+    initial state W
+      if B do b = true go to W
+}

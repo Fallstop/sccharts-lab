@@ -1,0 +1,19 @@
+{
+  "hash": "2c162f15b77c6ca50ba3e8e9ce3452df3e96ddcb",
+  "chart": "tests/conformance/preemption/28-strong-after-termination-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "11:3 Causality problem!\nStrong abort transitions must have a higher priority than weak abort or termination transitions."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Causality problem!\nStrong abort transitions must have a higher priority than weak abort or termination transitions.",
+      "line": 11,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

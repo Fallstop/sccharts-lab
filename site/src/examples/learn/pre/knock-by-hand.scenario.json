@@ -1,0 +1,16 @@
+{
+  "ticks": [
+    { "inputs": { "knock": false, "away": false }, "note": "Entering `Shut` runs `count = 0`." },
+    { "inputs": { "knock": true }, "note": "The during action counts the knock: `count` is 1. The trigger reads `pre(count)`, 0, so it does not fire." },
+    { "inputs": { "knock": false }, "note": "No knock: `count` stays 1." },
+    { "inputs": { "knock": true }, "note": "`count` is 2; `pre(count)` was 1." },
+    { "inputs": { "knock": false, "away": true }, "note": "Off to `Away`." },
+    { "inputs": { "away": false }, "note": "Back in `Shut`: the entry action resets `count` to 0." },
+    { "inputs": { "knock": true }, "note": "`count` is 1." },
+    { "inputs": { "knock": false }, "note": "`count` stays 1." },
+    { "inputs": { "knock": true }, "note": "`count` is 2." },
+    { "note": "`pre(count)` is 2 and `knock` holds: the transition fires, in the same tick as the count delay version." },
+    { "note": "Open." }
+  ],
+  "expect": "ok"
+}

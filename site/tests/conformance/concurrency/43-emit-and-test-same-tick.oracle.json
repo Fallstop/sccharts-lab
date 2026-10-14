@@ -1,0 +1,109 @@
+{
+  "hash": "3235485ed54be4e9e1252a7dd079c227538ee659",
+  "chart": "tests/conformance/concurrency/43-emit-and-test-same-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "after": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "before": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "S": false,
+        "after": 0,
+        "before": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "S": true,
+        "after": 1,
+        "before": 1
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "S": false,
+        "after": 1,
+        "before": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "S": true,
+        "after": 2,
+        "before": 2
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

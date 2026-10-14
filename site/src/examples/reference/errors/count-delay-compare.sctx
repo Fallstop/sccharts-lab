@@ -1,0 +1,8 @@
+scchart CountDelayCompare {
+  input int level
+
+  initial state Low
+    if 3 == level go to High
+
+  state High
+}

@@ -1,0 +1,20 @@
+scchart EmitAndTest {
+  input bool a
+  output signal S
+  output int before, after
+
+  region TestBefore {
+    initial state X
+    if S do before++ go to X
+  }
+
+  region Emit {
+    initial state X
+    if a do S go to X
+  }
+
+  region TestAfter {
+    initial state X
+    if S do after++ go to X
+  }
+}

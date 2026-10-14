@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: both charts start with `ring` = `{1, 2, 3}`. Their self-loops are delayed."
+    },
+    {
+      "inputs": {},
+      "note": "`Rotate` runs `ring[0] = ring[1]; ring[1] = ring[2]; ring[2] = ring[0]`, in that order. By the time `ring[2]` is assigned, `ring[0]` is already 2, so it gets `{2, 3, 2}`: the 1 is lost. `RotateTemp` saved `ring[0]` in `first` before the vector assignment, so its last element gets the 1 back: `{2, 3, 1}`."
+    },
+    {
+      "inputs": {},
+      "note": "`Rotate`: `{3, 2, 3}`. `RotateTemp`: `{3, 1, 2}`."
+    },
+    {
+      "inputs": {},
+      "note": "`Rotate` is back to `{2, 3, 2}` and never rotates. `RotateTemp` is back to `{1, 2, 3}` after three rotations."
+    }
+  ],
+  "expect": "ok"
+}

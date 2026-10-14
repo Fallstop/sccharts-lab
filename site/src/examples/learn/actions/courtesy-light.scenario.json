@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false, "dark": false }, "note": "Tick 1 enters `Closed`." },
+    { "inputs": { "doorOpen": true }, "note": "The door opens in daylight. The entry action's trigger `dark` is checked now, at the moment `Open` is entered: false, so the light stays off." },
+    { "inputs": { "dark": true }, "note": "It gets dark while the door is open. The entry action has already had its chance: the light stays off." },
+    { "inputs": { "doorOpen": false }, "note": "The door closes: the exit action runs (the light was off anyway)." },
+    { "inputs": { "doorOpen": true }, "note": "The door opens in the dark: `dark` is true at the moment of entry, so the light comes on." },
+    { "inputs": { "dark": false }, "note": "Daylight again, but nothing checks `dark` now: the light stays on." },
+    { "inputs": { "doorOpen": false }, "note": "The door closes and the exit action switches the light off." }
+  ],
+  "expect": "ok"
+}

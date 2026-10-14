@@ -1,0 +1,10 @@
+scchart CountResetWeak {
+  input bool tap, rst
+  output bool done = false
+  initial state Outer {
+    initial state Wait
+      if 2 tap do done = true go to Over
+    final state Over
+  }
+  if rst go to Outer
+}

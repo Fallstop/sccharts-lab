@@ -1,0 +1,92 @@
+{
+  "hash": "593f712776dcda9d4254af350dbcd83ac8b6873f",
+  "chart": "tests/conformance/structure/143-scl-if-else.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__effect0_t is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "grade": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "tripled": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 0
+      },
+      "values": {
+        "x": 0,
+        "grade": 0,
+        "tripled": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "x": 7,
+        "grade": 1,
+        "tripled": 21
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 12
+      },
+      "values": {
+        "x": 12,
+        "grade": 2,
+        "tripled": 36
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "grade": 0,
+        "tripled": 9
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

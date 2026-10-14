@@ -1,0 +1,90 @@
+{
+  "hash": "0aae4ddc9e55e90277afeaaf113162055d08f9b4",
+  "chart": "tests/conformance/structure/131-override-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name twice is contained in the model but not in VariableStore.",
+    "ValuedObject with name twice is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "P": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "class",
+      "properties": []
+    },
+    "b": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "O": 0,
+        "P": 0,
+        "Q": 0,
+        "a": {},
+        "b": {}
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "O": 5,
+        "P": 10,
+        "Q": 2,
+        "a": {},
+        "b": {}
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "O": 5,
+        "P": 10,
+        "Q": 2,
+        "a": {},
+        "b": {}
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "hash": "17366cc055ee73cabbf301cf459e3f1673adf741",
+  "chart": "tests/conformance/structure/14-reference-signals.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "Press": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "V": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "V_val": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "W_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Beat": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "W_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "Press": false,
+        "V": false,
+        "V_val": 0
+      },
+      "values": {
+        "Press": false,
+        "V": false,
+        "V_val": 0,
+        "W": false,
+        "W_val": 0,
+        "count": 0,
+        "Beat": false,
+        "W_curval": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "Press": true,
+        "V": true,
+        "V_val": 4
+      },
+      "values": {
+        "Press": true,
+        "V": true,
+        "V_val": 4,
+        "W": true,
+        "W_val": 8,
+        "count": 1,
+        "Beat": true,
+        "W_curval": 8
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "Press": false,
+        "V": false
+      },
+      "values": {
+        "Press": false,
+        "V": false,
+        "V_val": 4,
+        "W": false,
+        "W_val": 8,
+        "count": 1,
+        "Beat": false,
+        "W_curval": 8
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "Press": true
+      },
+      "values": {
+        "Press": true,
+        "V": false,
+        "V_val": 4,
+        "W": false,
+        "W_val": 8,
+        "count": 2,
+        "Beat": true,
+        "W_curval": 8
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

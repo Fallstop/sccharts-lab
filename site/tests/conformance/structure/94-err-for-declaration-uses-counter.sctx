@@ -1,0 +1,11 @@
+// A declaration at the top of a for-region belongs to the enclosing state (one variable for all copies). If its
+// initial value uses the counter, KIELER's compiler crashes (official KIELER never reports back).
+scchart St94ForInit {
+  output int sum = 0
+  region for i : 1 to 3 {
+    int k = i
+    initial state W
+    immediate do sum += k go to D
+    final state D
+  }
+}

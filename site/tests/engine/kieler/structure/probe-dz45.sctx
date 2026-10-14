@@ -1,0 +1,13 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz45 {
+  input bool A
+  output int o = 0
+  initial state R is Dz45Sub(o)
+  if A go to R
+}
+scchart Dz45Sub {
+  output int cnt
+  int mine = 5
+  initial state S
+  do mine++; cnt = mine go to S
+}

@@ -1,0 +1,38 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1 starts the chart: it enters the initial state, `Off`, and `light` gets its initial value, false."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "The chart reads `button`: true. The transition out of `Off` fires, `light` becomes true and the chart is now in `On`. The input and the output it caused belong to the same tick."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "`button` is false, so nothing fires. The chart stays in `On` and `light` keeps its value, true."
+    },
+    {
+      "note": "No input changed: `button` is still false. The tick still happens; the chart looks, finds nothing to do, and keeps everything as it was."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "`button` is true again. Now the transition out of `On` fires: `light` becomes false and the chart is back in `Off`."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released. Nothing fires; `Off` and `light` false."
+    }
+  ],
+  "expect": "ok"
+}

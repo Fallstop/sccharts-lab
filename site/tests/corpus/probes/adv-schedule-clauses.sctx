@@ -1,0 +1,7 @@
+scchart Sched {
+  schedule {conflicting} s
+  output int o
+  initial state S
+  do o = 1 schedule s 1 go to S
+  if o > 0 schedule s 2 go to S
+}

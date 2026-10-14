@@ -1,0 +1,95 @@
+{
+  "hash": "7406b8b9b820dd14e5803b6d77e7d2fc26e56c83",
+  "chart": "tests/conformance/basics/04-delayed-then-immediate.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "J": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": true,
+        "J": false
+      },
+      "values": {
+        "I": true,
+        "J": false,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "J": false,
+        "x": 11
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "J": true
+      },
+      "values": {
+        "I": true,
+        "J": true,
+        "x": 111
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "J": true,
+        "x": 111
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+scchart DoorbellPanel {
+  input bool front, back
+  output int frontRings = 0, backRings = 0
+
+  region {
+    initial state Front is Bell(front, frontRings)
+  }
+  region {
+    initial state Back is Bell(back, backRings)
+  }
+}
+
+scchart Bell {
+  output int rings = 0
+  input bool button
+
+  initial state Quiet
+    if button do rings++ go to Ringing
+
+  state Ringing
+    if !button go to Quiet
+}

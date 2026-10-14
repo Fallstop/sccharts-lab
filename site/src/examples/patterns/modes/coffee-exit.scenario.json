@@ -1,0 +1,85 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Tick 1: both machines enter `Serving` and wait in `Ready`."
+    },
+    {
+      "inputs": {
+        "brew": true
+      },
+      "note": "`brew`: in both, the heater goes on and the machine moves to `Heating`."
+    },
+    {
+      "inputs": {
+        "brew": false,
+        "clean": true
+      },
+      "note": "`clean` in the middle of the brew. `if clean go to Cleaning` is a weak abort, so the inside of `Serving` finishes its tick first: `Heating` moves on to `Pouring`, whose entry action starts the pump. Then `Serving` is left, and `Pouring`'s exit action stops the pump again. Only `CoffeeExitAction` has an exit action on `Serving` that switches the heater off. In `CoffeeAbrupt` the heater stays on."
+    },
+    {
+      "inputs": {
+        "clean": false
+      },
+      "note": "Both machines are cleaning, and the half-made cup has been abandoned. `CoffeeAbrupt`'s heater is still on."
+    },
+    {
+      "inputs": {},
+      "note": "Cleaning finishes and `Serving` starts again. `cups` is still 0 in both."
+    },
+    {
+      "inputs": {},
+      "note": "Back in `Ready`. `CoffeeAbrupt`'s heater is *still* on, with nothing to heat."
+    },
+    {
+      "inputs": {
+        "brew": true
+      },
+      "note": "A proper brew in both."
+    },
+    {
+      "inputs": {
+        "brew": false
+      },
+      "note": "Pouring."
+    },
+    {
+      "inputs": {},
+      "note": "Pouring."
+    },
+    {
+      "inputs": {},
+      "note": "The cup is done in both: `cups` is 1. `CoffeeAbrupt`'s heater is off at last, switched off by the end of this brew."
+    },
+    {
+      "inputs": {},
+      "note": "Ready."
+    },
+    {
+      "inputs": {
+        "brew": true,
+        "clean": true
+      },
+      "note": "`brew` and `clean` in the same tick. The weak abort's last wish lets `Ready` start the brew in both machines (heater on), and only then is `Serving` left for `Cleaning`. `CoffeeExitAction`'s exit action switches the heater off again before the tick ends; `CoffeeAbrupt`'s stays on."
+    },
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Cleaning."
+    },
+    {
+      "inputs": {},
+      "note": "Back to `Serving`."
+    },
+    {
+      "inputs": {},
+      "note": "Ready: the heater is on in `CoffeeAbrupt` and off in `CoffeeExitAction`."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,18 @@
+// A chart instance used in a dataflow region that terminates is restarted: one tick after it terminates it
+// is entered afresh (KIELER wraps it in a loop "instance, join to wait, delayed go back").
+scchart St48Main {
+  output int O
+  ref St48Pulse p
+  dataflow {
+    O = p.O
+  }
+}
+
+scchart St48Pulse {
+  output int O
+  initial state S
+  do O = 1 go to M
+  state M
+  do O = 2 go to F
+  final state F
+}

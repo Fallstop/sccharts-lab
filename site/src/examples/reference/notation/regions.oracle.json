@@ -1,0 +1,83 @@
+{
+  "hash": "9c81dacc9094bf3e9e63c42233b12ffd53a8e782",
+  "chart": "src/examples/reference/notation/regions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "O": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "O": false
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "values": {
+        "A": false,
+        "B": true,
+        "O": true
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": true
+    }
+  ]
+}

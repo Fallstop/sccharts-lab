@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false, "cancel": false, "jam": false }, "note": "KIELER rejects this chart: the strong abort is written after a weak one." }
+  ],
+  "expect": "error",
+  "errorIncludes": "Strong abort transitions must have a higher priority than weak abort or termination transitions."
+}

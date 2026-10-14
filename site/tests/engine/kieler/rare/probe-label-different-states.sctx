@@ -1,0 +1,9 @@
+// The same label in code blocks of two different states: no clash (each state is a container of its own).
+scchart LabelSameTwo {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S
+    if a do { if (b) { goto skip } x += 1; skip: y += 1 } go to T
+  state T
+    if a do { if (b) { goto skip } z += 1; skip: y += 10 } go to S
+}

@@ -1,0 +1,7 @@
+scchart AssignmentOperators {
+  input int A
+  output int add = 10, sub = 10, mul = 10, div = 10, mod = 10, and = 12, or = 12, xor = 12, shl = 3, shr = -16, inc = 0, dec = 0
+
+  initial state S
+  do add += A; sub -= A; mul *= A; div /= A; mod %= 3; and &= A; or |= A; xor ^= A; shl <<= 2; shr >>= 2; inc++; dec-- go to S
+}

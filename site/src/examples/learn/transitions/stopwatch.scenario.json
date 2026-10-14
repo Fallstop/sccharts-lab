@@ -1,0 +1,54 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "stop": false
+      },
+      "note": "Tick 1 enters `Stopped`; `elapsed` is 0."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start` is pressed: `Stopped` to `Running`. `Running` was entered in this tick, so its own transitions wait until the next one, and `elapsed` is still 0."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "In `Running`, transition 1 (`stop`) is false. Transition 2 has no trigger, so it fires: `elapsed++` adds one, and the chart goes from `Running` back to `Running`."
+    },
+    {
+      "note": "The same again: `elapsed` is 2."
+    },
+    {
+      "note": "And again: 3. One tick, one count."
+    },
+    {
+      "inputs": {
+        "stop": true
+      },
+      "note": "`stop` is pressed. Transition 1 is checked first and fires, so the chart goes to `Stopped`. Only one transition leaves a state per tick, so transition 2 does not run and `elapsed` stays 3."
+    },
+    {
+      "inputs": {
+        "stop": false
+      },
+      "note": "`Stopped` waits for `start`; `elapsed` keeps its value."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Started again: `Running`, still showing 3."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Counting carries on from where it stopped: 4."
+    }
+  ],
+  "expect": "ok"
+}

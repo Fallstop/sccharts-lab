@@ -1,0 +1,174 @@
+{
+  "hash": "8679646725f2769217fb81ec0105a8231ad24023",
+  "chart": "src/examples/advanced/history/kiosk-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "idle": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "open": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "touch": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "screen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "idle": false,
+        "touch": false,
+        "next": false,
+        "open": false
+      },
+      "values": {
+        "idle": false,
+        "next": false,
+        "open": false,
+        "touch": false,
+        "screen": 11
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "idle": false,
+        "next": true,
+        "open": false,
+        "touch": false,
+        "screen": 21
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "next": false,
+        "open": true
+      },
+      "values": {
+        "idle": false,
+        "next": false,
+        "open": true,
+        "touch": false,
+        "screen": 22
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "open": false,
+        "idle": true
+      },
+      "values": {
+        "idle": true,
+        "next": false,
+        "open": false,
+        "touch": false,
+        "screen": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "idle": false,
+        "touch": true
+      },
+      "values": {
+        "idle": false,
+        "next": false,
+        "open": false,
+        "touch": true,
+        "screen": 11
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "touch": false
+      },
+      "values": {
+        "idle": false,
+        "next": false,
+        "open": false,
+        "touch": false,
+        "screen": 11
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

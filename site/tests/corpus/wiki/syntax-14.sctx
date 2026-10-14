@@ -1,0 +1,10 @@
+scchart UserLabels {
+  output int O
+
+  initial state A {
+    entry do O = 1 label "Initialize O"
+    during do O++ label "Increment O"
+    exit do O = 0 label "Reset O"
+  } do print("Hello World") go to B label "Say Hello"
+  final state B
+}

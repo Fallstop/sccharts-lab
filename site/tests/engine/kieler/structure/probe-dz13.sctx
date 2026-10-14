@@ -1,0 +1,20 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz13 {
+  input bool A
+  output int O, P
+  ref Dz13Pulse p
+  dataflow {
+    p.T = A
+    O = p.N
+    P = p.N * 2
+  }
+}
+scchart Dz13Pulse {
+  input bool T
+  output int N = 0
+  initial state S
+  if T do N++ go to M
+  state M
+  if T do N += 10 go to F
+  final state F
+}

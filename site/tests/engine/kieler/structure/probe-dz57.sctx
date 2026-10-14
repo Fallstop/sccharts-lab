@@ -1,0 +1,14 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz57 {
+  input bool A
+  output int o = 0
+  initial state Start
+  if A go to R
+  state R is Dz57H(o)
+  if o > 3 go to Start
+}
+scchart Dz57H {
+  output int c = 0
+  initial state X
+  do c++ go to X
+}

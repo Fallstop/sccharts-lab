@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "next": false
+      },
+      "note": "Tick 1 enters the initial states: `First` (heavy outline) in `Steps`, and `Ready` in `Idle`. `Ready` is final too, so `Idle` has finished already."
+    },
+    {
+      "inputs": {
+        "next": true
+      },
+      "note": "`next` is true: `First` goes to `Middle`, an ordinary state with a thin outline."
+    },
+    {
+      "note": "`next` is still true, so `Middle` goes to `Last`, a final state (double outline). Both regions are now in final states, so the chart terminates."
+    }
+  ],
+  "expect": "ok"
+}

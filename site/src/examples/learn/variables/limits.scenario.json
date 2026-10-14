@@ -1,0 +1,34 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "flow": 200,
+        "drain": 0
+      },
+      "note": "Tick 1 enters `Filling`; the self-loop is delayed."
+    },
+    {
+      "note": "`volume` is 200."
+    },
+    {
+      "note": "400."
+    },
+    {
+      "note": "600: more than `CAPACITY`."
+    },
+    {
+      "inputs": {
+        "flow": 0,
+        "drain": 350
+      },
+      "note": "250."
+    },
+    {
+      "note": "−100: below empty."
+    },
+    {
+      "note": "−450."
+    }
+  ],
+  "expect": "ok"
+}

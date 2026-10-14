@@ -1,0 +1,211 @@
+{
+  "hash": "16d98ad559230a330fa554e3c9d1bfd9e593396f",
+  "chart": "src/examples/advanced/connectors/vending.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "coin10": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "coin20": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "credit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "vend": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "coin10": false,
+        "coin20": false
+      },
+      "values": {
+        "coin10": false,
+        "coin20": false,
+        "credit": 0,
+        "vend": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "coin20": true
+      },
+      "values": {
+        "coin10": false,
+        "coin20": true,
+        "credit": 20,
+        "vend": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "coin20": false
+      },
+      "values": {
+        "coin10": false,
+        "coin20": false,
+        "credit": 20,
+        "vend": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "coin10": true
+      },
+      "values": {
+        "coin10": true,
+        "coin20": false,
+        "credit": 0,
+        "vend": true
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "coin10": false
+      },
+      "values": {
+        "coin10": false,
+        "coin20": false,
+        "credit": 0,
+        "vend": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "coin20": true
+      },
+      "values": {
+        "coin10": false,
+        "coin20": true,
+        "credit": 20,
+        "vend": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "coin20": false
+      },
+      "values": {
+        "coin10": false,
+        "coin20": false,
+        "credit": 20,
+        "vend": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "coin10": true,
+        "coin20": true
+      },
+      "values": {
+        "coin10": true,
+        "coin20": true,
+        "credit": 10,
+        "vend": true
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "coin10": false,
+        "coin20": false
+      },
+      "values": {
+        "coin10": false,
+        "coin20": false,
+        "credit": 10,
+        "vend": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

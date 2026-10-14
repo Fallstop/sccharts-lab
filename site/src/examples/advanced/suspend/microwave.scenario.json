@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false }, "note": "Tick 1 enters `Cooking` and its initial state `Heating`. The countdown transitions are delayed, so `remaining` starts at 3." },
+    { "note": "The door is shut, so `Cooking` runs normally: the self-loop on `Heating` counts down to 2." },
+    { "inputs": { "doorOpen": true }, "note": "The door opens. `suspend if doorOpen` holds, so nothing inside `Cooking` runs this tick: `remaining` stays 2 and `Heating` stays active." },
+    { "note": "Still open, still frozen. A suspended state keeps its place; it does not restart or move on." },
+    { "inputs": { "doorOpen": false }, "note": "The door shuts and `Cooking` carries on exactly where it stopped: `remaining` goes from 2 to 1." },
+    { "note": "The last step goes to the final state `Finished` (`remaining` = 0), so `Cooking` terminates and `join to Done` fires in the same tick: `beep` is true." },
+    { "note": "In `Done`. Nothing else happens." }
+  ],
+  "expect": "ok"
+}

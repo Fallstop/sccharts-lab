@@ -1,0 +1,11 @@
+scchart LoopThroughSuperstate {
+  input bool I
+
+  initial state A {
+    initial state A1
+  }
+  immediate if I go to B
+
+  state B
+  immediate go to A
+}

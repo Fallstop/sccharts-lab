@@ -1,0 +1,8 @@
+scchart P68 {
+  output int O
+  host class "List<Integer>" {
+    int size()
+  } l = `new java.util.ArrayList<>()`
+  initial state S0
+  do O = l.size() go to S0
+}

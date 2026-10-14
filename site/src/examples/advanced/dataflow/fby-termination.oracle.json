@@ -1,0 +1,82 @@
+{
+  "hash": "c3dd37ef364adc9332f80c0f47fc547103ce511e",
+  "chart": "src/examples/advanced/dataflow/fby-termination.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "level": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "doneA": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "doneB": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "level": 5
+      },
+      "values": {
+        "level": 5,
+        "a": 0,
+        "b": 0,
+        "doneA": false,
+        "doneB": true
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "level": 6
+      },
+      "values": {
+        "level": 6,
+        "a": 0,
+        "b": 0,
+        "doneA": false,
+        "doneB": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

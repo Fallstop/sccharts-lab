@@ -1,0 +1,14 @@
+// In two regions: the later one's clock applies to both.
+scchart PreClockStates {
+  input int v
+  input bool c
+  output int p = 0, q = 0
+  region R1:
+    initial state S {
+      immediate during do p = pre(v)
+    }
+  region R2:
+    initial state T {
+      immediate during do q = pre(v, c)
+    }
+}

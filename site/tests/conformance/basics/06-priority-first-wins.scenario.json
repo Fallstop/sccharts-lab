@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {"inputs": {"I": true, "J": true}, "note": "Tick 1 only enters A; all three of its transitions are delayed."},
+    {"inputs": {}, "note": "All three transitions are enabled (the third has no trigger). They are tried in the order written (priorities 1, 2, 3) and the first enabled one wins: x = 1, state B. The effects of the other two do not run."},
+    {"inputs": {}, "note": "B goes back to A (delayed). A is entered in this tick, so its own delayed transitions are not checked."},
+    {"inputs": {"I": false}, "note": "Only priorities 2 and 3 are enabled; priority 2 wins: x = 2, state C."},
+    {"inputs": {}, "note": "C goes back to A (delayed). A's own transitions wait, since A was entered in this tick."},
+    {"inputs": {"J": false}, "note": "Neither trigger holds, so the transition without trigger fires: x = 3, state D."},
+    {"inputs": {}, "note": "D goes back to A. taken (transition order A1, A2, A3, B, C, D) = [0, 0, 0, 0, 0, 1]."}
+  ],
+  "expect": "ok"
+}

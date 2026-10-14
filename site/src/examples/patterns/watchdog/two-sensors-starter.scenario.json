@@ -1,0 +1,71 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false
+      },
+      "note": "Tick 1."
+    },
+    {
+      "inputs": {
+        "beatA": true,
+        "beatB": true
+      },
+      "note": "Both sensors beat."
+    },
+    {
+      "inputs": {
+        "beatA": false,
+        "beatB": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {
+        "beatA": true
+      },
+      "note": "Sensor A beats; sensor B has gone quiet."
+    },
+    {
+      "inputs": {
+        "beatA": false
+      },
+      "note": "Sensor B has been quiet for three ticks: your version raises the alarm here."
+    },
+    {
+      "inputs": {
+        "beatA": true
+      },
+      "note": "A beats. The starter watches only sensor A, so it sees nothing wrong."
+    },
+    {
+      "inputs": {
+        "beatA": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {
+        "beatA": true,
+        "restart": true,
+        "beatB": true
+      },
+      "note": "Restart, and both beat."
+    },
+    {
+      "inputs": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {},
+      "note": "Quiet."
+    }
+  ],
+  "expect": "ok"
+}

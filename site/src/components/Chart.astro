@@ -1,0 +1,79 @@
+---
+/**
+ * <Chart example="learn/first-chart/toggle" />: an example's diagram with its source.
+ *
+ * The diagram is laid out and rendered at build time (src/diagram), so it is there without JavaScript and
+ * without a layout flash. Hovering a state or transition marks the lines it was written on in the code, and
+ * hovering a line marks its element in the diagram (visible together in the "Both" view). A chart that KIELER
+ * rejects is still drawn, with the elements the messages name marked and the messages in the foot.
+ *
+ * Props: example (required), code (default true: offer the source as a second view), caption,
+ * highlight (state / transition ids or unique state names to emphasise, e.g. ['On', 'Off->1']),
+ * view ('diagram' | 'code' | 'both', the view shown first; default 'diagram'), references ('collapsed', the
+ * default, or 'expanded': reference states drawn with the referenced chart inside; `highlight` can then name
+ * inner elements as `<reference state>/<id in the referenced chart>`).
+ *
+ * The foot lists KIELER's warnings (collapsed) and, prominently, what official KIELER does differently.
+ */
+import WidgetFrame from './frame/WidgetFrame.astro'
+import SourceView from './frame/SourceView.astro'
+import DiagramView from './frame/DiagramView.astro'
+import Diagnostics from './frame/Diagnostics.astro'
+import { loadExample, playgroundHref } from './frame/examples'
+import { diagramSvg, prepareChart, resolveIds, type ReferencesView } from './frame/prepare'
+import { nextId } from './frame/ids'
+
+interface Props {
+	example: string
+	code?: boolean
+	caption?: string
+	highlight?: string[]
+	view?: 'diagram' | 'code' | 'both'
+	references?: ReferencesView
+}
+const { code = true, caption, highlight = [], view = 'diagram', references } = Astro.props
+const usedBy = `<Chart example="${Astro.props.example}">`
+const ex = loadExample(Astro.props.example, usedBy)
+const p = await prepareChart({ ...ex, references })
+const pinned = resolveIds(p, highlight, usedBy)
+const classes: Record<string, string[]> = { ...p.errorIds }
+for (const id of pinned) classes[id] = [...(classes[id] ?? []), 'is-focus']
+const svg = diagramSvg(p, classes)
+const key = nextId('scc-')
+const views = [
+	{ id: 'diagram', label: 'Diagram' },
+	...(code ? [{ id: 'code', label: 'Code' }, { id: 'both', label: 'Both', show: ['diagram', 'code'] }] : []),
+]
+const marked = [...new Set(pinned.flatMap((id) => (p.map?.spans[id] ? [p.map.spans[id]] : [])).map(([a, b]) => (a === b ? `${a}` : `${a}-${b}`)))]
+const meta = marked.length ? `{${marked.join(',')}}` : ''
+const showFoot = p.rejected || p.warnings.length > 0 || p.notices.length > 0
+---
+
+<WidgetFrame
+	kind="chart"
+	name={p.name}
+	views={views}
+	defaultView={code ? view : 'diagram'}
+	caption={caption}
+	playground={playgroundHref(ex.id)}
+	stage="tall"
+	class={p.rejected ? 'is-rejected' : undefined}
+>
+	<div slot="view-diagram">
+		<DiagramView svg={svg} key={key} map={p.map} root={p.compiled.chart?.id} pinned={pinned} />
+	</div>
+	{
+		code && (
+			<div slot="view-code" data-sc-code={key} data-error-lines={p.errorLines.join(' ') || undefined}>
+				<SourceView source={ex.source} meta={meta} />
+			</div>
+		)
+	}
+	{
+		showFoot && (
+			<div slot="foot">
+				<Diagnostics prepared={p} />
+			</div>
+		)
+	}
+</WidgetFrame>

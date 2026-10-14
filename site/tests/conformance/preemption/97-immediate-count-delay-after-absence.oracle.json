@@ -1,0 +1,156 @@
+{
+  "hash": "d9fd0352b58a80a5f993c45634c3eded95755a8d",
+  "chart": "tests/conformance/preemption/97-immediate-count-delay-after-absence.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "away": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "knock": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "open": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "knock": false,
+        "away": true
+      },
+      "values": {
+        "away": true,
+        "knock": false,
+        "open": false
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "knock": false,
+        "away": true
+      },
+      "values": {
+        "away": true,
+        "knock": false,
+        "open": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "knock": false,
+        "away": true
+      },
+      "values": {
+        "away": true,
+        "knock": false,
+        "open": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": true
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

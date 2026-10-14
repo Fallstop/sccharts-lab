@@ -1,0 +1,20 @@
+{
+  "hash": "846b837b834396a2712c8c8f8d9135aa5ad7dc8e",
+  "chart": "src/examples/reference/errors/assign-const.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "7:13 You cannot assign a value to a const object.",
+    "Cannot replace left hand side of assignment by a value. (Trying to replace ValuedObjectImpl@2976358e LIMIT by de.cau.cs.kieler.kexpressions.impl.IntValueImpl@2fd5ae9 (value: 10) in AssignmentImpl@31b59949 LIMIT = 20)"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "You cannot assign a value to a const object.",
+      "line": 7,
+      "column": 13
+    }
+  ],
+  "ticks": []
+}

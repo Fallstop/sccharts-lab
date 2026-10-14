@@ -1,0 +1,87 @@
+{
+  "hash": "ead37609023586db538e0ac6a79ceb72a6464592",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-call-assign.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name v is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name twice is contained in the model but not in VariableStore.",
+    "ValuedObject with name v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "r": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "r": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "r": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "r": 12
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "r": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

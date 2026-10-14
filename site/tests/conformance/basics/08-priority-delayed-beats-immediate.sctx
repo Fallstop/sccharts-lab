@@ -1,0 +1,12 @@
+scchart PriorityDelayedBeatsImmediate {
+  input bool I, J
+  output int x = 0
+
+  initial state A
+  if I do x = 1 go to B
+  immediate if J do x = 2 go to C
+
+  state B
+
+  state C
+}

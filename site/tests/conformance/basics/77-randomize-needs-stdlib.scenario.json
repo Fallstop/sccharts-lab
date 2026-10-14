@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": { "A": false },
+      "note": "Rejected by gcc: `implicit declaration of function ‘srand’ [-Wimplicit-function-declaration]`. With `#hostcode \"#include <stdlib.h>\"` at the top, or a `random()` call anywhere in the chart, it compiles (structure/99-randomize-after-tick-1)."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "srand"
+}

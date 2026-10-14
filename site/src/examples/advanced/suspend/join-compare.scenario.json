@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false }, "note": "In both charts the inside of `Prepare` runs straight through to its final state `Ready` in tick 1. In `PreheatPlain`, `Prepare` terminates at once and `join to Heating` fires: `heater` = true. In `PreheatSuspend` the `suspend` has added a condition to `Prepare`'s termination, and a termination with a condition is delayed: `heater` stays false, although the door is shut." },
+    { "note": "In `PreheatSuspend`, `Prepare` terminates now, one tick late: `heater` = true in both." },
+    { "note": "Both in `Heating`." }
+  ],
+  "expect": "ok"
+}

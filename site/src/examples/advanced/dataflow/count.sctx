@@ -1,0 +1,8 @@
+scchart Count {
+  output int wrong, right
+
+  dataflow {
+    wrong = 0 fby wrong + 1
+    right = 0 fby (right + 1)
+  }
+}

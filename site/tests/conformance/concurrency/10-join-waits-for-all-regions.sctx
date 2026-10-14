@@ -1,0 +1,22 @@
+scchart JoinWaitsForAll {
+  input bool a, b
+  output bool done
+
+  initial state S {
+    region RA {
+      initial state W
+      if a go to F
+      final state F
+    }
+    region RB {
+      initial state W
+      if b go to F
+      final state F
+    }
+  }
+  join to D
+
+  state D {
+    entry do done = true
+  }
+}

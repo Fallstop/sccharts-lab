@@ -1,0 +1,57 @@
+{
+  "ticks": [
+    {
+      "inputs": { "reqA": false, "reqB": false, "done": false },
+      "note": "Tick 1 enters `Free` in both charts."
+    },
+    {
+      "inputs": { "reqA": true },
+      "note": "Only A has a job, and it starts at once in both charts."
+    },
+    {
+      "inputs": { "reqA": false, "reqB": true },
+      "note": "B's job waits in both charts."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "A's job is finished. Only B has a job waiting, so B prints in both charts."
+    },
+    {
+      "inputs": { "done": false, "reqB": false },
+      "note": "B's job prints."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "Finished, and nothing is waiting: `user` is 0."
+    },
+    {
+      "inputs": { "done": false, "reqA": true, "reqB": true },
+      "note": "Both send a job while the printer is free. In `RoundRobin`, `pre(user)` is 0, not 1, so A's trigger holds, and A wins in both charts."
+    },
+    {
+      "inputs": {},
+      "note": "From now on both computers keep sending jobs: `reqA` and `reqB` stay true."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "A's job is finished. `FixedPriority` gives the printer to A again. In `RoundRobin`, `pre(user)` is 1: A has just had its turn, so A's trigger is false, and B's transition hands the printer to B."
+    },
+    {
+      "inputs": { "done": false },
+      "note": "`FixedPriority` prints for A, `RoundRobin` for B."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "In `RoundRobin`, `pre(user)` is 2 now, so A's trigger holds again and A gets the printer. `FixedPriority` gives it to A, as always."
+    },
+    {
+      "inputs": { "done": false },
+      "note": "Both charts print for A."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "`RoundRobin` alternates: B again. `FixedPriority` has not given B the printer once since B started waiting in tick 7."
+    }
+  ],
+  "expect": "ok"
+}

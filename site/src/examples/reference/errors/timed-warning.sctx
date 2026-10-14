@@ -1,0 +1,11 @@
+scchart TimedWarning {
+  input bool start
+  output bool alarm
+  clock t
+
+  initial state Idle
+    if start do t = 0 go to Waiting
+
+  state Waiting
+    if t >= 300 do alarm = true go to Idle
+}

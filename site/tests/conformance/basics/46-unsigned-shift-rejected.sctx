@@ -1,0 +1,7 @@
+scchart UnsignedShiftRejected {
+  input int A
+  output int u
+
+  initial state S
+  do u = A >>> 2 go to S
+}

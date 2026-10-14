@@ -1,0 +1,120 @@
+{
+  "hash": "0ffbd89195b885b8c974d2526c796726524f5123",
+  "chart": "tests/engine/kieler/structure/probe-dz56.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on t."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0.5
+      },
+      "values": {
+        "deltaT": 0.5,
+        "n": 0,
+        "sleepT": 1.5,
+        "t": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 0.5
+      },
+      "values": {
+        "deltaT": 0.5,
+        "n": 0,
+        "sleepT": 1,
+        "t": 0.5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 0.5
+      },
+      "values": {
+        "deltaT": 0.5,
+        "n": 0,
+        "sleepT": 0.5,
+        "t": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 0.5
+      },
+      "values": {
+        "deltaT": 0.5,
+        "n": 1,
+        "sleepT": 1.5,
+        "t": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 0.5
+      },
+      "values": {
+        "deltaT": 0.5,
+        "n": 1,
+        "sleepT": 1,
+        "t": 0.5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

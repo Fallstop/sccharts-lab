@@ -1,0 +1,40 @@
+{
+  "hash": "d648ac09413f3577903655866f3894064376c6af",
+  "chart": "tests/conformance/basics/21-loop-three-states.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _cg2",
+    "Can't schedule from _g2 to _g3",
+    "Can't schedule from _g3 to _g1",
+    "Can't schedule from _g2 to _g4",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A, C, B]",
+      "line": 5,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A, C, B]",
+      "line": 11,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A, C, B]",
+      "line": 8,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

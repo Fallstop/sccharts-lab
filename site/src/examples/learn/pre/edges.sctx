@@ -1,0 +1,8 @@
+scchart Edges {
+  input bool button
+  output bool pressed, released
+
+  initial state Watch {
+    immediate during do pressed = button && !pre(button); released = !button && pre(button)
+  }
+}

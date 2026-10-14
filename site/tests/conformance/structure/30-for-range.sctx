@@ -1,0 +1,17 @@
+// region R for i : 1 to 3 makes three concurrent copies of the region, with i = 1, 2 and 3 (a constant in each).
+// The join fires when every copy has reached its final state.
+scchart St30Wait {
+  input int I
+  output bool O = false
+  initial state Waiting {
+    region R for i : 1 to 3 {
+      initial state W
+      if I == i go to D
+      final state D
+    }
+  }
+  join to Done
+  state Done {
+    entry do O = true
+  }
+}

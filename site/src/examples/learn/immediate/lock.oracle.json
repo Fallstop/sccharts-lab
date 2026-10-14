@@ -1,0 +1,128 @@
+{
+  "hash": "6673ff6d8564387df0392066270c1ca4f29285dd",
+  "chart": "src/examples/learn/immediate/lock.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "code": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "enter": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "open": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "tries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "code": 42,
+        "enter": true
+      },
+      "values": {
+        "code": 42,
+        "enter": true,
+        "open": false,
+        "tries": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "code": 7
+      },
+      "values": {
+        "code": 7,
+        "enter": true,
+        "open": false,
+        "tries": 1
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "enter": false
+      },
+      "values": {
+        "code": 7,
+        "enter": false,
+        "open": false,
+        "tries": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "code": 42,
+        "enter": true
+      },
+      "values": {
+        "code": 42,
+        "enter": true,
+        "open": true,
+        "tries": 2
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "enter": false
+      },
+      "values": {
+        "code": 42,
+        "enter": false,
+        "open": true,
+        "tries": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz41 {
+  input bool A
+  output int x = 0
+  initial state S
+  do { x += 1; } go to T
+  state T
+  if A do { if (x > 0) { x = x * 10; } } go to S
+}

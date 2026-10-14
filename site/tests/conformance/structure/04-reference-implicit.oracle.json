@@ -1,0 +1,53 @@
+{
+  "hash": "7cac19beea1f8b38ffa43fc72bb3908c2ef8ed66",
+  "chart": "tests/conformance/structure/04-reference-implicit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Valued Objects are bound implicitly!\nsecond, ",
+      "line": 7,
+      "column": 22,
+      "code": "Valued Objects are bound implicitly!\nsecond, "
+    }
+  ],
+  "interface": {
+    "second": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "speaker": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "second": true
+      },
+      "values": {
+        "second": true,
+        "speaker": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "second": true,
+        "speaker": true
+      },
+      "terminated": false
+    }
+  ]
+}

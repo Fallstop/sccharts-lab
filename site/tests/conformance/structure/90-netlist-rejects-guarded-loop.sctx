@@ -1,0 +1,10 @@
+// The netlist compiler (the default) rejects any immediate cycle of transitions, even if a guard ends it at
+// run time. Compare 91-priority-runs-guarded-loop.
+scchart St90Loop {
+  input bool A
+  output int n = 0
+  initial state S
+  immediate if A && n < 5 do n++ go to T
+  state T
+  immediate go to S
+}

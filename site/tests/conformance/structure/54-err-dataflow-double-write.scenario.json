@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": 1
+      },
+      "note": "Rejected: \"Can't schedule from ... to ...\", \"The SCG is NOT asc-schedulable!\" (with \"Potential instantaneous loop.\" warnings). Written as sequential equations (X = I; then X = I + 1) the chart is accepted and the last write wins."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Can't schedule"
+}

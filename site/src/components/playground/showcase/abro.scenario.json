@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters the initial states. The waits for `A` and `B` are delayed, so nothing else can happen yet." },
+    { "inputs": { "A": true }, "note": "`A` is present: region HandleA reaches its final state. HandleB still waits." },
+    { "inputs": { "A": false, "B": true }, "note": "`B` arrives: now both regions are final, so `join to Done` fires in the same tick and emits `O`." },
+    { "inputs": { "B": false }, "note": "`O` was a one-tick pulse. `ABO` waits in `Done` until `R`." },
+    { "inputs": { "R": true }, "note": "`R` aborts `ABO` and enters it again: the waits start over." },
+    { "inputs": { "R": false, "A": true, "B": true }, "note": "`A` and `B` in the same tick: both regions finish at once and `O` is emitted." },
+    { "inputs": { "A": false, "B": false }, "note": "Back to waiting for `R`." },
+    { "inputs": { "A": true, "B": true, "R": true }, "note": "`R` arrives with `A` and `B`. `abort to` is a strong abort: it fires before the regions run, so this time `O` is not emitted." }
+  ]
+}

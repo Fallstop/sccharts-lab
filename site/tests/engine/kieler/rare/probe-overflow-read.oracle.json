@@ -1,0 +1,81 @@
+{
+  "hash": "85ae278c260aad60364ef2678058a6e4b517b478",
+  "chart": "tests/engine/kieler/rare/probe-overflow-read.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "x": 0,
+        "z": 42
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "x": 42,
+        "z": 43
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "x": 43,
+        "z": 44
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

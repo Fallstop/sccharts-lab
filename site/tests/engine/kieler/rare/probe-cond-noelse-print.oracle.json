@@ -1,0 +1,20 @@
+{
+  "hash": "8e70b7e44c3f9817519003448fb89339d5e54dd6",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-print.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "‘__CONDSELF__’ undeclared (first use in this function)",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "You do a calculation inside a print call effect. You should use printf syntax to be safe on different code generators.",
+      "line": 6,
+      "column": 16
+    }
+  ],
+  "ticks": []
+}

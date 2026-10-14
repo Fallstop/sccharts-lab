@@ -1,0 +1,12 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz07 {
+  input int I
+  output int s = 0
+  int arr[4] = {0, 0, 0, 0}
+  region for j : 0 to 3 {
+    initial state W
+    if I == j do arr[j] = j * 2; s += arr[j] go to D
+    state D
+    go to W
+  }
+}

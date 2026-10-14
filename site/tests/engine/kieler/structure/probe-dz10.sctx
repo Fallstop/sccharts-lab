@@ -1,0 +1,10 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz10 {
+  input int I
+  output int O[2]
+  output int X
+  dataflow {
+    O = {I + 1, I * 2}
+    X = O[0] + O[1]
+  }
+}

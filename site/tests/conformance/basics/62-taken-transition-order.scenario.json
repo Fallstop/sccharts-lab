@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {"inputs": {"a": false, "b": false, "c": false, "d": false, "e": false, "f": false}, "note": "The oracle's taken[] array numbers the transitions in pre-order: each state's own outgoing transitions (in priority order), then everything inside it (regions and states in source order), then the next state. Here: 0 P->Q (c), 1 P->Q (f), 2 X1->X2, 3 Y1->Y2, 4 Q->P, 5 U->V. Nothing fires in tick 1."},
+    {"inputs": {"a": true}, "note": "X1 -> X2: taken = [0, 0, 1, 0, 0, 0]."},
+    {"inputs": {"a": false, "b": true}, "note": "Y1 -> Y2: taken = [0, 0, 0, 1, 0, 0]."},
+    {"inputs": {"b": false, "c": true}, "note": "P -> Q with priority 1: taken = [1, 0, 0, 0, 0, 0]."},
+    {"inputs": {"c": false, "d": true}, "note": "Q -> P: taken = [0, 0, 0, 0, 1, 0]."},
+    {"inputs": {"d": false, "e": true}, "note": "U -> V in the second root region: taken = [0, 0, 0, 0, 0, 1]."},
+    {"inputs": {"e": false, "f": true}, "note": "P -> Q with priority 2: taken = [0, 1, 0, 0, 0, 0]."},
+    {"inputs": {"f": false}, "note": "Nothing fires: all inputs are false."}
+  ],
+  "expect": "ok"
+}

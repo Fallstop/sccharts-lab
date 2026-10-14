@@ -1,0 +1,89 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "Tick 1: both buttons up."
+    },
+    {
+      "inputs": {
+        "rawA": true,
+        "rawB": false
+      },
+      "note": "`rawA` contact."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "`rawA` bounce."
+    },
+    {
+      "inputs": {
+        "rawA": true,
+        "rawB": false
+      },
+      "note": "`rawA` contact."
+    },
+    {
+      "inputs": {
+        "rawA": true,
+        "rawB": true
+      },
+      "note": "`rawA` held; `rawB` pressed cleanly. The starter ignores `rawB` completely."
+    },
+    {
+      "inputs": {
+        "rawA": true,
+        "rawB": true
+      },
+      "note": "Third reading in a row for `rawA`: `pressedA`. Your version should handle `rawB` as well."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": true
+      },
+      "note": "`rawA` released."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": true
+      },
+      "note": "`rawA` released."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "Third false reading for `rawA`: released. `rawB` goes up."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "Quiet."
+    }
+  ],
+  "expect": "ok"
+}

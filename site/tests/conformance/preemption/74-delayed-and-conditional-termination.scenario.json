@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Three superstates whose inner region finishes in tick 1. A plain `join to` fires as soon as the inner regions are final, even in the entry tick (plainAt = 1). `delayed join to` and a termination with a trigger (`if A join to`) are delayed: they wait for tick 2."
+    },
+    {
+      "inputs": {},
+      "note": "delayedAt = 2, guardedAt = 2."
+    },
+    {
+      "inputs": {},
+      "note": "Nothing new."
+    }
+  ],
+  "expect": "ok"
+}

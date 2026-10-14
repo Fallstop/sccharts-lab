@@ -1,0 +1,60 @@
+{
+  "hash": "8379a2c477445c5b6b2b87c46c6f051f92b320e3",
+  "chart": "tests/conformance/structure/23-warn-join-never-terminates.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The referenced SCChart does not terminate, but you are using a termination to proceed.",
+      "line": 6,
+      "column": 22
+    }
+  ],
+  "interface": {
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "done": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "done": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

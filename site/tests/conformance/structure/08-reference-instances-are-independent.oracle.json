@@ -1,0 +1,74 @@
+{
+  "hash": "c0e2ef6996ee5c870496a3799df0d941a5ede0d3",
+  "chart": "tests/conformance/structure/08-reference-instances-are-independent.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "step": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "step": false
+      },
+      "values": {
+        "step": false,
+        "a": 0,
+        "b": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "step": false,
+        "a": 0,
+        "b": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "step": true
+      },
+      "values": {
+        "step": true,
+        "a": 1,
+        "b": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "step": true,
+        "a": 2,
+        "b": 3
+      },
+      "terminated": false
+    }
+  ]
+}

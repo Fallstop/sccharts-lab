@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Rejected: whole arrays cannot be assigned to each other (nor can a scalar be assigned to an array). The C compiler fails: \"assignment to expression with array type\"."}
+  ],
+  "expect": "error",
+  "errorIncludes": "assignment to expression with array type"
+}

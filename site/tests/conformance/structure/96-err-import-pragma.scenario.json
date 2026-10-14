@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Syntax error `no viable alternative at input 'import'` at 1:1 (official KIELER and the lab server alike). Error recovery still reads the line as an import, so the editor also warns `Broken Import: There is no SCCharts model with the given name.`"
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "no viable alternative at input 'import'"
+}

@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "note": "Tick 1 enters `Off`, and `light` is false. The transition out of `Off` has no condition, but it is not checked in the tick `Off` was entered."
+    },
+    {
+      "note": "The transition out of `Off` has no condition, so it fires: `light` is true and the chart is in `On`."
+    },
+    {
+      "note": "And back: `light` is false and the chart is in `Off`."
+    },
+    {
+      "note": "`On` again. The chart has no inputs at all, yet every tick it does something."
+    },
+    {
+      "note": "`Off` again. How long is one blink? One tick. How long is a tick? The chart cannot say."
+    },
+    {
+      "note": "`On` again."
+    }
+  ],
+  "expect": "ok"
+}

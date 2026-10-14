@@ -1,0 +1,28 @@
+// Two methods of the chart with the same label: KIELER crashes.
+scchart LabelSameMethod {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+
+  method void m1() {
+    if (b) {
+      goto skip
+    }
+    x += 1;
+    skip:
+    y += 1
+  }
+
+  method void m2() {
+    if (b) {
+      goto skip
+    }
+    z += 1;
+    skip:
+    y += 10
+  }
+
+  initial state S
+    if a do m1() go to T
+  state T
+    if a do m2() go to S
+}

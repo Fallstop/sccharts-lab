@@ -1,0 +1,82 @@
+{
+  "hash": "807ecda7ee90836ff97c0674af570d53fe1e23ba",
+  "chart": "tests/conformance/structure/51-fby-blocks-termination.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "doneX": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "doneY": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 5
+      },
+      "values": {
+        "I": 5,
+        "X": 0,
+        "Y": 0,
+        "doneX": false,
+        "doneY": true
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 6
+      },
+      "values": {
+        "I": 6,
+        "X": 0,
+        "Y": 0,
+        "doneX": false,
+        "doneY": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

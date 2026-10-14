@@ -1,0 +1,27 @@
+{
+  "hash": "a575891589015ec5a576a67f33d8d3aa46110e08",
+  "chart": "src/examples/reference/errors/assign-signal.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "6:13 Non-variables cannot be used in an assignment.",
+    "Can't schedule from _g4 to _g7",
+    "Can't schedule from _g7 to _g4",
+    "Can't schedule from _g4 to _g2",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving done prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through done.",
+    "Potential instantaneous loop through done."
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Non-variables cannot be used in an assignment.",
+      "line": 6,
+      "column": 13
+    }
+  ],
+  "ticks": []
+}

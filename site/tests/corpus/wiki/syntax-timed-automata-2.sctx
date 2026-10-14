@@ -1,0 +1,15 @@
+scchart FastAndSlowGreedy {
+  region Fast {
+    clock x = 0
+    
+    initial state S
+    if x >= 333 do x = 0 go to S
+    
+  }
+  region Slow {
+    clock x = 0
+    
+    initial state S
+    if x >= 999 || x >= 1000 do x = 0 go to S
+  }
+}

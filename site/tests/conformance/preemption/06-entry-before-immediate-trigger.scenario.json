@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "unused": false
+      },
+      "note": "Tick 1 enters A and runs its entry action (ready = true) before A's immediate transition is checked, so the transition fires in the same tick: left = 1."
+    },
+    {
+      "inputs": {},
+      "note": "B has no transitions: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

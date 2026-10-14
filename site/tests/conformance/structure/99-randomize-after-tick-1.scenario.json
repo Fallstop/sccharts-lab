@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Accepted: the delayed transition is not part of the tick-1 block, so `randomize()` is not moved into `reset()` (compare 84-err-randomize). Tick 1: n = 0."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "The transition seeds the generator and counts: n = 1. (Without the `#hostcode` include, gcc rejects `srand`: \"implicit declaration of function ‘srand’\".)"
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In T; nothing changes (n = 1)."
+    }
+  ],
+  "expect": "ok"
+}

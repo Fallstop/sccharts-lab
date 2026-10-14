@@ -1,0 +1,15 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz49 {
+  input int I
+  output int O = 0
+  initial state R is Dz49D(I, O)
+}
+scchart Dz49D {
+  input int a
+  output int b
+  int t
+  dataflow {
+    t = a * 2
+    b = t + (0 fby a)
+  }
+}

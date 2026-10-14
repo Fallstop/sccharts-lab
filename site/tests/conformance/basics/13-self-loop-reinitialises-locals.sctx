@@ -1,0 +1,9 @@
+scchart SelfLoopReinitialisesLocals {
+  output int x = 0
+
+  initial state A {
+    int c = 10
+    entry do c += 1
+  }
+  do x = c go to A
+}

@@ -1,0 +1,9 @@
+scchart CodeSemicolon {
+  input bool A
+  output int x, y
+
+  initial state Idle
+    if A do { x = 1 y = 2 } go to Done
+
+  state Done
+}

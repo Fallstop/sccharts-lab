@@ -1,0 +1,159 @@
+{
+  "hash": "816077917be5053d68924d1043be49dd42237ce2",
+  "chart": "tests/conformance/concurrency/57-pure-emission-of-valued-signal.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "N": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "N_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "P": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "P_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "N_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "P_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "N": false,
+        "N_val": 0,
+        "P": false,
+        "P_val": 0,
+        "N_curval": 0,
+        "P_curval": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "N": true,
+        "N_val": 4,
+        "P": true,
+        "P_val": 4,
+        "N_curval": 4,
+        "P_curval": 4
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "N": true,
+        "N_val": 4,
+        "P": true,
+        "P_val": 0,
+        "N_curval": 4,
+        "P_curval": 0
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "N": false,
+        "N_val": 4,
+        "P": false,
+        "P_val": 0,
+        "N_curval": 4,
+        "P_curval": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

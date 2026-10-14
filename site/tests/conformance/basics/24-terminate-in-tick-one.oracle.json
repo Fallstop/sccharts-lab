@@ -1,0 +1,40 @@
+{
+  "hash": "549c8e03f6b662c64fd28c0de7dfda3fc86fde05",
+  "chart": "tests/conformance/basics/24-terminate-in-tick-one.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 7
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

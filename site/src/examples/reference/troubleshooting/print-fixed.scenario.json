@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "Tick 1 enters `Idle`."
+    },
+    {
+      "inputs": {
+        "job": true
+      },
+      "note": "`job` takes the chart into `Printing`: its entry action sets `busy`, and both regions start."
+    },
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "Both regions reach their final states, and the `join to` fires in the same tick: `busy` is false again and the chart is back in `Idle`. `fed` is declared in the chart, not in `Printing`."
+    },
+    {
+      "inputs": {},
+      "note": "Waiting in `Idle`."
+    },
+    {
+      "inputs": {
+        "job": true
+      },
+      "note": "The second `job` starts `Printing` again."
+    },
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "The second page is counted, and the join takes the chart back to `Idle`."
+    }
+  ],
+  "expect": "ok"
+}

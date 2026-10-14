@@ -1,0 +1,15 @@
+scchart StartDelayed {
+  input bool doorOpen
+  output bool heater = false
+  output int remaining = 3
+
+  initial state Cooking {
+    suspend if doorOpen
+
+    initial state Start
+      immediate do heater = true go to Heating
+
+    state Heating
+      if remaining > 0 do remaining-- go to Heating
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": {}, "note": "Tick 1 enters `S`, which sets its local `n` to 0." },
+    { "inputs": {}, "note": "The self-loop fires: `n++` makes `n` 1, `shown` copies it, and re-entering `S` sets `n` back to 0." },
+    { "inputs": {}, "note": "The same again: `shown` is 1." },
+    { "inputs": {}, "note": "And again. The counter never gets past 1." }
+  ],
+  "expect": "ok"
+}

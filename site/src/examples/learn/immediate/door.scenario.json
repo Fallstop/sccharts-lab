@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "open": false
+      },
+      "note": "KIELER rejects this chart: `Closed` and `Opened` are joined by a cycle of immediate transitions. The guards `open` and `!open` can never both hold, but the check does not look at guards."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

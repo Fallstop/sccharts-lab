@@ -1,0 +1,109 @@
+{
+  "hash": "e7843156cd9c7798a52f3684574e85f4a4ee656f",
+  "chart": "src/examples/learn/transitions/thermostat-window.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "temperature": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "windowOpen": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "heating": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "temperature": 20,
+        "windowOpen": false
+      },
+      "values": {
+        "temperature": 20,
+        "windowOpen": false,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "temperature": 17
+      },
+      "values": {
+        "temperature": 17,
+        "windowOpen": false,
+        "heating": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "windowOpen": true
+      },
+      "values": {
+        "temperature": 17,
+        "windowOpen": true,
+        "heating": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "temperature": 17,
+        "windowOpen": true,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "windowOpen": false
+      },
+      "values": {
+        "temperature": 17,
+        "windowOpen": false,
+        "heating": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

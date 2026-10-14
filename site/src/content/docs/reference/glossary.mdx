@@ -1,0 +1,832 @@
+---
+title: "Glossary"
+description: "The terms this guide uses, each defined in a sentence or two, with a link to where it is taught."
+sidebar:
+  order: 5
+tableOfContents:
+  minHeadingLevel: 2
+  maxHeadingLevel: 2
+---
+
+Each entry says what the term means in SCCharts as KIELER implements it, and links to the chapter
+that teaches it. Terms that have entries of their own are linked to them.
+
+**Jump to:**&ensp;[A](#a)&ensp;[B](#b)&ensp;[C](#c)&ensp;[D](#d)&ensp;[E](#e)&ensp;[F](#f)&ensp;[G](#g)&ensp;[H](#h)&ensp;[I](#i)&ensp;[J](#j)&ensp;[K](#k)&ensp;[L](#l)&ensp;[M](#m)&ensp;[N](#n)&ensp;[O](#o)&ensp;[P](#p)&ensp;[R](#r)&ensp;[S](#s)&ensp;[T](#t)&ensp;[U](#u)&ensp;[V](#v)&ensp;[W](#w)
+
+## A
+
+### ABRO
+
+The classic first program of synchronous languages: emit `O` as soon as both `A` and `B` have
+arrived, in any order, and start again whenever `R` arrives. It shows [concurrent
+regions](#concurrent-regions), [termination](#termination) and a [strong abort](#strong-abort) in a
+few lines. See [the ABRO pattern](/patterns/abro/) and [finishing together](/learn/concurrency/#finishing-together-abro).
+
+### Abort
+
+Leaving a [superstate](#superstate) by one of its outgoing [transitions](#transition) while its inside is still running. A
+[weak abort](#weak-abort) (`go to`) lets the inside finish the current [tick](#tick) first; a [strong abort](#strong-abort)
+(`abort to`) stops it before it does anything in that tick. See [aborts](/learn/preemption/).
+
+### Absent
+
+A [signal](#signal) is absent in a tick in which nothing emits it. The opposite of [present](#present). See
+[signals](/learn/signals/).
+
+### Absolute write
+
+An assignment such as `x = 3` that sets a variable without reading it. Within a tick, concurrent
+absolute writes of a variable happen before its [updates](#update) and its reads. See
+[why the compiler says no](/learn/causality/).
+
+### Action
+
+Behaviour attached to a [state](#state) rather than to a transition: an [entry action](#entry-action), a [during action](#during-action),
+an [exit action](#exit-action), a `suspend` or a `period`. See [entry, during and exit](/learn/actions/).
+
+### Active state
+
+A state the chart is in. Every active region has exactly one active state; a [superstate](#superstate) that is
+active has an active state in each of its regions. Simulators mark active states in red.
+
+### Actual
+
+The variable or signal of the referencing chart that a [binding](#binding) connects to a
+[formal](#formal) of the referenced chart. Bindings are written `actual to formal`: in
+`Blinker(left to tick)`, `left` is the actual. See
+[reusing charts](/advanced/references/#wiring-bindings).
+
+### Annotation
+
+A note for the tools written before an element, such as `@HVLayout` or `@layout[elk.direction] RIGHT`.
+Annotations change the diagram or the compilation, not the language. See
+[comments and annotations](/advanced/annotations/).
+
+### Arbiter
+
+A part of a chart that decides which of several clients may use a shared resource, such as a printer,
+and passes it on when the client is done: by a fixed priority, or in turns. See
+[sharing a resource](/patterns/arbiter/).
+
+### Asc-schedulable
+
+KIELER's word for a chart it can compile: in every tick, the operations of its [SCG](#scg) can be put in an
+order without a cycle (ASC stands for *acyclic sequentially constructive*). When they cannot, KIELER
+rejects the chart with `The SCG is NOT asc-schedulable!`. See
+[why the compiler says no](/learn/causality/) and [schedule](#schedule).
+
+## B
+
+### Binding
+
+The connection between a variable of a chart and an input or output of a chart it references:
+`Blinker(tick to tick, lamp to light)` binds this chart's `tick` to Blinker's `tick`, and this chart's
+`lamp` to Blinker's `light`. Bindings can be explicit (`a to b`), by position, or implicit (by name,
+with a warning). See [reusing charts](/advanced/references/).
+
+## C
+
+### Causality cycle
+
+A set of reads and writes in one tick that cannot be ordered, because each waits for another, as when
+one region tests a signal before emitting a second one and another region does the reverse. KIELER
+rejects such charts. See [why the compiler says no](/learn/causality/).
+
+### Class
+
+A [struct](#struct) that also has methods: `class Counter { … } home, away` declares the type and its
+two [instances](#instance). Members marked `private` can be used only inside the class, and a call
+names its instance, `home.add()`. See
+[enums, structs and classes](/advanced/data-types/#classes-data-with-its-own-methods).
+
+### Clock
+
+A variable declared with `clock t` that measures physical time in a timed chart. It advances by the
+input [deltaT](#deltat) from tick to tick and is tested in triggers such as `if t >= 300`. See [time](/advanced/time/).
+
+### Code effect
+
+A block of statements in braces in place of an effect, as in `do { a++; b = a * 2 } go to S`, written
+in the same language as the body of a [method](#method): `if`, loops and local variables, with its own
+rule for semicolons. See [code effects](/advanced/methods/#code-effects).
+
+### Combine function
+
+How a [valued signal](#valued-signal) merges several values emitted in the same tick: `+`, `*`, `max`, `min`, `|`, `&`,
+`none` or `host`, declared as in `signal int sum combine +`. (In KIELER, `&` on an `int` signal always gives
+0.) See [signals](/learn/signals/#emitting-more-than-once-in-a-tick).
+
+### Concurrent regions
+
+Two or more [regions](#region) of the same state. All of them react in every tick, and the order in which
+their actions run within the tick is decided by their reads and writes, not by the order in which they
+are written. See [concurrent regions](/learn/concurrency/).
+
+### Connector state
+
+A state written `connector state C` and drawn as a small filled dot. Control passes through it within the
+tick, along the first of its outgoing transitions whose trigger holds. See
+[connector states](/advanced/connectors/).
+
+### const
+
+A name for a value that is fixed when the chart is compiled: `const int N = 3`. Every use is replaced
+by the value. See [variables](/learn/variables/).
+
+### Core SCCharts
+
+The small set of constructs on which SCCharts is defined, and into which KIELER translates every chart
+before it generates code: superstates with concurrent regions, initial and final states, delayed and
+immediate transitions out of simple states with their triggers, effects and priorities, and
+[termination transitions](#termination-transition) without a trigger. Everything else is
+[Extended SCCharts](#extended-sccharts). See Figure 1 of the PLDI 2014 paper on [further reading](/reference/further-reading/#sccharts-papers).
+
+### Count delay
+
+A number in front of a trigger: `if 3 A go to B` fires in the third tick in which `A` holds while the
+source state is active. The count starts again whenever the state is entered. See
+[the previous tick](/learn/pre/).
+
+## D
+
+### Dataflow region
+
+A region holding equations (`O = A && B`) instead of states; every equation is recomputed in every
+tick. See [dataflow regions](/advanced/dataflow/).
+
+### Debouncing
+
+Accepting a new reading of a noisy input, such as a bouncing button, only once it has stayed the same
+for a number of ticks in a row. See [debouncing](/patterns/debounce/).
+
+### Declaration
+
+The line that introduces a variable or signal and gives its type: `input bool button`,
+`output int count = 0`. A declaration is visible in the state or region that contains it and in
+everything nested inside. See [variables](/learn/variables/).
+
+### Deep history
+
+A transition `go to S history` that enters the superstate `S` in the states it was in when it was
+last left, at every level of nesting. Drawn as H\* at the arrow head. See [history](/advanced/history/).
+
+### Deferred transition
+
+A transition `go to S deferred` that enters `S` quietly: `S`'s entry actions do not run and its
+immediate behaviour waits until the next tick. See [history and deferred transitions](/advanced/history/#deferred-transitions).
+
+### Delayed transition
+
+A transition that cannot fire in the tick its source state is entered, only from the next tick on.
+This is the default, except for a `join to` without a trigger and the transitions out of a
+[connector state](#connector-state), which are immediate. It is drawn as a solid arrow. See
+[delayed and immediate](/learn/immediate/).
+
+### deltaT
+
+The input that a chart with a [clock](#clock) gets automatically: how much time has passed since the previous
+tick. The environment provides it. See [time](/advanced/time/).
+
+### Determinacy
+
+Often called determinism: the same inputs, tick by tick, always produce the same outputs, even with
+[concurrent regions](#concurrent-regions). KIELER guarantees it by rejecting every chart whose ticks it cannot order (see
+[causality cycle](#causality-cycle)). The SCCharts papers say *determinacy* because, strictly, a *deterministic*
+computation would also take the same internal steps every time. See
+[thinking in ticks](/learn/ticks/).
+
+### Determinism
+
+See [determinacy](#determinacy).
+
+### Doc comment
+
+A comment written `/** … */` before an element, or `//*` at the end of a declaration (a *declaration
+comment*). KIELER draws doc comments in the diagram, as notes or as extra labels on transitions. See
+[comments and annotations](/advanced/annotations/#doc-comments-in-the-diagram).
+
+### During action
+
+An action `during do …` of a state that runs in every tick the state is active except the tick it was
+entered; `immediate during` also runs in that first tick. See [entry, during and exit](/learn/actions/).
+
+### Dynamic ticks
+
+Running a chart only when an input changes or when it asks to be woken (through [sleepT](#sleept)), instead of
+at a fixed rate. The environment reports the time that passed in [deltaT](#deltat). See
+[time](/advanced/time/#sleept-when-to-wake-the-chart).
+
+## E
+
+### Edge
+
+The tick in which a `bool` changes: a *rising edge* (false to true, `x && !pre(x)`) or a *falling
+edge* (true to false, `!x && pre(x)`). See [the previous tick](/learn/pre/#edges-and-pulses) and
+[edges and pulses](/patterns/edges/).
+
+### Effect
+
+What a transition or action does when it fires: assignments (`x = 1`), emissions (`S`), calls and so
+on, written after `do` and separated by `;`. See [triggers, effects and priority](/learn/transitions/).
+
+### Emit
+
+To make a [signal](#signal) [present](#present) in the current tick, by writing its name as an effect: `do S`. A valued
+signal is emitted with a value: `do V(3)`. See [signals](/learn/signals/).
+
+### Entry action
+
+An action `entry do …` that runs every time its state is entered, before the states inside it are
+entered and before its transitions are checked. See [entry, during and exit](/learn/actions/).
+
+### Entry tick
+
+The tick in which a state is entered. Only its [immediate](#immediate-transition) transitions can fire in its entry tick. See
+[delayed and immediate](/learn/immediate/).
+
+### Enum
+
+A type with named values, `enum Speed { OFF, LOW, HIGH }`, and variables of that type, declared with
+`ref`: `ref Speed speed = Speed.OFF`. Values are written with their type in front, `Speed.LOW`; a
+simulation shows them as numbers, their positions counted from 0. See
+[enums, structs and classes](/advanced/data-types/#enums-names-instead-of-codes).
+
+### Environment
+
+Whatever surrounds the chart and talks to it: in a simulation, you, setting the inputs before each tick;
+on a device, the main loop that reads sensors and drives outputs. See [thinking in ticks](/learn/ticks/).
+
+### Equation
+
+A line such as `siren = armed && door` in a [dataflow region](#dataflow-region), worked out again in every tick. See
+[dataflow regions](/advanced/dataflow/).
+
+### Exit action
+
+An action `exit do …` that runs every time its state is left, however it is left, strong aborts
+included. See [entry, during and exit](/learn/actions/).
+
+### Extended SCCharts
+
+All the constructs beyond [core SCCharts](#core-sccharts): weak and strong aborts (every transition out
+of a superstate other than a plain termination), signals, entry, during and exit actions, suspension,
+history and deferred entry, count delays, `pre`, connectors, initial values and more. Each is defined
+by a translation into core SCCharts, and KIELER compiles a chart by applying these translations one
+after another. See Figure 1 of the PLDI 2014 paper on
+[further reading](/reference/further-reading/#sccharts-papers).
+
+## F
+
+### fby
+
+"Followed by": in `0 fby x`, the value is 0 in the first tick and the previous tick's `x` after that.
+Mostly used in [dataflow regions](#dataflow-region). See [dataflow regions](/advanced/dataflow/).
+
+### Final region
+
+A region written `final region R { … }`, all of whose states count as final, so that it never holds up
+its parent's [termination](#termination). Rarely used; KIELER still warns as if the region had no final state. See
+the [cheat sheet](/reference/cheatsheet/#rarely-used).
+
+### Final state
+
+A state written `final state F` and drawn with a double outline. A region in a final state counts as
+finished; when every region of a superstate is in a final state, the superstate terminates. See
+[delayed and immediate](/learn/immediate/) and [superstates](/learn/hierarchy/).
+
+### For region
+
+A region written `region R for i : 0 to 2 { … }`, which KIELER copies once for each value of `i`; the
+copies run concurrently. See [arrays and for regions](/advanced/for-regions/).
+
+### Formal
+
+An input or output of a referenced chart. A [binding](#binding) connects each formal to an [actual](#actual), a variable
+or signal of the referencing chart. See [reusing charts](/advanced/references/#wiring-bindings).
+
+## G
+
+### Guard
+
+In KIELER's scheduling messages, names such as `_g4` in `Can't schedule from _g4 to _g9`: the blocks of
+the program that the compiler builds from a chart (the [SCG](#scg)). They do not appear in your source. See
+[why the compiler says no](/learn/causality/).
+
+## H
+
+### Handshake
+
+A request from one part of a chart and an acknowledgement from another, usually between concurrent
+regions, within one tick or across several. See [handshakes](/patterns/handshake/).
+
+### History
+
+Returning to a [superstate](#superstate) where it was when it was left, instead of at its initial states: see
+[deep history](#deep-history) and [shallow history](#shallow-history).
+
+### Host code
+
+Text in the language KIELER generates (usually C) that is copied into the generated code: in
+backticks, through `extern` functions or with `#hostcode`. See [host code](/advanced/host-code/).
+
+## I
+
+### Immediate during
+
+See [during action](#during-action).
+
+### Immediate transition
+
+A transition written with `immediate` that may fire in the [entry tick](#entry-tick) of its source state, and in
+every later tick. Drawn as a dashed arrow. See [delayed and immediate](/learn/immediate/).
+
+### Initial state
+
+The state in which a region starts, written `initial state A` and drawn with a heavy outline. Every
+region has exactly one. See [your first SCChart](/learn/first-chart/).
+
+### Initialise, update, read
+
+The order KIELER gives to the operations on a variable within a tick when concurrent regions share it:
+first the [absolute writes](#absolute-write), then the [updates](#update), then the reads. See
+[why the compiler says no](/learn/causality/).
+
+### Inner behaviour
+
+What happens inside a state: its regions, with their states, transitions and actions, and its own
+[during actions](#during-action). A [weak abort](#weak-abort) lets the inner behaviour finish its tick; a [strong abort](#strong-abort) stops it.
+KIELER's message `A state with a termination transition must have inner behaviour.` means that the
+state has no regions ([superstates](/learn/hierarchy/#finishing-final-states-and-join-to)). See
+[aborts](/learn/preemption/).
+
+### Input
+
+A variable or signal declared with `input`, set by the [environment](#environment) before each tick. In KIELER's
+simulator, an input keeps its value until you change it. See [variables](/learn/variables/).
+
+### Instance
+
+A copy of another chart inside this one, made by a [reference](#reference) (`state L is Blinker(…)`) or, in a
+dataflow region, by a declaration such as `ref Adder add`. Each instance has its own local variables.
+See [reusing charts](/advanced/references/). The variables of a [struct](#struct) or [class](#class)
+type, such as `latest` in `struct Reading { … } latest`, are its instances too.
+
+### Instant
+
+Another word for [tick](#tick).
+
+### Instantaneous loop
+
+A cycle that one tick could go round without end, such as two states connected by immediate
+transitions both ways. KIELER rejects every such cycle, whatever the triggers on it. See
+[delayed and immediate](/learn/immediate/).
+
+### Interface
+
+The [inputs](#input) and [outputs](#output) of a chart: what the environment sets and what it reads. Only the
+declarations at the top of the chart belong to it. See [your first SCChart](/learn/first-chart/).
+
+## J
+
+### Join
+
+Short for a `join to` transition: see [termination transition](#termination-transition).
+
+## K
+
+### KiCo
+
+KIELER's compiler framework, which turns a chart into code step by step. Compiler messages sometimes
+refer to the *KiCo log*, and `kico` is also the name of KIELER's command-line compiler. See
+[compiler messages](/reference/errors/#compiler-did-not-return-success-exit-value--0) and
+[getting SCCharts](/start/tools/#kieler-sccharts-for-eclipse).
+
+### KIELER
+
+The research project at Kiel University that created SCCharts, and its tools: the compiler, the
+simulator and the diagram synthesis. The name stands for *Kiel Integrated Environment for Layout
+Eclipse RichClient*. See [getting SCCharts](/start/tools/).
+
+## L
+
+### Label
+
+Text shown in the diagram instead of a name or an expression: `state Off "Light off"`,
+`go to On label "press"`. A label changes only the drawing. See
+[comments and annotations](/advanced/annotations/).
+
+### Last wish
+
+What a [weak abort](#weak-abort) grants the inside of a superstate: it finishes the current tick, transitions,
+effects and actions included, before the superstate is left. A [strong abort](#strong-abort) grants none. See
+[aborts](/learn/preemption/).
+
+### Latch
+
+A memory that a request *sets* and its service *resets*, such as the lamp in a lift's call button. When
+both arrive in the same tick, a reset-dominant latch resets and a set-dominant one sets. See
+[latches](/patterns/latch/).
+
+### Local variable
+
+A variable declared without `input` or `output`, or declared inside a superstate. It is set to its
+initial value every time its scope is entered, unless it is [static](#static). See [variables](/learn/variables/).
+
+### Logical time
+
+Time counted in ticks. How long a tick lasts in physical time is decided by whatever runs the chart.
+See [thinking in ticks](/learn/ticks/#logical-time-and-physical-time).
+
+## M
+
+### Method
+
+A small function declared in a chart, such as `method int twice(int v) { return v * 2 }`, called in
+triggers and effects. It runs within the tick. See [methods and code effects](/advanced/methods/).
+
+### Mode
+
+An operating mode of a device, usually a superstate with its own behaviour inside. A safe switch waits
+for a safe point, a moment at which the mode can be left without harm. See
+[mode switching](/patterns/modes/).
+
+## N
+
+### Netlist-based compilation
+
+KIELER's default way of compiling a chart, used by its simulator and by this guide. It is stricter
+than the alternative, [priority-based compilation](#priority-based-compilation): it rejects every [instantaneous loop](#instantaneous-loop). See
+[netlist versus priority-based compilation](/advanced/code-generation/#netlist-versus-priority-based-compilation).
+
+## O
+
+### One-shot
+
+A pattern that turns a press of any length into a [pulse](#pulse) of a fixed number of ticks (also called a
+monostable). See [edges and pulses](/patterns/edges/#a-one-shot-pulse).
+
+### Output
+
+A variable or signal declared with `output`, which the environment can read after each tick. See
+[variables](/learn/variables/).
+
+## P
+
+### Period
+
+An action `period 500` that lets the inside of a state run only in ticks in which another 500 time
+units have passed. By default it keeps excess time (soft reset); `@HardReset` drops it. See
+[time](/advanced/time/#doing-something-every-so-often-period).
+
+### Pragma
+
+A setting for the whole file, written before the first chart with `#`, such as
+`#hostcode "#include <stdlib.h>"`. See [comments and annotations](/advanced/annotations/).
+
+### pre
+
+`pre(x)` is the value `x` had at the end of the previous tick. In the first tick it is the default of
+the type (0 or `false`), not the initial value of `x`. See [the previous tick](/learn/pre/).
+
+### Preemption
+
+Taking control away from a state from outside: a [weak abort](#weak-abort), a [strong abort](#strong-abort) or [suspension](#suspension). See
+[aborts](/learn/preemption/) and [suspension](/advanced/suspend/).
+
+### Present
+
+A [signal](#signal) is present in a tick in which something emits it (or, for an input signal, when the
+environment says so). See [signals](/learn/signals/).
+
+### Priority
+
+The order in which a state's outgoing transitions are tried: the order they are written, shown as
+`1:`, `2:` in the diagram. The first one whose trigger holds is taken. See
+[triggers, effects and priority](/learn/transitions/).
+
+### Priority-based compilation
+
+An alternative way KIELER can compile a chart. It accepts some charts the default [netlist-based
+compilation](#netlist-based-compilation) rejects, but this guide does not use it. See [netlist versus priority-based compilation](/advanced/code-generation/#netlist-versus-priority-based-compilation).
+
+### Pulse
+
+Something that is true, or present, in one tick only. The pulse button next to an input in the
+simulator sets the input for the next tick only; a one-tick pulse computed with `pre`, such as
+`pressed = button && !pre(button)`, is true in the tick of a press and false in the next. See
+[thinking in ticks](/learn/ticks/) and [edges and pulses](/learn/pre/#edges-and-pulses).
+
+### Pure signal
+
+A [signal](#signal) without a value: in each tick it is just present or absent. Declared as `signal S`. See
+[signals](/learn/signals/).
+
+## R
+
+### Reaction
+
+Another word for [tick](#tick): the chart's response to one set of inputs.
+
+### Reactive system
+
+A program in a continuous conversation with its environment, such as a thermostat or a lift
+controller, as opposed to a transformational program, which turns an input into a result and stops.
+See [thinking in ticks](/learn/ticks/#programs-that-never-finish).
+
+### Reference
+
+A state that is an instance of another chart: `state L is Blinker(…)`. KIELER pastes a copy of the
+other chart into the state, with the given [bindings](#binding). See [reusing charts](/advanced/references/).
+
+### Referencing state
+
+See [reference](#reference).
+
+### Region
+
+A container of states inside a chart or a [superstate](#superstate), in which exactly one state is active at a
+time. A state with several regions runs them concurrently. See [concurrent regions](/learn/concurrency/).
+
+### Relative write
+
+See [update](#update).
+
+### Reset
+
+Two things. `go to S reset` enters the superstate `S` afresh, at its initial states; it is the default,
+the opposite of [history](#history). And `reset()` is the function of the generated C code that gives
+a chart's variables their initial values before the first tick (see [TickData](#tickdata)). Because
+`reset` is a keyword, no variable or signal can be called that.
+
+### Root state
+
+The chart itself, seen as the outermost state, with the chart's declarations and actions. When its
+regions are all in final states, the chart terminates.
+
+### Round robin
+
+An [arbiter](#arbiter) that takes turns: when both clients are waiting, the one that did not go last
+gets the resource, so neither [starves](#starvation). See
+[taking turns: round robin](/patterns/arbiter/#taking-turns-round-robin).
+
+## S
+
+### SASC
+
+The word at the end of the validator's warning `There is an immediate loop. The model is not SASC.`,
+which appears on every transition of a cycle of [immediate transitions](#immediate-transition). KIELER
+does not spell the abbreviation out; read it as "free of cycles of immediate transitions", which is what
+the validator checks. KIELER's default compiler then rejects the chart. See
+[delayed and immediate](/learn/immediate/).
+
+### SCCharts
+
+*Sequentially Constructive Statecharts*: a language for reactive systems that combines statecharts
+with the synchronous model of time and the [sequentially constructive](#sequentially-constructive) rules for concurrency. See
+[welcome](/start/welcome/).
+
+### SCCharts Lab
+
+A VS Code extension for SCCharts with diagrams, a tick-by-tick simulator and live diagnostics. It uses
+KIELER's compiler. See [getting SCCharts](/start/tools/).
+
+### SCG
+
+*Sequentially constructive graph*: the graph of operations that KIELER builds from a chart and then
+schedules. It appears in messages such as `The SCG is NOT asc-schedulable!`. See
+[compiler messages](/reference/errors/#the-scg-is-not-asc-schedulable).
+
+### Schedule
+
+The order in which the operations of one tick run, worked out by KIELER when it compiles the chart,
+from the reads and writes of its [concurrent regions](#concurrent-regions) ([initialise, update, read](#initialise-update-read)). A chart for which
+no such order exists is rejected; see [asc-schedulable](#asc-schedulable). See
+[why the compiler says no](/learn/causality/).
+
+### Scope
+
+The part of a chart in which a declaration is visible: the state or region that contains it, and
+everything nested inside. An inner declaration hides an outer one of the same name. See
+[superstates](/learn/hierarchy/).
+
+### SCTX
+
+The textual format of SCCharts, in `.sctx` files: what you write, and what this guide shows.
+
+### Self-loop
+
+A transition from a state back to the same state. Taking it leaves the state and enters it again, so
+its exit and entry actions run and its local variables start afresh. See
+[triggers, effects and priority](/learn/transitions/).
+
+### Sequentially constructive
+
+The rule that gives SCCharts its name. Within one region, effects and statements run in the order
+they are written, as in an ordinary program. Between concurrent regions, KIELER orders the operations
+on each shared variable as [initialise, update, read](#initialise-update-read), and rejects the chart when no such order
+exists. See [why the compiler says no](/learn/causality/).
+
+### Shallow history
+
+A transition `go to S shallow history` that resumes the states of `S`'s own regions, while states
+nested deeper start from their initial states. Drawn as H at the arrow head. See
+[history](/advanced/history/).
+
+### Signal
+
+An event of the current tick: present if something emits it in this tick, absent otherwise. A
+[valued signal](#valued-signal) also carries a value. See [signals](/learn/signals/).
+
+### Simple state
+
+A state without regions inside it, drawn as a capsule (or as a box, if it has actions).
+
+### sleepT
+
+The output that a chart with a [clock](#clock) gets automatically: how long the environment may wait before
+the next tick without missing a timeout. See [time](/advanced/time/).
+
+### Source state
+
+The state a transition leaves, written above it; the state it leads to is its [target](#target-state). See
+[your first SCChart](/learn/first-chart/#the-transitions).
+
+### Starvation
+
+A client of an [arbiter](#arbiter) that never gets its turn starves, as the lower-priority client of a
+fixed-priority arbiter does while the other keeps asking. See
+[a fixed-priority arbiter](/patterns/arbiter/#a-fixed-priority-arbiter).
+
+### State
+
+A situation the chart can be in, drawn as a rounded box: `state Waiting`. A region is in exactly one
+of its states at a time. A state can be [initial](#initial-state), [final](#final-state), a
+[connector](#connector-state), a [superstate](#superstate) or a [reference](#reference); one without
+regions inside is a [simple state](#simple-state). See [your first SCChart](/learn/first-chart/).
+
+### Statechart
+
+A state machine with two additions: states inside states (hierarchy) and state machines side by side
+(concurrency). David Harel introduced statecharts in 1987; SCCharts are statecharts that react in
+[ticks](#tick). See [what SCCharts is](/start/welcome/#what-sccharts-is) and
+[background](/reference/further-reading/#background).
+
+### static
+
+A local variable declared `static` keeps its value when its state is left and entered again, instead
+of starting afresh: it is initialised once, when the chart starts. See
+[history](/advanced/history/#history-restores-states-not-data).
+
+### Strong abort
+
+A transition `abort to` out of a superstate. When its trigger holds, the superstate is left before
+its inside does anything in that tick (its exit actions still run). Drawn with a red dot at the
+source. See [aborts](/learn/preemption/).
+
+### Struct
+
+A record of variables that belong together. `struct Reading { … } latest` declares the type
+`Reading`, with the members listed in its braces, and its [instance](#instance) `latest`, whose
+members are used as `latest.value`. An instance is copied and compared member by member, never as a whole. See
+[enums, structs and classes](/advanced/data-types/#structs-variables-that-belong-together).
+
+### Superstate
+
+A state with regions inside it, written `state S { … }`. Entering it enters its initial states;
+leaving it leaves everything inside. See [superstates](/learn/hierarchy/).
+
+### Suspension
+
+`suspend if c` freezes a state, its own outgoing transitions included, in every tick in which `c`
+holds (from the tick after the state is entered, unless it is an `immediate suspend`): nothing inside
+it runs, and it continues where it was afterwards. See [suspension](/advanced/suspend/).
+
+### Synchronous language
+
+A language for [reactive systems](#reactive-system) in which the program reacts in ticks, each taking
+no time ([synchrony hypothesis](#synchrony-hypothesis)): Esterel, Lustre, Signal and SCCharts. See
+[thinking in ticks](/learn/ticks/) and [related languages](/reference/further-reading/#related-languages).
+
+### Synchrony hypothesis
+
+The assumption behind synchronous languages, also called the *synchronous hypothesis*: each tick takes
+no time, so a reaction is complete before the next inputs arrive. See [thinking in ticks](/learn/ticks/).
+
+## T
+
+### Target state
+
+The state a transition leads to; the state it leaves is its [source state](#source-state).
+
+### Termination
+
+A superstate terminates when every one of its regions is in a final state; a `join to` transition
+then fires. When the chart's own regions are all final, the chart terminates and does nothing more.
+Drawn with a green triangle at the source. See [superstates](/learn/hierarchy/).
+
+### Termination transition
+
+A transition written `join to`, which fires when its superstate has terminated. Without a trigger it
+is immediate, so it can fire in the tick the last region becomes final. See
+[termination](#termination) and [superstates](/learn/hierarchy/#finishing-final-states-and-join-to).
+
+### Tick
+
+One step of the chart: the inputs are read, the chart reacts completely in zero logical time, and the
+outputs are written. Also called a [reaction](#reaction) or an [instant](#instant). See [thinking in ticks](/learn/ticks/).
+
+### TickData
+
+The C struct that KIELER generates for a chart: the chart's whole state, with a field for each input,
+output and variable. The program around the chart calls `reset()` once, then in every tick writes the
+inputs into the struct, calls `tick()` and reads the outputs from it. See
+[what the compiler generates](/advanced/code-generation/#what-the-compiler-generates) and
+[signals in TickData](/advanced/code-generation/#signals-in-tickdata).
+
+### Timed SCCharts
+
+Charts with [clocks](#clock), which measure the time the environment reports through [deltaT](#deltat). See
+[time](/advanced/time/).
+
+### Timing diagram
+
+The picture under every simulation in this guide and in SCCharts Lab: one row per input, output and
+region, one column per tick, so that you can read a run at a glance. See
+[thinking in ticks](/learn/ticks/).
+
+### Transition
+
+An arrow from one state to another, written after its source state, with an optional trigger and
+effects: `if A do x = 1 go to B`. See [triggers, effects and priority](/learn/transitions/).
+
+### Trigger
+
+The condition of a transition or action, after `if`. A transition without a trigger is enabled
+whenever it is checked; a delayed one is first checked in the tick after its state is entered. See
+[triggers, effects and priority](/learn/transitions/).
+
+## U
+
+### Update
+
+An assignment that changes a variable relative to its current value, such as `x += 2` or `x++` (also
+called a [relative write](#relative-write)). Concurrent updates of a variable are allowed when they commute, and
+happen after its [absolute writes](#absolute-write) and before its reads. See [why the compiler says no](/learn/causality/).
+
+## V
+
+### val
+
+`val(V)` is the current value of the valued signal `V`. It keeps its value between emissions. See
+[signals](/learn/signals/).
+
+### Valued object
+
+KIELER's word for anything declared with a name: a variable, a signal or a constant. It appears in
+the most common name error, `Couldn't resolve reference to ValuedObject 'x'.` See
+[your first SCChart](/learn/first-chart/).
+
+### Valued signal
+
+A [signal](#signal) that carries a value as well as being present or absent: `output signal int V`. See
+[signals](/learn/signals/).
+
+### Variable
+
+A named value that keeps its value from tick to tick until it is assigned: `int count = 0`. Unlike a
+[signal](#signal), it is not reset at the start of a tick. See [variables](/learn/variables/).
+
+## W
+
+### Warning
+
+A message from KIELER that does not stop the chart from compiling or running, but points at something
+that is probably not what you meant, such as `The state is not reachable.` See
+[your first SCChart](/learn/first-chart/#the-states) and [compiler messages](/reference/errors/#warnings).
+
+### Watchdog
+
+Something that expects a regular sign of life, a heartbeat, and raises the alarm when it has been
+missing for too long. See [watchdogs](/patterns/watchdog/).
+
+### Weak abort
+
+A transition `go to` out of a superstate. When its trigger holds, the inside of the superstate first
+completes its tick (its [last wish](#last-wish)), then the superstate is left. See [aborts](/learn/preemption/).
+
+### Weak entry, weak exit
+
+`weak entry do …` is an entry action that is skipped when its state is strongly aborted in the tick it
+is entered. `weak exit do …` on a superstate runs only when the state terminates (`join to`), not when
+it is aborted; on a simple state it is an ordinary exit action. See
+[entry, during and exit](/learn/actions/).
+
+### Weak suspend
+
+`weak suspend if c`: the inside of the state runs in a tick in which `c` holds, but at the end of the
+tick it goes back to the states it was in before. See [suspension](/advanced/suspend/).
+
+### Write–write conflict
+
+Two concurrent regions that can assign different values to the same variable in one tick. KIELER
+rejects the chart. See [why the compiler says no](/learn/causality/).

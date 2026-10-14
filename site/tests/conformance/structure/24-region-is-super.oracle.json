@@ -1,0 +1,76 @@
+{
+  "hash": "53ada20323db69d4d28b9f8ab2d8101549b034a6",
+  "chart": "tests/conformance/structure/24-region-is-super.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "hold": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "hold": false
+      },
+      "values": {
+        "hold": false,
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "hold": false,
+        "o": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "hold": true
+      },
+      "values": {
+        "hold": true,
+        "o": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "hold": true,
+        "o": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "hold": false
+      },
+      "values": {
+        "hold": false,
+        "o": 2
+      },
+      "terminated": false
+    }
+  ]
+}

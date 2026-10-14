@@ -1,0 +1,42 @@
+scchart CoffeeQueue {
+  input bool brew, clean
+  output bool heater, pump, rinsing
+  output int cups = 0
+  bool cleanWanted = false
+  bool brewWanted = false
+
+  initial state Serving {
+    during if clean do cleanWanted = true
+
+    initial state Ready
+      if cleanWanted go to Stopped
+      if brew || brewWanted do brewWanted = false; heater = true go to Heating
+
+    state Heating
+      go to Pouring
+
+    state Pouring {
+      entry do pump = true
+      exit do pump = false
+    }
+    if 2 true do heater = false; cups++ go to Ready
+
+    final state Stopped
+  }
+  do cleanWanted = false join to Cleaning
+
+  state Cleaning {
+    entry do rinsing = true
+    exit do rinsing = false
+    during if brew do brewWanted = true
+
+    initial state Rinse
+      go to Flush
+
+    state Flush
+      go to Rinsed
+
+    final state Rinsed
+  }
+  join to Serving
+}

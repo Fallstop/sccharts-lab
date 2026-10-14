@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Rejected: \"The SCG is NOT asc-schedulable!\" (lab server: also \"Circular dependency involving x prevents scheduling this tick.\"). `x = x + 1` is a relative write with operator `=`, `x += 3` one with `+=`; different operators outside the {+=, -=, ++, --} family never commute, so the two writes conflict. Writing both as `+=` (or both old-style) is accepted."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

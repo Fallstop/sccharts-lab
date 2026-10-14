@@ -1,0 +1,18 @@
+scchart RootActions {
+  input bool finish
+  output int step = 0
+  output int rootEntryAt = 0, aEntryAt = 0, finalEntryAt = 0, finalExitAt = 0, rootExitAt = 0
+
+  entry do step += 1; rootEntryAt = step
+  exit do step += 1; rootExitAt = step
+
+  initial state A {
+    entry do step += 1; aEntryAt = step
+  }
+  if finish go to F
+
+  final state F {
+    entry do step += 1; finalEntryAt = step
+    exit do step += 1; finalExitAt = step
+  }
+}

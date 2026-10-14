@@ -1,0 +1,7 @@
+// Host code in backticks is pasted into the generated C unchanged. As an effect it is a statement, as an
+// expression it is a value. In KIELER's C simulation the data is reached through d->...
+scchart St77Host {
+  output int x = 0, y = 0
+  initial state S
+  do `d->x = 42;`; y = `7 * 6` go to S
+}

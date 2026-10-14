@@ -1,0 +1,25 @@
+{
+  "hash": "890de69be20f23a6a01656b4c5bd1c7ad032dcf6",
+  "chart": "tests/conformance/concurrency/35-read-write-cycle-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3b to _cg3",
+    "Can't schedule from _g3b to _g4",
+    "Can't schedule from _g4 to _g10b",
+    "Can't schedule from _g10b to _cg10",
+    "Can't schedule from _g10b to _g11",
+    "Can't schedule from _g11 to _g3b",
+    "Can't schedule from _g3b to _g2",
+    "Can't schedule from _g4 to _g5",
+    "Can't schedule from _g10b to _g9",
+    "Can't schedule from _g11 to _g12",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving x, y prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through x, y.",
+    "Potential instantaneous loop through x, y."
+  ],
+  "ticks": []
+}

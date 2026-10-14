@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false
+      },
+      "note": "Tick 1: Top, M, I (where = 1)."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "I → J (where = 2)."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "P": true
+      },
+      "note": "M is left (where = 9)."
+    },
+    {
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "note": "Surprise: KIELER only processes `history` on transitions into states of the chart's top-level regions, and inside states that are themselves targets of a history transition. M is nested in Top, which has no incoming history transition, so this `history` is silently ignored: M restarts in I (where = 1)."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "In I."
+    }
+  ],
+  "expect": "ok"
+}

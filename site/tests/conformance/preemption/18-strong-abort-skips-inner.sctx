@@ -1,0 +1,17 @@
+scchart StrongAbortNoLastWish {
+  input bool A, S
+  output int inner = 0, chained = 0, effect = 0
+
+  initial state M {
+    initial state I1
+    if A do inner = 1 go to I2
+
+    state I2
+    immediate do chained = 1 go to I3
+
+    state I3
+  }
+  if S do effect = 1 abort to Done
+
+  state Done
+}

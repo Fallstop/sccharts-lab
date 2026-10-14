@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "`S` declares a local signal `L` and has an exit action. Tick 1 enters `S`."
+    },
+    {
+      "inputs": {},
+      "note": "`A` → `F`: the region is final, but the `join to D` never fires (`done = false`), because KIELER wraps a scope that declares a signal and has an action into a non-final helper state. The exit action nevertheless runs in this tick (`n = 5`) although `S` is not left."
+    },
+    {
+      "inputs": {},
+      "note": "Still in `S`: `done = false`."
+    },
+    {
+      "inputs": {},
+      "note": "Still in `S`: `done = false`."
+    }
+  ],
+  "expect": "ok"
+}

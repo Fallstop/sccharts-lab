@@ -1,0 +1,61 @@
+{
+  "hash": "8be16ede77a50ff07197ee5d096fecb31fcf5e44",
+  "chart": "tests/conformance/preemption/42-count-delay-on-during-ignored.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Count Delays on During Actions are not supported yet. The valued will be ignored by the transformation.",
+      "line": 6,
+      "column": 15
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "x": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "x": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "x": 2
+      },
+      "terminated": false
+    }
+  ]
+}

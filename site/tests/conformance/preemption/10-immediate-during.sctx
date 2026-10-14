@@ -1,0 +1,18 @@
+scchart ImmediateDuring {
+  input bool next
+  output int countA = 0, countB = 0, countC = 0
+
+  initial state A {
+    immediate during do countA += 1
+  }
+  if next go to B
+
+  state B {
+    immediate during do countB += 1
+  }
+  immediate go to C
+
+  state C {
+    during do countC += 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "X": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Surprise: the first abort's trigger A && !y is true, so M is aborted and its exit action sets y = true. KIELER then chooses the target by evaluating the triggers again, in priority order, and takes the last transition without checking it: A && !y is now false, so M goes to **C** (target = 2) although X is false."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In C. Don't let exit actions change what a state's outgoing triggers read."
+    }
+  ],
+  "expect": "ok"
+}

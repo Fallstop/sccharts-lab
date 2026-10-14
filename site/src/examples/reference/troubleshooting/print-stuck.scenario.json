@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "Tick 1 enters `Idle`."
+    },
+    {
+      "inputs": {
+        "job": true
+      },
+      "note": "`job` takes the chart into `Printing`: its entry action sets `busy`, and both regions start."
+    },
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "`Feeding` emits `fed` and reaches the final state `Fed`; `Waiting` sees `fed`, counts the page and reaches `Counted`. Both regions are final, yet the `join to` does not fire: `Printing` declares the signal `fed` and has an entry action, and in KIELER such a state never terminates."
+    },
+    {
+      "inputs": {},
+      "note": "Still in `Printing`, with `busy` true."
+    },
+    {
+      "inputs": {
+        "job": true
+      },
+      "note": "Another `job`, but the chart is stuck in `Printing`: it never counts the second page."
+    },
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "Nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

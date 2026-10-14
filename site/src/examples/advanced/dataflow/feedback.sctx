@@ -1,0 +1,9 @@
+scchart Feedback {
+  input int I
+  output int X, Y
+
+  dataflow {
+    X = Y + I
+    Y = X
+  }
+}

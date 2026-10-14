@@ -1,0 +1,16 @@
+// A strong abort out of a state that has its own suspend is a causality cycle: Suspend guards the state's
+// outgoing transitions with the suspend flag, which the state's own during action computes, while a strong
+// abort must be decided before the state's inner behaviour (and so before that during action) runs.
+scchart SuspendStrongOut {
+  input bool S, A
+  output int n = 0
+
+  initial state M {
+    suspend if S
+    initial state I
+    do n += 1 go to I
+  }
+  if A abort to X
+
+  state X
+}

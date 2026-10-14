@@ -1,0 +1,24 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "X": false
+      },
+      "note": "Tick 1 enters M. This is chart 32 with M as a simple state."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "For a simple state KIELER remembers which transition was chosen before running the exit action, so changing y in the exit does not matter: M goes to B (target = 1)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In B."
+    }
+  ],
+  "expect": "ok"
+}

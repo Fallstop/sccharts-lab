@@ -1,0 +1,11 @@
+@SimulateSleep
+scchart BlinkSleep {
+  output bool led = false
+  clock t
+
+  initial state Off
+    if t >= 500 do led = true; t = 0 go to On
+
+  state On
+    if t >= 300 do led = false; t = 0 go to Off
+}

@@ -1,0 +1,301 @@
+---
+title: "Diagram notation"
+description: "How KIELER draws every construct of an SCChart, and what each line, outline and marker means."
+sidebar:
+  order: 2
+---
+
+import { Chart, Sim } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+export const Glyph = ({ k }) => {
+  const fade = `notation-glyph-fade-${k}`
+  const fill = (x, y, w, h, rx) => [
+    <rect class="sc-fill" x={x} y={y} width={w} height={h} rx={rx} />,
+    <rect class="sc-fill-top" x={x} y={y} width={w} height={h} rx={rx} mask={`url(#${fade})`} />,
+  ]
+  const edge = (from, to, immediate, extra = '') => (
+    <g class={`sc-transition${immediate ? ' sc-immediate' : ''}${extra}`}>
+      <path class="sc-edge" d={`M${from} 16H${to}`} />
+      <path class="sc-arrow" d={`M${to - 8} 13L${to - 4.8} 16L${to - 8} 19L${to} 16Z`} />
+    </g>
+  )
+  const parts = {
+    state: <g class="sc-state sc-simple">{fill(8, 4, 56, 24, 12)}<rect class="sc-shape" x="8" y="4" width="56" height="24" rx="12" /></g>,
+    initial: <g class="sc-state sc-simple sc-initial">{fill(8, 4, 56, 24, 12)}<rect class="sc-shape" x="8" y="4" width="56" height="24" rx="12" /></g>,
+    final: <g class="sc-state sc-simple sc-final"><rect class="sc-shape sc-final-outer" x="6" y="2" width="60" height="28" rx="14" />{fill(9, 5, 54, 22, 11)}<rect class="sc-shape sc-final-inner" x="9" y="5" width="54" height="22" rx="11" /></g>,
+    initialfinal: <g class="sc-state sc-simple sc-initial sc-final"><rect class="sc-shape sc-final-outer" x="6" y="2" width="60" height="28" rx="14" />{fill(9.5, 5.5, 53, 21, 10.5)}<rect class="sc-shape sc-final-inner" x="9.5" y="5.5" width="53" height="21" rx="10.5" /></g>,
+    delayed: edge(6, 66, false),
+    immediate: edge(6, 66, true),
+    strong: <g>{edge(13, 66, false)}<circle class="sc-strong-marker" cx="8" cy="16" r="5" /></g>,
+    termination: <g>{edge(15, 66, true)}<path class="sc-termination-marker" d="M4 10.5L15 16L4 21.5Z" /></g>,
+    shallow: <g>{edge(6, 54, false)}<g class="sc-history-marker"><circle cx="62" cy="16" r="8" /><path class="sc-history-letter" d="M59 12V20M59 16H65M65 12V20" /></g></g>,
+    deep: <g>{edge(6, 54, false)}<g class="sc-history-marker"><circle cx="62" cy="16" r="8" /><path class="sc-history-letter" d="M57 12V20M57 16H63M63 12V20" /><path class="sc-history-star" d="M66 11v4M64.27 12l3.46 2M64.27 14l3.46 -2" /></g></g>,
+    deferred: <g>{edge(6, 56, false)}<g class="sc-deferred-marker"><circle cx="61" cy="16" r="5" /></g></g>,
+    deepdeferred: <g>{edge(6, 56, false)}<g class="sc-deferred-marker"><circle cx="61" cy="16" r="5" /><path class="sc-deferred-star" d="M61 13v6M58.4 14.5l5.2 3M58.4 17.5l5.2 -3" /></g></g>,
+    connector: <g>{edge(4, 31.5, false)}<g class="sc-state sc-connector"><circle class="sc-shape" cx="36" cy="16" r="4.5" /></g>{edge(40.5, 68, true)}</g>,
+    superstate: <g class="sc-state sc-superstate">{fill(4, 1, 64, 30, 6)}<rect class="sc-shape" x="4" y="1" width="64" height="30" rx="6" /><path class="sc-shape" d="M24 7H48" /><g class="sc-region"><rect class="sc-region-frame" x="9" y="12" width="54" height="14" /><path class="sc-region-corner" d="M9.5 12.5L9.5 20L17 12.5Z" /></g></g>,
+    regions: <g class="sc-state sc-superstate">{fill(4, 1, 64, 30, 6)}<rect class="sc-shape" x="4" y="1" width="64" height="30" rx="6" /><path class="sc-shape" d="M24 7H48" /><g class="sc-region"><rect class="sc-region-frame" x="9" y="12" width="25" height="14" /><path class="sc-region-corner" d="M9.5 12.5L9.5 20L17 12.5Z" /></g><g class="sc-region"><rect class="sc-region-frame" x="38" y="12" width="25" height="14" /><path class="sc-region-corner" d="M38.5 12.5L38.5 20L46 12.5Z" /></g></g>,
+    reference: <g class="sc-state sc-superstate sc-reference">{fill(4, 1, 64, 30, 6)}<rect class="sc-shape" x="4" y="1" width="64" height="30" rx="6" /><path class="sc-shape" d="M14 7H58" /><g class="sc-region sc-collapsed"><rect class="sc-region-frame" x="9" y="12" width="54" height="14" /><path class="sc-region-corner" d="M9.5 12.5L9.5 22L19 12.5Z" /><path class="sc-region-corner-mark" d="M11 15.5h4M13 13.5v4" /></g></g>,
+    comment: <g class="sc-comment"><rect class="sc-comment-box" x="6" y="5" width="60" height="22" rx="1" /><path class="sc-comment-edge" d="M12 12H58M12 17H52M12 22H40" /></g>,
+    priority: <g>{edge(4, 68, false)}<g class="sc-label"><rect class="sc-label-bg" x="21" y="8.5" width="30" height="15" /><path class="sc-label-bars" d="M21.5 8.5V23.5M50.5 8.5V23.5" /><text class="sc-text sc-edge-label sc-bold" y="20" font-size="11"><tspan x="24">2: A</tspan></text></g></g>,
+    label: <g>{edge(4, 68, false)}<g class="sc-label"><rect class="sc-label-bg" x="16" y="1" width="40" height="30" /><path class="sc-label-bars" d="M16.5 1V31M55.5 1V31" /><text class="sc-text sc-edge-label sc-bold" y="13" font-size="11"><tspan x="19">A</tspan></text><text class="sc-text sc-edge-label sc-bold" y="27" font-size="11"><tspan x="19">/ x = 1</tspan></text></g></g>,
+    count: <g>{edge(4, 68, false)}<g class="sc-label"><rect class="sc-label-bg" x="23" y="8.5" width="26" height="15" /><path class="sc-label-bars" d="M23.5 8.5V23.5M48.5 8.5V23.5" /><text class="sc-text sc-edge-label sc-bold" y="20" font-size="11"><tspan x="26">3 A</tspan></text></g></g>,
+    action: <g class="sc-state sc-superstate">{fill(1, 1, 70, 30, 6)}<rect class="sc-shape" x="1" y="1" width="70" height="30" rx="6" /><text class="sc-text sc-title" y="12.5" font-size="10"><tspan x="25">Busy</tspan></text><text class="sc-text sc-action" y="26" font-size="9.5"><tspan x="6" class="sc-kw">entry</tspan><tspan x="32"> / x = 0</tspan></text></g>,
+    active: <g class="sc-state sc-simple is-active">{fill(8, 4, 56, 24, 12)}<rect class="sc-shape" x="8" y="4" width="56" height="24" rx="12" /></g>,
+    exited: <g class="sc-state sc-simple is-exited">{fill(8, 4, 56, 24, 12)}<rect class="sc-shape" x="8" y="4" width="56" height="24" rx="12" /></g>,
+    taken: edge(6, 66, false, ' is-taken'),
+    takenimmediate: edge(6, 66, true, ' is-taken'),
+    error: <g><g class="sc-state sc-simple is-error">{fill(8, 6, 52, 22, 11)}<rect class="sc-shape" x="8" y="6" width="52" height="22" rx="11" /></g><g class="sc-error-marker"><circle cx="61" cy="7" r="6.5" /><path d="M61 3.6V7.8M61 10.2v0.01" /></g></g>,
+    dataflow: <g><g class="sc-df-node sc-df-input"><path class="sc-df-shape" d="M2 8H14L19 16L14 24H2Z" /><text class="sc-text sc-equation" y="19.5" font-size="10"><tspan x="5">A</tspan></text></g><path class="sc-wire" d="M19 16H28" /><g class="sc-df-node sc-df-operator"><rect class="sc-df-shape" x="28" y="7" width="16" height="18" rx="3" /><text class="sc-text sc-equation sc-bold" y="19.5" font-size="10"><tspan x="34.5">!</tspan></text></g><path class="sc-wire" d="M44 16H51" /><g class="sc-df-node sc-df-output"><path class="sc-df-shape" d="M51 8H64L69 16L64 24H51L56 16Z" /><text class="sc-text sc-equation" y="19.5" font-size="10"><tspan x="58">O</tspan></text></g></g>,
+  }
+  return (
+    <svg class="sc-diagram notation-glyph" viewBox="0 0 72 32" width="86" height="38" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id={`${fade}-g`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" /><stop offset="1" stop-color="#000" /></linearGradient>
+        <mask id={fade} maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox" x="0" y="0" width="1" height="1"><rect width="1" height="1" fill={`url(#${fade}-g)`} /></mask>
+      </defs>
+      {parts[k]}
+    </svg>
+  )
+}
+
+<style>{`
+.notation-glyph { display: inline-block; vertical-align: middle; margin-inline-end: 0.5rem; }
+/* The grey outline of an ordinary state, in the token that keeps 3:1 on the page in both themes. */
+.notation-glyph .sc-simple:not(.sc-initial):not(.sc-final):not([class*="is-"]) > .sc-shape { stroke: var(--sc-state-outline, #7d889b); stroke-width: 1.25; }
+@media (max-width: 40rem) { .notation-glyph { display: block; margin-block: 0.15rem 0.3rem; } }
+`}</style>
+
+You never draw an SCChart by hand: you write the text, and KIELER lays out and draws the diagram for
+you. Each construct has its own look, and once you know the symbols you can read a chart's
+behaviour off its diagram. Every diagram on this page is a real chart, drawn the way KIELER and
+SCCharts Lab draw it, except that [dataflow regions](#dataflow-regions) are simplified; switch to
+**Code** to see the text behind it.
+
+## At a glance
+
+| You see | It means |
+| --- | --- |
+| <Glyph k="state" /> thin outline | an ordinary [state](/learn/first-chart/): `state A` |
+| <Glyph k="initial" /> heavy outline | an [initial state](/learn/first-chart/): `initial state A` |
+| <Glyph k="final" /> double outline | a [final state](/learn/immediate/): `final state Done` |
+| <Glyph k="initialfinal" /> heavy double outline | both: `initial final state A` |
+| <Glyph k="delayed" /> solid arrow | a [delayed transition](/learn/transitions/): `if A go to B` |
+| <Glyph k="immediate" /> dashed arrow | an [immediate transition](/learn/immediate/): `immediate if A go to B` |
+| <Glyph k="priority" /> `2:` before a label | the [priority](/learn/transitions/): the second transition written |
+| <Glyph k="label" /> label on an arrow | [trigger, then effects](/learn/transitions/): `if A do x = 1` |
+| <Glyph k="count" /> a number first | a [count delay](/learn/pre/): `if 3 A` |
+| <Glyph k="strong" /> red dot at the start | a [strong abort](/learn/preemption/): `abort to` |
+| <Glyph k="termination" /> green triangle | a [termination](/learn/hierarchy/): `join to` |
+| <Glyph k="shallow" /> **H** at the head | [shallow history](/advanced/history/): `go to S shallow history` |
+| <Glyph k="deep" /> **H\*** at the head | [deep history](/advanced/history/): `go to S history` |
+| <Glyph k="deferred" /> red dot at the head | [deferred entry](/advanced/history/#deferred-transitions): `go to S deferred` |
+| <Glyph k="deepdeferred" /> red dot with a star | deep deferred entry: `go to S deep deferred` |
+| <Glyph k="connector" /> small filled dot | a [connector state](/advanced/connectors/): `connector state C` |
+| <Glyph k="superstate" /> box with an inner area | a [superstate](/learn/hierarchy/): `state S { … }` |
+| <Glyph k="regions" /> areas side by side | [concurrent regions](/learn/concurrency/): `region R { … }` |
+| <Glyph k="action" /> a line in a state | an [action of the state](/learn/actions/): `entry do x = 0` |
+| <Glyph k="reference" /> violet box, `S @ Chart` | a [reference to another chart](/advanced/references/): `state S is Chart(…)` |
+| <Glyph k="dataflow" /> wires and operator boxes | a [dataflow region](/advanced/dataflow/): `dataflow { … }` |
+| <Glyph k="comment" /> yellow note | a [doc comment](/advanced/annotations/): `/** … */` |
+
+While a chart runs, the simulation adds a few marks ([in a simulation](#in-a-simulation)):
+
+| You see | It means |
+| --- | --- |
+| <Glyph k="active" /> red outline | an active state: where its region is after the tick |
+| <Glyph k="taken" /> blue arrow | a delayed transition that fired in the tick |
+| <Glyph k="takenimmediate" /> blue dashed arrow | an immediate transition that fired in the tick |
+| <Glyph k="exited" /> blue outline | a state left in the tick, or entered and left again within it |
+| <Glyph k="error" /> outline with **!** | in a chart KIELER rejects: an element a message is about |
+
+## The chart itself
+
+The chart is the outermost box, with its name at the top. Below the name come its declarations, one
+line per declaration with the keywords in colour (`input bool A, B`), then its own actions, and then
+the region that holds its states. Every region has a small grey corner at its top left; in KIELER it
+collapses the region to save space (in this guide's diagrams it is only drawn).
+
+## States
+
+<Chart example="reference/notation/states" caption="In the region `Steps`, `First` is initial (heavy outline), `Middle` ordinary and `Last` final (double outline); `Ready`, in the region `Idle`, is initial and final at once." />
+
+- An **ordinary state** is a rounded box with its name, drawn with a thin outline.
+- The **initial state** of a region, where the region starts, has a heavy outline. Each region has
+  exactly one.
+- A **final state** has a double outline. When every region of a superstate is in a final state, the
+  superstate has finished; at the top level, the chart terminates.
+- A state that is both (`initial final state`) has both: a double outline whose outer ring is heavy.
+  Its region has finished as soon as it starts, so here the chart terminates as soon as `Last` is
+  reached.
+
+A state with a label (`state Off "Light off"`) shows the label instead of its name; see
+[labels](#labels-and-comments).
+
+## Transitions
+
+<Chart example="reference/notation/transitions" caption="Three transitions leave `Wait`, numbered by priority; the one out of `Fast` is dashed because it is immediate." />
+
+A transition is an arrow from its source state to its target state. What it says is written on the
+arrow:
+
+- **Solid or dashed.** A solid line is a delayed transition, the default: it cannot fire in the tick
+  its source state is entered. A dashed line is an immediate transition, which can.
+- **Priority.** When a state has more than one outgoing transition, each label starts with its
+  priority, `1:`, `2:` and so on, in the order the transitions are written. In any tick the enabled
+  transition with the lowest number wins. A state with a single outgoing transition shows no number.
+- **Trigger and effects.** The trigger comes first (`A && B`); the effects follow a `/`, one per line
+  (`/ x = 3`). A transition without a trigger shows only its effects (`/ x++`); one with neither has no
+  label at all, like the arrow from `Both` back to `Wait`.
+- **Count delay.** `2 B` means "the second tick in which `B` holds", written `if 2 B`.
+- **Self-loop.** An arrow from a state back to itself, like `3: 2 B`. Taking it leaves the state and
+  enters it again.
+
+The warning under the chart is one of KIELER's
+[false alarms](/reference/errors/#instantaneous-loop-detected): it suspects an instantaneous loop, but
+compiles and runs the chart as drawn.
+
+## Superstates and regions
+
+<Chart example="reference/notation/superstate" caption="The superstate `Counter` shows its declaration and entry action under its name, and its states in the inner area." />
+
+A **superstate** is a state with an inside. It is drawn as a large box: its name at the top, then its
+declarations and actions, then an inner area (a region) with its own states and transitions. The
+arrow from the edge of `Counter` back to itself belongs to the superstate, not to the state inside.
+Such a reset is a typical cause of the same harmless loop warning, shown under the chart.
+
+<Chart example="reference/notation/regions" caption="`WaitAB` has two concurrent regions; the first shows its label, *Wait for A*, the second its name, `HandleB`." />
+
+A superstate with several **concurrent regions** shows them side by side, each in its own area with
+its name or label in the top corner. All of them are active at once. A region written without a name
+and label shows nothing there. A [for region](/advanced/for-regions/) is drawn once, with its range
+after its name: `region Seat for i : 0 to 2` shows `Seat | i [ 0, 2 ]`.
+
+## Leaving a superstate
+
+The marker at the start of an arrow tells you how it leaves a superstate:
+
+<Chart example="reference/notation/preemption" caption="From top: a strong abort (red dot), a weak abort (no marker) and a termination (green triangle, dashed because it is immediate)." />
+
+- **No marker: weak abort** (`go to`). When the trigger holds, the inside of the superstate still
+  completes its tick, and then the superstate is left.
+- **Red dot: strong abort** (`abort to`). When the trigger holds, the superstate is left before the
+  inside does anything in that tick.
+- **Green triangle: termination** (`join to`). Taken when every region inside has reached a final
+  state. A termination without a trigger is immediate, so it is drawn dashed.
+
+[Aborts](/learn/preemption/) explains exactly what the inside may still do in each case, and
+[Entry, during and exit actions](/learn/actions/#actions-and-aborts) which actions run.
+
+## Returning to a superstate
+
+Markers at the head of an arrow say how the target superstate is entered:
+
+<Chart example="reference/notation/history" caption="The four arrows back into `Mode`, from top: deep history (H*), shallow history (H), deferred (red dot) and deep deferred (red dot with a star)." />
+
+- **H\*: deep history** (`go to S history`). The superstate resumes in the states it was in when it was
+  left, at every level.
+- **H: shallow history** (`go to S shallow history`). Only the superstate's own regions resume; states
+  nested deeper start again from their initial states.
+- **Red dot: deferred** (`go to S deferred`). The target is entered quietly: its entry actions do not
+  run, and its immediate transitions wait until the next tick. A star in the dot marks
+  `deep deferred`, which treats the inner initial states the same way.
+- **No marker** (or `reset`): the superstate starts from its initial states.
+
+KIELER honours history only for superstates at the top level of a chart (and inside superstates that
+are themselves entered with history); elsewhere it silently restarts the superstate, although the
+marker is drawn. The [history chapter](/advanced/history/) shows this.
+
+A marker at the start of an arrow is about leaving its source; a marker at the head is about entering
+its target. One arrow can carry both.
+
+## Connector states
+
+<Chart example="reference/notation/connector" caption="The small filled dot is the connector state, called `Classify` in the code: control passes through it and takes the first branch whose trigger holds." />
+
+A **connector state** is drawn as a small filled dot, without a name. It is a junction, not a place to
+wait: its outgoing transitions are always immediate, and drawn dashed, even without the keyword
+`immediate`, and control passes through it in the same tick. KIELER still asks you to write the
+keyword, with the warning
+[`Outgoing transitions of connector states should be marked as immediate.`](/reference/errors/#outgoing-transitions-of-connector-states-should-be-marked-as-immediate)
+Give the last branch no trigger, so that one branch always fires.
+
+## Actions
+
+<Chart example="reference/notation/actions" caption="`Busy` lists its actions under its name, one per line, each starting with its keyword." />
+
+A state's actions are listed inside its box, under the name: the keyword (`entry`, `during`,
+`immediate during`, `exit`), then the trigger if there is one, then `/` and the effects. The other
+actions are listed the same way: `suspend if hold` appears as `suspend hold` (the trigger without its
+`if`), `weak suspend hold` and `immediate suspend hold` likewise; `period 100` is listed as written. A
+state with actions is drawn as a box rather than a capsule, even when it has no inner states.
+
+## References
+
+<Chart example="reference/notation/reference" caption="`Blinking` is an instance of the chart `Blinker`, with `tick` and `lamp` connected to its interface." />
+
+A state that is an instance of another chart (`state Blinking is Blinker(tick to tick, lamp to light)`)
+is drawn with a violet fill and the title `Blinking @ Blinker (tick, lamp)`: the state's name, the
+referenced chart, and the variables passed to it. Its inside is collapsed (the `+` corner); KIELER can
+expand it to show the referenced chart in place.
+
+## Dataflow regions
+
+<Chart example="reference/notation/dataflow" caption="Inputs on the left, operators in the middle, outputs on the right: `O = A && !B` and `N = I * 2 + 1`." />
+
+A dataflow region is drawn as a circuit: the variables an equation reads come in on the left, each
+operator is a small box, constants are square boxes, and the variables it writes leave on the right.
+
+<Aside type="note">
+This guide draws dataflow regions as a simplified circuit. KIELER's own drawing of the same region is
+built from the same parts but differs in detail; the rest of the notation on this page matches
+KIELER's.
+</Aside>
+
+## Labels and comments
+
+<Chart example="reference/notation/labels" caption="The states show their labels instead of their names, the region its label, and the transitions *press* and *press again* instead of their triggers and effects." />
+
+Labels replace names and expressions in the diagram, never the behaviour:
+
+- `state Off "Light off"` shows *Light off* instead of `Off`; `region Main "The lamp":` shows its
+  label in the region's corner.
+- `go to On label "press"` shows *press* instead of the trigger and effects. KIELER adds a hint to the
+  transition, `The trigger of this action is hidden by the label.`, because the label can hide what
+  really happens.
+
+<Chart example="reference/notation/comments" caption="Doc comments become yellow notes attached to the chart and to the state `Off`." />
+
+A **doc comment**, `/** … */` directly before the chart, a state or a region, is shown as a yellow
+note attached to it; one before a transition becomes an extra label on its arrow. KIELER shows these
+notes by default (its diagram option *Comment Nodes*), and so do this guide's diagrams. The annotation
+`@diagram[commentNodes] false` before `scchart` turns them off for one chart. Ordinary comments (`//`,
+`/* … */`) never appear in the diagram.
+
+## In a simulation
+
+When a chart runs, the diagram shows where it is. KIELER, SCCharts Lab and this guide use the same
+two colours: **red** for the states that are active after the tick, **blue** for the transitions taken
+in it and the states that were left. In this guide's simulations no mark relies on colour alone:
+
+- An **active state** has a heavy red outline with a glow and its name in bold; a simple state is
+  also tinted pale red.
+- A **transition that fired** is drawn heavier, in blue, with a glow, and a short pulse runs along it
+  once as it fires (not when your system asks for reduced motion). It keeps its own line: solid when
+  delayed, dashed when immediate, so you can still tell which it is.
+- A **state that was left** during the tick, or entered and left again within it, gets a blue outline
+  and a pale blue tint that fades. A state entered in the tick glows briefly.
+
+The guide's diagrams also mark compiler messages: in a chart that KIELER rejects, the states and
+transitions a **message is about** get a solid red-orange outline with a glow and a small red-orange
+disc with an exclamation mark.
+
+None of these marks adds dashes: on a transition, a dashed line always means that it is immediate.
+
+<Sim example="reference/notation/simulation" caption="Step through the tour: in tick 2 two transitions fire at once, and the active state changes from `Wait` to `Done`." />
+
+In tick 2, `go1` is true: the delayed transition out of `Wait` fires, `Fast` is entered, and its
+immediate transition fires straight away, so both arrows are marked, one solid and one dashed, and
+the chart ends the tick in `Done`. `Fast` was active only for a moment within the tick, so it is never
+outlined in red; it gets the blue outline of a state that was left, and so does `Wait`.

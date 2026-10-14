@@ -1,0 +1,51 @@
+{
+  "hash": "e0e71f632e71f679971aa904fc4e52e39f0ce3c4",
+  "chart": "src/examples/advanced/for-regions/copy-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).\nWrite it as log *= 10; log += 9 to say so. In one region it means the same.\nIt only matters when another region also writes log in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 6,
+      "column": 20
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).\nWrite it as log *= 10; log += i to say so. In one region it means the same.\nIt only matters when another region also writes log in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 11,
+      "column": 20
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).\nWrite it as log *= 10; log += 7 to say so. In one region it means the same.\nIt only matters when another region also writes log in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 16,
+      "column": 20
+    }
+  ],
+  "interface": {
+    "log": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "log": 97321
+      },
+      "taken": [
+        1,
+        3,
+        1
+      ],
+      "terminated": true
+    }
+  ]
+}

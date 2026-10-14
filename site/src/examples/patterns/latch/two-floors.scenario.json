@@ -1,0 +1,71 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button1": false,
+        "button2": false,
+        "at1": false,
+        "at2": false
+      },
+      "note": "Tick 1: no calls."
+    },
+    {
+      "inputs": {
+        "button1": true
+      },
+      "note": "A call on floor 1: `Floor1` lights `lamp1`."
+    },
+    {
+      "inputs": {
+        "button1": false,
+        "button2": true
+      },
+      "note": "A call on floor 2: `Floor2` lights `lamp2`."
+    },
+    {
+      "inputs": {
+        "button2": false
+      },
+      "note": "Both calls are waiting."
+    },
+    {
+      "inputs": {
+        "at1": true
+      },
+      "note": "The lift is at floor 1: only `lamp1` goes off."
+    },
+    {
+      "inputs": {
+        "at1": false
+      },
+      "note": "The lift moves on."
+    },
+    {
+      "inputs": {
+        "at2": true,
+        "button1": true
+      },
+      "note": "The lift is at floor 2, and someone calls on floor 1: `lamp2` goes off and `lamp1` goes on, in the same tick, each in its own region."
+    },
+    {
+      "inputs": {
+        "button1": false,
+        "at2": false
+      },
+      "note": "Waiting."
+    },
+    {
+      "inputs": {
+        "at1": true
+      },
+      "note": "Floor 1 served."
+    },
+    {
+      "inputs": {
+        "at1": false
+      },
+      "note": "Idle. Each region writes only its own lamp."
+    }
+  ],
+  "expect": "ok"
+}

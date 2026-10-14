@@ -1,0 +1,64 @@
+{
+  "hash": "2553ced3f6a1fbbe08986ea3c7c5d9668efb5613",
+  "chart": "tests/conformance/basics/29-initialiser-reads-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 5
+      },
+      "values": {
+        "I": 5,
+        "y": 5,
+        "z": 6
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 7
+      },
+      "values": {
+        "I": 7,
+        "y": 5,
+        "z": 6
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "I": 7,
+        "y": 5,
+        "z": 6
+      },
+      "terminated": false
+    }
+  ]
+}

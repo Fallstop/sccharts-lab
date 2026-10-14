@@ -1,0 +1,300 @@
+---
+title: "Level crossing"
+description: "A capstone: a railway level crossing controller with train detection, a barrier, flashing lamps, timeouts and a fault mode, built up step by step."
+sidebar:
+  order: 10
+---
+
+import { Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Where a road crosses a railway line at the same level, a controller has to stop the road traffic before
+every train: flash the red lamps, ring the bell, lower the barrier, wait for the train to pass, raise the
+barrier again. It must also notice when something goes wrong, and then fail safe: a barrier that does
+not move must not be mistaken for one that has.
+
+This page builds such a controller in four steps. Each step is a complete chart you can run, and the last
+one uses most of what the [Learn](/learn/ticks/) chapters teach: concurrent regions, superstates,
+variables and signals, entry and exit actions, count delays, termination, a strong abort and `pre`. It
+also reuses several patterns from this section: [edges](/patterns/edges/),
+[counters and timeouts](/patterns/counters/), [mode switching](/patterns/modes/) and
+[watchdogs](/patterns/watchdog/).
+
+<Aside type="note" title="A teaching example">
+The controller is simplified and its timings are invented. Real level crossings follow national railway
+standards and are built from certified, redundant equipment. Treat this chart as an exercise in
+SCCharts, not as a design for a railway.
+</Aside>
+
+## What the controller does
+
+The chart is meant to tick once a second, so a count of 3 ticks is 3 seconds.
+
+| Name | Kind | Meaning |
+| --- | --- | --- |
+| `occupied` | input `bool` | the track circuit: a train is near or on the crossing |
+| `isDown`, `isUp` | input `bool` | the barrier's limit switches: fully down, fully up |
+| `restart` | input `bool` | the maintainer's key, to leave the fault mode |
+| `lower` | output `bool` | the barrier motor: `true` lowers the barrier, `false` raises it |
+| `lampL`, `lampR` | output `bool` | the two red lamps, which flash alternately |
+| `bell` | output signal | one stroke of the bell |
+| `fault` | output `bool` | the fault lamp for the maintainer |
+| `trains` | output `int` | how many trains have passed |
+
+The behaviour, in words:
+
+1. When a train approaches, the lamps start flashing and the bell rings. After a warning time of three
+   ticks, the barrier is lowered.
+2. When the barrier is down, the crossing is closed until the track is clear. Then the barrier is raised;
+   the lamps keep flashing until it is up.
+3. If another train comes while the barrier is rising, the barrier goes down again at once.
+4. If the barrier does not reach its end position within four ticks, the crossing goes into a fault
+   mode: fault lamp on, lamps flashing, barrier commanded down. Only the maintainer's `restart` ends it.
+5. Both limit switches reporting at the same time is impossible for a healthy barrier: that is a fault
+   too, and it must act at once.
+
+## Step 1: the barrier sequence
+
+Start with the heart of it, the sequence of the barrier, as one state per phase:
+
+<Sim example="patterns/level-crossing/sequence" caption="A train from tick 2 to tick 8. The barrier is commanded down in tick 5 and up in tick 9; the crossing is open again in tick 11." />
+
+Each state waits for one thing:
+
+- `Open` waits for a train.
+- `Warning` waits for the warning time: `if 3 true` fires three ticks after `Warning` was entered (tick 2),
+  so in tick 5. The transition's effect starts the motor.
+- `Lowering` waits for the lower limit switch, `Closed` for the track to clear, `Raising` for the upper
+  limit switch.
+
+`Raising` has two ways out, and their order matters: `if occupied` is written first, so a train that
+arrives in the very tick the barrier reaches the top still closes the crossing. Safety first, in
+priority order.
+
+`lower` is a variable, not a signal: the motor command must hold from one tick to the next, and a
+variable keeps its value until something assigns it. Each transition that changes the command sets it.
+
+## Step 2: flashing lamps in a concurrent region
+
+The lamps flash all the time the crossing is not open, independently of what the barrier does. That is
+a job for a second region. `Control` decides *whether* to flash and says so in a variable, `flashing`;
+`Lights` does the flashing:
+
+<Sim example="patterns/level-crossing/lights" caption="The lamps alternate from tick 2 to tick 10, the bell strikes with every left lamp, and both go dark in tick 11 when the barrier is up." />
+
+A few things make this work:
+
+- **One writer per variable.** `Control` alone writes `flashing` and `lower`; `Lights` alone writes
+  `lampL`, `lampR` and emits `bell`. Neither writes what the other writes, so there is nothing for KIELER
+  to object to (see [latches](/patterns/latch/) for what happens otherwise).
+- **Within a tick, writes come before reads.** In tick 2, `Control` sets `flashing` and `Lights` reacts to
+  it in the same tick: KIELER schedules the write before the read in the other region. In tick 11 the
+  same happens in reverse, and the lamps go dark in the very tick the barrier is up.
+- **A lamp is on exactly while its state is active.** `Left` and `Right` switch their lamp on in an entry
+  action and off in an exit action, as the one-shot on the [edges page](/patterns/edges/) does. Whatever
+  makes `Lights` leave a state, the lamp goes off.
+- **The flasher is a frequency divider.** `Left` and `Right` hand over to each other in every tick, like
+  the blinker on the [counters page](/patterns/counters/), only faster. `if !flashing go to Dark` is
+  written first, so stopping wins over flashing on.
+- **A variable for the condition, a signal for the event.** `flashing` is a condition that lasts many
+  ticks, so it is a variable. A bell stroke is an event of one tick, so `bell` is a signal: present in
+  the tick `Left` is entered, absent otherwise, with nothing to reset.
+
+## Step 3: timeouts and a fault mode
+
+Now the failures. A barrier that is commanded down but never reports `isDown` (a broken motor, a stuck
+arm, a cut wire) must not leave the crossing waiting for ever with the road half open. Each moving phase
+gets a timeout, and a timeout leads to a fault mode:
+
+<Sim example="patterns/level-crossing/faults" caption="The barrier sticks on its way down. Four ticks after the command (tick 9), the crossing goes into `Fault`; the maintainer's `restart` in tick 11 ends it." />
+
+`Lights` has not changed since step 2, so this chart draws it collapsed: the annotation `@collapse` in
+front of the region does that ([Comments and annotations](/advanced/annotations/)), and the Code view
+and the trace still show it in full.
+
+The normal sequence now lives in a superstate, `Working`, and both moving states have a count delay:
+`if 4 true go to Stuck`. `Stuck` is a **final state**, and the only one in `Working`. So reaching it makes
+`Working` terminate, and `join to Fault` fires in the same tick. Termination is the inside's way of saying
+"I am done here", which is exactly the message: the normal sequence has given up.
+
+`Fault` is a mode with a safe state built into its entry action: fault lamp on, lamps flashing, barrier
+commanded down. Its exit action undoes all three when the maintainer turns the key. As on the
+[mode switching page](/patterns/modes/), the actions belong to the mode, so no path into or out of it can
+forget them.
+
+In tick 10 the train has gone, and nothing happens: the fault mode ignores the track. Once the
+controller no longer trusts its barrier, only a person who has looked at it should decide that the
+crossing works again.
+
+## Step 4: a sensor check and a train counter
+
+Two additions complete the controller:
+
+<Sim example="patterns/level-crossing/level-crossing" caption="The whole controller: a normal passage (ticks 2 to 11), a barrier that sticks (from tick 16, fault in tick 20), a restart (tick 22), and two limit switches reporting at once (tick 24). **Actual size** shows the diagram at full scale." />
+
+**A sensor check with a strong abort.** `isUp && isDown` means a broken switch or wiring. Whatever
+`Working` is doing, it must stop: `if isUp && isDown abort to Fault` is a strong abort, decided before
+anything inside `Working` reacts in that tick (tick 24), so no inner transition can act on the
+impossible readings. It is written before the `join to`: KIELER requires strong aborts to come first, and
+otherwise rejects the chart with `Causality problem!` and:
+
+```text wrap
+Strong abort transitions must have a higher priority than weak abort or termination transitions.
+```
+
+Note that the trigger reads only inputs. A strong abort whose trigger is written inside the aborted state
+causes trouble, as the [watchdog page](/patterns/watchdog/#keep-the-watchdog-outside) explains.
+
+**A train counter with pre.** `during if pre(occupied) && !occupied do trains++`, written directly in the
+chart, counts the falling edges of `occupied`: the ticks in which a train has just cleared the crossing
+(ticks 9 and 21). It runs alongside both regions and writes only `trains`, so it disturbs nobody.
+
+Here are the key ticks of the whole run, from KIELER's simulation. **Control** is the state of the
+`Control` region after the tick; the inputs and outputs not listed are false (or, for `bell`,
+absent), and "(held)" marks an input that keeps the value it was given in an earlier tick. `trains` goes up to 1 in tick 9 and to 2 in tick 21:
+
+| Tick | Inputs | Control | Outputs |
+| ---: | --- | --- | --- |
+| 1 | `isUp` | Open | none |
+| 2 | `occupied`, `isUp` (held) | Warning | `lampL`, `bell` |
+| 5 | `occupied` (held), `isUp` (held) | Lowering | `lower`, `lampR` |
+| 7 | `occupied` (held), `isDown` | Closed | `lower`, `lampR` |
+| 9 | `isDown` (held) | Raising | `lampR` |
+| 11 | `isUp` | Open | none |
+| 13 | `occupied`, `isUp` (held) | Warning | `lampL`, `bell` |
+| 16 | `occupied` (held), `isUp` (held) | Lowering | `lower`, `lampR` |
+| 20 | `occupied` (held) | Fault | `lower`, `lampR`, `fault` |
+| 21 | none | Fault | `lower`, `lampL`, `bell`, `fault` |
+| 22 | `isUp`, `restart` | Open | none |
+| 24 | `isUp` (held), `isDown` | Fault | `lower`, `lampL`, `bell`, `fault` |
+
+### What each part of the language does here
+
+- **Concurrent regions** (`Lights`, `Control`): the lamps flash independently of the barrier sequence.
+- **A superstate with a final state and `join to`** (`Working`, `Stuck`): the normal sequence gives up
+  by terminating.
+- **Count delays** (`Warning`, `Lowering`, `Raising`): the warning time and the timeouts, counted in
+  ticks.
+- **Entry and exit actions** (`Left`, `Right`, `Fault`): outputs that are on exactly while a state is
+  active.
+- **Variables** (`lower`, `flashing`, `fault`): conditions that last.
+- **A signal** (`bell`): an event of one tick.
+- **A strong abort** (`if isUp && isDown abort to Fault`): a check that must win over everything inside.
+- **`pre`** (the train counter): the falling edge of `occupied`.
+- **Priority** (`Raising`, `Left`, `Right`): the safety-relevant transitions are written first.
+
+## Testing it
+
+A controller like this is only as good as the scenarios it has been run with. When you test your own:
+
+- **Give every input in tick 1**, and remember that inputs keep their value in KIELER's simulator and in
+  SCCharts Lab until you change them. A limit switch you set stays set.
+- **Run the coincidences.** A train arriving while the barrier rises; a train arriving in the tick the
+  barrier reaches the top; a limit switch and a timeout in the same tick. Each is one line of priority in
+  the chart, and one tick in a scenario.
+- **Run the failures,** not only the happy path: a barrier that never arrives, a switch that never
+  releases, both switches at once.
+- **Check the end of every phase,** not only its start: do the lamps really go dark in the tick the
+  barrier is up, or one tick later?
+
+[Troubleshooting](/reference/troubleshooting/#test-your-chart) has the same checklist for any chart, and
+the tools SCCharts Lab gives you for it: saved input traces, breakpoints and watches.
+
+The [debouncing page](/patterns/debounce/) is worth a look too: real limit switches bounce, and this
+controller trusts them on the first reading.
+
+## Variations
+
+- **Real time.** Counting ticks is only time if the ticks are regular. KIELER also has clocks, which
+  measure the time that the environment reports between ticks, so that a warning time can be written in
+  seconds instead of ticks; [Time](/advanced/time/) covers them.
+- **More tracks.** With two tracks, each with its own track circuit, the crossing must close while
+  either is occupied. Turn `occupied` into a local, compute it in one line,
+  `immediate during do occupied = occupied1 || occupied2`, and the rest of the controller stays as it is.
+  Count the trains per track, though: two trains that overlap make only one falling edge of the combined
+  `occupied`.
+- **Supervising the sensors.** If the track circuit sends a regular sign of life (many do), a
+  [watchdog](/patterns/watchdog/) on it can send the crossing into `Fault` when it falls silent.
+
+## Try it
+
+<TryIt example="patterns/level-crossing/safe-restart-starter" solution="patterns/level-crossing/safe-restart" title="A safe restart" hint="There is already a state that raises the barrier with the lamps flashing. What must hold on every way into it, and could the controller start there?">
+After `restart`, the starter goes straight to `Open`: the barrier is raised with the lamps already dark,
+so for a few seconds a moving barrier gives no warning. Change the chart so that leaving the fault mode
+keeps the lamps flashing while the barrier is raised, and the crossing is only `Open` once `isUp` confirms
+it. The same should happen when the controller starts up. To test it: start with every input false. The
+starter is `Open` with dark lamps; yours should flash until you set `isUp` (say in tick 3). Then set
+`isDown` as well (an impossible reading, so `Fault` at once), and in the next tick switch `isUp` off and
+turn the key (`restart`): the barrier is down and starts to rise. The starter's lamps go dark; yours should
+keep flashing until `isUp` comes back.
+</TryIt>
+
+<TryIt example="patterns/level-crossing/quiet-bell-starter" solution="patterns/level-crossing/quiet-bell" title="A quieter bell" hint="`Lights` cannot test `Control`'s states, so let `Control` say when the bell may ring, in a variable it alone writes, as it already does with `flashing`.">
+Some crossings stop ringing once the barrier is down. Change the controller so that the bell rings in
+`Warning` and `Lowering` only, while the lamps keep flashing as before. Keep one writer per variable:
+`Control` knows the phase, `Lights` rings the bell. To test it: a train from tick 2 to tick 9, the barrier
+leaving the top in tick 6 and down from tick 7. The bell should strike in ticks 2, 4 and 6 only (the
+starter rings on in ticks 8, 10 and 12), and the lamps should flash until the barrier is up again.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/level-crossing/crossing-predict"
+  ask={[{ tick: 10, value: 'lower' }, { tick: 12, value: 'lower' }, { tick: 14, value: 'lampL' }, { tick: 14, value: 'trains' }]}
+  caption="The final controller, with a second train arriving while the barrier rises (tick 10). What are these outputs after the ticks shown?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`lower` is true after tick 10 and false after tick 12; after tick 14 `lampL` is false and `trains` is 2.
+In tick 10 a second train arrives while the barrier rises: `Raising` tries `if occupied` first, so the
+barrier is lowered again at once. The track clears in tick 12, which counts the second train (the
+first cleared in tick 8) and raises the barrier. In tick 14 the barrier is up: `Control` goes to `Open`,
+and `Lights` switches the lamps off in the same tick.
+
+</details>
+
+<Quiz
+  question="While the barrier is lowering, both limit switches report at once. Which of the following happens in that tick?"
+  options={['The strong abort fires before `Lowering` reacts, and the crossing enters `Fault`', '`Lowering` first checks `isDown` and moves to `Closed`, then the abort fires', 'Nothing until the next tick, because the abort is delayed']}
+  answer={0}
+>
+A strong abort is checked before the inner behaviour of the tick, so `Lowering`'s `if isDown` never gets
+its turn. The abort is delayed only in the sense that it is not checked in the tick `Working` is entered;
+`Working` was entered long before.
+</Quiz>
+
+<Quiz
+  question="Why does `Control` communicate with `Lights` through a variable, `flashing`, instead of letting `Lights` read `Control`'s states?"
+  options={['Variables are faster to read than states', 'Transitions and actions cannot test a state directly, and a variable written by `Control` is the clear way to pass the phase on', 'KIELER requires one variable for every region']}
+  answer={1}
+>
+A trigger or an action cannot ask whether another region is in a given state. KIELER does have an
+expression for that, `state(…)`, but it allows it only inside a method body, a rarely used escape
+hatch; in a trigger it says:
+
+```text wrap
+State access expressions are only permissible in methods bodies.
+```
+
+The clear way is a variable written by the region that owns the phase. `Control` owns `flashing` and
+writes it on the transitions where the warning starts and ends; `Lights` reads it. One writer, any
+number of readers.
+</Quiz>
+
+<KeyIdeas>
+- Build a controller in steps: the main sequence first, then concurrent parts, then failures, then
+  checks. Run every step.
+- One region per independent concern; one writer per variable; variables for conditions, signals for
+  events.
+- Timeouts are count delays (or counters) on the states that wait for the outside world.
+- A superstate that terminates into a fault mode is a clean way for a sequence to give up; a strong
+  abort is the way for a check to override it.
+- Put safe states into entry and exit actions, and safety-relevant transitions first.
+- Test the coincidences and the failures, not only the happy path.
+</KeyIdeas>
+
+That is the end of Patterns. The [cheat sheet](/reference/cheatsheet/) has all the syntax on one page,
+and the [playground](/playground/) is the place for charts of your own.

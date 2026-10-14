@@ -1,0 +1,242 @@
+{
+  "hash": "b6bcb7c581300ac25c7379b48540d8340cbb80e4",
+  "chart": "tests/conformance/basics/62-taken-transition-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "d": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "e": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "e": false,
+        "f": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "e": false,
+        "f": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "e": false,
+        "f": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "e": false,
+        "f": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": false,
+        "e": false,
+        "f": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "c": false,
+        "d": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": true,
+        "e": false,
+        "f": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "d": false,
+        "e": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "e": true,
+        "f": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "e": false,
+        "f": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "e": false,
+        "f": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "f": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "e": false,
+        "f": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

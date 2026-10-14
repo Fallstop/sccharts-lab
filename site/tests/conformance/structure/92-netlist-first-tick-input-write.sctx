@@ -1,0 +1,10 @@
+// Writing an INPUT in the first tick: the netlist compiler moves first-tick assignments that do not depend on
+// inputs into reset(), and the environment then overwrites the input. Compare 93 (priority).
+scchart St92Write {
+  input int x
+  output int y = 0
+  initial state S
+  immediate do x = 7; y = x go to T
+  state T
+  do y = x go to T
+}

@@ -1,0 +1,200 @@
+---
+title: "Host code"
+description: "Calling C or Java from a chart: text in backticks, extern functions, #hostcode and its relatives, host types, and what host code means for the simulation."
+sidebar:
+  order: 9.5
+---
+
+import { Chart, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Some things are beyond SCCharts' own language: a function from a C library such as `abs`, a 64-bit
+integer, a helper you have already written in C. For these, a chart can contain **host code**: text in
+the target language, the *host language*, C or Java, that KIELER copies into the program it generates.
+[From chart to C](/advanced/code-generation/) shows what that program looks like.
+
+<Aside type="note" title="What runs where">
+KIELER and SCCharts Lab simulate a chart by compiling it to C (with gcc) or to Java, so host code runs
+there. This site's simulator runs in your browser and has no C compiler: it draws charts with host code
+but cannot run them, so this page shows KIELER's results as tables. When a
+[method](/advanced/methods/) can do the job, prefer it: methods run wherever the chart runs, this site
+included.
+</Aside>
+
+## Host code in backticks
+
+The bluntest form of host code is text between backticks. KIELER pastes it into the generated code
+unchanged: as an effect it is a statement, inside an expression it is a value.
+
+<Chart example="advanced/host-code/backticks" caption="One backtick effect sets `x` in C; one backtick expression computes `y`." />
+
+KIELER's diagram prints host code without its backticks: the label reads `d->x = 42;;` and
+`y = 7 * 6`. The first `;` belongs to the C statement, the second separates the two effects. In
+KIELER's C simulation:
+
+| Tick | State after | `x` | `y` |
+| ---: | --- | ---: | ---: |
+| 1 | Run | 0 | 0 |
+| 2 | Run | 42 | 42 |
+
+In the generated C every variable of the chart is a field of a struct that the code reaches through a
+pointer `d`, so the C statement writes `d->x` (see [From chart to C](/advanced/code-generation/)).
+
+The compiler does not look inside backticks. It cannot see that `` `d->x = 42;` `` writes `x`, so the
+causality checks of [chapter 12](/learn/causality/) do not cover it, and the chart only works with the
+one language the text is written in. Keep backticks for the edges of a system, if you use them at all.
+
+## Calling host functions: `extern`
+
+The better way to call a host function is to declare it:
+
+<Chart example="advanced/host-code/distance" caption='`extern "abs" abs` makes C’s `abs` callable as `abs(...)`.' />
+
+| Tick | `position` | `distance` |
+| ---: | ---: | ---: |
+| 1 | −5 | 0 |
+| 2 | −6 | 6 |
+| 3 | 7 | 7 |
+
+- `extern "abs" abs` declares a host function: the string is its name in the host language, the second
+  name is what the chart calls it. Call it with parentheses, `abs(position)`. The compiler sees the call
+  and its arguments, so the arguments take part in the causality analysis.
+- One declaration can name the function for each language: `extern @C "abs", @Java "Math.abs" absolute`
+  works in both a C and a Java simulation, provided the C include goes into `#hostcode-c` rather than
+  `#hostcode` ([below](#hostcode-and-its-relatives) says why).
+- `extern abs(position)` inside an expression calls a host function without declaring it first. The
+  KIELER wiki calls this form deprecated.
+
+<Aside type="caution" title="The C compiler must know the function">
+Without the `#hostcode "#include <stdlib.h>"` line, gcc 14 and later reject the generated code with
+
+```text wrap
+implicit declaration of function ‘abs’ [-Wimplicit-function-declaration]
+```
+
+and KIELER adds `Compiler did not return success (exit value != 0)`. Older versions of gcc only warn,
+and since `abs` is in the C library anyway, the chart runs; include the header all the same. A message
+from gcc means that the chart was fine but the C code generated from it does not compile: look for a
+missing declaration or include.
+
+Forgetting the parentheses is the other classic. With `extern "abs" absolute`, the effect
+`distance = absolute` draws the warning
+
+```text wrap
+You are using an external reference without call syntax. If you want to generate a call, you must add parentheses.
+```
+
+and then gcc fails with `‘absolute’ undeclared (first use in this function)`.
+[Compiler messages](/reference/errors/#you-are-using-an-external-reference-without-call-syntax-if-you-want-to-generate-a-call-you-must-add-parentheses)
+explains both.
+</Aside>
+
+## `#hostcode` and its relatives
+
+Includes, type definitions and helper functions go into **pragmas**: lines starting with `#` at the top
+of the file, before the first `scchart`. Their strings are pasted at the top of the generated files:
+
+- `#hostcode "..."`: every generated file, the C header, the C file and the Java file;
+- `#hostcode-c "..."`: the C file only;
+- `#hostcode-c-header "..."`: the C header only;
+- `#hostcode-java "..."`: the Java file only;
+- `#resource "helper.c"`: nothing is pasted; the file is copied next to the generated code, and `.c`
+  files are compiled with it.
+
+The C file includes the header, so text in `#hostcode` reaches the C compiler twice. That is harmless
+for `#include` lines and type definitions, but a function defined there is defined twice: gcc says
+`redefinition of ‘clamp’`. Function bodies go into `#hostcode-c`:
+
+<Chart example="advanced/host-code/gauge" caption="`clamp` is defined in `#hostcode-c`, declared with `extern` and called like any function." />
+
+| Tick | `reading` | `needle` |
+| ---: | ---: | ---: |
+| 1 | 42 | 0 |
+| 2 | 250 | 100 |
+| 3 | −7 | 0 |
+| 4 | 42 | 42 |
+
+Since `#hostcode` text also lands in the Java file, a C `#include` there breaks the Java version of the
+chart. If a chart must work in both languages, use `#hostcode-c` and `#hostcode-java`.
+
+`#resource` pulls in whole files. A header used by a resource needs its own `#resource` line, or gcc
+will not find it:
+
+```sctx
+#resource "scale.h"
+#resource "scale.c"
+#hostcode "#include \"scale.h\""
+```
+
+## Host types
+
+`host "int64" big` declares a variable whose type is a host-language type, written as a string. The C
+compiler has to know the type, so it usually comes with a `typedef` or an `#include` in `#hostcode`:
+
+```sctx
+#hostcode "typedef long long int64;"
+...
+host "int64" big = `1LL << 40`
+```
+
+Without the `typedef`, gcc reports `unknown type name ‘int64’`. Host-type variables work in the
+generated code but are not part of the simulator's data pool, so you will not see `big` in a trace.
+
+## Strings in the C simulation
+
+One more place where C shows through: KIELER's C code stores a `string` as a C pointer, and `==`
+compares pointers, not text. An input string never equals a literal, whatever it contains. In SCCharts
+Lab gcc warns about it (official KIELER does not show the warning):
+
+```text wrap
+comparison with string literal results in unspecified behavior [-Waddress]
+```
+
+Java simulations compare the text. Use an `int` code or an
+[enum](/advanced/data-types/#enums-names-instead-of-codes) instead of a string when a chart has to
+compare values (see [chapter 5](/learn/variables/#strings-compare-as-pointers)).
+
+## Try it
+
+<TryIt example="advanced/host-code/gauge" solution="advanced/host-code/gauge-method" title="Clamp it yourself">
+`Gauge` calls a C function, `clamp`, so it runs only where KIELER can compile C, and not on this site.
+Replace the `#hostcode-c` line and the `extern` declaration with a method of the chart that does the
+same, so that `Gauge` behaves exactly as before and also runs in the playground. Test it with readings
+above 100 and below 0.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question='`#hostcode "static int twice(int v) { return 2 * v; }"` makes gcc report `redefinition of ‘twice’`. Why?'
+  options={['`static` functions are not allowed in host code', 'The chart calls `twice` from two transitions', 'An `extern` declaration also defines the function', '`#hostcode` text goes into the generated header and the C file, and the C file includes the header']}
+  answer={3}
+>
+`#hostcode` is pasted into the header and the C file, and the C file includes the header, so the
+compiler sees the definition twice. Put function definitions into `#hostcode-c`, which goes into the C
+file only.
+</Quiz>
+
+<Quiz
+  question='A chart declares `extern "abs" absolute` and has the effect `distance = absolute`. What happens?'
+  options={['It works: KIELER adds the parentheses', 'KIELER warns that the call syntax is missing, and then gcc fails', 'KIELER rejects the chart before it generates any code', '`distance` gets the address of the function']}
+  answer={1}
+>
+Without parentheses the name is not a call. KIELER only warns that the external reference is used
+without call syntax and generates the code anyway, and then gcc fails:
+`‘absolute’ undeclared (first use in this function)`. Write the call, `absolute(x)`.
+</Quiz>
+
+<KeyIdeas>
+- Host code is C or Java text that KIELER copies into the generated program. It needs a real compiler,
+  so this site can draw such charts but not run them. Prefer a method when one can do the job.
+- The compiler does not look inside backticks, so it cannot see what they read or write.
+- Declare host functions with `extern "name" localName` and call them with parentheses.
+- `#hostcode` text goes into every generated file, function definitions into `#hostcode-c`, and
+  `#resource` copies whole files next to the generated code.
+- A host type such as `host "int64"` needs its definition in `#hostcode`, and it is not in the data pool.
+- In KIELER's C code, strings compare as pointers.
+</KeyIdeas>
+
+Next, [From chart to C](/advanced/code-generation/): what the compiler generates from a chart, and how
+a main loop on a microcontroller drives it.

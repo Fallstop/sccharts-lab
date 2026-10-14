@@ -1,0 +1,97 @@
+{
+  "hash": "5eaa004e6259bca410af1a6e11cb7f7ba4099b4d",
+  "chart": "src/examples/reference/errors/connector-not-immediate.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Outgoing transitions of connector states should be marked as immediate.",
+      "line": 9,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "Outgoing transitions of connector states should be marked as immediate.",
+      "line": 10,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "choice": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "choice": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true,
+        "B": true
+      },
+      "values": {
+        "A": true,
+        "B": true,
+        "choice": 1
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "B": false
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "choice": 2
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

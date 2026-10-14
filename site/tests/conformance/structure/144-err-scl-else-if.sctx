@@ -1,0 +1,13 @@
+// "else if" is a syntax error in SCL: the else needs a block.
+scchart St144ElseIf {
+  input bool A, B
+  output int O = 0
+  initial state S
+  do {
+    if (A) {
+      O = 1
+    } else if (B) {
+      O = 2
+    }
+  } go to S
+}

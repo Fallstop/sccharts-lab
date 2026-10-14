@@ -1,0 +1,90 @@
+{
+  "hash": "3dfcc8dbd48c53351a8ccd4a68b6a9dc6cd5782f",
+  "chart": "src/examples/advanced/suspend/delayed-suspend.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "doorOpen": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "heater": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "remaining": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "doorOpen": true
+      },
+      "values": {
+        "doorOpen": true,
+        "heater": true,
+        "remaining": 3
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "doorOpen": true,
+        "heater": true,
+        "remaining": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "doorOpen": false
+      },
+      "values": {
+        "doorOpen": false,
+        "heater": true,
+        "remaining": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "doorOpen": false,
+        "heater": true,
+        "remaining": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

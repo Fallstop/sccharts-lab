@@ -1,0 +1,164 @@
+{
+  "hash": "7f2ba711f72f1ef46cbc010c109c37cd0de402b1",
+  "chart": "src/examples/patterns/abro/abro-predict.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "R": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "O": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": false,
+        "O": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true,
+        "R": true
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "R": true,
+        "O": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "R": false,
+        "B": true
+      },
+      "values": {
+        "A": false,
+        "B": true,
+        "R": false,
+        "O": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "B": false,
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "R": false,
+        "O": true
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": true
+      },
+      "values": {
+        "A": true,
+        "B": true,
+        "R": true,
+        "O": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "R": false,
+        "O": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

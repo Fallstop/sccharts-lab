@@ -1,0 +1,24 @@
+{
+  "system": "priority",
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Priority-based simulation. A is false: **n = 0**."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "S → T → S five times in this one tick: **n = 5**, taken = [5, 5]."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "A is false: the loop does not start: **n = 5** stays."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,13 @@
+// A `dataflow once` region in a state with a weak (or strong) self-loop cannot be scheduled. A plain dataflow
+// region with the same self-loop compiles, and so does a `dataflow once` state left for another state.
+scchart St38OnceLoop {
+  input int I
+  input bool R
+  output int X
+  initial state S {
+    dataflow once {
+      X = I * 2
+    }
+  }
+  if R go to S
+}

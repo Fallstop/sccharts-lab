@@ -1,0 +1,17 @@
+scchart KnockByHand {
+  input bool knock, away
+  output bool open = false
+  output int count
+
+  initial state Shut {
+    entry do count = 0
+    during if knock do count++
+  }
+  if pre(count) == 2 && knock do open = true go to Open
+  if away go to Away
+
+  state Away
+    if !away go to Shut
+
+  state Open
+}

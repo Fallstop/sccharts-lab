@@ -1,0 +1,11 @@
+scchart InputsPersist {
+  input bool I
+  input int N
+  output int count = 0, last = 0
+
+  initial state A
+  do last = N go to B
+
+  state B
+  if I do count += 1; last = N go to B
+}

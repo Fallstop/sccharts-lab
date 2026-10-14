@@ -1,0 +1,111 @@
+{
+  "hash": "a20be849b6603fadf4f2c20b8ea305e1dcaf70af",
+  "chart": "tests/conformance/preemption/09-root-and-final-state-actions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "finish": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "aEntryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "finalEntryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "finalExitAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "rootEntryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "rootExitAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "finish": false
+      },
+      "values": {
+        "finish": false,
+        "aEntryAt": 2,
+        "finalEntryAt": 0,
+        "finalExitAt": 0,
+        "rootEntryAt": 1,
+        "rootExitAt": 0,
+        "step": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "finish": true
+      },
+      "values": {
+        "finish": true,
+        "aEntryAt": 2,
+        "finalEntryAt": 3,
+        "finalExitAt": 4,
+        "rootEntryAt": 1,
+        "rootExitAt": 5,
+        "step": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "finish": false
+      },
+      "values": {
+        "finish": false,
+        "aEntryAt": 2,
+        "finalEntryAt": 3,
+        "finalExitAt": 4,
+        "rootEntryAt": 1,
+        "rootExitAt": 5,
+        "step": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

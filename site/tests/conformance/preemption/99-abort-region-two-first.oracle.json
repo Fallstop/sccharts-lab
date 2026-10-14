@@ -1,0 +1,182 @@
+{
+  "hash": "b5579ee27315276123818f2a13da0eca19930cce",
+  "chart": "tests/conformance/preemption/99-abort-region-two-first.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 17,
+      "column": 12
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 10,
+      "column": 19
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 15,
+      "column": 19
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "done": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "work": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "done": 0,
+        "work": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "done": 0,
+        "work": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "done": 1,
+        "work": 1
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "done": 1,
+        "work": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "done": 1,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "values": {
+        "A": false,
+        "B": true,
+        "done": 2,
+        "work": 3
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

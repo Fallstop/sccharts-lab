@@ -1,0 +1,87 @@
+{
+  "hash": "15f9dcd5c439715ee93de3386593dc1f09b615a1",
+  "chart": "tests/conformance/preemption/22-weak-abort-sees-inner-write.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "effect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "flag": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "effect": 0,
+        "flag": false,
+        "inner": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "effect": 1,
+        "flag": true,
+        "inner": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "effect": 1,
+        "flag": true,
+        "inner": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

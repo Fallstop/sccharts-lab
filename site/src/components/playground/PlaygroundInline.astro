@@ -1,0 +1,112 @@
+---
+/**
+ * The inside of <Playground example="…" /> (src/components/Playground.astro): a compact playground in the widget
+ * frame. Editor and diagram side by side when the frame is wide enough (stacked otherwise), the simulation
+ * underneath. At build time it shows the example's highlighted source, its diagram and the simulation panel as it
+ * will be (SimPanel, rendered here and mounted afresh by the app), at their final sizes, so that nothing moves when
+ * the playground starts: when the reader engages with the frame, a click, a touch, a key or focus in it (boot.ts,
+ * bootInline). A click on the panel's controls before then is replayed once it is live.
+ *
+ * Without JavaScript the source and the diagram stay, and a note takes the place of the editor's status and the
+ * simulation's controls (which cannot work).
+ *
+ * "Open in the playground" in the frame's header opens the example, or the edited chart once it has been edited.
+ */
+import WidgetFrame from '../frame/WidgetFrame.astro'
+import SimPanel from '../sim/SimPanel.svelte'
+import { chartNameOf, loadExample, playgroundHref } from '../frame/examples'
+import { highlightLines } from './static-highlight'
+import { codeColourCss } from './code-colours'
+import { pgIcons } from './icons'
+import { compile } from '../../engine/index'
+import { chartToSvg } from '../../diagram/index'
+import { nextId } from '../frame/ids'
+import { defaultShow, variableChoices } from './variables'
+import '../../diagram/diagram.css'
+import './playground.css'
+
+interface Props {
+	example?: string
+	caption?: string
+}
+const { caption } = Astro.props
+const ex = Astro.props.example
+	? loadExample(Astro.props.example, `<Playground example="${Astro.props.example}">`)
+	: { id: '', source: 'scchart Untitled {\n  input bool start\n  output bool done = false\n\n  initial state Idle\n    if start do done = true go to Done\n\n  final state Done\n}\n', chartName: 'Untitled' }
+const files = 'files' in ex ? ex.files : {}
+const compiled = compile(ex.source, { files })
+const name = compiled.chart?.name ?? chartNameOf(ex.source) ?? 'Chart'
+const uid = nextId('pgi-')
+const svg = compiled.chart ? await chartToSvg(compiled.chart, { program: compiled.program, fit: 'natural', idPrefix: `${uid}d` }) : ''
+// The editor shows every line of the text, the empty one after a final newline too (as CodeMirror will).
+const lines = highlightLines(ex.source)
+while (lines.length < ex.source.split('\n').length) lines.push('')
+// The diagram's stage is as tall as the chart drawn as wide as the stage allows, at most at 100 % (DiagramView's
+// fit, 48 px above it for the tools, 16 px below), between 14rem and 24rem: the build-time picture and the live
+// diagram stand where they will (playground.css, "Inline playground").
+const natural = (attr: string) => Number(new RegExp(`data-natural-${attr}="([\\d.]+)"`).exec(svg)?.[1] ?? NaN)
+const [naturalW, naturalH] = [natural('width'), natural('height')]
+const stageStyle = Number.isFinite(naturalW + naturalH) && naturalW > 0
+	? `--pg-nat-w:${naturalW}px;--pg-nat-h:${naturalH}px;--pg-ratio:${(naturalH / naturalW).toFixed(4)}`
+	: undefined
+// The panel as the app mounts it (app.ts, mountSimFor): the full variant, KIELER's data pool traced, the verdict of
+// the recording when it agrees.
+const choices = compiled.chart && compiled.ok ? variableChoices(compiled).choices : []
+const show = compiled.chart && choices.length ? defaultShow(choices) : undefined
+const oracle = 'oracle' in ex ? ex.oracle : undefined
+const verdict = oracle && oracle.ok === compiled.ok ? 'recorded' : 'engine'
+const json = (v: unknown) => JSON.stringify(v).replace(/</g, '\\u003c')
+---
+
+<Fragment set:html={`<style>${codeColourCss()}</style>`} />
+<WidgetFrame kind="playground" name={name} caption={caption} playground={ex.id ? playgroundHref(ex.id) : '/playground/'} class="sc-pg-inline-host">
+	<div class="sc-pg-inline" data-sc-playground-inline data-example={ex.id || undefined}>
+		<script type="application/json" data-pg-source set:html={json(ex.source)} />
+		<div class="sc-pg-inline__editor">
+			<div class="sc-pg__body sc-pg__body--editor" data-pg-editor aria-label="Editor">
+				<pre class="sc-pg-static" data-pg-static tabindex="0" role="region" aria-label={`Source of ${name}`}><code>{lines.map((l, i) => <span class="sc-pg-static__line"><span class="sc-pg-static__no" aria-hidden="true">{i + 1}</span><span class="sc-pg-static__text" set:html={l || ' '} /></span>)}</code></pre>
+			</div>
+			<footer class="sc-pg__problems" data-pg-problems data-state="pending">
+				<button type="button" class="sc-pg__problems-toggle" data-pg-problems-toggle aria-expanded="false" aria-controls={`${uid}-problems`} aria-disabled="true">
+					<span class="sc-pg__problems-dot" aria-hidden="true"></span>
+					<span class="sc-pg__problems-summary" data-pg-problems-summary>Edit the chart: the diagram and the simulation follow.</span>
+				</button>
+				<ul class="sc-pg__problems-list" id={`${uid}-problems`} data-pg-problems-list hidden></ul>
+			</footer>
+		</div>
+		<div class="sc-pg-inline__diagram" data-pg-diagram style={stageStyle}>
+			<div class="sc-pg-inline__tools" role="group" aria-label="Diagram">
+				<button type="button" class="sc-pg__tool" data-action="restore" hidden title="Go back to the original chart"><Fragment set:html={pgIcons.undo} /><span class="sc-visually-hidden">Revert</span></button>
+				<button type="button" class="sc-pg__tool" data-action="zoom-out" aria-label="Zoom out" title="Zoom out"><Fragment set:html={pgIcons.zoomOut} /></button>
+				<button type="button" class="sc-pg__tool" data-action="zoom-in" aria-label="Zoom in" title="Zoom in"><Fragment set:html={pgIcons.zoomIn} /></button>
+				<button type="button" class="sc-pg__tool" data-action="fit" aria-label="Fit the diagram" title="Fit"><Fragment set:html={pgIcons.fit} /></button>
+			</div>
+			<div class="sc-pg__body sc-pg__stage" data-pg-stage aria-label="Diagram. Drag to pan; Ctrl and the mouse wheel, or a pinch, zoom.">
+				<div class="sc-pg__static-diagram" data-pg-static-diagram set:html={svg} />
+				<span class="sc-pg__keys" id={`${uid}-keys`} data-pg-diagram-keys hidden>Use the arrow keys to move between its states and transitions.</span>
+			</div>
+			<p class="sc-pg__badge" data-pg-badge hidden>Showing the last diagram that parsed</p>
+			<p class="sc-pg__busy" data-pg-busy hidden>Drawing the diagram</p>
+			<p class="sc-pg__empty" data-pg-empty hidden><span>There is no <code>scchart</code> to draw yet.</span></p>
+		</div>
+	</div>
+	<div slot="panel" class="sc-pg-inline__sim">
+		<div class="sc-pg-inline__simbar" data-pg-simbar hidden>
+			<p class="sc-pg__sim-note" data-pg-sim-note hidden></p>
+			<button type="button" class="sc-btn sc-btn--sm sc-pg__rebuild" data-action="rebuild" hidden><Fragment set:html={pgIcons.rebuild} /><span>Rebuild</span></button>
+		</div>
+		<div class="sc-pg__sim" data-pg-sim>
+			<SimPanel compiled={compiled} source={ex.source} variant="full" label="Simulation" id={`${uid}-sim`} show={show} verdict={verdict} />
+		</div>
+		<noscript>
+			<Fragment set:html={'<style>.sc-pg-inline-host :is([data-pg-problems], .sc-pg-inline__tools, [data-pg-sim]) { display: none !important } .sc-pg-inline-host .sc-pg__stage { cursor: auto }</style>'} />
+			<p class="sc-pg-inline__nojs">Turn on JavaScript to edit this chart and run it here.</p>
+		</noscript>
+	</div>
+</WidgetFrame>
+
+<script>
+	import { bootInline } from './boot'
+	bootInline()
+	document.addEventListener('astro:page-load', bootInline)
+</script>

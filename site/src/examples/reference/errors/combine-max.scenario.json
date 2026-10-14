@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": 3,
+        "b": 5
+      },
+      "note": "Tick 1 enters both regions; their self-loops are delayed, so nothing is emitted yet."
+    },
+    {
+      "note": "Both regions emit `peak`, with 3 and 5. The combine function `max` keeps the larger value, 5. KIELER warns that `min` and `max` are not supported, yet the result is right."
+    },
+    {
+      "inputs": {
+        "a": 9
+      },
+      "note": "Now 9 and 5 are emitted: `peak` is 9."
+    }
+  ],
+  "expect": "ok"
+}

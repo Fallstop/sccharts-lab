@@ -1,0 +1,13 @@
+/** Rings for one tick per press. */
+scchart Doorbell {
+  input bool press  //* the bell push
+  output bool ring = false
+
+  /** Waiting for someone at the door. */
+  initial state Quiet
+    if press do ring = true go to Ringing label "pressed"
+
+  /** The bell is ringing. */
+  state Ringing
+    do ring = false go to Quiet label "after one tick"
+}

@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "temp": 20 }, "note": "Tick 1 enters `Watch`. A `during` action without `immediate` does not run in the tick its state is entered, so `rising` keeps its default, false." },
+    { "inputs": {}, "note": "From tick 2 on the action runs, and `pre(temp)` is a real previous value: 20 after 20, not rising." },
+    { "inputs": { "temp": 21 }, "note": "21 after 20: rising." },
+    { "inputs": { "temp": 23 }, "note": "23 after 21: rising." },
+    { "inputs": { "temp": 22 }, "note": "22 after 23: not rising." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,13 @@
+scchart TrayStrong {
+  input bool start, sheet
+  output int printed
+
+  initial state Idle
+    if start go to Job
+
+  state Job {
+    initial state Printing
+      if sheet do printed++ go to Printing
+  }
+  if printed >= 3 abort to Idle
+}

@@ -1,0 +1,8 @@
+scchart CountOnEntry {
+  input bool A
+  output int x = 0
+
+  initial state S {
+    entry if 2 A do x = 1
+  }
+}

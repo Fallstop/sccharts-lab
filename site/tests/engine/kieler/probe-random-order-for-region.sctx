@@ -1,0 +1,13 @@
+// The order of random() calls is the netlist's schedule: the copies of a for-region call random() in copy order.
+scchart RandomFor {
+  output float r[3] = {0, 0, 0}
+  output float rz = 0
+  region R for i : 0 to 2 {
+    initial state S
+    do r[i] = random() go to S
+  }
+  region Z {
+    initial state S
+    do rz = random() go to S
+  }
+}

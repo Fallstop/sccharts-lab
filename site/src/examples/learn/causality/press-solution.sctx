@@ -1,0 +1,26 @@
+scchart TwoHandPress {
+  input bool left, right
+  output int pos = 0
+  output int strokes = 0
+  signal start
+
+  region Hands {
+    initial state Watch {
+      immediate during if left && right && !(pre(left) && pre(right)) do start
+    }
+  }
+
+  region Ram {
+    initial state Top
+      if start go to Down
+
+    state Down {
+      during do pos++
+    }
+    if !left || !right abort to Up
+    if pos == 3 do strokes++ go to Up
+
+    state Up
+      do pos = 0 go to Top
+  }
+}

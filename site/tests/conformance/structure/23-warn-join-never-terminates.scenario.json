@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Compiles with the warning about the missing termination. **done = false**."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "The instance loops in W forever; the join can never fire: **done = false**."
+    }
+  ],
+  "expect": "ok"
+}

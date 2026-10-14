@@ -1,0 +1,16 @@
+{
+  "ticks": [
+    { "inputs": { "button": false, "deltaT": 1000 }, "note": "Each tick is one second later than the last (`deltaT = 1000`). Tick 1 enters `Off`." },
+    { "inputs": { "button": true }, "note": "Pressed. The root's clock has been running since tick 1 (it says 1000 here before the transition), so the transition resets it: `t` = 0, `light` on." },
+    { "inputs": { "button": false }, "note": "The clock advances in `On` just as it did in `Off`: `t` = 1000." },
+    { "note": "`t` = 2000." },
+    { "inputs": { "button": true }, "note": "Pressed again. The clock first advances to 3000, then the self-loop (priority 1) resets it: `t` = 0. The five seconds start again." },
+    { "inputs": { "button": false }, "note": "`t` = 1000." },
+    { "note": "`t` = 2000." },
+    { "note": "`t` = 3000." },
+    { "note": "`t` = 4000." },
+    { "note": "`t` = 5000: the timeout fires in this tick and `light` goes off, five seconds after the second press." },
+    { "note": "The clock is never stopped: it keeps counting in `Off` (`t` = 6000). That is why the transition into `On` resets it." }
+  ],
+  "expect": "ok"
+}

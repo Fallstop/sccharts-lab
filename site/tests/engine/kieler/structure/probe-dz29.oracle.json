@@ -1,0 +1,80 @@
+{
+  "hash": "363f3a92e5872ad062925ffc63c022ada45504e3",
+  "chart": "tests/engine/kieler/structure/probe-dz29.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "sum": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 0
+      },
+      "values": {
+        "I": 0,
+        "sum": 300
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "sum": 301
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "sum": 303
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "sum": 303
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

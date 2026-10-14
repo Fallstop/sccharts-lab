@@ -1,0 +1,352 @@
+{
+  "hash": "681ad1b2996f990dfd8aa002949302ab53c755a7",
+  "chart": "src/examples/patterns/handshake/give-up-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "online": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "failed": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "served": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "ack": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "req": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "online": true
+      },
+      "values": {
+        "online": true,
+        "start": false,
+        "failed": 0,
+        "served": 0,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "online": true,
+        "start": true,
+        "failed": 0,
+        "served": 0,
+        "ack": false,
+        "req": true
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "online": true,
+        "start": false,
+        "failed": 0,
+        "served": 0,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "online": true,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": true,
+        "req": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "online": false
+      },
+      "values": {
+        "online": false,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "online": false,
+        "start": true,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "online": false,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "online": false,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {},
+      "values": {
+        "online": false,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {},
+      "values": {
+        "online": false,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "online": true
+      },
+      "values": {
+        "online": true,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "online": true,
+        "start": true,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "online": true,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {},
+      "values": {
+        "online": true,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {},
+      "values": {
+        "online": true,
+        "start": false,
+        "failed": 0,
+        "served": 1,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

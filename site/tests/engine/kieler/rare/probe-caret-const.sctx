@@ -1,0 +1,7 @@
+scchart CaretConst {
+  input bool A
+  const int ^max = 3
+  output int o = 0
+  initial state S
+    if A do o = ^max go to S
+}

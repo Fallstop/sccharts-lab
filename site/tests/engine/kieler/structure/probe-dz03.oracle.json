@@ -1,0 +1,144 @@
+{
+  "hash": "dbdf39edbf51c64aa647770ab895f380c96fc6c5",
+  "chart": "tests/engine/kieler/structure/probe-dz03.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "gate": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "done": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "gate": true
+      },
+      "values": {
+        "gate": true,
+        "a": 10,
+        "b": 10,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "gate": false
+      },
+      "values": {
+        "gate": false,
+        "a": 10,
+        "b": 11,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "gate": true
+      },
+      "values": {
+        "gate": true,
+        "a": 11,
+        "b": 12,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "gate": true
+      },
+      "values": {
+        "gate": true,
+        "a": 12,
+        "b": 12,
+        "done": true
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "gate": true
+      },
+      "values": {
+        "gate": true,
+        "a": 12,
+        "b": 12,
+        "done": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "gate": true
+      },
+      "values": {
+        "gate": true,
+        "a": 12,
+        "b": 12,
+        "done": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

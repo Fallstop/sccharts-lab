@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {},
+      "note": "(1, 1)."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "Weakly suspended: unlike `suspend`, the during action and the inner transitions keep running (2, 2)."
+    },
+    {
+      "inputs": {},
+      "note": "(3, 3)."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "(4, 4)."
+    }
+  ],
+  "expect": "ok"
+}

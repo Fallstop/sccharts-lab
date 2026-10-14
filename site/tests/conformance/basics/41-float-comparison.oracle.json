@@ -1,0 +1,100 @@
+{
+  "hash": "c8be27c9ad00a63497da9d7b0d57085144e31508",
+  "chart": "tests/conformance/basics/41-float-comparison.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "F": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "exact": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "inputBelowLiteral": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "inputEqualsLiteral": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "lit": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "variableEqualsLiteral": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "F": 0.1
+      },
+      "values": {
+        "F": 0.1,
+        "exact": false,
+        "inputBelowLiteral": false,
+        "inputEqualsLiteral": false,
+        "lit": 0.10000000149011612,
+        "variableEqualsLiteral": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "F": 0.1,
+        "exact": false,
+        "inputBelowLiteral": true,
+        "inputEqualsLiteral": false,
+        "lit": 0.10000000149011612,
+        "variableEqualsLiteral": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "F": 0.5
+      },
+      "values": {
+        "F": 0.5,
+        "exact": false,
+        "inputBelowLiteral": false,
+        "inputEqualsLiteral": false,
+        "lit": 0.10000000149011612,
+        "variableEqualsLiteral": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

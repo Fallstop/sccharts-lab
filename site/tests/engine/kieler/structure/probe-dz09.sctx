@@ -1,0 +1,13 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz09 {
+  input int I
+  output int A, B, C, D
+  output bool E
+  dataflow {
+    A = I + 1
+    B = pre(A) + 0
+    C = 5 fby (A + B)
+    D = I -> (C - 1)
+    E = (I > 2) -> false
+  }
+}

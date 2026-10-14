@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Tick 1 enters Wait. The clock does not advance in the tick its state is entered: **t = 0, sleepT = 300**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Wait's clock advances by deltaT: **t = 100**; the timeout is 200 away: **sleepT = 200**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "**t = 200**, **sleepT = 100**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "t reaches 300 in this tick and the transition sees it in the same tick: **done = true**, the chart terminates, **sleepT = 1000**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Done has no clock behaviour: **t = 300**."
+    }
+  ],
+  "expect": "ok"
+}

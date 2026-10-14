@@ -1,0 +1,12 @@
+// The number of arguments must match the parameters (official KIELER 0.3.0 accepts the call and ignores the
+// extra argument).
+scchart St118Args {
+  class C {
+    int v
+    void add(int k) {
+      v += k
+    }
+  } c
+  initial state A
+  do c.add(1, 2) go to A
+}

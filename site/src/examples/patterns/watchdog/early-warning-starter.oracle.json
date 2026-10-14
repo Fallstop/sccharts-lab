@@ -1,0 +1,198 @@
+{
+  "hash": "3aaa390b4f2f58b0008b12bfa7ad604fef0d82f4",
+  "chart": "src/examples/patterns/watchdog/early-warning-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "beat": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "late": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "quiet": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "late": false,
+        "quiet": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "alarm": false,
+        "late": false,
+        "quiet": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "late": false,
+        "quiet": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "late": false,
+        "quiet": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "alarm": false,
+        "late": false,
+        "quiet": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "late": false,
+        "quiet": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "late": false,
+        "quiet": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": true,
+        "late": false,
+        "quiet": 3
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": true,
+        "late": false,
+        "quiet": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

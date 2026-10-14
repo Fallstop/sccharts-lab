@@ -1,0 +1,21 @@
+{
+  "hash": "75058aa2639fa0edb3ec7c0a990c276c67a5b21e",
+  "chart": "tests/conformance/structure/117-err-method-without-parentheses.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "11:12 Methods must be used with call syntax using parenthesis.",
+    "‘St117NoParens_C’ has no member named ‘get’",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Methods must be used with call syntax using parenthesis.",
+      "line": 11,
+      "column": 12
+    }
+  ],
+  "ticks": []
+}

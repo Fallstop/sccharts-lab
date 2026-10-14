@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "door": false }, "note": "Tick 1 enters the initial state of each region: `Idle` in `Oven`, `Dark` in `Lamp`." },
+    { "inputs": { "start": true }, "note": "`Oven` starts cooking and sets `heating`. `Lamp` reads `heating` in the same tick, sees true and switches `lamp` on. Regions react together, and a region sees what another has written in the same tick." },
+    { "inputs": { "start": false }, "note": "Both regions wait." },
+    { "inputs": { "door": true }, "note": "The door opens. `Oven` switches `heating` off and goes to `DoorOpen`. `Lamp` stays in `Lit`, because the door is open." },
+    { "inputs": { "door": false }, "note": "The door shuts. `Oven` returns to `Idle`, and `Lamp`, seeing neither the door nor `heating`, goes dark." }
+  ],
+  "expect": "ok"
+}

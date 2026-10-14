@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"A": 6, "Z": 0}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "& binds weaker than == (as in C): A & 3 == 2 is A & (3 == 2) = 6 & 0, so p = false. r = true. || short-circuits: A >= 6 is true, so A / Z (a division by zero) is never evaluated and s = true. ! binds tighter than ==: (!A) == 0 is true."},
+    {"inputs": {"A": 0, "Z": 1}, "note": "p = false, r = false, s = 0 / 1 > 1 = false, t = (!0) == 0 = false."}
+  ],
+  "expect": "ok"
+}

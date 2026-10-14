@@ -1,0 +1,16 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true,
+        "B": true
+      },
+      "note": "Tick 1 enters St01First.S. Only **St01First** runs: its interface is A and X. B is sent but means nothing to the simulated chart."
+    },
+    {
+      "inputs": {},
+      "note": "The delayed transition S → T fires because A is still true: **X** becomes true. St01Second never runs, so there is no Y."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,78 @@
+{
+  "hash": "1db99ee721c1599a7afec5da5ca82ccf62a21073",
+  "chart": "src/examples/learn/immediate/lift.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "up": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "floor": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "up": true,
+        "floor": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "up": true,
+        "floor": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "up": true,
+        "floor": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "up": true,
+        "floor": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

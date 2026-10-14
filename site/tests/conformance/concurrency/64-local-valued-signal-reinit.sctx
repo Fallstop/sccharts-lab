@@ -1,0 +1,19 @@
+scchart LocalValuedReinit {
+  input bool a, r
+  output int seen
+
+  initial state S {
+    signal int L = 7
+    region R1 {
+      initial state X
+      if a do L(3) go to X
+    }
+    region R2 {
+      initial state X
+      immediate do seen = val(L) go to Y
+      state Y
+      do seen = val(L) go to Y
+    }
+  }
+  if r go to S
+}

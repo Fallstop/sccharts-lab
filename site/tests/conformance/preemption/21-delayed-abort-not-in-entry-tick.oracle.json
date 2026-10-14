@@ -1,0 +1,80 @@
+{
+  "hash": "45746f1d360a10b7a93d92c374d57bbffdb51db5",
+  "chart": "tests/conformance/preemption/21-delayed-abort-not-in-entry-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "effect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": true,
+        "W": true
+      },
+      "values": {
+        "S": true,
+        "W": true,
+        "effect": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": false,
+        "W": false
+      },
+      "values": {
+        "S": false,
+        "W": false,
+        "effect": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "W": true
+      },
+      "values": {
+        "S": false,
+        "W": true,
+        "effect": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

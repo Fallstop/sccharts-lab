@@ -1,0 +1,77 @@
+{
+  "hash": "eec3c807cbec084552b58d73bac55ab8e1cb7b98",
+  "chart": "src/examples/reference/troubleshooting/rising.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "temp": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "rising": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "temp": 20
+      },
+      "values": {
+        "temp": 20,
+        "rising": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "temp": 20,
+        "rising": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "temp": 21
+      },
+      "values": {
+        "temp": 21,
+        "rising": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "temp": 23
+      },
+      "values": {
+        "temp": 23,
+        "rising": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "temp": 22
+      },
+      "values": {
+        "temp": 22,
+        "rising": false
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "hash": "dcd26263abb047dbf6a2aa7e0180696227d8559e",
+  "chart": "tests/conformance/structure/82-string-equality-c.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "comparison with string literal results in unspecified behavior [-Waddress]"
+  ],
+  "interface": {
+    "cmd": {
+      "type": "string",
+      "properties": [
+        "input"
+      ]
+    },
+    "hit": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "mode": {
+      "type": "string",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "cmd": "stop"
+      },
+      "values": {
+        "cmd": "stop",
+        "hit": false,
+        "mode": "idle"
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "cmd": "go"
+      },
+      "values": {
+        "cmd": "go",
+        "hit": false,
+        "mode": "idle"
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

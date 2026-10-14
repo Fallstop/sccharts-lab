@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Tick 1 enters M normally: all three entry actions run (1, 1, 1)."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "The immediate strong abort fires (M was entered earlier): M is left to N. No entry actions run."
+    },
+    {
+      "inputs": {},
+      "note": "N goes back to M, and the immediate strong abort fires in M's entry tick. A plain (strong) entry action still runs (plainEntry = 2), but `weak entry` actions, M's own and the inner state's, count as inner behaviour and are skipped (still 1, 1)."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "N goes back to M with S false: all entry actions run again (3, 2, 2)."
+    }
+  ],
+  "expect": "ok"
+}

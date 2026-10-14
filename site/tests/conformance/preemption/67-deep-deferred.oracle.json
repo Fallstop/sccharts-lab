@@ -1,0 +1,116 @@
+{
+  "hash": "7e809655048cf4a210bf6210cb3374617a85b2f7",
+  "chart": "tests/conformance/preemption/67-deep-deferred.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chained": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "chained": 0,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "chained": 0,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "chained": 1,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "G": false,
+        "chained": 1,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

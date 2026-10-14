@@ -1,0 +1,20 @@
+// KIELER's netlist defect for a conditional whose two branches lead to the same node (the else branch never passes
+// control), inside a referenced chart: its transitions have no take counters, so `if q go to B` and `go to B` are a
+// conditional with equal branches there. When q is false the instance stops for good.
+scchart RefEqualBranches {
+  input bool a, c
+  output int x = 0
+  initial state R0s0
+  go to R0s2
+  state R0s2 is C0(c, a, x)
+}
+
+scchart C0 {
+  input bool p, q
+  output int o = 0
+  initial state A
+  if q go to B
+  go to B
+  state B
+  do o++ go to A
+}

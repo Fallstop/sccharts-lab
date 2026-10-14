@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 1000 }, "note": "Rejected: one clock is tested by two concurrent regions." }
+  ],
+  "expect": "error",
+  "errorIncludes": "is read by several concurrent regions"
+}

@@ -1,0 +1,94 @@
+{
+  "hash": "071a83c56539938bc3eb1aad4a92b06c8477ea87",
+  "chart": "tests/conformance/structure/126-chart-class.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "St126Counter1.counter": {
+      "type": "int",
+      "properties": []
+    },
+    "St126Counter1.step": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "O": 0,
+        "c": {
+          "counter": 0,
+          "step": 1
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "O": 1,
+        "c": {
+          "counter": 1,
+          "step": 1
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "O": 6,
+        "c": {
+          "counter": 6,
+          "step": 5
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "O": 11,
+        "c": {
+          "counter": 11,
+          "step": 5
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

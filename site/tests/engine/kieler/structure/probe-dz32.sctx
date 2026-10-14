@@ -1,0 +1,9 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz32 {
+  input int I
+  output int S = 0, P
+  dataflow {
+    S += I
+    P = pre(S)
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "hash": "f3cd4fd60f4141888708340a516d9fcdd8247ed1",
+  "chart": "src/examples/advanced/history/player-restart.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "call": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "hangUp": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "track": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "next": false,
+        "call": false,
+        "hangUp": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": false,
+        "track": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": true,
+        "track": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "next": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": false,
+        "track": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "call": true
+      },
+      "values": {
+        "call": true,
+        "hangUp": false,
+        "next": false,
+        "track": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "call": false,
+        "hangUp": true
+      },
+      "values": {
+        "call": false,
+        "hangUp": true,
+        "next": false,
+        "track": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "hangUp": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": false,
+        "track": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "next": true,
+        "call": true
+      },
+      "values": {
+        "call": true,
+        "hangUp": false,
+        "next": true,
+        "track": 0
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "next": false,
+        "call": false,
+        "hangUp": true
+      },
+      "values": {
+        "call": false,
+        "hangUp": true,
+        "next": false,
+        "track": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "hangUp": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "next": false,
+        "track": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+scchart PrintStuck {
+  input bool job
+  output int pages = 0
+  output bool busy
+
+  initial state Idle
+    if job go to Printing
+
+  state Printing {
+    signal fed
+    entry do busy = true
+    region Feed:
+      initial state Feeding
+        do fed go to Fed
+      final state Fed
+    region Count:
+      initial state Waiting
+        if fed do pages++ go to Counted
+      final state Counted
+  }
+  do busy = false join to Idle
+}

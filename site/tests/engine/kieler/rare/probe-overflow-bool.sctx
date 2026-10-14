@@ -1,0 +1,7 @@
+// bool arrays are chars: b[2] is the next bool.
+scchart OverflowBool {
+  output bool b[2] = {false, false}
+  output bool z = false
+  initial state Run
+    do b[2] = true go to Run
+}

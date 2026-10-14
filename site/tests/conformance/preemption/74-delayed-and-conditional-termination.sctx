@@ -1,0 +1,44 @@
+scchart TerminationDelays {
+  input bool A
+  output int plainAt = 0, delayedAt = 0, guardedAt = 0, tick = 0
+
+  region Clock {
+    initial state C
+    immediate do tick += 1 go to D
+    state D
+    if true do tick += 1 go to D
+  }
+  region Plain {
+    initial state M {
+      initial state I
+      immediate go to F
+      final state F
+    }
+    join to Done
+    state Done {
+      entry do plainAt = tick
+    }
+  }
+  region Delayed {
+    initial state M {
+      initial state I
+      immediate go to F
+      final state F
+    }
+    delayed join to Done
+    state Done {
+      entry do delayedAt = tick
+    }
+  }
+  region Guarded {
+    initial state M {
+      initial state I
+      immediate go to F
+      final state F
+    }
+    if A join to Done
+    state Done {
+      entry do guardedAt = tick
+    }
+  }
+}

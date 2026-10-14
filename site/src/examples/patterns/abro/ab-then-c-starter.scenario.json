@@ -1,0 +1,45 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "C": false,
+        "R": false
+      },
+      "note": "Tick 1 enters everything."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A`: `HandleA` finishes."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "`B`: both regions are final, and the starter emits `O` at once. It should wait for `C`."
+    },
+    {
+      "inputs": {
+        "B": false
+      },
+      "note": "Resting in `Done`."
+    },
+    {
+      "inputs": {
+        "C": true
+      },
+      "note": "`C` comes now, but the starter has already emitted `O` and ignores it."
+    },
+    {
+      "inputs": {
+        "C": false
+      },
+      "note": "Quiet."
+    }
+  ],
+  "expect": "ok"
+}

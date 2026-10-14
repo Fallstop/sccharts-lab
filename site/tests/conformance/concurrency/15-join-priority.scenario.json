@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Tick 1 enters both superstates."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "note": "`a` and `b` together: both superstates terminate and both `if b` aborts are enabled. In `AbortFirst` the weak abort has priority 1 and wins (`first = 1`); in `JoinFirst` the join has priority 1 and wins (`second = 2`). In both, the inner `W` → `F` ran first (weak preemption)."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "No change: `first = 1`, `second = 2`."
+    }
+  ],
+  "expect": "ok"
+}

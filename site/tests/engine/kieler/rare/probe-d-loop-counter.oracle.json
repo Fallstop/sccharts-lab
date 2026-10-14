@@ -1,0 +1,45 @@
+{
+  "hash": "8834d5584c1c3a40b1ce454ef8bbf52a5f312759",
+  "chart": "tests/engine/kieler/rare/probe-d-loop-counter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name d is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name f is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "r": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "r": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "r": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

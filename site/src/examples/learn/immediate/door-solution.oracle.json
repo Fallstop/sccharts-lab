@@ -1,0 +1,97 @@
+{
+  "hash": "b958fdacebef5291bf5d61074f8d56f0a6014753",
+  "chart": "src/examples/learn/immediate/door-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "open": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "isOpen": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "open": true
+      },
+      "values": {
+        "open": true,
+        "isOpen": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "open": true,
+        "isOpen": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "open": false
+      },
+      "values": {
+        "open": false,
+        "isOpen": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "open": true
+      },
+      "values": {
+        "open": true,
+        "isOpen": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "open": false
+      },
+      "values": {
+        "open": false,
+        "isOpen": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

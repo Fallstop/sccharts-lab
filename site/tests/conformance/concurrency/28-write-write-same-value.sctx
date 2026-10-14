@@ -1,0 +1,16 @@
+scchart SameValueWrites {
+  input int i
+  output int x, y
+
+  region R1 {
+    initial state A
+    do x = 3; y = i go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    do x = 3; y = i go to B
+    state B
+  }
+}

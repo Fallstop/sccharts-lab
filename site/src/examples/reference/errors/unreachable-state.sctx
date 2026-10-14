@@ -1,0 +1,11 @@
+scchart UnreachableState {
+  input bool A
+
+  initial state Idle
+    if A go to Busy
+
+  state Busy
+
+  state Forgotten
+    go to Idle
+}

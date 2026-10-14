@@ -1,0 +1,91 @@
+scchart R26 {
+  input bool a, b, c
+  input int n
+  output int x = 0, y = 0
+  output bool f = false
+  output signal S
+  output signal int V
+  region R0 {
+    initial state R0S0
+      if !a do y += 1; x += 1 go to R0S3
+      do y += 1 go to R0S2
+    state R0S1
+      immediate if n == 2 do x += 1; f = true go to R0S3
+    state R0S2 {
+      signal L0
+      region {
+        initial state R0S2r0S0
+          if !a do y += 1; x++ go to R0S2r0S1
+          go to R0S2r0S1
+        final state R0S2r0S1
+      }
+      region {
+        initial state R0S2r1S0 {
+          int c1 = 1
+          exit do f = false
+          region {
+            initial state R0S2r1S0r0S0
+              if b do y += 1 go to R0S2r1S0r0S1
+              if a && b do S go to R0S2r1S0r0S2
+              do S go to R0S2r1S0r0S2
+            state R0S2r1S0r0S1
+              if n == 2 go to R0S2r1S0r0S1
+              immediate do x++ go to R0S2r1S0r0S2
+            state R0S2r1S0r0S2 {
+              entry do x += 1
+            }
+              go to R0S2r1S0r0S2
+          }
+        }
+          if b || c do S abort to R0S2r1S0
+        state R0S2r1S1 {
+          region {
+            initial state R0S2r1S1r0S0
+              if n > 1 do y += 2; y += 1 go to R0S2r1S1r0S1
+            state R0S2r1S1r0S1
+              if b || c go to R0S2r1S1r0S1
+              if a && b do x += 1 go to R0S2r1S1r0S1
+              do y += 1 go to R0S2r1S1r0S1
+          }
+        }
+          do V(1); x += 1 abort to R0S2r1S0
+          if b do S go to R0S2r1S2
+          if c do S; L0 go to R0S2r1S1
+        state R0S2r1S2
+          if n > 1 do y += 2; V(1) go to R0S2r1S0
+      }
+    }
+      if b do S; S abort to R0S1
+    state R0S3 {
+      region {
+        initial state R0S3r0S0 {
+          entry do x += 1
+        }
+          immediate do V(1); V(1) go to R0S3r0S1
+        final state R0S3r0S1 {
+          entry do y += 1
+        }
+      }
+      region {
+        initial state R0S3r1S0
+          if !a do x += 1; x += 1 go to R0S3r1S1
+          do S; S go to R0S3r1S1
+        state R0S3r1S1
+          if b do y += 1 go to R0S3r1S1
+          if a && b go to R0S3r1S0
+        state R0S3r1S2
+          immediate if b || c do S go to R0S3r1S1
+          do S; x++ go to R0S3r1S2
+      }
+    }
+      if b do S abort to R0S0
+      if n > 1 do V(1) go to R0S2
+      go to R0S0
+  }
+  region R1 {
+    initial state R1S0
+      do S go to R1S1
+    state R1S1
+      do y += 1 go to R1S0
+  }
+}

@@ -1,0 +1,11 @@
+scchart Worker {
+  input bool go1
+  initial state Idle
+  if go1 go to Busy
+  final state Busy
+}
+scchart Pool {
+  input bool g
+  region is Worker(g) for i : 0 to 2
+  region Other is Worker(g)
+}

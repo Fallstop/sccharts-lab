@@ -1,0 +1,8 @@
+scchart CountOnDuring {
+  input bool A
+  output int x = 0
+
+  initial state S {
+    during if 3 A do x += 1
+  }
+}

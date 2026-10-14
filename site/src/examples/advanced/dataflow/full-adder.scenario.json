@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "a": false, "b": false, "carryIn": false }, "note": "0 + 0 + 0: both half adders output false, so `sum` and `carryOut` are false." },
+    { "inputs": { "a": true }, "note": "1 + 0 + 0 = 1: `h1.s` is true, `h2` adds the carry 0 to it, so `sum` is true." },
+    { "inputs": { "b": true }, "note": "1 + 1 + 0 = binary 10: `h1.c` is true, so `carryOut` is true and `sum` false. Both instances react in the tick the input changed." },
+    { "inputs": { "carryIn": true }, "note": "1 + 1 + 1 = binary 11: `sum` and `carryOut` are both true." },
+    { "inputs": { "a": false }, "note": "0 + 1 + 1 = binary 10: `h1.s` is true and `h2` turns it, with the carry, into `carryOut` true and `sum` false." }
+  ],
+  "expect": "ok"
+}

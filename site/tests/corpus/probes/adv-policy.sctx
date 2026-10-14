@@ -1,0 +1,16 @@
+scchart Pol {
+  output int O
+  host class Counter {
+    policy P {
+      initial state count
+      if increment go to count
+      if getValue: increment go to read
+      state read
+      go to count
+    }
+    void increment()
+    int getValue()
+  } counter
+  initial state A
+  do counter.increment(); O = counter.getValue() go to A
+}

@@ -1,0 +1,20 @@
+scchart InitialFinalOnlyJoin {
+  input bool a, c
+  output bool done
+
+  initial state S {
+    region R1 {
+      initial final state F
+    }
+    region R2 {
+      initial state W
+      if a go to F
+      final state F
+    }
+  }
+  if c join to D
+
+  state D {
+    entry do done = true
+  }
+}

@@ -1,0 +1,14 @@
+scchart ConnectorBranch {
+  input bool A
+  output int first = 0, second = 0
+
+  initial state S
+  if A do first = 1 go to C
+
+  connector state C
+  immediate if first == 1 && A do second = first + 1 go to X
+  immediate do second = 9 go to Y
+
+  state X
+  state Y
+}

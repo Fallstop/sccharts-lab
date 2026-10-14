@@ -1,0 +1,14 @@
+// A referenced chart may write to its own input. The input is replaced by the bound variable, so the write
+// changes the parent's variable z.
+scchart St13Main {
+  output int o = 0
+  int z = 3
+  initial state R is St13Inc(z, o)
+}
+
+scchart St13Inc {
+  input int a
+  output int b
+  initial state S
+  do a += 1; b = a go to S
+}

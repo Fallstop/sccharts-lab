@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "stop": false }, "note": "Tick 1 enters `Stopped`." },
+    { "inputs": { "start": true }, "note": "`Running` is entered: `elapsed` is 0." },
+    { "inputs": { "start": false }, "note": "The during action counts: `elapsed` is 1. `Running` is not left, so the entry action does not run again." },
+    { "note": "`elapsed` is 2." },
+    { "note": "`elapsed` is 3." },
+    { "inputs": { "stop": true }, "note": "`stop` leaves `Running` with `go to`, so the during action runs once more (`elapsed` is 4) before the exit action clears `running`." },
+    { "inputs": { "stop": false }, "note": "Stopped: `elapsed` keeps showing 4." }
+  ],
+  "expect": "ok"
+}

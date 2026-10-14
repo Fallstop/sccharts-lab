@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": 5
+      },
+      "note": "`now` starts at 50, but `pre(now)` in tick 1 is 0, the default of `int`, not 50: there is no previous tick yet."
+    },
+    {
+      "inputs": {
+        "I": 6
+      },
+      "note": "`pre(now)` is the value `now` had at the end of tick 1: 5. `pre(pre(now))` goes two ticks back, to before tick 1: 0."
+    },
+    {
+      "inputs": {
+        "I": 7
+      },
+      "note": "`before` = 6 and `twoAgo` = 5."
+    }
+  ],
+  "expect": "ok"
+}

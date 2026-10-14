@@ -1,0 +1,100 @@
+{
+  "hash": "3f09da7eadc573ed5581c87899a64cb51caccadd",
+  "chart": "src/examples/learn/first-chart/dimmer-held.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "level": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "level": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "level": 30
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "level": 100
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "level": 0
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "level": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

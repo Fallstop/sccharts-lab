@@ -1,0 +1,120 @@
+{
+  "hash": "710da6d67d39152426475cc5f6c4c7a624252cd1",
+  "chart": "tests/conformance/preemption/31-strong-abort-written-inside.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "countR1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "countR2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "done": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "countR1": 0,
+        "countR2": 0,
+        "done": 0,
+        "stop": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "countR1": 0,
+        "countR2": 0,
+        "done": 0,
+        "stop": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "countR1": 0,
+        "countR2": 0,
+        "done": 1,
+        "stop": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "A": false,
+        "countR1": 0,
+        "countR2": 0,
+        "done": 1,
+        "stop": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

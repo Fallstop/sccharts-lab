@@ -1,0 +1,99 @@
+{
+  "hash": "a5cc2c0db0b61d6ebb1323fedfecb4ec4e3e3bb8",
+  "chart": "src/examples/learn/transitions/thermostat.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "temperature": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "heating": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "temperature": 20
+      },
+      "values": {
+        "temperature": 20,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "temperature": 17
+      },
+      "values": {
+        "temperature": 17,
+        "heating": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "temperature": 19
+      },
+      "values": {
+        "temperature": 19,
+        "heating": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "temperature": 21
+      },
+      "values": {
+        "temperature": 21,
+        "heating": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "temperature": 19
+      },
+      "values": {
+        "temperature": 19,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

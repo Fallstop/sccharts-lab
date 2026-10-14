@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "`x += 2` and `x *= 3` in concurrent regions do not commute (the result would depend on the order): rejected as \"NOT asc-schedulable\"."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

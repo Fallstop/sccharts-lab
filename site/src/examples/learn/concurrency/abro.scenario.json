@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `ABO`, `WaitAB`, `WaitA` and `WaitB`: four states, two levels of nesting, two regions." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` is done." },
+    { "inputs": { "A": false, "B": true }, "note": "`B`: `HandleB` is done too, `WaitAB` terminates and its join emits `O`. `ABO` is now in `Done`." },
+    { "inputs": { "B": false }, "note": "Waiting in `Done`." },
+    { "inputs": { "A": true, "B": true }, "note": "`A` and `B` again, but `Done` ignores them." },
+    { "inputs": { "A": false, "B": false, "R": true }, "note": "`R`: the transition `if R abort to ABO` leaves `ABO` and enters it again, so everything inside starts over in `WaitA` and `WaitB`." },
+    { "inputs": { "R": false, "A": true }, "note": "`A`: `HandleA` is done." },
+    { "inputs": { "A": false, "B": true }, "note": "`B`: both are done, `O` is present again." },
+    { "inputs": { "B": false }, "note": "Back in `Done` until the next `R`." }
+  ],
+  "expect": "ok"
+}

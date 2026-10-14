@@ -1,0 +1,7 @@
+// Only the second block jumps, to a label the first block also has: KIELER crashes.
+scchart LabelSecondGoto {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S
+    if a do { skip: x += 1 }; { if (b) { goto skip } z += 1; skip: y += 10 } go to S
+}

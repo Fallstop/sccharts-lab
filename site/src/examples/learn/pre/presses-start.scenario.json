@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Not pressed." },
+    { "inputs": { "button": true }, "note": "Pressed: `presses` is 1." },
+    { "note": "Held: counted again." },
+    { "note": "Held: 3 already, after one press." },
+    { "inputs": { "button": false }, "note": "Released." },
+    { "inputs": { "button": true }, "note": "Second press: 4." },
+    { "inputs": { "button": false }, "note": "Released." }
+  ],
+  "expect": "ok"
+}

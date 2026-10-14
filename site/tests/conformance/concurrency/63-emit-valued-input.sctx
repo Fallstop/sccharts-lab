@@ -1,0 +1,16 @@
+scchart EmitValuedInput {
+  input signal int V
+  input bool a
+  output int seen
+
+  region R1 {
+    initial state X
+    if a do V(5) go to X
+  }
+
+  region R2 {
+    initial state X {
+      immediate during do seen = val(V)
+    }
+  }
+}

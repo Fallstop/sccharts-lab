@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "flow": 100
+      },
+      "note": "Tick 1 enters the chart: `volume` and `full` get their initial values, and the local `fills`, which has none, starts at 0. `CAPACITY` is a constant, so it is not in the list of values at all. Both transitions are delayed, so nothing else happens."
+    },
+    {
+      "note": "`flow` is still 100. `volume + flow` is 100, below `CAPACITY`, so priority 1 fails and the self-loop adds `flow`: `volume` is 100 and `fills` is 1."
+    },
+    {
+      "inputs": {
+        "flow": 150
+      },
+      "note": "`flow` is 150 now: `volume` is 250, `fills` 2."
+    },
+    {
+      "note": "`flow` keeps its value, 150: `volume` is 400, `fills` 3."
+    },
+    {
+      "note": "`volume + flow` would be 550, which reaches `CAPACITY`, so priority 1 fires: `volume` is set to 500, `full` to true, and the chart enters the final state `Full` and terminates."
+    },
+    {
+      "note": "The chart has terminated: nothing changes any more."
+    }
+  ],
+  "expect": "ok"
+}

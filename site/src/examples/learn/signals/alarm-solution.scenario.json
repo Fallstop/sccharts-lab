@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "temperature": 20
+      },
+      "note": "Tick 1 enters `Watch`."
+    },
+    {
+      "inputs": {
+        "temperature": 95
+      },
+      "note": "Too hot: the self-loop emits `alarm`, so it is present in this tick."
+    },
+    {
+      "inputs": {
+        "temperature": 40
+      },
+      "note": "Nothing emits `alarm`, so it is absent: no code needed to switch it off."
+    },
+    {
+      "note": "Still absent."
+    }
+  ],
+  "expect": "ok"
+}

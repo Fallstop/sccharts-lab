@@ -1,0 +1,10 @@
+scchart OnceBool {
+  input bool start
+  output int runs = 0
+
+  initial state Waiting
+    if start do runs += 1 go to Done
+
+  final state Done
+    if start go to Waiting
+}

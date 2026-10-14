@@ -1,0 +1,107 @@
+{
+  "hash": "70c8d49913263fe9b235f787a72e30b48b2b7de7",
+  "chart": "tests/engine/kieler/structure/probe-dz21.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__effect0_t is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 0
+      },
+      "values": {
+        "I": 0,
+        "a": 0,
+        "b": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "a": -2,
+        "b": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "a": -4,
+        "b": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "a": 6,
+        "b": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "I": 4
+      },
+      "values": {
+        "I": 4,
+        "a": 8,
+        "b": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

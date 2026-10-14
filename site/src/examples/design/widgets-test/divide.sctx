@@ -1,0 +1,11 @@
+scchart Divide {
+  input int d = 1
+  input signal int V
+  input string word
+  input float gain
+  output int q = 0
+  output float scaled = 0
+
+  initial state Run
+    if d != 7 do q = 100 / d; scaled = gain * 2 go to Run
+}

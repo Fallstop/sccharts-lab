@@ -1,0 +1,14 @@
+scchart PreResetOnReentry {
+  input bool r
+  input int i
+  output int p
+
+  initial state S {
+    int k
+    initial state X
+    immediate do k = i; p = pre(k) go to Y
+    state Y
+    do k = i; p = pre(k) go to Y
+  }
+  if r go to S
+}

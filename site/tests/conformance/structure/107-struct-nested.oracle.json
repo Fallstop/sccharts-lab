@@ -1,0 +1,107 @@
+{
+  "hash": "a19fef7b2e011628ba97a74882c3a0007b62fd7e",
+  "chart": "tests/conformance/structure/107-struct-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads l.b.y, so the compiler treats it as an update of l.b.y (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. l.b.y += 1.\nIt only matters when another region also writes l.b.y in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 12,
+      "column": 17
+    }
+  ],
+  "interface": {
+    "Line.Point.x": {
+      "type": "int",
+      "properties": []
+    },
+    "Line.Point.y": {
+      "type": "int",
+      "properties": []
+    },
+    "Line.a": {
+      "type": "struct",
+      "properties": []
+    },
+    "Line.b": {
+      "type": "struct",
+      "properties": []
+    },
+    "Line.width": {
+      "type": "int",
+      "properties": []
+    },
+    "l": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "l": {
+          "a": {
+            "x": 0,
+            "y": 0
+          },
+          "b": {
+            "x": 0,
+            "y": 0
+          },
+          "width": 1
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "l": {
+          "a": {
+            "x": 3,
+            "y": 0
+          },
+          "b": {
+            "x": 0,
+            "y": 4
+          },
+          "width": 1
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "l": {
+          "a": {
+            "x": 3,
+            "y": 0
+          },
+          "b": {
+            "x": 0,
+            "y": 4
+          },
+          "width": 1
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

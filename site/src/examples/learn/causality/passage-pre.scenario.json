@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "aWants": false, "bWants": false }, "note": "With `pre`, each robot reads the other's flag as it was at the end of the previous tick, which is already known. No cycle, so KIELER accepts the chart." },
+    { "inputs": { "aWants": true, "bWants": true }, "note": "Both want to go. Neither flag was set in the previous tick, so both go now: a collision. The chart is determinate, but it answers a different question." },
+    { "inputs": { "aWants": false, "bWants": false }, "note": "Both are through and clear their flags." },
+    { "note": "Nothing else happens." }
+  ],
+  "expect": "ok"
+}

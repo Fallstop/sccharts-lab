@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": { "start": false },
+      "note": "Tick 1 enters `Waiting`."
+    },
+    {
+      "inputs": { "start": true },
+      "note": "`start` is true: `runs` is 1 and the chart enters the final state `Done`. The chart ends the tick in a final state, so it terminates."
+    },
+    {
+      "note": "`start` is still true, but a terminated chart checks nothing: `Done`'s transition does not fire."
+    },
+    {
+      "note": "Nothing happens; `runs` stays 1."
+    },
+    {
+      "inputs": { "start": false },
+      "note": "Nothing happens, whatever the inputs."
+    }
+  ],
+  "expect": "ok"
+}

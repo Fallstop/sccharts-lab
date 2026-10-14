@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: nothing fires."
+    },
+    {
+      "inputs": {},
+      "note": "In one tick: `Init` writes `x = 100` (absolute write), `Update` adds 5 (relative write), `Reader` reads `x`. KIELER orders them initialise, update, read regardless of region order: `x = 105`, `y = 105`."
+    },
+    {
+      "inputs": {},
+      "note": "No further change."
+    }
+  ],
+  "expect": "ok"
+}

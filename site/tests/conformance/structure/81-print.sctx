@@ -1,0 +1,8 @@
+// print(...) writes its arguments to the simulation's console, separated by single spaces, without a newline.
+// It does not change any variable. (A "\n" in a print string breaks KIELER's C code generation.)
+scchart St81Print {
+  input int x
+  output int n = 0
+  initial state S
+  do print("x is", x); n++ go to S
+}

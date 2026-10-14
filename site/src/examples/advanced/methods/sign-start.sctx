@@ -1,0 +1,7 @@
+scchart Sign {
+  input int value
+  output int s = 0
+
+  initial state Watch
+    do s = value go to Watch
+}

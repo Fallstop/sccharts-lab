@@ -1,0 +1,12 @@
+// A method returning (c) ? a, inlined into a trigger.
+scchart CondNoElseMethod {
+  input bool c, a
+  output int n = 0, r = 0
+
+  method bool pick() {
+    return (c) ? a
+  }
+
+  initial state S
+    if pick() do n++; r = 1 go to S
+}

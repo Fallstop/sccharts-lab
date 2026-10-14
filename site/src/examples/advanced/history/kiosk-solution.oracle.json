@@ -1,0 +1,176 @@
+{
+  "hash": "785109e8ea169476e4ba0158476a0ff90079ddbe",
+  "chart": "src/examples/advanced/history/kiosk-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HPages is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "idle": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "open": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "touch": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "screen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "idle": false,
+        "touch": false,
+        "next": false,
+        "open": false
+      },
+      "values": {
+        "idle": false,
+        "next": false,
+        "open": false,
+        "touch": false,
+        "screen": 11
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "idle": false,
+        "next": true,
+        "open": false,
+        "touch": false,
+        "screen": 21
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "next": false,
+        "open": true
+      },
+      "values": {
+        "idle": false,
+        "next": false,
+        "open": true,
+        "touch": false,
+        "screen": 22
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "open": false,
+        "idle": true
+      },
+      "values": {
+        "idle": true,
+        "next": false,
+        "open": false,
+        "touch": false,
+        "screen": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "idle": false,
+        "touch": true
+      },
+      "values": {
+        "idle": false,
+        "next": false,
+        "open": false,
+        "touch": true,
+        "screen": 21
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "touch": false
+      },
+      "values": {
+        "idle": false,
+        "next": false,
+        "open": false,
+        "touch": false,
+        "screen": 21
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

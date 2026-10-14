@@ -1,0 +1,143 @@
+{
+  "hash": "1c05b6600928bf3844c1246332233d86ab9696b3",
+  "chart": "tests/engine/kieler/structure/probe-dz04.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).\nWrite it as log *= 10; log += 1 to say so. In one region it means the same.\nIt only matters when another region also writes log in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 12,
+      "column": 12
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).\nWrite it as log *= 10; log += 2 to say so. In one region it means the same.\nIt only matters when another region also writes log in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 13,
+      "column": 11
+    }
+  ],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "log": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "log": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "log": 101
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "log": 1012
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "log": 1012
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "log": 10121
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "log": 10221
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "log": 10321
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

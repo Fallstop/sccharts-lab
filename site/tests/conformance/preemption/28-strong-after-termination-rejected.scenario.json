@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "KIELER rejects a strong abort written after a termination (`join to`) with the same causality error."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Strong abort transitions must have a higher priority than weak abort or termination transitions."
+}

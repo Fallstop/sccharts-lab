@@ -1,0 +1,18 @@
+scchart HouseDeep {
+  input bool walk
+  output int chimes = 0, lights = 0, steps = 0
+
+  initial state Outside
+    if walk go to House deep deferred
+
+  state House {
+    entry do chimes++
+
+    initial state Hall {
+      entry do lights++
+    }
+    immediate do steps++ go to Room
+
+    state Room
+  }
+}

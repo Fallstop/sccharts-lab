@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "An immediate strong abort fires in M's entry tick. Entry actions are not inner behaviour: both still run (outerEntry = 1, innerEntry = 1). The inner immediate transition is skipped (chained = 0). Then both exit actions run (innerExit = 1, outerExit = 1) and the effect (effect = 1)."
+    },
+    {
+      "inputs": {},
+      "note": "In Done: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

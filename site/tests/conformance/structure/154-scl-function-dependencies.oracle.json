@@ -1,0 +1,94 @@
+{
+  "hash": "3d32c49b0ca9fac938027ef5f11753c58f5ca63f",
+  "chart": "tests/conformance/structure/154-scl-function-dependencies.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name fill is contained in the model but not in VariableStore.",
+    "ValuedObject with name _effect0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "seen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "seenTotal": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "data": {
+      "type": "int",
+      "properties": []
+    },
+    "total": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "seen": 0,
+        "seenTotal": 0,
+        "data": [
+          0,
+          0
+        ],
+        "total": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "seen": 5,
+        "seenTotal": 2,
+        "data": [
+          5,
+          5
+        ],
+        "total": 2
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "seen": 10,
+        "seenTotal": 4,
+        "data": [
+          10,
+          10
+        ],
+        "total": 4
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

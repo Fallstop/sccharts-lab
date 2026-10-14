@@ -1,0 +1,19 @@
+{
+  "hash": "8cdddc5994d8f012a7952015bf77797f47fb426c",
+  "chart": "tests/conformance/structure/109-err-struct-member-conflict.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3b to _g7b",
+    "Can't schedule from _g7b to _g3b",
+    "Can't schedule from _g3b to _g2",
+    "Can't schedule from _g7b to _g6",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving x prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through x.",
+    "Potential instantaneous loop through x."
+  ],
+  "ticks": []
+}

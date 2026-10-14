@@ -1,0 +1,262 @@
+{
+ "sourceHash": "8d88b06b488534da",
+ "states": [
+  {
+   "path": [
+    "Dishwasher"
+   ],
+   "rows": [
+    [
+     "Dishwasher"
+    ],
+    [
+     "input bool ",
+     "tick, button"
+    ],
+    [
+     "output bool ",
+     "fill = true, heat, drain"
+    ],
+    [
+     "int ",
+     "count = 0"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    1610.2,
+    201.9
+   ]
+  },
+  {
+   "path": [
+    "Dishwasher",
+    0,
+    "Fill"
+   ],
+   "rows": [
+    [
+     "Fill"
+    ],
+    [
+     "entry ",
+     "/ fill = true; heat = false; drain = false; count = 0"
+    ],
+    [
+     "during ",
+     "/ count++"
+    ]
+   ],
+   "box": [
+    10,
+    26.7,
+    331.4,
+    70.3
+   ]
+  },
+  {
+   "path": [
+    "Dishwasher",
+    0,
+    "FillHeat"
+   ],
+   "rows": [
+    [
+     "FillHeat"
+    ],
+    [
+     "entry ",
+     "/ heat = true; count = 0"
+    ],
+    [
+     "during ",
+     "/ count++"
+    ]
+   ],
+   "box": [
+    548.3,
+    10,
+    190.1,
+    70.3
+   ]
+  },
+  {
+   "path": [
+    "Dishwasher",
+    0,
+    "Wash"
+   ],
+   "rows": [
+    [
+     "Wash"
+    ],
+    [
+     "entry ",
+     "/ fill = false; heat = false; drain = true; count = 0"
+    ],
+    [
+     "during ",
+     "/ count++"
+    ]
+   ],
+   "box": [
+    859.4,
+    10,
+    331.4,
+    70.3
+   ]
+  },
+  {
+   "path": [
+    "Dishwasher",
+    0,
+    "Rinse"
+   ],
+   "rows": [
+    [
+     "Rinse"
+    ],
+    [
+     "entry ",
+     "/ drain = false; heat = true; count = 0"
+    ],
+    [
+     "during ",
+     "/ count++"
+    ]
+   ],
+   "box": [
+    1317.6,
+    32.6,
+    268.8,
+    70.3
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Dishwasher",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    83.2,
+    1596.4,
+    112.9
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NDishwasher$$N0$NFill$EFillHeat0",
+   "source": [
+    "Dishwasher",
+    0,
+    "Fill"
+   ],
+   "target": [
+    "Dishwasher",
+    0,
+    "FillHeat"
+   ],
+   "text": "1: count >= 5 && button",
+   "lines": [
+    "1: count >= 5 && button"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NDishwasher$$N0$NFill$EFillHeat1",
+   "source": [
+    "Dishwasher",
+    0,
+    "Fill"
+   ],
+   "target": [
+    "Dishwasher",
+    0,
+    "FillHeat"
+   ],
+   "text": "2: count >= 20",
+   "lines": [
+    "2: count >= 20"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NDishwasher$$N0$NFillHeat$EWash0",
+   "source": [
+    "Dishwasher",
+    0,
+    "FillHeat"
+   ],
+   "target": [
+    "Dishwasher",
+    0,
+    "Wash"
+   ],
+   "text": "count >= 2",
+   "lines": [
+    "count >= 2"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NDishwasher$$N0$NWash$ERinse0",
+   "source": [
+    "Dishwasher",
+    0,
+    "Wash"
+   ],
+   "target": [
+    "Dishwasher",
+    0,
+    "Rinse"
+   ],
+   "text": "count >= 15",
+   "lines": [
+    "count >= 15"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NDishwasher$$N0$NRinse$EFill0",
+   "source": [
+    "Dishwasher",
+    0,
+    "Rinse"
+   ],
+   "target": [
+    "Dishwasher",
+    0,
+    "Fill"
+   ],
+   "text": "count >= 3",
+   "lines": [
+    "count >= 3"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

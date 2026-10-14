@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "hallButton": false, "porchButton": false }, "note": "Tick 1 enters the initial state of *each* region: `Off` in `Hall` and `Off` in `Porch`. The chart is in two states at once." },
+    { "inputs": { "hallButton": true }, "note": "`hallButton`: the `Hall` region moves to `On`. `Porch` reacts too, in the same tick, but none of its transitions is enabled, so it stays in `Off`." },
+    { "inputs": { "hallButton": false, "porchButton": true }, "note": "`porchButton`: now `Porch` moves to `On`; `Hall` stays where it is." },
+    { "inputs": { "hallButton": true }, "note": "Both buttons are pressed (`porchButton` is still true from the last tick). Both regions react in this one tick: both lamps go off." },
+    { "inputs": { "hallButton": false, "porchButton": false }, "note": "Neither button: both regions stay in `Off`." }
+  ],
+  "expect": "ok"
+}

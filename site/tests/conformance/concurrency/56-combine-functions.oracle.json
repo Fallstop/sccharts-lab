@@ -1,0 +1,338 @@
+{
+  "hash": "5e8cd57f83b33dc47b066f9af8b10f80f9746fab",
+  "chart": "tests/conformance/concurrency/56-combine-functions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Min or max combine operators are currently not supported.",
+      "line": 5,
+      "column": 21
+    },
+    {
+      "severity": 2,
+      "message": "Min or max combine operators are currently not supported.",
+      "line": 6,
+      "column": 21
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "And": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "And_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "BAnd": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "BAnd_val": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "BOr": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "BOr_val": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "Max": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "Max_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "Min": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "Min_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "Or": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "Or_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "Prod": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "Prod_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "Sum": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "Sum_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "And_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "BAnd_curval": {
+      "type": "bool",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "BOr_curval": {
+      "type": "bool",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "Max_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "Min_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "Or_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "Prod_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "Sum_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "And": false,
+        "And_val": 0,
+        "BAnd": false,
+        "BAnd_val": false,
+        "BOr": false,
+        "BOr_val": false,
+        "Max": false,
+        "Max_val": 0,
+        "Min": false,
+        "Min_val": 0,
+        "Or": false,
+        "Or_val": 0,
+        "Prod": false,
+        "Prod_val": 0,
+        "Sum": false,
+        "Sum_val": 0,
+        "And_curval": 0,
+        "BAnd_curval": true,
+        "BOr_curval": false,
+        "Max_curval": -2147483648,
+        "Min_curval": 2147483647,
+        "Or_curval": 0,
+        "Prod_curval": 1,
+        "Sum_curval": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "And": true,
+        "And_val": 0,
+        "BAnd": true,
+        "BAnd_val": false,
+        "BOr": true,
+        "BOr_val": true,
+        "Max": true,
+        "Max_val": 6,
+        "Min": true,
+        "Min_val": 5,
+        "Or": true,
+        "Or_val": 7,
+        "Prod": true,
+        "Prod_val": 30,
+        "Sum": true,
+        "Sum_val": 11,
+        "And_curval": 0,
+        "BAnd_curval": false,
+        "BOr_curval": true,
+        "Max_curval": 6,
+        "Min_curval": 5,
+        "Or_curval": 7,
+        "Prod_curval": 30,
+        "Sum_curval": 11
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "And": false,
+        "And_val": 0,
+        "BAnd": false,
+        "BAnd_val": false,
+        "BOr": false,
+        "BOr_val": true,
+        "Max": false,
+        "Max_val": 6,
+        "Min": false,
+        "Min_val": 5,
+        "Or": false,
+        "Or_val": 7,
+        "Prod": false,
+        "Prod_val": 30,
+        "Sum": false,
+        "Sum_val": 11,
+        "And_curval": 0,
+        "BAnd_curval": true,
+        "BOr_curval": false,
+        "Max_curval": -2147483648,
+        "Min_curval": 2147483647,
+        "Or_curval": 0,
+        "Prod_curval": 1,
+        "Sum_curval": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

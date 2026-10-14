@@ -1,0 +1,6 @@
+scchart A {
+  output int o
+  signal S
+  initial state S0
+  do { if o > 3 { o = 1 } } go to S0
+}

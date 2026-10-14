@@ -1,0 +1,15 @@
+// A label that ends a branch stands for the end of the block: goto out skips everything after the if too.
+scchart GotoEndOfBranch {
+  input bool skip
+  output int a = 0, b = 0, c = 0
+  initial state S
+    if true do {
+      if (skip) {
+        goto out;
+        a++;
+        out:
+      }
+      b++;
+      c++
+    } go to S
+}

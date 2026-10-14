@@ -1,0 +1,23 @@
+// The first-entry quirk of a suspendable state (P-42) concerns only the state's own entry actions: the entry
+// actions of its inner initial states, at any depth, run in the entry tick as usual.
+scchart SuspendInnerEntries {
+  input bool G
+  output int outer = 0, inner = 0, deeper = 0
+
+  initial state M {
+    suspend if false
+    entry do outer += 1
+
+    initial state I {
+      entry do inner += 1
+
+      initial state J {
+        entry do deeper += 1
+      }
+    }
+  }
+  if G go to N
+
+  state N
+  if G go to M
+}

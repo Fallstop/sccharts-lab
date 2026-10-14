@@ -1,0 +1,82 @@
+{
+  "hash": "ea9dbb979ee04a8708491025b3a5a1329dee6024",
+  "chart": "tests/conformance/basics/39-int-overflow.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "negated": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "product": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sum": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 2147483647
+      },
+      "values": {
+        "A": 2147483647,
+        "negated": 0,
+        "product": 0,
+        "sum": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": 2147483647,
+        "negated": -2147483647,
+        "product": -2,
+        "sum": -2147483648
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": -2147483648
+      },
+      "values": {
+        "A": -2147483648,
+        "negated": -2147483648,
+        "product": 0,
+        "sum": -2147483647
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

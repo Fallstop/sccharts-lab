@@ -1,0 +1,20 @@
+scchart PassagePre {
+  input bool aWants, bWants
+  output bool aGoes = false, bGoes = false
+
+  region RobotA {
+    initial state Waiting
+      if aWants && !pre(bGoes) do aGoes = true go to Passing
+    state Passing
+      do aGoes = false go to Through
+    state Through
+  }
+
+  region RobotB {
+    initial state Waiting
+      if bWants && !pre(aGoes) do bGoes = true go to Passing
+    state Passing
+      do bGoes = false go to Through
+    state Through
+  }
+}

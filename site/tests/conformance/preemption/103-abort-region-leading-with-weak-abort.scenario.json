@@ -1,0 +1,40 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Tick 1 enters M: **work = 0, out = 0**."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Main reacts: **work = 1**."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "note": "Watch finishes; Main still reacts (work = 2), and M leaves by its transition although B is false: **out = 1**."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "X goes back to M: **out = 1**."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "M is active: B leaves it the normal way: **work = 3, out = 2**."
+    }
+  ],
+  "expect": "ok"
+}

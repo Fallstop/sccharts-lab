@@ -1,0 +1,122 @@
+{
+  "hash": "c626fc2075bb025b33c1955737f8c0aeb58c295f",
+  "chart": "src/examples/learn/transitions/stopwatch-unreachable.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The transition is not reachable.",
+      "line": 10,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "elapsed": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "stop": false
+      },
+      "values": {
+        "start": false,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "stop": false,
+        "elapsed": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "stop": true
+      },
+      "values": {
+        "start": false,
+        "stop": true,
+        "elapsed": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "start": false,
+        "stop": true,
+        "elapsed": 3
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

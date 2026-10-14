@@ -1,0 +1,16 @@
+// After an explicit binding "x to v", the next positional argument binds to the declaration AFTER v,
+// not to the first unbound one. Here 1 → b, then 2 → c and o → d (the ones after b), then z → a.
+scchart St05Main {
+  output int o = 0
+  int z = 7
+  initial state R is St05Sum(1 to b, 2, o, z to a)
+}
+
+scchart St05Sum {
+  input int a
+  input int b
+  input int c
+  output int d
+  initial state S
+  do d = a * 100 + b * 10 + c go to S
+}

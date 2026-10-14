@@ -1,0 +1,139 @@
+{
+  "hash": "04df129b6cfd307b6a56861f5777e651fe8ae78b",
+  "chart": "src/examples/advanced/suspend/cancel-fixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "cancel": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "doorOpen": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "remaining": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "doorOpen": false,
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "doorOpen": false,
+        "remaining": 5
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "cancel": false,
+        "doorOpen": false,
+        "remaining": 4
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "doorOpen": true
+      },
+      "values": {
+        "cancel": false,
+        "doorOpen": true,
+        "remaining": 4
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "cancel": true
+      },
+      "values": {
+        "cancel": true,
+        "doorOpen": true,
+        "remaining": 4
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "doorOpen": true,
+        "remaining": 4
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "doorOpen": false
+      },
+      "values": {
+        "cancel": false,
+        "doorOpen": false,
+        "remaining": 4
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "cancel": false,
+        "doorOpen": false,
+        "remaining": 4
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

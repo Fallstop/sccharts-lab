@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "KIELER rejects this chart: the emission `count(val(count) + 1)` reads the value that it is itself about to set. `val(count)` has to wait for every emission of `count` in the tick, including this one."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

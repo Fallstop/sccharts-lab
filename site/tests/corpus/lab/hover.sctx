@@ -1,0 +1,23 @@
+/** The audit chart reacts to a trigger. */
+scchart Audit {
+  // Rising edge of the sensor.
+  input bool trigger
+  input string timeout_update_vals
+  output bool result = false //* Set while listening.
+  output string echoed
+  const int LIMIT = 3
+  int count = 0
+
+  initial state Idle "Waiting"
+  if trigger do result = true; echoed = timeout_update_vals go to Active
+
+  state Active {
+    entry do count = count + 1
+    region main:
+      initial state On
+      if count > LIMIT abort to Off
+      final state Off
+  }
+  if !trigger do result = false go to Idle
+  join to Idle
+}

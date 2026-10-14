@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1: nothing fires."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `V(5)` is emitted. In expressions the bare name `V` is the presence (true, i.e. 1 in arithmetic): `plusOne = V + 1 = 2`. Only `val(V)` is the value: `valPlusOne = 6`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "No change."
+    }
+  ],
+  "expect": "ok"
+}

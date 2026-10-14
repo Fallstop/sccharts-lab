@@ -1,0 +1,48 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "fault": false,
+        "ack": false
+      },
+      "note": "Tick 1: normal."
+    },
+    {
+      "inputs": {
+        "fault": true
+      },
+      "note": "A fault: the alarm goes on."
+    },
+    {
+      "inputs": {
+        "ack": true
+      },
+      "note": "The operator acknowledges while the fault is still there. `if ack` fires: the alarm goes off ..."
+    },
+    {
+      "inputs": {
+        "ack": false
+      },
+      "note": "... and comes straight back, because the fault is still present. The acknowledgement was wasted."
+    },
+    {
+      "inputs": {
+        "fault": false
+      },
+      "note": "The fault clears; the alarm stays latched until it is acknowledged."
+    },
+    {
+      "inputs": {
+        "ack": true
+      },
+      "note": "Acknowledged: off."
+    },
+    {
+      "inputs": {
+        "ack": false
+      },
+      "note": "Normal."
+    }
+  ],
+  "expect": "ok"
+}

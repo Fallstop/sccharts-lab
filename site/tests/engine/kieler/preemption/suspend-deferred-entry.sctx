@@ -1,0 +1,19 @@
+scchart SuspendDeferredEntry {
+  input bool G, S
+  output int outerEntry = 0, innerEntry = 0
+
+  initial state P {
+    suspend if S
+
+    initial state A
+    if G go to B deferred
+
+    state B {
+      entry do outerEntry = 1
+
+      initial state I {
+        entry do innerEntry = 1
+      }
+    }
+  }
+}

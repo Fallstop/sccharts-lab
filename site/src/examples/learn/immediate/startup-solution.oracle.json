@@ -1,0 +1,67 @@
+{
+  "hash": "f9b061f20fee1c206d2e0894622941295bb162fa",
+  "chart": "src/examples/learn/immediate/startup-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "ok": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "running": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "ok": false
+      },
+      "values": {
+        "ok": false,
+        "running": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "ok": true
+      },
+      "values": {
+        "ok": true,
+        "running": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "ok": true,
+        "running": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

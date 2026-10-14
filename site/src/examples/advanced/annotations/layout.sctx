@@ -1,0 +1,20 @@
+scchart Layout {
+  input bool button
+  output bool light = false
+  output int presses = 0
+
+  @layout[elk.direction] DOWN
+  region Lamp {
+    initial state Off
+      if button do light = true go to On
+
+    state On
+      if button do light = false go to Off
+  }
+
+  @hide
+  region Counter {
+    initial state Count
+      if button do presses++ go to Count
+  }
+}

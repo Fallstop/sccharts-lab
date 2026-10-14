@@ -1,0 +1,28 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "next": false,
+        "leave": false
+      },
+      "note": "Tick 1 enters `Steps` at `One` (`at` = 1). KIELER compiles the history transition with a harmless warning about an internal variable, `_HSteps`."
+    },
+    {
+      "inputs": {
+        "next": true
+      },
+      "note": "`One` goes to `Two` (`at` = 2)."
+    },
+    {
+      "inputs": {
+        "next": false,
+        "leave": true
+      },
+      "note": "`Steps` is left for `Away` (`at` = 0)."
+    },
+    {
+      "note": "`leave` is still true: `go to Steps history` returns to `Two`, where the chart was, not to `One` (`at` = 2)."
+    }
+  ],
+  "expect": "ok"
+}

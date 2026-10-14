@@ -1,0 +1,18 @@
+scchart DuringConcurrent {
+  input bool A
+  output bool fromDuring = false, fromInner = false
+  output int innerSaw = 0, duringSaw = 0
+
+  initial state M {
+    during do fromDuring = true
+    during if fromInner do duringSaw = 1
+
+    initial state I
+    if fromDuring do innerSaw = 1 go to J
+
+    state J
+    if A do fromInner = true go to K
+
+    state K
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "hash": "9d6ed7fad9816f211d8a4dea65cf6cfeb7f1ff98",
+  "chart": "src/examples/advanced/dataflow/alarm.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "armed": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "door": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "window": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "ready": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "siren": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "armed": false,
+        "door": false,
+        "window": false
+      },
+      "values": {
+        "armed": false,
+        "door": false,
+        "window": false,
+        "ready": true,
+        "siren": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "door": true
+      },
+      "values": {
+        "armed": false,
+        "door": true,
+        "window": false,
+        "ready": false,
+        "siren": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "armed": true
+      },
+      "values": {
+        "armed": true,
+        "door": true,
+        "window": false,
+        "ready": false,
+        "siren": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "door": false
+      },
+      "values": {
+        "armed": true,
+        "door": false,
+        "window": false,
+        "ready": true,
+        "siren": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "window": true
+      },
+      "values": {
+        "armed": true,
+        "door": false,
+        "window": true,
+        "ready": false,
+        "siren": true
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    { "inputs": { "approach": false, "cleared": false, "fault": false, "repaired": false }, "note": "The crossing is open." },
+    { "inputs": { "approach": true }, "note": "A train approaches: the lights start flashing." },
+    { "inputs": { "approach": false }, "note": "`if 3 true` counts the ticks after `Warning` was entered: this is the first." },
+    { "inputs": {} },
+    { "inputs": {}, "note": "The third tick: the barrier comes down." },
+    { "inputs": {} },
+    { "inputs": { "cleared": true }, "note": "The train has cleared the crossing: the barrier goes up, the lights keep flashing." },
+    { "inputs": { "cleared": false } },
+    { "inputs": {}, "note": "Two ticks later the lights stop and the crossing is open again." },
+    { "inputs": {} },
+    { "inputs": {} },
+    { "inputs": { "fault": true }, "note": "A fault: `abort to Failsafe` leaves `Normal` whatever it was doing, with the lights on and the barrier down." },
+    { "inputs": { "fault": false } },
+    { "inputs": { "repaired": true }, "note": "Repaired: back to `Normal`, which starts again in `Open`." },
+    { "inputs": { "repaired": false } }
+  ]
+}

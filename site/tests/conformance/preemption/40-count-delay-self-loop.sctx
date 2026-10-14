@@ -1,0 +1,7 @@
+scchart CountSelfLoop {
+  input bool A
+  output int fired = 0
+
+  initial state S
+  if 2 A do fired += 1 go to S
+}

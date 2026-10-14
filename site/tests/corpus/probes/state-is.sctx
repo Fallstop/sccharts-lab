@@ -1,0 +1,14 @@
+scchart P80 {
+  input bool A
+  output bool X
+  initial state R is Sub(A to a, X to x)
+  join to Done
+  state Done
+}
+scchart Sub {
+  input bool a
+  output bool x
+  initial state W
+  if a do x = true go to F
+  final state F
+}

@@ -1,0 +1,18 @@
+scchart concurrencies {
+  input bool E, F
+
+  initial state EF {
+    region handleF:
+    initial state init
+    if F go to done
+    final state done
+
+    region handleE:
+    initial state init
+    if E go to done
+    final state done
+  }
+  join to done
+
+  final state done
+}

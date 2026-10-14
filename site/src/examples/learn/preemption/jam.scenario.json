@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false, "cancel": false, "jam": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start`: `Job`." },
+    { "inputs": { "start": false, "sheet": true }, "note": "A sheet: 1." },
+    { "inputs": { "jam": true }, "note": "A jam: the strong abort leaves `Job` before the sheet of this tick is counted. `printed` stays 1." },
+    { "inputs": { "jam": false, "start": true }, "note": "Start again." },
+    { "inputs": { "start": false }, "note": "A sheet (`sheet` is still true): 2." },
+    { "inputs": { "cancel": true }, "note": "`cancel`: the weak abort lets this tick's sheet be counted (3), then leaves." },
+    { "inputs": { "cancel": false, "sheet": false }, "note": "Idle." }
+  ],
+  "expect": "ok"
+}

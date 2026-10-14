@@ -1,0 +1,24 @@
+// With super.value() in the override, KIELER keeps the base's value() under another name, and the base's own
+// methods go on calling that one: a.twice() is 2, not 2 * 5 (KIELER defect: the same chart without super gives
+// 10, see 131). Official KIELER 0.3.0 cannot compile this.
+scchart St138Super {
+  output int O = 0, P = 0
+  ref St138Loud a
+  initial state A
+  do O = a.value(); P = a.twice() go to A
+}
+
+scchart St138Loud extends St138Base {
+  override method int value() {
+    return super.value() + 4
+  }
+}
+
+scchart St138Base {
+  method int value() {
+    return 1
+  }
+  method int twice() {
+    return value() * 2
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "reqA": false,
+        "reqB": false,
+        "reqC": false,
+        "done": false
+      },
+      "note": "Tick 1 enters `Free`."
+    },
+    {
+      "inputs": {
+        "reqC": true
+      },
+      "note": "Only C has a job. It should start at once (`user` 3); the starter ignores C."
+    },
+    {
+      "inputs": {
+        "reqA": true,
+        "reqB": true
+      },
+      "note": "All three have jobs waiting now. The starter never started C's job, so the printer is free and A's job starts; with your change, C's job prints and the others wait."
+    },
+    {
+      "inputs": {
+        "done": true
+      },
+      "note": "Finished: of the jobs waiting, A's should come first."
+    },
+    {
+      "inputs": {
+        "done": false,
+        "reqA": false
+      },
+      "note": "A has nothing more waiting."
+    },
+    {
+      "inputs": {
+        "done": true
+      },
+      "note": "Finished: B and C are waiting, and B should come before C."
+    },
+    {
+      "inputs": {
+        "done": false,
+        "reqB": false
+      },
+      "note": "B has nothing more waiting."
+    },
+    {
+      "inputs": {
+        "done": true
+      },
+      "note": "Finished: only C is waiting, so C should print now. In the starter it never does."
+    }
+  ],
+  "expect": "ok"
+}

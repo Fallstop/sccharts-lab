@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": 1}, "note": "Constants are replaced by their values at compile time and are not variables at run time: they do not appear in the data pool. A const int with a literal value can size an array (a has 3 elements). Tick 1 only enters A."},
+    {"inputs": {}, "note": "x = M + I = 6 + 1 = 7; y = T[2] = 6; f = 0.5 * 3 = 1.5; b = true."},
+    {"inputs": {"I": 10}, "note": "x = M + I = 6 + 10 = 16."}
+  ],
+  "expect": "ok"
+}

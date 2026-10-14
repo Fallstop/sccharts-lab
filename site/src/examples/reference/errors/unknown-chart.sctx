@@ -1,0 +1,17 @@
+scchart UnknownChart {
+  input bool tick
+  output bool light
+
+  initial state Blinking is Blinkr(tick to tick, light to light)
+}
+
+scchart Blinker {
+  input bool tick
+  output bool light
+
+  initial state Dark
+    if tick do light = true go to Lit
+
+  state Lit
+    if tick do light = false go to Dark
+}

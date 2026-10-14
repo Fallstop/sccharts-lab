@@ -1,0 +1,19 @@
+scchart ComplexFinal {
+  input bool A
+  output int finalDuring = 0, finalExit = 0, done = 0
+
+  initial state M {
+    initial state I
+    if A go to F
+
+    final state F {
+      during do finalDuring += 1
+      exit do finalExit = 1
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done = 1
+  }
+}

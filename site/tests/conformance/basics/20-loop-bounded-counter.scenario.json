@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Rejected: this loop would stop after three rounds, but an SCChart cannot loop within a tick at all. Count across ticks with a delayed transition instead."}
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

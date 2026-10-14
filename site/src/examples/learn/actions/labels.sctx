@@ -1,0 +1,23 @@
+scchart FridgeLabels {
+  input bool doorOpen
+  output bool lamp = false, beep = false
+  output int openFor = 0
+
+  initial state Closed
+    if doorOpen go to Open label "door opens"
+
+  state Open {
+    entry do lamp = true; openFor = 0 label "lamp on, start counting"
+    during do openFor++ label "count the ticks"
+    exit do lamp = false label "lamp off"
+
+    initial state Quiet
+      if openFor == 3 go to Beeping label "open too long"
+
+    state Beeping {
+      entry do beep = true label "start beeping"
+      exit do beep = false label "stop beeping"
+    }
+  }
+  if !doorOpen go to Closed label "door closes"
+}

@@ -1,0 +1,128 @@
+{
+  "hash": "c7eb072100567207c1d6664974ea541a9f4cfaa5",
+  "chart": "tests/conformance/concurrency/04-local-reinit-on-reentry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through seenC, seenD."
+  ],
+  "interface": {
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "seenC": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "seenD": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seenC": 0,
+        "seenD": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seenC": 6,
+        "seenD": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seenC": 7,
+        "seenD": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "seenC": 8,
+        "seenD": 3
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seenC": 6,
+        "seenD": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seenC": 7,
+        "seenD": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "hash": "0c331213abadbbadd6c36348f3ece3200b1c613b",
+  "chart": "src/examples/learn/pre/knock-held.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "away": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "knock": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "open": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "knock": true,
+        "away": false
+      },
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": true
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "away": false,
+        "knock": true,
+        "open": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz64 {
+  input int I
+  input bool stop
+  output int X = 0
+  initial state S {
+    dataflow { X = I + 1 }
+  }
+  if stop abort to T
+  state T
+}

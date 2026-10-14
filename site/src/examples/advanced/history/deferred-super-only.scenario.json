@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "walk": false }, "note": "Tick 1 enters `Outside`." },
+    { "inputs": { "walk": true }, "note": "Deferred entry into the superstate `Inside`. Every transition into `Inside` is deferred, so KIELER postpones the whole entry by a tick: nothing inside happens yet." },
+    { "inputs": { "walk": false }, "note": "`Inside` is really entered now: the entry action of the inner initial state `First` runs (`innerEntry` = 1). `Inside`'s own entry action never runs." },
+    { "note": "`First`'s delayed transition fires (`step` = 1), one tick later than after a normal entry." },
+    { "note": "In `Second`." }
+  ],
+  "expect": "ok"
+}

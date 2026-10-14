@@ -1,0 +1,73 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true,
+        "restart": false
+      },
+      "note": "Tick 1: open."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A train: warning."
+    },
+    {
+      "inputs": {},
+      "note": "Warning."
+    },
+    {
+      "inputs": {},
+      "note": "Warning."
+    },
+    {
+      "inputs": {},
+      "note": "The barrier is commanded down."
+    },
+    {
+      "inputs": {
+        "isUp": false
+      },
+      "note": "It leaves the upper limit switch, and then it sticks: `isDown` never comes."
+    },
+    {
+      "inputs": {},
+      "note": "Lowering: two ticks without `isDown`."
+    },
+    {
+      "inputs": {},
+      "note": "Three."
+    },
+    {
+      "inputs": {},
+      "note": "Four: `if 4 true go to Stuck` fires. `Stuck` is final, so `Working` terminates and `join to Fault` fires in the same tick. `Fault` lights the fault lamp, keeps the lamps flashing and keeps commanding the barrier down."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "The train has passed, but `Fault` does not care: only the maintainer can end it."
+    },
+    {
+      "inputs": {
+        "restart": true,
+        "isUp": true
+      },
+      "note": "The maintainer has freed the barrier (it is up again) and turns the key: `restart`. `Fault`'s exit action clears the fault lamp, the lamps and the motor command, and `Working` starts again in `Open`."
+    },
+    {
+      "inputs": {
+        "restart": false
+      },
+      "note": "Open."
+    },
+    {
+      "inputs": {},
+      "note": "Open."
+    }
+  ],
+  "expect": "ok"
+}

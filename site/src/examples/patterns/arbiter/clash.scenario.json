@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": { "reqA": false, "reqB": false },
+      "note": "KIELER rejects this chart: the concurrent regions `ComputerA` and `ComputerB` both write `user`, with different values."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: both instances initialised, **p = {x: 0, y: 5, seen: false, hist: [0, 0, 0]}**, q the same."
+    },
+    {
+      "inputs": {},
+      "note": "p.x becomes 1, q.y = 10, q.seen = true, then p.hist[1] = 10: **p.x = 1, p.hist = [0, 10, 0], q.y = 10**."
+    },
+    {
+      "inputs": {},
+      "note": "p.x = 2, p.hist[2] = 20; q unchanged: **p.hist = [0, 10, 20]**."
+    }
+  ],
+  "expect": "ok"
+}

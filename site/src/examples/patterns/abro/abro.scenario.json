@@ -1,0 +1,16 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `ABO`, then `WaitAB`, then `WaitA` and `WaitB`, all at once. Every transition is delayed, so this tick only sets things up." },
+    { "inputs": { "B": true }, "note": "`B` arrives first this time: `HandleB` finishes in `DoneB`. The order of `A` and `B` does not matter." },
+    { "inputs": { "B": false }, "note": "Nothing present. `DoneB` remembers that `B` has happened." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` finishes too. Both regions are final, so the `join to` fires in this tick and emits `O`." },
+    { "inputs": { "A": false }, "note": "`O` is a signal, so it is absent again: it was present in exactly one tick. `ABO` now rests in `Done`." },
+    { "inputs": { "A": true, "B": true }, "note": "`A` and `B` are ignored: `Done` waits for `R`, nothing else." },
+    { "inputs": { "A": false, "B": false, "R": true }, "note": "`R`: the strong abort `if R abort to ABO` leaves `ABO` and enters it again from its initial states. `WaitAB` starts over in `WaitA` and `WaitB`." },
+    { "inputs": { "R": false, "A": true, "B": true }, "note": "`A` and `B` in the same tick: both regions finish in this tick, so `WaitAB` terminates and `O` is emitted at once." },
+    { "inputs": { "A": false, "B": false }, "note": "Back in `Done`, waiting for `R`." },
+    { "inputs": { "A": true, "B": true, "R": true }, "note": "All three at once. `R` wins: `ABO` is re-entered, and the re-entered `WaitA` and `WaitB` cannot react to `A` and `B` in their entry tick (their transitions are delayed). `O` is absent." },
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "The `A` and `B` of the last tick are not remembered: ABRO waits for a fresh `A` and `B`." }
+  ],
+  "expect": "ok"
+}

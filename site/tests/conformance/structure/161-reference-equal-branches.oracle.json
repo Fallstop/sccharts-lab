@@ -1,0 +1,142 @@
+{
+  "hash": "0c7dee73ca593041362ea9ddc3ec3c2f14f9ac01",
+  "chart": "tests/conformance/structure/161-reference-equal-branches.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "c": false,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "x": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "c": true,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "c": false,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "c": false,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

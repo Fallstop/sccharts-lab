@@ -1,0 +1,12 @@
+scchart Zap {
+  output int o = 5
+  output int r = 0
+
+  method int zap(int v) {
+    v = 0;
+    return v + 1
+  }
+
+  initial state Run
+    do r = zap(o) go to Run
+}

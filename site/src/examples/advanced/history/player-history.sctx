@@ -1,0 +1,27 @@
+scchart PlayerHistory {
+  input bool next, call, hangUp
+  output int track = 0
+
+  initial state Playing {
+    initial state Track1 {
+      entry do track = 1
+    }
+    if next go to Track2
+
+    state Track2 {
+      entry do track = 2
+    }
+    if next go to Track3
+
+    state Track3 {
+      entry do track = 3
+    }
+    if next go to Track1
+  }
+  if call go to OnCall
+
+  state OnCall {
+    entry do track = 0
+  }
+  if hangUp go to Playing history
+}

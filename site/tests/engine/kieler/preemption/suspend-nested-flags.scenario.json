@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "S": false, "T": false } },
+    { "inputs": {}, "note": "Both during actions run." },
+    { "inputs": { "S": true }, "note": "M suspended: neither runs." },
+    { "inputs": { "S": false, "T": true }, "note": "N suspended: only M's during action runs." },
+    { "inputs": { "S": true, "T": true }, "note": "Both." },
+    { "inputs": { "S": false, "T": false } }
+  ],
+  "expect": "ok"
+}

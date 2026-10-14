@@ -1,0 +1,17 @@
+// The order of random() calls is the netlist's schedule: A's z = y waits for B: KIELER pulls B's whole scheduling block in front of A's first one (rb, y, ra, z, rc).
+scchart RandomReverse {
+  output float ra = 0, rb = 0, rc = 0
+  output int y = 0, z = 0
+  region A {
+    initial state S
+    do ra = random(); z = y go to S
+  }
+  region B {
+    initial state S
+    do rb = random(); y = 1 go to S
+  }
+  region C {
+    initial state S
+    do rc = random() go to S
+  }
+}

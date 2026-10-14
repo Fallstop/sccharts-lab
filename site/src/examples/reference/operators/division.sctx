@@ -1,0 +1,12 @@
+scchart Division {
+  input int A, B
+  output int quotient, remainder
+  output float stillWhole, real
+
+  immediate during do quotient = A / B
+  immediate during do remainder = A % B
+  immediate during do stillWhole = A / B
+  immediate during do real = A / 2.0
+
+  initial state Calc
+}

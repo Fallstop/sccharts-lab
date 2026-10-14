@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "start": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`Idle` to `Busy` fires. `Busy` is entered in this tick, so its plain `during` action does not run: `n` stays 0." },
+    { "note": "`Busy` was active when the tick began: the during action runs, `n` is 1." },
+    { "note": "`n` is 2: one more every tick while the chart stays in `Busy`." }
+  ],
+  "expect": "ok"
+}

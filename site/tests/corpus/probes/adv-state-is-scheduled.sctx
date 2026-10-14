@@ -1,0 +1,9 @@
+scchart Inner7 {
+  input bool a
+  initial state S
+}
+scchart Outer7 {
+  input bool a
+  schedule {commuting} s
+  initial state R is Inner7(a) schedule s 1
+}

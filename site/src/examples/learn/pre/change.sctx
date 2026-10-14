@@ -1,0 +1,8 @@
+scchart Change {
+  input int temp
+  output int previous, delta
+
+  initial state Watch {
+    immediate during do previous = pre(temp); delta = temp - pre(temp)
+  }
+}

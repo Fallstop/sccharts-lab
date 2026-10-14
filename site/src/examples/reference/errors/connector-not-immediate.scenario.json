@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Tick 1 enters `Idle`."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true
+      },
+      "note": "`A` is true: `Idle` goes to the connector `Pick`, and in the same tick `B` sends control back to `Idle` with `choice = 1`. The connector's transitions fire at once although they are not written `immediate`; KIELER treats them as immediate and only warns."
+    },
+    {
+      "inputs": {
+        "B": false
+      },
+      "note": "`A` is still true, so the chart passes through `Pick` again. This time `B` is false and the last transition sets `choice` to 2."
+    }
+  ],
+  "expect": "ok"
+}

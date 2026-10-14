@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    { "inputs": { "knock": false, "restart": false }, "note": "Tick 1 enters `Door` and `Shut`. `Shut`'s entry action sets `count` to 0." },
+    { "inputs": { "knock": true }, "note": "First knock: the during action counts it, `count` is 1." },
+    { "inputs": { "knock": false }, "note": "A pause: `count` stays 1." },
+    { "inputs": { "knock": true }, "note": "Second knock: `count` is 2." },
+    { "inputs": { "knock": false, "restart": true }, "note": "`restart` leaves `Door` and enters it again in the same tick. Entering `Shut` sets `count` back to 0." },
+    { "inputs": { "knock": true, "restart": false }, "note": "The first knock after the restart: `count` is 1." },
+    { "inputs": { "knock": false }, "note": "A pause." },
+    { "inputs": { "knock": true }, "note": "Second knock: `count` is 2." },
+    { "inputs": {}, "note": "Third knock: the during action makes `count` 3, the transition out of `Shut` reads it after that update, and `unlock` is present in this tick." },
+    { "inputs": { "knock": false }, "note": "In `Open`. `unlock` is a signal, so it was present for that one tick only." },
+    { "inputs": { "restart": true }, "note": "`restart` works from `Open` too: back in `Shut`, with `count` at 0." },
+    { "inputs": { "restart": false }, "note": "Waiting for knocks again." }
+  ],
+  "expect": "ok"
+}

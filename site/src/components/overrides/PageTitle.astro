@@ -1,0 +1,198 @@
+---
+/**
+ * Starlight's PageTitle, replaced. Adds two things under the guide's rules:
+ *
+ * - On a Learn chapter, a chapter ruler above the title: the twelve chapters as ticks on a time axis,
+ *   drawn as a timing diagram whose signal is high in the current chapter. It is navigation (each tick
+ *   links to its chapter) and tells the reader where they are in the sequence.
+ * - The page's `description` as a lede under the title, weighted for search.
+ *
+ * Its script makes the page's wide tables (they scroll sideways inside themselves) reachable by keyboard: a table
+ * that overflows becomes a tab stop, so the arrow keys scroll it (WCAG 2.1.1).
+ */
+import type { StarlightRouteData } from '@astrojs/starlight/route-data'
+
+type Entry = StarlightRouteData['sidebar'][number]
+type Link = Extract<Entry, { type: 'link' }>
+
+const route = Astro.locals.starlightRoute
+const { title, description } = route.entry.data
+
+// The ordered chapters: the links of the sidebar group labelled "Learn" (see astro.config.mjs).
+function findGroup(entries: Entry[], label: string): Link[] | undefined {
+	for (const e of entries) {
+		if (e.type !== 'group') continue
+		if (e.label === label) return e.entries.filter((x): x is Link => x.type === 'link')
+		const inner = findGroup(e.entries, label)
+		if (inner) return inner
+	}
+	return undefined
+}
+const chapters = findGroup(route.sidebar, 'Learn') ?? []
+const current = chapters.findIndex((c) => c.isCurrent)
+const showRuler = current >= 0
+
+// Geometry of the ruler, in SVG user units. One tick per chapter.
+const pitch = 28
+const width = pitch * chapters.length
+const lo = 22
+const hi = 8
+const x0 = current * pitch
+const wave = showRuler
+	? `M0 ${lo} H${x0} V${hi} H${x0 + pitch} V${lo} H${width}`
+	: ''
+---
+
+{
+	showRuler && (
+		<nav class="sc-chapter-ruler" aria-label={`Learn, chapter ${current + 1} of ${chapters.length}`}>
+			<svg
+				class="sc-chapter-ruler__wave"
+				viewBox={`0 0 ${width} 30`}
+				width={width}
+				height="30"
+				aria-hidden="true"
+				preserveAspectRatio="none"
+			>
+				<rect class="sc-chapter-ruler__high" x={x0} y={hi} width={pitch} height={lo - hi} />
+				<path class="sc-chapter-ruler__line" d={wave} />
+				{chapters.map((_, i) => (
+					<line class="sc-chapter-ruler__tick" x1={i * pitch} x2={i * pitch} y1={lo} y2={lo + 6} />
+				))}
+				<line class="sc-chapter-ruler__tick" x1={width} x2={width} y1={lo} y2={lo + 6} />
+			</svg>
+			<ol class="sc-chapter-ruler__list" style={`--n: ${chapters.length}`}>
+				{chapters.map((c, i) => (
+					<li>
+						<a
+							href={c.href}
+							aria-current={c.isCurrent ? 'page' : undefined}
+							title={c.label}
+							class:list={{ 'is-past': i < current }}
+						>
+							<span class="sc-visually-hidden">Chapter </span>
+							{i + 1}
+							<span class="sc-visually-hidden">: {c.label}</span>
+						</a>
+					</li>
+				))}
+			</ol>
+		</nav>
+	)
+}
+<h1 id="_top">{title}</h1>
+{/* The lede says what the page is about: Pagefind weighs its words above body text (1), below the title (7). */}
+{description && <p class="sc-lede" data-pagefind-weight="3">{description}</p>}
+
+<script>
+	// Wide tables scroll inside themselves (theme.css): one that overflows is a tab stop, so the keyboard scrolls it.
+	// So is a Predict's table of inputs (its wrapper scrolls), named after its label.
+	function tabbable() {
+		const scrollers = document.querySelectorAll<HTMLElement>('.sl-markdown-content table:not(:where(.not-content *)), .sc-predict__inputs')
+		for (const t of scrollers) {
+			const wide = t.scrollWidth > t.clientWidth + 1
+			const label = t.matches('.sc-predict__inputs') ? t.querySelector('table')?.getAttribute('aria-labelledby') : null
+			if (wide && !t.hasAttribute('tabindex')) {
+				t.tabIndex = 0
+				if (label) {
+					t.setAttribute('role', 'region')
+					t.setAttribute('aria-labelledby', label)
+				}
+			} else if (!wide && t.getAttribute('tabindex') === '0') {
+				t.removeAttribute('tabindex')
+				if (label) {
+					t.removeAttribute('role')
+					t.removeAttribute('aria-labelledby')
+				}
+			}
+		}
+	}
+	tabbable()
+	// Again once the web fonts are in: their wider glyphs can make a table overflow that fitted before.
+	document.fonts?.ready.then(tabbable)
+	let pending = 0
+	addEventListener('resize', () => {
+		cancelAnimationFrame(pending)
+		pending = requestAnimationFrame(tabbable)
+	})
+	document.addEventListener('astro:page-load', tabbable)
+</script>
+
+<style>
+	h1 {
+		margin-top: 1rem;
+		font-size: var(--sl-text-h1);
+	}
+	.sc-chapter-ruler + h1 {
+		margin-top: 0.625rem;
+	}
+
+	.sc-lede {
+		margin-top: var(--space-3);
+		max-width: var(--measure);
+		font-size: var(--text-lg);
+		line-height: 1.5;
+		color: var(--c-muted);
+		text-wrap: pretty;
+	}
+
+	/* ----- Chapter ruler ----- */
+	.sc-chapter-ruler {
+		--pitch: 1.75rem;
+		position: relative;
+		width: calc(var(--pitch) * 12);
+		max-width: 100%;
+		margin-top: 0.5rem;
+	}
+	.sc-chapter-ruler__wave {
+		display: block;
+		width: 100%;
+		height: 1.875rem;
+		overflow: visible;
+	}
+	.sc-chapter-ruler__line {
+		fill: none;
+		stroke: var(--c-ink);
+		stroke-width: 1.75;
+		stroke-linejoin: round;
+		vector-effect: non-scaling-stroke;
+	}
+	.sc-chapter-ruler__high {
+		fill: var(--sc-wave-fill);
+	}
+	.sc-chapter-ruler__tick {
+		stroke: var(--c-rule-strong);
+		stroke-width: 1;
+		vector-effect: non-scaling-stroke;
+	}
+	.sc-chapter-ruler__list {
+		display: grid;
+		grid-template-columns: repeat(var(--n), 1fr);
+		margin: 0.125rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	.sc-chapter-ruler__list li {
+		margin: 0;
+	}
+	.sc-chapter-ruler__list a {
+		display: block;
+		padding-block: 0.125rem;
+		text-align: center;
+		font-size: var(--text-2xs);
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		line-height: 1.2;
+		color: var(--c-muted);
+		text-decoration: none;
+		border-radius: var(--radius-xs);
+	}
+	.sc-chapter-ruler__list a:hover {
+		color: var(--c-ink);
+		background-color: var(--c-accent-soft);
+	}
+	.sc-chapter-ruler__list a[aria-current='page'] {
+		color: var(--c-ink);
+		font-weight: 800;
+	}
+</style>

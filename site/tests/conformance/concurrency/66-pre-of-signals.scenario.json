@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "In": false,
+        "a": false
+      },
+      "note": "Tick 1: every `pre` is false or 0."
+    },
+    {
+      "inputs": {
+        "In": true,
+        "a": true
+      },
+      "note": "`In` present and `S`, `V(42)` emitted. The `pre` values describe tick 1: all false/0."
+    },
+    {
+      "inputs": {
+        "In": false,
+        "a": false
+      },
+      "note": "Now `pre(In)`, `pre(S)` and `pre(V)` are true (presence in tick 2) and `pre(val(V)) = 42`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`pre` presences are false again; `pre(val(V))` stays 42 because the value persists."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,61 @@
+{
+  "hash": "e09fbc3e76cffff9d78b3eaba1c0e43d610111c3",
+  "chart": "src/examples/reference/errors/during-count-delay.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Count Delays on During Actions are not supported yet. The valued will be ignored by the transformation.",
+      "line": 6,
+      "column": 15
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "n": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "n": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "n": 2
+      },
+      "terminated": false
+    }
+  ]
+}

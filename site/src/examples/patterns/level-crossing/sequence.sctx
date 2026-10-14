@@ -1,0 +1,21 @@
+scchart CrossingSequence {
+  input bool occupied        // track circuit: a train is near or on the crossing
+  input bool isDown, isUp    // the barrier's limit switches
+  output bool lower          // barrier motor: true lowers, false raises
+
+  initial state Open
+    if occupied go to Warning
+
+  state Warning
+    if 3 true do lower = true go to Lowering
+
+  state Lowering
+    if isDown go to Closed
+
+  state Closed
+    if !occupied do lower = false go to Raising
+
+  state Raising
+    if occupied do lower = true go to Lowering
+    if isUp go to Open
+}

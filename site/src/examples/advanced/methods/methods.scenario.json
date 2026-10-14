@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "reading": 42 }, "note": "Tick 1 enters `Display`; the self-loop is delayed: `shown` = 0." },
+    { "inputs": { "reading": 250 }, "note": "`percent(250)` returns 100 and `tooHot(250)` returns true, both within this tick: `shown` = 100, `hot` = true." },
+    { "inputs": { "reading": -7 }, "note": "`shown` = 0, `hot` = false." },
+    { "inputs": { "reading": 90 }, "note": "`shown` = 90, `hot` = true." }
+  ],
+  "expect": "ok"
+}

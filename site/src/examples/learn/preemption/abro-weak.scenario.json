@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `ABO`, `WaitAB`, `WaitA` and `WaitB`." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` is done." },
+    { "inputs": { "A": false }, "note": "Waiting for `B`." },
+    { "inputs": { "B": true, "R": true }, "note": "`B` and `R` in the same tick, with a weak reset. The inside of `ABO` finishes its tick first: `HandleB` sees `B`, `WaitAB` terminates and emits `O`. Then the reset leaves `ABO` and enters it again. `O` is present although `R` arrived in the same tick." },
+    { "inputs": { "B": false, "R": false }, "note": "Waiting for `A` and `B` again." },
+    { "inputs": { "A": true, "B": true }, "note": "`A` and `B` together: `O`." },
+    { "inputs": { "A": false, "B": false }, "note": "In `Done` until the next `R`." }
+  ],
+  "expect": "ok"
+}

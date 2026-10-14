@@ -1,0 +1,8 @@
+scchart IntTooLarge {
+  output int big
+
+  initial state Start
+    do big = 3000000000 go to Done
+
+  state Done
+}

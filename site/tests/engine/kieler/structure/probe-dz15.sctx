@@ -1,0 +1,13 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+@IntegerClockType
+@DefaultSleep 500
+scchart Dz15 {
+  input bool rst
+  output int n = 0
+  initial state Outer {
+    clock t
+    initial state W
+    if t >= 700 do n++ go to W
+  }
+  if rst go to Outer
+}

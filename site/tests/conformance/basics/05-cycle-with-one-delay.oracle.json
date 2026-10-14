@@ -1,0 +1,86 @@
+{
+  "hash": "e33aa684e3c1cd2ed9ca53691ac5a9eed4dc7e30",
+  "chart": "tests/conformance/basics/05-cycle-with-one-delay.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": false
+      },
+      "values": {
+        "I": false,
+        "x": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": true
+      },
+      "values": {
+        "I": true,
+        "x": 1
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "x": 2
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": false
+      },
+      "values": {
+        "I": false,
+        "x": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

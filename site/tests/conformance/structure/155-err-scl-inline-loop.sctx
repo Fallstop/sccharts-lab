@@ -1,0 +1,14 @@
+// @inline makes KIELER inline even a method with a loop, and a loop inlined into the tick is an instantaneous
+// loop: rejected.
+scchart St155Inline {
+  output int seen = 0
+  int data[2]
+  @inline
+  method fill() {
+    for (int i = 0; i < 2; i++) {
+      data[i] = data[i] + 5
+    }
+  }
+  initial state A
+  do fill(); seen = data[0] go to A
+}

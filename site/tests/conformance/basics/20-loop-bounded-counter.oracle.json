@@ -1,0 +1,27 @@
+{
+  "hash": "5999cc29d6b84671dcd5eff7824d1f7edb6bc385",
+  "chart": "tests/conformance/basics/20-loop-bounded-counter.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _cg1",
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _g1",
+    "Can't schedule from _g1 to _g3",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A]",
+      "line": 5,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

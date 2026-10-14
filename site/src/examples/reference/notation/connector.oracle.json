@@ -1,0 +1,104 @@
+{
+  "hash": "d11413528503a6d59ca10ac24809efd8b3abad76",
+  "chart": "src/examples/reference/notation/connector.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "level": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "sample": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "band": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "sample": false,
+        "level": 0
+      },
+      "values": {
+        "level": 0,
+        "sample": false,
+        "band": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "sample": true,
+        "level": 7
+      },
+      "values": {
+        "level": 7,
+        "sample": true,
+        "band": 1
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "level": 12
+      },
+      "values": {
+        "level": 12,
+        "sample": true,
+        "band": 2
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "level": 3
+      },
+      "values": {
+        "level": 3,
+        "sample": true,
+        "band": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

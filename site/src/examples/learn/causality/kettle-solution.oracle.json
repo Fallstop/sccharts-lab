@@ -1,0 +1,132 @@
+{
+  "hash": "0e4cccceb840532a8529677f7f4a88d3a679d4e0",
+  "chart": "src/examples/learn/causality/kettle-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "temp": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "cutOut": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "heating": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "temp": 20
+      },
+      "values": {
+        "temp": 20,
+        "cutOut": false,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "temp": 40
+      },
+      "values": {
+        "temp": 40,
+        "cutOut": false,
+        "heating": true
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "temp": 80
+      },
+      "values": {
+        "temp": 80,
+        "cutOut": false,
+        "heating": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "temp": 97
+      },
+      "values": {
+        "temp": 97,
+        "cutOut": true,
+        "heating": true
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "temp": 99
+      },
+      "values": {
+        "temp": 99,
+        "cutOut": true,
+        "heating": false
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "temp": 90
+      },
+      "values": {
+        "temp": 90,
+        "cutOut": true,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

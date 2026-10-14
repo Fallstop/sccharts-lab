@@ -1,0 +1,130 @@
+{
+ "sourceHash": "53a6bfd2103bded4",
+ "states": [
+  {
+   "path": [
+    "Transitions"
+   ],
+   "rows": [
+    [
+     "Transitions"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "output int ",
+     "X, Y"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    217.2,
+    204.8
+   ]
+  },
+  {
+   "path": [
+    "Transitions",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    10,
+    44.8,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Transitions",
+    0,
+    "B"
+   ],
+   "rows": [
+    [
+     "B"
+    ]
+   ],
+   "box": [
+    159.6,
+    44.8,
+    34,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Transitions",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    203.6,
+    132.8
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NTransitions$$N0$NA$EB0",
+   "source": [
+    "Transitions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Transitions",
+    0,
+    "B"
+   ],
+   "text": "A / X++",
+   "lines": [
+    "A",
+    "/ X++"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NTransitions$$N0$NB$EA0",
+   "source": [
+    "Transitions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Transitions",
+    0,
+    "A"
+   ],
+   "text": "A && B / X++; Y = X * 2",
+   "lines": [
+    "A && B",
+    "/ X++;",
+    "  Y = X * 2"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

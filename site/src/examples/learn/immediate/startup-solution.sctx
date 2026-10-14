@@ -1,0 +1,12 @@
+scchart Startup {
+  input bool ok
+  output bool running = false
+
+  initial state Check
+    immediate if ok do running = true go to Ready
+    immediate go to Fault
+
+  state Ready
+
+  final state Fault
+}

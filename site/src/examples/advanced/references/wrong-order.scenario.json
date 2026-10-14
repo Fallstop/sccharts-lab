@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "`PushSwitchFirst` comes first in the file, so it is the chart that is simulated: its interface is `press` and `lit`. `PanelSecond`, with its `left` and `right`, never runs."
+    },
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "`press` toggles `lit`, exactly as if the file held only `PushSwitchFirst`."
+    },
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "In `On`."
+    }
+  ],
+  "expect": "ok"
+}

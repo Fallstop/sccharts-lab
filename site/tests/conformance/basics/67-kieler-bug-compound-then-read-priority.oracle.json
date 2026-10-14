@@ -1,0 +1,57 @@
+{
+  "hash": "8a7542a292fa3cc3a1d33edbfefe11180213ab2d",
+  "chart": "tests/conformance/basics/67-kieler-bug-compound-then-read-priority.sctx",
+  "system": "priority",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "shown": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "count": 1,
+        "shown": 1
+      },
+      "taken": [
+        0
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "count": 2,
+        "shown": 2
+      },
+      "taken": [
+        1
+      ]
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "count": 3,
+        "shown": 3
+      },
+      "taken": [
+        1
+      ]
+    }
+  ]
+}

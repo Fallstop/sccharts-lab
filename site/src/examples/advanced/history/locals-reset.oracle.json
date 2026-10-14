@@ -1,0 +1,147 @@
+{
+  "hash": "a5bc6dfe03cf818a854d42e6f08776f81b296946",
+  "chart": "src/examples/advanced/history/locals-reset.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HPlaying is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "call": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "hangUp": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "shown": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "call": false,
+        "hangUp": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "shown": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "shown": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "shown": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "call": true
+      },
+      "values": {
+        "call": true,
+        "hangUp": false,
+        "shown": 3
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "call": false,
+        "hangUp": true
+      },
+      "values": {
+        "call": false,
+        "hangUp": true,
+        "shown": 3
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "hangUp": false
+      },
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "shown": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "call": false,
+        "hangUp": false,
+        "shown": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

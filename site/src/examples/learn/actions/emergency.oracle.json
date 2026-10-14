@@ -1,0 +1,176 @@
+{
+  "hash": "074cf0d28203c2190740a011138e32eec971f3a5",
+  "chart": "src/examples/learn/actions/emergency.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "emergency": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "motor": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "ticks": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "stop": false,
+        "emergency": false
+      },
+      "values": {
+        "emergency": false,
+        "start": false,
+        "stop": false,
+        "motor": true,
+        "ticks": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "emergency": false,
+        "start": false,
+        "stop": false,
+        "motor": true,
+        "ticks": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "stop": true
+      },
+      "values": {
+        "emergency": false,
+        "start": false,
+        "stop": true,
+        "motor": false,
+        "ticks": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "stop": false,
+        "start": true
+      },
+      "values": {
+        "emergency": false,
+        "start": true,
+        "stop": false,
+        "motor": true,
+        "ticks": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "emergency": false,
+        "start": false,
+        "stop": false,
+        "motor": true,
+        "ticks": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "emergency": true
+      },
+      "values": {
+        "emergency": true,
+        "start": false,
+        "stop": false,
+        "motor": false,
+        "ticks": 3
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "emergency": false
+      },
+      "values": {
+        "emergency": false,
+        "start": false,
+        "stop": false,
+        "motor": false,
+        "ticks": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

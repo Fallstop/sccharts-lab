@@ -1,0 +1,31 @@
+scchart FbyTermination {
+  input int level
+  output int a = 0, b = 0
+  output bool doneA = false, doneB = false
+
+  region WithFby {
+    initial state CopyA {
+      initial state Start
+        immediate do a = 0 fby level go to End
+      final state End
+    }
+    join to FinishedA
+
+    state FinishedA {
+      entry do doneA = true
+    }
+  }
+
+  region WithArrow {
+    initial state CopyB {
+      initial state Start
+        immediate do b = 0 -> level go to End
+      final state End
+    }
+    join to FinishedB
+
+    state FinishedB {
+      entry do doneB = true
+    }
+  }
+}

@@ -1,0 +1,30 @@
+---
+/**
+ * Starlight's Footer, with "Report a mistake on this page" above it when REPORT_URL (src/components/site.ts) is
+ * set. It is not set by default, and then this is exactly Starlight's footer.
+ */
+import Default from '@astrojs/starlight/components/Footer.astro'
+import { REPORT_URL, reportHref } from '../site'
+
+const href = reportHref(REPORT_URL, Astro.url.href, Astro.locals.starlightRoute.entry.data.title)
+---
+
+{
+	href && (
+		<p class="sc-report">
+			<a href={href}>Report a mistake on this page</a>
+		</p>
+	)
+}
+<Default />
+
+<style>
+	.sc-report {
+		margin-top: 3rem;
+		font-size: var(--sl-text-sm);
+		color: var(--c-muted);
+	}
+	.sc-report + :global(footer) :global(.meta) {
+		margin-top: 1rem;
+	}
+</style>

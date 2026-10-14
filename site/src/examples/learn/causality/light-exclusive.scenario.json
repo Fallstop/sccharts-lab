@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "on": false }, "note": "Rejected as well: `on` and `!on` can never hold together, but KIELER does not look at the triggers. Two concurrent writes of different values are a conflict on paper, so the chart is refused." }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

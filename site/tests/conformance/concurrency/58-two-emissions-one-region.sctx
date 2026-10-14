@@ -1,0 +1,8 @@
+scchart TwoEmissionsOneRegion {
+  input bool a
+  output signal int P combine +
+  output signal int N
+
+  initial state X
+  if a do P(1); P(2); N(1); N(2) go to X
+}

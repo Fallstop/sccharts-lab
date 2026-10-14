@@ -1,0 +1,17 @@
+// A C function in the trigger of a state that is not active runs in every tick.
+scchart TrigCallInactive {
+  input bool start
+  output int hits = 0
+
+  method bool probe() {
+    for (int i = 0; i < 1; i++) {
+      hits++
+    }
+    return false
+  }
+
+  initial state A
+    if start go to B
+  state B
+    if probe() go to A
+}

@@ -1,0 +1,21 @@
+// Assigning a parameter: a short method without loops is inlined, and its parameter is the argument itself, so
+// k = k * 2 writes the caller's input a. A method with a loop is kept as a C function, whose parameter is a copy:
+// b is unchanged. Never assign a parameter.
+scchart St150Params {
+  input int a, b
+  output int ya = 0, yb = 0
+  method int inlined(int k) {
+    k = k * 2;
+    k++;
+    return k
+  }
+  method int function(int k) {
+    for (int i = 0; i < 1; i++) {
+      k = k * 2
+    }
+    k++;
+    return k
+  }
+  initial state S
+  do ya = inlined(a); yb = function(b) go to S
+}

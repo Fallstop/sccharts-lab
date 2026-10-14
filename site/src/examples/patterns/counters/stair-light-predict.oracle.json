@@ -1,0 +1,314 @@
+{
+  "hash": "adf5a3daf650fd7ad2587a164bdc629b07ea519e",
+  "chart": "src/examples/patterns/counters/stair-light-predict.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through light."
+  ],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "light": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "light": true
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "light": true
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "light": true
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "light": true
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "light": true
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 16,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 17,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 18,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

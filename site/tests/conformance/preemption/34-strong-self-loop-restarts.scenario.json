@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "Tick 1 enters M and I: entries = 1, innerEntries = 1."
+    },
+    {
+      "inputs": {
+        "R": true
+      },
+      "note": "The strong self-loop fires: inner behaviour is skipped (moved = 0), M's exit runs (exits = 1), M is entered again from its initial state (entries = 2, innerEntries = 2)."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "I's delayed transition fires: moved = 1, now in J."
+    },
+    {
+      "inputs": {
+        "R": true
+      },
+      "note": "Self-loop again: back to I (exits = 2, entries = 3, innerEntries = 3)."
+    }
+  ],
+  "expect": "ok"
+}

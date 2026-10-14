@@ -1,0 +1,136 @@
+{
+  "hash": "1f45b267156c3dadca5432ab0a8b3c1750b94521",
+  "chart": "src/examples/reference/troubleshooting/print-stuck.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "job": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "busy": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "pages": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "job": false
+      },
+      "values": {
+        "job": false,
+        "busy": false,
+        "pages": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "job": true
+      },
+      "values": {
+        "job": true,
+        "busy": true,
+        "pages": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "job": false
+      },
+      "values": {
+        "job": false,
+        "busy": true,
+        "pages": 1
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "job": false,
+        "busy": true,
+        "pages": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "job": true
+      },
+      "values": {
+        "job": true,
+        "busy": true,
+        "pages": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "job": false
+      },
+      "values": {
+        "job": false,
+        "busy": true,
+        "pages": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

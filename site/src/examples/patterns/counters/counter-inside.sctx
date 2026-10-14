@@ -1,0 +1,8 @@
+scchart CounterInside {
+  output int shown = 0
+
+  initial state S {
+    int n = 0
+  }
+  do n++; shown = n go to S
+}

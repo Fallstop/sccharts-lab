@@ -1,0 +1,30 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Equations run in tick 1 as well: **O = false**."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Only A is true, so A && B is false: **O = false**."
+    },
+    {
+      "inputs": {
+        "B": true
+      },
+      "note": "**O = true** in the same tick both inputs are true."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "A is false again, so **O = false** in this same tick: equations are not delayed."
+    }
+  ],
+  "expect": "ok"
+}

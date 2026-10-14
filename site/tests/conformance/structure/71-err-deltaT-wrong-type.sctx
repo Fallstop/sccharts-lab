@@ -1,0 +1,10 @@
+// The names deltaT and sleepT are reserved for timed charts: a user-declared deltaT must be an input of the
+// clock type (float, or int with @IntegerClockType).
+scchart St71Clash {
+  input int deltaT
+  output bool a = false
+  clock t
+  initial state W
+  if t >= 100 do a = true go to D
+  state D
+}

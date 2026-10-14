@@ -1,0 +1,123 @@
+{
+  "hash": "e801dbf2d6acd2737ebcf28687a553c786a8ba56",
+  "chart": "tests/conformance/preemption/49-suspend-does-not-freeze-pre.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "previous": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "X": 1
+      },
+      "values": {
+        "S": false,
+        "X": 1,
+        "previous": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "X": 2
+      },
+      "values": {
+        "S": false,
+        "X": 2,
+        "previous": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true,
+        "X": 3
+      },
+      "values": {
+        "S": true,
+        "X": 3,
+        "previous": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "X": 4
+      },
+      "values": {
+        "S": true,
+        "X": 4,
+        "previous": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "S": false,
+        "X": 5
+      },
+      "values": {
+        "S": false,
+        "X": 5,
+        "previous": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "X": 6
+      },
+      "values": {
+        "S": false,
+        "X": 6,
+        "previous": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

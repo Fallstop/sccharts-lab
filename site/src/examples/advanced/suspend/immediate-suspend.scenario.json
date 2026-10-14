@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": true }, "note": "`immediate suspend` is checked in the entry tick too. The door is open, so `Cooking` is suspended at once: the immediate transition out of `Start` waits and the heater stays off." },
+    { "note": "Still suspended." },
+    { "inputs": { "doorOpen": false }, "note": "The door shuts. The waiting immediate transition fires now (`heater` = true) and enters `Heating`, whose delayed countdown can only start next tick." },
+    { "note": "The countdown begins: 2." }
+  ],
+  "expect": "ok"
+}

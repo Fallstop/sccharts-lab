@@ -1,0 +1,11 @@
+scchart DebounceCounter {
+  input bool raw
+  output bool pressed
+  const int N = 3   // readings in a row needed to accept a change
+  int run = 0       // readings in a row that disagree with pressed
+
+  initial state Filter
+    if raw == pressed do run = 0 go to Filter
+    if run < N - 1 do run++ go to Filter
+    do pressed = raw; run = 0 go to Filter
+}

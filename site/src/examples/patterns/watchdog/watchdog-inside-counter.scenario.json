@@ -1,0 +1,61 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beat": false,
+        "demand": false
+      },
+      "note": "Tick 1: watching and running, motor stopped."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat."
+    },
+    {
+      "inputs": {
+        "beat": false,
+        "demand": true
+      },
+      "note": "Demand: the motor starts (`starts` is 1). `quiet` counts the first tick without a beat."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat: `quiet` is 0 again. From now on no more beats arrive."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "First quiet tick."
+    },
+    {
+      "inputs": {},
+      "note": "Second quiet tick."
+    },
+    {
+      "inputs": {},
+      "note": "Third quiet tick: the watchdog emits `expired`. `Work` checks the abort after that emission and stops at once, in `Started`, with the motor on. `Watchdog` checked it before its own emission, so it carries on into `Expired`, and `Running` is not left."
+    },
+    {
+      "inputs": {},
+      "note": "`expired` was a signal, and it is gone. `Watchdog` sits in `Expired`, which never stops, so `Running` is never left: no `Safe`, no alarm."
+    },
+    {
+      "inputs": {
+        "demand": false
+      },
+      "note": "The demand ends, but `Work` has stopped in `Started`, so nothing switches the motor off. `Running`'s exit action would, but `Running` is never left."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat changes nothing: the motor runs, and the alarm never comes."
+    }
+  ],
+  "expect": "ok"
+}

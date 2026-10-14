@@ -1,0 +1,15 @@
+scchart ValOfPre {
+  input bool a
+  output signal int V
+  output int x
+
+  region R1 {
+    initial state X
+    if a do V(42) go to X
+  }
+
+  region R2 {
+    initial state X
+    do x = val(pre(V)) go to X
+  }
+}

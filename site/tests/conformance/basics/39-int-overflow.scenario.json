@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"A": 2147483647}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value. int is a 32-bit C int."},
+    {"inputs": {}, "note": "2147483647 + 1 wraps round to -2147483648 and 2147483647 * 2 gives -2; negated = -2147483647."},
+    {"inputs": {"A": -2147483648}, "note": "sum = -2147483647, product = 0, and -(-2147483648) wraps back to -2147483648."}
+  ],
+  "expect": "ok"
+}

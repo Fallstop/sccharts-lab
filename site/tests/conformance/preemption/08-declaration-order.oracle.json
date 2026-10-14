@@ -1,0 +1,102 @@
+{
+  "hash": "6477d42880d42fdab124c0bfdda4d464afd1b6a5",
+  "chart": "tests/conformance/preemption/08-declaration-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "entry1At": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "entry2At": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "exit1At": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "exit2At": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "entry1At": 1,
+        "entry2At": 2,
+        "exit1At": 0,
+        "exit2At": 0,
+        "step": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "entry1At": 1,
+        "entry2At": 2,
+        "exit1At": 3,
+        "exit2At": 4,
+        "step": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "entry1At": 1,
+        "entry2At": 2,
+        "exit1At": 3,
+        "exit2At": 4,
+        "step": 4
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

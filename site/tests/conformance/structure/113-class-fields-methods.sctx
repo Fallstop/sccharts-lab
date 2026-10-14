@@ -1,0 +1,22 @@
+// A class: fields and methods (written without the "method" keyword). Each instance has its own fields; a method
+// may take parameters, return a value and use variables of the enclosing chart (base).
+scchart St113Class {
+  input bool up
+  output int a = 0, b = 0, report = 0
+  int base = 100
+  class Counter {
+    int count = 10
+    void add(int k) {
+      count = count + k
+    }
+    int get() {
+      return count
+    }
+    void tell() {
+      report = base + count
+    }
+  } c1, c2
+  initial state A
+  if up do c1.add(1); a = c1.get(); c1.tell() go to A
+  if !up do c2.add(5); b = c2.get(); c2.tell() go to A
+}

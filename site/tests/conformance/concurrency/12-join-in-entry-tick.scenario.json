@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1 enters `P`; its transition is delayed: `n = 0`."
+    },
+    {
+      "inputs": {},
+      "note": "One tick does everything: `P` → `S` (`n = 1`), `S` is entered, `W` → `F` is immediate (`n = 12`), and since `S`'s region is now final the trigger-less `join to D` fires at once (`n = 123`, from `D`'s entry action). A superstate can terminate in the tick it is entered."
+    },
+    {
+      "inputs": {},
+      "note": "In `D`: `n = 123`."
+    }
+  ],
+  "expect": "ok"
+}

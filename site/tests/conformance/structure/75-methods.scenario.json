@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "x": 3
+      },
+      "note": "The immediate transition runs in tick 1: **y = 9, s = 3** (0 + 1 + 2). (KIELER lists \"ValuedObject with name ... is contained in the model but not in VariableStore.\" warnings for method locals; they are harmless.)"
+    },
+    {
+      "inputs": {
+        "x": 4
+      },
+      "note": "isBig(4) is false, so the second transition: **y = 17, count = 1**."
+    },
+    {
+      "inputs": {
+        "x": 20
+      },
+      "note": "isBig(20): **big = true, count = 2**, y unchanged (17)."
+    }
+  ],
+  "expect": "ok"
+}

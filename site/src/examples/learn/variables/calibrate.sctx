@@ -1,0 +1,8 @@
+scchart Calibrate {
+  input int reading
+  output int zero = reading
+  output int offset = 0
+
+  initial state Measure
+    do offset = reading - zero go to Measure
+}

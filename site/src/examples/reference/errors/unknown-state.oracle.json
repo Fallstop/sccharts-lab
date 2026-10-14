@@ -1,0 +1,28 @@
+{
+  "hash": "9b344c53507ba12073fa4b64ab6c07ffe0fd35d0",
+  "chart": "src/examples/reference/errors/unknown-state.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "6:18 The required feature 'targetState' of 'de.cau.cs.kieler.sccharts.impl.TransitionImpl@11a8fb7{file:///tmp/sccharts-oracle-Kb2Joo/m176/unknown-state.sctx#//@rootStates.0/@regions.0/@states.0/@regions.0/@states.0/@outgoingTransitions.0}' must be set",
+    "Couldn't resolve reference to State 'Done'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to State 'Done'.",
+      "line": 6,
+      "column": 18,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'targetState' of 'de.cau.cs.kieler.sccharts.impl.TransitionImpl@11a8fb7{file:///tmp/sccharts-oracle-Kb2Joo/m176/unknown-state.sctx#//@rootStates.0/@regions.0/@states.0/@regions.0/@states.0/@outgoingTransitions.0}' must be set",
+      "line": 6,
+      "column": 18,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

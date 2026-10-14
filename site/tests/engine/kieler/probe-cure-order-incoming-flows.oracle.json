@@ -1,0 +1,105 @@
+{
+  "hash": "9786b0b1b4395258241b9e01bad2a390ed611d38",
+  "chart": "tests/engine/kieler/probe-cure-order-incoming-flows.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A, B]",
+      "line": 12,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A, B]",
+      "line": 15,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "The transition is not reachable.",
+      "line": 13,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 12,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 13,
+      "column": 7
+    }
+  ],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "S": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "S": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "S": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

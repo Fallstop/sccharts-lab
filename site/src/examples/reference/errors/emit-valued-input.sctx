@@ -1,0 +1,7 @@
+scchart EmitValuedInput {
+  input signal int level
+  output int seen
+
+  initial state Watch
+    if level do seen = val(level); level(0) go to Watch
+}

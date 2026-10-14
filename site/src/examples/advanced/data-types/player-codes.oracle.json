@@ -1,0 +1,138 @@
+{
+  "hash": "6d90886a5d28cec5d5bf21bf5525265cf219f913",
+  "chart": "src/examples/advanced/data-types/player-codes.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "pause": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "play": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "sound": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "mode": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "play": false,
+        "pause": false,
+        "stop": false
+      },
+      "values": {
+        "pause": false,
+        "play": false,
+        "stop": false,
+        "sound": false,
+        "mode": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "play": true
+      },
+      "values": {
+        "pause": false,
+        "play": true,
+        "stop": false,
+        "sound": true,
+        "mode": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "play": false,
+        "pause": true
+      },
+      "values": {
+        "pause": true,
+        "play": false,
+        "stop": false,
+        "sound": false,
+        "mode": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "pause": false
+      },
+      "values": {
+        "pause": false,
+        "play": false,
+        "stop": false,
+        "sound": false,
+        "mode": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "stop": true
+      },
+      "values": {
+        "pause": false,
+        "play": false,
+        "stop": true,
+        "sound": false,
+        "mode": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

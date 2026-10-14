@@ -1,0 +1,19 @@
+scchart DoorCounters {
+  input bool front, back
+  output int frontCount = 0, backCount = 0
+
+  region {
+    initial state Front is Tally(front to click, frontCount to count)
+  }
+  region {
+    initial state Back is Tally(back to click, backCount to count)
+  }
+}
+
+scchart Tally {
+  input bool click
+  output int count = 0
+
+  initial state Counting
+    if click do count++ go to Counting
+}

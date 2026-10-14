@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "temperature": 20,
+        "windowOpen": false
+      },
+      "note": "Tick 1 enters `Idle`."
+    },
+    {
+      "inputs": {
+        "temperature": 17
+      },
+      "note": "Cold and the window is shut: the heater comes on."
+    },
+    {
+      "inputs": {
+        "windowOpen": true
+      },
+      "note": "The window opens: `temperature >= 21 || windowOpen` holds, so the heater goes off."
+    },
+    {
+      "note": "Still 17 degrees, but the window is open, so `Idle` stays put."
+    },
+    {
+      "inputs": {
+        "windowOpen": false
+      },
+      "note": "Window shut and still cold: the heater comes back on."
+    }
+  ],
+  "expect": "ok"
+}

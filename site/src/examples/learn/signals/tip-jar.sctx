@@ -1,0 +1,9 @@
+scchart TipJar {
+  input signal tip
+  input int amount
+  output signal int received = 0
+  output signal thanks
+
+  initial state Open
+    if tip do received(amount); thanks go to Open
+}

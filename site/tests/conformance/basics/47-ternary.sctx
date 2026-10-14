@@ -1,0 +1,8 @@
+scchart Ternary {
+  input int A
+  input bool B
+  output int pick, guarded, keep = 1, sum, nested
+
+  initial state S
+  do pick = B ? 10 : 20; guarded = (A > 2) ? A : 0; keep = B ? 5; sum = B ? 10 : 20 + 1; nested = B ? ((A > 2) ? 1 : 2) : 3 go to S
+}

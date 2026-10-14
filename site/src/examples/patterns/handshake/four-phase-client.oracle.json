@@ -1,0 +1,239 @@
+{
+  "hash": "f749994812bd6891cbf95b7a2a5bbc924a1bb7e0",
+  "chart": "src/examples/patterns/handshake/four-phase-client.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "ack": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "req": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "ack": true,
+        "req": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "start": true,
+        "ack": true,
+        "req": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "start": false,
+        "ack": false,
+        "req": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

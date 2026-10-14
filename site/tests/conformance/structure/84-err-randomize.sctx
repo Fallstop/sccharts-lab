@@ -1,0 +1,7 @@
+// randomize() (seed the generator) cannot be compiled by KIELER's C code generator.
+scchart St84Seed {
+  output float r = 0
+  entry do randomize()
+  initial state S
+  do r = random() go to S
+}

@@ -1,0 +1,16 @@
+// One clock tested in several concurrent regions is not supported (without the experimental @ClocksUseSD).
+// Declare one clock per region instead.
+scchart St67Shared {
+  output bool a = false, b = false
+  clock t
+  region {
+    initial state W
+    if t >= 100 do a = true go to D
+    state D
+  }
+  region {
+    initial state W
+    if t >= 200 do b = true go to D
+    state D
+  }
+}

@@ -1,0 +1,9 @@
+// Current KIELER (and the lab server) expects `const` after `input` / `output`: `output const int M = 4`.
+// Official KIELER 0.3.0 (the KIELER VS Code extension) expects it first: `const output int M = 4` (basics.md 10.1).
+scchart ConstAfterOutput {
+  output const int M = 4
+  const int N = 3
+  output int o
+  initial state A
+  do o = M + N go to A
+}

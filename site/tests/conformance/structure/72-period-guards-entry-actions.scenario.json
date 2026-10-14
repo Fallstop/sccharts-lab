@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Tick 1 enters both states. With period, the entry action of A is suppressed: **e1 = 0**. With immediate period it runs: **e2 = 1**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Both period clocks are at 100: nothing inside runs: **e1 = 0, e2 = 1, n1 = n2 = 0**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Both period clocks are at 200: nothing runs."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Both periods elapse: the self-loops run and re-enter A: **n1 = 1, e1 = 1, n2 = 1, e2 = 2**."
+    }
+  ],
+  "expect": "ok"
+}

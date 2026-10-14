@@ -1,0 +1,126 @@
+{
+  "hash": "652379360be04c60c769122d6d70b3d8e358b1f1",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-suspend.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": false,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "n": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": true,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "c": true,
+        "n": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": false,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "n": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": true,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "c": true,
+        "n": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "c": false,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "c": false,
+        "n": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "c": false,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "c": false,
+        "n": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

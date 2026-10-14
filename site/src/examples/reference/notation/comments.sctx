@@ -1,0 +1,12 @@
+/** Switches a lamp on and off. */
+scchart Commented {
+  input bool button
+  output bool light
+
+  /** Waiting for the first press. */
+  initial state Off
+    if button do light = true go to On
+
+  state On
+    if button do light = false go to Off
+}

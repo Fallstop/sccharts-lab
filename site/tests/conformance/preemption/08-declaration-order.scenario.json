@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Several entry actions of one state run in the order they are written: entry1At = 1, entry2At = 2."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "Exit actions also run in the order written: exit1At = 3, exit2At = 4."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

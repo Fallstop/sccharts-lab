@@ -1,0 +1,143 @@
+{
+  "hash": "f31a29a2e08c53c1ba2503848b589241a170e3ef",
+  "chart": "src/examples/advanced/history/filler-deferred.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "cup": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "full": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fills": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "cup": true,
+        "full": false
+      },
+      "values": {
+        "cup": true,
+        "full": false,
+        "fills": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "cup": true,
+        "full": false,
+        "fills": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "full": true
+      },
+      "values": {
+        "cup": true,
+        "full": true,
+        "fills": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "full": false,
+        "cup": false
+      },
+      "values": {
+        "cup": false,
+        "full": false,
+        "fills": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "cup": true
+      },
+      "values": {
+        "cup": true,
+        "full": false,
+        "fills": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "full": true
+      },
+      "values": {
+        "cup": true,
+        "full": true,
+        "fills": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "full": false,
+        "cup": false
+      },
+      "values": {
+        "cup": false,
+        "full": false,
+        "fills": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

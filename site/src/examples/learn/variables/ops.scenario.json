@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "reading": 40
+      },
+      "note": "Tick 1 sets the initial values; the self-loop is delayed."
+    },
+    {
+      "note": "`lowest min= 40` keeps the smaller of 1000 and 40; `highest max= 40` the larger of 0 and 40. `count++` adds 1 and `doubling *= 2` doubles."
+    },
+    {
+      "inputs": {
+        "reading": 75
+      },
+      "note": "75 is not below 40, so `lowest` stays 40; `highest` becomes 75."
+    },
+    {
+      "inputs": {
+        "reading": 12
+      },
+      "note": "12 is the new lowest; 75 stays the highest."
+    },
+    {
+      "note": "`reading` keeps its value, 12. Nothing new for `lowest` and `highest`, but `count` and `doubling` change in every tick."
+    }
+  ],
+  "expect": "ok"
+}

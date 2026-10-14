@@ -1,0 +1,13 @@
+import "DF-0007"
+#skinpath "skin"
+
+scchart df#1000 {
+  input int I, I2
+  output int O
+  ref df#0007 A, A2
+
+  dataflow:
+  A = {true, false}
+  A2 = {true, A.out}
+  O = A2.out
+}

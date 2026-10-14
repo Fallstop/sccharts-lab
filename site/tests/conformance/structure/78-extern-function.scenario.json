@@ -1,0 +1,20 @@
+{
+  "needs": [
+    "c-hostcode"
+  ],
+  "ticks": [
+    {
+      "inputs": {
+        "a": -5
+      },
+      "note": "Tick 1 enters S; the delayed self-loop has not called anything yet: **x = y = z = 0**."
+    },
+    {
+      "inputs": {
+        "a": -6
+      },
+      "note": "abs(-6) = 6, twice(-6) = -12, abs(-6 - 1) = 7: **x = 6, y = -12, z = 7**."
+    }
+  ],
+  "expect": "ok"
+}

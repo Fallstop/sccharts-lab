@@ -1,0 +1,8 @@
+// A variable index: a[3] is z, a[4] is w, a[-1] the input i.
+scchart OverflowDynamic {
+  input int i
+  output int a[3] = {0, 0, 0}
+  output int z = 0, w = 0
+  initial state Run
+    do a[i] = 7 go to Run
+}

@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "X": true,
+        "Y": true,
+        "Z": false
+      },
+      "note": "g1.O = true, g2.O = true && Z = false: **O = false**. g3.A is never set (false): **P = false**."
+    },
+    {
+      "inputs": {
+        "Z": true
+      },
+      "note": "Instances are evaluated in the same tick as their inputs change: **O = true**."
+    },
+    {
+      "inputs": {
+        "Y": false
+      },
+      "note": "Y = false makes g1.O false and with it g2.O: **O = false** in the same tick."
+    }
+  ],
+  "expect": "ok"
+}

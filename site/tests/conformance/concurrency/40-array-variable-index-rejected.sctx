@@ -1,0 +1,16 @@
+scchart ArrayVariableIndex {
+  input int i
+  output int a[2]
+
+  region R1 {
+    initial state A
+    do a[i] = 1 go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    do a[1] = 2 go to B
+    state B
+  }
+}

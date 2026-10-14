@@ -1,0 +1,576 @@
+---
+title: "Cheat sheet"
+description: "All of the SCTX syntax on one page, each form with a small example, and the grammar traps that catch everyone once."
+sidebar:
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Everything you can write in an `.sctx` file, taken from KIELER's grammar and checked with KIELER's
+compiler. Each part links to the chapter that teaches it; the [grammar traps](#grammar-traps) at the
+end collect the rules that are easy to get wrong. To see the common parts working together in one
+chart first, read [Short on time?](/start/in-a-hurry/).
+
+## The shape of a file
+
+```sctx title="Main.sctx"
+// optional, before the first chart:
+// pragmas such as #hostcode "…" and
+// imports such as import "lamps"
+
+// the FIRST chart is the one to run
+scchart Main {
+  // 1. declarations
+  input bool press
+  output bool lamp
+
+  // 2. actions of the chart
+  entry do lamp = false
+
+  // 3. states (or regions)
+  initial state Off
+    if press do lamp = true go to On
+
+  state On
+    if press do lamp = false
+      go to Off
+}
+
+// further charts, used by references
+scchart Helper {
+  initial state Idle
+}
+```
+
+Inside the chart, and inside every state and region with a body, the order is always the same:
+**declarations, then actions, then states or regions**. No `;` follows declarations, states or
+transitions. A chart may have a label, `scchart Main "The lamp" { … }`. Pragmas
+([host code](#methods-and-host-code)) and imports ([references](#references-and-imports)) go before
+the first `scchart`, in any order. See [your first SCChart](/learn/first-chart/).
+
+## Declarations
+
+| You write | Means |
+| --- | --- |
+| `input bool A, B` | two inputs, set by the environment before each tick |
+| `output int count = 0` | an output, with an initial value |
+| `input output bool io` | both an input and an output |
+| `int i, j = 2` | local variables (`i` starts at 0) |
+| `float level = 0.5` | a `float` |
+| `string name = "text"` | a `string` |
+| `const int N = 3` | a constant, fixed when the chart is compiled |
+| `int values[3] = {1, 2, 3}` | an array; the size is a number or a `const` |
+| `bool grid[2][3]` | an array with two dimensions |
+| `int buffer[N]` | an array sized by a constant |
+| `static int visits = 0` | a local of a superstate that keeps its value across visits ([history](/advanced/history/#history-restores-states-not-data)) |
+| `int x = 0 label "count"` | the diagram shows *count* instead of `x` |
+
+- **Types:** `bool`, `int`, `float`, `string`; `pure` only for signals; `host "c type"` for a type of the
+  host language.
+- **Modifiers:** `input` before `output`; `signal` right before the type, as in `output signal int V`;
+  `const static int`. See [trap 9](#grammar-traps) about `const` with `input` or `output`.
+- **Defaults:** `0`, `false`, `0.0`; an unset `string` is `null`.
+
+A declaration inside a superstate is local to it and is initialised again every time the superstate
+is entered. See [variables](/learn/variables/) and [superstates](/learn/hierarchy/); enums, structs
+and classes have [a section of their own](#enums-structs-and-classes).
+
+## States
+
+| You write | Means |
+| --- | --- |
+| `initial state Idle` | where the region starts: exactly one per region |
+| `state Busy "Working"` | an ordinary state; the diagram shows *Working* |
+| `final state Done` | the region may finish here |
+| `initial final state Ready` | both, in this order |
+| `connector state Choice` | a junction, passed in zero time |
+| `state Lamp is Blinker(…)` | an instance of another chart ([below](#references-and-imports)) |
+
+A superstate has a body in braces, in the usual order:
+
+```sctx
+state Counting {
+  // 1. declarations
+  int n = 0
+  // 2. actions
+  exit do total += n
+  // 3. states
+  initial state Step
+    if A do n++ go to Step
+}
+// its own transitions follow the }
+if B go to Idle
+```
+
+A state's outgoing transitions follow it (after its closing brace, for a superstate). States written
+directly in a chart or superstate form one region. See [your first SCChart](/learn/first-chart/),
+[delayed and immediate](/learn/immediate/) and [connector states](/advanced/connectors/).
+
+## Regions
+
+```sctx
+state Both {
+  // a region with braces
+  region Left {
+    initial state WaitA
+      if A go to DoneA
+    final state DoneA
+  }
+  // the colon form runs up to the
+  // next region or the closing }
+  region Right "Waiting for B":
+    initial state WaitB
+      if B go to DoneB
+    final state DoneB
+}
+```
+
+| You write | Means |
+| --- | --- |
+| `region { … }`, `region:` | an unnamed region |
+| `region Name "Label" { … }` | name and label are both optional |
+| `region R for i : 0 to 2` | one copy of the region per value of `i` (bounds: integer literals) |
+| `region R for i : ARR` | one copy per index of the array `ARR` |
+| `dataflow { … }`, `dataflow:` | a dataflow region ([below](#dataflow)) |
+
+A chart or superstate holds either plain states or regions, not both. See
+[concurrent regions](/learn/concurrency/) and [for regions](/advanced/for-regions/).
+
+## Transitions
+
+The parts of a transition always come in this order, on one line or several. Everything except the
+kind and the target is optional:
+
+```sctx
+immediate
+  if 3 A && B
+  do x = 1; y++
+  go to Target
+  deferred history
+  label "text"
+```
+
+| Part | Example |
+| --- | --- |
+| 1. delay | `immediate`, or `delayed` (the default, with two exceptions, below) |
+| 2. count delay and trigger | `if 3 A && B` |
+| 3. effects | `do x = 1; y++` |
+| 4. kind and target | `go to Target`, `abort to Target`, `join to Target` |
+| 5. how the target is entered | `deferred`, `deep deferred`, then `history`, `shallow history` or `reset` |
+| 6. label | `label "text"` |
+
+| You write | Means |
+| --- | --- |
+| `go to B` | no trigger: fires in the tick after the state was entered |
+| `if A go to B` | fires in a tick in which `A` holds |
+| `if A do x = 1 go to B` | trigger and effect |
+| `do x++ go to B` | effect only |
+| `do x = 1; y = 2 go to B` | effects are separated by `;` |
+| `immediate if A go to B` | may fire in the tick the state is entered |
+| `delayed if A go to B` | the default, written out |
+| `if 3 A go to B` | fires in the third tick in which `A` holds |
+| `if R abort to B` | a strong abort |
+| `join to B` | termination: when all regions inside are final; immediate, so it can fire in the tick they get there |
+| `if A join to B` | termination with a trigger: delayed, like other transitions |
+| `go to S history` | resume `S` where it was, at every level |
+| `go to S shallow history` | resume only `S`'s own regions |
+| `go to S reset` | start `S` afresh (the default) |
+| `go to S deferred` | enter `S` without its entry behaviour |
+| `go to S deep deferred` | the same, inside `S` too |
+| `go to B label "press"` | the diagram shows *press* |
+
+| Kind | Means |
+| --- | --- |
+| `go to` | weak abort: the inside of a superstate finishes its tick first. A plain arrow. |
+| `abort to` | strong abort: the inside of a superstate does nothing in that tick. A red dot at the source. |
+| `join to` | termination: only on a superstate, when all its regions are final. A green triangle at the source. |
+
+Two kinds of transition are immediate without the keyword: a `join to` without a trigger, and every
+transition out of a [connector state](/advanced/connectors/) (KIELER warns until you write
+`immediate` there). All others are delayed unless they say `immediate`.
+
+The **priority** of a transition is its position among its state's transitions: the first one written
+wins. `abort to` transitions must come before `go to` and `join to`. `auto` and `undefined` are
+accepted in place of `delayed` and mean the default. See
+[triggers, effects and priority](/learn/transitions/), [aborts](/learn/preemption/) and
+[history](/advanced/history/).
+
+## Actions
+
+| You write | Means |
+| --- | --- |
+| `entry do x = 0` | runs whenever the state is entered |
+| `entry if A do x = 1` | the same, only when `A` holds |
+| `during do n++` | in every tick the state stays in, not in the tick it is entered |
+| `immediate during do n++` | in every tick, the entry tick included |
+| `exit do left++` | whenever the state is left, however |
+| `weak entry do y = 1` | skipped if the state is strongly aborted in the tick it is entered |
+| `weak exit do y = 2` | on a superstate, only when it terminates (`join to`); on a simple state, the same as `exit` |
+| `strong entry do y = 3` | the same as `entry` |
+| `strong exit do y = 3` | the same as `exit` |
+| `suspend if H` | freezes the state, its own transitions included, in every tick in which `H` holds, from the tick after it is entered |
+| `immediate suspend if H` | the same, the entry tick included |
+| `weak suspend if H` | the inside runs, then goes back to the states it was in |
+| `during do x-- label "down"` | the diagram shows *down* |
+
+Actions go after a state's declarations and before its inner states. Actions written directly in the
+chart belong to the chart itself. `immediate` exists for `during`, `suspend` and `period`, not for
+`entry` and `exit`; count delays (`if 2 A`) belong on transitions. See
+[entry, during and exit actions](/learn/actions/) and [suspension](/advanced/suspend/).
+
+## Effects
+
+| Effect | Example |
+| --- | --- |
+| assignment | `x = e`, `x += e`, `x -= e`, `x *= e`, `x /= e`, `x %= e` |
+| bitwise assignment | `x &= e`, `x \|= e`, `x ^= e`, `x <<= e`, `x >>= e` |
+| keep the smaller / larger | `x min= e`, `x max= e` |
+| increment, decrement | `x++`, `x--` |
+| array | `a[0] = e`, `a = {1, 2, 3}` |
+| emit a pure signal | `S` |
+| emit a valued signal | `V(3)` |
+| call a method | `clear()`, `y = twice(x)` |
+| call a host function | `y = extern abs(x)`, or `y = absf(x)` after declaring `extern "abs" absf` |
+| print to the console | `print("x is", x)` |
+| seed `random()` from the clock | `randomize()` (see below) |
+| host code | `` `some_c_call();` `` |
+| code block (code effect) | `{ x = 1; y = x * 2 }` |
+
+Effects are separated by `;`, run left to right, and see each other's writes.
+
+`randomize()` fails to compile in an action that runs in tick 1: an entry action of the chart or of
+an initial state, or an untriggered immediate transition out of an initial state. Call it on a
+delayed transition instead. It also needs `#hostcode "#include <stdlib.h>"`
+at the top of the file unless the chart calls `random()` too
+([random numbers](/advanced/methods/#random-numbers)).
+
+A code block holds statements, as in a method body
+([code effects](/advanced/methods/#code-effects), [statements](/advanced/methods/#statements)):
+
+```sctx
+if A do {
+  // ; ends an assignment that is
+  // followed by another statement
+  x = 1;
+  // ( ) are optional, { } required;
+  // there is no else if
+  if B {
+    y = 2
+  } else {
+    if C { y = 3 }
+  }
+  // loops run within the tick
+  for (int k = 0; k < 3; k++) {
+    n++
+  }
+} go to Next
+```
+
+Calls, declarations and blocks need no `;` ([semicolons](/advanced/methods/#semicolons)).
+`while (c) { … }` loops like `for` ([for](/advanced/methods/#for-loops),
+[while](/advanced/methods/#while-loops)), and a declaration at the top of a block, such as
+`int t = a`, makes a variable that exists only inside that block
+([local variables](/advanced/methods/#local-variables)).
+
+See also [variables](/learn/variables/) and [operators](/reference/operators/).
+
+## Expressions
+
+| Kind | Examples |
+| --- | --- |
+| literals | `42`, `1.5`, `2f`, `1.5e3`, `true`, `false`, `"text"`, `null`, `{1, 2, 3}`, `{0 to 3}` |
+| names | `x`, `a[i]`, `grid[1][2]`, `p.x` |
+| arithmetic | `a + b`, `a - b`, `a * b`, `a / b`, `a % b`, `-a` |
+| comparison | `a == b`, `a != b`, `a < b`, `a <= b`, `a > b`, `a >= b` |
+| logic | `A && B`, `A \|\| B`, `!A` |
+| bits | `a & b`, `a \| b`, `a ^ b`, `~a`, `a << n`, `a >> n` |
+| choice | `(c) ? a : b` |
+| previous tick | `pre(x)`, `pre(pre(x))`, `pre(S)`, `pre(val(V))` |
+| signals | `S` (present?), `val(V)` (its value) |
+| calls | `f(x)`, `extern f(x)`, `random()` |
+
+The precedence of all of these, and the traps in it, are on the [operators page](/reference/operators/).
+
+## Signals
+
+| You write | Means |
+| --- | --- |
+| `input signal Tick` | a pure input signal |
+| `output signal Beep` | a pure output signal |
+| `signal Ready` | a local signal |
+| `output signal int V` | a valued signal |
+| `signal int sum combine +` | values emitted in the same tick are added up |
+
+| Write | Means |
+| --- | --- |
+| `do Beep` | emit `Beep` (it is present in this tick) |
+| `do V(3)` | emit `V` with the value 3 |
+| `if Tick` | `Tick` is present in this tick |
+| `if val(V) > 2` | the value of `V` |
+| `if pre(Tick)` | `Tick` was present in the previous tick |
+
+Combine functions: `+`, `*`, `max`, `min`, `|`, `&`, `none`, `host`. Two of them do not work as you
+would expect in KIELER: `&` on an `int` signal always gives 0, and a `float` signal with any combine
+function crashes the compiler (see [emitting more than once](/learn/signals/#emitting-more-than-once-in-a-tick)).
+A local or output signal is absent in every tick in which nothing emits it, while its value (`val`) is
+kept; input signals are set by the environment. See [signals](/learn/signals/).
+
+## References and imports
+
+```sctx
+// lamps.sctx, next to this file
+import "lamps"
+// every .sctx file in parts/
+import "parts/*"
+
+// explicit: my tick to its tick,
+// my lamp to its light
+state L is Blinker(tick to tick,
+                   lamp to light)
+// by position, in the order Blinker
+// declares them
+state L is Blinker(tick, lamp)
+// by name (KIELER warns)
+state L is Blinker
+// a constant into an input
+state L is Blinker(true to tick,
+                   lamp to light)
+// an instance as a declaration
+ref Blinker b(tick to tick,
+              lamp to light)
+```
+
+The first chart in the file is the one that is simulated; the others exist to be referenced. See
+[reusing charts](/advanced/references/).
+
+## Dataflow
+
+```sctx
+dataflow {
+  // recomputed in every tick
+  O = A && B
+  // 0 first, then the last N + 1
+  N = 0 fby (N + 1)
+  // 0 first, then I
+  M = 0 -> I
+  // ; or seq: these two in order
+  D = I; D = D * 10
+}
+// once, in the tick it is entered;
+// then the region terminates
+dataflow once { O = I }
+```
+
+| Operator | First tick | Later ticks |
+| --- | --- | --- |
+| `a -> b` | `a` | `b` |
+| `a fby b` | `a` | `b` of the previous tick |
+| `pre(b)` | 0 / `false` | `b` of the previous tick |
+| `a sfby b` | `a` | `b` (as `->`; avoid it, KIELER gets longer chains wrong) |
+
+`->` and `fby` take atoms: write `0 fby (N + 1)`, because `0 fby N + 1` means `(0 fby N) + 1`. With
+`ref Adder add` declared, an equation can set an instance's inputs (`add.a = I`) and read its outputs
+(`O = add.s`). See [dataflow regions](/advanced/dataflow/).
+
+## Time
+
+| You write | Means |
+| --- | --- |
+| `clock t` | a clock; the chart gets the input `deltaT` and the output `sleepT` |
+| `do t = 0` | sets the clock back to 0 |
+| `if t >= 300 go to Done` | a timeout |
+| `period 100` | an action: the inside of the state runs only in ticks in which another 100 have passed |
+| `immediate period 100` | the same, and the inside also runs in the tick the state is entered |
+
+Chart annotations for timed charts: `@IntegerClockType` (clocks are `int`), `@DefaultSleep 500`,
+`@SimulateSleep` (the simulation jumps from timeout to timeout), `@NoSleep` (no `sleepT`); and
+`@HardReset` before a `period` drops the excess time instead of keeping it. Each clock may be tested by one
+region only. See [time](/advanced/time/).
+
+## Methods and host code
+
+```sctx
+// a small function
+method int twice(int v) {
+  return v * 2
+}
+method void clear() {
+  x = 0
+}
+// C's abs, called as absf(x)
+extern "abs" absf
+// a name for each host language
+extern @C "abs", @Java "Math.abs" absolute
+// a variable of a C type
+host "unsigned char" raw
+
+// pragmas, before the first chart:
+// C header and code
+#hostcode "#include <stdlib.h>"
+// code for the C file only
+#hostcode-c "int one() { return 1; }"
+// also: #hostcode-c-header, #hostcode-java
+// a file copied next to the generated code
+#resource "helper.c"
+// rename reset, tick, logic and TickData
+#code.naming "prefix"
+```
+
+A method body holds the same statements as a code block (above): `if`, `for`, `while`, local
+variables and the [semicolon rule](/advanced/methods/#semicolons). `return` comes last and takes no
+`;`. A short method without loops or calls of other methods is copied into the place it is called
+from (inlined); KIELER keeps the others as C functions
+([what KIELER makes of a method](/advanced/methods/#what-kieler-makes-of-a-method)).
+See [methods and code effects](/advanced/methods/) and [host code](/advanced/host-code/).
+
+## Enums, structs and classes
+
+```sctx
+// an enum: a type and its values
+enum Speed { OFF, LOW, HIGH }
+// a variable of it: ref is required
+ref Speed speed = Speed.OFF
+
+// a struct: the type, then its
+// instances after the }
+struct Reading {
+  int value
+  int number
+} latest, highest
+
+// a class: a struct with methods
+// (no keyword method here)
+class Counter {
+  private int count = 0
+  void add() {
+    count++
+  }
+  int get() {
+    return count
+  }
+} home, away
+```
+
+| You write | Means |
+| --- | --- |
+| `speed = Speed.LOW`, `if speed == Speed.HIGH` | an enum value, always with its type in front |
+| `latest.value = 20` | one member of one instance |
+| `home.add()`, `if home.get() > 2` | a method of one instance; the parentheses are required |
+| `highest.value = latest.value` | copy member by member: `highest = latest` and `highest == latest` are rejected |
+
+Declare enums among the chart's own declarations, not inside a state. Structs and classes cannot be
+inputs or outputs; enums can be in current KIELER only. A simulation shows an enum value as its
+position (`Speed.LOW` is 1). See [enums, structs and classes](/advanced/data-types/).
+
+## Comments, labels and annotations
+
+```sctx
+// a line comment
+/* a block comment */
+/** a doc comment: belongs to the next
+    state, region or chart, and is
+    drawn as a note */
+
+// a doc comment for one declaration
+input bool A //* the button
+
+// annotations go before their element
+@HVLayout
+// lay this level out left to right
+@layout[elk.direction] RIGHT
+// the region starts collapsed
+@collapse
+// left out of the diagram
+@hide
+// a diagram option: hide the notes
+@diagram[commentNodes] false
+```
+
+See [comments and annotations](/advanced/annotations/).
+
+## Rarely used
+
+These parse, but this guide does not use them, and some do not compile in every KIELER version.
+
+| You write | What it is |
+| --- | --- |
+| `final region R { … }` | a region whose states all count as final, so it never holds up its parent's termination; KIELER still warns as if it had no final state |
+| `abort region R { … }` | a region that ends its parent as soon as it reaches a final state; the regions then run one after another, not concurrently |
+| `if A Pr=0.5 go to B`, `if A nondeterministic go to B` | a transition's probability, or a mark that its choice is nondeterministic |
+| `violation state V` | a state that marks a violated property, drawn in red |
+| `ode` actions, `schedule` declarations and clauses | differential equations; schedules written by hand. This guide's simulations cannot run either |
+| `state S calls Other(…)` | a call of another chart; does not work in the C simulation |
+| `policy` regions, `extends`, `override region` | object orientation: see the KIELER wiki's [Object Orientation](https://github.com/kieler/semantics/wiki/Syntax:-Object-Orientation) page |
+| `global int g` | in a referenced chart, one variable shared by all its instances; at the top level of the chart that is simulated, KIELER fails on it |
+| `scchart C<T is int>` | a chart with generic parameters |
+| `scchart(Consts).MAX` | a name declared in another chart |
+| `return state(Busy)`, `state(Main.Busy)` | inside a method only: true while the state is active (a state in a named region needs the region's name); anywhere else KIELER rejects it |
+| `goto done`, `done:` | in a code block: a jump to a label in the same block. Only a forward jump works, skipping statements. A backward jump is an instantaneous loop, which KIELER rejects even when a condition ends it; in a block it keeps as a [C function](/advanced/methods/#what-kieler-makes-of-a-method) (a long one, or one with a loop or a call) the C code drops the jump instead, and the block ends there. The same label in two code blocks of one state can crash KIELER. Avoid: use `if` |
+| `x = (c) ? a` | a conditional without an else. In a plain assignment `x` keeps its value when `c` is false, as in `(c) ? a : x`; elsewhere the missing branch is something else again (`x += (c) ? 1` doubles `x`). Avoid: write the else |
+| `pre(x, c)` | `pre` with a clock, `c` a `bool` or a signal: in a tick in which `c` holds it is `x` from the previous such tick, in between it keeps that value. KIELER keeps one memory per variable, so next to a `pre(x)` of the same `x` the clock is ignored or applies to both. Avoid: keep the value in a variable of your own |
+| `bump(&x)`, `put(!&x)` | passes the address of `x` to an `extern` C function that takes a pointer (`!&` if it only writes `x`). Not for methods: an [inlined method](/advanced/methods/#what-kieler-makes-of-a-method) changes its argument anyway, and one compiled to a C function breaks the C code |
+| `super.inc()`, `region is super.Main` | in a chart that `extends` another: the base chart's method or region. Overriding methods works in current KIELER only |
+| `state S is Sub(this)` | parses, but KIELER fails on it |
+| `clock-time last` | a variable of the clocks' type, for keeping a clock's value; only in a chart with a `clock`, and only in current KIELER |
+| `@info {"step": 2}`, `#meta {"tags": ["a"]}` | an annotation or a pragma whose value is a JSON object; the compiler ignores it |
+| `@figure "and.kgt"` | a custom drawing (a KLighD `.kgt` file, looked up in `#skinpath "dir"`) for a reference in a dataflow diagram; only KIELER's own diagrams use it, the compiler and this guide ignore it |
+| `int x'`, `x'' = x'` | names with primes: KIELER's parser accepts them, but the generated C does not compile ([`missing terminating ' character`](/reference/errors/#compiler-did-not-return-success-exit-value--0)), and this guide rejects them too |
+
+## Grammar traps
+
+<Aside type="caution" title="The usual suspects">
+Each of these was checked with KIELER; the [compiler messages](/reference/errors/) page has the exact
+error for most of them. The first three are the ones C and Java programmers meet in their first hour.
+A chart that compiles but misbehaves is a different matter: see
+[My chart does not do what I expect](/reference/troubleshooting/).
+</Aside>
+
+1. **Effects need `do`.** `if A x = 1 go to B` is a syntax error
+   ([`no viable alternative at input 'x'`](/reference/errors/#no-viable-alternative-at-input-x)); write
+   `if A do x = 1 go to B`. Actions too: `entry do x = 1`.
+2. **`==` compares, `=` assigns.** `if I = 3 go to B` is a syntax error (at `'='`); write
+   `if I == 3 go to B`. In an effect it is the other way round: `do b = true`, not `do b == true`.
+3. **Signals are emitted, variables are assigned.** `do S` emits the signal `S`; `do S = true` is an
+   error ([`Non-variables cannot be used in an assignment.`](/reference/errors/#non-variables-cannot-be-used-in-an-assignment)).
+   `do flag = true` sets the variable `flag`; `do flag` on a variable is a mistake
+   ([`Non-signals should not be used in an emission.`](/reference/errors/#non-signals-should-not-be-used-in-an-emission)).
+4. **No semicolons after declarations.** `input bool A;` is a syntax error. Inside code blocks
+   `{ … }` and methods it is the other way round: an assignment needs `;` when another statement
+   follows it ([`Missing Semicolon`](/reference/errors/#missing-semicolon)).
+5. **Declarations, actions, states: in that order.** A declaration after an action or a state, or an
+   action after a state, is a syntax error.
+6. **The parts of a transition have a fixed order:** delay, `if` trigger, `do` effects, `go to`
+   target. `go to B if A`, `do x = 1 if A` and `goto B` are all syntax errors.
+7. **Effects are separated by `;`, with none after the last:** `do x = 1, y = 2` and
+   `do x = 1; go to B` are errors.
+8. **`if` with a number is a count delay.** `if 3 == x` is an error and `if 3 -x > 0` means "the
+   third time `-x > 0`". Write the variable first: `if x == 3`.
+9. **`initial final`, not `final initial`.** State modifiers come in the order `initial`, `final`,
+   `connector`. Declaration modifiers come in the order `input`, `output`, then the rest; `const` and
+   `input` or `output` are best not combined at all, because KIELER versions disagree about their
+   order.
+10. **States or regions, not both,** directly in one chart or superstate.
+11. **Transitions stay in their region.** A state inside a superstate cannot `go to` a state outside it;
+    leave through a final state and `join to`, or put the transition on the superstate.
+12. **Reserved words cannot be names:** `reset`, `go`, `to`, `max`, `min`, `period`, `clock`, `label`, `history`,
+    `deep`, `entry`, `exit`, `final`, `pre`, `val` and many more (the
+    [full list](/reference/errors/#mismatched-input-reset-expecting-rule_id)). C keywords such as
+    `default`, `char` or `long` pass KIELER's checks but break the C compiler. A `^` in front turns a
+    keyword into a name: `state ^state` parses and works, but a variable written with a `^`
+    (`int ^max`) gets into the generated C as it is, and the C does not compile
+    (`expected identifier before ‘^’ token`).
+13. **`//*` starts a comment that belongs to the declaration before it.** Anywhere else it is a
+    syntax error, so a separator line such as `//*********` breaks the chart. Write `// *****`.
+14. **The ternary takes atoms:** `x > 2 ? x : 0` means `x > (2 ? x : 0)`. Write `(x > 2) ? x : 0`.
+15. **`!` takes an atom and cannot be added to:** `!x + 1` is an error, `!x == y` means `(!x) == y`.
+16. **Comparisons do not chain:** `1 < x < 3` is an error; write `x > 1 && x < 3` (in a trigger,
+    `if 1 < x` reads the `1` as a count delay).
+17. **`pre` takes a name:** `pre(x + 1)` is an error; write `pre(x) + 1`. In the first tick `pre(x)` is
+    0, not the initial value of `x`.
+18. **Two-word keywords take exactly one space:** `deep deferred`, `shallow history`. `Pr=0.5`,
+    `min=` and `max=` take none.
+19. **The first chart in a file is the one that runs**, not the last and not the one you are looking
+    at.
+20. **Only ASCII in names.** `Zustandü` is an error; strings may hold any text, but escapes such as
+    `\n` and `\"` inside a string break the generated C code.

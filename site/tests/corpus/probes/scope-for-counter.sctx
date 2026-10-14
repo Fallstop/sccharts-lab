@@ -1,0 +1,8 @@
+scchart P240 {
+  output int O
+  region R for i : 0 to 1 {
+    initial state A
+    do O = i go to A
+  }
+  initial state Z
+}

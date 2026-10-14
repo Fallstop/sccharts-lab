@@ -1,0 +1,31 @@
+/*
+ * A stopwatch that counts ticks. startStop
+ * starts and stops the clock, clear sets
+ * it back to zero while it is stopped, and
+ * lap freezes the display while the clock
+ * keeps running.
+ */
+scchart Stopwatch {
+  input signal startStop, clear, lap
+  output int time = 0
+  output int display = 0
+
+  region Clock:
+    initial state Stopped
+      if startStop go to Running
+      if clear do time = 0 go to Stopped
+
+    state Running {
+      during do time++
+    }
+      if startStop go to Stopped
+
+  region Display:
+    initial state Live {
+      immediate during do display = time
+    }
+      if lap go to Frozen
+
+    state Frozen
+      if lap go to Live
+}

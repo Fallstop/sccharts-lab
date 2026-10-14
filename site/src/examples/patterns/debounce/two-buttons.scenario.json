@@ -1,0 +1,89 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "Tick 1: both buttons up."
+    },
+    {
+      "inputs": {
+        "rawA": true,
+        "rawB": false
+      },
+      "note": "`rawA` contact: `ButtonA` is in `MaybePressed`."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "`rawA` bounce."
+    },
+    {
+      "inputs": {
+        "rawA": true,
+        "rawB": false
+      },
+      "note": "`rawA` contact."
+    },
+    {
+      "inputs": {
+        "rawA": true,
+        "rawB": true
+      },
+      "note": "`rawA` held; `rawB` pressed: `ButtonB` moves to `MaybePressed`."
+    },
+    {
+      "inputs": {
+        "rawA": true,
+        "rawB": true
+      },
+      "note": "Third reading in a row for `rawA`: `pressedA`."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": true
+      },
+      "note": "Third reading in a row for `rawB`: `pressedB`. `rawA` is released."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": true
+      },
+      "note": "`rawA` up."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "`pressedA` is released; `rawB` goes up."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "`rawB` up."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "`pressedB` is released."
+    },
+    {
+      "inputs": {
+        "rawA": false,
+        "rawB": false
+      },
+      "note": "Quiet. Each region reads its own input and writes its own output."
+    }
+  ],
+  "expect": "ok"
+}

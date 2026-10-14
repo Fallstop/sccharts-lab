@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": 10
+      },
+      "note": "First tick: both take their first operand: **arrows = 1, fbys = 1**."
+    },
+    {
+      "inputs": {
+        "I": 20
+      },
+      "note": "The middle operand of -> is skipped: **arrows = 20** (current I). The fby chain yields its second operand: **fbys = 2**."
+    },
+    {
+      "inputs": {
+        "I": 30
+      },
+      "note": "**arrows = 30**; **fbys = 10**, the I of two ticks ago."
+    },
+    {
+      "inputs": {
+        "I": 40
+      },
+      "note": "**arrows = 40, fbys = 20**."
+    }
+  ],
+  "expect": "ok"
+}

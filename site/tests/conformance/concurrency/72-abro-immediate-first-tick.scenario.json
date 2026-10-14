@@ -1,0 +1,63 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "note": "ABRO with immediate triggers. `A` and `B` are present in tick 1, so both regions finish in the entry tick. Inside the reset loop `if R abort to ABO` KIELER's netlist code loses this entry-tick join (see `26-join-lost-in-entry-tick-under-abort`): `O` is absent. The priority-based compiler rejects the chart."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": true
+      },
+      "note": "`A`, `B` and `R`: the strong abort does not fire any more: once every region of `WaitAB` is final without the join having fired, nothing in `ABO` can react."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "R": true
+      },
+      "note": "`R` alone: still no reaction."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true
+      },
+      "note": "`A` and `B`: nothing. The chart is stuck for ever."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Nothing."
+    }
+  ],
+  "expect": "ok"
+}

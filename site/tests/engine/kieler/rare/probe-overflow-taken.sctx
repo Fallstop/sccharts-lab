@@ -1,0 +1,6 @@
+// a[3] is past the chart's variables, where KIELER counts the transitions taken: KIELER runs on with a wrong count; the guide stops with an error instead.
+scchart OverflowTaken {
+  output int a[3] = {0, 0, 0}
+  initial state Run
+    do a[3] = 9 go to Run
+}

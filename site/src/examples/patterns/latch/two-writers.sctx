@@ -1,0 +1,14 @@
+scchart TwoWriters {
+  input bool button, arrived
+  output bool lamp
+
+  region Button {
+    initial state Watch
+      if button do lamp = true go to Watch
+  }
+
+  region Lift {
+    initial state Watch
+      if arrived do lamp = false go to Watch
+  }
+}

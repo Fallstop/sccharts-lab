@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "step": false
+      },
+      "note": "Both instances start; delayed transitions wait: **a = 0, b = 0**."
+    },
+    {
+      "inputs": {},
+      "note": "Only the second instance (t bound to true) counts: **a = 0, b = 1**."
+    },
+    {
+      "inputs": {
+        "step": true
+      },
+      "note": "Each instance has its own k: **a = 1, b = 2**."
+    },
+    {
+      "inputs": {},
+      "note": "Both instances count, each with its own k: **a = 2, b = 3**."
+    }
+  ],
+  "expect": "ok"
+}

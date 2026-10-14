@@ -1,0 +1,179 @@
+{
+  "hash": "06c93f6a94f30728b9ad852a2011f1bebe2dd724",
+  "chart": "tests/engine/kieler/structure/probe-dz18.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on _Dz18_local_c.",
+    "Potential instantaneous loop through the timed transitions on _Dz18_local_c1."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "m": 0,
+        "n": 0,
+        "sleepT": 150
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "m": 0,
+        "n": 0,
+        "sleepT": 50
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "m": 1,
+        "n": 1,
+        "sleepT": 150
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 120
+      },
+      "values": {
+        "deltaT": 120,
+        "m": 1,
+        "n": 1,
+        "sleepT": 30
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 200
+      },
+      "values": {
+        "deltaT": 200,
+        "m": 2,
+        "n": 2,
+        "sleepT": 80
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "deltaT": 50
+      },
+      "values": {
+        "deltaT": 50,
+        "m": 2,
+        "n": 2,
+        "sleepT": 30
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "deltaT": 300
+      },
+      "values": {
+        "deltaT": 300,
+        "m": 3,
+        "n": 3,
+        "sleepT": 150
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "deltaT": 10
+      },
+      "values": {
+        "deltaT": 10,
+        "m": 3,
+        "n": 4,
+        "sleepT": 120
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

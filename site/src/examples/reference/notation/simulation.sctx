@@ -1,0 +1,13 @@
+scchart Simulation {
+  input bool go1
+  output int x
+
+  initial state Wait
+    if go1 do x = 1 go to Fast
+
+  state Fast
+    immediate do x++ go to Done
+
+  state Done
+    go to Wait
+}

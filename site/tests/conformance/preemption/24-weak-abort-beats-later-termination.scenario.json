@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Both outgoing transitions are enabled in this tick: the inner region reaches F (termination) and A holds (weak abort). The weak abort is written first, so it has priority: X is entered (inX = 1)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In X."
+    }
+  ],
+  "expect": "ok"
+}

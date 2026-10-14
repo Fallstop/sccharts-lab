@@ -1,0 +1,18 @@
+scchart Bench {
+  input bool run, clear
+  output int total = 0
+  region R0 {
+    initial state Run0 {
+      int c = 0
+      initial state S0 {
+        entry do c++
+      }
+      if run go to S1
+      state S1 {
+        entry do c++
+      }
+      if run go to S0
+    }
+    if clear go to Run0
+  }
+}

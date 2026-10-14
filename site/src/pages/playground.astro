@@ -1,0 +1,363 @@
+---
+/**
+ * /playground: an in-browser SCCharts IDE. Editor | diagram side by side from 60rem (with a splitter), the
+ * simulation underneath; tabs on phones. The client code (src/components/playground/boot.ts, then app.ts) loads
+ * after the page has painted: until then (and without JavaScript) the page shows the starter chart's source,
+ * highlighted with the editor's own tokenizer, its diagram (rendered at build time) and the example list as links.
+ *
+ * ?example=<id> opens an example (TryIt links), #code=<lz-string> a shared chart; otherwise the reader's last
+ * scratch buffer (local storage) or the default chart. &solution=<id> (an exercise's TryIt link) offers "Compare
+ * with the model solution" and shows the exercise's task (the TryIt's title and text, from the guide's MDX).
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import { getCollection, render } from 'astro:content'
+import { exampleIds, loadExample, type Scenario } from '../components/frame/examples'
+import SimControls from '../components/frame/SimControls.astro'
+import { buildCatalogue, allItems, type CatalogueItem } from '../components/playground/catalogue'
+import { findExercises } from '../components/playground/exercises'
+import { SHOWCASE, showcaseSources } from '../components/playground/showcase'
+import { highlightLines } from '../components/playground/static-highlight'
+import { codeColourCss } from '../components/playground/code-colours'
+import { pgIcons } from '../components/playground/icons'
+import { compile } from '../engine/index'
+import { chartToSvg } from '../diagram/index'
+import '../diagram/diagram.css'
+import '../components/playground/playground.css'
+
+const DEFAULT_ID = 'showcase/abro'
+
+// The example menu: every example of the guide (not the widget tests under design/), grouped by page.
+const docs = await getCollection('docs')
+const ids = exampleIds().filter((id) => !id.startsWith('design/'))
+const sources: Record<string, string> = {}
+const rejected = new Set<string>()
+for (const id of ids) {
+	const ex = loadExample(id, '/playground')
+	sources[id] = ex.source
+	if (ex.scenario?.expect === 'error') rejected.add(id)
+}
+const groups = buildCatalogue(
+	sources,
+	docs.map((d) => ({ id: d.id, title: d.data.title, order: d.data.sidebar?.order, body: d.body })),
+	SHOWCASE,
+	rejected,
+)
+const items = allItems(groups)
+// The exercises (every <TryIt> of the guide, with its page's section), for the task banner of a TryIt link.
+const exercises = findExercises(
+	await Promise.all(
+		docs.filter((d) => d.body?.includes('<TryIt')).map(async (d) => ({ id: d.id, title: d.data.title, body: d.body, headings: (await render(d)).headings })),
+	),
+)
+// Whether "Compare with the model solution" works (app.ts, setupSolution, checks the same): a test run recorded
+// with KIELER's netlist compiler. The page then shows the button from the start.
+for (const e of exercises) {
+	if (!e.solution) continue
+	const solution = loadExample(e.solution, '/playground')
+	const scenario = solution.scenario as (Scenario & { system?: string }) | undefined
+	const recording = solution.oracle as (typeof solution.oracle & { interface?: unknown }) | undefined
+	e.compare = !!(scenario && scenario.expect !== 'error' && scenario.ticks?.length && (!scenario.system || scenario.system === 'netlist') && recording?.ok && recording.ticks?.length && recording.interface)
+}
+const defaultTitle = items.find((i) => i.id === DEFAULT_ID)?.title ?? 'ABRO'
+
+const defaultSource = showcaseSources()[DEFAULT_ID]
+const lines = highlightLines(defaultSource)
+const compiled = compile(defaultSource)
+const diagramSvg = compiled.chart ? await chartToSvg(compiled.chart, { program: compiled.program, fit: 'natural', idPrefix: 'pg0' }) : ''
+const iface = compiled.interface.filter((v) => v.input && !v.const).map((v) => ({ name: v.name, direction: 'input' as const, type: v.signal && !v.valued ? 'signal' : v.type }))
+
+const json = (v: unknown) => JSON.stringify(v).replace(/</g, '\\u003c')
+const data = json({ defaultId: DEFAULT_ID, defaultSource })
+
+const tag = (i: CatalogueItem) => (i.starter ? 'Exercise' : i.rejected ? 'Rejected' : undefined)
+const shortcuts: [string[], string][] = [
+	[['Mod', 'Enter'], 'Step one tick'],
+	[['Mod', 'Shift', 'Enter'], 'Rebuild the simulation after an edit'],
+	[['Ctrl', 'Space'], 'Complete a name, a keyword or a target state'],
+	[['F12'], 'Go to the declaration of the name under the cursor (or Ctrl-click or ⌘-click it)'],
+	[['Mod', '/'], 'Comment or uncomment the selected lines'],
+	[['Mod', 'F'], 'Find and replace'],
+	[['F8'], 'Go to the next problem (with Shift: the previous one)'],
+	[['Mod', 'S'], 'Download the chart as a .sctx file'],
+	[['Mod', 'O'], 'Open a .sctx file (or drop one on the editor)'],
+	[['Mod', 'Shift', 'S'], 'Copy a link to this chart'],
+	[['Esc', 'Tab'], 'Leave the editor (Tab alone indents)'],
+	[['?'], 'Show this help (outside the editor)'],
+]
+---
+
+<StarlightPage
+	frontmatter={{
+		title: 'Playground',
+		description: 'Write an SCChart, see its diagram and run it tick by tick in your browser.',
+		template: 'splash',
+		tableOfContents: false,
+		prev: false,
+		next: false,
+	}}
+	hasSidebar
+>
+	<Fragment set:html={`<style>${codeColourCss()}</style>`} />
+	<p class="sc-pg-trust not-content">
+		<Fragment set:html={pgIcons.info} />
+		<span class="sc-pg-trust__long">The playground runs the guide's own reimplementation of KIELER. For work you hand in, confirm the result in <a href="/start/tools/#sccharts-lab-for-vs-code">SCCharts Lab</a> or KIELER. <a href="/reference/about/">About the simulator</a></span>
+		<span class="sc-pg-trust__short">The guide's own simulator, not KIELER. <a href="/reference/about/">How it is checked</a></span>
+	</p>
+	<div class="sc-pg not-content" data-sc-playground data-tab="code" data-pagefind-ignore="all">
+		<script is:inline>document.currentScript.parentElement.setAttribute('data-pg-js', '')</script>
+		<script type="application/json" data-pg-data set:html={data} />
+		<div class="sc-pg__bar">
+			<details class="sc-pg-pop sc-pg-pop--examples" data-pg-examples>
+				<summary class="sc-btn sc-btn--sm sc-btn--quiet">
+					<Fragment set:html={pgIcons.examples} /><span>Examples</span><Fragment set:html={pgIcons.chevron} />
+				</summary>
+				<div class="sc-pg-pop__panel sc-pg-examples" role="group" aria-label="Examples">
+					<label class="sc-pg-examples__filter">
+						<Fragment set:html={pgIcons.search} />
+						<span class="sc-visually-hidden">Filter the examples</span>
+						<input type="search" placeholder={`Filter ${items.length} charts`} data-pg-filter autocomplete="off" spellcheck="false" />
+					</label>
+					<div class="sc-pg-examples__list" data-pg-list>
+						{
+							groups.map((g) => (
+								<section class="sc-pg-examples__group" data-group={g.id}>
+									<h2>{g.label}</h2>
+									{g.pages.map((p) => (
+										<div class="sc-pg-examples__page" data-page-title={p.slug ? p.title : g.id === 'showcase' ? 'Showcase' : undefined} data-page-href={p.href}>
+											{p.slug && <h3>{p.title}</h3>}
+											<ul>
+												{p.items.map((i) => (
+													<li>
+														<a href={`/playground/?example=${i.id}`} data-example={i.id}>
+															<span class="sc-pg-examples__name">{i.title}</span>
+															{i.blurb ? <span class="sc-pg-examples__blurb">{i.blurb}</span> : <span class="sc-pg-examples__file">{i.file}.sctx</span>}
+															{tag(i) && <span class={`sc-pg-examples__tag is-${tag(i)!.toLowerCase()}`}>{tag(i)}</span>}
+														</a>
+													</li>
+												))}
+											</ul>
+										</div>
+									))}
+								</section>
+							))
+						}
+						<p class="sc-pg-examples__none" data-pg-none hidden>No chart matches.</p>
+					</div>
+				</div>
+			</details>
+
+			<p class="sc-pg__title" data-pg-title>
+				<span class="sc-pg__title-name" data-pg-title-name>{defaultTitle}</span>
+				<a class="sc-pg__title-page" data-pg-title-page hidden></a>
+				<span class="sc-pg__edited" data-pg-title-edited hidden>edited</span>
+			</p>
+
+			<details class="sc-pg-pop sc-pg-pop--compare" data-pg-compare hidden>
+				<summary class="sc-btn sc-btn--sm sc-pg__compare" title="Run your chart on the model solution's test inputs and compare the outputs">
+					<Fragment set:html={pgIcons.compare} /><span class="sc-pg__compare-long">Compare with the model solution</span><span class="sc-pg__compare-short" aria-hidden="true">Compare</span><Fragment set:html={pgIcons.chevron} />
+				</summary>
+				<div class="sc-pg-pop__panel sc-pg-compare" role="group" aria-label="Comparison with the model solution" data-pg-compare-panel></div>
+			</details>
+			
+			<div class="sc-pg__actions" role="group" aria-label="File">
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-pg__act" data-action="restore" hidden title="Go back to the chart as it was loaded">
+					<Fragment set:html={pgIcons.undo} /><span>Revert</span>
+				</button>
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-pg__act" data-action="new" title="Start a new chart">
+					<Fragment set:html={pgIcons.new} /><span>New</span>
+				</button>
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-pg__act" data-action="open" title="Open a .sctx file">
+					<Fragment set:html={pgIcons.open} /><span>Open</span>
+				</button>
+				<input type="file" accept=".sctx,.sct,text/plain" data-pg-file hidden />
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-pg__act" data-action="download" title="Download the chart as a .sctx file">
+					<Fragment set:html={pgIcons.download} /><span>Download</span>
+				</button>
+				<button type="button" class="sc-btn sc-btn--sm sc-pg__act" data-action="share" title="Copy a link that contains this chart">
+					<Fragment set:html={pgIcons.link} /><span>Copy link</span>
+				</button>
+				<details class="sc-pg-pop sc-pg-pop--help" data-pg-help>
+					<summary class="sc-btn sc-btn--sm sc-btn--quiet sc-btn--icon" aria-label="Help and keyboard shortcuts" title="Help and keyboard shortcuts (?)">
+						<Fragment set:html={pgIcons.help} />
+					</summary>
+					<div class="sc-pg-pop__panel sc-pg-help">
+						<h2>About the simulator</h2>
+						<p>The playground runs the guide's own reimplementation of KIELER's compiler and simulator, checked against KIELER. For work you hand in, confirm the result in <a href="/start/tools/#sccharts-lab-for-vs-code">SCCharts Lab</a> or KIELER. <a href="/reference/about/">More about the simulator</a></p>
+						<h2>Keyboard shortcuts</h2>
+						<dl>
+							{
+								shortcuts.map(([keys, what]) => (
+									<div>
+										<dt>
+											{keys.map((k, n) => (
+												<>
+													{n > 0 && <span class="sc-pg-help__join">{keys[0] === 'Esc' ? 'then' : '+'}</span>}
+													<kbd data-mod={k === 'Mod' ? '' : undefined}>{k === 'Mod' ? 'Ctrl' : k}</kbd>
+												</>
+											))}
+										</dt>
+										<dd>{what}</dd>
+									</div>
+								))
+							}
+						</dl>
+						<h2>In the diagram</h2>
+						<p>Drag to pan; Ctrl and the mouse wheel, or a pinch, zoom. With the diagram focused: the arrow keys pan, <kbd>+</kbd> and <kbd>−</kbd> zoom, <kbd>0</kbd> fits, <kbd>1</kbd> shows it at 100 %. The picture button downloads the diagram as an SVG file, in the light colours, for a report or a slide.</p>
+						<p>Press <kbd>Tab</kbd> once more to reach the chart's states and transitions: the arrow keys move between them in the order they are written, and <kbd>Enter</kbd> finds one in the source.</p>
+						<p>Click a state or a transition to find it in the source; the element under the cursor in the editor is outlined in the diagram. Hover over a name or a keyword in the editor to see what it is.</p>
+						<p>The list button shows the chart as an outline, every region, state and transition, for the keyboard and screen readers: moving through it marks the element in the diagram, and Enter selects its source.</p>
+						<h2>In the simulation</h2>
+						<p><b>Variables</b> chooses what the timing diagram shows; the playground remembers it for each chart. Under the check boxes, <b>Watch</b> shows the value of an expression over the chart's inputs, outputs and variables in the tick shown (<code class="sc-nobr">count &gt;= 3 &amp;&amp; !done</code>, <code class="sc-nobr">pre(x) != x</code>; a variable of an inner state as <code class="sc-nobr">Outer.count</code>, a member as <code class="sc-nobr">home.count</code>, an enum value as <code class="sc-nobr">Speed.HIGH</code>), and <b>Run until</b> steps until the watch holds or a state is active (at most 1000 ticks). <b>Copy link to this run</b> copies a link with the inputs of every tick you ran: whoever opens it can step through the same run.</p>
+						<h2>When a chart misbehaves</h2>
+						<p><a href="/reference/troubleshooting/">Troubleshooting</a> goes from what you see (a transition that fires a tick late, an output that stays true, a chart that never terminates) to its cause and the fix. <a href="/reference/errors/">Compiler messages</a> explains each error and warning; every problem in the list under the editor links to its entry.</p>
+					</div>
+				</details>
+			</div>
+			<script type="application/json" data-pg-exercises set:html={json(exercises)} />
+			<section class="sc-pg-task" data-pg-task aria-labelledby="sc-pg-task-title" hidden>
+				<h2 class="sc-pg-task__head">
+					<button type="button" class="sc-pg-task__toggle" id="sc-pg-task-title" data-pg-task-toggle aria-expanded="true" aria-controls="sc-pg-task-body">
+						<Fragment set:html={pgIcons.chevron} /><span class="sc-pg-task__kind">Exercise</span><span class="sc-pg-task__title" data-pg-task-title></span>
+					</button>
+				</h2>
+				<p class="sc-pg-task__starter" data-pg-task-starter hidden>This is still the starter</p>
+				<a class="sc-pg-task__back" data-pg-task-back>Back to <span data-pg-task-page></span></a>
+				<div class="sc-pg-task__body" id="sc-pg-task-body" role="group" aria-labelledby="sc-pg-task-title" data-pg-task-text></div>
+			</section>
+			{/* A TryIt link's task, filled in while the page is parsed, so that nothing moves when the app comes (app.ts,
+			    showTask, does the same later: exerciseFor in exercises.ts). */}
+			<script is:inline>
+				;(() => {
+					const box = document.currentScript.previousElementSibling
+					try {
+						const q = new URLSearchParams(location.search)
+						const id = (s) => (s || '').trim().replace(/^\/+/, '').replace(/^src\/examples\//, '').replace(/\.sctx$/, '')
+						const sol = id(q.get('solution'))
+						if (!sol) return
+						const all = JSON.parse(box.previousElementSibling.textContent)
+						const e = all.find((x) => x.starter === id(q.get('example')) && x.solution === sol) || all.find((x) => x.solution === sol)
+						if (!e) return
+						const $ = (k) => box.querySelector(`[data-pg-task-${k}]`)
+						$('title').textContent = e.title
+						$('text').innerHTML = e.task
+						$('page').textContent = e.page
+						$('back').href = e.href
+						let open = !matchMedia('(max-width: 40rem)').matches
+						try {
+							const saved = localStorage.getItem('sccharts-guide:playground:task-open')
+							if (saved) open = saved === 'open'
+						} catch {}
+						$('toggle').setAttribute('aria-expanded', String(open))
+						box.classList.toggle('is-open', open)
+						$('text').hidden = !open
+						box.hidden = false
+						if (e.compare) box.parentElement.querySelector('[data-pg-compare]').hidden = false
+					} catch {}
+				})()
+			</script>
+		</div>
+
+		<div class="sc-pg__tabs" role="tablist" aria-label="Playground view" data-pg-tabs>
+			<button type="button" role="tab" data-tab="code" aria-selected="true" aria-controls="sc-pg-editor-panel">Code</button>
+			<button type="button" role="tab" data-tab="diagram" aria-selected="false" tabindex="-1" aria-controls="sc-pg-diagram-panel">Diagram</button>
+			<button type="button" role="tab" data-tab="sim" aria-selected="false" tabindex="-1" aria-controls="sc-pg-sim-panel">Simulate</button>
+		</div>
+
+		<div class="sc-pg__grid" data-pg-grid>
+			<section class="sc-pg__panel sc-pg__panel--editor" id="sc-pg-editor-panel" aria-labelledby="sc-pg-editor">
+				<header class="sc-pg__head">
+					<span class="sc-pg__glyph" aria-hidden="true"></span>
+					<h2 id="sc-pg-editor">Editor</h2>
+					<span class="sc-pg__meta" data-pg-cursor></span>
+				</header>
+				<div class="sc-pg__body sc-pg__body--editor" data-pg-editor>
+					<pre class="sc-pg-static" data-pg-static><code>{lines.map((l, i) => <span class="sc-pg-static__line"><span class="sc-pg-static__no" aria-hidden="true">{i + 1}</span><span class="sc-pg-static__text" set:html={l || ' '} /></span>)}</code></pre>
+				</div>
+				<footer class="sc-pg__problems" data-pg-problems data-state="pending">
+					<button type="button" class="sc-pg__problems-toggle" data-pg-problems-toggle aria-expanded="false" aria-controls="sc-pg-problems-list" aria-disabled="true">
+						<span class="sc-pg__problems-dot" aria-hidden="true"></span>
+						<span class="sc-pg__problems-summary" data-pg-problems-summary><span class="sc-pg__if-js">Loading the compiler</span><span class="sc-pg__if-nojs">The editor, the live diagram and the simulator need JavaScript.</span></span>
+					</button>
+					<ul class="sc-pg__problems-list" id="sc-pg-problems-list" data-pg-problems-list hidden></ul>
+				</footer>
+			</section>
+
+			<div class="sc-pg__split" data-pg-split role="separator" aria-orientation="vertical" aria-label="Resize the editor and the diagram" aria-controls="sc-pg-editor-panel" aria-valuemin="20" aria-valuemax="80" aria-valuenow="48" tabindex="0"></div>
+
+			<section class="sc-pg__panel sc-pg__panel--diagram" id="sc-pg-diagram-panel" aria-labelledby="sc-pg-diagram" data-pg-diagram>
+				<header class="sc-pg__head">
+					<span class="sc-pg__glyph" aria-hidden="true"></span>
+					<h2 id="sc-pg-diagram">Diagram</h2>
+					<span class="sc-pg__meta sc-pg__chart" data-pg-chart-name>{compiled.chart?.name}</span>
+					<select class="sc-pg__chart-select" data-pg-chart hidden aria-label="The chart to show and simulate"></select>
+					<div class="sc-pg__zoom" role="group" aria-label="Zoom">
+						<button type="button" class="sc-pg__tool" data-action="zoom-out" aria-label="Zoom out" title="Zoom out (−)"><Fragment set:html={pgIcons.zoomOut} /></button>
+						<button type="button" class="sc-pg__tool sc-pg__zoom-level" data-action="zoom-reset" data-pg-zoom title="Show at 100 % (1)">100 %</button>
+						<button type="button" class="sc-pg__tool" data-action="zoom-in" aria-label="Zoom in" title="Zoom in (+)"><Fragment set:html={pgIcons.zoomIn} /></button>
+						<button type="button" class="sc-pg__tool" data-action="fit" aria-label="Fit the whole diagram" title="Fit the whole diagram (0)"><Fragment set:html={pgIcons.fit} /></button>
+						<button type="button" class="sc-pg__tool" data-action="outline" aria-label="Outline of the chart" title="Outline: the chart as a list" aria-expanded="false" aria-controls="sc-pg-outline"><Fragment set:html={pgIcons.outline} /></button>
+						<button type="button" class="sc-pg__tool" data-action="export-svg" aria-label="Download the diagram as SVG" title="Download the diagram (SVG)"><Fragment set:html={pgIcons.image} /></button>
+					</div>
+				</header>
+				<nav class="sc-pg-outline" id="sc-pg-outline" data-pg-outline aria-label="Outline of the chart" hidden></nav>
+				<div class="sc-pg__body sc-pg__stage" data-pg-stage role="region" aria-roledescription="diagram" aria-label="Diagram. Arrow keys pan, plus and minus zoom, 0 fits it; drag to pan, Ctrl and the mouse wheel or a pinch zoom. The outline button lists its elements.">
+					<div class="sc-pg__static-diagram" data-pg-static-diagram set:html={diagramSvg} />
+					<span class="sc-pg__keys" id="sc-pg-diagram-keys" data-pg-diagram-keys hidden>Use the arrow keys to move between its states and transitions; Enter finds one in the source.</span>
+					<p class="sc-pg__badge" data-pg-badge hidden>Showing the last diagram that parsed</p>
+					<p class="sc-pg__busy" data-pg-busy hidden>Drawing the diagram</p>
+					<p class="sc-pg__empty" data-pg-empty hidden><span>There is no <code>scchart</code> to draw yet.</span></p>
+				</div>
+			</section>
+
+			<div class="sc-pg__hsplit" data-pg-hsplit role="separator" aria-orientation="horizontal" aria-label="Resize the simulation (Enter fits it to its content)" title="Drag to resize the simulation; double-click to fit it to its content" aria-controls="sc-pg-sim-panel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" tabindex="0"></div>
+
+			<section class="sc-pg__panel sc-pg__panel--sim" id="sc-pg-sim-panel" aria-labelledby="sc-pg-sim" data-pg-sim-panel>
+				<header class="sc-pg__head">
+					<span class="sc-pg__glyph is-sim" aria-hidden="true"></span>
+					<h2 id="sc-pg-sim">Simulation</h2>
+					<div class="sc-pg__mode" role="group" aria-label="How to run the example" data-pg-mode hidden>
+						<button type="button" data-mode="tour" aria-pressed="false" title="Step through the example's scripted inputs, with notes">Guided tour</button>
+						<button type="button" data-mode="free" aria-pressed="true" title="Set the inputs yourself">Free play</button>
+					</div>
+					<p class="sc-pg__sim-note" data-pg-sim-note hidden></p>
+					<button type="button" class="sc-btn sc-btn--sm sc-pg__rebuild" data-action="rebuild" hidden>
+						<Fragment set:html={pgIcons.rebuild} /><span>Rebuild</span>
+					</button>
+					<div class="sc-pg__simtools" role="group" aria-label="Simulation tools">
+						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-pg__simtool" data-pg-vars-toggle aria-expanded="false" aria-controls="sc-pg-vars" title="Choose the variables the timing diagram shows; watch an expression and run until it holds">
+							<Fragment set:html={pgIcons.variables} /><span class="sc-pg__simtool-label">Variables</span><span class="sc-pg__vars-count" data-pg-vars-count></span><span class="sc-visually-hidden"> shown in the timing diagram</span>
+						</button>
+						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-pg__simtool" data-action="share-run" aria-disabled="true" title="Run the chart first: the link replays the ticks you run">
+							<Fragment set:html={pgIcons.link} /><span class="sc-pg__simtool-label">Copy link to this run</span>
+						</button>
+					</div>
+				</header>
+				<div class="sc-pg-vars" id="sc-pg-vars" data-pg-vars hidden>
+					<div class="sc-pg-vars__list" data-pg-vars-list role="group" aria-label="Variables in the timing diagram"></div>
+					<div class="sc-pg-watch" role="group" aria-label="Watch and run until">
+						<label class="sc-pg-watch__label" for="sc-pg-watch-input">Watch</label>
+						<input class="sc-pg-watch__input" id="sc-pg-watch-input" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="an expression, e.g. count >= 3" aria-describedby="sc-pg-watch-value" data-pg-watch-input />
+						<span class="sc-pg-watch__value" id="sc-pg-watch-value" data-pg-watch-value></span>
+						<span class="sc-pg-watch__until">
+							<label for="sc-pg-until">Run until</label>
+							<select id="sc-pg-until" data-pg-until></select>
+							<button type="button" class="sc-btn sc-btn--sm" data-pg-until-run>Run</button>
+						</span>
+					</div>
+				</div>
+				<div class="sc-pg__sim" data-pg-sim>
+					<div class="sc-pg__sim-placeholder">
+						<SimControls inputs={iface} note="" />
+						<p class="sc-simctl__note"><span class="sc-pg__if-js">Loading the simulator.</span><span class="sc-pg__if-nojs">Turn on JavaScript to run the chart.</span></p>
+					</div>
+				</div>
+			</section>
+		</div>
+		<div class="sc-pg__toast" data-pg-toast role="status" hidden></div>
+	</div>
+</StarlightPage>
+
+<script>
+	import { bootPage } from '../components/playground/boot'
+	bootPage()
+</script>

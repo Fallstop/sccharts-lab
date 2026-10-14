@@ -1,0 +1,21 @@
+scchart SharedCounter {
+  input bool left, right
+  output int total = 0
+  class Counter {
+    private int count = 0
+    void add() { count++ }
+    int get() { return count }
+  } c
+
+  region Left:
+  initial state WaitLeft
+    if left do c.add() go to WaitLeft
+
+  region Right:
+  initial state WaitRight
+    if right do c.add() go to WaitRight
+
+  region Show:
+  initial state Copy
+    do total = c.get() go to Copy
+}

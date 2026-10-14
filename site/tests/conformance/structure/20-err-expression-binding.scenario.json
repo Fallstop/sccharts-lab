@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "No editor diagnostic, but compiling fails: \"A binding for the valued object reference \"second\" exists, but the type \"...OperatorExpressionImpl\" is not supported.\""
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "is not supported"
+}

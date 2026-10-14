@@ -1,0 +1,92 @@
+{
+  "hash": "6bddbe64edd899fa4b0260f8c77c326865cfd862",
+  "chart": "tests/conformance/preemption/20-immediate-strong-abort-entry-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chained": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "effect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerExit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerExit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "chained": 0,
+        "effect": 1,
+        "innerEntry": 1,
+        "innerExit": 1,
+        "outerEntry": 1,
+        "outerExit": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": true,
+        "chained": 0,
+        "effect": 1,
+        "innerEntry": 1,
+        "innerExit": 1,
+        "outerEntry": 1,
+        "outerExit": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

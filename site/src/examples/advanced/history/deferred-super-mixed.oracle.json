@@ -1,0 +1,134 @@
+{
+  "hash": "b29f31ada47f5ec9d58bff76d9bec057d6d5f34b",
+  "chart": "src/examples/advanced/history/deferred-super-mixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "rush": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "walk": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "walk": false,
+        "rush": false
+      },
+      "values": {
+        "rush": false,
+        "walk": false,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "walk": true
+      },
+      "values": {
+        "rush": false,
+        "walk": true,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "rush": false,
+        "walk": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "rush": false,
+        "walk": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "rush": false,
+        "walk": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

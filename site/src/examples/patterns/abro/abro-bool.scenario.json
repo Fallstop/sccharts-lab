@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `ABO`; its entry action sets `O = false`." },
+    { "inputs": { "A": true }, "note": "`A` is true: `HandleA` finishes." },
+    { "inputs": { "A": false, "B": true }, "note": "`B` is true: `HandleB` finishes, the join fires and its effect sets `O = true`." },
+    { "inputs": { "B": false }, "note": "`O` is a variable, so it keeps the value it was given: it stays true." },
+    { "inputs": { "R": true }, "note": "`R`: the strong abort re-enters `ABO`, and the entry action sets `O = false` again." },
+    { "inputs": { "R": false, "A": true, "B": true }, "note": "Both in one tick: `O = true`." },
+    { "inputs": { "A": false, "B": false }, "note": "`O` stays true until the next `R`." }
+  ],
+  "expect": "ok"
+}

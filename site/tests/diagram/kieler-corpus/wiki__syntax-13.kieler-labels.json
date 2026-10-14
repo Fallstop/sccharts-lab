@@ -1,0 +1,210 @@
+{
+ "sourceHash": "24eff02df4890b48",
+ "states": [
+  {
+   "path": [
+    "Actions"
+   ],
+   "rows": [
+    [
+     "Actions"
+    ],
+    [
+     "input bool ",
+     "trigger"
+    ],
+    [
+     "output int ",
+     "effect"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    323.6,
+    367.7
+   ]
+  },
+  {
+   "path": [
+    "Actions",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    10,
+    130.6,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Actions",
+    0,
+    "B"
+   ],
+   "rows": [
+    [
+     "B"
+    ],
+    [
+     "entry ",
+     "/ effect = 0"
+    ],
+    [
+     "entry ",
+     "trigger ",
+     "/ effect++"
+    ],
+    [
+     "during ",
+     "trigger ",
+     "/ effect++"
+    ],
+    [
+     "immediate during ",
+     "trigger ",
+     "/ effect++"
+    ],
+    [
+     "exit ",
+     "trigger ",
+     "/ effect *= 10"
+    ]
+   ],
+   "box": [
+    64,
+    10,
+    235.6,
+    275.7
+   ]
+  },
+  {
+   "path": [
+    "Actions",
+    0,
+    "B",
+    0,
+    "B1"
+   ],
+   "rows": [
+    [
+     "B1"
+    ]
+   ],
+   "box": [
+    93.7,
+    10,
+    35.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Actions",
+    0,
+    "B",
+    0,
+    "B2"
+   ],
+   "rows": [
+    [
+     "B2"
+    ]
+   ],
+   "box": [
+    91.7,
+    108.1,
+    39.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Actions",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    309.6,
+    295.7
+   ]
+  },
+  {
+   "path": [
+    "Actions",
+    0,
+    "B",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    7,
+    117,
+    222.2,
+    152.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NActions$$N0$NB$$N0$NB1$EB20",
+   "source": [
+    "Actions",
+    0,
+    "B",
+    0,
+    "B1"
+   ],
+   "target": [
+    "Actions",
+    0,
+    "B",
+    0,
+    "B2"
+   ],
+   "text": "trigger",
+   "lines": [
+    "trigger"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NActions$$N0$NA$EB0",
+   "source": [
+    "Actions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Actions",
+    0,
+    "B"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

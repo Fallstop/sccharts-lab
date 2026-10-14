@@ -1,0 +1,12 @@
+scchart LocalReinit {
+  input bool r
+  output int seenC, seenD
+
+  initial state S {
+    int c = 5
+    int d
+    initial state A
+    do c++; d++; seenC = c; seenD = d go to A
+  }
+  if r go to S
+}

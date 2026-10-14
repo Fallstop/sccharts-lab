@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "clear": false, "north": false, "south": false }, "note": "Tick 1 enters the initial state of all four regions. `inside` starts at 0." },
+    { "inputs": { "north": true }, "note": "Someone comes in through the north door: `North` adds one, `inside` is 1." },
+    { "inputs": { "north": false, "south": true }, "note": "Someone comes in through the south door: 2." },
+    { "inputs": { "north": true }, "note": "Both doors at once (`south` is still true). `North` and `South` both update `inside` in this tick, and both updates count: 2 + 1 + 1 = 4. `Display` reads `inside` only after both updates, sees 4 and reports a crowd, in the same tick." },
+    { "inputs": { "clear": true }, "note": "`clear`, `north` and `south` all at once. `Clear` sets `inside = 0` first (an absolute write), then the two updates add 1 each, then `Display` reads the result: 2, so it goes back to `Calm`. The order of the regions in the file plays no part." },
+    { "inputs": { "clear": false, "north": false, "south": false }, "note": "Quiet again: `inside` stays 2." }
+  ],
+  "expect": "ok"
+}

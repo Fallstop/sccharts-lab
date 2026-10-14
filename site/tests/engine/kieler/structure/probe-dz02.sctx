@@ -1,0 +1,21 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz02 {
+  input int v[3]
+  output int s = 0, m = 0
+  int k = 5
+  region { initial state R1 is Dz02Sum(v, s) }
+  region { initial state R2 is Dz02Cell(v[2], m) }
+}
+scchart Dz02Sum {
+  input int a[3]
+  output int out
+  int k = 1
+  initial state S
+  do out = a[0] + a[1] * k + a[2]; k++ go to S
+}
+scchart Dz02Cell {
+  input int x
+  output int y = 7
+  initial state S
+  do y = x * 10 go to S
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "walk": false }, "note": "Tick 1 enters `Outside`." },
+    { "inputs": { "walk": true }, "note": "`go to Hall deferred`: `Hall` is entered quietly. No chime, and its immediate transition waits." },
+    { "inputs": { "walk": false }, "note": "One tick later the immediate transition fires (`steps` = 1). The entry action never runs for this visit (`chimes` stays 0)." },
+    { "note": "In `Room`." }
+  ],
+  "expect": "ok"
+}

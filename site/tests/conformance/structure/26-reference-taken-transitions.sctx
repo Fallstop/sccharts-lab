@@ -1,0 +1,18 @@
+// The simulator's taken-transition counters cover only the transitions written in the simulated chart, not the
+// ones inside referenced charts (KIELER numbers them before expanding references). Here: [Start -> R, R -> Done].
+scchart St26Main {
+  input bool A
+  output bool X = false
+  initial state Start
+  if A go to R
+  state R is St26Sub(X)
+  if X go to Done
+  state Done
+}
+
+scchart St26Sub {
+  output bool o
+  initial state S
+  do o = true go to T
+  state T
+}

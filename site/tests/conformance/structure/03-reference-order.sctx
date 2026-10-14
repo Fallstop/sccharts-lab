@@ -1,0 +1,16 @@
+// Positional (order) bindings: the arguments bind to the referenced chart's inputs and outputs in the order
+// they are declared there (second, then beep). Names need not match.
+scchart St03Main {
+  input bool tick
+  output bool led
+  initial state R is St03Beep(tick, led)
+}
+
+scchart St03Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

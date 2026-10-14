@@ -1,0 +1,16 @@
+{
+  "hash": "2a7fbdb7de697811db6c072bd5c6019e4b3ff87a",
+  "chart": "tests/conformance/structure/80-err-hostcode-definition-in-header.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "redefinition of ‘twice’",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name tw is contained in the model but not in VariableStore.",
+    "‘twice’ defined but not used [-Wunused-function]",
+    "‘twice’ defined but not used [-Wunused-function]"
+  ],
+  "ticks": []
+}

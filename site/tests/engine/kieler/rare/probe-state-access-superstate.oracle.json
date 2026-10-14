@@ -1,0 +1,104 @@
+{
+  "hash": "9277999088bef5d964cb5f32f25bca2b6efed046",
+  "chart": "tests/engine/kieler/rare/probe-state-access-superstate.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "step": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "step": false
+      },
+      "values": {
+        "step": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "step": true
+      },
+      "values": {
+        "step": true,
+        "n": 1
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "step": false
+      },
+      "values": {
+        "step": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "step": true
+      },
+      "values": {
+        "step": true,
+        "n": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "step": false
+      },
+      "values": {
+        "step": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

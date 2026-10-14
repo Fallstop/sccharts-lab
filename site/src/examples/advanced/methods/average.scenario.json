@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "samples": [1, 2, 3, 4] }, "note": "Tick 1 enters `Measure`; the self-loop is delayed, so `sum()` has not been called yet." },
+    { "inputs": { "samples": [10, 20, 30, 41] }, "note": "`sum()` adds the four elements in one call: `total` is 101. `mean` is 101 / 4 = 25: integer division drops the fraction." },
+    { "inputs": { "samples": [0, 0, 0, -8] }, "note": "`total` is −8, `mean` −2." }
+  ],
+  "expect": "ok"
+}

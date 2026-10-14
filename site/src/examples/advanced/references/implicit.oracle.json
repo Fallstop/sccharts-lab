@@ -1,0 +1,66 @@
+{
+  "hash": "505ea6cc7e2f5ca42118405ffd41453f376481b3",
+  "chart": "src/examples/advanced/references/implicit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Valued Objects are bound implicitly!\npress, lit, ",
+      "line": 5,
+      "column": 27,
+      "code": "Valued Objects are bound implicitly!\npress, lit, "
+    }
+  ],
+  "interface": {
+    "press": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lit": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "lit": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "lit": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "lit": true
+      },
+      "terminated": false
+    }
+  ]
+}

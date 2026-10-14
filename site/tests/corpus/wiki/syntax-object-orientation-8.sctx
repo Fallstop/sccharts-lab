@@ -1,0 +1,27 @@
+scchart CodeEffects {
+  output int O[3]
+  
+  entry do {
+    O[0] = 1;
+    O[1] = 2;
+    O[2] = 3;
+  }
+  
+  initial state A {
+    int i = 1
+    during do {
+      O[0]++;
+      O[1] += 2;
+      O[2] *= i;
+    }
+  }
+  if O[0] > 5 
+  do {
+    O[0]++;
+    if (O[2] > 10) {
+      O[2] *= 10;
+    }
+  } go to B
+  
+  final state B
+}

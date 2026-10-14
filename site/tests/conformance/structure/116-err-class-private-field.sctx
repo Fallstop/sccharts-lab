@@ -1,0 +1,12 @@
+// A private field cannot be used outside the class.
+scchart St116PrivateField {
+  class C {
+    private int v
+    int get() {
+      return v
+    }
+  } c
+  output int o = 0
+  initial state A
+  do c.v = 3; o = c.get() go to A
+}

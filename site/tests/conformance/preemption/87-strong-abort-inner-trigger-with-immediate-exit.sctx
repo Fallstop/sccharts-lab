@@ -1,0 +1,17 @@
+scchart StrongTriggerCycle {
+  input bool A, W
+  output bool flag = false
+  output int inner = 0, effect = 0
+
+  initial state M {
+    initial state I1
+    if A do flag = true; inner = 1 go to I2
+
+    state I2
+  }
+  if flag do effect = 1 abort to Done
+  immediate if W go to Other
+
+  state Done
+  state Other
+}

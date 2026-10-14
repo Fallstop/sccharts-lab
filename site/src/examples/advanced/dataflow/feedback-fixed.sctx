@@ -1,0 +1,9 @@
+scchart FeedbackFixed {
+  input int I
+  output int X, Y
+
+  dataflow {
+    X = pre(Y) + I
+    Y = X
+  }
+}

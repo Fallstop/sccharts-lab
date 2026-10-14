@@ -1,0 +1,35 @@
+// Two states of a referenced chart whose immediate transitions without trigger lead to each other: there they have no
+// take counters, so Surface/Depth merges one into the other and drops the resulting self-loop. KIELER accepts the
+// chart (with its immediate-loop warning); the region has no code, so the dependency analysis stops there
+// (probe-reference-dependency-stop) and Read sees x one tick late.
+scchart St159SilentCycle {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  region Read {
+    initial state Check
+    if x > 0 do y += 1 go to Check
+  }
+  region Write {
+    initial state Set
+    if a do x += 1 go to Set
+  }
+  region Ref {
+    initial state I is St159Sub(b, z)
+  }
+}
+
+scchart St159Sub {
+  input bool p
+  output int o = 0
+  initial state Wait
+  go to Busy
+  state Busy {
+    region {
+      initial state Spin
+      immediate go to Spin2
+      state Spin2
+      immediate go to Spin
+    }
+  }
+  if p go to Wait
+}

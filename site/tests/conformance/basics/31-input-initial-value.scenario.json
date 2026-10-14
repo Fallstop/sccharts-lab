@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"J": 3}, "note": "An input's initialiser is the value it has before the environment first sets it. I and B are not supplied, so they keep 42 and true; J is supplied (3), which overrides its initialiser. (This is the netlist compiler; the priority-based compiler runs input initialisers after reading the tick-1 inputs, so there J = 42: see input-initial-value-priority.)"},
+    {"inputs": {}, "note": "The self-loop copies them: x = 42, y = 3, b = true."},
+    {"inputs": {"I": 1, "B": false}, "note": "Once supplied, the environment's values win: x = 1, b = false."}
+  ],
+  "inputsLeftUnset": ["I", "B"],
+  "expect": "ok"
+}

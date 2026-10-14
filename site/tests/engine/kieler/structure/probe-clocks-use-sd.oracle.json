@@ -1,0 +1,398 @@
+{
+  "hash": "370897fbe1df961d0020176dc42eb0fbeaf98615",
+  "chart": "tests/engine/kieler/structure/probe-clocks-use-sd.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on t.",
+    "Potential instantaneous loop through the timed transitions on t.",
+    "ValuedObject with name tSD is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "poke": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "zero": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 50
+      },
+      "values": {
+        "deltaT": 50,
+        "poke": false,
+        "zero": false,
+        "a": 0,
+        "b": 0,
+        "sleepT": 300,
+        "t": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "poke": false,
+        "zero": false,
+        "a": 0,
+        "b": 0,
+        "sleepT": 200,
+        "t": 100
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 50
+      },
+      "values": {
+        "deltaT": 50,
+        "poke": false,
+        "zero": false,
+        "a": 0,
+        "b": 0,
+        "sleepT": 150,
+        "t": 150
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "poke": false,
+        "zero": false,
+        "a": 1,
+        "b": 0,
+        "sleepT": 100,
+        "t": 400
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 50
+      },
+      "values": {
+        "deltaT": 50,
+        "poke": false,
+        "zero": false,
+        "a": 2,
+        "b": 0,
+        "sleepT": 50,
+        "t": 450
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "poke": false,
+        "zero": false,
+        "a": 3,
+        "b": 1,
+        "sleepT": 1000,
+        "t": 550
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "poke": false,
+        "zero": false,
+        "a": 4,
+        "b": 2,
+        "sleepT": 1000,
+        "t": 650
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "zero": false,
+        "poke": true,
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "poke": true,
+        "zero": false,
+        "a": 5,
+        "b": 3,
+        "sleepT": 1000,
+        "t": 900
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "zero": true,
+        "poke": true,
+        "deltaT": 50
+      },
+      "values": {
+        "deltaT": 50,
+        "poke": true,
+        "zero": true,
+        "a": 6,
+        "b": 3,
+        "sleepT": 1000,
+        "t": 950
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "poke": false,
+        "zero": false,
+        "a": 7,
+        "b": 3,
+        "sleepT": 1000,
+        "t": 1050
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "poke": false,
+        "zero": false,
+        "a": 8,
+        "b": 3,
+        "sleepT": 1000,
+        "t": 1150
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "poke": false,
+        "zero": false,
+        "a": 9,
+        "b": 3,
+        "sleepT": 1000,
+        "t": 1250
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "zero": true,
+        "poke": false,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "poke": false,
+        "zero": true,
+        "a": 10,
+        "b": 3,
+        "sleepT": 1000,
+        "t": 1350
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "zero": false,
+        "poke": false,
+        "deltaT": 150
+      },
+      "values": {
+        "deltaT": 150,
+        "poke": false,
+        "zero": false,
+        "a": 11,
+        "b": 3,
+        "sleepT": 1000,
+        "t": 1500
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

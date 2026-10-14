@@ -1,0 +1,10 @@
+// The trigger of a during action: ov[n] > 0 || a holds.
+scchart IdxDuring {
+  input int n
+  input bool a
+  output int y = 0
+  output int ov[2] = {0, 0}
+  initial state A {
+    during if ov[n] > 0 || a do y++
+  }
+}

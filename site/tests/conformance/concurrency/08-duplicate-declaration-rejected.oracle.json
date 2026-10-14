@@ -1,0 +1,23 @@
+{
+  "hash": "23c13ca5ed6836d0829ad6d0ecbd243a35b4f353",
+  "chart": "tests/conformance/concurrency/08-duplicate-declaration-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "duplicate member ‘x’",
+    "duplicate member ‘x’",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "VariableStore contains ambiguous information for variables."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The variable is declared multiple times in this scope.",
+      "line": 3,
+      "column": 7
+    }
+  ],
+  "ticks": []
+}

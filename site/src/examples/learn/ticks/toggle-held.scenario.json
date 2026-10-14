@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1 enters `Off`; `light` is false."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "`button` goes true: `Off` to `On`, `light` is true."
+    },
+    {
+      "note": "`button` is still true. The chart cannot tell a held button from a new press: it sees `button` true while in `On`, so the transition out of `On` fires and `light` goes false."
+    },
+    {
+      "note": "Still true, so it flips again: `On`, `light` true."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released at last. Nothing fires, and the light happens to be on."
+    }
+  ],
+  "expect": "ok"
+}

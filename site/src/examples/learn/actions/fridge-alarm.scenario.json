@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false }, "note": "Tick 1 enters `Closed`." },
+    { "inputs": { "doorOpen": true }, "note": "The door opens. Entering `Open` runs its entry action (`lamp = true; openFor = 0`) and enters `Quiet`. The `during` action does not run in this tick: `Open` was only just entered." },
+    { "note": "`Open` was already active when this tick began, so its `during` action runs: `openFor` becomes 1." },
+    { "note": "`openFor` becomes 2." },
+    { "note": "`openFor` becomes 3. The during action and `Quiet`'s trigger run in the same tick, and the update comes first, so `openFor == 3` sees 3: `Quiet` to `Beeping` fires and `Beeping`'s entry action sets `beep`." },
+    { "note": "Still open: `openFor` is 4, and the fridge keeps beeping." },
+    { "inputs": { "doorOpen": false }, "note": "The door closes. `Open` is left by a `go to`, so its during action still runs in this tick (`openFor` is 5). Then the exit actions run from the inside out: `Beeping`'s (`beep = false`), then `Open`'s (`lamp = false`)." },
+    { "note": "In `Closed` nothing changes: `openFor` keeps its last value." }
+  ],
+  "expect": "ok"
+}

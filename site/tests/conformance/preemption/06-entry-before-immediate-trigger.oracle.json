@@ -1,0 +1,58 @@
+{
+  "hash": "46de4b7c3cf0ee842da9bf1858334438cc43e7f9",
+  "chart": "tests/conformance/preemption/06-entry-before-immediate-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "unused": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "left": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "ready": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "unused": false
+      },
+      "values": {
+        "unused": false,
+        "left": 1,
+        "ready": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "unused": false,
+        "left": 1,
+        "ready": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

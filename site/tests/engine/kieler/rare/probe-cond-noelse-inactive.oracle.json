@@ -1,0 +1,169 @@
+{
+  "hash": "b1418c1863a607cdc374176bbad8c61e00448e2a",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-inactive.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": false,
+        "a": false,
+        "start": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "start": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": true,
+        "a": true,
+        "start": false
+      },
+      "values": {
+        "a": true,
+        "c": true,
+        "start": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": false,
+        "a": false,
+        "start": true
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "start": true,
+        "n": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": false,
+        "a": false,
+        "start": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "start": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "c": false,
+        "a": false,
+        "start": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "start": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "c": false,
+        "a": false,
+        "start": true
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "start": true,
+        "n": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "c": false,
+        "a": false,
+        "start": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "start": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+scchart TwoButtons {
+  input bool rawA, rawB
+  output bool pressedA, pressedB
+
+  initial state Released
+    if rawA go to MaybePressed
+
+  state MaybePressed
+    if !rawA go to Released
+    if 2 rawA do pressedA = true go to Pressed
+
+  state Pressed
+    if !rawA go to MaybeReleased
+
+  state MaybeReleased
+    if rawA go to Pressed
+    if 2 !rawA do pressedA = false go to Released
+}

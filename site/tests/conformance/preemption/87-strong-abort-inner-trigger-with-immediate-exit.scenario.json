@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "W": false
+      },
+      "note": "Chart 23 plus an immediate weak abort. With a delayed strong abort *and* an immediate way out, KIELER reads the strong trigger in a separate control region and passes it to the inner regions through a flag. The inner region must then read the flag before it writes `flag`, and the control region must read `flag` after that write: a causality cycle. KIELER rejects the chart (*Circular dependency involving flag, inner prevents scheduling this tick.*)."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

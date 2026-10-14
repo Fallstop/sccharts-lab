@@ -1,0 +1,8 @@
+// The trigger of a during action.
+scchart CondNoElseDuring {
+  input bool c, a
+  output int n = 0
+  initial state S {
+    during if (c) ? a do n++
+  }
+}

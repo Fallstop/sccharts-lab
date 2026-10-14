@@ -1,0 +1,88 @@
+{
+  "hash": "e7264a41f870370fd2e793946d99dc2bf1c21ad0",
+  "chart": "src/examples/advanced/dataflow/changed-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "level": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "changed": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "differs": {
+      "type": "bool",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "level": 3
+      },
+      "values": {
+        "level": 3,
+        "changed": false,
+        "differs": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "level": 3
+      },
+      "values": {
+        "level": 3,
+        "changed": false,
+        "differs": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "level": 4
+      },
+      "values": {
+        "level": 4,
+        "changed": true,
+        "differs": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "level": 4
+      },
+      "values": {
+        "level": 4,
+        "changed": false,
+        "differs": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "level": 0
+      },
+      "values": {
+        "level": 0,
+        "changed": true,
+        "differs": true
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+scchart TwoTimersFixed {
+  output bool tea = false, egg = false
+
+  region {
+    clock t
+    initial state Steeping
+      if t >= 3000 do tea = true go to Ready
+    state Ready
+  }
+
+  region {
+    clock t
+    initial state Boiling
+      if t >= 5000 do egg = true go to Ready
+    state Ready
+  }
+}

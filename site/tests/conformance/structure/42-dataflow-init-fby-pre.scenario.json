@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": 5
+      },
+      "note": "First tick: **arrow = 0, followed = 0, arrowPre = 0, previous = 0** (pre ignores the initial value 7)."
+    },
+    {
+      "inputs": {
+        "I": 6
+      },
+      "note": "**arrow = 6** (current I), **followed = arrowPre = previous = 5** (previous I)."
+    },
+    {
+      "inputs": {
+        "I": 9
+      },
+      "note": "**arrow = 9, followed = arrowPre = previous = 6**."
+    }
+  ],
+  "expect": "ok"
+}

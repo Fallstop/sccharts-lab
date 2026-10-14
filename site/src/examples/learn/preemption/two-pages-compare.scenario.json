@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false, "cancel": false }, "note": "Tick 1 enters `Idle` in both charts." },
+    { "inputs": { "start": true }, "note": "`start`: both enter `Job`, at `First`." },
+    { "inputs": { "start": false, "sheet": true }, "note": "The first sheet: 1 on both sides." },
+    { "inputs": { "cancel": true }, "note": "The second sheet and `cancel` in the same tick. Both ways out are weak, so in both charts the inside runs first: the sheet is counted (2) and `Done` is reached. Each job has finished *and* been cancelled, and the transition written first wins: `TwoPages` emits `cancelled`, `TwoPagesJoinFirst` emits `finished`." },
+    { "inputs": { "cancel": false, "sheet": false }, "note": "Both idle." }
+  ],
+  "expect": "ok"
+}

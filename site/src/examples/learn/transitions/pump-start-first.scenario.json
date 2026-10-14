@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "fault": false
+      },
+      "note": "Tick 1 enters `Idle`."
+    },
+    {
+      "inputs": {
+        "start": true,
+        "fault": true
+      },
+      "note": "`start` and `fault` are both true. Transition 1 is `start`, so it wins: the pump starts, with a fault present."
+    },
+    {
+      "note": "Only now, one tick later, does `Running` see the fault and stop the pump."
+    },
+    {
+      "inputs": {
+        "start": false,
+        "fault": false
+      },
+      "note": "Both inputs are back to false; `Blocked` has no way out."
+    }
+  ],
+  "expect": "ok"
+}

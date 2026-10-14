@@ -1,0 +1,23 @@
+scchart Laps {
+  input bool lap
+  output int laps = 0
+
+  class Counter {
+    private int count = 0
+    void add() {
+      count++
+    }
+    int get() {
+      return count
+    }
+    bool done() {
+      return count >= 3
+    }
+  } counter
+
+  initial state Racing
+    if counter.done() go to Finished
+    if lap do counter.add(); laps = counter.get() go to Racing
+
+  final state Finished
+}

@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "The same chart as loop-bounded-counter, which the default netlist compiler rejects. The priority-based compiler accepts instantaneous loops and runs them: the self-loop fires three times within tick 1 (taken = [3]) and x = 3. If such a loop never ends, the priority-compiled tick never returns and the simulation stops responding."},
+    {"inputs": {}, "note": "x < 3 is false now; the loop does not fire. x = 3."}
+  ],
+  "system": "priority",
+  "expect": "ok"
+}

@@ -1,0 +1,7 @@
+scchart Dice {
+  output float r = 0
+  output int face = 0
+
+  initial state Roll
+    do r = random(); face = r * 6 + 1 go to Roll
+}

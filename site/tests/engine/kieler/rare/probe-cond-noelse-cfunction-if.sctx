@@ -1,0 +1,17 @@
+// An if of a method compiled as a C function: gcc rejects __CONDSELF__.
+scchart CondNoElseCFunctionIf {
+  input bool c, a
+  output int n = 0
+
+  method void bump() {
+    for (int i = 0; i < 1; i++) {
+      n += 0
+    }
+    if ((c) ? a) {
+      n++
+    }
+  }
+
+  initial state S
+    if true do bump() go to S
+}

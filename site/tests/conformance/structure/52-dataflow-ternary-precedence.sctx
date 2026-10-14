@@ -1,0 +1,9 @@
+// The operands of c ? a : b are atoms: A > B ? A : B parses as A > (B ? A : B). Parenthesise the condition.
+scchart St52Max {
+  input int A, B
+  output int wrong, right
+  dataflow {
+    wrong = A > B ? A : B
+    right = (A > B) ? A : B
+  }
+}

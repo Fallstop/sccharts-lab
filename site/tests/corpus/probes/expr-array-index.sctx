@@ -1,0 +1,6 @@
+scchart P200 {
+  int a[3]
+  int m[2][2]
+  initial state S0
+  do a[0] = a[a[1] + 1] * m[1][0] go to S0
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "stop": false, "doorOpen": false }, "note": "Tick 1 starts in `Idle`." },
+    { "inputs": { "start": true }, "note": "Surprise: `Cooking` is entered, but its entry action does not run (`sessions` stays 0). KIELER guards it with the suspend's internal flag, which is only switched on after the entry action has looked at it." },
+    { "inputs": { "start": false, "stop": true }, "note": "Back to `Idle`." },
+    { "inputs": { "start": true, "stop": false }, "note": "The second entry does run the entry action (`sessions` = 1): the flag kept its value from the last visit." },
+    { "inputs": { "start": false }, "note": "Cooking." },
+    { "inputs": { "stop": true }, "note": "Back to `Idle`. Two sessions, but `sessions` says 1." },
+    { "inputs": { "stop": false }, "note": "In `Idle`." }
+  ],
+  "expect": "ok"
+}

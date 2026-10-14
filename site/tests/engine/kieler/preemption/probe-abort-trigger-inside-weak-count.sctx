@@ -1,0 +1,19 @@
+// A weak abort of a superstate whose trigger is emitted inside it by a transition with a count delay: KIELER cannot schedule it (patterns/watchdog's WatchdogInside rejects for this reason, not for being a strong abort).
+scchart W {
+  input bool a, beat
+  output signal expired
+  initial state Running {
+    region Watchdog {
+      initial state Watching
+        if beat go to Watching
+        if 3 true do expired go to Expired
+      state Expired
+    }
+    region Work {
+      initial state Idle
+        if beat go to Idle
+    }
+  }
+  if expired go to Safe
+  state Safe
+}

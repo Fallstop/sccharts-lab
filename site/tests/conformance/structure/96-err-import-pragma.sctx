@@ -1,0 +1,7 @@
+#import "St96Nothere"
+// The old `#import` pragma does not parse: `import` is a keyword, so the parser stops at it. (The validator's
+// "The import pragma is no longer supported. Use import keyword." can never be reached from SCTX text.)
+scchart St96OldImport {
+  output bool o
+  initial state A
+}

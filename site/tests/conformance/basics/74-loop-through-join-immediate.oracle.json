@@ -1,0 +1,19 @@
+{
+  "hash": "10aca8d756d91b150053b88bc83b76ab8a3e7369",
+  "chart": "tests/conformance/basics/74-loop-through-join-immediate.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _cg1",
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _g1",
+    "Can't schedule from _g1 to _g3",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "ticks": []
+}

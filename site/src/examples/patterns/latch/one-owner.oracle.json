@@ -1,0 +1,247 @@
+{
+  "hash": "8fd2178fb87fd0545a601d5510665f0d8cfd1736",
+  "chart": "src/examples/patterns/latch/one-owner.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "arrived": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "carButton": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "hallButton": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "request": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "hallButton": false,
+        "carButton": false,
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "carButton": false,
+        "hallButton": false,
+        "lamp": false,
+        "request": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "hallButton": true
+      },
+      "values": {
+        "arrived": false,
+        "carButton": false,
+        "hallButton": true,
+        "lamp": true,
+        "request": true
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "hallButton": false
+      },
+      "values": {
+        "arrived": false,
+        "carButton": false,
+        "hallButton": false,
+        "lamp": true,
+        "request": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "carButton": true
+      },
+      "values": {
+        "arrived": false,
+        "carButton": true,
+        "hallButton": false,
+        "lamp": true,
+        "request": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "carButton": false,
+        "arrived": true
+      },
+      "values": {
+        "arrived": true,
+        "carButton": false,
+        "hallButton": false,
+        "lamp": false,
+        "request": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "carButton": false,
+        "hallButton": false,
+        "lamp": false,
+        "request": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "hallButton": true,
+        "carButton": true
+      },
+      "values": {
+        "arrived": false,
+        "carButton": true,
+        "hallButton": true,
+        "lamp": true,
+        "request": true
+      },
+      "taken": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "hallButton": false,
+        "carButton": false
+      },
+      "values": {
+        "arrived": false,
+        "carButton": false,
+        "hallButton": false,
+        "lamp": true,
+        "request": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "arrived": true
+      },
+      "values": {
+        "arrived": true,
+        "carButton": false,
+        "hallButton": false,
+        "lamp": false,
+        "request": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "carButton": false,
+        "hallButton": false,
+        "lamp": false,
+        "request": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters `Idle`. No transition leads to `Forgotten`, so KIELER warns that it is not reachable."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A` is true: `Idle` goes to `Busy`. `Forgotten` is never entered, whatever the inputs do."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,244 @@
+{
+  "hash": "3cc97530baa9dd53d839500000586138224a18ed",
+  "chart": "src/examples/learn/pre/knock-restart-by-hand.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "interface": {
+    "knock": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "restart": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "unlock": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "knock": false,
+        "restart": false
+      },
+      "values": {
+        "knock": false,
+        "restart": false,
+        "count": 0,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "knock": true
+      },
+      "values": {
+        "knock": true,
+        "restart": false,
+        "count": 1,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "knock": false
+      },
+      "values": {
+        "knock": false,
+        "restart": false,
+        "count": 1,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "knock": true
+      },
+      "values": {
+        "knock": true,
+        "restart": false,
+        "count": 2,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "knock": false,
+        "restart": true
+      },
+      "values": {
+        "knock": false,
+        "restart": true,
+        "count": 0,
+        "unlock": false
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "knock": true,
+        "restart": false
+      },
+      "values": {
+        "knock": true,
+        "restart": false,
+        "count": 1,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "knock": false
+      },
+      "values": {
+        "knock": false,
+        "restart": false,
+        "count": 1,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "knock": true
+      },
+      "values": {
+        "knock": true,
+        "restart": false,
+        "count": 2,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {},
+      "values": {
+        "knock": true,
+        "restart": false,
+        "count": 3,
+        "unlock": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "knock": false
+      },
+      "values": {
+        "knock": false,
+        "restart": false,
+        "count": 3,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "restart": true
+      },
+      "values": {
+        "knock": false,
+        "restart": true,
+        "count": 0,
+        "unlock": false
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "restart": false
+      },
+      "values": {
+        "knock": false,
+        "restart": false,
+        "count": 0,
+        "unlock": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

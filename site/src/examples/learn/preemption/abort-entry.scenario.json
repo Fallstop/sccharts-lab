@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "cancel": false }, "note": "Tick 1 enters `Idle` in both charts." },
+    { "inputs": { "start": true, "cancel": true }, "note": "`start` while `cancel` is held down. Both charts set `busy` and enter `Job`. `DelayedAbort`'s abort is not checked in the tick `Job` is entered, so it stays in `Job` with `busy` true. `ImmediateAbort`'s abort is checked at once: it fires, sets `busy` back to false and returns to `Idle`. Its `Job` was entered and left in one tick." },
+    { "inputs": { "start": false }, "note": "`cancel` is still true, and now `DelayedAbort`'s abort may fire too: `Job` is left and `busy` is false. Both charts are in `Idle`." },
+    { "inputs": { "cancel": false }, "note": "Both idle." }
+  ],
+  "expect": "ok"
+}

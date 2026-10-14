@@ -1,0 +1,10 @@
+// KIELER gives the helper variable of `->` and `fby` the type it infers from the operands. A bool operand next
+// to an int expression (here an int comparison) gives the type UNKNOWN, which the simulation cannot handle.
+scchart St89MixedDelay {
+  input int level
+  output bool high, low
+  dataflow {
+    high = false -> (level > 3)
+    low = false fby (level < 1)
+  }
+}

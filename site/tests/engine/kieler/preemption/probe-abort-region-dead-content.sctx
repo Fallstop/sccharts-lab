@@ -1,0 +1,31 @@
+// As probe-abort-region-dead-crash with a content region next to the abort region: still dead, still the NullPointerException.
+scchart F52 {
+  output int x = 0, y = 0, z = 0
+  enum Mode { IDLE, RUN, HALT }
+  region R0 {
+    initial state R0s0 {
+      during do y++
+      region {
+        initial state R0s0r2s0
+      }
+    }
+    join to R0s1
+    state R0s1 {
+      region {
+        initial state R0s1r0s0
+        go to R0s1r0s1
+        state R0s1r0s1 {
+          abort region R0s1r0s1a {
+            initial state R0s1r0s1aW
+            final state R0s1r0s1aF
+          }
+          region {
+            initial state Q
+          }
+        }
+      }
+    }
+    go to R0s2
+    state R0s2
+  }
+}

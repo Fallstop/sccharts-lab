@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "go1": false
+      },
+      "note": "Tick 1 enters `Wait`, the active state: a heavy red outline with a glow."
+    },
+    {
+      "inputs": {
+        "go1": true
+      },
+      "note": "`go1` is true: the delayed transition to `Fast` fires (`x` = 1), and then the immediate transition out of `Fast` fires in the same tick (`x` = 2). Both are drawn heavier, in blue, and each keeps its own line: solid for the delayed one, dashed for the immediate one. `Wait` and `Fast`, both left in this tick, get a blue outline and tint, and `Done` is now the active state."
+    },
+    {
+      "inputs": {
+        "go1": false
+      },
+      "note": "The transition out of `Done` has no trigger, so it fires in the tick after `Done` was entered: back to `Wait`."
+    },
+    {
+      "note": "Nothing is enabled: `go1` is false. No transition fires, and `Wait` stays the active state."
+    }
+  ],
+  "expect": "ok"
+}

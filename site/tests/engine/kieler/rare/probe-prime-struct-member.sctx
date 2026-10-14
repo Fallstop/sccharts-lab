@@ -1,0 +1,7 @@
+scchart PrimeStructMember {
+  input bool A
+  output int o = 0
+  struct Pt { int v' } pt
+  initial state S
+    if A do pt.v' = 2; o = pt.v' go to S
+}

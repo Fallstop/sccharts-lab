@@ -1,0 +1,51 @@
+{
+  "hash": "69d17c810446a93164e27c896611f8770c61c352",
+  "chart": "tests/conformance/structure/43-dataflow-delay-precedence.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "N1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "N2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "N1": 1,
+        "N2": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "N1": 2,
+        "N2": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "N1": 3,
+        "N2": 2
+      },
+      "terminated": false
+    }
+  ]
+}

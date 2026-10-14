@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "idle": false, "touch": false, "next": false, "open": false }, "note": "Tick 1 shows the news headlines (`screen` = 11)." },
+    { "inputs": { "next": true }, "note": "The weather page, today (21)." },
+    { "inputs": { "next": false, "open": true }, "note": "The week's forecast (22)." },
+    { "inputs": { "open": false, "idle": true }, "note": "Nobody is looking: the screensaver (0)." },
+    { "inputs": { "idle": false, "touch": true }, "note": "`shallow history` brings back the weather page, and the weather page starts on today's forecast (21)." },
+    { "inputs": { "touch": false }, "note": "Today's weather." }
+  ],
+  "expect": "ok"
+}

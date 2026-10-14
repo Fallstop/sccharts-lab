@@ -1,0 +1,19 @@
+// The fix the guide suggests for probe-abort-trigger-inside-strong-count: the abort reads last tick's value, pre(expired), and KIELER accepts it.
+scchart W {
+  input bool a, beat
+  output signal expired
+  initial state Running {
+    region Watchdog {
+      initial state Watching
+        if beat go to Watching
+        if 3 true do expired go to Expired
+      state Expired
+    }
+    region Work {
+      initial state Idle
+        if beat go to Idle
+    }
+  }
+  if pre(expired) abort to Safe
+  state Safe
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `ABO`, `WaitAB`, `WaitA` and `WaitB`." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` reaches its final state `DoneA`." },
+    { "inputs": { "A": false, "B": true }, "note": "`B`: `HandleB` moves to `DoneB`, but `DoneB` is not a final state. `WaitAB` does not terminate, and `O` stays absent." },
+    { "inputs": { "B": false }, "note": "Nothing more can happen inside `WaitAB`: only `R` can restart it, and `O` never comes. This is what the two warnings are about." }
+  ],
+  "expect": "ok"
+}

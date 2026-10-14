@@ -1,0 +1,71 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false
+      },
+      "note": "Tick 1."
+    },
+    {
+      "inputs": {
+        "beatA": true,
+        "beatB": true
+      },
+      "note": "Both sensors beat."
+    },
+    {
+      "inputs": {
+        "beatA": false,
+        "beatB": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {
+        "beatA": true
+      },
+      "note": "A beats; B is quiet: `WatchB` counts on."
+    },
+    {
+      "inputs": {
+        "beatA": false
+      },
+      "note": "Third tick without a beat from B: `WatchB` emits `expired`, and `Alarm` raises the alarm in the same tick."
+    },
+    {
+      "inputs": {
+        "beatA": true
+      },
+      "note": "The alarm stays on, although A is still beating."
+    },
+    {
+      "inputs": {
+        "beatA": false
+      },
+      "note": "Alarm."
+    },
+    {
+      "inputs": {
+        "beatA": true,
+        "restart": true,
+        "beatB": true
+      },
+      "note": "`restart`, with both sensors beating: both watchdogs and the alarm start again."
+    },
+    {
+      "inputs": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {},
+      "note": "Quiet."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,150 @@
+{
+ "sourceHash": "78d781c733f94e41",
+ "states": [
+  {
+   "path": [
+    "FastAndSlowGreedy"
+   ],
+   "rows": [
+    [
+     "FastAndSlowGreedy"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    284.1,
+    189.7
+   ]
+  },
+  {
+   "path": [
+    "FastAndSlowGreedy",
+    "Fast",
+    "S"
+   ],
+   "rows": [
+    [
+     "S"
+    ]
+   ],
+   "box": [
+    27.7,
+    109,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "FastAndSlowGreedy",
+    "Slow",
+    "S"
+   ],
+   "rows": [
+    [
+     "S"
+    ]
+   ],
+   "box": [
+    71.8,
+    109,
+    34,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "FastAndSlowGreedy",
+    "Fast"
+   ],
+   "label": [
+    "Fast"
+   ],
+   "rows": [
+    [
+     "clock ",
+     "x = 0"
+    ]
+   ],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    30.6,
+    88.7,
+    152.7
+   ]
+  },
+  {
+   "path": [
+    "FastAndSlowGreedy",
+    "Slow"
+   ],
+   "label": [
+    "Slow"
+   ],
+   "rows": [
+    [
+     "clock ",
+     "x = 0"
+    ]
+   ],
+   "direction": "RIGHT",
+   "box": [
+    100.7,
+    30.6,
+    176.8,
+    152.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NFastAndSlowGreedy$NFast$NS$ES0",
+   "source": [
+    "FastAndSlowGreedy",
+    "Fast",
+    "S"
+   ],
+   "target": [
+    "FastAndSlowGreedy",
+    "Fast",
+    "S"
+   ],
+   "text": "x >= 333 / x = 0",
+   "lines": [
+    "x >= 333",
+    "/ x = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NFastAndSlowGreedy$NSlow$NS$ES0",
+   "source": [
+    "FastAndSlowGreedy",
+    "Slow",
+    "S"
+   ],
+   "target": [
+    "FastAndSlowGreedy",
+    "Slow",
+    "S"
+   ],
+   "text": "x >= 999 || x >= 1000 / x = 0",
+   "lines": [
+    "x >= 999 || x >= 1000",
+    "/ x = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

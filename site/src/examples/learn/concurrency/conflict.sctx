@@ -1,0 +1,14 @@
+scchart Conflict {
+  input bool on, off
+  output bool light
+
+  region SwitchOn {
+    initial state Waiting
+      if on do light = true go to Waiting
+  }
+
+  region SwitchOff {
+    initial state Waiting
+      if off do light = false go to Waiting
+  }
+}

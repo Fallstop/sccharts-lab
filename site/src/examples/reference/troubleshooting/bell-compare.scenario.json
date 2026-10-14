@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Waiting` in both charts." },
+    { "inputs": { "press": true }, "note": "`press`: `BellVariable` sets `ding` to true, `BellSignal` emits `ding`. Both read true after this tick." },
+    { "inputs": { "press": false }, "note": "Nothing fires. The variable keeps the value it was given; the signal is absent, because nothing emitted it in this tick." },
+    { "inputs": {}, "note": "The same: the variable stays true." },
+    { "inputs": { "press": true }, "note": "Another press: the signal is present again. The variable was true all along." },
+    { "inputs": { "press": false }, "note": "To make the variable read like the signal, something would have to set it back to false in every tick after the press." }
+  ],
+  "expect": "ok"
+}

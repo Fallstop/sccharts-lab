@@ -1,0 +1,15 @@
+scchart EmitInputSignal {
+  input signal A
+  input bool b
+  output int n
+
+  region R1 {
+    initial state X
+    if b do A go to X
+  }
+
+  region R2 {
+    initial state X
+    if A do n++ go to X
+  }
+}

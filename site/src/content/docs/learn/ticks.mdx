@@ -1,0 +1,310 @@
+---
+title: "Thinking in ticks"
+description: "A chart runs in ticks: it reads its inputs, reacts in no time at all, and writes its outputs, the same way every time."
+sidebar:
+  order: 1
+---
+
+import { Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Most programs you have written so far take some input, compute, print a result and stop. A
+thermostat never stops. Neither does a lift, a washing machine or the turnstile at a train station.
+They wait for something to happen, react to it, and go back to waiting, for as long as the power is
+on. SCCharts is a language for programs like these, and at its centre is one idea: time moves in
+steps called ticks. This chapter is about that idea. Once it clicks, the rest of the language follows
+from it.
+
+## Programs that never finish
+
+Computer scientists distinguish two kinds of program.
+
+A **transformational** program turns an input into an output. A compiler reads source files and
+writes an executable; a sorting function takes a list and returns it sorted. What matters is the
+final result, and the program is finished when it has produced it.
+
+A **reactive** program is in a continuous conversation with its environment. A thermostat reads a
+temperature, switches a heater on or off, reads the temperature again, and so on for years. There is
+no final result. What matters is the relationship between inputs and outputs over time: when the room
+gets cold, the heater must come on, and it must come on *in time*. The environment sets the pace, not
+the program. (David Harel and Amir Pnueli gave reactive systems their name in 1985.)
+
+Embedded software is mostly reactive: engine controllers, pacemakers, door locks, the firmware in a
+keyboard. SCCharts is designed for exactly this kind of program.
+
+## The tick
+
+An SCChart does not run continuously. It runs in **ticks**. In every tick, three things happen in
+order:
+
+1. The chart **reads its inputs**: it takes a snapshot of the values its environment provides.
+2. The chart **reacts**: it decides which transitions to take, updates its variables and moves to
+   its new states.
+3. The chart **writes its outputs**, and waits for the next tick.
+
+The papers and tools also call a tick a **reaction** or an **instant**; all three words mean the same
+thing. Here is about the smallest interesting chart: a lamp with one button that switches it on and
+off. You will learn to write charts like this in [the next chapter](/learn/first-chart/); for now,
+watch how it behaves. Press **Step** to run one tick, or let the guided tour drive.
+
+<Sim example="learn/ticks/toggle" caption="Each **Step** is one tick. Watch tick 2: `button` and `light` change in the same column of the timing diagram." />
+
+The tour's ticks, as KIELER runs them:
+
+| Tick | `button` | State after | `light` after |
+| ---: | --- | --- | --- |
+| 1 | false | Off | false |
+| 2 | true | On | true |
+| 3 | false | On | true |
+| 4 | false (held) | On | true |
+| 5 | true | Off | false |
+| 6 | false | Off | false |
+
+Read it a row at a time. In each tick the chart looks at `button` and at the state it is in, and
+at nothing else. In tick 2 it is in `Off` and sees `button` true, so it switches the light on and
+moves to `On`. In ticks 3 and 4 it is in `On` and sees `button` false, so there is nothing to do.
+
+Tick 4 is worth a second look: no input changed, yet a tick still happened. The chart looked, found
+nothing to react to, and kept everything as it was. A tick is not an event. It is a moment at which
+the chart looks.
+
+## Zero time: the synchrony hypothesis
+
+Look at tick 2 again. The button is pressed and the light comes on *in the same tick*. There is no
+tick in between in which the chart is "still thinking". As far as the chart is concerned, its
+reaction takes no time at all: the outputs are simultaneous with the inputs that caused them.
+
+This is the **synchrony hypothesis** (also called the *synchronous hypothesis*), the founding
+assumption of the synchronous languages that SCCharts belongs to. It is a deliberate fiction. Of course the processor needs time to compute a
+reaction, perhaps a few microseconds. The hypothesis says: as long as each reaction finishes before
+the next tick is due, you may pretend that it took no time at all. Then a chart's behaviour is
+described completely by its ticks. You never have to think about how fast the processor is, or what
+happens if an input changes halfway through a computation. It can't: the inputs are a snapshot taken
+at the start of the tick.
+
+Checking that the fiction holds, that even the slowest reaction is fast enough, is an engineering
+task outside the chart (worst-case execution time analysis). Inside the chart, a tick has no
+duration.
+
+<Aside title="Zero time, but in order">
+Zero time does not mean "no order". Inside a tick, the things a chart does still happen one after
+another: a transition can set a variable and then read it again, and it reads the value it has just
+written. [Chapter 3](/learn/transitions/) shows this, and [chapter 12](/learn/causality/) explains what
+the compiler checks so that the order is never ambiguous. None of it takes logical time.
+</Aside>
+
+## A tick is a sample, not an event
+
+Because the chart only ever sees a snapshot of its inputs, it cannot see *what happened* between two
+ticks, only *what is true now*. If you press and release the button between two ticks, the chart never
+knows. And if you hold the button down for several ticks, the chart sees `button` true in each of them.
+
+Predict what that does to the lamp, run it to check, then open the explanation. In this run, `button`
+becomes true in tick 2 and stays true through tick 4:
+
+<Predict example="learn/ticks/toggle-held" ask={[{ tick: 3, value: 'light' }, { tick: 4, state: 'On' }]} caption="`button` is switched on in tick 2 and only switched off again in tick 5." />
+
+<details>
+<summary>Explanation</summary>
+
+The lamp flickers: on in tick 2, off in tick 3, on in tick 4. In every tick the chart is in some
+state, sees `button` true, and takes the transition out of that state. It has no idea that this is
+"the same press". The state and `light` after each tick:
+
+| Tick | `button` | State | `light` |
+| ---: | --- | --- | --- |
+| 1 | false | Off | false |
+| 2 | true | On | true |
+| 3 | true (held) | Off | false |
+| 4 | true (held) | On | true |
+| 5 | false | On | true |
+
+</details>
+
+A chart reacts to values, not to changes in values: a held button switches the lamp in every tick.
+That is not a fault in the simulator; it is what the chart says. A real lamp should react only in the
+tick in which the button *becomes* pressed. SCCharts can express that by comparing an input with its
+value in the previous tick, which you will meet in [chapter 11](/learn/pre/) (the recipe is in
+[Edges and pulses](/patterns/edges/)).
+
+<Aside type="tip">
+In the simulators on this site, and in SCCharts Lab and KIELER, an input **keeps its value** until you
+change it. Switch `button` on and it stays on, tick after tick. To press a button for exactly one
+tick, switch it on, press **Step**, and switch it off again before the next step. On this site, the
+pulse button next to an input's switch is a shortcut: it sets the input for the next tick only.
+</Aside>
+
+## Logical time and physical time
+
+The tick counter counts reactions, not seconds. This chart has no inputs at all. Its transitions have
+no `if` part, so each one fires as soon as it is checked, and the light goes on in one tick and off in
+the next:
+
+<Sim example="learn/ticks/blinker" caption="No inputs, and yet something happens in every tick from tick 2 on." />
+
+| Tick | State after | `light` after |
+| ---: | --- | --- |
+| 1 | Off | false |
+| 2 | On | true |
+| 3 | Off | false |
+| 4 | On | true |
+| 5 | Off | false |
+| 6 | On | true |
+
+How fast does it blink? The chart cannot say. "One tick on, one tick off" is a statement in **logical
+time**: time counted in ticks. How long a tick lasts in **physical time**, in milliseconds, is decided
+by whatever runs the chart.
+
+When KIELER turns a chart into C, it generates a struct that holds the chart's variables (called
+`TickData` by default) and two functions: `reset`, which prepares the first tick, and `tick`, which
+performs one reaction. Your own program calls them in a loop. Here is a sketch of such a loop on a
+microcontroller; the three hardware functions are made up:
+
+```c
+TickData chart;               // the chart's inputs, outputs and state
+
+int main(void) {
+    reset(&chart);            // once, before the first tick
+    while (1) {
+        chart.button = read_button();   // 1. sample the inputs
+        tick(&chart);                   // 2. react: one tick
+        set_lamp(chart.light);          // 3. write the outputs
+        wait_until_next_period();       // when is the next tick?
+    }
+}
+```
+
+The loop decides what a tick means physically. If `wait_until_next_period` waits 10 ms, the blinker
+blinks 50 times a second. Another program might run a tick only when an input changes. The chart is
+the same either way; only its environment differs. When a chart has to measure real time, it counts
+ticks of a known period, or it reads a timer input that the environment provides (see
+[Counters and timeouts](/patterns/counters/) and [Time](/advanced/time/)). The generated code is
+covered in full in [From chart to C](/advanced/code-generation/).
+
+## The same inputs, the same outputs
+
+A chart's reaction depends on exactly two things: the state it is in (with the values of its
+variables) and the inputs of the current tick. So if you feed a chart the same sequence of inputs
+twice, you get the same sequence of outputs twice: on your laptop, on a microcontroller, today and
+next year. There is no scheduler deciding
+which thread runs first, and no race between two parts of the program that might come out
+differently on a busy day.
+
+This holds even when a chart does several things at once, in concurrent regions
+([chapter 8](/learn/concurrency/)). Where the result of a tick *could* depend on which part runs
+first, the compiler rejects the chart rather than pick an order for you
+([chapter 12](/learn/causality/)). For a controller whose behaviour must be tested, certified and
+trusted, that guarantee is the point of the whole approach.
+
+<Aside title="Determinacy">
+The SCCharts papers call this property *determinacy*: the same sequence of inputs always produces the
+same sequence of outputs, whatever happens inside. They follow a distinction made by Robin Milner, in
+which a *deterministic* computation would, in addition, always take the same internal steps.
+</Aside>
+
+You can watch this guarantee at work in the tools. When you press **Back** in SCCharts Lab, it does
+not restore a saved snapshot of the earlier tick: it restarts the compiled chart and feeds it every
+input you gave, up to the tick you asked for. That only works because the chart is certain to arrive
+at exactly the same place again.
+
+## What happens in tick 1
+
+Before tick 1 the chart has not started; SCCharts Lab and this site call that moment tick 0. Tick 1
+is the chart's first reaction, and it is special: it **starts** the chart. Every variable gets its
+initial value, and the chart enters its **initial state** (`Off` in the lamp).
+
+What tick 1 does *not* do is take an ordinary transition out of the initial state. A transition like
+the one from `Off` to `On` is checked only from the tick *after* its source state was entered. In
+tick 1, `Off` has only just been entered, so its transition waits, even if `button` is already true:
+
+<Sim example="learn/ticks/first-tick" caption="`button` is true from tick 1 on, but the light only comes on in tick 2." />
+
+| Tick | `button` | State after | `light` after |
+| ---: | --- | --- | --- |
+| 1 | true | Off | false |
+| 2 | true (held) | On | true |
+| 3 | false | On | true |
+
+This catches out almost everyone at first. Nor is it specific to tick 1: whenever a chart enters a
+state, that state's ordinary transitions wait until the next tick. That is also why the blinker
+takes one transition per tick instead of racing round its loop. [Chapter 4](/learn/immediate/) names
+this kind of transition *delayed* and introduces the other kind, *immediate*, which may fire in the
+tick its state is entered.
+
+## What Step does
+
+Every simulator in this guide maps one press of **Step** to one tick:
+
+1. The values of the input controls become the chart's inputs.
+2. The chart reacts once.
+3. The diagram, the code and the timing diagram show the result: the active state is outlined in
+   red, the transition that fired is drawn in blue, and the new column of the timing diagram shows
+   every value **after** the tick.
+
+The tick counter shows how many ticks have run, so "Tick 3" means "after the third reaction".
+**Back** returns to the previous tick and **Reset** goes back to tick 0. Because the chart is
+determinate, stepping forward again with the same inputs gives the same ticks; change an input on the
+way and you get a different future from that point on.
+
+SCCharts Lab and KIELER work the same way: **Step** runs one tick, the values they show belong to the
+end of that tick, and an input you set stays set until you change it.
+
+## Try it
+
+<TryIt title="A slower blinker" example="learn/ticks/blinker" solution="learn/ticks/slow-blinker">
+Change the blinker so that the light stays on for two ticks and off for two ticks. Open the starter
+and look at its code. You need no new syntax, only a pattern to copy: each `state` line is a state, and
+the indented `do … go to …` line under it is that state's transition, the arrow in the diagram. Add two
+more states, say `Off2` and `On2`, and route the transitions through them. A transition may also be
+nothing but `go to` and a state. Then step through your chart and check the timing diagram: from
+tick 1 on, `light` should read false, false, true, true, false, false, true.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="Suppose the lamp has been in `Off` since some tick *n*, and `button` is true in tick *n* + 1. When is `light` first true?"
+  options={['After tick *n* + 1: the reaction belongs to the same tick as the input', 'After tick *n* + 2: the chart needs a tick to react', 'It depends on how fast the processor is']}
+  answer={0}
+>
+In tick 2 of the first simulation, `button` and `light` change in the same tick. Under the synchrony
+hypothesis a reaction takes no logical time, so an output belongs to the same tick as the input that
+caused it. The processor's speed only decides whether the reaction finishes before the next tick is
+due, not which tick it belongs to.
+</Quiz>
+
+<Quiz
+  question="`button` is false in tick 6 and false again in tick 7. Between the two ticks, someone pressed the button and let go. What does the lamp do in tick 7?"
+  options={['It switches, because the button was pressed', 'Nothing: in tick 7 the chart reads `button` false, as it did in tick 6', 'It switches twice, once for the press and once for the release']}
+  answer={1}
+>
+A chart sees its inputs only as they are at the start of each tick. Whatever happened between two
+ticks is invisible to it. If presses that short matter, the environment has to make them last until
+the next tick, or the ticks have to come faster.
+</Quiz>
+
+<Quiz
+  question="A chart's tick counter reads 600. How much time has passed?"
+  options={['600 milliseconds', '600 seconds', 'The chart cannot tell: the environment decides how often a tick happens']}
+  answer={2}
+>
+Ticks are logical time. A program that calls `tick` every 100 ms would have run for a minute; one
+that ticks only when an input changes might have run for a week. To measure physical time, a chart
+counts ticks of a known period or reads a timer input.
+</Quiz>
+
+<KeyIdeas>
+- A reactive program runs for ever, responding to its environment. SCCharts describes such programs
+  as a sequence of **ticks**.
+- In each tick the chart reads a snapshot of its inputs, reacts, and writes its outputs. It sees
+  values, not changes: a held input looks the same in every tick.
+- Under the **synchrony hypothesis** a reaction takes no time, so outputs belong to the same tick as
+  the inputs that caused them.
+- Ticks are **logical time**. How long a tick lasts in physical time is up to the program that runs
+  the chart.
+- The same inputs always give the same outputs.
+- Tick 1 starts the chart in its initial state. Ordinary transitions out of a state are checked only
+  from the tick after the state was entered.
+</KeyIdeas>
+
+Next, [Your first SCChart](/learn/first-chart/): you write a chart like the lamp yourself, line by line.

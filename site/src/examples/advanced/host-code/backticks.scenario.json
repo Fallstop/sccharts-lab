@@ -1,0 +1,8 @@
+{
+  "needs": ["c-hostcode"],
+  "ticks": [
+    { "inputs": {}, "note": "Tick 1 enters `Run`. The self-loop is delayed, so no host code has run yet: `x` = 0, `y` = 0." },
+    { "inputs": {}, "note": "The C statement `d->x = 42;` and the C expression `7 * 6` ran: `x` = 42, `y` = 42." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,142 @@
+{
+  "hash": "7e5cf09d8dcc75a6a1c263a2e96cb7117d6b3ff8",
+  "chart": "src/examples/advanced/suspend/metronome-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "pause": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "click": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "pause": false,
+        "stop": false
+      },
+      "values": {
+        "pause": false,
+        "stop": false,
+        "click": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "pause": false,
+        "stop": false,
+        "click": true
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "pause": false,
+        "stop": false,
+        "click": false
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "pause": true
+      },
+      "values": {
+        "pause": true,
+        "stop": false,
+        "click": true
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "pause": true,
+        "stop": false,
+        "click": false
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "stop": true
+      },
+      "values": {
+        "pause": true,
+        "stop": true,
+        "click": true
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "pause": true,
+        "stop": true,
+        "click": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

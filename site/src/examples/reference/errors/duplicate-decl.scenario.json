@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER warns about the second declaration, then the C compiler fails: the generated C struct has two members called `count`."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Compiler did not return success"
+}

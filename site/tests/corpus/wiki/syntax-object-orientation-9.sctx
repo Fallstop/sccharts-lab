@@ -1,0 +1,21 @@
+#resource "Counter.java"
+
+scchart HostCounterApplication {
+  
+  input bool CountUp
+  output int O
+  
+  host class Counter {
+    void increment()
+    void decrement()
+    int getValue()
+  } counter
+
+  region {
+    initial state A ""
+      if CountUp do counter.increment();
+                 O = counter.getValue() go to A
+      if !CountUp do counter.decrement();
+                 O = counter.getValue() go to A
+  }
+}

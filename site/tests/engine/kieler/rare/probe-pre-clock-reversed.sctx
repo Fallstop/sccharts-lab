@@ -1,0 +1,9 @@
+// pre(v) next to pre(v, c), the clocked one last: both are clocked.
+scchart PreClockReversed {
+  input int v
+  input bool c
+  output int p = 0, q = 0
+  initial state S {
+    immediate during do q = pre(v); p = pre(v, c)
+  }
+}

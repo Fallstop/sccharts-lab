@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "I": 1 }, "note": "`pre(Y)` is 0 in the first tick, so `X` = 1 and `Y` = 1." },
+    { "inputs": { "I": 1 }, "note": "`pre(Y)` is last tick's `Y` (1): `X` = 2, `Y` = 2. The loop is broken by the tick boundary, so it is fine." },
+    { "inputs": { "I": 2 }, "note": "`X` = 2 + 2 = 4, `Y` = 4: the chart adds up `I` tick after tick." }
+  ],
+  "expect": "ok"
+}

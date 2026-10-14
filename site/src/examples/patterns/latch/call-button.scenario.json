@@ -1,0 +1,90 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "note": "Tick 1: no call, the lamp is off."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Someone presses the button: `Idle` moves to `Waiting`, whose entry action lights the lamp."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "The button is released, but the chart is still in `Waiting`: the state is the memory. The lamp stays on."
+    },
+    {
+      "inputs": {},
+      "note": "Still waiting for the lift."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A second press while the call is registered changes nothing: `Waiting` has no transition for the button."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Waiting."
+    },
+    {
+      "inputs": {
+        "arrived": true
+      },
+      "note": "The lift arrives: `if arrived go to Idle` fires, and `Waiting`'s exit action switches the lamp off. The call has been served."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "The doors are still open, and someone presses the button anyway. `Idle` sees the press and lights the lamp, although the lift is right here."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Doors still open: the call is served at once, and the lamp goes off again. A one-tick flash for a call that never needed registering."
+    },
+    {
+      "inputs": {
+        "arrived": false
+      },
+      "note": "The lift leaves."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A new call."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Waiting."
+    },
+    {
+      "inputs": {
+        "button": true,
+        "arrived": true
+      },
+      "note": "The lift arrives in the same tick as another press: `if arrived` fires, and the press is served along with the earlier call."
+    },
+    {
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "note": "Idle."
+    }
+  ],
+  "expect": "ok"
+}

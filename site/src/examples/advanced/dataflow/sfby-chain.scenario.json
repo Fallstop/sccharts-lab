@@ -1,0 +1,10 @@
+{
+  "kielerBug": "A chain a sfby b sfby c never yields c (observed: a, b, b, ...): SequentialFollowedBy.xtend does not produce the sequence its name promises.",
+  "ticks": [
+    { "inputs": { "level": 10 }, "note": "First tick: both take their first operand: `two` = 1, `chain` = 1." },
+    { "inputs": { "level": 20 }, "note": "With two operands `sfby` behaves like `->`: `two` = 20, the current `level`. The chain moves on to 2." },
+    { "inputs": { "level": 30 }, "note": "`two` = 30. The chain should now say 3, but KIELER keeps `chain` = 2." },
+    { "inputs": { "level": 40 }, "note": "`two` = 40, `chain` = 2 for ever: the third operand never appears." }
+  ],
+  "expect": "ok"
+}

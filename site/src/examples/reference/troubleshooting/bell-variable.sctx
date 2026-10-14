@@ -1,0 +1,7 @@
+scchart BellVariable {
+  input bool press
+  output bool ding = false
+
+  initial state Waiting
+    if press do ding = true go to Waiting
+}

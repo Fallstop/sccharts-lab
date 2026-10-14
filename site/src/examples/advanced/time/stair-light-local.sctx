@@ -1,0 +1,20 @@
+scchart StairLightLocal {
+  input bool button
+  output bool light = false
+
+  initial state Off
+    if button go to On
+
+  state On {
+    clock t
+    entry do light = true
+    exit do light = false
+
+    initial state Lit
+      if t >= 5000 go to Expired
+
+    final state Expired
+  }
+  if button go to On
+  join to Off
+}

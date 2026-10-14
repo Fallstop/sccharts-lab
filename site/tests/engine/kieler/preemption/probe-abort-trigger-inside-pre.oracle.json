@@ -1,0 +1,90 @@
+{
+  "hash": "7cfb29ce2e2859aff07461a00673b36af8a4295b",
+  "chart": "tests/engine/kieler/preemption/probe-abort-trigger-inside-pre.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "beat": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "expired": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "beat": false
+      },
+      "values": {
+        "a": false,
+        "beat": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "beat": false
+      },
+      "values": {
+        "a": true,
+        "beat": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "beat": true
+      },
+      "values": {
+        "a": false,
+        "beat": true,
+        "expired": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

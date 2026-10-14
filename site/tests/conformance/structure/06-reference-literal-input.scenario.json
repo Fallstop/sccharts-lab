@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "second is the constant true. Tick 1 enters the instance: **led = false**."
+    },
+    {
+      "inputs": {},
+      "note": "second is the literal true in every tick, so A → B fires as soon as it may: **led = true**."
+    },
+    {
+      "inputs": {},
+      "note": "B → A fires in the next tick: **led = false**. With a constant true input the instance toggles every tick."
+    }
+  ],
+  "expect": "ok"
+}

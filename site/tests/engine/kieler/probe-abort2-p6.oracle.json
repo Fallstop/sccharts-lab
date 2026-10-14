@@ -1,0 +1,205 @@
+{
+  "hash": "34a55a3247d1b1e6e43d6d0d8294b4218da87017",
+  "chart": "tests/engine/kieler/probe-abort2-p6.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 17,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 14,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "f": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "S": false,
+        "f": false,
+        "y": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "S": false,
+        "f": false,
+        "y": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "c": true,
+        "S": false,
+        "f": true,
+        "y": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "S": false,
+        "f": true,
+        "y": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "S": false,
+        "f": true,
+        "y": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "c": true,
+        "S": false,
+        "f": true,
+        "y": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "S": false,
+        "f": true,
+        "y": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

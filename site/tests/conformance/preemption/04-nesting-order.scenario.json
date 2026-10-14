@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Entering a superstate runs its entry action first (outerEntryAt = 1), then the entry action of its inner initial state (innerEntryAt = 2)."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "Leaving runs the exit actions inside out: the inner state's exit first (innerExitAt = 3), then the superstate's (outerExitAt = 4), then the transition effect (effectAt = 5)."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Nothing changes in Done."
+    }
+  ],
+  "expect": "ok"
+}

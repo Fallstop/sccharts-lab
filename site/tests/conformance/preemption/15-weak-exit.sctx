@@ -1,0 +1,20 @@
+scchart WeakExit {
+  input bool S, W, A
+  output int plainExit = 0, weakExit = 0
+
+  initial state M {
+    exit do plainExit += 1
+    weak exit do weakExit += 1
+
+    initial state I
+    if A go to F
+
+    final state F
+  }
+  if S abort to N
+  if W go to N
+  join to N
+
+  state N
+  go to M
+}

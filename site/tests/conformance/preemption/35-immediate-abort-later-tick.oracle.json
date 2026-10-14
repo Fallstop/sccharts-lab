@@ -1,0 +1,92 @@
+{
+  "hash": "946c708d3af928c2316fd1ff8912d9327835b2f2",
+  "chart": "tests/conformance/preemption/35-immediate-abort-later-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "effect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "effect": 0,
+        "inner": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "effect": 0,
+        "inner": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "effect": 1,
+        "inner": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "effect": 1,
+        "inner": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

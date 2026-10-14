@@ -1,0 +1,90 @@
+{
+  "hash": "d594582dd6d33e8611612a990db2de3b281c01a8",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "x": 3,
+        "y": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "x": 4,
+        "y": 10
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "x": 3,
+        "y": 20
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "x": 4,
+        "y": 40
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

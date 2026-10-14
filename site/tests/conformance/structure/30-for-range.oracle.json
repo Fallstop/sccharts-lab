@@ -1,0 +1,84 @@
+{
+  "hash": "b694169c7056b667435786bb6602bb589edb2806",
+  "chart": "tests/conformance/structure/30-for-range.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 0
+      },
+      "values": {
+        "I": 0,
+        "O": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "O": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "O": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "O": true
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

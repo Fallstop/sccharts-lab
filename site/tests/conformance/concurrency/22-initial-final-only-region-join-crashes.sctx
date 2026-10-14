@@ -1,0 +1,12 @@
+scchart InitialFinalOnlyCrash {
+  output bool done
+
+  initial state S {
+    initial final state F
+  }
+  join to D
+
+  state D {
+    entry do done = true
+  }
+}

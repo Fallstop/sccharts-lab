@@ -1,0 +1,474 @@
+---
+title: "Variables, types and expressions"
+description: "Booleans, integers, floats and strings; inputs, outputs and locals; initial values, operators, assignments and arrays."
+sidebar:
+  order: 5
+---
+
+import { Sim, Compare, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import HowKielerReads from '~components/HowKielerReads.astro'
+import { Aside } from '@astrojs/starlight/components'
+
+The inputs and outputs of the charts so far have been variables all along. This chapter covers the
+whole set: the four types, the three places a variable can live, how variables get their first
+values, and the operators and assignments you can use, up to arrays. SCCharts expressions look like
+C, and KIELER runs your chart as C code, so they mostly behave like C too. Where that gives an answer
+you might not expect, this chapter says so; the strangest cases are collected at the end, in
+[When the C code shows through](#when-the-c-code-shows-through).
+
+## A tank that fills
+
+`Tank` adds the input `flow` to `volume` in every tick until the tank is full, then stops. It uses
+every kind of declaration in this chapter: an input, two outputs, a constant and a local variable.
+
+<Sim example="learn/variables/tank" show={['flow', 'volume', 'full', 'fills']} caption="`flow` keeps its value until it is changed; `fills` is a local that counts how often `flow` was added." />
+
+Each declaration names a type and one or more variables, optionally with an initial value:
+
+```sctx
+input int flow                 // set by the environment
+output int volume = 0          // written by the chart, visible outside
+output bool full = false
+const int CAPACITY = 500       // a fixed value, see Constants below
+int fills                      // a local variable: no input or output
+```
+
+In every tick until it is full, `Tank` first checks whether this tick's `flow` would reach
+`CAPACITY` (priority 1). If not, the self-loop adds `flow` to `volume`. In tick 5, 400 + 150 would
+be 550, so the chart sets `volume` to exactly 500, sets `full`, enters its final state and
+terminates.
+
+## Inputs, outputs and locals
+
+An **input** is written by the environment: the device, the test bench, you in the simulator. An
+**output** is written by the chart and can be read from outside. A variable declared with neither
+keyword is a **local**: the chart's own working memory. All three keep their value from tick to
+tick until something assigns them. In KIELER's simulator the locals declared at the top of a chart
+are listed along with the inputs and outputs, so you can watch them; locals declared inside states
+come in [Superstates](/learn/hierarchy/).
+
+You may declare several variables of one type at once, each with its own initial value if you
+like: `input int a, b` or `output int low = 0, high = 100`.
+
+### Inputs keep their value
+
+A real environment supplies every input in every tick. KIELER's simulator, SCCharts Lab and this
+guide make that easier: an input you set **keeps its value until you change it**. That is why
+`flow` stays 150 in ticks 4 and 5 of `Tank`, and why the guided tours list an input only in the
+ticks in which it changes. Think of inputs as switches, not buttons. If you want something to be
+true for one tick only, you have to set it back yourself.
+
+A chart may even assign its own inputs; the value lasts until the environment supplies a new one.
+It is legal, but it makes charts hard to follow. Copy the input into a local instead.
+
+## Types
+
+| Type | Holds | Literals | Default |
+| --- | --- | --- | --- |
+| `bool` | true or false | `true`, `false` | `false` |
+| `int` | a 32-bit whole number | `0`, `42`, `2147483647` | `0` |
+| `float` | a number with a fraction (a C `double`) | `1.5`, `2.`, `1.5e3`, `1.5f` | `0.0` |
+| `string` | text | `"pump"` | null (no value) |
+
+A few details of the literals. `int` literals are decimal only (no hex), and one above 2147483647 is
+rejected (`For input string: "3000000000"`). There are no negative literals: `-7` is the minus
+operator applied to `7`, which matters in [the conditional](#traps-in-the-grammar). An exponent needs a decimal point before it: `1e3`
+is a syntax error (`no viable alternative at input 'e3'`); write `1.0e3` or `1000.0`.
+
+SCCharts also has enums, structs and classes, for named values and for data that belongs together.
+They come later, in [Enums, structs and classes](/advanced/data-types/).
+
+`bool` and `int` mix freely, as in C. `true + 1` is 2, a comparison gives 0 or 1, and an `int` can
+stand on its own as a trigger, meaning "not zero": `if n go to …` fires for −3 as well as for 1. Keep
+bools for conditions and do arithmetic in ints, though: a bool is really a small number, which can
+[surprise you](#a-bool-is-a-small-number).
+
+<Aside type="caution" title="A name that is a keyword">
+Many short English words are reserved in SCTX, among them `go`, `to`, `state`, `label`, `max`,
+`min`, `reset`, `print`, `random`, `pre`, `val`, `clock` and `period`. `input bool go` fails with
+`mismatched input 'go' expecting RULE_ID` (`RULE_ID` means a name), plus a second, misleading
+message about `bool` on the same line ([Your first SCChart](/learn/first-chart/#more-first-mistakes)
+shows both). Pick another name: `up`, `start`, `next` and `count` are all fine.
+</Aside>
+
+## Initial values
+
+A variable without an initial value starts with its type's default from the table above: `0`,
+`false`, `0.0`. An unset string is *null*, no value at all, and KIELER leaves it out of the
+simulation's values altogether.
+
+An initial value is assigned when the chart is entered, in tick 1, and never again. (A variable
+declared inside a state gets its initial value each time that state is entered; see
+[Superstates](/learn/hierarchy/).) The initial values run in the order you declared them, and they
+can read the inputs of tick 1. `Calibrate` uses that to remember its first reading as the zero point:
+
+<Sim example="learn/variables/calibrate" caption="`zero` takes `reading` from tick 1 and keeps it; `offset` follows `reading` from tick 2." />
+
+| Tick | `reading` | `zero` after | `offset` after |
+| ---: | --- | --- | --- |
+| 1 | 20 | 20 | 0 |
+| 2 | 20 (held) | 20 | 0 |
+| 3 | 23 | 20 | 3 |
+| 4 | 18 | 20 | −2 |
+| 5 | 18 (held) | 20 | −2 |
+
+So `output int zero = reading` is not a definition that holds for ever, as it would be in a
+spreadsheet: it is an assignment that runs once. Because the initial values run in order, one may
+use another declared above it, but not one declared below it. Here `early` is 1, not 6, because
+`later` still has its default 0 when `early` is computed:
+
+```sctx
+output int early = later + 1
+output int later = 5
+```
+
+There is one exception in KIELER, when an initial value builds on another one that reads an input:
+see [Tick 1 runs input-free initial values first](#tick-1-runs-input-free-initial-values-first).
+
+## Constants
+
+`const` makes a name for a fixed value. A constant is replaced by its value when the chart is
+compiled, so it never appears among the simulator's values: the `Tank` simulation lists no
+`CAPACITY`. A constant needs an initial value; without one, KIELER says:
+
+```text wrap
+A const declaration must have an initialization part!
+```
+
+A constant cannot be assigned either: `do CAPACITY = 600` gives
+`You cannot assign a value to a const object.` If a value has to change while the chart runs, it is a
+variable. Constants are also the only names allowed as array sizes, which come up at the end of this
+chapter.
+
+## Operators
+
+From the loosest binding to the tightest:
+
+| Operators | Meaning |
+| --- | --- |
+| `\|\|` | or (stops at the first true operand) |
+| `&&` | and (stops at the first false operand) |
+| `\|`, `^`, `&` | bitwise or, exclusive or, and (in that order) |
+| `==` `!=` `<` `<=` `>` `>=` | comparisons, at most one in a row |
+| `<<` `>>` | shifts |
+| `+` `-` | addition, subtraction |
+| `*` `/` `%` | multiplication, division, remainder |
+| `-x`, `!x`, `~x` | negation, not, bitwise not |
+| `c ? a : b` | conditional: `a` if `c` holds, otherwise `b` |
+
+Two things in this table differ from what you may know from other languages. The conditional is at
+the bottom, binding tighter than everything else; that is a trap, and it gets its own section next.
+And, as in C, `&` binds more loosely than `==`, so `a & 3 == 2` means `a & (3 == 2)`. Write
+`(a & 3) == 2`. [Operators](/reference/operators/) has the complete table, with every quirk of KIELER's
+grammar.
+
+If you use SCCharts Lab, its **Watch** expressions (the top line of the trace) are a quick way to
+try an operator: each one is evaluated after every tick, in the chart's own syntax.
+
+### Traps in the grammar
+
+The conditional operator binds tighter than every other operator, and its three parts must each be
+a single value: a name, a number, a call, or something in parentheses. So `Clamp` below does not
+cap `speed` at 10. It reads as `speed > (10 ? 10 : speed)`; `10 ? 10 : speed` is 10, because 10 is
+not zero, so the whole thing is `speed > 10`, which is 0 or 1. `ClampFixed` adds the parentheses.
+
+<Compare a="learn/variables/clamp" b="learn/variables/clamp-fixed" scenario="learn/variables/clamp-compare" caption="One pair of parentheses apart: `Clamp` shows 0 or 1, `ClampFixed` caps `speed` at 10." />
+
+Don't trust the diagrams here: KIELER prints a label with its own choice of parentheses, not yours.
+`Clamp`'s label shows how KIELER reads it, `speed > (10 ? 10 : speed)`, but `ClampFixed`'s label
+reads `speed > 10 ? 10 : speed`, which is `Clamp`'s code. When precedence matters, read the code.
+
+More traps of the same kind:
+
+- `b ? 10 : 20 + 1` means `(b ? 10 : 20) + 1`, and `2 * b ? 3 : 4` means `2 * (b ? 3 : 4)`.
+- `b ? -1 : 2` and `!b ? 1 : 2` are rejected with `no viable alternative at input …`. Write
+  `b ? (-1) : 2` and `(!b) ? 1 : 2`.
+- Comparisons don't chain: `1 < x < 3` fails with `no viable alternative at input '<'`. Write
+  `x > 1 && x < 3`, with the name first: in a trigger, `if 1 < x …` would read the `1` as a
+  [count delay](/learn/pre/#count-delays) and fail too.
+- `!` and `~` take a single value: `!b + 1` fails with `no viable alternative at input '+'`. Write
+  `(!b) + 1`.
+- `++` is an effect of its own, not part of an expression: `x = i++` fails with
+  `no viable alternative at input '++'`. Write `x = i; i++`.
+
+Each of them is a button here. Type your own expression or effect to see how KIELER groups it:
+
+<HowKielerReads
+  initial="speed > 10 ? 10 : speed"
+  seeds={[
+    { label: '`Clamp`', text: 'speed > 10 ? 10 : speed' },
+    { label: '`+ 1`', text: 'b ? 10 : 20 + 1' },
+    { label: '`2 *`', text: '2 * b ? 3 : 4' },
+    { label: '`-1`', text: 'b ? -1 : 2' },
+    { label: '`<` chain', text: '1 < x < 3' },
+    { label: '`!`', text: '!b + 1' },
+    { label: '`++`', text: 'x = i++' },
+    { label: '`&`', text: 'a & 3 == 2' },
+  ]}
+  caption="KIELER's reading of an expression or an effect, fully parenthesised and as a tree, or the syntax error it reports."
+/>
+
+The habit that avoids all of it: put the condition, and every part that is more than a single name
+or number, in parentheses.
+
+### Arithmetic is C arithmetic
+
+`Divide` divides `a` by `b` in every tick from tick 2 on, but only when `b` is not zero.
+
+<Sim example="learn/variables/divide" caption="Integer division truncates towards zero, and the remainder takes the sign of `a`." />
+
+| Tick | `a` | `b` | `quotient` after | `remainder` after |
+| ---: | --- | --- | --- | --- |
+| 2 | 7 (held) | 2 (held) | 3 | 1 |
+| 3 | −7 | 2 (held) | −3 | −1 |
+| 4 | −7 (held) | −2 | 3 | −1 |
+| 5 | 7 | −2 (held) | −3 | 1 |
+| 6 | 7 (held) | 0 | −3 (kept) | 1 (kept) |
+
+`int` division throws the fraction away, rounding towards zero, so −7 / 2 is −3, not −4. The
+remainder has the sign of the dividend. An `int` is 32 bits and wraps round on overflow:
+2147483647 + 1 is −2147483648. And `int / int` is integer division even when the result is stored
+in a float: write `a / 2.0` when you want the fraction.
+
+<Aside type="caution" title="Dividing by zero">
+Nothing checks for division by zero. In KIELER's simulation the C program crashes in that tick, but
+the simulator reports no error: from then on it shows the inputs you set, every other value stays as
+it was before the crash, and no transition fires. This site's simulator stops with the error
+`Division by zero` in that tick instead. Either way, guard every division whose divisor can be zero,
+as `Divide` does with `if b != 0`.
+</Aside>
+
+### Floats
+
+A `float` is a C `double`, with one twist: KIELER rounds every float *literal* in your chart to
+single precision before it reaches the C code. `0.1` in a chart is 0.10000000149011612, while a
+value you type into the simulator keeps full precision.
+
+<Sim example="learn/variables/floats" caption="`f` and `tenth` were both written as 0.1, yet `equal` stays false." />
+
+`tenth` is 0.10000000149011612 in every tick:
+
+| Tick | `f` | `equal` after | `whole` after |
+| ---: | --- | --- | --- |
+| 2 | 0.1 (held) | false | 1 |
+| 3 | 0.79 | false | 7 |
+| 4 | −0.79 | false | −7 |
+
+Two lessons. Never compare floats with `==`; compare with a tolerance, or keep the quantity in an
+`int` (tenths of a degree, milliseconds). And storing a float in an `int` truncates towards zero:
+7.9 becomes 7, and −7.9 becomes −7. Literals that single precision holds exactly, such as 0.5, 2.5
+or 1500.0, are not rounded.
+
+A float on its own is not a condition: `if f go to …` is rejected with
+`Float tests must have a comparison operator!` Write `if f > 0.0 go to …`.
+
+## Assignments
+
+Besides `=`, effects can use the compound assignments of C and two of KIELER's own:
+
+| Effect | Means |
+| --- | --- |
+| `x += e`, `x -= e`, `x *= e`, `x /= e`, `x %= e` | `x = x + e`, and so on |
+| `x &= e`, `x \|= e`, `x ^= e`, `x <<= e`, `x >>= e` | bitwise versions |
+| `x min= e` | keep the smaller: `x` becomes `e` if `e` is less than `x` |
+| `x max= e` | keep the larger |
+| `x++`, `x--` | add or subtract 1 (also on floats) |
+
+<Sim example="learn/variables/ops" caption="`lowest` and `highest` track the extremes of `reading`; `count` and `doubling` change in every tick." />
+
+Prefer these to writing the variable twice. For `count = count + 1`, official KIELER warns:
+
+```text wrap
+This assignment looks like old relative write SC syntax and is considered deprecated.
+If you want to create a relative write in new syntax, please use an infix assignment operator.
+```
+
+SCCharts Lab says what it makes of it instead:
+
+```text wrap
+This assignment reads count, so the compiler treats it as an update of count (a relative write, as in the deprecated old SC syntax).
+Write it as count += 1 to say so. In one region it means the same.
+It only matters when another region also writes count in the same tick: this assignment then runs after that write instead of conflicting with it.
+```
+
+This site's playground says the same in fewer words. The infix assignment operator is `count += 1`, or
+`count++`. In the charts you have met so far both forms mean the same thing; the difference only
+matters with concurrent regions, as [Why the compiler says no](/learn/causality/) explains.
+
+## Arrays
+
+Add a size in brackets to declare an array: `int ring[3]`, or `int grid[2][3]` for two dimensions.
+The size must be a number, or a constant whose initial value is a plain number. Elements start at
+the type's default, or take their values from a vector: `int ring[3] = {1, 2, 3}`. A vector may be
+shorter than the array (the rest stay 0) but not longer
+([`Cardinalities do not match.`](/reference/errors/#cardinalities-do-not-match)). Elements
+are numbered from 0: `ring[0]`, `ring[1]`, `ring[2]`.
+
+A vector can also be assigned in an effect, `ring = {ring[1], ring[2], ring[0]}`. That looks like a
+rotation, but KIELER runs it as one assignment per element, in order, each seeing the ones before:
+`ring[0] = ring[1]; ring[1] = ring[2]; ring[2] = ring[0]`. By the time `ring[2]` is assigned,
+`ring[0]` has already been overwritten. Saving the element first fixes it:
+
+<Compare a="learn/variables/rotate" b="learn/variables/rotate-temp" scenario="learn/variables/rotate-compare" caption="`Rotate` loses its 1 in tick 2; `RotateTemp` saves `ring[0]` first and really rotates." />
+
+| Tick | `Rotate`'s `ring` | `RotateTemp`'s `ring` |
+| ---: | --- | --- |
+| 1 | `{1, 2, 3}` | `{1, 2, 3}` |
+| 2 | `{2, 3, 2}` | `{2, 3, 1}` |
+| 3 | `{3, 2, 3}` | `{3, 1, 2}` |
+| 4 | `{2, 3, 2}` | `{1, 2, 3}` |
+
+There is no whole-array assignment: `b = a` between two arrays is rejected by the C compiler
+(`assignment to expression with array type`). Copy element by element, and mind the order, as
+above.
+
+## When the C code shows through
+
+KIELER compiles a chart to C and runs the C program, and in a few places the C shows through. You
+won't need any of this for the charts in this guide. Skim it now, and come back when a chart of your
+own behaves strangely.
+
+### A bool is a small number
+
+In the C code a `bool` is a `char`. Assign it 5 and it shows as true but reads back as 5; assign it
+256 and it is false, because 256 does not fit in a `char` and becomes 0. Keep bools for conditions
+and do arithmetic in ints.
+
+### Strings compare as pointers
+
+In KIELER's C simulation a string is a pointer (`char*`), and `==` compares pointers, not text.
+`Greeting` compares the input `name` and the output `reply` with the literal `"hi"`:
+
+<Sim example="learn/variables/greeting" caption="With `name` set to hi, `nameIsHi` is still false." />
+
+`reply` was assigned the literal `"hi"`, so it points at that very literal and compares equal. The
+text you type into the simulator lives somewhere else in memory, so `name == "hi"` is false whatever
+you type. So a string comparison runs and quietly gives the wrong answer. Official KIELER compiles
+it without a word; SCCharts Lab passes on the C compiler's warning for each one
+([C compiler warnings](/reference/errors/#c-compiler-warnings-in-sccharts-lab)):
+
+```text wrap
+comparison with string literal results in unspecified behavior
+```
+
+Strings cannot be joined either. The C compiler rejects `s + "b"`:
+
+```text wrap
+invalid operands to binary + (have ‘char *’ and ‘char *’)
+```
+
+Don't base decisions on strings: encode choices as ints, bools or an
+[enum](/advanced/data-types/#enums-names-instead-of-codes)
+(`mode == 2`, `isManual`), and use strings only for text you pass through. In the *KIELER VS Code*
+extension (0.3.0), string inputs are broken: its simulation of `Greeting` shows `name` as
+`nameIsHi` in every tick, whatever you send.
+
+### A compound assignment converts its right-hand side first
+
+For an `int` target and a `float` right-hand side, KIELER converts the right-hand side to `int`
+*before* applying a compound operator. So `x *= 1.5` multiplies by 1. In this chart, which runs in
+every tick from tick 2 on,
+
+```sctx
+initial state Calc
+  do compound = n; compound *= 1.5; plain = n * 1.5 go to Calc
+```
+
+`compound *= 1.5` never changes anything, while `plain = n * 1.5` computes the product and then
+truncates it:
+
+| Tick | `n` | `compound` after | `plain` after |
+| ---: | --- | --- | --- |
+| 2 | 10 (held) | 10 | 15 |
+| 3 | 3 | 3 | 4 |
+| 4 | −3 | −3 | −4 |
+
+### Tick 1 runs input-free initial values first
+
+KIELER's default compiler has a bug in tick 1: assignments that do not read an input are moved
+ahead of those that do. With these declarations and `start` = 4 in tick 1, KIELER gives `twice` the
+value 0, not 8, because it computes `twice` before `first` has its value:
+
+```sctx
+input int start
+output int first = start
+output int twice = first * 2
+```
+
+This site's simulator shows the intended 8, with a warning that KIELER computes something else;
+SCCharts Lab and KIELER show 0. Until the bug is fixed, don't build one initial value on another that
+reads an input. Compute it on a transition instead.
+
+### Array indices are not checked
+
+In KIELER's simulation an index outside the array is not caught: `ring[3]` in a three-element array
+silently reads or overwrites whatever variable lies next to it in memory. This site's simulator does
+the same, and says so under *What happened* in that tick; a constant index outside its array also
+gets a warning. Only where the C code would reach past the chart's own variables does the simulator
+stop with an error instead. Make sure your indices stay in range.
+
+The [KIELER wiki](https://github.com/kieler/semantics/wiki/Syntax) also describes `_` as a placeholder
+that leaves an element unchanged in a vector assignment. It does not work in current KIELER (the C
+compiler reports `‘_’ undeclared`), so assign the elements you mean one by one.
+
+## Try it
+
+<TryIt example="learn/variables/limits" solution="learn/variables/limits-solution" title="Keep the tank in range">
+`Limits` adds `flow` and takes away `drain` in every tick, and `volume` happily goes above
+`CAPACITY` and below zero. Keep `volume` between 0 and `CAPACITY` without adding a state or a
+transition: two more effects on the self-loop are enough.
+</TryIt>
+
+<TryIt example="learn/variables/history" solution="learn/variables/history-solution" title="Remember the last three readings">
+`History` should keep the last three values of `reading` in `last` (newest first) and their average
+in `average`. With readings 6, 9 and 12 in ticks 2 to 4, `last` should end up `{12, 9, 6}` and
+`average` 9. As written, every element of `last` holds the newest reading. Rewrite the vector
+assignment as three element assignments, in an order that never overwrites an element you still
+need.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="`a` is −7 and `b` is 2, both `int`. What are `a / b` and `a % b` in KIELER?"
+  options={['−4 and 1', '−3 and −1', '−3.5 and −1', '−3 and 1']}
+  answer={1}
+>
+Integer division truncates towards zero, so −7 / 2 is −3, and the remainder has the sign of the
+dividend: −7 % 2 is −1. This is C's rule (and Java's), not Python's.
+</Quiz>
+
+<Quiz
+  question="What does the effect `y = x > 5 ? 1 : 0` store in `y` when `x` is 3?"
+  options={['0, because 3 is not greater than 5', '1, because it means `x > (5 ? 1 : 0)`, that is `x > 1`', 'Nothing: KIELER rejects the expression']}
+  answer={1}
+>
+The conditional binds tighter than `>`, so the expression is `x > (5 ? 1 : 0)`. `5 ? 1 : 0` is 1
+(5 is not zero), and 3 > 1 holds, so `y` is 1. Write `(x > 5) ? 1 : 0` to get 0.
+</Quiz>
+
+<Quiz
+  question="A chart declares `input int level` and `output int start = level`. `level` is 5 in tick 1 and 8 from tick 2 on. What is `start` after tick 3?"
+  options={['5', '8', '0']}
+  answer={0}
+>
+An initial value is assigned once, when the chart is entered in tick 1, and it can read tick 1's
+inputs. After that, nothing assigns `start` again, so it stays 5.
+</Quiz>
+
+<KeyIdeas>
+- Inputs are written by the environment, outputs and locals by the chart. In the simulator an input
+  keeps its value until you change it.
+- Variables start at their type's default (0, false, 0.0) or their initial value, assigned once in
+  tick 1, in declaration order, with tick 1's inputs available.
+- Arithmetic is C's: integer division truncates towards zero, ints wrap at 32 bits, and storing a
+  float in an int truncates. Float literals are rounded to single precision, so never compare floats
+  with `==`.
+- The conditional `c ? a : b` binds tighter than everything else. Parenthesise its parts.
+- Prefer `x += e` and `x++` to `x = x + e`. A vector assignment runs element by element, in order.
+- Some C details show through: strings compare as pointers, and nothing checks for division by zero
+  or for indices out of range.
+</KeyIdeas>
+
+Next, [Signals](/learn/signals/): values that are present for a single tick, for the events a
+controller reacts to.

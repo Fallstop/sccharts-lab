@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "The inner transition sets flag = true. A weak abort's trigger is evaluated after the inner behaviour of the tick, so it sees flag = true and M is left in the same tick: effect = 1."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

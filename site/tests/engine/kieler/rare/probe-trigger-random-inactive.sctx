@@ -1,0 +1,14 @@
+// The trigger of a state that is not active is computed in every tick: its random() takes a value of the sequence each tick.
+scchart TrigRandomInactive {
+  input bool start
+  output float r = 0.0
+  output bool went = false
+  region R1:
+    initial state A
+      if start go to B
+    state B
+      if random() > 2.0 do went = true go to A
+  region R2:
+    initial state C
+      do r = random() go to C
+}

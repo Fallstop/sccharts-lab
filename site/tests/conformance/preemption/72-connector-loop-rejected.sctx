@@ -1,0 +1,12 @@
+scchart ConnectorLoop {
+  input bool A
+
+  initial state S
+  if A go to C1
+
+  connector state C1
+  immediate go to C2
+
+  connector state C2
+  immediate go to C1
+}

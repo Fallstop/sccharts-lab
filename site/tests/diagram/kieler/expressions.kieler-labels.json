@@ -1,0 +1,1329 @@
+{
+ "sourceHash": "cee906ef4c05aef1",
+ "states": [
+  {
+   "path": [
+    "Expressions"
+   ],
+   "rows": [
+    [
+     "Expressions"
+    ],
+    [
+     "input bool ",
+     "a, b, c"
+    ],
+    [
+     "input int ",
+     "x, y, z"
+    ],
+    [
+     "input float ",
+     "f"
+    ],
+    [
+     "input string ",
+     "s"
+    ],
+    [
+     "output int ",
+     "o, arr[4]"
+    ],
+    [
+     "output float ",
+     "g"
+    ],
+    [
+     "output signal ",
+     "S"
+    ],
+    [
+     "output signal int ",
+     "V"
+    ],
+    [
+     "output signal bool ",
+     "W ",
+     "combine ",
+     "or"
+    ],
+    [
+     "output signal int ",
+     "M ",
+     "combine ",
+     "max"
+    ],
+    [
+     "output bool ",
+     "ok"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    1058,
+    1308.2
+   ]
+  },
+  {
+   "path": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    10,
+    534.3,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "rows": [
+    [
+     "B"
+    ]
+   ],
+   "box": [
+    548.7,
+    525,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "rows": [
+    [
+     "C"
+    ]
+   ],
+   "box": [
+    1001,
+    534.3,
+    34,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Expressions",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    218.2,
+    1045,
+    1084.2
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NExpressions$$N0$NA$EB0",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "1: a && b || c",
+   "lines": [
+    "1: a && b || c"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB1",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "2: a || b && c",
+   "lines": [
+    "2: a || b && c"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB2",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "3: (a || b) && c",
+   "lines": [
+    "3: (a || b) && c"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB3",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "4: !(a && b)",
+   "lines": [
+    "4: !(a && b)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB4",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "5: !a && !b",
+   "lines": [
+    "5: !a && !b"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB5",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "6: x + y * z > 3",
+   "lines": [
+    "6: x + y * z > 3"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB6",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "7: (x + y) * z > 3",
+   "lines": [
+    "7: (x + y) * z > 3"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB7",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "8: x - y - z == 0",
+   "lines": [
+    "8: x - y - z == 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB8",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "9: x - y - z == 0",
+   "lines": [
+    "9: x - y - z == 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB9",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "10: x - (y + z) == 0",
+   "lines": [
+    "10: x - (y + z) == 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB10",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "11: x + y - z == 0",
+   "lines": [
+    "11: x + y - z == 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB11",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "12: x * (y / z) == 0",
+   "lines": [
+    "12: x * (y / z) == 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB12",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "13: x / (y * z) == 0",
+   "lines": [
+    "13: x / (y * z) == 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB13",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "14: -(x + y) < 0",
+   "lines": [
+    "14: -(x + y) < 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB14",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "15: -x - y < 0",
+   "lines": [
+    "15: -x - y < 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB15",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "16: x % 2 == 1",
+   "lines": [
+    "16: x % 2 == 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB16",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "17: (x & 3) == 1",
+   "lines": [
+    "17: (x & 3) == 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB17",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "18: (x | y) != 0",
+   "lines": [
+    "18: (x | y) != 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB18",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "19: x << 2 > y",
+   "lines": [
+    "19: x << 2 > y"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB19",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "20: (x + 1) << 2 > y",
+   "lines": [
+    "20: (x + 1) << 2 > y"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB20",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "21: x >= y && y <= z",
+   "lines": [
+    "21: x >= y && y <= z"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB21",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "22: pre(a)",
+   "lines": [
+    "22: pre(a)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB22",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "23: pre(x) + 1 > x",
+   "lines": [
+    "23: pre(x) + 1 > x"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB23",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "24: !pre(a) && b",
+   "lines": [
+    "24: !pre(a) && b"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB24",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "25: 3 a",
+   "lines": [
+    "25: 3 a"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB25",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "26: a == (b == c)",
+   "lines": [
+    "26: a == (b == c)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB26",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "27: f > 1.5",
+   "lines": [
+    "27: f > 1.5"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB27",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "28: f < 0.1",
+   "lines": [
+    "28: f < 0.1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB28",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "29: s == \"hi\"",
+   "lines": [
+    "29: s == \"hi\""
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB29",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "30: arr[x + 1] > 0",
+   "lines": [
+    "30: arr[x + 1] > 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB30",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "31: x > (0 ? true : false)",
+   "lines": [
+    "31: x > (0 ? true : false)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NA$EB31",
+   "source": [
+    "Expressions",
+    0,
+    "A"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "text": "32:",
+   "lines": [
+    "32: "
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC0",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "1: / o = x + 1",
+   "lines": [
+    "1: / o = x + 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC1",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "2: / o += 2; o -= 1; o *= 3",
+   "lines": [
+    "2: / o += 2;",
+    "     o -= 1;",
+    "     o *= 3"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC2",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "3: / o++; o--",
+   "lines": [
+    "3: / o++;",
+    "     o--"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC3",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "4: / S",
+   "lines": [
+    "4: / S"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC4",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "5: / V((x + 1))",
+   "lines": [
+    "5: / V((x + 1))"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC5",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "6: / V(3)",
+   "lines": [
+    "6: / V(3)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC6",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "7: / V(pre(x))",
+   "lines": [
+    "7: / V(pre(x))"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC7",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "8: / W((a && b))",
+   "lines": [
+    "8: / W((a && b))"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC8",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "9: / M(x)",
+   "lines": [
+    "9: / M(x)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC9",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "10: / arr[1] = 2; arr[x] = y",
+   "lines": [
+    "10: / arr[1] = 2;",
+    "      arr[x] = y"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC10",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "11: / g = f * 2.0",
+   "lines": [
+    "11: / g = f * 2.0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC11",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "12: / g = 1000000.0",
+   "lines": [
+    "12: / g = 1000000.0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC12",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "13: / g = 1.0E-4",
+   "lines": [
+    "13: / g = 1.0E-4"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC13",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "14: / g = 1.23456789E7",
+   "lines": [
+    "14: / g = 1.23456789E7"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC14",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "15: / ok = !ok",
+   "lines": [
+    "15: / ok = !ok"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC15",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "16: / o = x > (0 ? 1 : 2)",
+   "lines": [
+    "16: / o = x > (0 ? 1 : 2)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC16",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "17: / print(x)",
+   "lines": [
+    "17: / print(x)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC17",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "18: / foo(x)",
+   "lines": [
+    "18: / foo(x)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC18",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "user label",
+   "lines": [
+    "user label"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC19",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "20: a / o = 2",
+   "lines": [
+    "20: a",
+    "/ o = 2"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC20",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "21: a / o = 3",
+   "lines": [
+    "21: a",
+    "/ o = 3"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC21",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "22: a / o = 4",
+   "lines": [
+    "22: a",
+    "/ o = 4"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NB$EC22",
+   "source": [
+    "Expressions",
+    0,
+    "B"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "23:",
+   "lines": [
+    "23: "
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NExpressions$$N0$NC$EC0",
+   "source": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "target": [
+    "Expressions",
+    0,
+    "C"
+   ],
+   "text": "a / S",
+   "lines": [
+    "a",
+    "/ S"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

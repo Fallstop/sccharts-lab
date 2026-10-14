@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start`: `Job`." },
+    { "inputs": { "start": false, "sheet": true }, "note": "Sheet 1." },
+    { "inputs": {}, "note": "Sheet 2." },
+    { "inputs": {}, "note": "Sheet 3. A weak abort reads its trigger *after* the inside has run, so it sees `printed >= 3` at once and leaves in this tick." },
+    { "inputs": {}, "note": "In `Idle`: the sheet signal is ignored." },
+    { "inputs": { "sheet": false }, "note": "Idle." }
+  ],
+  "expect": "ok"
+}

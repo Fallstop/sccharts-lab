@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false }, "note": "Tick 1 enters `Idle` in both charts." },
+    { "inputs": { "start": true }, "note": "`start`: both enter `Job`." },
+    { "inputs": { "start": false, "sheet": true }, "note": "Sheet 1 on both sides." },
+    { "inputs": {}, "note": "Sheet 2 on both sides." },
+    { "inputs": {}, "note": "Sheet 3: `printed` is 3 on both sides. `TrayWeak`'s weak abort reads `printed >= 3` *after* the inside has run, sees 3 and leaves in this tick. `TrayStrong`'s strong abort read its trigger *before* the inside ran, when `printed` was still 2, so `TrayStrong` stays in `Job`." },
+    { "inputs": {}, "note": "Another sheet. `TrayWeak` is in `Idle` and ignores it. `TrayStrong`'s abort now sees 3 and fires before the inside runs, so this sheet is not counted: both charts stay at 3." },
+    { "inputs": { "sheet": false }, "note": "Both idle." }
+  ],
+  "expect": "ok"
+}

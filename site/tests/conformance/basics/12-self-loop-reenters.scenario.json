@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Tick 1 enters A, so its entry action runs: entries = 1, x = 0."},
+    {"inputs": {}, "note": "The self-loop leaves A and enters it again: its effect runs (x = 1) and then A's entry action runs again (entries = 2)."},
+    {"inputs": {}, "note": "Exit and re-entry again: x = 2, entries = 3."},
+    {"inputs": {}, "note": "x = 3, entries = 4: every self-loop is a full exit and re-entry."}
+  ],
+  "expect": "ok"
+}

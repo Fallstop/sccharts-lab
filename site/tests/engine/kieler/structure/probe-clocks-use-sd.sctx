@@ -1,0 +1,21 @@
+// @ClocksUseSD: one clock read by two concurrent regions and inside a superstate (rejected without the annotation).
+// The declaring state advances it once per tick; a reset `t = 0` comes after the increment (KIELER's ClockIUR
+// schedule), and every state asks for the sleep time of its own timeouts.
+@ClocksUseSD
+scchart SharedClock {
+  input bool zero, poke
+  output int a = 0, b = 0
+  clock t = 0
+  region Left {
+    initial state Wait
+    if t >= 300 do a++ go to Wait
+    if zero do t = 0 go to Wait
+  }
+  region Right {
+    initial state Outer {
+      initial state Inner
+      if t >= 500 do b++ go to Inner
+    }
+    if poke go to Outer
+  }
+}

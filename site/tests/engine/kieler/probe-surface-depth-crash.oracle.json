@@ -1,0 +1,67 @@
+{
+  "hash": "4a3ba8fefe3ea5aa1943570f255fce708277103a",
+  "chart": "tests/engine/kieler/probe-surface-depth-crash.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "org.eclipse.emf.common.util.BasicEList$BasicIndexOutOfBoundsException: index=3, size=3\norg.eclipse.emf.common.util.BasicEList$BasicIndexOutOfBoundsException: index=3, size=3\n\torg.eclipse.emf.common.util.BasicEList.remove(BasicEList.java:600)\n\torg.eclipse.emf.common.notify.impl.NotifyingListImpl.doRemove(NotifyingListImpl.java:756)\n\torg.eclipse.emf.common.notify.impl.NotifyingListImpl.remove(NotifyingListImpl.java:737)\n\tde.cau.cs.kieler.sccharts.processors.SurfaceDepth.transformSurfaceDepth(SurfaceDepth.java:200)\n\tde.cau.cs.kieler.sccharts.processors.SurfaceDepth.lambda$transform$0(SurfaceDepth.java:126)\n\tjava.base/java.util.ArrayList.forEach(ArrayList.java:1596)\n\tde.cau.cs.kieler.sccharts.processors.SurfaceDepth.transform(SurfaceDepth.java:128)\n\tde.cau.cs.kieler.sccharts.processors.SurfaceDepth.lambda$transform$8(SurfaceDepth.java:315)\n\tjava.base/java.lang.Iterable.forEach(Iterable.java:75)\n\tde.cau.cs.kieler.sccharts.processors.SurfaceDepth.lambda$transform$9(SurfaceDepth.java:317)\n\torg.eclipse.xtext.xbase.lib.ObjectExtensions.operator_doubleArrow(ObjectExtensions.java:141)\n\tde.cau.cs.kieler.sccharts.processors.SurfaceDepth.transform(SurfaceDepth.java:319)\n\tde.cau.cs.kieler.sccharts.processors.SurfaceDepth.process(SurfaceDepth.java:87)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:304)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:777)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:256)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:210)\n\tde.cau.cs.kieler.language.server.kicool.CompilationThread.run(CompilationThread.java:46)"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 20,
+      "column": 21
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 41,
+      "column": 9
+    },
+    {
+      "severity": 2,
+      "message": "The transition is not reachable.",
+      "line": 52,
+      "column": 11
+    },
+    {
+      "severity": 2,
+      "message": "The transition is not reachable.",
+      "line": 53,
+      "column": 11
+    },
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 51,
+      "column": 11
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 54,
+      "column": 9
+    },
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 83,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 65,
+      "column": 21
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 76,
+      "column": 9
+    }
+  ],
+  "ticks": []
+}

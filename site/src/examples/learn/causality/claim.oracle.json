@@ -1,0 +1,73 @@
+{
+  "hash": "fb5315330cb48258b77014d491042cb57c7c44f7",
+  "chart": "src/examples/learn/causality/claim.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "aWorks": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "bWorks": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "busy": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "aWorks": true,
+        "bWorks": false,
+        "busy": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "aWorks": true,
+        "bWorks": true,
+        "busy": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "aWorks": true,
+        "bWorks": true,
+        "busy": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

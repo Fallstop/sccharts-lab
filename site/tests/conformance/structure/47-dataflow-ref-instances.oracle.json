@@ -1,0 +1,86 @@
+{
+  "hash": "96a1d24770c8b30b1f116400335f38d9814ce4db",
+  "chart": "tests/conformance/structure/47-dataflow-ref-instances.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "X": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "Y": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "Z": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "P": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "X": true,
+        "Y": true,
+        "Z": false
+      },
+      "values": {
+        "X": true,
+        "Y": true,
+        "Z": false,
+        "O": false,
+        "P": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "Z": true
+      },
+      "values": {
+        "X": true,
+        "Y": true,
+        "Z": true,
+        "O": true,
+        "P": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "Y": false
+      },
+      "values": {
+        "X": true,
+        "Y": false,
+        "Z": true,
+        "O": false,
+        "P": false
+      },
+      "terminated": false
+    }
+  ]
+}

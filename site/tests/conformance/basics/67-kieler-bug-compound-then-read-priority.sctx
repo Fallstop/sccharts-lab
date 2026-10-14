@@ -1,0 +1,8 @@
+scchart KielerBugCompoundThenReadPriority {
+  output int count = 0, shown = 0
+
+  initial state A {
+    entry do count += 1; shown = count
+  }
+  go to A
+}

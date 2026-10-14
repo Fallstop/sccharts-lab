@@ -1,0 +1,10 @@
+scchart StaticAccessVariable {
+  input bool A
+  output int o = 0
+  initial state S
+    if A do o = scchart(StaticVars).X go to S
+}
+scchart StaticVars {
+  int X = 3
+  initial state I
+}

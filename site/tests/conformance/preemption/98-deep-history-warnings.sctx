@@ -1,0 +1,19 @@
+// With deep history, KIELER keeps a history variable _H<name> for the target and for every superstate inside
+// it, and the compiler warns once for each ("ValuedObject with name _HMid is contained in the model but not in
+// VariableStore."). The warnings are harmless.
+scchart P98DeepWarnings {
+  input bool leave, deeper
+  output int where = 0
+  initial state Outer {
+    initial state Mid {
+      initial state Inner {
+        initial state I1
+        if deeper do where = 2 go to I2
+        state I2
+      }
+    }
+  }
+  if leave go to Away
+  state Away
+  if !leave go to Outer history
+}

@@ -1,0 +1,22 @@
+scchart LampPanel {
+  input bool left, right
+  output bool leftLamp = false, rightLamp = false
+
+  region {
+    initial state Left is PushSwitch(left to press, leftLamp to lit)
+  }
+  region {
+    initial state Right is PushSwitch(right to press, rightLamp to lit)
+  }
+}
+
+scchart PushSwitch {
+  input bool press
+  output bool lit = false
+
+  initial state Off
+    if press do lit = true go to On
+
+  state On
+    if press do lit = false go to Off
+}

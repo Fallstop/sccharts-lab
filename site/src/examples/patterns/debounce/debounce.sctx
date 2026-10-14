@@ -1,0 +1,18 @@
+scchart Debounce {
+  input bool raw
+  output bool pressed
+
+  initial state Released
+    if raw go to MaybePressed
+
+  state MaybePressed
+    if !raw go to Released
+    if 2 raw do pressed = true go to Pressed
+
+  state Pressed
+    if !raw go to MaybeReleased
+
+  state MaybeReleased
+    if raw go to Pressed
+    if 2 !raw do pressed = false go to Released
+}

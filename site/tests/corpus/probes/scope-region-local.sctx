@@ -1,0 +1,9 @@
+scchart P237 {
+  region R:
+  int r = 0
+  initial state A
+  do r++ go to A
+  region Q:
+  initial state B
+  if r > 0 go to B
+}

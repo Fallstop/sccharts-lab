@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "A -> B writes x = 1; B's first immediate transition then tests x == 1 and sees the new value, so it fires: y = 1, state C."},
+    {"inputs": {}, "note": "C has no transitions; x = 1, y = 1."}
+  ],
+  "expect": "ok"
+}

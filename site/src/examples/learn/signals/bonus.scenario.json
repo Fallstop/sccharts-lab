@@ -1,0 +1,36 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "gold": false,
+        "silver": false
+      },
+      "note": "Tick 1 enters `Play`."
+    },
+    {
+      "inputs": {
+        "gold": true
+      },
+      "note": "Gold only: priority 2 emits `points(10)`."
+    },
+    {
+      "inputs": {
+        "silver": true
+      },
+      "note": "Both: priority 1 emits `points(10)` and then `points(5)`. Without a combine function the last emission wins, so `points` is 5, not 15."
+    },
+    {
+      "inputs": {
+        "gold": false
+      },
+      "note": "Silver only: 5."
+    },
+    {
+      "inputs": {
+        "silver": false
+      },
+      "note": "Nothing emitted: `points` is absent and keeps its value, 5."
+    }
+  ],
+  "expect": "ok"
+}

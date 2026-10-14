@@ -1,0 +1,121 @@
+{
+  "hash": "b99fa2b93e31d31e937c5d5fe85adaf1111bde1e",
+  "chart": "tests/conformance/structure/85-static-local.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "kept": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "plain": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "St85Visits_region0_A___visits": {
+      "type": "int",
+      "properties": [
+        "static"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "kept": 1,
+        "plain": 1,
+        "St85Visits_region0_A___visits": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "kept": 1,
+        "plain": 1,
+        "St85Visits_region0_A___visits": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "kept": 2,
+        "plain": 1,
+        "St85Visits_region0_A___visits": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "kept": 2,
+        "plain": 1,
+        "St85Visits_region0_A___visits": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "kept": 3,
+        "plain": 1,
+        "St85Visits_region0_A___visits": 3
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

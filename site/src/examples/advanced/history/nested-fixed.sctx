@@ -1,0 +1,30 @@
+@layout[elk.direction] DOWN
+scchart MenuNestedFixed {
+  input bool power, menu, home, right
+  output int screen = 0
+
+  initial state Off {
+    entry do screen = -1
+  }
+  if power go to On shallow history
+
+  state On {
+    initial state Home {
+      entry do screen = 0
+    }
+    if menu go to Settings history
+
+    state Settings {
+      initial state Brightness {
+        entry do screen = 11
+      }
+      if right go to Contrast
+
+      state Contrast {
+        entry do screen = 12
+      }
+    }
+    if home go to Home
+  }
+  if !power go to Off
+}

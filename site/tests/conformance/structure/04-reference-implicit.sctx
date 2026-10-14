@@ -1,0 +1,17 @@
+// Implicit binding: second is not mentioned, so KIELER binds it to the variable with the same name that is
+// visible at the referencing state. The editor warns: "Valued Objects are bound implicitly!\nsecond, "
+// (the message really ends with ", "). Implicit binding also finds locals and variables of enclosing states.
+scchart St04Main {
+  input bool second
+  output bool speaker
+  initial state R is St04Beep(speaker to beep)
+}
+
+scchart St04Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    { "inputs": { "menu": false, "home": false, "down": false, "right": false }, "note": "Tick 1 enters `Home` (`screen` = 0)." },
+    { "inputs": { "menu": true }, "note": "The first visit to `Settings`: there is nothing to remember yet, so it starts in its initial states, `Display` and `Brightness` (`screen` = 11)." },
+    { "inputs": { "menu": false, "right": true }, "note": "`Brightness` to `Contrast` (12)." },
+    { "inputs": { "right": false, "home": true }, "note": "Back `Home` (0)." },
+    { "inputs": { "home": false, "menu": true }, "note": "`history` is deep: `Settings` resumes in `Display`, and `Display` resumes in `Contrast` (12)." },
+    { "inputs": { "menu": false, "down": true }, "note": "`Display` to `Sound`, which starts in `Volume` (21)." },
+    { "inputs": { "down": false, "right": true }, "note": "`Volume` to `Balance` (22)." },
+    { "inputs": { "right": false, "home": true }, "note": "`Home` (0)." },
+    { "inputs": { "home": false, "menu": true }, "note": "Deep history again: `Sound`, and inside it `Balance` (22)." },
+    { "inputs": { "menu": false }, "note": "On the `Balance` screen." }
+  ],
+  "expect": "ok"
+}

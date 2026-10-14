@@ -1,0 +1,8 @@
+scchart EffectsSequential {
+  output int x = 0, y = 0, z = 0
+
+  initial state A
+  do x = 1; y = x; x = 5; z = x + y go to B
+
+  state B
+}

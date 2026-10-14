@@ -1,0 +1,21 @@
+// Arrays bind to arrays of the referenced chart; a single cell binds to a scalar input.
+scchart St15Main {
+  input int a[3]
+  output int s = 0, m = 0
+  region { initial state R1 is St15Sum(a, s) }
+  region { initial state R2 is St15Times10(a[1], m) }
+}
+
+scchart St15Sum {
+  input int v[3]
+  output int sum
+  initial state S
+  do sum = v[0] + v[1] + v[2] go to S
+}
+
+scchart St15Times10 {
+  input int x
+  output int y
+  initial state S
+  do y = x * 10 go to S
+}

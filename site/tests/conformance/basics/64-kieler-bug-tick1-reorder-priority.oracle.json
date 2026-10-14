@@ -1,0 +1,58 @@
+{
+  "hash": "db4da75cbc41ebcaa3bcca1a895d4d18bf5aac89",
+  "chart": "tests/conformance/basics/64-kieler-bug-tick1-reorder-priority.sctx",
+  "system": "priority",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "y": 13,
+        "z": 14
+      },
+      "taken": [
+        1,
+        1
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 3,
+        "y": 13,
+        "z": 14
+      },
+      "taken": [
+        0,
+        0
+      ]
+    }
+  ]
+}

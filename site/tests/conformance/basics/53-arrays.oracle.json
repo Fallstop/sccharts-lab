@@ -1,0 +1,216 @@
+{
+  "hash": "ee01bb55551148bcdaa10aa98884ca31a65e7466",
+  "chart": "tests/conformance/basics/53-arrays.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads grid[1][0], so the compiler treats it as an update of grid[1][0] (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. grid[1][0] += 1.\nIt only matters when another region also writes grid[1][0] in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 13,
+      "column": 35
+    }
+  ],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "arr": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "flags": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "grid": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "partial": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sum": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "arr": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "flags": [
+          false,
+          false
+        ],
+        "grid": [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "partial": [
+          7,
+          8,
+          0
+        ],
+        "sum": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 2,
+        "arr": [
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "flags": [
+          false,
+          false
+        ],
+        "grid": [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "partial": [
+          7,
+          8,
+          0
+        ],
+        "sum": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "I": 2,
+        "arr": [
+          0,
+          0,
+          108,
+          9,
+          10
+        ],
+        "flags": [
+          false,
+          true
+        ],
+        "grid": [
+          [
+            1,
+            2
+          ],
+          [
+            20,
+            4
+          ]
+        ],
+        "partial": [
+          7,
+          8,
+          0
+        ],
+        "sum": 10
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 4
+      },
+      "values": {
+        "I": 4,
+        "arr": [
+          0,
+          0,
+          108,
+          9,
+          110
+        ],
+        "flags": [
+          false,
+          true
+        ],
+        "grid": [
+          [
+            1,
+            2
+          ],
+          [
+            20,
+            4
+          ]
+        ],
+        "partial": [
+          7,
+          8,
+          0
+        ],
+        "sum": 110
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

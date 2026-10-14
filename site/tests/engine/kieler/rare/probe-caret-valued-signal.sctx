@@ -1,0 +1,6 @@
+scchart CaretValuedSignal {
+  input bool A
+  output signal int ^S
+  initial state S
+    if A do ^S(3) go to S
+}

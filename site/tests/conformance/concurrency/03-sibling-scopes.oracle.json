@@ -1,0 +1,63 @@
+{
+  "hash": "cd9890210473ad7c7513562aa2eb7a315afb0c94",
+  "chart": "tests/conformance/concurrency/03-sibling-scopes.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "y1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "y1": 0,
+        "y2": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "y1": 2,
+        "y2": 101
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "y1": 2,
+        "y2": 101
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+scchart ConnectorDelayedLooking {
+  input bool coin10, coin20
+  output signal vend
+  output int credit = 0
+
+  initial state Waiting
+    if coin20 do credit += 20 go to Check
+    if coin10 do credit += 10 go to Check
+
+  connector state Check
+    if credit >= 30 do credit -= 30; vend go to Waiting
+    go to Waiting
+}

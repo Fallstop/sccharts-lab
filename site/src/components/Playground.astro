@@ -1,0 +1,20 @@
+---
+/**
+ * <Playground example="…" />: an editable chart with a live diagram and simulation, inside a page.
+ * The full-page version is /playground.
+ *
+ * Props: example (optional starter; a small chart if omitted), caption.
+ *
+ * The internals belong to the playground workstream: src/components/playground/PlaygroundInline.astro (the
+ * widget frame, the build-time source and diagram) and src/components/playground/app.ts (the editor, the live
+ * diagram and the simulation).
+ */
+import PlaygroundInline from './playground/PlaygroundInline.astro'
+
+interface Props {
+	example?: string
+	caption?: string
+}
+---
+
+<PlaygroundInline {...Astro.props} />

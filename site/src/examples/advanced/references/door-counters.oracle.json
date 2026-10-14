@@ -1,0 +1,115 @@
+{
+  "hash": "2eb5233de71a1a307f0b46e22ab784158b8f5b26",
+  "chart": "src/examples/advanced/references/door-counters.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "back": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "front": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "backCount": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "frontCount": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "front": false,
+        "back": false
+      },
+      "values": {
+        "back": false,
+        "front": false,
+        "backCount": 0,
+        "frontCount": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "front": true
+      },
+      "values": {
+        "back": false,
+        "front": true,
+        "backCount": 0,
+        "frontCount": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "back": false,
+        "front": true,
+        "backCount": 0,
+        "frontCount": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "front": false,
+        "back": true
+      },
+      "values": {
+        "back": true,
+        "front": false,
+        "backCount": 1,
+        "frontCount": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "front": true
+      },
+      "values": {
+        "back": true,
+        "front": true,
+        "backCount": 2,
+        "frontCount": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "front": false,
+        "back": false
+      },
+      "values": {
+        "back": false,
+        "front": false,
+        "backCount": 2,
+        "frontCount": 3
+      },
+      "terminated": false
+    }
+  ]
+}

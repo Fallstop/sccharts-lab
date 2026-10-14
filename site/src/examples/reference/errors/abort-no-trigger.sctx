@@ -1,0 +1,12 @@
+scchart AbortNoTrigger {
+  input bool A
+
+  initial state Work {
+    initial state Step1
+      if A go to Step2
+    state Step2
+  }
+  go to Done
+
+  state Done
+}

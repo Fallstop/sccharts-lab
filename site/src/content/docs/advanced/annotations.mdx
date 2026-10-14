@@ -1,0 +1,212 @@
+---
+title: "Comments and annotations"
+description: "Comments that appear in diagrams, labels that replace code in them, annotations that steer the layout, and pragmas for the whole file."
+sidebar:
+  order: 9
+---
+
+import { Chart, Sim, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A chart is read far more often than it is written, and much of the reading happens in the diagram.
+This chapter is about the parts of a `.sctx` file that are there for the reader: comments, some of which
+KIELER draws in the diagram; labels, which replace code in the diagram with words; annotations, which
+steer the layout (and occasionally the compiler); and pragmas, which apply to the whole file. Along the
+way it covers two comment traps that can quietly change what a chart does.
+
+## Ordinary comments
+
+`//` starts a comment that runs to the end of the line, and `/* ... */` encloses a comment that can span
+lines. Both are ignored by the compiler and by the diagram. In SCCharts Lab, a `//` comment on the line
+above a declaration also shows up when you hover over the declared name.
+
+## Doc comments in the diagram
+
+A comment that starts with `/**` is a **doc comment**. It belongs to the element written right after
+it: the chart, a declaration, a state, a region, a transition, an action or an equation. KIELER draws
+the doc comments of the chart, its states and its regions as yellow comment boxes attached to their
+element, and the doc comment of a transition as an extra label on its arrow:
+
+<Chart example="advanced/annotations/doc-comments" caption="The doc comments of the chart and of both states as comment boxes, and the transition's comment, “Press: switch on.”, as an extra label on its arrow." />
+
+Comment boxes are an option of the diagram, "Comment Nodes", which is on by default. The annotation
+`@diagram[commentNodes] false` before `scchart` turns it off for one chart (more on annotations below).
+Doc comments change nothing in the behaviour.
+
+A doc comment must stand where an element can follow. Inside a transition (`if button /** x */ go to
+On`) it is a syntax error, `no viable alternative at input '/** x */'`, and so is a doc comment after the
+last state of a region, with nothing left for it to describe.
+
+There is also a one-line form for declarations, the **declaration comment**: `//*` at the end of a
+declaration attaches the rest of the line to it.
+
+```sctx
+input bool button          //* the push button, true while pressed
+output bool light = false  //* the lamp
+```
+
+SCCharts Lab shows these in its hover card for the declared name. The form is allowed only at the end of
+a declaration: at the end of a transition line, say, it is a syntax error (`no viable alternative at
+input '//* switch on\n'`).
+
+## Two comment traps
+
+Both traps come from the same detail of KIELER's grammar: a `//` comment must be followed by at least one
+character that is not `*`, and the line break itself counts as that character.
+
+### An empty `//` swallows the next line
+
+<Sim example="advanced/annotations/swallowed" caption="Press the button: the light never comes on. The transition below the empty `//` is not part of the chart." />
+
+`initial state Off //` ends with an empty comment. KIELER's comment rule takes the line break after `//`
+as the comment's first character and then continues to the end of the *next* line. So the whole line
+`if button do light = true go to On` becomes part of the comment, `Off` has no transition, and the only
+hint is the warning `The state is not reachable.` on `On`.
+
+<Aside type="danger" title="A chart that silently loses a line">
+This happens in files with Unix line endings (LF), which is what most editors on Linux and macOS write
+and what many projects use everywhere. In a file with Windows line endings (CRLF) the `\r` is the
+comment's character and nothing is lost, so the same chart can behave differently on two machines.
+Never end a line with a bare `//`; give the comment some text, or delete it.
+</Aside>
+
+### A `//*` banner is not a comment
+
+Many C programmers frame headings with lines of asterisks. In SCTX a line starting with `//*` is the
+declaration comment from above, and before the chart there is nothing for it to belong to:
+
+<Chart example="advanced/annotations/banner" caption="The banner above `scchart` makes the whole file unreadable for KIELER. (This site still draws the chart, so that you can see what was meant.)" />
+
+KIELER stops at the first line with `missing EOF at '//**********************************\n'`. That is
+all official KIELER says; SCCharts Lab adds
+
+```text wrap
+There is no SCChart to compile. Add a scchart declaration first.
+```
+
+Inside a chart, a banner line that follows a declaration does not fail: it silently becomes that
+declaration's comment. Put a space
+after the slashes (`// ****`) or use `/* ... */` for banners.
+
+One relative of these traps: `/**/`, an empty block comment, is read as the start of a doc comment
+(`/**`) that only ends at the next `*/` in the file.
+
+## Labels
+
+A diagram is easiest to read when it says what a transition means rather than how it is computed.
+**Labels** replace the name of a state or region, or the trigger and effects of a transition or action,
+with your own words:
+
+<Chart example="advanced/annotations/labels" caption='The diagram shows “lever down” and “water boils” instead of the triggers and effects; switch to Code to see what they hide.' />
+
+| Element | Syntax |
+| --- | --- |
+| chart | `scchart Kettle "Kettle controller" { ... }` |
+| state | `state Idle "Waiting"` |
+| region | `region Lamp "The lamp" { ... }` |
+| transition | `if lever do heater = true go to Heating label "lever down"` |
+| entry, during or exit action | `exit do heater = false label "heater off"` |
+
+A label of a state or region is shown in place of its name; the name is still what transitions and
+references use. A label of a transition or action is shown in place of its trigger and effects, and
+KIELER reminds you of that with the notes `The trigger of this action is hidden by the label.` and
+`The effects of this action are hidden by the label.` In KIELER the "User Labels" option of the diagram
+turns the labels off again. Labels never change behaviour.
+
+## Annotations
+
+An **annotation** is a name starting with `@`, written before the element it applies to. It comes in
+three shapes:
+
+```sctx
+// a tag:
+@HVLayout
+// a name with a value:
+@DefaultSleep 50
+// a name with a key and a value:
+@layout[elk.direction] DOWN
+```
+
+Most annotations only affect the diagram:
+
+| Annotation | Where | Effect |
+| --- | --- | --- |
+| `@layout[elk.direction] DOWN` | chart, state, region | lays out that level `DOWN`, `UP`, `LEFT` or `RIGHT` |
+| `@HVLayout`, `@VHLayout` | chart, state, region | the order in which the levels alternate between horizontal and vertical layout (the default is `@HVLayout`) |
+| `@hide` | state, region, transition, declaration | leaves the element out of the diagram, along with transitions from or to a hidden state |
+| `@collapse`, `@expand` | region | draws the region collapsed, or expanded |
+| `@diagram[userLabels] false` | chart | sets one of the diagram's options for this chart, here "User Labels" |
+| `@foreground`, `@background` | state | colours (this site's diagrams ignore them, so that they suit both themes) |
+
+Hidden is not switched off. In this chart the region that counts presses carries `@hide`:
+
+<Sim example="advanced/annotations/layout" caption="The counter region is not drawn, but `presses` goes up with every press." />
+
+A few annotations change what the compiler does. They appear in the chapters about their features:
+`@HardReset`, `@SimulateSleep`, `@DefaultSleep`, `@IntegerClockType` and `@NoSleep` in
+[Time](/advanced/time/), and `@C` / `@Java` on `extern` names in [Host code](/advanced/host-code/).
+
+<Aside type="caution" title="A misspelt annotation does nothing, silently">
+KIELER accepts any annotation name and ignores the ones it does not know. Write `@HardRest` instead of
+`@HardReset` and the period quietly keeps its default soft reset, with no warning. If an annotation seems
+to have no effect, check its spelling first.
+</Aside>
+
+## Pragmas
+
+A **pragma** is a line starting with `#` that applies to the whole file. Pragmas and `import` lines go at
+the top, in any order, before the first `scchart`; a pragma after a chart is a syntax error
+(`missing EOF at '#'`). The ones you are likely to meet:
+
+| Pragma | Purpose | Chapter |
+| --- | --- | --- |
+| `#hostcode "..."`, `#hostcode-c "..."`, `#hostcode-c-header "..."`, `#hostcode-java "..."` | C or Java text pasted into the generated files | [Host code](/advanced/host-code/) |
+| `#resource "file"` | copies a file next to the generated code and compiles it with it | [Host code](/advanced/host-code/) |
+| `#code.naming "prefix"` | renames the generated functions and data struct | [From chart to C](/advanced/code-generation/) |
+
+The KIELER wiki's page on annotations and pragmas lists a few more for special set-ups.
+
+## Try it
+
+<TryIt example="advanced/annotations/doorbell-start" solution="advanced/annotations/doorbell-solution" title="A diagram that explains itself">
+Document the doorbell: give the chart and both states doc comments, put a `//*` comment on the input,
+and label the two transitions "pressed" and "after one tick". Check your work in the diagram: the
+comment boxes and the two labels should appear there. Comments and labels never change behaviour, so
+the playground's comparison with the model solution matches even before you start; run it at the end
+to make sure that you did not change anything else.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="Which of these lines, at the top of a file before `scchart`, makes KIELER reject the file?"
+  options={['`// ===== Lamp controller =====`', '`/* ***** Lamp controller ***** */`', '`/** Lamp controller */`', '`//***** Lamp controller *****`']}
+  answer={3}
+>
+A line starting with `//*` is a declaration comment, and there is no declaration before `scchart` for it
+to belong to: `missing EOF at ...`. An ordinary `//` or `/* */` comment is ignored, and a `/** */` doc
+comment before `scchart` belongs to the chart.
+</Quiz>
+
+<Quiz
+  question='A transition has `label "door opens"`. What changes in the simulation?'
+  options={['Nothing: labels only change the diagram', 'The transition fires only when the label matches an input', 'The trigger is ignored', 'The effects no longer run']}
+  answer={0}
+>
+A label replaces the trigger and effects in the diagram only. KIELER notes that they are hidden, but the
+transition behaves exactly as before.
+</Quiz>
+
+<KeyIdeas>
+- `//` and `/* */` comments are ignored. `/** */` doc comments belong to the next element and KIELER
+  draws them in the diagram; `//*` at the end of a declaration is a one-line doc comment.
+- Never end a line with a bare `//`: in LF files it swallows the next line. Never start a banner with
+  `//*`.
+- Labels (`state S "..."`, `label "..."`) replace names, triggers and effects in the diagram, never the
+  behaviour.
+- Annotations (`@...`) steer the layout and a few compiler features; unknown or misspelt names are
+  ignored without a warning.
+- Pragmas (`#...`) apply to the whole file and go before the first `scchart`.
+</KeyIdeas>
+
+Next, [Host code](/advanced/host-code/): calling C or Java from a chart.

@@ -1,0 +1,129 @@
+{
+ "sourceHash": "1e68e69e8033267b",
+ "states": [
+  {
+   "path": [
+    "Floodlight"
+   ],
+   "rows": [
+    [
+     "Floodlight"
+    ],
+    [
+     "input bool ",
+     "button"
+    ],
+    [
+     "output bool ",
+     "light"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    318.4,
+    186.3
+   ]
+  },
+  {
+   "path": [
+    "Floodlight",
+    0,
+    "lightOff"
+   ],
+   "rows": [
+    [
+     "lightOff"
+    ]
+   ],
+   "box": [
+    10,
+    40.3,
+    74.3,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Floodlight",
+    0,
+    "lightOn"
+   ],
+   "rows": [
+    [
+     "lightOn"
+    ]
+   ],
+   "box": [
+    223.2,
+    40.3,
+    71.2,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Floodlight",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    304.4,
+    114.3
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NFloodlight$$N0$NlightOff$ElightOn0",
+   "source": [
+    "Floodlight",
+    0,
+    "lightOff"
+   ],
+   "target": [
+    "Floodlight",
+    0,
+    "lightOn"
+   ],
+   "text": "button / light = true",
+   "lines": [
+    "button",
+    "/ light = true"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NFloodlight$$N0$NlightOn$ElightOff0",
+   "source": [
+    "Floodlight",
+    0,
+    "lightOn"
+   ],
+   "target": [
+    "Floodlight",
+    0,
+    "lightOff"
+   ],
+   "text": "!button / light = false",
+   "lines": [
+    "!button",
+    "/ light = false"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

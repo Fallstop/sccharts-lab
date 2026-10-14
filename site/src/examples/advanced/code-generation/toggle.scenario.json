@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "`reset()` has run before this first `tick()`: `light` = false, and tick 1 enters `Off`." },
+    { "inputs": { "button": true }, "note": "Your main loop wrote `button = 1` into the struct and called `tick()`: `Off` → `On`, `light` = true." },
+    { "inputs": { "button": false }, "note": "`light` stays true." },
+    { "inputs": { "button": true }, "note": "`On` → `Off`." }
+  ],
+  "expect": "ok"
+}

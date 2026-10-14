@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "`button` is already true in tick 1, but tick 1 *enters* `Off`. An ordinary transition is checked only from the tick after its state was entered, so nothing fires and `light` stays false."
+    },
+    {
+      "note": "`button` is still true. `Off` has been active since tick 1, so this time its transition is checked: it fires, `light` is true, the chart is in `On`."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released. Nothing fires."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,396 @@
+{
+ "sourceHash": "018621f883d6fd47",
+ "states": [
+  {
+   "path": [
+    "Aborts"
+   ],
+   "rows": [
+    [
+     "Aborts"
+    ],
+    [
+     "input bool ",
+     "I, S, W, Imm"
+    ],
+    [
+     "output int ",
+     "F = 0"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    371.7,
+    376.1
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    10,
+    53.8,
+    163.5,
+    197.7
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "A",
+    0,
+    "A0"
+   ],
+   "rows": [
+    [
+     "A0"
+    ]
+   ],
+   "box": [
+    61.5,
+    10,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "A",
+    0,
+    "A1"
+   ],
+   "rows": [
+    [
+     "A1"
+    ]
+   ],
+   "box": [
+    28.7,
+    108.1,
+    41.6,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "A",
+    0,
+    "A2"
+   ],
+   "rows": [
+    [
+     "A2"
+    ]
+   ],
+   "box": [
+    90.3,
+    108.1,
+    45.6,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "F1"
+   ],
+   "rows": [
+    [
+     "F1"
+    ]
+   ],
+   "box": [
+    303.9,
+    11.2,
+    40.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "F2"
+   ],
+   "rows": [
+    [
+     "F2"
+    ]
+   ],
+   "box": [
+    303.9,
+    71.8,
+    44.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "F3"
+   ],
+   "rows": [
+    [
+     "F3"
+    ]
+   ],
+   "box": [
+    303.9,
+    132.4,
+    44.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "F4"
+   ],
+   "rows": [
+    [
+     "F4"
+    ]
+   ],
+   "box": [
+    303.9,
+    192.9,
+    44.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "F5"
+   ],
+   "rows": [
+    [
+     "F5"
+    ]
+   ],
+   "box": [
+    303.9,
+    253.5,
+    44.3,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Aborts",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    358.1,
+    304.1
+   ]
+  },
+  {
+   "path": [
+    "Aborts",
+    0,
+    "A",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    30.6,
+    145.9,
+    158.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NAborts$$N0$NA$$N0$NA0$EA10",
+   "source": [
+    "Aborts",
+    0,
+    "A",
+    0,
+    "A0"
+   ],
+   "target": [
+    "Aborts",
+    0,
+    "A",
+    0,
+    "A1"
+   ],
+   "text": "1: I && Imm",
+   "lines": [
+    "1: I && Imm"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NAborts$$N0$NA$$N0$NA0$EA20",
+   "source": [
+    "Aborts",
+    0,
+    "A",
+    0,
+    "A0"
+   ],
+   "target": [
+    "Aborts",
+    0,
+    "A",
+    0,
+    "A2"
+   ],
+   "text": "2: I",
+   "lines": [
+    "2: I"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NAborts$$N0$NA$EF10",
+   "source": [
+    "Aborts",
+    0,
+    "A"
+   ],
+   "target": [
+    "Aborts",
+    0,
+    "F1"
+   ],
+   "text": "1: S && Imm / F = 1",
+   "lines": [
+    "1: S && Imm",
+    "/ F = 1"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "red-circle"
+   ]
+  },
+  {
+   "id": "$root$NAborts$$N0$NA$EF20",
+   "source": [
+    "Aborts",
+    0,
+    "A"
+   ],
+   "target": [
+    "Aborts",
+    0,
+    "F2"
+   ],
+   "text": "2: S / F = 2",
+   "lines": [
+    "2: S",
+    "/ F = 2"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle"
+   ]
+  },
+  {
+   "id": "$root$NAborts$$N0$NA$EF30",
+   "source": [
+    "Aborts",
+    0,
+    "A"
+   ],
+   "target": [
+    "Aborts",
+    0,
+    "F3"
+   ],
+   "text": "3: W && Imm / F = 3",
+   "lines": [
+    "3: W && Imm",
+    "/ F = 3"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NAborts$$N0$NA$EF40",
+   "source": [
+    "Aborts",
+    0,
+    "A"
+   ],
+   "target": [
+    "Aborts",
+    0,
+    "F4"
+   ],
+   "text": "4: W / F = 5",
+   "lines": [
+    "4: W",
+    "/ F = 5"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NAborts$$N0$NA$EF50",
+   "source": [
+    "Aborts",
+    0,
+    "A"
+   ],
+   "target": [
+    "Aborts",
+    0,
+    "F5"
+   ],
+   "text": "5: / F = 5",
+   "lines": [
+    "5: / F = 5"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  }
+ ],
+ "comments": []
+}

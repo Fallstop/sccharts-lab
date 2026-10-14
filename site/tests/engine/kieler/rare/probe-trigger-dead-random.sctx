@@ -1,0 +1,11 @@
+// A state that can never be entered has no code: its trigger's random() never runs.
+scchart TrigDeadRandom {
+  output float r = 0.0
+  region R1:
+    initial state A
+    state B
+      if random() > 2.0 go to A
+  region R2:
+    initial state C
+      do r = random() go to C
+}

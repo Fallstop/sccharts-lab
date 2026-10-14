@@ -1,0 +1,88 @@
+{
+  "hash": "479942ddbde3a631e79af0560f106f77d2f2139f",
+  "chart": "tests/conformance/preemption/88-exit-rewrites-trigger-mixed-case.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "target": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "W": false
+      },
+      "values": {
+        "A": false,
+        "W": false,
+        "target": 0,
+        "y": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "W": false,
+        "target": 1,
+        "y": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "W": false,
+        "target": 1,
+        "y": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

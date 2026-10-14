@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: `Left` must know whether `Q` is emitted before it can decide to emit `P`, and `Right` must know about `P` before it decides about `Q`. Each waits for the other."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

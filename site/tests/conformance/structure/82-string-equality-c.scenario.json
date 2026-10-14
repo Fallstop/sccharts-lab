@@ -1,0 +1,21 @@
+{
+  "needs": [
+    "c-strings"
+  ],
+  "kielerBug": "String equality in the C code generators compares char pointers; the Java simulations compare contents.",
+  "ticks": [
+    {
+      "inputs": {
+        "cmd": "stop"
+      },
+      "note": "cmd is \"stop\", so the test is false anyway: **hit = false**, mode = \"idle\"."
+    },
+    {
+      "inputs": {
+        "cmd": "go"
+      },
+      "note": "Even with cmd = \"go\", the C comparison is false: **hit = false**. Assigning string literals works."
+    }
+  ],
+  "expect": "ok"
+}

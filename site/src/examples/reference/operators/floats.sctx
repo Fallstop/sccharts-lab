@@ -1,0 +1,12 @@
+scchart Floats {
+  input float F
+  output float literal
+  output bool same
+  output int truncated
+
+  immediate during do literal = 0.1
+  immediate during do same = F == 0.1
+  immediate during do truncated = F * 10
+
+  initial state Calc
+}

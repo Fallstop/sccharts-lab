@@ -1,0 +1,15 @@
+scchart JoinNoFinal {
+  input bool A
+  output bool done
+
+  initial state Work {
+    initial state Step1
+      if A go to Step2
+    state Step2
+  }
+  join to Done
+
+  state Done {
+    entry do done = true
+  }
+}

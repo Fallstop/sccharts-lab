@@ -1,0 +1,13 @@
+scchart StairLightCounter {
+  input bool button
+  output bool light
+  output int left = 0
+
+  initial state Off
+    if button do light = true; left = 4 go to On
+
+  state On
+    if button do left = 4 go to On
+    if left == 1 do left = 0; light = false go to Off
+    do left-- go to On
+}

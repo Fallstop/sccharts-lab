@@ -1,0 +1,51 @@
+{
+  "hash": "e91a678f8e5cc779c18f1c5428f36f02864d2b7c",
+  "chart": "tests/conformance/structure/32-for-descending-and-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads s, so the compiler treats it as an update of s (a relative write, as in the deprecated old SC syntax).\nWrite it as s *= 10; s += 9 to say so. In one region it means the same.\nIt only matters when another region also writes s in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 8,
+      "column": 18
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads s, so the compiler treats it as an update of s (a relative write, as in the deprecated old SC syntax).\nWrite it as s *= 10; s += i to say so. In one region it means the same.\nIt only matters when another region also writes s in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 13,
+      "column": 18
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads s, so the compiler treats it as an update of s (a relative write, as in the deprecated old SC syntax).\nWrite it as s *= 10; s += 7 to say so. In one region it means the same.\nIt only matters when another region also writes s in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 18,
+      "column": 18
+    }
+  ],
+  "interface": {
+    "s": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "s": 97321
+      },
+      "taken": [
+        1,
+        3,
+        1
+      ],
+      "terminated": true
+    }
+  ]
+}

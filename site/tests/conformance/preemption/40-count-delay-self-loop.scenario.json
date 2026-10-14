@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Entry tick: not counted."
+    },
+    {
+      "inputs": {},
+      "note": "Count 1."
+    },
+    {
+      "inputs": {},
+      "note": "Count 2: the self-loop fires (fired = 1). S is entered again, which restarts the count; this tick is the new visit's entry tick."
+    },
+    {
+      "inputs": {},
+      "note": "Count 1 (S was entered in the previous tick)."
+    },
+    {
+      "inputs": {},
+      "note": "Count 2: fires again (fired = 2). With a count of 2 the loop fires every second tick."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,11 @@
+import "DF-0000"
+
+scchart df#0521 {
+  input bool I
+  output int O
+  ref df#0000 A
+
+  dataflow:
+  A.I = I + A.O
+  O = A.O
+}

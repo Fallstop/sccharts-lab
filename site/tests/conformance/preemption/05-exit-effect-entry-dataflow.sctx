@@ -1,0 +1,16 @@
+scchart ExitEffectEntry {
+  input bool leave
+  output int x = 0, y = 0, z = 0, w = 0
+
+  initial state A {
+    exit do x = 5
+  }
+  if leave do y = x * 2 go to B
+
+  state B {
+    entry do z = y + 1
+  }
+  immediate if z == 11 do w = 1 go to C
+
+  state C
+}

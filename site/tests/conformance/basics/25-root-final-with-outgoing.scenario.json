@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Tick 1 enters A; its transition is delayed."},
+    {"inputs": {}, "note": "A -> B. B is final, so the root terminates in this tick (terminated = true), although B has an outgoing transition."},
+    {"inputs": {}, "note": "B's delayed transition never fires: a terminated root does nothing. x stays 0 and taken = [0, 0]."},
+    {"inputs": {}, "note": "Still nothing: x = 0."}
+  ],
+  "expect": "ok"
+}

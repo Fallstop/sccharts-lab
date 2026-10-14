@@ -1,0 +1,7 @@
+scchart CompoundAssignFloatToInt {
+  output int x = 7, y = 7
+  output float f = 1.5
+
+  initial state S
+  do x *= 1.5; y = y * 1.5; f++ go to S
+}

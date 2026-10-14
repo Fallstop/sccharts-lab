@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "next": true
+      },
+      "note": "Tick 1 enters `Lap`. Its transition is delayed."
+    },
+    {
+      "inputs": {},
+      "note": "`next` is true, so `Lap` → `Done` fires and `laps` is 1. `Done` is a final state, and the chart ends the tick in it, so the chart **terminates** in this tick."
+    },
+    {
+      "inputs": {},
+      "note": "`next` is still true and `Done` has a transition back to `Lap`, but a terminated chart does nothing: no transition is checked any more."
+    },
+    {
+      "inputs": {
+        "next": false
+      },
+      "note": "Still terminated. `laps` stays 1, whatever the inputs do."
+    }
+  ],
+  "expect": "ok"
+}

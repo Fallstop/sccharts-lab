@@ -1,0 +1,12 @@
+// A struct declares a type and instances. Members are written p.x; each instance has its own; members may have
+// initial values and be arrays. In the pool, a root-level instance is an object of its members.
+scchart St106Struct {
+  struct Point {
+    int x
+    int y = 5
+    bool seen
+    int hist[3]
+  } p, q
+  initial state A
+  do p.x = p.x + 1; q.y = p.y * 2; q.seen = true; p.hist[p.x] = p.x * 10 go to A
+}

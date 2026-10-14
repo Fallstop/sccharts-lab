@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: the comment that starts with `/*` is never closed with `*/`."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "mismatched character '<EOF>'"
+}

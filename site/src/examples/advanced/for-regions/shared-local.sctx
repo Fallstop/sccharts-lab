@@ -1,0 +1,9 @@
+scchart ForSharedLocal {
+  output int sum = 0
+  region for i : 1 to 3 {
+    int k = 0
+    initial state W
+      immediate do k = i; sum += k go to D
+    final state D
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "hash": "14c680325356006f072b9f97a0d5e7cd91e805fa",
+  "chart": "tests/conformance/preemption/11-superstate-during-on-leave.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "innerDuring": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerDuring": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "W": false,
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "W": false,
+        "innerDuring": 0,
+        "outerDuring": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "W": false,
+        "innerDuring": 1,
+        "outerDuring": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "W": true
+      },
+      "values": {
+        "S": false,
+        "W": true,
+        "innerDuring": 2,
+        "outerDuring": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "W": false
+      },
+      "values": {
+        "S": false,
+        "W": false,
+        "innerDuring": 2,
+        "outerDuring": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "W": false,
+        "innerDuring": 2,
+        "outerDuring": 2
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "W": false,
+        "innerDuring": 2,
+        "outerDuring": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "W": false,
+        "innerDuring": 3,
+        "outerDuring": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

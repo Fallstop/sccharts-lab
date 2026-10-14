@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1 enters `S` and `W`. `W`'s transition is delayed: `n = 0`, `done = false`."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a` holds: `W` → `F` (`n = 1`). The only region is now in a final state, so the termination transition `join to D` fires in the same tick, running its effect after the inner one (`n = 10`) and `D`'s entry action (`done = true`)."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`D` has no transitions: `n = 10`, `done = true`."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "Tick 1 enters `Ready`. `flash` is absent: a signal is absent unless something emits it in this tick."
+    },
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "`press` is true, so the self-loop emits `flash` and sets `pressed`. Both are true at the end of this tick."
+    },
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "Nothing emits `flash`, so it is absent again. `pressed` is a variable: it keeps the value true until something assigns it."
+    },
+    {
+      "note": "Still `flash` absent, `pressed` true."
+    },
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "`flash` is present again, for this tick only."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,16 @@
+// "region R is X" does NOT instantiate a chart: it only refers to a region inherited from a base chart
+// (extends). Naming a chart there does not resolve. Use "state S is X(...)" instead.
+scchart St22Main {
+  input bool second
+  output bool speaker
+  region R is St22Beep(second, speaker)
+}
+
+scchart St22Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

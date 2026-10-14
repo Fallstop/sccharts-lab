@@ -1,0 +1,9 @@
+// A local of the state: the last, unclocked pre(k) decides.
+scchart PreClockLocal {
+  input bool c
+  output int p = 0, q = 0
+  initial state S {
+    int k = 0
+    immediate during do k++; p = pre(k, c); q = pre(k)
+  }
+}

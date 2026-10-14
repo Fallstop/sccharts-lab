@@ -1,0 +1,17 @@
+scchart Reference {
+  input bool tick
+  output bool lamp
+
+  initial state Blinking is Blinker(tick to tick, lamp to light)
+}
+
+scchart Blinker {
+  input bool tick
+  output bool light
+
+  initial state Dark
+    if tick do light = true go to Lit
+
+  state Lit
+    if tick do light = false go to Dark
+}

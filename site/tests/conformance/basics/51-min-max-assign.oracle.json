@@ -1,0 +1,98 @@
+{
+  "hash": "8094d4a56c135bc149f420b32b047754729c8771",
+  "chart": "tests/conformance/basics/51-min-max-assign.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "fl": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "highest": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "lowest": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 4
+      },
+      "values": {
+        "I": 4,
+        "fl": 1.5,
+        "highest": 10,
+        "lowest": 10
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 4,
+        "fl": 1.5,
+        "highest": 10,
+        "lowest": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 20
+      },
+      "values": {
+        "I": 20,
+        "fl": 1.5,
+        "highest": 21,
+        "lowest": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": -3
+      },
+      "values": {
+        "I": -3,
+        "fl": -3,
+        "highest": 21,
+        "lowest": -3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

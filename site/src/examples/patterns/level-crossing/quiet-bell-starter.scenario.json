@@ -1,0 +1,78 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true,
+        "restart": false
+      },
+      "note": "Tick 1: open."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A train: lamps and bell."
+    },
+    {
+      "inputs": {},
+      "note": "Right lamp."
+    },
+    {
+      "inputs": {},
+      "note": "Left lamp, bell."
+    },
+    {
+      "inputs": {},
+      "note": "Right; lower."
+    },
+    {
+      "inputs": {
+        "isUp": false
+      },
+      "note": "Left, bell."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Down: closed. From here your version should be silent."
+    },
+    {
+      "inputs": {},
+      "note": "Left, bell: the starter keeps ringing while the barrier is down."
+    },
+    {
+      "inputs": {},
+      "note": "Right."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "Left, bell. The barrier rises."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "Right."
+    },
+    {
+      "inputs": {},
+      "note": "Left, bell."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "Up: open, dark."
+    },
+    {
+      "inputs": {},
+      "note": "Open."
+    }
+  ],
+  "expect": "ok"
+}

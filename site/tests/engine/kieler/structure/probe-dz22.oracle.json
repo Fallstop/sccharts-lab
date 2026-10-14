@@ -1,0 +1,126 @@
+{
+  "hash": "e6223c082b59a1fa0cf642bba7a434f223812a95",
+  "chart": "tests/engine/kieler/structure/probe-dz22.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "k": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Dz22_region0_R1_region0_A___visits": {
+      "type": "int",
+      "properties": [
+        "static"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "k": 100,
+        "Dz22_region0_R1_region0_A___visits": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "k": 100,
+        "Dz22_region0_R1_region0_A___visits": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "k": 200,
+        "Dz22_region0_R1_region0_A___visits": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "k": 200,
+        "Dz22_region0_R1_region0_A___visits": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "k": 300,
+        "Dz22_region0_R1_region0_A___visits": 3
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "k": 300,
+        "Dz22_region0_R1_region0_A___visits": 3
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

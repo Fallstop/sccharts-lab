@@ -1,0 +1,128 @@
+{
+  "hash": "ec0e2a99007e521160b6343a061e5f92fd1a4a58",
+  "chart": "src/examples/advanced/references/join.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "open": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "open": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "open": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": false,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "open": false
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "open": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "open": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "open": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

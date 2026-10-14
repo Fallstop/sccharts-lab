@@ -1,0 +1,141 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true,
+        "restart": false
+      },
+      "note": "Tick 1: open, dark, no trains so far."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A train: the lamps start flashing, the bell strikes, and the warning time begins."
+    },
+    {
+      "inputs": {},
+      "note": "Warning."
+    },
+    {
+      "inputs": {},
+      "note": "Warning."
+    },
+    {
+      "inputs": {},
+      "note": "The warning time is over: the barrier is commanded down."
+    },
+    {
+      "inputs": {
+        "isUp": false
+      },
+      "note": "The barrier leaves its upper limit switch."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Down: `Closed`."
+    },
+    {
+      "inputs": {},
+      "note": "The train passes."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "The track is clear: raise the barrier. `occupied` has just fallen, so the chart-level during action counts the train: `trains` is 1."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "The barrier is moving up."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "Up: `Open`, the lamps go dark."
+    },
+    {
+      "inputs": {},
+      "note": "Open."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A second train."
+    },
+    {
+      "inputs": {},
+      "note": "Warning."
+    },
+    {
+      "inputs": {},
+      "note": "Warning."
+    },
+    {
+      "inputs": {},
+      "note": "Lower."
+    },
+    {
+      "inputs": {
+        "isUp": false
+      },
+      "note": "The barrier leaves the upper switch, and sticks."
+    },
+    {
+      "inputs": {},
+      "note": "Lowering: two ticks."
+    },
+    {
+      "inputs": {},
+      "note": "Three."
+    },
+    {
+      "inputs": {},
+      "note": "Four ticks without `isDown`: `Stuck`, so `Working` terminates and `join to Fault` fires: the fault lamp is on, the lamps flash, the barrier is commanded down."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "The train passes (`trains` is 2); the fault stays."
+    },
+    {
+      "inputs": {
+        "restart": true,
+        "isUp": true
+      },
+      "note": "The maintainer has freed the barrier, it is up, and the key is turned: back to `Open`."
+    },
+    {
+      "inputs": {
+        "restart": false
+      },
+      "note": "Open."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Both limit switches report at once, which cannot happen with a healthy barrier. `if isUp && isDown abort to Fault` is a strong abort: in this tick nothing inside `Working` reacts, and the crossing goes straight to `Fault`."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "The fault stays until the next `restart`."
+    },
+    {
+      "inputs": {},
+      "note": "Fault."
+    }
+  ],
+  "expect": "ok"
+}

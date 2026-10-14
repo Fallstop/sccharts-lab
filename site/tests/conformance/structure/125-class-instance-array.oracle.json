@@ -1,0 +1,76 @@
+{
+  "hash": "9e1465c8a141813aa4c4d30f1eebd1fc073dd06e",
+  "chart": "tests/conformance/structure/125-class-instance-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "cs": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "cs": [
+          {
+            "v": 1
+          },
+          {
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "cs": [
+          {
+            "v": 2
+          },
+          {
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

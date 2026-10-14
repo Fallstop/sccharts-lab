@@ -1,0 +1,8 @@
+scchart Doorbell {
+  input signal ring
+  output signal chime
+  output int rings = 0
+
+  initial state Quiet
+    if ring do chime; rings += 1 go to Quiet
+}

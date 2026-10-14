@@ -1,0 +1,11 @@
+// Enum inputs and outputs: "input ref" and "output ref" are int inputs/outputs with the "enum" property; the
+// environment sets an input enum with the number (STOP = 2). Official KIELER 0.3.0 rejects "output ref" and
+// drops the "input" of "input ref".
+scchart St102EnumIO {
+  enum Dir { UP, DOWN, STOP }
+  input ref Dir d
+  output ref Dir last = Dir.STOP
+  output int moves = 0
+  initial state A
+  if d != Dir.STOP do last = d; moves++ go to A
+}

@@ -1,0 +1,10 @@
+// a[2] lands in the padding before the double f; a[3] = 1 changes f's lowest bits.
+scchart OverflowPad {
+  output bool b = false
+  output int a[2] = {0, 0}
+  output float f = 1.0
+  output int x = 0
+  initial state Run
+    do a[2] = 9; a[3] = 1 go to Run
+  state Read
+}

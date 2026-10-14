@@ -1,0 +1,5 @@
+scchart PrintNewline {
+  input int level
+  initial state S
+    do print("a\n", level) go to S
+}

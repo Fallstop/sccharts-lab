@@ -1,0 +1,16 @@
+scchart Machine {
+  input bool start, stop, emergency
+  output bool motor = false
+  output int ticks = 0
+
+  initial state Running {
+    entry do motor = true
+    during do ticks++
+    exit do motor = false
+  }
+  if emergency abort to Halted
+  if stop go to Halted
+
+  state Halted
+    if start go to Running
+}

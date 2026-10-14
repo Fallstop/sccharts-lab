@@ -1,0 +1,61 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Tick 1: all regions start: **x = 0, y = 0, z = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "Write increments x, Read tests it first (no dependency): **x = 1, y = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "note": "Read sees the old x: **x = 2, y = 1**; b is true: the instance's region A counts: **z = 1**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "**x = 2, y = 2, z = 1**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "**x = 3, y = 3**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "note": "**x = 4, y = 4, z = 2**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "note": "a is false: **x = 4, y = 5, z = 3**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "**x = 5, y = 6, z = 3**."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,126 @@
+{
+ "sourceHash": "2ec5276b432beb9b",
+ "states": [
+  {
+   "path": [
+    "P173"
+   ],
+   "rows": [
+    [
+     "P173"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    340.4,
+    220.7
+   ]
+  },
+  {
+   "path": [
+    "P173",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    23.2,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P173",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    281.5,
+    23.2,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P173",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    327,
+    80.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP173$$N0$NS0$ES10",
+   "source": [
+    "P173",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P173",
+    0,
+    "S1"
+   ],
+   "text": "pre(A) && pre(pre(B)) || pre(val(V)) == 1 || val(pre(V)) > 0 || pre(I) > 0",
+   "lines": [
+    "pre(A) && pre(pre(B)) ||",
+    "pre(val(V)) == 1 ||",
+    "val(pre(V)) > 0 || pre(I) > 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

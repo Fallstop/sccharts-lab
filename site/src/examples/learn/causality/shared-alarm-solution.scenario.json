@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "smoke": false, "heat": false, "ack": false }, "note": "One region owns `alarm`." },
+    { "inputs": { "smoke": true }, "note": "Smoke: the alarm sounds." },
+    { "inputs": { "smoke": false }, "note": "It keeps sounding." },
+    { "inputs": { "ack": true }, "note": "Acknowledged: off." },
+    { "inputs": { "ack": false, "heat": true }, "note": "Heat: on again." },
+    { "inputs": { "heat": true, "ack": true }, "note": "Heat and an acknowledgement in the same tick: the danger transition has priority 1, so the alarm stays on. That choice is now written down instead of being left to the compiler." },
+    { "inputs": { "heat": false, "ack": true }, "note": "The heat is gone: the acknowledgement switches it off." },
+    { "inputs": { "ack": false }, "note": "Quiet." }
+  ],
+  "expect": "ok"
+}

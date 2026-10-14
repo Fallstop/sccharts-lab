@@ -1,0 +1,18 @@
+scchart StateAccessRegion {
+  input bool start, stop
+  output bool seen = false
+  output int n = 0
+  method bool busy() {
+    return state(Control.Busy)
+  }
+  region Control {
+    initial state Idle
+      if start go to Busy
+    state Busy
+      if stop go to Idle
+  }
+  region Watch {
+    initial state W
+      if busy() do seen = true; n++ go to W
+  }
+}

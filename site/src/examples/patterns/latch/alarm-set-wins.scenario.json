@@ -1,0 +1,48 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "fault": false,
+        "ack": false
+      },
+      "note": "Tick 1: no alarm in either chart."
+    },
+    {
+      "inputs": {
+        "fault": true
+      },
+      "note": "A fault: both alarms go on."
+    },
+    {
+      "inputs": {
+        "ack": true
+      },
+      "note": "The operator acknowledges while the fault is still present. `AlarmResetWins` takes `if ack` and switches its alarm off. `AlarmSetWins` tests `ack && !fault`, which is false: its alarm stays on."
+    },
+    {
+      "inputs": {
+        "ack": false
+      },
+      "note": "`AlarmResetWins` is back in `Normal`, sees the fault again and raises the alarm once more: the acknowledgement was wasted. `AlarmSetWins` is still alarming."
+    },
+    {
+      "inputs": {
+        "fault": false
+      },
+      "note": "The fault clears. Both alarms stay latched until someone acknowledges."
+    },
+    {
+      "inputs": {
+        "ack": true
+      },
+      "note": "Acknowledged, with the fault gone: both alarms go off."
+    },
+    {
+      "inputs": {
+        "ack": false
+      },
+      "note": "Normal."
+    }
+  ],
+  "expect": "ok"
+}

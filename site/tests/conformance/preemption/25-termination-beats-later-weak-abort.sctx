@@ -1,0 +1,20 @@
+scchart JoinBeforeAbort {
+  input bool A
+  output int inX = 0, inY = 0
+
+  initial state M {
+    initial state I
+    if A go to F
+
+    final state F
+  }
+  join to Y
+  if A go to X
+
+  state X {
+    entry do inX = 1
+  }
+  state Y {
+    entry do inY = 1
+  }
+}

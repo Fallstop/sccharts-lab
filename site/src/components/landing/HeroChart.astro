@@ -1,0 +1,73 @@
+---
+/**
+ * The landing page's live chart: Toggle (src/examples/landing/toggle.sctx) in a widget frame, with its
+ * diagram, a switch for the input, Step and Reset, a timing diagram and a line saying what the last tick
+ * did and why.
+ *
+ * It runs on the guide's engine and renderer like every <Sim>: the diagram is rendered at build time, the
+ * simulation is the compact SimPanel (src/components/sim). The opening is the example's scenario
+ * (toggle.scenario.json, checked against KIELER by its oracle recording), whose notes are the narration.
+ *
+ * Without JavaScript it shows the state after the opening (the scenario's seven ticks, run at build time).
+ * With JavaScript it replays the opening once when it comes into view (unless the reader prefers reduced
+ * motion), then hands over to the reader.
+ */
+import WidgetFrame from '../frame/WidgetFrame.astro'
+import SourceView from '../frame/SourceView.astro'
+import DiagramView from '../frame/DiagramView.astro'
+import SimIsland from '../sim/Sim.svelte'
+import { loadExample } from '../frame/examples'
+import { prepareChart } from '../frame/prepare'
+import { nextId } from '../frame/ids'
+import { renderSvg } from '../../diagram/render'
+import { tickClasses } from '../../diagram/highlight'
+import { createSimulation } from '../sim/engine'
+import { initialInputs } from '../sim/inputs'
+import { Timeline } from '../sim/timeline'
+
+const ex = loadExample('landing/toggle', 'HeroChart')
+const scenario = ex.scenario!
+const p = await prepareChart(ex)
+// The picture after the opening, for the first paint (and for readers without JavaScript).
+const t = new Timeline(createSimulation(p.compiled), initialInputs(p.compiled.interface), scenario)
+for (const _ of scenario.ticks) t.step()
+const svg = p.layout
+	? renderSvg(p.layout, { idPrefix: 'sc-hero', scale: 1.55, fit: 'natural', minScale: 0.7, classes: tickClasses(t.shown!), title: 'Diagram of Toggle' })
+	: undefined
+const key = nextId('sch-')
+---
+
+<WidgetFrame
+	kind="hero"
+	name="Toggle"
+	label="Live chart"
+	views={[
+		{ id: 'diagram', label: 'Diagram' },
+		{ id: 'code', label: 'Code' },
+	]}
+	class="sc-hero-chart"
+>
+	<div slot="view-diagram" class="sc-hero-chart__diagram">
+		<DiagramView svg={svg} key={key} map={p.map} root={p.compiled.chart?.id} />
+	</div>
+	<div slot="view-code" data-sc-code={key}>
+		<SourceView source={ex.source} />
+	</div>
+	<SimIsland
+		slot="panel"
+		client:visible
+		source={ex.source}
+		link={key}
+		scenario={scenario}
+		variant="compact"
+		autoplay={650}
+		initialTicks={scenario.ticks.length}
+		handover="Your turn: switch `button` on or off, then press **Step**. An input keeps its value until you change it."
+	/>
+</WidgetFrame>
+
+<style>
+	.sc-hero-chart__diagram :global(.sc-dview__scroll) {
+		padding: clamp(0.5rem, 2.5vw, 1.25rem);
+	}
+</style>

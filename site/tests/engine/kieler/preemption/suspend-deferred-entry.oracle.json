@@ -1,0 +1,102 @@
+{
+  "hash": "ae13df8e951dcff3909b33b364e4eb1185ec0b16",
+  "chart": "tests/engine/kieler/preemption/suspend-deferred-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false,
+        "S": false
+      },
+      "values": {
+        "G": false,
+        "S": false,
+        "innerEntry": 0,
+        "outerEntry": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "S": false,
+        "innerEntry": 0,
+        "outerEntry": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": false,
+        "S": true
+      },
+      "values": {
+        "G": false,
+        "S": true,
+        "innerEntry": 0,
+        "outerEntry": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "G": false,
+        "S": false,
+        "innerEntry": 0,
+        "outerEntry": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+// Every input and output of the referenced chart must be bound, explicitly, by order or implicitly by name.
+// second is not bound and the parent has nothing called second.
+scchart St17Main {
+  input bool s
+  output bool speaker
+  initial state R is St17Beep(speaker to beep)
+}
+
+scchart St17Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

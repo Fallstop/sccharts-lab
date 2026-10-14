@@ -1,0 +1,14 @@
+// Two regions writing different values to the same member are a write-write conflict, named after the member.
+scchart St109Conflict {
+  struct Point {
+    int x
+  } p
+  region R1 {
+    initial state A
+    do p.x = 1 go to A
+  }
+  region R2 {
+    initial state A
+    do p.x = 2 go to A
+  }
+}

@@ -1,0 +1,8 @@
+// Signals are not where they are written (KIELER declares them anew at the end): a[2] is z.
+scchart OverflowSignal {
+  output int a[2] = {0, 0}
+  output signal S
+  output int z = 0
+  initial state Run
+    do a[2] = 9; S go to Run
+}

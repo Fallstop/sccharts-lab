@@ -1,0 +1,6 @@
+scchart Rotate {
+  output int ring[3] = {1, 2, 3}
+
+  initial state Turn
+    do ring = {ring[1], ring[2], ring[0]} go to Turn
+}

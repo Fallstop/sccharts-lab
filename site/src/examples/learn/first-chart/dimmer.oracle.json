@@ -1,0 +1,136 @@
+{
+  "hash": "080f9e37920db97211e70487b4cd0d2ba7e72743",
+  "chart": "src/examples/learn/first-chart/dimmer.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "level": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "level": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "level": 30
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "level": 30
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "level": 100
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "level": 100
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "level": 0
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "level": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

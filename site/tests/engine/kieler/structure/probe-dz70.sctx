@@ -1,0 +1,8 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz70 {
+  input int I
+  output int O
+  dataflow {
+    O = 0 fby (I + (0 fby I))
+  }
+}

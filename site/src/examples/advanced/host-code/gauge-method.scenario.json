@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "reading": 42
+      },
+      "note": "Tick 1: the delayed self-loop waits: `needle` = 0."
+    },
+    {
+      "inputs": {
+        "reading": 250
+      },
+      "note": "`clamp`, now a method of the chart, caps the reading: `needle` = 100."
+    },
+    {
+      "inputs": {
+        "reading": -7
+      },
+      "note": "Below 0: `needle` = 0."
+    },
+    {
+      "inputs": {
+        "reading": 42
+      },
+      "note": "In range: `needle` = 42."
+    }
+  ],
+  "expect": "ok"
+}

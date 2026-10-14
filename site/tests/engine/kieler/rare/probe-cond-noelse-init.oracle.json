@@ -1,0 +1,57 @@
+{
+  "hash": "e5c2b2170225f7439799f02612ff0efd17636eb9",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-init.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "x": 4
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "x": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "x": 0
+      },
+      "terminated": false
+    }
+  ]
+}

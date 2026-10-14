@@ -1,0 +1,9 @@
+scchart Alarm {
+  input bool armed, door, window
+  output bool siren, ready
+
+  dataflow {
+    siren = armed && (door || window)
+    ready = !door && !window
+  }
+}

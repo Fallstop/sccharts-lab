@@ -1,0 +1,9 @@
+scchart SelfLoop {
+  input bool press
+  output int presses = 0, entries = 0
+
+  initial state Ready {
+    entry do entries++
+  }
+  if press do presses++ go to Ready
+}

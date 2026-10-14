@@ -1,0 +1,224 @@
+---
+title: "ABRO"
+description: "The hello world of synchronous programming: wait for A and B in any order, emit O, and start again whenever R arrives."
+sidebar:
+  order: 1
+---
+
+import { Chart, Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+ABRO is the first program almost every synchronous language shows. It comes from Esterel, Gérard Berry's
+language, and its whole specification fits in two sentences:
+
+> Emit `O` as soon as both `A` and `B` have arrived, in any order. Whenever `R` arrives, forget
+> everything and start again.
+
+You have built it already: [Concurrent regions](/learn/concurrency/#finishing-together-abro) puts it
+together step by step, and [Aborts](/learn/preemption/#abro-the-classic) explains why its reset is a
+strong abort. This page treats ABRO as a pattern to reuse. It shows what each part is for, what the chart
+does in every corner case, a version with variables, the mistakes people make with it, and an immediate
+version that KIELER gets wrong.
+
+## The pattern
+
+ABRO answers a question that comes up all the time: *how do I wait for several things that can happen in
+any order?* A vending machine, for instance, may deliver once a product has been chosen *and* the payment
+has gone through, in either order, and a cancel button starts it all again. In C you would juggle flags
+in a loop. In SCCharts each part of the problem has its own construct:
+
+- **One region per thing to wait for.** A region waits in its initial state and moves to a **final
+  state** when its signal arrives. Being in the final state is the region's memory that its signal has
+  happened; no flag is needed.
+- **Termination notices when everything has happened.** A superstate whose regions are *all* in final
+  states terminates, and its `join to` fires in that same tick. Here the join's effect emits `O`.
+- **A strong abort around everything restarts it.** `if R abort to ABO` leaves `ABO` and enters it again
+  from its initial states, whatever was going on inside.
+
+<Sim example="patterns/abro/abro" caption="The tour runs through every case: one signal at a time (ticks 2 to 4), both in one tick (tick 8), and all three at once (tick 10)." />
+
+To wait for a third thing, add a third region: the join waits for all of them.
+
+## Every case, tick by tick
+
+| Tick | Present | What happens | `O` |
+| ---: | --- | --- | --- |
+| 2 | `B` | `HandleB` finishes; `DoneB` remembers `B` | absent |
+| 4 | `A` | `HandleA` finishes too: both regions are final, so the join fires | present |
+| 6 | `A`, `B` | ignored: `Done` waits for `R` and nothing else | absent |
+| 7 | `R` | `ABO` is left and entered again: both regions wait from the start | absent |
+| 8 | `A`, `B` | both regions finish in the same tick, so the join fires at once | present |
+| 10 | `A`, `B`, `R` | `R` restarts `ABO`; `A` and `B` are lost | absent |
+
+Tick 10 deserves a closer look. `ABO` rests in `Done`, so nothing inside it is waiting for `A` or `B`.
+`R` re-enters `ABO`, and the newly entered `WaitA` and `WaitB` cannot react in their entry tick,
+because their transitions are delayed. So `A` and `B` in the reset tick are lost, and ABRO waits for
+fresh ones. Esterel's ABRO behaves the same way.
+
+When `R` arrives while `ABO` is still waiting, there is a second reason. A strong abort is decided
+*before* anything inside reacts, so `HandleA` and `HandleB` never get to look at that tick's `A` and
+`B`. With a weak reset, `if R go to ABO`, they would: the inside finishes its tick first, and if that
+completes the join, `O` is emitted before the restart. [Aborts](/learn/preemption/#abro-the-classic) runs
+the two versions side by side. "Forget everything" means the strong abort, and that is what Esterel uses.
+KIELER compiles the weak version with the warning `Instantaneous loop detected!` (in SCCharts Lab,
+`Potential instantaneous loop.`), a [false alarm](/reference/errors/#instantaneous-loop-detected) here.
+
+<Aside type="tip" title="Inputs stay where you put them">
+Input signals [keep their presence](/learn/signals/#input-signals-in-the-simulator) until you change
+them. To give `A` for one tick, set it in one tick and clear it in the next, as the tours do, or use the
+pulse button next to its switch.
+</Aside>
+
+## Signals or variables
+
+KIELER's own [Quick Start Guide](https://github.com/kieler/semantics/wiki/Quick-Start-Guide) writes ABRO
+with `bool` variables instead of signals. `O` is then a variable that the join sets to `true`, and `ABO`'s
+entry action sets it back to `false` whenever the chart starts or restarts:
+
+<Sim example="patterns/abro/abro-bool" caption="`O` becomes true in tick 3 and stays true until the reset in tick 5." />
+
+The behaviour is the same up to what `O` means. A signal is present only in the tick it is emitted, so
+the signal version says "both have arrived, *now*". The variable keeps its value, so the `bool` version
+says "both have arrived *since the last reset*". Pick the one that matches what the reader of `O` needs:
+an event to react to once, or a condition to look at whenever it likes. [Signals](/learn/signals/)
+covers the difference in detail.
+
+## Common mistakes
+
+**The reset on the wrong state.** The reset has to sit on a state that contains `Done` as well. Put it
+on `WaitAB` instead, and it works only until the first `O`:
+
+<Sim example="patterns/abro/abro-reset-inside" caption="Before the first `O` the reset works (tick 3); after it (tick 6) nothing can leave `Done`." />
+
+Two more mistakes come with compiler messages.
+
+**A region without a final state.** Forget the `final` on `DoneB`, and `HandleB` can never finish, so
+the join never fires. KIELER compiles the chart but warns:
+
+```text wrap
+Every region should have a final state whenever its parent state has a termination transition.
+All or none concurrent regions should have final states.
+```
+
+<Sim example="patterns/abro/abro-no-final" caption="Tick 3: `A` and `B` have both arrived, but `DoneB` is not final, so `O` never comes. The two warnings are listed under the simulation." />
+
+**A strong abort after a weak one.** Give ABRO an off switch, a weak `if off go to Off` on `ABO`, and
+the reset must still be written first. A strong abort is decided before the inside reacts, but a weak
+abort or a join of higher priority can only be decided after it. Written the other way round, KIELER
+rejects the chart:
+
+<Chart example="patterns/abro/abro-off-switch" caption="`if off go to Off` comes before `if R abort to ABO`. Swap the two lines and KIELER accepts the chart." />
+
+## The immediate variant
+
+The ABRO above ignores `A` and `B` in tick 1 and in the tick of a reset, because the waiting
+transitions are delayed. If you want those to count, the obvious change is to make them immediate:
+
+```sctx
+initial state WaitA
+  immediate if A go to DoneA
+```
+
+What this should mean is clear. With `A`, `B` and `R` in the same tick, the reset re-enters `ABO`,
+the immediate transitions see `A` and `B` at once, `WaitAB` terminates in its entry tick, and the join
+emits `O` in that same tick. KIELER gets this right when `A` and `B` arrive in a later tick, but not
+when they arrive in the tick in which `ABO` is entered. Follow the tour to tick 8, then on to the end:
+
+<Sim example="patterns/abro/abro-immediate" caption="Ticks 3 and 6: `O`, as expected. Tick 8: `R`, `A` and `B` together, and the join is lost. From then on the chart never reacts again, not even to `R`." />
+
+The same happens if `A` and `B` are both present in tick 1. This is a defect in KIELER's
+[netlist-based compiler](/advanced/code-generation/#netlist-versus-priority-based-compilation), the one its
+simulation uses by default. It shows both in the current KIELER sources and in the KIELER extension for
+VS Code (version 0.3.0), checked in October 2026 ([how the guide checks KIELER](/reference/about/)).
+A superstate that terminates in the tick it is entered, inside a state that a reset re-enters, loses its
+join. With a strong reset, as here, the state around it then never reacts again, not even to `R`. The
+only hint is the warning `Instantaneous loop detected!` (SCCharts Lab: `Potential instantaneous loop.`).
+KIELER's other compiler, the priority-based one, rejects the chart outright with
+`The SCG is not IASC-schedulable!`. Without the reset loop, terminating in the entry tick works as it
+should.
+
+So on a chart like this, treat that warning as a red flag. If you really need `A` and `B` in the
+reset tick to count, avoid terminating in the entry tick: record `A` and `B` in two local flags and
+let a third region emit `O` when both are set.
+
+<Sim example="patterns/abro/abro-immediate-flags" caption="Tick 7: `R`, `A` and `B` together, and `O` is emitted, because nothing has to terminate." />
+
+The flags are declared inside `ABO`, so every entry of `ABO`, the reset included, sets them back to
+`false`. `Emit` reads them after the other regions have written them in the same tick, because KIELER
+schedules every write of a variable before every read of it in another region (see
+[Concurrent regions](/learn/concurrency/#talking-within-a-tick)). For everyday use the delayed ABRO is the
+better choice: it is the standard version and it holds no surprises.
+
+## Try it
+
+<TryIt example="patterns/abro/ab-then-c-starter" solution="patterns/abro/ab-then-c" title="A and B, then C">
+Change ABRO so that, once `A` and `B` have both arrived (in any order), it waits for `C`, and emits
+`O` only when `C` comes. A `C` before both have arrived does not count; a `C` in the same tick as
+the second of them does. `R` still restarts everything. To test it: `C` in tick 2 changes nothing;
+`A` in tick 3, `B` in tick 4 and `C` in tick 6 give `O` in tick 6; after an `R`, `A` in one
+tick and `B` and `C` together in the next give `O` in that tick. Hint: the join does not have to
+lead to `Done`.
+</TryIt>
+
+<TryIt example="patterns/abro/abo-repeat-starter" solution="patterns/abro/abo-repeat" title="Again and again, without R">
+Change the starter so that it does not stop after the first `O`: after each `O` it should wait for a
+fresh `A` and a fresh `B`, and emit `O` again when both have arrived. There is no `R`. One line
+needs to change (and `Done`, which can then no longer be reached, can go). To test it: `A` in tick 2,
+`B` in tick 3, then `A` and `B` together in ticks 5 and 6 give `O` in ticks 3, 5 and 6. Hint:
+where does the join lead?
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/abro/abro-predict"
+  ask={[{ tick: 3, value: 'O' }, { tick: 4, value: 'O' }, { tick: 5, value: 'O' }]}
+  caption="The ABRO from this page. Is `O` present after ticks 3, 4 and 5?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`O` is absent after tick 3, present after tick 4 and absent after tick 5. Tick 2 brought `A` together
+with `R`: the strong reset won, and the re-entered `WaitA` could not react to that `A` in its entry
+tick, so it was lost. `B` alone in tick 3 finishes only `HandleB`; `A` in tick 4 finishes `HandleA` too,
+and the join emits `O`. In tick 5 `ABO` rests in `Done`, which ignores `A` and `B`, and `R` restarts it.
+
+</details>
+
+<Quiz
+  question="ABRO rests in `Done`. `A`, `B` and `R` arrive in the same tick. Would a weak reset, `if R go to ABO`, emit `O` in that tick?"
+  options={['Yes: a weak abort lets the inside finish its tick first, and that completes the join', 'Only if `A` and `B` were also present in the tick before the reset', 'No: `Done` ignores `A` and `B`, and the restarted waits are delayed']}
+  answer={2}
+>
+A weak and a strong abort differ in what the inside may still do in the abort tick. Here the inside is
+`Done`, which has no transitions, so there is nothing to finish. The restart enters `WaitA` and `WaitB`,
+whose delayed transitions ignore their entry tick, so `A` and `B` are lost with either reset;
+KIELER's runs of the two versions agree. They differ only while `WaitAB` is still waiting.
+</Quiz>
+
+<Quiz
+  question="In the `bool` version of ABRO (KIELER's Quick Start chart), `A` and `B` have both been true, and then nothing happens for ten ticks. What is `O`?"
+  options={['`true`: a variable keeps its value until something assigns it', '`false`: `O` is true only in the tick of the join', '`false`: the entry action of `ABO` resets it in every tick']}
+  answer={0}
+>
+`O` is a variable, so it keeps the value the join gave it. Only the entry action of `ABO` sets it back to
+`false`, and that runs only when `ABO` is entered: in tick 1 and after each `R`. In the signal version,
+by contrast, `O` is present in a single tick.
+</Quiz>
+
+<KeyIdeas>
+- One region per thing to wait for; a final state remembers that it has happened.
+- A superstate terminates when all its regions are in final states, and a `join to` without a trigger
+  fires in that same tick.
+- A self-loop on a superstate restarts everything inside it. Put the reset on the state that contains
+  everything it must restart.
+- A strong reset (`abort to`) wins over whatever happens inside in that tick; a weak one (`go to`) lets
+  the inside finish first, so the reset tick's `A` and `B` can still complete the old round. Either way
+  the restarted `ABO` does not see them: its waits are delayed.
+- Immediate ABRO gets stuck in KIELER when `A` and `B` arrive in an entry tick. Use the delayed
+  version, or avoid terminating in the entry tick.
+</KeyIdeas>
+
+Next, [Edges and pulses](/patterns/edges/): turning a button's level into the one tick in which it
+changes.

@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "W": true
+      },
+      "note": "An immediate abort can fire in the tick its superstate is entered. As a weak abort it first lets the immediate inner behaviour run: both entry actions and the immediate transition I1 → I2 (all 1), then effect = 1."
+    },
+    {
+      "inputs": {},
+      "note": "In Done: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

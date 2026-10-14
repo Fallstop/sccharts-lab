@@ -1,0 +1,127 @@
+{
+  "hash": "54abacb91206ed015915e8fb87d95497f9ee87ee",
+  "chart": "tests/conformance/structure/62-clock-not-reset.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on t."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "on": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "on": false,
+        "sleepT": 500,
+        "t": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "on": false,
+        "sleepT": 250,
+        "t": 250
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "on": true,
+        "sleepT": 1000,
+        "t": 500
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "on": false,
+        "sleepT": 1000,
+        "t": 600
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "on": true,
+        "sleepT": 1000,
+        "t": 700
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

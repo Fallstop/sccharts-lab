@@ -1,0 +1,9 @@
+scchart RootFinalTerminates {
+  input bool I
+  output int x = 0
+
+  initial state A
+  do x = 1 go to B
+
+  final state B
+}

@@ -1,0 +1,9 @@
+// randomize() is srand(time(NULL)). Current KIELER includes <stdlib.h> only for random(), so a chart that seeds
+// without ever calling random() fails in gcc (S-50; official KIELER 0.3.0 includes it for neither).
+scchart RandomizeNoStdlib {
+  input bool A
+  output int n = 0
+  initial state S
+  if A do randomize(); n += 1 go to T
+  state T
+}

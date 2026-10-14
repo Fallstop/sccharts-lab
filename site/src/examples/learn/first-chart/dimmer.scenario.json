@@ -1,0 +1,47 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1 enters the initial state, `Off`, and `level` starts at 0."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A press. The transition out of `Off` fires: `level` becomes 30 and the lamp is `Dim`."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released. `Dim` has nothing to do, so the lamp stays at 30."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed again: `Dim` to `Bright`, `level` 100."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released; still `Bright`."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A third press goes from `Bright` back to `Off` and sets `level` to 0."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released. The lamp waits in `Off` for the next press."
+    }
+  ],
+  "expect": "ok"
+}

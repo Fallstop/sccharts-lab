@@ -1,0 +1,9 @@
+// fv[n] > 0.5 && a: gcc rejects comparing a double array's address with a double.
+scchart IdxFloat {
+  input int n
+  input bool a
+  output int y = 0
+  output float fv[2] = {0.0, 0.0}
+  initial state A
+    if fv[n] > 0.5 && a do y++ go to A
+}

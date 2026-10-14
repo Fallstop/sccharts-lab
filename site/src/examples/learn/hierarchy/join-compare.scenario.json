@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": { "start": false, "ready": true },
+      "note": "Tick 1 enters `Idle` in both charts. `ready` is true from the start; only `GuardedJoin`'s join reads it."
+    },
+    {
+      "inputs": { "start": true },
+      "note": "`start`: both charts enter `Work`, and `Begin` → `Done` fires at once, so `Work` terminates in its entry tick. `PlainJoin`'s join has no trigger, so it is immediate: it fires now, sets `left` and ends in `After`. `GuardedJoin`'s `if ready` makes its join delayed, so it is not checked in `Work`'s entry tick: `left` stays false."
+    },
+    {
+      "inputs": { "start": false },
+      "note": "`GuardedJoin`'s join is checked for the first time: `Work` is still terminated and `ready` still true, so it fires and sets `left`. Both charts are now in `After`, one tick apart."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,19 @@
+// An override must keep the return type.
+scchart St133Main {
+  output int O = 0
+  ref St133Loud a
+  initial state A
+  do O = a.value() go to A
+}
+
+scchart St133Loud extends St133Base {
+  override method bool value() {
+    return true
+  }
+}
+
+scchart St133Base {
+  method int value() {
+    return 1
+  }
+}

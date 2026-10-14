@@ -1,0 +1,7 @@
+scchart tuples {
+  const int A = 1
+  output int arr[3][2] = {{A,0}, {2,0}, {3,0}}
+
+  initial state init
+    do arr = {{arr[0] + 1, _}, _, {arr[2] + 1, _}} go to init
+}

@@ -1,0 +1,212 @@
+{
+  "hash": "4aa9f12d86898ebc22cca6b12b729b928f00514c",
+  "chart": "tests/engine/kieler/preemption/abort-region-root.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 13,
+      "column": 17
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "work": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "work": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "work": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "work": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "work": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

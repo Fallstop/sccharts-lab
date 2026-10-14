@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false, "off": false }, "note": "KIELER rejects the chart: the strong abort `if R abort to ABO` is written after the weak abort `if off go to Off`, so it has the lower priority." }
+  ],
+  "expect": "error",
+  "errorIncludes": "Strong abort transitions must have a higher priority than weak abort or termination transitions."
+}

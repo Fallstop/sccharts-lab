@@ -1,0 +1,18 @@
+scchart LongPress {
+  input bool button
+  output signal rise, fall, longPress
+
+  initial state Start
+    immediate if button go to Down
+    immediate go to Up
+
+  state Up
+    if button do rise go to Down
+
+  state Down
+    if !button do fall go to Up
+    if 2 true do longPress go to Held
+
+  state Held
+    if !button do fall go to Up
+}

@@ -1,0 +1,16 @@
+// Entry and exit actions declared at the top of the referenced chart become actions of the referencing state:
+// they run when R is entered and left.
+scchart St12Main {
+  input bool leave
+  output int log = 0
+  initial state R is St12Logger(log)
+  if leave go to D
+  state D
+}
+
+scchart St12Logger {
+  output int log
+  entry do log += 1
+  exit do log += 10
+  initial state S
+}

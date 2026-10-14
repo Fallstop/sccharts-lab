@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "`R1` reads `y` to decide whether to write `x`; `R2` reads `x` to decide whether to write `y`. Each read must wait for the other region's write: a cycle. Rejected as \"NOT asc-schedulable\"."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

@@ -1,0 +1,71 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Tick 1: idle, both flags down."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start`: the client raises `req` and waits."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "The server sees `pre(req)`, the request of the last tick, and raises `ack`. The client sees `ack` in the same tick (the server writes it before the client reads it) and lowers `req`."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "The server sees that `req` was lowered (`pre(req)` is false) and lowers `ack`; the client sees `ack` down and is idle again. Three ticks for the complete handshake."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "A new handshake."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "`ack` up, `req` down."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "`ack` down."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    }
+  ],
+  "expect": "ok"
+}

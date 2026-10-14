@@ -1,0 +1,9 @@
+scchart CaretMethod {
+  input bool A
+  output int o = 0
+  method int ^max() {
+    return 5
+  }
+  initial state S
+    if A do o = ^max() go to S
+}

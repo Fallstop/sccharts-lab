@@ -1,0 +1,44 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "W": false,
+        "S": false
+      },
+      "note": "Tick 1 enters M and I: delayed during actions do not run yet."
+    },
+    {
+      "inputs": {},
+      "note": "Both during actions run: outerDuring = 1, innerDuring = 1."
+    },
+    {
+      "inputs": {
+        "W": true
+      },
+      "note": "Weak abort: the superstate's and the inner state's during actions still run in this tick (2, 2), then M is left."
+    },
+    {
+      "inputs": {
+        "W": false
+      },
+      "note": "N goes back to M. M and I are entered again, so their delayed during actions do not run (still 2, 2)."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "Strong abort: all inner behaviour is skipped, including both during actions (still 2, 2)."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "N goes back to M (entry tick: still 2, 2)."
+    },
+    {
+      "inputs": {},
+      "note": "The during actions run again: 3, 3."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,245 @@
+---
+title: "Counters and timeouts"
+description: "Counting ticks, timeouts measured in ticks, frequency division, and when to use a count delay instead of a counter."
+sidebar:
+  order: 4
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A synchronous chart has no clock of its own; it has ticks. If your system ticks at a fixed rate, say
+every 10 ms, then counting ticks *is* measuring time: 100 ticks are a second. This page shows the two ways
+SCCharts gives you to count: **count delays** (`if 4 true go to …`), where KIELER keeps the count for you,
+and **counters**, ordinary `int` variables you increment yourself. It uses both for timeouts and for
+frequency division, and ends with a comparison to help you choose.
+
+Everything here assumes the ticks come at a steady rate. If they do not, see
+[Time](/advanced/time/) for clocks that measure real time.
+
+## Counting ticks
+
+The simplest counter is a variable and a `during` action:
+
+<Sim example="patterns/counters/tick-counter" caption="`tickNo` is the number of the current tick; `later` is always one less." />
+
+The two actions differ only in the first tick. A `during` action runs in every tick in which its state
+is active *except the tick it was entered*; for actions written directly in the chart, that is tick 1.
+`immediate during` runs in the entry tick as well. So `immediate during do tickNo++` makes `tickNo` the
+number of the current tick, and `during do later++` counts the ticks *after* the first. Pick whichever
+matches the question you ask: "which tick is this?" or "how many ticks have passed since we started?".
+
+<Aside type="note" title="Counters overflow">
+KIELER's C code stores an `int` as a C `int`. On most targets that is 32 bits, and its largest value is
+`2147483647`: a tick counter at 1000 ticks a second gets there after about 24.8 days. Going past it is an
+overflow, which C leaves undefined; in practice the value usually wraps around to −2147483648. On some
+microcontrollers (8-bit AVRs, for example) an `int` is only 16 bits, and the same counter overflows
+after about 33 seconds. Count down to a deadline, or reset the counter, instead of counting up for ever.
+</Aside>
+
+## A timeout: the stairwell light
+
+Many buildings have a stairwell light on a timer: press the button and the light stays on for a while,
+then goes off by itself. Pressing again while it is on restarts the time. With a count delay that is
+three transitions:
+
+<Sim example="patterns/counters/stair-light" caption="Ticks 2 to 5: four ticks of light. In tick 11 a second press restarts the count, and the light stays on until tick 14." />
+
+`if 4 true go to Off` is a **count delay**: it fires in the fourth tick in which its trigger (here
+`true`) holds while `On` is active. Like any delayed transition it ignores the entry tick, so it
+fires four ticks after the tick `On` was entered. The restart comes for free: `if button go to On` is a
+self-loop, and every entry of a state restarts its count delays. It is written first, so a press in the
+very tick the timeout would fire still wins and keeps the light on. ([Time](/advanced/time/#resetting-a-clock)
+builds the same light with a clock, which measures real time.)
+
+Two consequences of that restart are worth knowing:
+
+- **Holding the button keeps the light on.** In every tick of a long press `if button go to On` fires
+  again and restarts the count; the four ticks start when the button is released. If that is not what
+  you want, restart only on a rising edge, `if button && !pre(button) go to On` (see
+  [edges](/patterns/edges/)).
+- **The count belongs to the state.** KIELER keeps it in a hidden variable that it sets to 0 whenever
+  `On` is entered. You cannot read it, show it, or change it.
+
+<Aside type="note" title="A warning you can ignore here">
+KIELER compiles `StairLight` with the warning `Instantaneous loop detected!`. SCCharts Lab, which
+[words some messages differently](/reference/about/#official-kieler-and-sccharts-lab), says
+`Potential instantaneous loop through light.` The chart is fine: every cycle in it passes a delayed
+transition, so a tick always ends. KIELER's loop analysis flags many correct charts like this one
+([more about this warning](/reference/errors/#instantaneous-loop-detected)). Treat it as a hint to check
+that each cycle has a delayed transition, not as an error. A chart with a real instantaneous loop is
+*rejected*, with `The SCG is NOT asc-schedulable!`, not merely warned about.
+</Aside>
+
+## The same timeout with a counter
+
+Here is the stairwell light with an explicit counter, `left`, the number of ticks the light has left:
+
+<Compare a="patterns/counters/stair-light" b="patterns/counters/stair-light-counter" scenario="b" caption="Both turn the light off in ticks 6 and 15. Only the counter version shows how much time is left." />
+
+The transitions out of `On` say, in priority order: a press sets `left` back to 4; on the last tick, switch
+off; otherwise count down. With a press in tick 2, the two charts agree tick for tick. **Delay** and
+**Counter** are `light` in `StairLight` and in `StairLightCounter`:
+
+| Tick | Delay | Counter | `left` |
+| ---: | --- | --- | ---: |
+| 1 | false | false | 0 |
+| 2 | true | true | 4 |
+| 3 | true | true | 3 |
+| 4 | true | true | 2 |
+| 5 | true | true | 1 |
+| 6 | false | false | 0 |
+
+The counter version is longer, but you can watch `left` in the simulator, other parts of the chart can
+read it (to make the light warn before it goes off, say), and the limit could come from a variable
+instead of being a number written into the transition.
+
+Note where `left` is declared: at the top of the chart. `On` is re-entered by its self-loop, and a
+variable declared *inside* a state is initialised again on every entry of that state. Predict what that
+does to a counter:
+
+<Predict
+  example="patterns/counters/counter-inside"
+  ask={[{ tick: 2, value: 'shown' }, { tick: 4, value: 'shown' }]}
+  caption="`S` declares `int n = 0` and loops to itself in every tick with `do n++; shown = n go to S`. What is `shown` after ticks 2 and 4?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`shown` is 1 after both ticks. In every tick the self-loop runs `n++`, which turns 0 into 1, and
+`shown` copies the 1; then the re-entry of `S` sets `n` back to 0. The counter never gets past 1.
+
+</details>
+
+Declare counters one level up, in the chart or
+in a superstate that stays active, as `StairLightCounter` does with `left`. The
+[debouncing page](/patterns/debounce/) uses the same idea with a counter declared outside its looping
+state.
+
+<Aside type="caution" title="An old-style increment">
+Write increments as `left--`, `left++` or `left += 1`. KIELER accepts `left = left + 1`, but warns:
+
+```text wrap
+This assignment looks like old relative write SC syntax and is considered deprecated.
+```
+
+SCCharts Lab says what the compiler makes of it, and suggests `left += 1`:
+
+```text wrap
+This assignment reads left, so the compiler treats it as an update of left (a relative write, as in the deprecated old SC syntax).
+```
+
+Within one region the two mean the same; the warning matters when several regions update one variable,
+which [Why the compiler says no](/learn/causality/) explains.
+</Aside>
+
+## Frequency division
+
+Counting is also how you make something slower than the tick. A blinker that is lit for two ticks and dark
+for two divides the tick rate by four:
+
+<Sim example="patterns/counters/blinker" caption="Lit in ticks 3, 4, 7 and 8: a period of four ticks." />
+
+Each state waits for its own count delay and hands over to the other. (KIELER warns about this chart too,
+as above.) To produce a single-tick pulse every N ticks, a counter and a self-loop are more direct:
+
+<Sim example="patterns/counters/divider" view="both" show={['beat', 'phase']} caption="From tick 2, `phase` runs 1, 2, 0, 1, 2, 0, … and `beat` comes in ticks 4, 7 and 10." />
+
+`phase` counts 0, 1, 2, 0, …, and the tick in which it would pass 2 emits `beat` instead. Because the
+transitions of `Count` are delayed, the first beat comes in tick 4: tick 1 only enters the state. The same
+chart divides *events* instead of ticks if you put the event into the triggers; the packing exercise
+below does that.
+
+## Count delay or counter?
+
+A count delay, such as `if 4 true go to Off`, against a counter, an `int` you update yourself:
+
+| What differs | Count delay | Counter |
+| --- | --- | --- |
+| Length | one transition | a declaration and two or three transitions |
+| Visible | no: KIELER's hidden variable | yes, like any variable |
+| What it counts | ticks in which the trigger holds while the state is active, not the entry tick; they need not be consecutive | whatever you program |
+| Restarts | on every entry of the source state | when you assign it |
+| The limit | a number literal only | any expression: a `const`, a variable, an input |
+| Where | on transitions only | anywhere |
+
+Rules of thumb: use a count delay for a fixed timeout on a single state ("leave after 50 ticks"). Use a
+counter when the count must be seen or shared, when the limit is not a fixed number, when the count must
+survive leaving the state, or when you count across several states.
+
+How a count delay counts is the subject of [The previous tick](/learn/pre/#count-delays): the ticks need
+not be consecutive ([debouncing](/patterns/debounce/) shows how to demand ticks in a row), every entry
+restarts the count, `if 0 A` is rejected, `if 1 A` means `if A`, and an `immediate` count delay can fire
+too early when its state is left and entered again. One limit matters when you choose: count delays work
+**only on transitions**. KIELER accepts `during if 3 A do …`, but treats it as `during if A do …` and
+warns (sic):
+
+```text wrap
+Count Delays on During Actions are not supported yet. The valued will be ignored by the transformation.
+```
+
+On `entry` and `exit` actions a count is a syntax error. To count inside an action, use a counter.
+
+## Try it
+
+<TryIt example="patterns/counters/blinker-starter" solution="patterns/counters/blinker-asym" title="A short flash">
+Change the blinker so that the lamp is lit for one tick and dark for three, so that it flashes once every
+four ticks. The starter is lit in ticks 3, 4, 7 and 8; your version should be lit in ticks 4 and 8 only.
+</TryIt>
+
+<TryIt example="patterns/counters/packer-starter" solution="patterns/counters/packer" title="Boxes of four">
+Items pass a light barrier on a conveyor belt; `sensor` is true while an item is in front of it. The
+starter counts the items (once per item, thanks to the edge). Extend it to pack them in boxes of four:
+when the fourth item of a box passes, emit `boxFull` and start counting the next box from 0. To test
+it: items in ticks 2, 4 to 5, 7 and 9 fill the first box, so `boxFull` comes in tick 9 and `inBox` is 0
+again; items in ticks 11 and 13 make it 1 and 2.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/counters/stair-light-predict"
+  ask={[{ tick: 7, value: 'light' }, { tick: 8, value: 'light' }, { tick: 15, value: 'light' }, { tick: 16, value: 'light' }]}
+  caption="The stairwell light with a new sequence of presses. Is the light on after ticks 7, 8, 15 and 16?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+The light is on after tick 7, off after tick 8, on after tick 15 and off after tick 16. The press in
+tick 4 re-enters `On` and restarts the count, so the four ticks are 5 to 8. From tick 10 the button is
+held for three ticks, and every tick of the press restarts the count again; the four ticks begin when
+it is released, in tick 13, and end in tick 16.
+
+</details>
+
+<Quiz
+  question="`state Wait` has the transition `if 5 true go to Done`. `Wait` is entered in tick 10. In which tick does the transition fire, if `Wait` is not left before?"
+  options={['Tick 10', 'Tick 14', 'Tick 15', 'Tick 16']}
+  answer={2}
+>
+A delayed count delay does not count the entry tick. It counts ticks 11, 12, 13, 14 and 15, and fires in
+the fifth of them, tick 15: five ticks after the entry.
+</Quiz>
+
+<Quiz
+  question="The stairwell light's time should be adjustable: the chart gets an input `input int limit`. How do you write the timeout?"
+  options={['With a counter, set to `limit` on every press', 'With a count delay, `if limit true go to Off`', 'Either works: a count may be any `int`']}
+  answer={0}
+>
+The count of a count delay must be a number literal, so `if limit true` is a syntax error. A counter
+can start from any expression: set `left = limit` where `StairLightCounter` sets `left = 4`.
+</Quiz>
+
+<KeyIdeas>
+- With a steady tick rate, counting ticks measures time.
+- `during` skips the tick its state is entered; `immediate during` does not.
+- A count delay `if N true` fires N ticks after its state was entered, restarts on every entry, and
+  hides its count. A self-loop that restarts it gives a retriggerable timeout.
+- A counter is a variable you update: visible, shareable and free to compare with anything. Declare it
+  outside any state that is re-entered.
+- Frequency division is counting with a hand-over: two states with count delays, or a counter that wraps.
+</KeyIdeas>
+
+Next, [Latches](/patterns/latch/): remembering a request until it has been served.

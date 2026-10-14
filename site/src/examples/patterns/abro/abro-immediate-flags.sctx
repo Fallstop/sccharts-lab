@@ -1,0 +1,25 @@
+scchart ABROImmediateFlags {
+  input signal A, B, R
+  output signal O
+
+  initial state ABO {
+    bool gotA = false, gotB = false
+
+    region HandleA {
+      initial state WaitA
+        immediate if A do gotA = true go to DoneA
+      state DoneA
+    }
+    region HandleB {
+      initial state WaitB
+        immediate if B do gotB = true go to DoneB
+      state DoneB
+    }
+    region Emit {
+      initial state Waiting
+        immediate if gotA && gotB do O go to Done
+      state Done
+    }
+  }
+  if R abort to ABO
+}

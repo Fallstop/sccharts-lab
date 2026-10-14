@@ -1,0 +1,17 @@
+scchart StrongSelfLoop {
+  input bool R
+  output int entries = 0, exits = 0, innerEntries = 0, moved = 0
+
+  initial state M {
+    entry do entries += 1
+    exit do exits += 1
+
+    initial state I {
+      entry do innerEntries += 1
+    }
+    if true do moved += 1 go to J
+
+    state J
+  }
+  if R abort to M
+}

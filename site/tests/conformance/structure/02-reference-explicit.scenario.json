@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "second": true
+      },
+      "note": "Tick 1 enters R, i.e. St02Beep starts in A. Its delayed transitions cannot fire yet, so **speaker** (bound to beep) stays false."
+    },
+    {
+      "inputs": {},
+      "note": "second holds: A → B sets beep, which is speaker: **speaker = true**."
+    },
+    {
+      "inputs": {
+        "second": false
+      },
+      "note": "No second: nothing moves, speaker stays true."
+    },
+    {
+      "inputs": {
+        "second": true
+      },
+      "note": "B → A sets beep = false: **speaker = false**."
+    }
+  ],
+  "expect": "ok"
+}

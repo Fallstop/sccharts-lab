@@ -1,0 +1,11 @@
+// A class inside a class: o.in.v. The pool shows a nested object.
+scchart St124Inner {
+  class Outer {
+    class Inner {
+      int v
+    } in
+    int w
+  } o
+  initial state A
+  do o.in.v++; o.w = o.in.v go to A
+}

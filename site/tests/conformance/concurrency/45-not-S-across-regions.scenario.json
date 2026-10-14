@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "`R2` tests `!S` and emits `S`; its own test runs before its own emission, so it fires (`r2Took = true`, `S` present). `R1`'s test of `S` must wait for `R2`'s emission, so `R1` sees `S` present and does not fire (`r1Took = false`). Accepted."
+    },
+    {
+      "inputs": {},
+      "note": "Tick 2: `S` is absent (nobody emits it), so `R1`'s immediate transition, which is still enabled, fires now: `r1Took = true`."
+    },
+    {
+      "inputs": {},
+      "note": "No change."
+    }
+  ],
+  "expect": "ok"
+}

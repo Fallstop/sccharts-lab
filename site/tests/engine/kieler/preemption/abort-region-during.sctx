@@ -1,0 +1,25 @@
+// A during action adds a region after the others (KIELER's During transformation): with a leading abort region,
+// the state's regions are nested and still react in the tick Watch finishes.
+scchart DuringLead {
+  input bool A
+  output int work = 0, n = 0, done = 0
+
+  initial state M {
+    during do n += 1
+    abort region Watch {
+      initial state W
+      if A go to F
+      final state F
+    }
+    region Main {
+      initial state I
+      if true do work += 1 go to I
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done += 1
+  }
+  go to M
+}

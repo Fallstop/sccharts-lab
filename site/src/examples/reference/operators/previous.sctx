@@ -1,0 +1,10 @@
+scchart Previous {
+  input int I
+  output int now = 50, before, twoAgo
+
+  immediate during do now = I
+  immediate during do before = pre(now)
+  immediate during do twoAgo = pre(pre(now))
+
+  initial state Run
+}

@@ -1,0 +1,16 @@
+scchart PeriodLeaveFixed {
+  input bool stop
+  output int samples = 0
+
+  initial state Run {
+    region {
+      period 500
+
+      initial state Measure
+        do samples++ go to Measure
+    }
+  }
+  if stop go to Stopped
+
+  state Stopped
+}

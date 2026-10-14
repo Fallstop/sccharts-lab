@@ -1,0 +1,111 @@
+---
+/**
+ * Starlight's Hero, replaced (only the landing page has a `hero`). Copy comes from the page's
+ * frontmatter (hero.title, hero.tagline, hero.actions); the live chart sits beside it.
+ *
+ * Layout: copy and chart side by side from 64rem, stacked below. The first action is drawn as an
+ * initial state (heavy outline): it is where a reader starts.
+ *
+ * A plain hero (the 404 page, which has no live chart) takes the page's own content beside it from 64rem instead:
+ * the copy on the left, the Markdown content (404.mdx: its small teaching chart and a paragraph of links) on the
+ * right, so the hero's row is not two thirds empty; below 64rem the content follows the copy.
+ */
+import HeroChart from '../landing/HeroChart.astro'
+
+const { data, id } = Astro.locals.starlightRoute.entry
+const { title = data.title, tagline, actions = [] } = data.hero || {}
+// The live chart belongs to the landing page; other pages with a hero (404) get the copy only.
+const withChart = id === 'index' || id === ''
+---
+
+<div class:list={['sc-hero not-content', { 'is-plain': !withChart }]}>
+	<div class="sc-hero__copy">
+		<h1 id="_top" class="sc-hero__title sc-display" data-page-title set:html={title} />
+		{tagline && <div class="sc-hero__tagline" set:html={tagline} />}
+		{
+			actions.length > 0 && (
+				<div class="sc-hero__actions">
+					{actions.map(({ link, text }, i) => (
+						<a class:list={['sc-btn', i === 0 ? 'sc-btn--initial' : 'sc-btn--quiet']} href={link}>
+							{text}
+						</a>
+					))}
+				</div>
+			)
+		}
+	</div>
+	{
+		withChart && (
+			<div class="sc-hero__chart">
+				<HeroChart />
+			</div>
+		)
+	}
+</div>
+
+<style>
+	.sc-hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.5rem;
+		align-items: center;
+		padding-block: 1.5rem 3.5rem;
+	}
+	.sc-hero__title {
+		margin: 0;
+		font-size: var(--text-hero);
+		line-height: 1.02;
+		letter-spacing: -0.02em;
+		max-width: 13ch;
+	}
+	.sc-hero__tagline {
+		margin-top: 1.25rem;
+		max-width: 36rem;
+		font-size: var(--text-lg);
+		line-height: 1.55;
+		color: var(--c-text);
+		text-wrap: pretty;
+	}
+	.sc-hero__tagline :global(p + p) {
+		margin-top: 0.75rem;
+	}
+	.sc-hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 2rem;
+	}
+	.sc-hero__chart {
+		min-width: 0;
+	}
+	.sc-hero.is-plain {
+		padding-block: 3rem 1rem;
+	}
+	@media (min-width: 64rem) {
+		.sc-hero:not(.is-plain) {
+			grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+			gap: 3.5rem;
+			padding-block: 2.5rem 4.5rem;
+		}
+		/* The 404 page: its content (Starlight puts it after the hero, in the same container) beside the copy. */
+		:global(.sl-container:has(> .sc-hero.is-plain)) {
+			display: grid;
+			grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+			column-gap: 3.5rem;
+			align-items: center;
+			padding-block: 2.5rem 3rem;
+		}
+		:global(.sl-container:has(> .sc-hero.is-plain) > *) {
+			grid-column: 1 / -1;
+			margin-top: 0;
+		}
+		:global(.sl-container > .sc-hero.is-plain) {
+			grid-column: 1;
+			padding-block: 0;
+		}
+		:global(.sl-container:has(> .sc-hero.is-plain) > .sl-markdown-content) {
+			grid-column: 2;
+			grid-row: 1;
+		}
+	}
+</style>

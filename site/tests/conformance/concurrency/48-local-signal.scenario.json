@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Local signal `L` declared in superstate `S`. Tick 1: nothing fires."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `R1` emits `L`; `R2` sees it in the same tick: `n = 1`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`L` is absent again: `n = 1`."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `n = 2`."
+    }
+  ],
+  "expect": "ok"
+}

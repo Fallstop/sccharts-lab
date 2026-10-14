@@ -1,0 +1,101 @@
+{
+  "hash": "edc65216f96291f6a957929d908bdae5dac59621",
+  "chart": "src/examples/advanced/methods/digits.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name rest is contained in the model but not in VariableStore.",
+    "ValuedObject with name n is contained in the model but not in VariableStore.",
+    "ValuedObject with name v is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name countDigits is contained in the model but not in VariableStore.",
+    "ValuedObject with name v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "value": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "digits": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "value": 7
+      },
+      "values": {
+        "value": 7,
+        "digits": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "value": 42
+      },
+      "values": {
+        "value": 42,
+        "digits": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "value": 12345
+      },
+      "values": {
+        "value": 12345,
+        "digits": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "value": 9
+      },
+      "values": {
+        "value": 9,
+        "digits": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "value": 100
+      },
+      "values": {
+        "value": 100,
+        "digits": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

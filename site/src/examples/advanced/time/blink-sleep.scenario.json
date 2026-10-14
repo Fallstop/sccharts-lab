@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 0 }, "note": "Tick 1 enters `Off`. The next timeout is 500 ms away: `sleepT` = 500." },
+    { "inputs": {}, "note": "With `@SimulateSleep` the chart assumes that exactly the requested time passed: `deltaT` is set to the last `sleepT` (500), so the timeout fires at once and the LED comes on. On wants 300 ms: `sleepT` = 300." },
+    { "inputs": {}, "note": "`deltaT` = 300: off again." },
+    { "inputs": {}, "note": "`deltaT` = 500: on. Every tick is a timeout; nothing happens in between." },
+    { "inputs": {}, "note": "`deltaT` = 300: off." }
+  ],
+  "expect": "ok"
+}

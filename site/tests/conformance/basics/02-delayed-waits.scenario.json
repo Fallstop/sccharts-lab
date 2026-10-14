@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": true}, "note": "I is true from the start, but A is entered in this tick and its only transition is delayed: it is not checked. x = 0, state A."},
+    {"inputs": {}, "note": "Now the delayed transition is checked; I is still true, so it fires: x = 1, state B."},
+    {"inputs": {"I": false}, "note": "B has no transitions. x stays 1."}
+  ],
+  "expect": "ok"
+}

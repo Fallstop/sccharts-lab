@@ -1,0 +1,10 @@
+scchart Stay {
+  input bool button
+  output bool light = false
+
+  initial state Off
+    if !button go to Off
+    if button do light = true go to On
+
+  state On
+}

@@ -1,0 +1,306 @@
+---
+title: "Delayed and immediate transitions"
+description: "When a transition is checked, how several transitions can fire in one tick, and how a chart finishes."
+sidebar:
+  order: 4
+---
+
+import { Chart, Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Every transition you have written so far has waited. A chart enters a state in one tick and can
+leave it in the next tick at the earliest, which is why nothing seemed to happen in tick 1. That
+rhythm keeps charts easy to follow, but some decisions belong to the moment of arrival. A lock that
+has just been given a code should say yes or no straight away; a controller that starts up should
+look at its inputs in tick 1, not in tick 2.
+
+SCCharts lets you choose, one transition at a time. A **delayed** transition waits; an
+**immediate** transition may fire in the same tick its state was entered. This chapter shows both,
+what happens when immediate transitions follow one another within a tick, why KIELER refuses some
+charts that look harmless, and how a chart comes to an end in a final state.
+
+## Delayed transitions wait a tick
+
+`Stairs` climbs from `Ground` to `Second`, one floor at a time, while the input `up` is true. Its
+transitions are written the way you have written transitions so far. In the tour, `up` is true from
+tick 1, yet the chart only reaches the top in tick 3.
+
+<Sim example="learn/immediate/stairs" caption="`up` is true in every tick, but `floor` changes at most once per tick." />
+
+| Tick | `up` | State after | `floor` after |
+| ---: | --- | --- | --- |
+| 1 | true | Ground | 0 |
+| 2 | true (held) | First | 1 |
+| 3 | true (held) | Second | 2 |
+| 4 | true (held) | Second | 2 |
+
+Two things hold the climb up. In tick 1, `Ground` has only just been entered; in tick 2, `First` has
+only just been entered. The tick in which a state is entered is that state's **entry tick**, and the
+rule for an ordinary transition is short: it is never checked in its source state's entry tick. In
+every later tick in which the state is still active, it is checked as usual.
+
+Tick 1 is nothing more than the entry tick of the initial state, which is why a transition out of the
+initial state can fire in tick 2 at the earliest. But the rule is about every state, whenever it is entered:
+`First` is entered in tick 2, so its transition has to wait until tick 3. A chain of delayed
+transitions moves at most one step per tick. Every transition without a keyword is delayed.
+
+## Immediate transitions fire on arrival
+
+Write `immediate` in front of a transition and it is checked in its source state's entry tick too:
+
+```sctx
+initial state Ground
+  immediate if up do floor = 1 go to First
+```
+
+`Lift` is `Stairs` with both transitions immediate. Here are the two side by side, with the same
+input:
+
+<Compare a="learn/immediate/stairs" b="learn/immediate/lift" scenario="learn/immediate/stairs-lift-compare" caption="The same input and the same states: `Lift` reaches `Second` in tick 1, `Stairs` in tick 3." />
+
+In tick 1, `Lift` enters `Ground` and checks its immediate transition at once: `up` is true, so the
+chart moves to `First` and sets `floor` to 1. Entering `First` makes tick 1 `First`'s entry tick
+as well, and `First`'s transition is immediate too, so it is checked straight away: the chart moves
+on to `Second` and `floor` becomes 2. All of this happens within tick 1. Only the values at the end
+of a tick are reported, so the 1 is never seen.
+
+| Tick | `up` | `Stairs` after | `Lift` after |
+| ---: | --- | --- | --- |
+| 1 | true | Ground, `floor` 0 | Second, `floor` 2 |
+| 2 | true (held) | First, `floor` 1 | Second, `floor` 2 |
+| 3 | true (held) | Second, `floor` 2 | Second, `floor` 2 |
+
+### Chains of immediate transitions
+
+A tick keeps following transitions for as long as it can: after every transition it checks the
+immediate transitions of the state it has just entered, and it stops at the first state where none
+of them is enabled. So one tick can pass through any number of states. Each transition's effects
+run before the next transition is checked, so a trigger further along the chain sees the values
+written earlier in the same tick. When you step a simulation, every transition taken in the tick is
+highlighted, so a chain shows up as a path through the diagram.
+
+The first link of a chain may be a delayed transition. When a delayed transition fires in tick 5,
+its target is entered in tick 5, and the target's immediate transitions are checked in tick 5 too.
+`Lock` relies on this: it waits in `Idle` until `enter` is true, then passes through `Check`, which
+decides at once whether the code was right.
+
+<Sim example="learn/immediate/lock" caption="Watch tick 2: the chart goes from `Idle` to `Check` and back to `Idle` within one tick." />
+
+In the diagram, an immediate transition is drawn as a **dashed arrow**: `Check`'s two transitions are
+dashed, and the delayed one out of `Idle` is solid.
+
+`Check` is a state you never see at the end of a tick: it is entered and left in the same tick,
+every time. Its second transition has no trigger, so it is the default when the code is wrong, and
+because it is immediate as well, the chart is back in `Idle` in the same tick whichever way the
+check went. That default has to come last, as in [chapter 3](/learn/transitions/#when-a-transition-can-never-fire):
+written first, it would fire in every entry tick of `Check`, and KIELER would warn
+`The transition is not reachable.` on the code check after it. Notice also that `enter` keeps its
+value: while it stays true, `Lock` checks the code again in every tick.
+
+## Which transitions compete
+
+You already know that a state's outgoing transitions are checked in priority order and that the
+first enabled one wins ([Triggers, effects and priority](/learn/transitions/)). Once delayed and
+immediate transitions are mixed, the question is which of them take part in that contest. `Race`
+has one of each: priority 1 is delayed, priority 2 is immediate.
+
+<Sim example="learn/immediate/race" caption="`path` records which transition fired last: 1 for the delayed one, 2 for the immediate one." />
+
+`Done` has one untriggered delayed transition back to `Choose`, so the chart keeps returning to
+`Choose`: in some ticks `Choose` has just been entered, in others it was already active.
+
+The column *Entry tick* says whether `Choose` was entered in that tick:
+
+| Tick | `A` | `B` | Entry tick | State after | `path` after |
+| ---: | --- | --- | --- | --- | --- |
+| 1 | true | true | yes | Done | 2 |
+| 2 | true (held) | false | yes | Choose | 2 |
+| 3 | true (held) | true | no | Done | 1 |
+| 4 | true (held) | true (held) | yes | Done | 2 |
+| 5 | false | false | yes | Choose | 2 |
+| 6 | false (held) | true | no | Done | 2 |
+
+Those six ticks show the whole rule:
+
+- In a state's entry tick, only its immediate transitions are candidates, in priority order. In
+  tick 1 the delayed priority 1 is skipped although `A` is true, and the immediate priority 2 fires.
+  In tick 2 `B` is false, so nothing fires, and the chart stays in `Choose`.
+- In every later tick, all of the state's transitions are candidates, in priority order. In tick 3
+  both are enabled, and the delayed priority 1 wins. Being immediate does not make a transition go
+  first.
+- An immediate transition is not limited to the entry tick. In tick 6 it fires in a tick in which
+  `Choose` was already active, because `A` is false.
+
+Tick 4 is a chain that starts with a delayed transition: `Done` → `Choose` fires, `Choose` has just
+been entered, so its immediate transition is checked and fires in the same tick. In short,
+`immediate` changes *when* a transition may be checked; it never changes its priority.
+
+## Immediate loops are rejected
+
+What if a chain comes back to where it started? `Spin` tries to count to three with an immediate
+self-loop.
+
+<Chart example="learn/immediate/spin" caption="KIELER refuses to compile `Spin`: its self-loop is immediate." />
+
+KIELER does not run this chart. What it reports:
+
+- errors from the scheduler: one or more lines like `Can't schedule from _g1 to _cg1`, then
+  `The SCG is NOT asc-schedulable!`;
+- the warning `Instantaneous loop detected!`;
+- on the transition itself, the warning `There is an immediate loop. The model is not SASC.`,
+  followed by the states involved.
+
+SCCharts Lab shows the same errors plus a plainer one, `Circular dependency prevents scheduling this
+tick.`, and words the warning `Potential instantaneous loop.`
+
+The reason is that a tick must end. KIELER compiles each tick into a fixed sequence of steps, and a
+cycle of immediate transitions would need to go back to an earlier step, possibly for ever. You can
+see that `n < 3` stops `Spin` after three rounds, but the compiler does not look at triggers: the
+check is about the shape of the chart. Every cycle made only of immediate transitions is rejected,
+whatever its triggers say. This one is refused too, although its two guards can never both be true:
+
+```sctx
+initial state Ping
+  immediate if flip go to Pong
+
+state Pong
+  immediate if !flip go to Ping
+```
+
+The fix is always the same: make at least one transition on the cycle delayed. A delayed transition
+cannot fire again in the tick its state was re-entered, so a cycle through it goes round at most
+once per tick. `CountSteps` is `Spin` without the keyword `immediate`:
+
+<Sim example="learn/immediate/count-steps" caption="One step per tick: `n` becomes 1, 2 and 3 in ticks 2, 3 and 4." />
+
+`Lock` has a cycle as well, `Idle` → `Check` → `Idle`, and KIELER accepts it because the transition
+out of `Idle` is delayed. If you really want three steps of work in one tick, don't loop: write the
+result directly (`n = 3`), or spread the work over several ticks as `CountSteps` does. The chapter
+[Why the compiler says no](/learn/causality/) explains the scheduling behind these messages.
+
+<Aside>
+KIELER has a second compiler, the priority-based one, which accepts loops like `Spin` and runs them
+inside the tick (and never finishes the tick if the loop never stops). This guide always uses the
+default netlist-based compiler, the one you get unless you pick another.
+</Aside>
+
+## Final states and termination
+
+A state written with `final` is a **final state**; the diagram gives it a double outline. When the
+chart's top level is in a final state at the end of a tick, the chart **terminates** in that tick,
+and from then on it does nothing at all. (With several concurrent regions at the top level, every
+one of them must be in a final state; that comes in [Concurrent regions](/learn/concurrency/).) In
+this guide's timing diagrams, a small triangle next to a tick's number marks the tick in which the
+chart terminated.
+
+`Finish` counts one lap and stops. Its final state even has a transition back to `Lap`. Predict what
+happens, run it, then open the explanation:
+
+<Predict example="learn/immediate/finish" ask={[{ tick: 2, value: 'laps' }, { tick: 4, value: 'laps' }]} caption="`next` is true in ticks 1 to 3 and false in tick 4." />
+
+<details>
+<summary>Explanation</summary>
+
+In tick 2, `Lap` → `Done` fires and `laps` becomes 1. The chart ends the tick in a final state, so it
+terminates in tick 2. In tick 3, `next` is still true, and an ordinary state would now take `Done`'s
+transition back to `Lap`; but a terminated chart checks nothing, so `laps` stays 1 for good.
+
+</details>
+
+A few details, all visible in KIELER's simulator:
+
+- The transition into the final state runs its effects as usual; termination happens at the end of
+  that tick.
+- A chart can terminate in tick 1, if a chain of immediate transitions from the initial state reaches
+  a final state.
+- "Final" means "may count as finished", not "stop here". If a final state has an immediate
+  transition that is enabled when the state is entered, the chain continues, the chart does
+  not end the tick in a final state, and nothing terminates.
+
+Most controllers never terminate: they run as long as the device is switched on. Final states earn
+their keep inside superstates, where reaching one lets the superstate finish and move on with
+`join to` ([Superstates](/learn/hierarchy/)). One KIELER quirk to know about already: a chart that
+declares a signal never terminates in KIELER's simulator ([Signals and
+termination](/learn/signals/#signals-and-termination)).
+
+## `delayed` and `auto`
+
+You may meet two more keywords in front of transitions. `delayed` says explicitly what no keyword
+means. `auto` is a leftover that KIELER still accepts, and it also means delayed; the first example
+on the [KIELER wiki's syntax page](https://github.com/kieler/semantics/wiki/Syntax) uses it.
+
+```sctx
+initial state A
+  auto do step = 1 go to B
+
+state B
+  delayed do step = 2 go to C
+
+final state C
+```
+
+Both transitions behave exactly like transitions without a keyword: this chart is in `A` after
+tick 1, in `B` after tick 2 (`step` 1), and reaches `C` in tick 3, where it terminates with
+`step` 2. Write transitions without a keyword, and use `immediate` where you mean it.
+
+## Try it
+
+<TryIt example="learn/immediate/startup" solution="learn/immediate/startup-solution" title="Decide in tick 1">
+`Startup` should look at `ok` in tick 1: if `ok` is true it sets `running` and goes to `Ready`,
+otherwise it goes to the final state `Fault`. As written, it decides one tick late. Change it so
+that the decision is made in tick 1. Then try `ok` false in tick 1: in which tick does the chart
+terminate?
+</TryIt>
+
+<TryIt example="learn/immediate/door" solution="learn/immediate/door-solution" title="Break the loop">
+KIELER rejects `Door`. Make it compile with the smallest change you can find, keeping this
+behaviour: if `open` is true in tick 1, the door is already open at the end of tick 1.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="A delayed transition from `Idle` to `Check` fires in tick 5. `Check` has one outgoing transition, `immediate if x > 0 go to Done`, and `x` is 3. Which state is the chart in at the end of tick 5?"
+  options={['`Idle`: the chart only reaches `Check` in tick 6', '`Check`: its immediate transition fires in tick 6', '`Done`: `Check` is entered in tick 5, so its immediate transition is checked in tick 5 too']}
+  answer={2}
+>
+Entering a state, by any transition and in any tick, makes that tick the state's entry tick, and
+its immediate transitions are checked at once. The delayed transition starts the chain; the
+immediate one continues it in the same tick.
+</Quiz>
+
+<Quiz
+  question="`Choose` has two outgoing transitions: priority 1 is `if A go to X`, priority 2 is `immediate if B go to Y`. `Choose` was entered two ticks ago. In this tick `A` and `B` are both true. What happens?"
+  options={['Priority 1 fires and the chart goes to `X`', 'Priority 2 fires, because immediate transitions go first', 'Nothing: two enabled transitions conflict']}
+  answer={0}
+>
+Outside its entry tick, all of a state's transitions are candidates, in priority order, and the
+first enabled one wins. `immediate` only matters in the entry tick, when the delayed transition
+would not have been a candidate.
+</Quiz>
+
+<Quiz
+  question="Which of these charts does KIELER accept?"
+  options={['`A` goes to `B` with `immediate if I`, and `B` goes back to `A` with `immediate if !I`', '`A` has a self-loop `immediate if x < 3 do x += 1 go to A`', '`A` goes to `B` with `immediate if I`, and `B` goes back to `A` with `if !I`']}
+  answer={2}
+>
+The first two contain a cycle made only of immediate transitions, which KIELER rejects whatever the
+triggers say (`The SCG is NOT asc-schedulable!`). The third cycle contains a delayed transition, so
+it can go round at most once per tick.
+</Quiz>
+
+<KeyIdeas>
+- A state's **entry tick** is the tick in which it is entered. Delayed transitions (no keyword,
+  `delayed` or `auto`) are not checked in it; immediate transitions are.
+- After the entry tick, all of a state's transitions compete in priority order. `immediate` never
+  raises a transition's priority.
+- A tick follows immediate transitions until it reaches a state where none is enabled. A delayed
+  transition can start such a chain.
+- KIELER rejects every cycle made only of immediate transitions, whatever the guards. Make one
+  transition on the cycle delayed.
+- When the top level is in a final state at the end of a tick, the chart terminates and does
+  nothing from then on.
+</KeyIdeas>
+
+Next, [Variables, types and expressions](/learn/variables/): the data a chart works with, from
+booleans to arrays.

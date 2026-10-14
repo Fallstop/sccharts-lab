@@ -1,0 +1,49 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "reqA": false,
+        "reqB": false,
+        "done": false
+      },
+      "note": "Tick 1 enters `Free`."
+    },
+    {
+      "inputs": {
+        "reqA": true
+      },
+      "note": "A's job starts at once."
+    },
+    {
+      "inputs": {
+        "reqA": false
+      },
+      "note": "A's job prints."
+    },
+    {
+      "inputs": {
+        "done": true
+      },
+      "note": "Finished, and nobody is waiting: `user` is 0."
+    },
+    {
+      "inputs": {
+        "done": false,
+        "reqA": true,
+        "reqB": true
+      },
+      "note": "Both send a job. A printed last, so B should win this tie. The starter reads `pre(user)`, which is 0 now, and gives the printer to A."
+    },
+    {
+      "inputs": {},
+      "note": "Both keep sending jobs."
+    },
+    {
+      "inputs": {
+        "done": true
+      },
+      "note": "Finished, both waiting: whoever did not print in tick 5 should print now."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,17 @@
+// An @inline method with a backward goto: inlined, rejected.
+scchart GotoInlineBack {
+  input bool start
+  output int n = 0, m = 0
+
+  @inline
+  method void bump() {
+    again:
+    n++;
+    if (n % 3 != 0) {
+      goto again
+    }
+  }
+
+  initial state S
+    if start do bump() go to S
+}

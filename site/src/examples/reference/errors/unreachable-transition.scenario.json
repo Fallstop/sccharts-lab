@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Tick 1 enters `Idle`. Both transitions are delayed, so neither can fire yet."
+    },
+    {
+      "note": "`go to Busy` has no trigger and comes first, so it always wins in the tick after `Idle` is entered. The second transition can never fire, which is why KIELER warns that it is not reachable: `x` stays 0 even though `A` is true."
+    }
+  ],
+  "expect": "ok"
+}

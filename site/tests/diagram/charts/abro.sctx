@@ -1,0 +1,22 @@
+scchart ABRO {
+  input bool A, B, R
+  output bool O
+
+  initial state ABO {
+    initial state WaitAB {
+      region HandleA:
+      initial state WaitA
+      if A go to DoneA
+      final state DoneA
+
+      region HandleB:
+      initial state WaitB
+      if B go to DoneB
+      final state DoneB
+    }
+    do O = true join to Done
+
+    state Done
+  }
+  if R go to ABO
+}

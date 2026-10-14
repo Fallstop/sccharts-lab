@@ -1,0 +1,55 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "note": "Tick 1: no call."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A press: `Waiting`, lamp on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Waiting for the lift."
+    },
+    {
+      "inputs": {
+        "button": true,
+        "arrived": true
+      },
+      "note": "Someone presses again in the very tick the lift arrives. `Waiting` has only `if arrived go to Idle`: the call is served, and the exit action switches the lamp off. The new press is served by the same lift."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "The doors are open."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A press while the doors are open: `if button && !arrived` is false in `Idle`, so nothing is registered."
+    },
+    {
+      "inputs": {
+        "arrived": false
+      },
+      "note": "The button is still held as the lift leaves. Now `button && !arrived` is true: the call is registered and the lamp goes on. The chart reacts to levels, and the press is still going on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Waiting."
+    }
+  ],
+  "expect": "ok"
+}

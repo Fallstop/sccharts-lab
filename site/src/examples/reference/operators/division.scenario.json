@@ -1,0 +1,30 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": 7,
+        "B": 2
+      },
+      "note": "Both operands are `int`, so `/` is integer division: 7 / 2 = 3, remainder 1. `stillWhole` is a `float`, but `A / B` is computed in `int` first, so it is 3. `A / 2.0` has a `float` operand, so it gives 3.5."
+    },
+    {
+      "inputs": {
+        "A": -7
+      },
+      "note": "Integer division rounds towards zero: −7 / 2 = −3, and the remainder has the sign of the dividend: −1."
+    },
+    {
+      "inputs": {
+        "B": -2
+      },
+      "note": "−7 / −2 = 3, remainder −1."
+    },
+    {
+      "inputs": {
+        "A": 7
+      },
+      "note": "7 / −2 = −3, remainder 1."
+    }
+  ],
+  "expect": "ok"
+}

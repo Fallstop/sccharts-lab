@@ -1,0 +1,12 @@
+scchart WriteConflict {
+  input bool A, B
+  output int mode
+
+  region First:
+    initial state Wait
+      if A do mode = 1 go to Wait
+
+  region Second:
+    initial state Wait
+      if B do mode = 2 go to Wait
+}

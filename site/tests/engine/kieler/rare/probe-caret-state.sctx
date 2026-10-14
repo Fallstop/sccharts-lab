@@ -1,0 +1,8 @@
+scchart CaretState {
+  input bool A
+  output int o = 0
+  initial state ^state
+    if A do o++ go to ^final
+  state ^final
+    if A go to ^state
+}

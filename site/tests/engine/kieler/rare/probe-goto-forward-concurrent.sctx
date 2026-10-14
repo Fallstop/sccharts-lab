@@ -1,0 +1,20 @@
+// An inlined code block's b += 1 commutes with a concurrent b += 1 (the block is not a C call).
+scchart GotoForwardConcurrent {
+  input bool skip
+  output int a = 0, b = 0
+
+  region R1:
+    initial state S
+      if true do {
+        if (skip) {
+          goto done
+        }
+        a = 1;
+        done:
+        b += 1
+      } go to S
+
+  region R2:
+    initial state T
+      if true do b += 1 go to T
+}

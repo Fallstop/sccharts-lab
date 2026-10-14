@@ -1,0 +1,46 @@
+{
+ "ticks": [
+  {
+   "inputs": {
+    "a": true,
+    "b": true,
+    "c": false,
+    "d": false,
+    "n": 3
+   },
+   "note": "After the cure, a superstate's join is reached only through a fork copy: KIELER's single-pass dead-block analysis marks it dead, so the strong abort never completes."
+  },
+  {
+   "inputs": {
+    "a": false,
+    "b": true,
+    "c": true,
+    "d": true,
+    "n": 0
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "a": true,
+    "d": true,
+    "n": 2
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "a": false,
+    "d": false
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "d": true
+   },
+   "note": "Next tick."
+  }
+ ],
+ "expect": "ok"
+}

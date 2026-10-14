@@ -1,0 +1,52 @@
+---
+/**
+ * Starlight's SiteTitle, replaced: the mark, "SCCharts" in the display face, and the guide's subtitle.
+ * The subtitle hides on narrow screens, where the header also holds search and the menu button.
+ */
+import LogoMark from './LogoMark.astro'
+
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute
+---
+
+<a href={siteTitleHref} class="sc-site-title" translate="no">
+	<LogoMark size={30} />
+	<span class="sc-site-title__name">{siteTitle}</span>
+	<span class="sc-site-title__sub">an interactive guide</span>
+</a>
+
+<style>
+	.sc-site-title {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.625rem;
+		min-width: 0;
+		color: var(--c-ink);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	.sc-site-title__name {
+		font-family: var(--font-display);
+		font-stretch: var(--display-stretch);
+		font-weight: 650;
+		font-size: 1.1875rem;
+		letter-spacing: -0.01em;
+		line-height: 1;
+	}
+	.sc-site-title__sub {
+		display: none;
+		align-self: center;
+		padding-inline-start: 0.625rem;
+		border-inline-start: 1px solid var(--c-rule-strong);
+		font-size: var(--text-sm);
+		line-height: 1.2;
+		color: var(--c-muted);
+	}
+	.sc-site-title:hover .sc-site-title__name {
+		color: var(--c-accent);
+	}
+	@media (min-width: 34em) {
+		.sc-site-title__sub {
+			display: inline;
+		}
+	}
+</style>

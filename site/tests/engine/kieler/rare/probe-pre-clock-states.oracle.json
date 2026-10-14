@@ -1,0 +1,148 @@
+{
+  "hash": "9feaf19f743072ac8f4b75db7a644126a2627c50",
+  "chart": "tests/engine/kieler/rare/probe-pre-clock-states.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 1,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 1,
+        "p": 0,
+        "q": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 2,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 2,
+        "p": 0,
+        "q": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 3,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 3,
+        "p": 0,
+        "q": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 4,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 4,
+        "p": 0,
+        "q": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "v": 5,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 5,
+        "p": 2,
+        "q": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "v": 6,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 6,
+        "p": 5,
+        "q": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "v": 7,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 7,
+        "p": 5,
+        "q": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "v": 8,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 8,
+        "p": 6,
+        "q": 6
+      },
+      "terminated": false
+    }
+  ]
+}

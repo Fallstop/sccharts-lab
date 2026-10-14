@@ -1,0 +1,9 @@
+// Imported by 16-import.sctx (not a test of its own).
+scchart St16Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

@@ -1,0 +1,33 @@
+{
+  "hash": "14a9181c25f735881f8902abe72103efb0241b85",
+  "chart": "tests/conformance/structure/110-err-struct-whole-assignment.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "8:6 Assignments to class/struct types are not supported. Please specify a member.",
+    "8:6 Referencing class/struct types is not supported. Please specify a member.",
+    "8:10 Referencing class/struct types is not supported. Please specify a member."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Assignments to class/struct types are not supported. Please specify a member.",
+      "line": 8,
+      "column": 6
+    },
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 8,
+      "column": 6
+    },
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 8,
+      "column": 10
+    }
+  ],
+  "ticks": []
+}

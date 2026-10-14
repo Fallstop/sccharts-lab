@@ -1,0 +1,75 @@
+{
+  "hash": "89383b483161df71542a6d541f59064500cc8b8d",
+  "chart": "tests/conformance/structure/122-unpack-class.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_acc_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "up": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "acc_sum": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "up": true,
+        "O": 0,
+        "acc_sum": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "up": true,
+        "O": 3,
+        "acc_sum": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "up": false
+      },
+      "values": {
+        "up": false,
+        "O": 3,
+        "acc_sum": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

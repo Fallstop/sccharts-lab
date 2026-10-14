@@ -1,0 +1,32 @@
+scchart Microwave {
+  input bool start, door, second
+  output bool heating = false
+  output bool lamp = false
+  output signal beep
+
+  region Oven {
+    initial state Idle
+      if door go to DoorOpen
+      if start && !pre(start) do heating = true; beep go to Cooking
+
+    state DoorOpen
+      if !door go to Idle
+
+    state Cooking {
+      initial state Heat
+        if 3 second go to Done
+
+      final state Done
+    }
+    if door do heating = false abort to DoorOpen
+    do heating = false; beep join to Idle
+  }
+
+  region Lamp {
+    initial state Dark
+      if door || heating do lamp = true go to Lit
+
+    state Lit
+      if !door && !heating do lamp = false go to Dark
+  }
+}

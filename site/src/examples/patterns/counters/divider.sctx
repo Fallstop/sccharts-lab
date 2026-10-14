@@ -1,0 +1,8 @@
+scchart Divider {
+  output signal beat
+  int phase = 0
+
+  initial state Count
+    if phase == 2 do phase = 0; beat go to Count
+    do phase++ go to Count
+}

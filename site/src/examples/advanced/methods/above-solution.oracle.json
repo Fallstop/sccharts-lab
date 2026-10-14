@@ -1,0 +1,146 @@
+{
+  "hash": "966c57087a08163351be2cb0020355e0efd10930",
+  "chart": "src/examples/advanced/methods/above-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name n is contained in the model but not in VariableStore.",
+    "ValuedObject with name t is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name countAbove is contained in the model but not in VariableStore.",
+    "ValuedObject with name t is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "samples": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "threshold": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "high": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "samples": [
+          3,
+          8,
+          1,
+          9
+        ],
+        "threshold": 5
+      },
+      "values": {
+        "samples": [
+          3,
+          8,
+          1,
+          9
+        ],
+        "threshold": 5,
+        "high": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "samples": [
+          3,
+          8,
+          1,
+          9
+        ],
+        "threshold": 5,
+        "high": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "threshold": 0
+      },
+      "values": {
+        "samples": [
+          3,
+          8,
+          1,
+          9
+        ],
+        "threshold": 0,
+        "high": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "samples": [
+          5,
+          5,
+          5,
+          6
+        ]
+      },
+      "values": {
+        "samples": [
+          5,
+          5,
+          5,
+          6
+        ],
+        "threshold": 0,
+        "high": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "threshold": 5
+      },
+      "values": {
+        "samples": [
+          5,
+          5,
+          5,
+          6
+        ],
+        "threshold": 5,
+        "high": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

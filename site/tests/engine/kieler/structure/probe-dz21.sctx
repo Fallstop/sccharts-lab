@@ -1,0 +1,15 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz21 {
+  input int I
+  output int a = 0, b = 0
+  initial state S
+  do {
+    int t = I * 2;
+    if (t > 4) {
+      a = t;
+    } else {
+      a = -t;
+      b++;
+    }
+  } go to S
+}

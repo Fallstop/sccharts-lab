@@ -1,0 +1,31 @@
+// An immediate self-loop without trigger in a referenced chart has no effects in KIELER (no take counter), and
+// Surface/Depth's clean-ups remove it together with the transitions after it. The state is left without transitions
+// and has no SCG node: control that reaches it ends there, so C0xs1's region counts as finished and C0xs1 terminates
+// (its weak exit runs). Without the reference (with the counter) the same loop is an instantaneous loop.
+scchart RefSilentSelfLoop {
+  input bool d, b
+  output int x = 0
+  region R0 {
+    initial state R0s0 is C0(d to p, b to q, x to o)
+  }
+}
+
+scchart C0 {
+  input bool p, q
+  output int o = 0
+  initial state C0xs0
+  go to C0xs1
+  state C0xs1 {
+    weak exit do o += 1
+    region {
+      initial state C0xs1r0s0
+      do o += 1 go to C0xs1r0s1
+      state C0xs1r0s1
+      immediate go to C0xs1r0s1
+      if p go to C0xs1r0s0
+    }
+  }
+  go to C0xs2
+  state C0xs2
+  go to C0xs0
+}

@@ -1,0 +1,6 @@
+scchart A {
+  output int o
+  signal S
+  initial state S0
+  do { l: o = 1; goto l } go to S0
+}

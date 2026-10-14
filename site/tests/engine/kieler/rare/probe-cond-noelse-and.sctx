@@ -1,0 +1,7 @@
+// Inside a larger trigger the whole trigger's previous result is kept.
+scchart CondNoElseAnd {
+  input bool b, c, a
+  output int n = 0
+  initial state S
+    if b && ((c) ? a) do n++ go to S
+}

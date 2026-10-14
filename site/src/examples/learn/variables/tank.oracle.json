@@ -1,0 +1,128 @@
+{
+  "hash": "2e3e189b34a6daeba3ca5ae2137f52fd2d8e8f8e",
+  "chart": "src/examples/learn/variables/tank.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "flow": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "full": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "volume": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "fills": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "flow": 100
+      },
+      "values": {
+        "flow": 100,
+        "full": false,
+        "volume": 0,
+        "fills": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "flow": 100,
+        "full": false,
+        "volume": 100,
+        "fills": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "flow": 150
+      },
+      "values": {
+        "flow": 150,
+        "full": false,
+        "volume": 250,
+        "fills": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "flow": 150,
+        "full": false,
+        "volume": 400,
+        "fills": 3
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "flow": 150,
+        "full": true,
+        "volume": 500,
+        "fills": 3
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": true
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "flow": 150,
+        "full": true,
+        "volume": 500,
+        "fills": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

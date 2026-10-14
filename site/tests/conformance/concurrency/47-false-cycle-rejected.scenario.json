@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": false
+      },
+      "note": "The cycle `U` → `S` → `U` exists only on paper: `I` and `!I` can never both hold, so Esterel's constructive semantics would accept the equivalent program (once `I` is known, one of the two tests is decided without the other signal). KIELER's analysis ignores guards and rejects it: \"NOT asc-schedulable\"."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

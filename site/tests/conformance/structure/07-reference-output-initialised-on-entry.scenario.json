@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "again": false
+      },
+      "note": "Entering R assigns count's initial value to o: **o = 100**, not the parent's 0. (KIELER also gives a \"Potential instantaneous loop.\" warning here.)"
+    },
+    {
+      "inputs": {},
+      "note": "The instance's count++ is an increment of o itself (count is replaced by o): **o = 101**."
+    },
+    {
+      "inputs": {},
+      "note": "Another increment: **o = 102**."
+    },
+    {
+      "inputs": {
+        "again": true
+      },
+      "note": "The self-loop leaves and re-enters R: the entry action sets **o = 100** again (the inner count++ of this tick is overwritten by the re-entry)."
+    },
+    {
+      "inputs": {
+        "again": false
+      },
+      "note": "Counting resumes from the re-initialised value: **o = 101**."
+    }
+  ],
+  "expect": "ok"
+}

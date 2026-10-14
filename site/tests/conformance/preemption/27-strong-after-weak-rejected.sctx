@@ -1,0 +1,12 @@
+scchart StrongAfterWeak {
+  input bool S, W
+  output int x = 0
+
+  initial state M {
+    initial state I
+  }
+  if W go to Done
+  if S abort to Done
+
+  state Done
+}

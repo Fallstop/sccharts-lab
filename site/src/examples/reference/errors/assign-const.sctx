@@ -1,0 +1,8 @@
+scchart AssignConst {
+  input bool A
+  const int LIMIT = 10
+  output int x
+
+  initial state Idle
+    if A do LIMIT = 20 go to Idle
+}

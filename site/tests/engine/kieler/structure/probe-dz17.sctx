@@ -1,0 +1,10 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+@SimulateSleep
+scchart Dz17 {
+  output int n = 0
+  clock x
+  initial state A
+  if x >= 400 do n++ go to B
+  state B
+  if x >= 1000 do n += 10; x = 0 go to A
+}

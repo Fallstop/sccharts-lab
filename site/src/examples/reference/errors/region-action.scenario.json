@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1: the region's entry action sets `x` to 1. KIELER warns that actions on a region that has a final state are experimental."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`Idle` goes to the final state `Done` and sets `x` to 2. `Done` is a final state at the top level, so the chart terminates."
+    }
+  ],
+  "expect": "ok"
+}

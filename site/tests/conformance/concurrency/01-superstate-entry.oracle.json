@@ -1,0 +1,102 @@
+{
+  "hash": "594be73e89b9d1d2fac4be0ff6c049136147399c",
+  "chart": "tests/conformance/concurrency/01-superstate-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads step, so the compiler treats it as an update of step (a relative write, as in the deprecated old SC syntax).\nWrite it as step *= 10; step += 2 to say so. In one region it means the same.\nIt only matters when another region also writes step in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 10,
+      "column": 18
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads step, so the compiler treats it as an update of step (a relative write, as in the deprecated old SC syntax).\nWrite it as step *= 10; step += 3 to say so. In one region it means the same.\nIt only matters when another region also writes step in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 12,
+      "column": 8
+    }
+  ],
+  "interface": {
+    "enter": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "enter": false
+      },
+      "values": {
+        "enter": false,
+        "step": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "enter": true
+      },
+      "values": {
+        "enter": true,
+        "step": 12
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "enter": false
+      },
+      "values": {
+        "enter": false,
+        "step": 123
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "enter": false
+      },
+      "values": {
+        "enter": false,
+        "step": 123
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

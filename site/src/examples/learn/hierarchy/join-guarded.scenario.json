@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "ready": true }, "note": "Tick 1 enters `Idle`. `ready` is true from the start." },
+    { "inputs": { "start": true }, "note": "`start`: `Work` is entered and terminates at once, as in `PlainJoin`, and `ready` is true. Still the join does not fire: `if ready … join to After` has a trigger, and a transition with a trigger is delayed. It cannot fire in the tick `Work` was entered." },
+    { "inputs": { "start": false }, "note": "One tick later the join may fire: `Work` is still terminated and `ready` is still true, so the join fires, sets `left` and the chart moves to `After`." }
+  ],
+  "expect": "ok"
+}

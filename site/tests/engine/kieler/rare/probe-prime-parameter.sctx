@@ -1,0 +1,9 @@
+scchart PrimeParameter {
+  input bool A
+  output int o = 0
+  method int twice(int n') {
+    return n' * 2
+  }
+  initial state S
+    if A do o = twice(4) go to S
+}

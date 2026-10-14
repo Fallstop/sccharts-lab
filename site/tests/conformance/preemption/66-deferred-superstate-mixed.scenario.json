@@ -1,0 +1,28 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "G": false,
+        "H": false
+      },
+      "note": "Tick 1 enters A."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "Deferred entry into B. Because B also has a normal incoming transition, KIELER uses a different implementation: B is entered now and only B's own immediate behaviour is suppressed (outerEntry = 0). The inner initial state's entry action does run (innerEntry = 1); a shallow `deferred` does not reach inside."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "I's delayed transition fires (step1 = 1), at the normal time. Compare with the previous chart."
+    },
+    {
+      "inputs": {},
+      "note": "In J."
+    }
+  ],
+  "expect": "ok"
+}

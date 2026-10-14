@@ -1,0 +1,139 @@
+{
+  "hash": "bf49f4b5c39729b677d5cd9f2b7bedf48b97fff0",
+  "chart": "src/examples/advanced/time/period-leave-fixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on _PeriodLeaveFixed_local_c."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "samples": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 250,
+        "stop": false
+      },
+      "values": {
+        "deltaT": 250,
+        "stop": false,
+        "samples": 0,
+        "sleepT": 500
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "deltaT": 250,
+        "stop": false,
+        "samples": 0,
+        "sleepT": 250
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "deltaT": 250,
+        "stop": false,
+        "samples": 1,
+        "sleepT": 500
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "deltaT": 250,
+        "stop": false,
+        "samples": 1,
+        "sleepT": 250
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "stop": true
+      },
+      "values": {
+        "deltaT": 250,
+        "stop": true,
+        "samples": 2,
+        "sleepT": 500
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "stop": false
+      },
+      "values": {
+        "deltaT": 250,
+        "stop": false,
+        "samples": 2,
+        "sleepT": 1000
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

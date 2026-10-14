@@ -1,0 +1,30 @@
+scchart Dishwasher {
+  input bool tick, button
+  output bool fill = true, heat, drain
+  int count = 0
+
+  initial state Fill {
+    entry do fill = true; heat = false; drain = false; count = 0
+    during do count++
+  }
+  if count >= 5 && button go to FillHeat
+  if count >= 20 go to FillHeat
+
+  state FillHeat {
+    entry do heat = true; count = 0
+    during do count++
+  }
+  if count >= 2 go to Wash
+
+  state Wash {
+    entry do fill = false; heat = false; drain = true; count = 0
+    during do count++
+  }
+  if count >= 15 go to Rinse
+
+  state Rinse {
+    entry do drain = false; heat = true; count = 0
+    during do count++
+  }
+  if count >= 3 go to Fill
+}

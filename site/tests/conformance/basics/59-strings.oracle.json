@@ -1,0 +1,112 @@
+{
+  "hash": "83261f76a88957a60c3341ffc16df980f415e940",
+  "chart": "tests/conformance/basics/59-strings.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "comparison with string literal results in unspecified behavior [-Waddress]",
+    "comparison with string literal results in unspecified behavior [-Waddress]",
+    "comparison with string literal results in unspecified behavior [-Waddress]"
+  ],
+  "interface": {
+    "S": {
+      "type": "string",
+      "properties": [
+        "input"
+      ]
+    },
+    "copy": {
+      "type": "string",
+      "properties": [
+        "output"
+      ]
+    },
+    "inputEqualsLiteral": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "isNull": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "literalEqualsLiteral": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "t": {
+      "type": "string",
+      "properties": [
+        "output"
+      ]
+    },
+    "variableEqualsLiteral": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": "hi"
+      },
+      "values": {
+        "S": "hi",
+        "inputEqualsLiteral": false,
+        "isNull": false,
+        "literalEqualsLiteral": false,
+        "t": "hi",
+        "variableEqualsLiteral": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": "hi",
+        "copy": "hi",
+        "inputEqualsLiteral": false,
+        "isNull": true,
+        "literalEqualsLiteral": true,
+        "t": "hi",
+        "variableEqualsLiteral": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": "ho"
+      },
+      "values": {
+        "S": "ho",
+        "copy": "ho",
+        "inputEqualsLiteral": false,
+        "isNull": false,
+        "literalEqualsLiteral": true,
+        "t": "hi",
+        "variableEqualsLiteral": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "hash": "f544210197a83baa1a0afb75f4cd371fa68f6b95",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-during.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": false,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "c": false,
+        "n": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": true,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "c": true,
+        "n": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": false,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "c": false,
+        "n": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": true,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "c": true,
+        "n": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "c": false,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "c": false,
+        "n": 2
+      },
+      "terminated": false
+    }
+  ]
+}

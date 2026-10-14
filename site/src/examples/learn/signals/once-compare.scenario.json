@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": { "start": false },
+      "note": "Tick 1 enters `Waiting` in both charts."
+    },
+    {
+      "inputs": { "start": true },
+      "note": "`start` comes, and both charts count it and enter their final state `Done`. `OnceBool` ends the tick in a final state, so it terminates. `Once` is in its final state too, but it declares a signal, so KIELER's simulator does not let it terminate."
+    },
+    {
+      "note": "`start` is still on. `OnceBool` has terminated and checks nothing. `Once` is still running, so `Done`'s transition fires and takes it back to `Waiting`."
+    },
+    {
+      "note": "`Once` counts a second run; `OnceBool` stays at 1 for good."
+    },
+    {
+      "inputs": { "start": false },
+      "note": "`start` is off. `Once` rests in `Done`, still running; the next `start` would send it round again."
+    }
+  ],
+  "expect": "ok"
+}

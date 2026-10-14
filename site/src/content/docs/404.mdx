@@ -1,0 +1,46 @@
+---
+title: Page not found
+description: There is no page at this address.
+template: splash
+editUrl: false
+pagefind: false
+# Not a real draft. Starlight's own /404 route renders this entry (it reads it with getEntry, drafts
+# included) as dist/404.html. As a draft it is left out of the [...slug] route in production builds, which
+# would otherwise render /404 a second time ("Could not render /404 from route /[...slug] as it conflicts
+# with higher priority route /404"). The hero layout shows no draft notice.
+draft: true
+# Search engines should not index the error page (its canonical URL, /404/, is Starlight's default).
+head:
+  - tag: meta
+    attrs:
+      name: robots
+      content: noindex
+hero:
+  title: No transition leads here
+  tagline: >-
+    <p>There is no page at this address. Search the guide (at the top of the page), or pick up where
+    most links lead.</p>
+  actions:
+    - text: Start learning
+      link: /start/welcome/
+    - text: Cheat sheet
+      link: /reference/cheatsheet/
+      variant: secondary
+    - text: Playground
+      link: /playground/
+      variant: secondary
+    - text: Go to the home page
+      link: /
+      variant: minimal
+---
+
+import { Chart } from '~components/guide'
+
+{/* From 64rem the content sits beside the hero's copy (overrides/Hero.astro): the chart, then the links. */}
+
+<Chart example="reference/errors/unreachable-state" highlight={['Forgotten']} caption="Like this page, `Forgotten` has no transition leading to it, so KIELER warns `The state is not reachable.`" />
+
+Looking for something in particular? [Short on time?](/start/in-a-hurry/) covers the language in one
+sitting, [My chart does not do what I expect](/reference/troubleshooting/) goes from a symptom to its
+cause, and [Compiler messages](/reference/errors/) explains what KIELER's messages mean. If a link in
+this guide brought you here, please [report it](/reference/about/#found-a-mistake).

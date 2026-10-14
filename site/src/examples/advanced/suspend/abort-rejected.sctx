@@ -1,0 +1,14 @@
+scchart CancelRejected {
+  input bool doorOpen, cancel
+  output int remaining = 5
+
+  initial state Cooking {
+    suspend if doorOpen
+
+    initial state Heating
+      if remaining > 0 do remaining-- go to Heating
+  }
+  if cancel abort to Idle
+
+  state Idle
+}

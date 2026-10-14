@@ -1,0 +1,47 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "A": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {},
+      "note": "Nothing happens."
+    },
+    {
+      "inputs": {
+        "S": true,
+        "A": true
+      },
+      "note": "Weakly suspended: the inner behaviour of this tick still runs, I → J (entersJ = 1)..."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "...but the state it reached is not kept: the region is back in I."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Resumed, still in I."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "I → J again (entersJ = 2), not J → K (entersK = 0)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In J."
+    }
+  ],
+  "expect": "ok"
+}

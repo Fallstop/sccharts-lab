@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Rejected: a line starting with `//*` is a declaration comment, not an ordinary comment, and before `scchart` there is no declaration for it to belong to." }
+  ],
+  "expect": "error",
+  "errorIncludes": "missing EOF"
+}

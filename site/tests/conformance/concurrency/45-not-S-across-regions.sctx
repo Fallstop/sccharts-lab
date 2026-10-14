@@ -1,0 +1,16 @@
+scchart NotSAcrossRegions {
+  output signal S
+  output bool r1Took, r2Took
+
+  region R1 {
+    initial state A
+    immediate if !S do r1Took = true go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    immediate if !S do S; r2Took = true go to B
+    state B
+  }
+}

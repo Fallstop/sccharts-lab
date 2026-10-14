@@ -1,0 +1,94 @@
+{
+  "hash": "764bfaa313d4a8a42038db1fb91683f183b609e3",
+  "chart": "tests/engine/kieler/probe-pre-declaration-expression.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "n": 1,
+        "y": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 2,
+        "y": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 3,
+        "y": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "n": 4,
+        "y": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

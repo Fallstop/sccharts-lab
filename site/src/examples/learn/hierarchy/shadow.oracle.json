@@ -1,0 +1,75 @@
+{
+  "hash": "f73b1748961efacc196621d1552eea90ba9cbd5a",
+  "chart": "src/examples/learn/hierarchy/shadow.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "press": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "seen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "count": 1,
+        "seen": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "count": 1,
+        "seen": 11
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "count": 1,
+        "seen": 11
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+// Private fields and methods can only be used inside the class: run() calls the private helper twice. The pool
+// shows private fields too. A method calling another method needs ";" after the call only before an
+// assignment (S-44a); here the calls are separated by one anyway.
+scchart St114Helpers {
+  output int O = 0
+  class C {
+    private int v
+    private void helper() {
+      v++
+    }
+    void run() {
+      helper();
+      helper()
+    }
+    int get() {
+      return v
+    }
+  } c
+  initial state A
+  do c.run(); O = c.get() go to A
+}

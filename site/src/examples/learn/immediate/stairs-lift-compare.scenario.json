@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "up": true
+      },
+      "note": "`up` is true from tick 1. `Stairs` enters `Ground` and stops there: its transition is delayed, so it is not checked in `Ground`'s entry tick. `Lift` enters `Ground` too, but its transition is immediate: it fires at once, and so does `First`'s, so `Lift` ends tick 1 in `Second` with `floor` 2."
+    },
+    {
+      "note": "`Stairs` checks `Ground`'s transition now: it climbs to `First`, and `floor` is 1. `First` was entered in this tick, so its delayed transition waits. `Lift` is already at the top."
+    },
+    {
+      "note": "`Stairs` reaches `Second`, two ticks after `Lift`: a chain of delayed transitions moves at most one step per tick."
+    },
+    {
+      "note": "Both charts are in `Second`, which has no outgoing transitions."
+    }
+  ],
+  "expect": "ok"
+}

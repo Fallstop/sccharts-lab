@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "clear": false, "north": false, "south": false, "leaving": false }, "note": "Tick 1 enters all five regions. `inside` starts at 0." },
+    { "inputs": { "north": true }, "note": "Someone comes in through the north door: 1." },
+    { "inputs": { "north": false, "south": true }, "note": "And one through the south door: 2." },
+    { "inputs": { "north": true }, "note": "Both doors at once: 4, and `Display` reports a crowd." },
+    { "inputs": { "north": false, "south": false, "leaving": true }, "note": "Someone leaves: `Exit` does `inside--`, 3. Still a crowd." },
+    { "inputs": {}, "note": "Another one leaves (`leaving` is still true): 2, so `Display` goes back to `Calm` in the same tick." },
+    { "inputs": { "north": true }, "note": "One person comes in while another leaves. `inside++` and `inside--` are both updates, and updates with `++` and `--` commute, so KIELER accepts the chart and the order does not matter: 2 + 1 − 1 = 2." },
+    { "inputs": { "north": false, "leaving": false }, "note": "Quiet: `inside` stays 2." }
+  ],
+  "expect": "ok"
+}

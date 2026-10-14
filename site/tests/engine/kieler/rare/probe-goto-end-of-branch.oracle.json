@@ -1,0 +1,100 @@
+{
+  "hash": "4a2ff997b238108f9f105a4e7fef0806793c1b1e",
+  "chart": "tests/engine/kieler/rare/probe-goto-end-of-branch.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "skip": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "c": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "a": 0,
+        "b": 0,
+        "c": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "skip": true
+      },
+      "values": {
+        "skip": true,
+        "a": 0,
+        "b": 0,
+        "c": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "a": 0,
+        "b": 1,
+        "c": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "skip": true
+      },
+      "values": {
+        "skip": true,
+        "a": 0,
+        "b": 1,
+        "c": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

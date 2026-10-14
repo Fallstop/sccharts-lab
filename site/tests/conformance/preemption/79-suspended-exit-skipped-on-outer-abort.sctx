@@ -1,0 +1,17 @@
+scchart SuspendedExit {
+  input bool S, X
+  output int moves = 0, exits = 0, left = 0
+
+  initial state Outer {
+    initial state M {
+      suspend if S
+      exit do exits += 1
+
+      initial state A
+      if true do moves += 1 go to A
+    }
+  }
+  if X do left = 1 abort to Done
+
+  state Done
+}

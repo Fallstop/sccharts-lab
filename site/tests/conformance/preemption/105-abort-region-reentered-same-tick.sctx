@@ -1,0 +1,21 @@
+// A state with an abort region that its own join re-enters in the tick it finishes (without an immediately
+// finishing region, so no instantaneous loop): KIELER compiles it with its thread reincarnation guards. The guide's
+// simulator does not run this shape ("unsupported").
+scchart P105ReenteredSameTick {
+  input bool a, b
+  output int entries = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}

@@ -1,0 +1,2195 @@
+/*
+ * The playground (/playground and the inline <Playground>): toolbar, editor, problems, diagram stage, simulation,
+ * phone tabs. Global (the editor and diagram markup is made in the browser). Colours are the site tokens
+ * (src/styles/tokens.css); syntax colours come from code-colours.ts (the guide's code theme).
+ */
+
+/* ===== Page chrome ================================================================================ */
+
+:root:has([data-sc-playground]) {
+	--sl-content-width: 100%;
+}
+main:has([data-sc-playground]) .content-panel {
+	padding-block: 0.5rem 1rem;
+}
+main:has([data-sc-playground]) .content-panel:first-of-type {
+	padding-bottom: 0;
+}
+main:has([data-sc-playground]) h1#_top {
+	font-size: var(--text-xl);
+	margin-top: 0.125rem;
+}
+main:has([data-sc-playground]) .sc-lede {
+	margin-top: 0.125rem;
+	font-size: var(--text-sm);
+}
+main:has([data-sc-playground]) .sl-container {
+	max-width: none;
+}
+/* The page has Starlight's sidebar for its menu button on phones (the site's navigation); on wider screens the
+ * playground takes the whole width and the sidebar stays out of the way. */
+@media (min-width: 50rem) {
+	:root[data-has-sidebar]:has([data-sc-playground]) {
+		--sl-content-inline-start: 0rem;
+		--__sidebar-pad: 0rem;
+	}
+	:root:has([data-sc-playground]) .sidebar-pane {
+		display: none;
+	}
+}
+@media (max-width: 40rem) {
+	/* On a phone the app needs the room; the description is in the page's metadata. */
+	main:has([data-sc-playground]) .sc-lede {
+		display: none;
+	}
+}
+
+/* Without JavaScript: the source, the build-time diagram and the example links; no tools that cannot work. */
+.sc-pg:not([data-pg-js]) .sc-pg__if-js,
+.sc-pg[data-pg-js] .sc-pg__if-nojs,
+.sc-pg:not([data-pg-js]) .sc-pg__actions,
+.sc-pg:not([data-pg-js]) .sc-pg__zoom,
+.sc-pg:not([data-pg-js]) .sc-pg__simtools,
+.sc-pg:not([data-pg-js]) .sc-pg__sim-placeholder > .sc-simctl,
+.sc-pg:not([data-pg-js]) .sc-pg__split,
+.sc-pg:not([data-pg-js]) .sc-pg__hsplit {
+	display: none !important;
+}
+
+/* ===== Syntax colours (editor and static code) ===================================================== */
+
+.sc-tok-kw {
+	color: var(--pg-tok-kw);
+	font-weight: 700;
+}
+.sc-tok-str,
+.sc-tok-host {
+	color: var(--pg-tok-str);
+}
+.sc-tok-num {
+	color: var(--pg-tok-num);
+}
+.sc-tok-com {
+	color: var(--pg-tok-com);
+}
+.sc-tok-ann {
+	color: var(--pg-tok-ann);
+}
+.sc-tok-op {
+	color: var(--pg-tok-op);
+}
+.sc-tok-bad {
+	color: var(--pg-tok-bad);
+	text-decoration: wavy underline;
+	text-decoration-skip-ink: none;
+}
+
+/* ===== The app ===================================================================================== */
+
+/* Editor colours beyond the syntax ones (selection and gutters are in code-colours.ts). */
+.sc-pg,
+.sc-pg-inline-host {
+	--pg-active-line: color-mix(in srgb, var(--c-trace) 7%, transparent);
+	--pg-gutter-fg: var(--c-muted);
+	--pg-bracket-bg: color-mix(in srgb, var(--c-accent-bright) 16%, transparent);
+	--pg-bracket-ring: color-mix(in srgb, var(--c-accent-bright) 55%, transparent);
+	--pg-match-bg: color-mix(in srgb, var(--c-trace) 14%, transparent);
+	--pg-search-bg: color-mix(in srgb, var(--c-caution-rule) 30%, transparent);
+	--pg-search-ring: var(--c-caution-rule);
+	--pg-search-sel: color-mix(in srgb, var(--c-caution-rule) 55%, transparent);
+}
+
+/* Several parts set `display`; `hidden` must still hide them. */
+.sc-pg [hidden],
+.sc-pg-inline-host [hidden] {
+	display: none !important;
+}
+
+.sc-pg {
+	--pg-gap: 0.625rem;
+	--pg-split: 48%;
+	--pg-chrome: 9.75rem;
+	position: relative;
+	display: grid;
+	grid-template-rows: auto auto minmax(0, 1fr);
+	gap: var(--pg-gap);
+	/* The app fills the first screen below the page title (boot.ts measures --pg-top). */
+	height: max(34rem, calc(100dvh - var(--pg-top, calc(var(--sl-nav-height) + var(--pg-chrome))) - 0.75rem));
+	min-width: 0;
+}
+
+/* ----- Toolbar ----- */
+
+.sc-pg__bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0.75rem;
+	min-width: 0;
+}
+.sc-pg__title {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	min-width: 0;
+	margin: 0 auto 0 0;
+	font-size: var(--text-sm);
+	color: var(--c-muted);
+	white-space: nowrap;
+}
+.sc-pg__title-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-family: var(--font-mono);
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sc-pg__title-name.is-prose {
+	font-family: var(--font-text);
+}
+.sc-pg__title-page {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: var(--text-xs);
+}
+.sc-pg__title-page:not([href]) {
+	color: var(--c-muted);
+	text-decoration: none;
+}
+.sc-pg__edited {
+	padding: 0 0.5rem;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-capsule);
+	font-size: var(--text-2xs);
+	color: var(--c-muted);
+}
+.sc-pg__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.375rem;
+}
+.sc-pg__act[hidden] {
+	display: none;
+}
+.sc-pg__bar .sc-btn {
+	gap: 0.375rem;
+}
+@media (max-width: 47.99rem) {
+	/* Icon-only toolbar buttons on phones; the label stays for screen readers. */
+	.sc-pg__act {
+		padding-inline: 0;
+		width: 2.25rem;
+		min-height: 2.25rem;
+	}
+	.sc-pg__act > span {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+	.sc-pg__title {
+		order: 3;
+		flex-basis: 100%;
+	}
+}
+
+/* ----- The exercise's task (a TryIt link, &solution=): under the toolbar, folding to its title ----- */
+
+.sc-pg-task {
+	order: 5;
+	flex: 1 0 100%;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	align-items: center;
+	column-gap: 0.75rem;
+	min-width: 0;
+	padding: 0.1875rem 0.875rem 0.1875rem 0.25rem;
+	border: 1px solid var(--c-rule-strong);
+	border-inline-start: 4px solid var(--c-accent-bright);
+	border-radius: var(--radius-md);
+	background-color: var(--c-sheet);
+}
+.sc-pg-task__head {
+	min-width: 0;
+	margin: 0;
+	font-size: var(--text-sm);
+	line-height: var(--leading-snug);
+}
+.sc-pg-task__toggle {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	min-height: 2rem;
+	padding: 0 0.5rem;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--c-ink);
+	font: inherit;
+	font-weight: 700;
+	text-align: start;
+	cursor: pointer;
+}
+.sc-pg-task__toggle svg {
+	flex: none;
+	width: 1rem;
+	height: 1rem;
+	transform: rotate(-90deg);
+	transition: transform 0.15s;
+}
+.sc-pg-task.is-open .sc-pg-task__toggle svg {
+	transform: none;
+}
+.sc-pg-task__kind {
+	flex: none;
+	font-size: var(--text-2xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-pg-task__title {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.sc-pg-task__starter {
+	margin: 0;
+	padding: 0.0625rem 0.5rem;
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-size: var(--text-2xs);
+	font-weight: 700;
+	white-space: nowrap;
+}
+.sc-pg-task__back {
+	font-size: var(--text-xs);
+	white-space: nowrap;
+	color: var(--c-accent);
+}
+.sc-pg-task__body {
+	grid-column: 1 / -1;
+	max-height: 10.5rem;
+	overflow: auto;
+	overscroll-behavior: contain;
+	padding: 0.125rem 0.5rem 0.5rem 2rem;
+	font-size: var(--text-sm);
+	line-height: var(--leading-snug);
+	color: var(--c-text);
+}
+.sc-pg-task__body > * {
+	max-width: 52rem;
+	margin: 0;
+}
+.sc-pg-task__body > * + * {
+	margin-top: 0.5rem;
+}
+.sc-pg-task__body ul {
+	padding-inline-start: 1.25rem;
+}
+.sc-pg-task__body li + li {
+	margin-top: 0.25rem;
+}
+.sc-pg-task__body code {
+	padding: 0.05em 0.3em;
+	border-radius: var(--radius-xs);
+	background-color: var(--sl-color-bg-inline-code);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: 0.9em;
+}
+@media (max-width: 47.99rem) {
+	/* On a phone the parts wrap: the title row, "This is still the starter" when it does not fit beside it, the
+	 * link back (while the task is open), the task. */
+	.sc-pg-task {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.125rem 0.75rem;
+		padding-bottom: 0.3125rem;
+	}
+	.sc-pg-task__head {
+		flex: 1 1 15rem;
+	}
+	.sc-pg-task__title {
+		white-space: normal;
+	}
+	.sc-pg-task__starter {
+		margin-inline-start: 2rem;
+	}
+	.sc-pg-task__back {
+		flex-basis: 100%;
+		margin-inline-start: 2rem;
+	}
+	.sc-pg-task:not(.is-open) .sc-pg-task__back {
+		display: none;
+	}
+	.sc-pg-task__body {
+		flex-basis: 100%;
+		padding-left: 0.5rem;
+	}
+}
+
+/* ----- Popovers (examples, shortcuts): <details> ----- */
+
+.sc-pg-pop {
+	position: relative;
+}
+.sc-pg-pop > summary {
+	list-style: none;
+	cursor: pointer;
+}
+.sc-pg-pop > summary::-webkit-details-marker {
+	display: none;
+}
+.sc-pg-pop > summary svg:last-child:not(:first-child) {
+	transition: transform 0.15s;
+}
+.sc-pg-pop[open] > summary svg:last-child:not(:first-child) {
+	transform: rotate(180deg);
+}
+.sc-pg-pop[open] > summary {
+	border-color: var(--c-accent-bright);
+}
+.sc-pg-pop__panel {
+	position: absolute;
+	z-index: 30;
+	top: calc(100% + 0.375rem);
+	left: 0;
+	width: min(26rem, calc(100vw - 2rem));
+	max-height: min(32rem, 70dvh);
+	overflow: auto;
+	overscroll-behavior: contain;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-frame);
+	background-color: var(--c-sheet);
+	box-shadow: var(--shadow-pop);
+}
+.sc-pg-pop--help .sc-pg-pop__panel {
+	left: auto;
+	right: 0;
+	width: min(27rem, calc(100vw - 2rem));
+	padding: 0.875rem 1rem 1rem;
+}
+
+.sc-pg-examples {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	overflow: hidden;
+}
+.sc-pg-examples__filter {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	border-bottom: 1px solid var(--c-rule);
+	background-color: var(--c-rail);
+	color: var(--c-muted);
+}
+.sc-pg-examples__filter input {
+	flex: 1;
+	min-width: 0;
+	min-height: 2rem;
+	padding: 0.25rem 0.5rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font: inherit;
+	font-size: var(--text-sm);
+}
+.sc-pg-examples__list {
+	overflow: auto;
+	overscroll-behavior: contain;
+	padding: 0.25rem 0 0.75rem;
+}
+.sc-pg-examples__group[hidden],
+.sc-pg-examples__page[hidden],
+.sc-pg-examples li[hidden] {
+	display: none;
+}
+.sc-pg-examples h2 {
+	margin: 0;
+	padding: 0.75rem 1rem 0.25rem;
+	font-size: var(--text-xs);
+	font-weight: 800;
+	color: var(--c-ink);
+}
+.sc-pg-examples h3 {
+	margin: 0;
+	padding: 0.375rem 1rem 0.125rem;
+	font-size: var(--text-xs);
+	font-weight: 600;
+	color: var(--c-muted);
+}
+.sc-pg-examples ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.sc-pg-examples li {
+	margin: 0;
+}
+.sc-pg-examples a {
+	display: grid;
+	grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto;
+	align-items: baseline;
+	gap: 0.625rem;
+	padding: 0.3125rem 1rem 0.3125rem 1.5rem;
+	color: var(--c-text);
+	text-decoration: none;
+	font-size: var(--text-sm);
+}
+.sc-pg-examples a:hover,
+.sc-pg-examples a:focus-visible {
+	background-color: var(--c-accent-soft);
+	color: var(--c-ink);
+	outline: none;
+}
+.sc-pg-examples a[aria-current] {
+	box-shadow: inset 3px 0 0 var(--c-accent-bright);
+}
+.sc-pg-examples__name {
+	font-family: var(--font-mono);
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sc-pg-examples__file,
+.sc-pg-examples__blurb {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+}
+.sc-pg-examples__file {
+	font-family: var(--font-mono);
+}
+.sc-pg-examples__tag {
+	padding: 0 0.4375rem;
+	border-radius: var(--radius-capsule);
+	font-size: var(--text-2xs);
+	font-weight: 700;
+	white-space: nowrap;
+}
+.sc-pg-examples__tag.is-exercise {
+	background-color: var(--c-tip-bg);
+	color: var(--c-tip-ink);
+}
+.sc-pg-examples__tag.is-rejected {
+	background-color: var(--c-danger-bg);
+	color: var(--c-danger-ink);
+}
+.sc-pg-examples__none {
+	margin: 0;
+	padding: 1rem;
+	color: var(--c-muted);
+	font-size: var(--text-sm);
+}
+
+.sc-pg-help h2 {
+	margin: 0 0 0.5rem;
+	font-size: var(--text-sm);
+	font-weight: 800;
+	color: var(--c-ink);
+}
+.sc-pg-help h2 + dl,
+.sc-pg-help dl + h2,
+.sc-pg-help p + h2 {
+	margin-top: 0.75rem;
+}
+.sc-pg-help dl {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	gap: 0.4375rem 0.875rem;
+	align-items: baseline;
+	margin: 0;
+}
+.sc-pg-help dl > div {
+	display: contents;
+}
+.sc-pg-help dt {
+	white-space: nowrap;
+}
+.sc-pg-help dd {
+	margin: 0;
+	font-size: var(--text-xs);
+	color: var(--c-text);
+}
+.sc-pg-help p {
+	margin: 0.5rem 0 0;
+	font-size: var(--text-xs);
+	color: var(--c-text);
+	line-height: var(--leading-snug);
+}
+.sc-pg-help kbd,
+.sc-pg kbd {
+	display: inline-block;
+	min-width: 1.5em;
+	padding: 0 0.3125rem;
+	border: 1px solid var(--c-rule-strong);
+	border-bottom-width: 2px;
+	border-radius: var(--radius-xs);
+	background-color: var(--c-rail);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: var(--text-2xs);
+	line-height: 1.6;
+	text-align: center;
+}
+.sc-pg-help__join {
+	margin: 0 0.1875rem;
+	font-size: var(--text-2xs);
+	color: var(--c-muted);
+}
+
+/* ----- Phone tabs ----- */
+
+.sc-pg__tabs {
+	display: none;
+}
+@media (max-width: 59.99rem) {
+	.sc-pg[data-pg-js] .sc-pg__tabs {
+		display: flex;
+		padding: 2px;
+		border: 1px solid var(--c-control);
+		border-radius: var(--radius-capsule);
+		background-color: var(--c-sheet);
+	}
+}
+.sc-pg__tabs button {
+	flex: 1;
+	min-height: 2.25rem;
+	border: 0;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-muted);
+	font: inherit;
+	font-size: var(--text-sm);
+	font-weight: 700;
+	cursor: pointer;
+}
+.sc-pg__tabs button[aria-selected='true'] {
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+
+/* ----- Grid: editor | splitter | diagram, simulation underneath ----- */
+
+.sc-pg__grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
+	gap: var(--pg-gap);
+	min-height: 0;
+	min-width: 0;
+}
+.sc-pg__split,
+.sc-pg__hsplit {
+	display: none;
+}
+@media (min-width: 60rem) {
+	/* With JavaScript the app fills the screen, and grows (the page scrolls) when the editor and the diagram at
+	 * their minimum height and the whole simulation do not fit. */
+	.sc-pg {
+		/* No phone tabs here: the toolbar, then the grid. */
+		grid-template-rows: auto minmax(0, 1fr);
+	}
+	.sc-pg[data-pg-js] {
+		height: auto;
+		min-height: max(34rem, calc(100dvh - var(--pg-top, calc(var(--sl-nav-height) + var(--pg-chrome))) - 0.75rem));
+	}
+	.sc-pg__grid {
+		/* The editor and the diagram open with 62 % of the first screen below the toolbar (at least 18rem), so a
+		 * chart shows whole; app.ts sets the same in pixels (MAIN_SHARE), and 18rem once the reader sizes the
+		 * simulation. */
+		--pg-main-min: max(18rem, calc((100dvh - var(--pg-top, calc(var(--sl-nav-height) + var(--pg-chrome))) - 3.75rem) * 0.62));
+		grid-template-columns: minmax(16rem, var(--pg-split)) 0.375rem minmax(16rem, 1fr);
+		/* The simulation is as tall as its controls and timing diagram, every lane in view (app.ts measures them and
+		 * sets --pg-sim-h, at most 36rem; the row splitter sets it too); the editor and the diagram get the rest, and
+		 * the page grows when both do not fit. */
+		grid-template-rows: minmax(var(--pg-main-min), 1fr) 0.375rem var(--pg-sim-h, minmax(8rem, 40%));
+		grid-template-areas: 'editor split diagram' 'hsplit hsplit hsplit' 'sim sim sim';
+		gap: 0.25rem;
+	}
+	/* Without JavaScript the simulation holds one note: its row is only as tall as that. */
+	.sc-pg:not([data-pg-js]) .sc-pg__grid {
+		grid-template-rows: minmax(var(--pg-main-min), 1fr) 0.375rem auto;
+	}
+	/* Their content (a long source, a large chart) scrolls or pans inside; it never makes the row taller. */
+	.sc-pg[data-pg-js] .sc-pg__panel--editor,
+	.sc-pg[data-pg-js] .sc-pg__panel--diagram {
+		contain: size;
+	}
+	.sc-pg__panel--editor {
+		grid-area: editor;
+	}
+	.sc-pg__panel--diagram {
+		grid-area: diagram;
+	}
+	.sc-pg__panel--sim {
+		grid-area: sim;
+		height: 100%;
+	}
+	.sc-pg__split,
+	.sc-pg__hsplit {
+		display: block;
+		position: relative;
+		touch-action: none;
+		border-radius: var(--radius-capsule);
+	}
+	.sc-pg__split {
+		grid-area: split;
+		cursor: col-resize;
+	}
+	.sc-pg__hsplit {
+		grid-area: hsplit;
+		cursor: row-resize;
+	}
+	.sc-pg__split::after,
+	.sc-pg__hsplit::after {
+		content: '';
+		position: absolute;
+		border-radius: var(--radius-capsule);
+		background-color: var(--c-rule-strong);
+		transition: background-color 0.15s;
+	}
+	.sc-pg__split::after {
+		inset: calc(50% - 1.5rem) 0.125rem;
+	}
+	.sc-pg__hsplit::after {
+		inset: 0.125rem calc(50% - 1.5rem);
+	}
+	.sc-pg__split:hover::after,
+	.sc-pg__split:focus-visible::after,
+	.is-resizing-x > .sc-pg__split::after {
+		inset: 0 0.0625rem;
+		background-color: var(--c-accent-bright);
+	}
+	.sc-pg__hsplit:hover::after,
+	.sc-pg__hsplit:focus-visible::after,
+	.is-resizing-y > .sc-pg__hsplit::after {
+		inset: 0.0625rem 0;
+		background-color: var(--c-accent-bright);
+	}
+	.sc-pg__split:focus-visible,
+	.sc-pg__hsplit:focus-visible {
+		outline: none;
+	}
+	.sc-pg__grid.is-resizing-x {
+		cursor: col-resize;
+		user-select: none;
+	}
+	.sc-pg__grid.is-resizing-y {
+		cursor: row-resize;
+		user-select: none;
+	}
+}
+@media (max-width: 59.99rem) {
+	.sc-pg[data-pg-js] .sc-pg__grid {
+		grid-template-rows: minmax(0, 1fr);
+	}
+	.sc-pg[data-pg-js][data-tab='code'] .sc-pg__panel--diagram,
+	.sc-pg[data-pg-js][data-tab='code'] .sc-pg__panel--sim,
+	.sc-pg[data-pg-js][data-tab='diagram'] .sc-pg__panel--editor,
+	.sc-pg[data-pg-js][data-tab='diagram'] .sc-pg__panel--sim,
+	.sc-pg[data-pg-js][data-tab='sim'] .sc-pg__panel--editor {
+		display: none;
+	}
+	/* Simulate: the diagram above (to watch the active states), the whole simulation below, every lane of its
+	 * timing diagram in view; the page scrolls. */
+	.sc-pg[data-pg-js][data-tab='sim'] {
+		height: auto;
+		min-height: max(34rem, calc(100dvh - var(--pg-top, calc(var(--sl-nav-height) + var(--pg-chrome))) - 0.75rem));
+	}
+	.sc-pg[data-pg-js][data-tab='sim'] .sc-pg__grid {
+		grid-template-rows: clamp(13rem, 40dvh, 24rem) auto;
+	}
+	.sc-pg[data-pg-js][data-tab='sim'] .sc-pg__sim {
+		flex: none;
+		overflow: visible;
+	}
+	/* Without JavaScript everything is shown, one after the other. */
+	.sc-pg:not([data-pg-js]) {
+		height: auto;
+	}
+	.sc-pg:not([data-pg-js]) .sc-pg__grid {
+		grid-template-rows: none;
+	}
+	.sc-pg:not([data-pg-js]) .sc-pg__body--editor {
+		max-height: 24rem;
+	}
+	.sc-pg:not([data-pg-js]) .sc-pg__stage {
+		min-height: 16rem;
+	}
+}
+
+/* ----- Panels ----- */
+
+.sc-pg__panel {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-frame);
+	background-color: var(--c-sheet);
+	box-shadow: var(--shadow-frame);
+	overflow: hidden;
+}
+.sc-pg__head {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 0.625rem;
+	min-height: 2.625rem;
+	padding: 0.3125rem 0.5rem 0.3125rem 1rem;
+	background-color: var(--c-rail);
+	border-bottom: 1px solid var(--c-rule);
+}
+.sc-pg__head h2 {
+	margin: 0;
+	font-size: var(--text-sm);
+	font-weight: 700;
+	color: var(--c-ink);
+	white-space: nowrap;
+}
+.sc-pg__meta {
+	margin-inline-start: auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+	font-variant-numeric: tabular-nums;
+}
+.sc-pg__panel--editor .sc-pg__meta {
+	font-family: var(--font-text);
+	padding-inline-end: 0.5rem;
+}
+.sc-pg__glyph {
+	flex: none;
+	width: 1.125rem;
+	height: 0.75rem;
+	border-radius: var(--radius-capsule);
+	border: 1.75px solid var(--sc-state-stroke);
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+}
+.sc-pg__glyph.is-sim {
+	border-color: var(--sc-active-stroke);
+	box-shadow: 0 0 0 2.5px var(--sc-active-glow);
+}
+.sc-pg__body {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+}
+
+/* ----- Editor ----- */
+
+.sc-pg__body--editor {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--c-code-bg);
+}
+.sc-pg__body--editor > .cm-editor {
+	flex: 1;
+	min-height: 0;
+}
+.sc-pg__body--editor.is-drop {
+	outline: 2px dashed var(--c-accent-bright);
+	outline-offset: -6px;
+}
+/* The static rendering mirrors the editor's metrics, so nothing moves when CodeMirror takes over. */
+.sc-pg-static {
+	flex: 1;
+	margin: 0;
+	padding: 0.75rem 0;
+	overflow: auto;
+	background: none;
+	border: 0;
+	color: var(--pg-code-fg);
+	font-family: var(--font-mono);
+	font-size: var(--pg-code-size, 0.875rem);
+	line-height: 1.6;
+	tab-size: 4;
+}
+.sc-pg-static code {
+	display: block;
+	font: inherit;
+	background: none;
+	padding: 0;
+	color: inherit;
+}
+.sc-pg-static__line {
+	display: flex;
+}
+.sc-pg-static__no {
+	/* CodeMirror's gutters: line numbers (2.375rem), folding (22px, not in the inline playground), lint (1.4em),
+	 * then the gutters' border and the line's own padding. */
+	--pg-fold-w: 22px;
+	flex: none;
+	box-sizing: content-box;
+	width: calc(2.375rem - 1.25rem);
+	padding: 0 calc(0.5rem + var(--pg-fold-w) + 1.4em) 0 0.75rem;
+	margin-right: 0.75rem;
+	border-right: 1px solid var(--c-rule);
+	color: var(--pg-gutter-fg);
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	user-select: none;
+}
+.sc-pg-inline-host .sc-pg-static__no {
+	/* No fold gutter; the line numbers are CodeMirror's 2.25rem (its min-width, padding included). */
+	--pg-fold-w: 0px;
+	width: calc(2.25rem - 1.25rem);
+}
+.sc-pg-static__text {
+	white-space: pre;
+	padding-right: 1rem;
+}
+.sc-pg__body--editor .cm-scroller {
+	scrollbar-width: thin;
+	scrollbar-color: var(--c-rule-strong) transparent;
+}
+@media (max-width: 30rem) {
+	/* Narrow gutters on phones. */
+	.sc-pg .cm-editor .cm-lineNumbers .cm-gutterElement {
+		min-width: 1.5rem;
+		padding: 0 0.25rem 0 0.375rem;
+	}
+	.sc-pg .cm-editor .cm-foldGutter .cm-gutterElement {
+		padding: 0 0.125rem;
+	}
+	.sc-pg .cm-editor .cm-line {
+		padding-left: 0.5rem;
+	}
+	/* The page's editor (the inline playground keeps its gutters, and its build-time code matches them). */
+	.sc-pg .sc-pg-static__no {
+		--pg-fold-w: 18px;
+		width: calc(28px - 0.625rem);
+		padding: 0 calc(0.25rem + var(--pg-fold-w) + 1.4em) 0 0.375rem;
+		margin-right: 0.5rem;
+	}
+}
+.sc-pg-fold {
+	display: inline-flex;
+	align-items: center;
+	height: 100%;
+}
+/* Lines the simulation marks: the header of each active state, each line of a fired transition. */
+.cm-line.sc-pg-cm-active {
+	box-shadow: inset 3px 0 0 var(--sc-active-stroke);
+	background-color: color-mix(in srgb, var(--sc-active-stroke) 7%, transparent);
+}
+.cm-line.sc-pg-cm-taken {
+	box-shadow: inset 3px 0 0 var(--sc-taken);
+	background-color: color-mix(in srgb, var(--sc-taken) 8%, transparent);
+}
+.cm-line.sc-pg-cm-active.sc-pg-cm-taken {
+	box-shadow: inset 3px 0 0 var(--sc-active-stroke), inset 6px 0 0 var(--sc-taken);
+}
+.sc-pg-cm-focus {
+	background-color: color-mix(in srgb, var(--sc-keyword) 12%, transparent);
+	border-radius: 2px;
+}
+.cm-completionIcon-state::after {
+	content: '';
+	display: inline-block;
+	width: 0.875em;
+	height: 0.55em;
+	border: 1.5px solid currentColor;
+	border-radius: 999px;
+}
+.cm-completionIcon-signal::after {
+	content: '⎍';
+}
+.cm-completionIcon-snippet::after {
+	content: '…';
+}
+
+/* Hover cards and diagnostics */
+.sc-pg-info,
+.sc-pg-diag {
+	display: grid;
+	gap: 0.3125rem;
+	max-width: 26rem;
+	line-height: var(--leading-snug);
+}
+.sc-pg-info p,
+.sc-pg-diag p {
+	margin: 0;
+}
+.sc-pg-decl {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	color: var(--c-ink);
+	background: none;
+	padding: 0;
+	white-space: pre-wrap;
+}
+.sc-pg-info__where {
+	color: var(--c-muted);
+}
+.sc-pg-info__doc {
+	color: var(--c-text);
+	white-space: pre-line;
+}
+.sc-pg-info__value {
+	color: var(--c-text);
+}
+.sc-pg-info code,
+.sc-pg-diag code {
+	font-family: var(--font-mono);
+	font-size: 0.95em;
+	color: var(--c-ink);
+	background: none;
+	padding: 0;
+}
+.sc-pg-diag__msg {
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sc-pg-diag__hint {
+	color: var(--c-text);
+}
+.sc-pg-diag__kieler {
+	color: var(--c-muted);
+}
+.sc-pg-diag__kieler q {
+	font-family: var(--font-mono);
+	font-size: 0.95em;
+	quotes: none;
+	white-space: pre-line;
+}
+
+/* ----- Problems ----- */
+
+.sc-pg__problems {
+	border-top: 1px solid var(--c-rule);
+	background-color: var(--c-rail);
+	font-size: var(--text-xs);
+}
+.sc-pg__problems-toggle {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	min-height: 2.25rem;
+	padding: 0.375rem 1rem;
+	border: 0;
+	background: none;
+	color: var(--c-muted);
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+.sc-pg__problems-toggle[aria-disabled='true'] {
+	cursor: default;
+}
+.sc-pg__problems-summary {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+/* Without JavaScript it is the note that says so: whole, on two lines on a phone. */
+.sc-pg:not([data-pg-js]) .sc-pg__problems-summary {
+	white-space: normal;
+}
+.sc-pg__problems-summary b {
+	color: var(--c-ink);
+}
+.sc-pg__problems-dot {
+	flex: none;
+	width: 0.625rem;
+	height: 0.625rem;
+	border-radius: 50%;
+	background-color: var(--c-faint);
+}
+[data-state='ok'] > .sc-pg__problems-toggle .sc-pg__problems-dot {
+	background-color: var(--c-go);
+}
+[data-state='warning'] > .sc-pg__problems-toggle .sc-pg__problems-dot {
+	background-color: var(--c-caution-rule);
+	border-radius: 2px;
+	transform: rotate(45deg) scale(0.85);
+}
+[data-state='info'] > .sc-pg__problems-toggle .sc-pg__problems-dot {
+	background-color: var(--c-note-rule);
+}
+[data-state='error'] > .sc-pg__problems-toggle .sc-pg__problems-dot {
+	background-color: var(--sc-error);
+	border-radius: 1px;
+}
+.sc-pg__problems-toggle:not([aria-disabled='true']):hover .sc-pg__problems-summary {
+	color: var(--c-ink);
+}
+.sc-pg__problems-list {
+	max-height: min(10rem, 30dvh);
+	margin: 0;
+	padding: 0 0 0.375rem;
+	overflow: auto;
+	list-style: none;
+	border-top: 1px solid var(--c-rule);
+}
+.sc-pg__problems-list[hidden] {
+	display: none;
+}
+.sc-pg-problem {
+	margin: 0;
+}
+.sc-pg-problem > button {
+	display: grid;
+	gap: 0.125rem;
+	width: 100%;
+	padding: 0.4375rem 1rem 0.4375rem 0.875rem;
+	border: 0;
+	border-left: 3px solid transparent;
+	background: none;
+	color: var(--c-text);
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+.sc-pg-problem > button:hover,
+.sc-pg-problem > button:focus-visible {
+	background-color: var(--c-sheet);
+}
+.sc-pg-problem.is-error > button {
+	border-left-color: var(--sc-error);
+}
+.sc-pg-problem.is-warning > button {
+	border-left-color: var(--c-caution-rule);
+}
+.sc-pg-problem.is-info > button {
+	border-left-color: var(--c-note-rule);
+}
+.sc-pg-problem {
+	position: relative;
+}
+.sc-pg-problem__fix {
+	position: absolute;
+	top: 0.375rem;
+	right: 0.75rem;
+	min-height: 1.75rem;
+	padding: 0 0.625rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font: inherit;
+	font-size: var(--text-2xs);
+	font-weight: 700;
+	cursor: pointer;
+}
+.sc-pg-problem__fix:hover {
+	border-color: var(--c-accent-bright);
+}
+.cm-diagnosticAction {
+	margin: 0.375rem 0 0 0 !important;
+	padding: 0.125rem 0.625rem !important;
+	border: 1.5px solid var(--c-control) !important;
+	border-radius: 999px !important;
+	background: var(--c-sheet) !important;
+	color: var(--c-ink) !important;
+	font: inherit !important;
+	font-weight: 700 !important;
+}
+.sc-pg-problem__where {
+	font-size: var(--text-2xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+
+/* ----- Diagram ----- */
+
+.sc-pg__chart {
+	margin-inline-start: 0;
+	color: var(--c-ink);
+	font-weight: 700;
+}
+.sc-pg__chart[hidden],
+.sc-pg__chart-select[hidden] {
+	display: none;
+}
+.sc-pg__chart-select {
+	min-height: 1.875rem;
+	max-width: 12rem;
+	padding: 0 0.5rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+}
+.sc-pg__zoom {
+	display: flex;
+	align-items: center;
+	gap: 0.125rem;
+	margin-inline-start: auto;
+}
+.sc-pg__tool {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2rem;
+	min-height: 2rem;
+	padding: 0 0.375rem;
+	border: 0;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-muted);
+	font: inherit;
+	font-size: var(--text-2xs);
+	font-variant-numeric: tabular-nums;
+	cursor: pointer;
+}
+.sc-pg__tool:hover {
+	background-color: var(--c-accent-soft);
+	color: var(--c-ink);
+}
+.sc-pg__tool[aria-expanded='true'] {
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+.sc-pg__zoom-level {
+	min-width: 3.25rem;
+}
+@media (max-width: 30rem) {
+	/* On a phone the diagram's head is the chart's name and the six tools, at their full size: "Diagram" is the tab
+	 * above (and the Simulate tab's diagram sits above the simulation), so it is said only to screen readers, and
+	 * the name gets the room ("Seatbelts" whole at 390 px; a longer name ends in an ellipsis, its title whole).
+	 * Without JavaScript there are no tabs and no tools: the head keeps its "Diagram". */
+	.sc-pg__panel--diagram > .sc-pg__head {
+		gap: 0.5rem;
+		padding-inline-start: 0.75rem;
+	}
+	.sc-pg[data-pg-js] .sc-pg__panel--diagram > .sc-pg__head > h2 {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+	.sc-pg__panel--diagram .sc-pg__chart,
+	.sc-pg__panel--diagram .sc-pg__chart-select {
+		flex: 0 1 auto;
+		min-width: 0;
+	}
+}
+@media (max-width: 23.99rem) {
+	/* Narrower still (360 px): the zoom read-out goes (Fit and the zoom buttons stay; 0 and 1 work from the keyboard). */
+	.sc-pg__panel--diagram .sc-pg__zoom-level {
+		display: none;
+	}
+}
+.sc-pg__stage {
+	overflow: hidden;
+	background-color: var(--c-inset);
+	background-image: radial-gradient(circle at 1px 1px, var(--c-rule-strong) 1px, transparent 0);
+	background-size: 16px 16px;
+	background-position: 8px 8px;
+	cursor: grab;
+	touch-action: none;
+	user-select: none;
+	-webkit-user-select: none;
+}
+.sc-pg__stage:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: -2px;
+}
+.sc-pg__stage.is-panning {
+	cursor: grabbing;
+}
+.sc-pg-canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform-origin: 0 0;
+}
+.sc-pg-svg {
+	display: block;
+	overflow: visible;
+}
+.sc-pg-svg [data-id] {
+	cursor: pointer;
+}
+.sc-pg-svg .sc-root,
+.sc-pg-svg .sc-region {
+	cursor: inherit;
+}
+.sc-pg__static-diagram {
+	display: grid;
+	place-items: start center;
+	height: 100%;
+	padding: 1rem;
+	overflow: auto;
+}
+.sc-pg__static-diagram svg {
+	max-width: 100%;
+}
+.sc-pg__static-diagram[hidden] {
+	display: none;
+}
+.is-stale .sc-pg-canvas {
+	opacity: 0.45;
+	filter: saturate(0.4);
+	transition: opacity 0.2s;
+}
+.sc-pg__badge {
+	position: absolute;
+	z-index: 2;
+	left: 0.75rem;
+	bottom: 0.75rem;
+	max-width: calc(100% - 1.5rem);
+	margin: 0;
+	padding: 0.25rem 0.75rem 0.25rem 0.625rem;
+	border: 1px solid var(--c-caution-rule);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-size: var(--text-xs);
+	font-weight: 600;
+	pointer-events: none;
+}
+.sc-pg__badge[hidden] {
+	display: none;
+}
+.sc-pg__busy,
+.sc-pg__empty {
+	position: absolute;
+	z-index: 2;
+	margin: 0;
+	pointer-events: none;
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+}
+.sc-pg__busy {
+	top: 0.625rem;
+	left: 0.75rem;
+	padding: 0.125rem 0.625rem;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+}
+.sc-pg__empty {
+	inset: 0;
+	display: grid;
+	place-items: center;
+	font-size: var(--text-sm);
+}
+.sc-pg__empty code {
+	font-family: var(--font-mono);
+	color: var(--c-ink);
+}
+.sc-pg__badge::before {
+	content: '';
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	margin-inline-end: 0.5rem;
+	border-radius: 1px;
+	background-color: var(--c-caution-rule);
+	transform: rotate(45deg) translateY(-1px);
+}
+
+/* ----- Simulation ----- */
+
+.sc-pg__panel--sim {
+	min-height: 0;
+}
+.sc-pg__sim-note {
+	min-width: 0;
+	margin: 0 0 0 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: var(--text-xs);
+	color: var(--c-caution-ink);
+}
+.sc-pg__sim-note[hidden],
+.sc-pg__rebuild[hidden] {
+	display: none;
+}
+.sc-pg__rebuild {
+	flex: none;
+	background: var(--c-caution-bg);
+	border-color: var(--c-caution-rule);
+	color: var(--c-caution-ink);
+}
+.sc-pg__rebuild:hover {
+	color: var(--c-caution-ink);
+}
+.sc-pg__rebuild[aria-disabled='true'] {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+.sc-pg__sim {
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+	overscroll-behavior: contain;
+}
+/* SimPanel's three blocks: the controls on top; the trace and "What happened" side by side when there is room. */
+.sc-pg__sim {
+	container-type: inline-size;
+}
+@container (min-width: 52rem) {
+	.sc-pg__sim .sc-sim[data-state='ready'] {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(16rem, 26rem);
+		grid-template-areas: 'controls controls' 'trace foot';
+		align-items: start;
+	}
+	.sc-pg__sim .sc-sim[data-state='ready'] > .sc-sim__controls {
+		grid-area: controls;
+	}
+	.sc-pg__sim .sc-sim[data-state='ready'] > .sc-sim__trace {
+		grid-area: trace;
+		border-top: 0;
+	}
+	.sc-pg__sim .sc-sim[data-state='ready'] > .sc-sim__foot {
+		grid-area: foot;
+		align-self: stretch;
+		align-content: start;
+		border-top: 0;
+		border-inline-start: 1px solid var(--c-rule);
+	}
+}
+.sc-pg__sim .sc-sim__controls {
+	border-top: 0;
+	border-bottom: 1px solid var(--c-rule);
+}
+.sc-pg__sim .sc-sim__trace {
+	border-top: 0;
+}
+.sc-pg__sim .sc-sim__errors {
+	border-top: 0;
+}
+.sc-pg__sim-placeholder {
+	padding: 0.625rem 1rem;
+	border-bottom: 1px solid var(--c-rule);
+	background-color: var(--c-rail);
+}
+
+/* ----- Toast ----- */
+
+.sc-pg__toast {
+	position: fixed;
+	z-index: 50;
+	left: 50%;
+	bottom: 1.25rem;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	/* Its own width (a fixed box at left: 50% would otherwise wrap at half the screen), up to the screen's. */
+	width: max-content;
+	max-width: min(36rem, calc(100vw - 2rem));
+	padding: 0.5rem 0.625rem 0.5rem 1rem;
+	border: 1px solid var(--c-rule-strong);
+	/* A capsule on one line; rounded corners, not a lozenge, when the message wraps. */
+	border-radius: 1.375rem;
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+	box-shadow: var(--shadow-pop);
+	font-size: var(--text-sm);
+	transform: translateX(-50%);
+}
+.sc-pg__toast[hidden] {
+	display: none;
+}
+.sc-pg-toast__action {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	flex: none;
+	min-height: 2rem;
+	padding: 0 0.75rem;
+	border: 1px solid color-mix(in srgb, var(--c-paper) 45%, transparent);
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: inherit;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+.sc-pg-toast__action:hover {
+	background-color: color-mix(in srgb, var(--c-paper) 14%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sc-pg *,
+	.sc-pg *::after {
+		transition: none !important;
+	}
+}
+
+/* ===== Inline playground (inside a widget frame) ==================================================== */
+
+.sc-pg-inline-host {
+	--pg-code-size: 0.8125rem;
+}
+.sc-pg-inline-host .sc-pg-inline__editor {
+	display: flex;
+	flex-direction: column;
+	min-height: 14rem;
+	max-height: 24rem;
+	background-color: var(--c-code-bg);
+}
+.sc-pg-inline-host .sc-pg__body--editor {
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+.sc-pg-inline-host .sc-pg__body--editor .cm-editor {
+	max-height: 100%;
+}
+/* The diagram is as tall as the chart drawn as wide as the stage allows, at most at 100 % (the build-time
+ * `--pg-nat-w`, `--pg-nat-h` and `--pg-ratio` of PlaygroundInline.astro), with DiagramView's room around it in
+ * embed mode (48 px above, for the tools; 16 px on the other sides), between 14rem and 24rem. The build-time
+ * picture is drawn where DiagramView's first fit puts it, so nothing moves when the playground starts. */
+.sc-pg-inline-host .sc-pg-inline__diagram {
+	--pg-dw: 100cqw;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-height: clamp(14rem, calc(64px + min(var(--pg-nat-h, 10rem), var(--pg-ratio, 0.5) * (var(--pg-dw) - 32px))), 24rem);
+	max-height: 24rem;
+}
+@container (min-width: 56rem) {
+	.sc-pg-inline-host .sc-pg-inline__diagram {
+		--pg-dw: calc(50cqw - 1px);
+	}
+}
+.sc-pg-inline-host .sc-pg__stage {
+	flex: 1;
+	min-height: 0;
+	cursor: grab;
+}
+.sc-pg-inline-host .sc-pg__static-diagram {
+	position: absolute;
+	inset: 48px 16px 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: auto;
+	padding: 0;
+	overflow: hidden;
+}
+/* As wide as the room allows up to its natural size (its own style), and no taller than the room: the drawing keeps
+ * its proportions inside (preserveAspectRatio), centred, as DiagramView fits it. */
+.sc-pg-inline-host .sc-pg__static-diagram svg {
+	max-height: 100%;
+}
+/* Without JavaScript (PlaygroundInline.astro's noscript): a note where the simulation's controls would be. */
+.sc-pg-inline__nojs {
+	margin: 0;
+	padding: 0.75rem var(--frame-pad, 1rem);
+	border-top: 1px solid var(--c-rule);
+	color: var(--c-muted);
+	font-size: var(--text-sm);
+}
+.sc-pg-inline-host .sc-pg__problems-toggle {
+	padding-inline: 0.75rem;
+}
+.sc-pg-inline__tools {
+	position: absolute;
+	z-index: 3;
+	top: 0.375rem;
+	right: 0.375rem;
+	display: flex;
+	gap: 0.125rem;
+	padding: 2px;
+	border: 1px solid var(--c-rule);
+	border-radius: var(--radius-capsule);
+	background-color: color-mix(in srgb, var(--c-sheet) 88%, transparent);
+}
+.sc-pg-inline__simbar .sc-pg__sim-note {
+	margin: 0;
+}
+.sc-pg-inline__simbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem 1rem;
+	padding: 0.5rem var(--frame-pad, 1rem);
+	border-top: 1px solid var(--c-rule);
+	background-color: var(--c-caution-bg);
+}
+.sc-pg-inline__simbar .sc-pg__sim-note {
+	white-space: normal;
+}
+.sc-pg-inline-host .sc-pg__sim {
+	overflow: visible;
+}
+
+/* ----- Guided tour | Free play (examples with a scenario) ----- */
+
+/* The simulation's head holds the switch, the "source changed" note and Rebuild: on a narrow screen they wrap. */
+.sc-pg__panel--sim > .sc-pg__head {
+	flex-wrap: wrap;
+	row-gap: 0.375rem;
+}
+.sc-pg__mode {
+	display: inline-flex;
+	flex: none;
+	padding: 2px;
+	border: 1px solid var(--c-control);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+}
+.sc-pg__mode[hidden] {
+	display: none;
+}
+.sc-pg__mode button {
+	min-height: 1.75rem;
+	padding: 0 0.75rem;
+	border: 0;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-muted);
+	font: inherit;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.sc-pg__mode button:hover {
+	color: var(--c-ink);
+}
+.sc-pg__mode button[aria-pressed='true'] {
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+.sc-pg__mode button:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 1px;
+}
+
+/* ----- Compare with the model solution (exercises) ----- */
+
+.sc-pg-pop--compare[hidden] {
+	display: none;
+}
+.sc-pg__compare {
+	border-color: var(--c-go);
+}
+.sc-pg__compare-short {
+	display: none;
+}
+@media (max-width: 47.99rem) {
+	.sc-pg__compare-long {
+		display: none;
+	}
+	.sc-pg__compare-short {
+		display: inline;
+	}
+}
+.sc-pg-pop--compare .sc-pg-pop__panel {
+	left: auto;
+	right: 0;
+	width: min(34rem, calc(100vw - 2rem));
+	max-height: min(40rem, 75dvh);
+	padding: 0.875rem 1rem 1rem;
+}
+@media (max-width: 47.99rem) {
+	/* Under the button, as wide as the playground (the button is not at its left edge). */
+	.sc-pg-pop--compare {
+		position: static;
+	}
+	.sc-pg-pop--compare .sc-pg-pop__panel {
+		top: auto;
+		left: 0;
+		right: 0;
+		width: auto;
+		margin-top: 0.375rem;
+	}
+}
+.sc-pg-compare {
+	display: grid;
+	gap: 0.75rem;
+	font-size: var(--text-sm);
+	color: var(--c-text);
+}
+.sc-pg-compare p {
+	margin: 0;
+}
+.sc-pg-compare__lead,
+.sc-pg-compare__note {
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+	line-height: var(--leading-snug);
+}
+.sc-pg-compare__result {
+	padding: 0.625rem 0.75rem;
+	border: 1px solid var(--c-rule-strong);
+	border-inline-start-width: 4px;
+	border-radius: var(--radius-sm);
+	background-color: var(--c-rail);
+	color: var(--c-ink);
+	line-height: var(--leading-snug);
+}
+.sc-pg-compare__result.is-match {
+	border-color: var(--c-tip-rule);
+	background-color: var(--c-tip-bg);
+	color: var(--c-tip-ink);
+}
+.sc-pg-compare__result.is-differs {
+	border-color: var(--c-caution-rule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+}
+.sc-pg-compare__result.is-starter {
+	border-color: var(--c-note-rule);
+	background-color: var(--c-note-bg);
+	color: var(--c-note-ink);
+}
+.sc-pg-compare__result.is-cannot {
+	border-color: var(--c-danger-rule);
+	background-color: var(--c-danger-bg);
+	color: var(--c-danger-ink);
+}
+/* KIELER runs the chart, the guide's simulator cannot: a caution, as the simulation panel says it, not an error. */
+.sc-pg-compare__result.is-unsupported {
+	border-color: var(--c-caution-rule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+}
+.sc-pg-compare__subhead {
+	font-size: var(--text-xs);
+	font-weight: 800;
+	color: var(--c-ink);
+}
+.sc-pg-compare ul {
+	display: grid;
+	gap: 0.25rem;
+	margin: 0;
+	padding-inline-start: 1.25rem;
+	line-height: var(--leading-snug);
+}
+.sc-pg-compare__where {
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+	font-variant-numeric: tabular-nums;
+}
+/* One cell per tick: the same outputs (a thin border), different (a heavy border and bold, not only a colour),
+ * not run (dashed: after a run-time error). */
+.sc-pg-compare__ticks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 3px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.sc-pg-compare__ticks li {
+	display: grid;
+	place-items: center;
+	min-width: 1.75rem;
+	height: 1.5rem;
+	padding: 0 0.25rem;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-muted);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	font-variant-numeric: tabular-nums;
+}
+.sc-pg-compare__ticks li.is-same {
+	border-color: var(--c-tip-rule);
+	background-color: var(--c-tip-bg);
+	color: var(--c-tip-ink);
+}
+.sc-pg-compare__ticks li.is-different {
+	border: 2px solid var(--c-caution-rule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-weight: 800;
+}
+.sc-pg-compare__ticks li.is-not-run {
+	border-style: dashed;
+	opacity: 0.7;
+}
+.sc-pg-compare__table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--text-xs);
+}
+.sc-pg-compare__table caption {
+	margin-bottom: 0.25rem;
+	text-align: start;
+	font-weight: 800;
+	color: var(--c-ink);
+}
+.sc-pg-compare__table th,
+.sc-pg-compare__table td {
+	padding: 0.25rem 0.5rem;
+	border-bottom: 1px solid var(--c-rule);
+	text-align: start;
+	font-family: var(--font-mono);
+}
+.sc-pg-compare__table thead th {
+	font-family: var(--font-text);
+	color: var(--c-muted);
+	font-weight: 700;
+}
+.sc-pg-compare__table tr.is-different td,
+.sc-pg-compare__table tr.is-different th {
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-weight: 700;
+}
+.sc-pg-compare__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+.sc-pg-compare__solution {
+	display: grid;
+	gap: 0.375rem;
+}
+.sc-pg-compare__solution .sc-pg-static {
+	max-height: 18rem;
+	padding: 0.625rem 0.75rem;
+	border: 1px solid var(--c-rule);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-code-bg);
+	font-size: 0.8125rem;
+}
+.sc-pg-compare__open {
+	font-size: var(--text-xs);
+}
+
+/* ----- Outline: the chart as a list (keyboard and screen readers) ----- */
+
+.sc-pg__panel--diagram {
+	position: relative;
+}
+.sc-pg-outline {
+	position: absolute;
+	z-index: 5;
+	top: 2.625rem;
+	right: 0;
+	bottom: 0;
+	width: min(21rem, 85%);
+	overflow: auto;
+	overscroll-behavior: contain;
+	padding: 0.5rem 0 0.75rem;
+	border-inline-start: 1px solid var(--c-rule-strong);
+	background-color: var(--c-sheet);
+	box-shadow: var(--shadow-pop);
+	font-size: var(--text-sm);
+}
+.sc-pg-outline[hidden] {
+	display: none;
+}
+.sc-pg-outline ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.sc-pg-outline ul ul {
+	margin-inline-start: 0.875rem;
+	border-inline-start: 1px solid var(--c-rule);
+}
+.sc-pg-outline__region {
+	display: block;
+	padding: 0.375rem 0.75rem 0.125rem;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-pg-outline button {
+	display: flex;
+	gap: 0.5rem;
+	align-items: baseline;
+	width: 100%;
+	min-height: 1.75rem;
+	padding: 0.1875rem 0.75rem;
+	border: 0;
+	background: none;
+	color: var(--c-text);
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+.sc-pg-outline button:hover,
+.sc-pg-outline button:focus-visible {
+	background-color: var(--c-accent-soft);
+	color: var(--c-ink);
+	outline: none;
+}
+.sc-pg-outline button:focus-visible {
+	box-shadow: inset 3px 0 0 var(--c-accent-bright);
+}
+.sc-pg-outline__name {
+	font-family: var(--font-mono);
+	font-weight: 700;
+}
+.sc-pg-outline__kind,
+.sc-pg-outline__label {
+	min-width: 0;
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+}
+.sc-pg-outline__label {
+	font-family: var(--font-mono);
+	overflow-wrap: anywhere;
+}
+/* What the simulation marks in the diagram, marked here too (never by colour alone). */
+.sc-pg-outline button.is-active .sc-pg-outline__name::before {
+	content: '';
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	margin-inline-end: 0.375rem;
+	border: 2px solid var(--sc-active-stroke);
+	border-radius: 50%;
+	background-color: var(--sc-active-fill);
+}
+.sc-pg-outline button.is-taken .sc-pg-outline__name {
+	text-decoration: underline 2px var(--sc-taken);
+	text-underline-offset: 3px;
+}
+/* A for-region's state: the number of copies it is active in, as the diagram's badge says it. */
+.sc-pg-outline__copies {
+	align-self: center;
+	padding: 0 0.375rem;
+	border-radius: var(--radius-capsule);
+	background-color: var(--sc-active-stroke);
+	color: var(--sc-region-fill, var(--c-paper));
+	font-size: var(--text-2xs);
+	font-weight: 800;
+	line-height: 1.5;
+	font-variant-numeric: tabular-nums;
+}
+
+/* ----- The simulator is the guide's own (under the page's description) ----- */
+
+.sc-pg-trust {
+	display: flex;
+	align-items: baseline;
+	gap: 0.375rem;
+	max-width: none;
+	margin: -0.25rem 0 0.625rem;
+	font-size: var(--text-xs);
+	line-height: var(--leading-snug);
+	color: var(--c-muted);
+}
+.sc-pg-trust svg {
+	flex: none;
+	align-self: center;
+	width: 0.875rem;
+	height: 0.875rem;
+}
+.sc-pg-trust__short {
+	display: none;
+}
+@media (max-width: 40rem) {
+	/* On a phone, one line (the help popover has the whole note). */
+	.sc-pg-trust {
+		margin: 0 0 0.5rem;
+		white-space: nowrap;
+	}
+	.sc-pg-trust__long {
+		display: none;
+	}
+	.sc-pg-trust__short {
+		display: inline;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+/* ----- Simulation tools in the head: Variables, Copy link to this run ----- */
+
+.sc-pg__simtools {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 0.25rem;
+	margin-inline-start: auto;
+}
+/* The "source changed" note takes the free room when it is there. */
+.sc-pg__head:has(> .sc-pg__sim-note:not([hidden])) > .sc-pg__simtools {
+	margin-inline-start: 0;
+}
+.sc-pg__simtool {
+	gap: 0.375rem;
+	min-height: 1.875rem;
+	padding-inline: 0.625rem;
+	font-size: var(--text-xs);
+}
+.sc-pg__simtool[aria-expanded='true'] {
+	border-color: var(--c-ink);
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+.sc-pg__simtool[aria-disabled='true'] {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+.sc-pg__vars-count {
+	font-family: var(--font-mono);
+	font-size: var(--text-2xs);
+	font-variant-numeric: tabular-nums;
+	opacity: 0.8;
+}
+.sc-pg__vars-count:empty {
+	display: none;
+}
+@media (max-width: 47.99rem) {
+	/* Icon-only on phones, as the toolbar; the label stays for screen readers. */
+	.sc-pg__simtool {
+		width: 2.25rem;
+		min-height: 2.25rem;
+		padding-inline: 0;
+	}
+	.sc-pg__simtool-label,
+	.sc-pg__vars-count {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+}
+
+/* ----- The variables strip (under the simulation's head) ----- */
+
+.sc-pg-vars {
+	display: grid;
+	gap: 0.5rem;
+	padding: 0.625rem 1rem;
+	border-bottom: 1px solid var(--c-rule);
+	background-color: var(--c-sheet);
+	font-size: var(--text-xs);
+}
+.sc-pg-vars__groups {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.25rem;
+}
+.sc-pg-vars__group {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.375rem;
+	min-width: 0;
+}
+.sc-pg-vars__title {
+	font-weight: 700;
+	color: var(--c-muted);
+	margin-inline-end: 0.125rem;
+}
+.sc-pg-vars__item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	min-height: 1.875rem;
+	padding: 0 0.625rem 0 0.4375rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	cursor: pointer;
+}
+.sc-pg-vars__item:hover {
+	border-color: var(--c-accent-bright);
+}
+.sc-pg-vars__item:has(input:focus-visible) {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 1px;
+}
+.sc-pg-vars__item:has(input:not(:checked)) {
+	border-style: dashed;
+	color: var(--c-muted);
+}
+.sc-pg-vars__item input {
+	width: 0.875rem;
+	height: 0.875rem;
+	margin: 0;
+	accent-color: var(--c-ink);
+}
+.sc-pg-vars__item input:focus-visible {
+	outline: none;
+}
+.sc-pg-vars__item code {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	background: none;
+	padding: 0;
+	color: inherit;
+}
+.sc-pg-vars__foot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 0.375rem;
+}
+.sc-pg-vars__note {
+	margin-inline-end: auto;
+	color: var(--c-muted);
+}
+.sc-pg-vars__buttons {
+	display: inline-flex;
+	gap: 0.375rem;
+}
+.sc-pg-vars__foot .sc-btn {
+	min-height: 1.75rem;
+	padding-inline: 0.625rem;
+	font-size: var(--text-2xs);
+}
+.sc-pg-vars__none {
+	margin: 0;
+	color: var(--c-muted);
+}
+.sc-pg-vars__list {
+	display: grid;
+	gap: 0.5rem;
+}
+
+/* ----- Watch and Run until (in the variables strip) ----- */
+
+.sc-pg-watch {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.375rem 0.625rem;
+	padding-top: 0.5rem;
+	border-top: 1px dashed var(--c-rule);
+}
+.sc-pg-watch__label,
+.sc-pg-watch__until label {
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-pg-watch__input {
+	flex: 1 1 14rem;
+	max-width: 24rem;
+	min-width: 0;
+	min-height: 1.875rem;
+	padding: 0.125rem 0.5rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+}
+.sc-pg-watch__input[aria-invalid='true'] {
+	border-color: var(--c-danger-rule);
+}
+.sc-pg-watch__value {
+	flex: 1 1 10rem;
+	min-width: 0;
+	color: var(--c-muted);
+}
+.sc-pg-watch__value code {
+	padding: 0.05em 0.3em;
+	border-radius: var(--radius-xs);
+	background-color: var(--sl-color-bg-inline-code);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+}
+.sc-pg-watch__value.is-true code {
+	background-color: var(--c-tip-bg);
+	color: var(--c-tip-ink);
+}
+.sc-pg-watch__value.is-error {
+	color: var(--c-danger-ink);
+}
+.sc-pg-watch__until {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.375rem;
+	margin-inline-start: auto;
+}
+.sc-pg-watch__until select {
+	min-height: 1.875rem;
+	max-width: 16rem;
+	padding: 0 0.375rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font: inherit;
+}
+.sc-pg-watch__until .sc-btn {
+	min-height: 1.875rem;
+	font-size: var(--text-2xs);
+}
+.sc-pg-watch__until .sc-btn[aria-disabled='true'] {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+/* ----- What only KIELER reports (an example's recording) ----- */
+
+.sc-pg-diag__kieler-only {
+	font-weight: 400;
+}
+.sc-pg-diag__kieler-only q {
+	font-family: var(--font-mono);
+	font-size: 0.95em;
+	font-weight: 700;
+	quotes: none;
+	white-space: pre-line;
+}
+.sc-pg-diag__kieler-only .sc-pg-diag__label {
+	color: var(--c-muted);
+}
+
+/* "About this message": the error reference's section (problems list and the editor's lint cards). */
+.sc-pg-about {
+	font-size: var(--text-2xs);
+	font-weight: 600;
+	text-underline-offset: 0.15em;
+}
+/* A target of its own (WCAG 2.2 target size): at least 24 px high. */
+.sc-pg-problem > .sc-pg-about,
+.sc-pg-diag__about > .sc-pg-about {
+	display: inline-flex;
+	align-items: center;
+	min-height: 1.5rem;
+}
+.sc-pg-problem > .sc-pg-about {
+	margin: -0.375rem 0 0.25rem calc(0.875rem + 3px);
+}
+.sc-pg-diag__about {
+	margin: 0;
+}
+
+/* Links in the playground's own text (outside Starlight's content styles): the guide's link colour. */
+.sc-pg-trust a,
+.sc-pg__title-page[href],
+.sc-pg-about,
+.sc-pg-compare__open,
+.sc-pg-help a {
+	color: var(--c-accent);
+	text-underline-offset: 0.15em;
+}
+.sc-pg-trust a:hover,
+.sc-pg__title-page[href]:hover,
+.sc-pg-about:hover,
+.sc-pg-compare__open:hover,
+.sc-pg-help a:hover {
+	color: var(--c-accent-strong);
+}
+.sc-pg-vars__scope {
+	font-size: var(--text-2xs);
+	color: var(--c-muted);
+}

@@ -1,0 +1,13 @@
+// A whole array cannot be bound to a scalar input (a single cell can, see 15-reference-arrays).
+scchart St25Main {
+  input int a[3]
+  output int s = 0
+  initial state R is St25Sub(a, s)
+}
+
+scchart St25Sub {
+  input int v
+  output int r
+  initial state S
+  do r = v go to S
+}

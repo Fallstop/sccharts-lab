@@ -1,0 +1,8 @@
+scchart RisingFromTick2 {
+  input int temp
+  output bool rising
+
+  initial state Watch {
+    during do rising = temp > pre(temp)
+  }
+}

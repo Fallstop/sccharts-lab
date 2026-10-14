@@ -1,0 +1,9 @@
+scchart SfbyChain {
+  input int level
+  output int two, chain
+
+  dataflow {
+    two = 1 sfby level
+    chain = 1 sfby 2 sfby 3
+  }
+}

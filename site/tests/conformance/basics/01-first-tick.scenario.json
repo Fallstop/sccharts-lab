@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": true}, "note": "Tick 1 enters the initial state **A**; its immediate transition fires at once (x = 1) and **B** is entered. B's transition is delayed, so it is not checked in the tick B is entered, even though I is true: x stays 1."},
+    {"inputs": {}, "note": "I is still true (inputs keep their value). B was entered in an earlier tick, so its delayed transition fires now: x = 11, state C."},
+    {"inputs": {}, "note": "C has no outgoing transitions: nothing happens, x stays 11."}
+  ],
+  "expect": "ok"
+}

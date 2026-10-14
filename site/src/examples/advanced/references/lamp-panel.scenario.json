@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "left": false, "right": false }, "note": "Tick 1 enters `Left` and `Right`. Each is a fresh copy of `PushSwitch`, starting in its own `Off`." },
+    { "inputs": { "left": true }, "note": "`left` is wired to the first copy's `press`, and `leftLamp` to its `lit`: the left lamp comes on. The right copy is unaffected." },
+    { "inputs": { "left": false, "right": true }, "note": "The right copy switches on `rightLamp`. The two copies run side by side, each in its own region." },
+    { "inputs": { "right": false, "left": true }, "note": "The left copy is in its `On` state and switches off. The right copy stays `On`." },
+    { "inputs": { "left": false }, "note": "Left off, right on." }
+  ],
+  "expect": "ok"
+}

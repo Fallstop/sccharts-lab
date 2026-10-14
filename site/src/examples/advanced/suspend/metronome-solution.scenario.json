@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "pause": false, "stop": false }, "note": "Tick 1 enters `Running`, `Beating` and `Low`." },
+    { "note": "`Low` to `High`: `click` is true." },
+    { "note": "`High` to `Low`: `click` is false." },
+    { "inputs": { "pause": true }, "note": "`pause` suspends `Beating`: the metronome freezes in `Low`." },
+    { "note": "Still frozen." },
+    { "inputs": { "stop": true }, "note": "`stop` belongs to `Running`, which is not suspended, so it fires even though `Beating` is paused." },
+    { "note": "In `Stopped`." }
+  ],
+  "expect": "ok"
+}

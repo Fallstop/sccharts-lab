@@ -1,0 +1,9 @@
+scchart P241 {
+  output int O
+  region R for i : 0 to 1 {
+    initial state A
+  }
+  region Q:
+  initial state B
+  do O = i go to B
+}

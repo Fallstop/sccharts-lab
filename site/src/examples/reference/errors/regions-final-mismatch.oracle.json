@@ -1,0 +1,122 @@
+{
+  "hash": "0080e4151715b394ee1f8fe52b0b379099579351",
+  "chart": "src/examples/reference/errors/regions-final-mismatch.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 11,
+      "column": 12
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 9,
+      "column": 19
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "sawA": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sawB": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "sawA": false,
+        "sawB": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "sawA": true,
+        "sawB": false
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "values": {
+        "A": false,
+        "B": true,
+        "sawA": true,
+        "sawB": true
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "A": false,
+        "B": true,
+        "sawA": true,
+        "sawB": true
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "Tick 1 enters `Run`; the self-loop is delayed. `count` is absent with value 0."
+    },
+    {
+      "note": "`pre(val(count))` is the value `count` had at the end of the last tick, 0, so the chart emits `count(1)`."
+    },
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "No emission: `count` is absent, its value stays 1."
+    },
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "`pre(val(count))` is 1, so `count` is emitted with 2."
+    },
+    {
+      "note": "And with 3."
+    }
+  ],
+  "expect": "ok"
+}

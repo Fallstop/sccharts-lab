@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": { "reading": 20 },
+      "note": "Tick 1 enters `Idle`. Its transition is delayed, so nothing is measured yet."
+    },
+    {
+      "inputs": {},
+      "note": "`Idle` → `Measure` → `Report` → `Idle`, all in this tick. The reading is 20, so `Measure` takes its second transition, nobody emits `high`, and `Report` does not emit `alarm`."
+    },
+    {
+      "inputs": { "reading": 130 },
+      "note": "130 is over 100: `Measure`'s first transition emits `high`. Later in the same chain `Report` tests `high`, finds it present, and emits `alarm`."
+    },
+    {
+      "inputs": {},
+      "note": "The reading is still 130 (inputs keep their value), so the chain runs the same way again: `high` and `alarm` are present in this tick too."
+    },
+    {
+      "inputs": { "reading": 90 },
+      "note": "`high` was present in tick 4, but a local signal is absent again at the start of every tick. Nobody emits it now, so there is no `alarm`."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,8 @@
+// x = (c) ? v keeps x when c is false: KIELER writes x = c ? v : x.
+scchart CondNoElse {
+  input bool c
+  input int v
+  output int x = 7
+  initial state S
+    if true do x = (c) ? v go to S
+}

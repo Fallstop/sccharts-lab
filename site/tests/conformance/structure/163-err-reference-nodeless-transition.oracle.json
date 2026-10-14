@@ -1,0 +1,19 @@
+{
+  "hash": "f0a8f4abc81dba3e717885d4a27b3073f442b61d",
+  "chart": "tests/conformance/structure/163-err-reference-nodeless-transition.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "java.lang.NullPointerException: Cannot invoke \"de.cau.cs.kieler.kexpressions.keffects.Link.getTarget()\" because \"cf\" is null\njava.lang.NullPointerException: Cannot invoke \"de.cau.cs.kieler.kexpressions.keffects.Link.getTarget()\" because \"cf\" is null\n\tde.cau.cs.kieler.scg.extensions.SCGControlFlowExtensions.targetNode(SCGControlFlowExtensions.java:177)\n\tde.cau.cs.kieler.scg.processors.DependencyTransformationV2.searchDependencies(DependencyTransformationV2.java:250)\n\tde.cau.cs.kieler.scg.processors.DependencyTransformationV2.searchDependencies(DependencyTransformationV2.java:85)\n\tde.cau.cs.kieler.kicool.processors.dependencies.AbstractDependencyAnalysis.processSubModel(AbstractDependencyAnalysis.java:173)\n\tde.cau.cs.kieler.kicool.processors.dependencies.AbstractDependencyAnalysis.process(AbstractDependencyAnalysis.java:153)\n\tde.cau.cs.kieler.scg.processors.DependencyTransformationV2.process(DependencyTransformationV2.java:137)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:304)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:777)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:256)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:210)\n\tde.cau.cs.kieler.language.server.kicool.CompilationThread.run(CompilationThread.java:46)"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Spin]",
+      "line": 18,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

@@ -1,0 +1,15 @@
+// More arguments than the referenced chart has inputs and outputs.
+scchart St18Main {
+  input bool s
+  output bool sp, extra
+  initial state R is St18Beep(s, sp, extra)
+}
+
+scchart St18Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

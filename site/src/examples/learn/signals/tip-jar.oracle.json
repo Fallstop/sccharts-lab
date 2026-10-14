@@ -1,0 +1,131 @@
+{
+  "hash": "7e62fc395599b17b1b6094ab865c861ad2a0abec",
+  "chart": "src/examples/learn/signals/tip-jar.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "amount": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "tip": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "received": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "received_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "thanks": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "received_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "tip": false,
+        "amount": 0
+      },
+      "values": {
+        "amount": 0,
+        "tip": false,
+        "received": false,
+        "received_val": 0,
+        "thanks": false,
+        "received_curval": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "tip": true,
+        "amount": 2
+      },
+      "values": {
+        "amount": 2,
+        "tip": true,
+        "received": true,
+        "received_val": 2,
+        "thanks": true,
+        "received_curval": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "amount": 5
+      },
+      "values": {
+        "amount": 5,
+        "tip": true,
+        "received": true,
+        "received_val": 5,
+        "thanks": true,
+        "received_curval": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "tip": false,
+        "amount": 1
+      },
+      "values": {
+        "amount": 1,
+        "tip": false,
+        "received": false,
+        "received_val": 5,
+        "thanks": false,
+        "received_curval": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

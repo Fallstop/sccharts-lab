@@ -1,0 +1,10 @@
+scchart FillerDeferred {
+  input bool cup, full
+  output int fills = 0
+
+  initial state Ready
+    immediate if cup do fills++ go to Filling
+
+  state Filling
+    if full go to Ready deferred
+}

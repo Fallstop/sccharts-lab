@@ -1,0 +1,13 @@
+scchart Q {
+  input int n
+  input bool a
+  output int x = 0, y = 0
+  output int arr[2]
+  output signal int S
+  initial state A {
+    entry if pre(a) do x = 1
+  }
+    if a go to B
+  state B
+    go to A
+}

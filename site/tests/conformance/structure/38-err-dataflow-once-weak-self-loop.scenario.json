@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": { "I": 1, "R": false },
+      "note": "Rejected: \"Can't schedule from … to …\", \"The SCG is NOT asc-schedulable!\" (lab: also \"Circular dependency prevents scheduling this tick.\"), warning \"Instantaneous loop detected!\" (lab: \"Potential instantaneous loop through X.\"). The once-region finishes in the entry tick, so the weak self-loop can re-enter S and write X again in the same tick."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

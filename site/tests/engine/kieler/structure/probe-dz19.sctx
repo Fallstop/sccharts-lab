@@ -1,0 +1,18 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz19 {
+  input int x
+  output int y = 0, z = 0
+  method int sign(int v) {
+    if (v > 0) {
+      return 1
+    } else {
+      return -1
+    }
+  }
+  method bump() {
+    z += 2
+  }
+  initial state S
+  if sign(x) > 0 do y = sign(x - 5); bump() go to S
+  do y = 0 go to S
+}

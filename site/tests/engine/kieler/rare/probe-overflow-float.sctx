@@ -1,0 +1,7 @@
+// floats are doubles: f[2] is g.
+scchart OverflowFloat {
+  output float f[2] = {0.0, 0.0}
+  output float g = 0.0
+  initial state Run
+    do f[2] = 1.5 go to Run
+}

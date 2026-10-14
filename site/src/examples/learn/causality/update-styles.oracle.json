@@ -1,0 +1,27 @@
+{
+  "hash": "ef1a628a9a00db08091fd620f10f7b7e48e4cdb7",
+  "chart": "src/examples/learn/causality/update-styles.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g4 to _g9",
+    "Can't schedule from _g9 to _g4",
+    "Can't schedule from _g4 to _g2",
+    "Can't schedule from _g9 to _g7",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving score prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through score.",
+    "Potential instantaneous loop through score."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads score, so the compiler treats it as an update of score (a relative write, as in the deprecated old SC syntax).\nWrite it as score += 1 to say so. In one region it means the same.\nIt only matters when another region also writes score in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 7,
+      "column": 15
+    }
+  ],
+  "ticks": []
+}

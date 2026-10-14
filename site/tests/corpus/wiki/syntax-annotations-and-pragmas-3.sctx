@@ -1,0 +1,12 @@
+scchart Testing {
+    @layout[elk.direction] UP
+    region "up":
+    initial state A
+    --> B;
+    final state B;
+    @layout[elk.direction] LEFT
+    region "left":
+    initial state A
+    --> B;
+    final state B;
+}

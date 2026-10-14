@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Surprise: with a `suspend` on the chart itself, the chart's own entry action never runs (started = 0), for the same reason as in chart 47; the root state is only entered once."
+    },
+    {
+      "inputs": {},
+      "note": "moves = 1."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "The whole chart is suspended: moves stays 1."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "moves = 2; started is still 0."
+    }
+  ],
+  "expect": "ok"
+}

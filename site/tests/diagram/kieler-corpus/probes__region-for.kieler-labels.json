@@ -1,0 +1,186 @@
+{
+ "sourceHash": "2bb9119f41cf00a4",
+ "states": [
+  {
+   "path": [
+    "P101"
+   ],
+   "rows": [
+    [
+     "P101"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "input bool ",
+     "ARR[4]"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    197.4,
+    218.1
+   ]
+  },
+  {
+   "path": [
+    "P101",
+    "R",
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    14.5,
+    23,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P101",
+    "R",
+    "B"
+   ],
+   "rows": [
+    [
+     "B"
+    ]
+   ],
+   "box": [
+    129,
+    20,
+    40,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "P101",
+    "Q",
+    "C"
+   ],
+   "rows": [
+    [
+     "C"
+    ]
+   ],
+   "box": [
+    10,
+    23,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P101",
+    "Q",
+    "D"
+   ],
+   "rows": [
+    [
+     "D"
+    ]
+   ],
+   "box": [
+    133.4,
+    20,
+    40,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P101",
+    "R"
+   ],
+   "label": [
+    "R ",
+    "| ",
+    "i [ 0, 2 ]"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    183.4,
+    70.6
+   ]
+  },
+  {
+   "path": [
+    "P101",
+    "Q"
+   ],
+   "label": [
+    "Q ",
+    "| ",
+    "j [ 0, 3 ]"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    141.9,
+    183.4,
+    70.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP101$NR$NA$EB0",
+   "source": [
+    "P101",
+    "R",
+    "A"
+   ],
+   "target": [
+    "P101",
+    "R",
+    "B"
+   ],
+   "text": "I == i",
+   "lines": [
+    "I == i"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP101$NQ$NC$ED0",
+   "source": [
+    "P101",
+    "Q",
+    "C"
+   ],
+   "target": [
+    "P101",
+    "Q",
+    "D"
+   ],
+   "text": "ARR[j]",
+   "lines": [
+    "ARR[j]"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

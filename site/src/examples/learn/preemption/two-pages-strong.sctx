@@ -1,0 +1,18 @@
+scchart TwoPagesStrong {
+  input bool start, sheet, cancel
+  output int printed
+  output signal finished, cancelled
+
+  initial state Idle
+    if start go to Job
+
+  state Job {
+    initial state First
+      if sheet do printed++ go to Second
+    state Second
+      if sheet do printed++ go to Done
+    final state Done
+  }
+  if cancel do cancelled abort to Idle
+  do finished join to Idle
+}

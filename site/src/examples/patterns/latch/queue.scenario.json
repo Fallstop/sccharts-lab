@@ -1,0 +1,86 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "take": false,
+        "serve": false
+      },
+      "note": "Tick 1: nobody waiting."
+    },
+    {
+      "inputs": {
+        "take": true
+      },
+      "note": "A ticket: 1."
+    },
+    {
+      "inputs": {
+        "take": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "take": true
+      },
+      "note": "Another ticket: 2."
+    },
+    {
+      "inputs": {
+        "take": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "serve": true
+      },
+      "note": "Served: 1."
+    },
+    {
+      "inputs": {
+        "serve": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "take": true,
+        "serve": true
+      },
+      "note": "One arrives, one is served, in the same tick: the first transition fires and `waiting` stays 1."
+    },
+    {
+      "inputs": {
+        "take": false,
+        "serve": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "serve": true
+      },
+      "note": "Served: 0."
+    },
+    {
+      "inputs": {
+        "serve": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "serve": true
+      },
+      "note": "Serve with nobody waiting: `waiting > 0` is false, nothing changes."
+    },
+    {
+      "inputs": {
+        "serve": false
+      },
+      "note": "Nothing."
+    }
+  ],
+  "expect": "ok"
+}

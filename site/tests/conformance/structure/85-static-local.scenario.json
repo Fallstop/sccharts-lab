@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "First entry of A: both counters are incremented from 0: **kept = 1, plain = 1**."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "leave: A → B. Neither entry action runs; the values stay."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "B → A re-enters A: **kept = 2**, but fresh was re-initialised: **plain = 1**."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "leave: A → B again; the values stay (**kept = 2, plain = 1**)."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Third entry: the static visits counts on, fresh starts from 0 again: **kept = 3, plain = 1**."
+    }
+  ],
+  "expect": "ok"
+}

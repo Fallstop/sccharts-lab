@@ -1,0 +1,15 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz47 {
+  output int n = 0
+  output bool fin = false
+  initial state R is Dz47T(n)
+  join to F
+  state F { entry do fin = true }
+}
+scchart Dz47T {
+  output int cnt
+  clock t
+  initial state W
+  if t >= 200 do cnt++ go to E
+  final state E
+}

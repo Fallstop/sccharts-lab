@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "W": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "S": true,
+        "W": true
+      },
+      "note": "Both aborts are enabled. The strong abort has the higher priority: it fires, and the inner self-loop does not run this tick (inner = 0, strongEffect = 1, weakEffect = 0)."
+    },
+    {
+      "inputs": {
+        "S": false,
+        "W": false
+      },
+      "note": "In X."
+    }
+  ],
+  "expect": "ok"
+}

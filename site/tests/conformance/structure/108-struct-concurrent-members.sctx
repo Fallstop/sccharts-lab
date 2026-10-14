@@ -1,0 +1,21 @@
+// Every member is its own variable for the causality analysis: two regions may write different members of
+// one instance in the same tick, and a third region reads both after them.
+scchart St108Members {
+  struct Point {
+    int x
+    int y
+  } p
+  output int sum = 0
+  region R1 {
+    initial state A
+    do p.x = 1 go to A
+  }
+  region R2 {
+    initial state A
+    do p.y = 2 go to A
+  }
+  region R3 {
+    initial state A
+    do sum = p.x + p.y go to A
+  }
+}

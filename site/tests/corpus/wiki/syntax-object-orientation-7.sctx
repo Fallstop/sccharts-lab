@@ -1,0 +1,19 @@
+scchart ForLoop {
+  output int O = 0
+  
+  method int sumTo(int limit) {
+    int sum = 0
+    for (int i = 0; i < limit; i++) {
+      sum += i
+    }
+    return sum
+  }
+  
+  region {
+    initial state A
+      do O = sumTo(10)
+      go to B
+      
+    final state B
+  }
+}

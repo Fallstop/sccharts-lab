@@ -1,0 +1,142 @@
+{
+  "hash": "86f7097144dafbf4d11501d6478064ae75dbcb2a",
+  "chart": "src/examples/advanced/time/two-timers-fixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "egg": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "tea": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "egg": false,
+        "sleepT": 1000,
+        "tea": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "egg": false,
+        "sleepT": 1000,
+        "tea": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "egg": false,
+        "sleepT": 1000,
+        "tea": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "egg": false,
+        "sleepT": 1000,
+        "tea": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "egg": false,
+        "sleepT": 1000,
+        "tea": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "egg": true,
+        "sleepT": 1000,
+        "tea": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

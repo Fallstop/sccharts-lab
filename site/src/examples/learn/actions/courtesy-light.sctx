@@ -1,0 +1,13 @@
+scchart CourtesyLight {
+  input bool doorOpen, dark
+  output bool light = false
+
+  initial state Closed
+    if doorOpen go to Open
+
+  state Open {
+    entry if dark do light = true
+    exit do light = false
+  }
+  if !doorOpen go to Closed
+}

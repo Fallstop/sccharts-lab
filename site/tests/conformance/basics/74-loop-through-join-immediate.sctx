@@ -1,0 +1,15 @@
+scchart LoopThroughJoinImmediate {
+  input bool I
+  output int x = 0
+
+  initial state A {
+    initial state A1
+    immediate if I go to A2
+
+    final state A2
+  }
+  join to B
+
+  state B
+  immediate do x += 1 go to A
+}

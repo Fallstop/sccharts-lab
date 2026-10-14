@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "stop": false, "doorOpen": false }, "note": "Tick 1 starts in `Idle`." },
+    { "inputs": { "start": true }, "note": "The count is now an effect of the transition into `Cooking`, so it happens on every entry, the first included: `sessions` = 1." },
+    { "inputs": { "start": false, "stop": true }, "note": "Back to `Idle`." },
+    { "inputs": { "start": true, "stop": false }, "note": "Second session: `sessions` = 2." },
+    { "inputs": { "start": false }, "note": "Cooking." },
+    { "inputs": { "stop": true }, "note": "Back to `Idle`." },
+    { "inputs": { "stop": false }, "note": "Two sessions, and `sessions` agrees." }
+  ],
+  "expect": "ok"
+}

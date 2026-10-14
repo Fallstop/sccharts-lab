@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "KIELER rejects this chart: in one tick the client would have to read `ack` before writing `req`, and the server read `req` before writing `ack`."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

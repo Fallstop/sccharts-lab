@@ -1,0 +1,97 @@
+{
+  "hash": "a8e336d15bc9c900858b3a0a9041a1fe63c93099",
+  "chart": "src/examples/learn/pre/presses-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "presses": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "presses": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "presses": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "presses": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "presses": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "presses": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "presses": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "presses": 2
+      },
+      "terminated": false
+    }
+  ]
+}

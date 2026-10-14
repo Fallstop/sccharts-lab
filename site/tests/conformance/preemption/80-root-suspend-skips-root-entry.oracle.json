@@ -1,0 +1,88 @@
+{
+  "hash": "ce8b97a21fea42973a80fd44746101995fa30d62",
+  "chart": "tests/conformance/preemption/80-root-suspend-skips-root-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "moves": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "started": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "moves": 0,
+        "started": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "moves": 1,
+        "started": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "moves": 1,
+        "started": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "moves": 2,
+        "started": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

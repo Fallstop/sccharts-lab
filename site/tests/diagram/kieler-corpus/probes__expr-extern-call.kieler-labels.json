@@ -1,0 +1,125 @@
+{
+ "sourceHash": "ae8e81b55fe38c90",
+ "states": [
+  {
+   "path": [
+    "P184"
+   ],
+   "rows": [
+    [
+     "P184"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    285.2,
+    202.1
+   ]
+  },
+  {
+   "path": [
+    "P184",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    14.2,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P184",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    226.3,
+    14.2,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P184",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    271.8,
+    62.1
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP184$$N0$NS0$ES10",
+   "source": [
+    "P184",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P184",
+    0,
+    "S1"
+   ],
+   "text": "/ O = extern abs(I); extern srand(1)",
+   "lines": [
+    "/ O = extern abs(I);",
+    "  extern srand(1)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

@@ -1,0 +1,126 @@
+{
+  "hash": "4d4708154f13655f2839a31e2f75ed013739eaf7",
+  "chart": "src/examples/advanced/connectors/dial-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "down": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "up": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "digit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "up": false,
+        "down": false
+      },
+      "values": {
+        "down": false,
+        "up": false,
+        "digit": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "down": true
+      },
+      "values": {
+        "down": true,
+        "up": false,
+        "digit": 9
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "down": false
+      },
+      "values": {
+        "down": false,
+        "up": false,
+        "digit": 9
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "down": false,
+        "up": true,
+        "digit": 0
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "up": false
+      },
+      "values": {
+        "down": false,
+        "up": false,
+        "digit": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+// for and while loops: the for counter is declared in the loop head; the bound may be an input; a return inside a
+// loop ends the method.
+scchart St145Loops {
+  input int n
+  output int sum = 0, bits = 0, first = 0
+  method int firstMultiple(int k) {
+    for (int i = 1; i < 100; i++) {
+      if (i % k == 0) {
+        return i
+      }
+    }
+    return -1
+  }
+  initial state S
+  do {
+    int v = n
+    sum = 0;
+    for (int i = 1; i <= n; i++) {
+      sum += i
+    }
+    bits = 0;
+    while (v > 0) {
+      bits += v % 2;
+      v = v / 2
+    }
+    first = firstMultiple(n + 3)
+  } go to S
+}

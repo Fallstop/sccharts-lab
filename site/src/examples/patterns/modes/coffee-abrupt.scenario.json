@@ -1,0 +1,85 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Tick 1: `Serving` is entered, `Ready` waits for a brew request."
+    },
+    {
+      "inputs": {
+        "brew": true
+      },
+      "note": "`brew`: the heater goes on and the chart moves to `Heating`."
+    },
+    {
+      "inputs": {
+        "brew": false,
+        "clean": true
+      },
+      "note": "Someone presses `clean` in the middle of the brew. `if clean go to Cleaning` is a weak abort, so the inside finishes its tick first: `Heating` moves on to `Pouring`, whose entry action starts the pump. Then `Serving` is left: `Pouring`'s exit action stops the pump again. Nothing switches the heater off."
+    },
+    {
+      "inputs": {
+        "clean": false
+      },
+      "note": "Cleaning. The heater is still on."
+    },
+    {
+      "inputs": {},
+      "note": "Cleaning finishes and `Serving` starts again. The cup was never finished: `cups` is still 0."
+    },
+    {
+      "inputs": {},
+      "note": "Back in `Ready`, and the heater is *still* on. It will stay on until the next brew happens to switch it off."
+    },
+    {
+      "inputs": {
+        "brew": true
+      },
+      "note": "A proper brew."
+    },
+    {
+      "inputs": {
+        "brew": false
+      },
+      "note": "Pouring."
+    },
+    {
+      "inputs": {},
+      "note": "Pouring."
+    },
+    {
+      "inputs": {},
+      "note": "The cup is done: `cups` is 1 and the heater is finally off."
+    },
+    {
+      "inputs": {},
+      "note": "Ready."
+    },
+    {
+      "inputs": {
+        "brew": true,
+        "clean": true
+      },
+      "note": "`brew` and `clean` in the same tick. The weak abort's last wish lets `Ready` start the brew, so the heater goes on, and then `Serving` is left for `Cleaning`."
+    },
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Cleaning, with the heater on again."
+    },
+    {
+      "inputs": {},
+      "note": "Back to `Serving`."
+    },
+    {
+      "inputs": {},
+      "note": "The heater is on with nothing to heat."
+    }
+  ],
+  "expect": "ok"
+}

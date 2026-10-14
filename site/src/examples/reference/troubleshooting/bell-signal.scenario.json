@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Waiting`. `ding` is absent." },
+    { "inputs": { "press": true }, "note": "`press`: the self-loop emits `ding`, which is present in this tick." },
+    { "inputs": { "press": false }, "note": "Nothing emits `ding`, so it is absent again." },
+    { "inputs": {}, "note": "Absent." },
+    { "inputs": { "press": true }, "note": "Another press: `ding` is present." },
+    { "inputs": { "press": false }, "note": "A signal is present only in the ticks that emit it." }
+  ],
+  "expect": "ok"
+}

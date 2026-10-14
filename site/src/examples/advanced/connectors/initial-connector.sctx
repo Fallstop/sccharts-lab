@@ -1,0 +1,18 @@
+scchart FanStart {
+  input bool boost, toggle
+  output int speed = 0
+
+  initial connector state Start
+    immediate if boost go to High
+    immediate go to Low
+
+  state Low {
+    entry do speed = 1
+  }
+  if toggle go to High
+
+  state High {
+    entry do speed = 3
+  }
+  if toggle go to Low
+}

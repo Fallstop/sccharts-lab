@@ -1,0 +1,7 @@
+scchart Assignments {
+  input int I
+  output int x, lo, hi, n, scaled
+
+  initial state Update
+    do x = I; x += 3; x *= 2; lo = 100; lo min= I; hi max= I; n++; scaled = 7; scaled *= 1.5 go to Update
+}

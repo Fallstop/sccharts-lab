@@ -1,0 +1,7 @@
+// m[0][3] is m[1][0]; m[1][3] is z.
+scchart Overflow2D {
+  output int m[2][3] = {{0, 0, 0}, {0, 0, 0}}
+  output int z = 0
+  initial state Run
+    do m[0][3] = 7; m[1][3] = 8 go to Run
+}

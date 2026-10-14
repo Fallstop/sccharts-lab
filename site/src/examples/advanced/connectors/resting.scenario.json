@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "coin": false, "enough": false }, "note": "KIELER warns `Connector states should have an outgoing transition without trigger.` Tick 1 enters `Waiting`." },
+    { "inputs": { "coin": true }, "note": "A coin: `Waiting` to `Check`. `enough` is false, so no transition out of `Check` can fire, and control stays in the connector, as if it were a normal state." },
+    { "inputs": { "coin": false }, "note": "Still in `Check`: control stays in the connector, and its transitions are checked again in every tick." },
+    { "inputs": { "enough": true }, "note": "`enough`: `Check` to `Served`." },
+    { "inputs": { "enough": false }, "note": "In `Served`." }
+  ],
+  "expect": "ok"
+}

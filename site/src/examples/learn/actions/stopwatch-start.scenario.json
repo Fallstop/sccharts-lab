@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "stop": false }, "note": "Tick 1 enters `Stopped`." },
+    { "inputs": { "start": true }, "note": "`Running` is entered: `running` is true and `elapsed` is 0." },
+    { "inputs": { "start": false }, "note": "The self-loop fires: `elapsed++` makes it 1, but re-entering `Running` runs the entry action, which sets it back to 0." },
+    { "note": "Same again: `elapsed` stays 0." },
+    { "note": "And again." },
+    { "inputs": { "stop": true }, "note": "`stop` has priority 1, so the chart goes to `Stopped`." },
+    { "inputs": { "stop": false }, "note": "Stopped." }
+  ],
+  "expect": "ok"
+}

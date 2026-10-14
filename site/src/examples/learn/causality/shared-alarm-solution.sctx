@@ -1,0 +1,8 @@
+scchart SharedAlarm {
+  input bool smoke, heat, ack
+  output bool alarm = false
+
+  initial state Watch
+    if smoke || heat do alarm = true go to Watch
+    if ack do alarm = false go to Watch
+}

@@ -1,0 +1,27 @@
+// Several self-loops on one state: each loop keeps clear of the labels of the loops inside it
+// (ELK stacks them on one side; KIELER draws the outer loops through the inner loops' labels).
+scchart SelfLoops {
+  input bool on, off, toggle
+  output bool lamp = false
+  output int count = 0
+  output int level = 0
+  output bool high = false
+
+  region Lamp:
+  initial state Watch
+  if on do lamp = true go to Watch
+  if off do lamp = false go to Watch
+
+  region Counter:
+  initial state Count
+  if toggle do count = count + 1 go to Count
+  if on && off do count = 0 go to Count
+  if count > 9 do count = 9 go to Count
+
+  region Nested:
+  initial state Outer {
+    initial state Inner
+    if on do level = 1 go to Inner
+    if off do level = 2; high = true go to Inner
+  }
+}

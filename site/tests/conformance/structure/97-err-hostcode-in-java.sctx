@@ -1,0 +1,8 @@
+#hostcode "#include <stdlib.h>"
+// `#hostcode` goes into the Java code as well as into the C code (only `#hostcode-c`, `#hostcode-c-header` and
+// `#hostcode-java` are language-specific), so a C include breaks the Java simulations.
+scchart St97HostJava {
+  output int x = 0
+  initial state A
+  do x = 1 go to A
+}

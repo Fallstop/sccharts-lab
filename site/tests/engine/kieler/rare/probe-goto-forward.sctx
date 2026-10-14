@@ -1,0 +1,14 @@
+// A forward goto in an inlined code block skips statements.
+scchart GotoForward {
+  input bool skip
+  output int a = 0, b = 0
+  initial state S
+    if true do {
+      if (skip) {
+        goto done
+      }
+      a++;
+      done:
+      b++
+    } go to S
+}

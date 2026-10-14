@@ -1,0 +1,36 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "b": false
+      },
+      "note": "The chart may emit its own input signal. Tick 1: `A` is given as absent."
+    },
+    {
+      "inputs": {
+        "b": true
+      },
+      "note": "`b`: `R1` emits `A`; `R2` sees `A` present: `n = 1`."
+    },
+    {
+      "inputs": {
+        "b": false
+      },
+      "note": "Input signals are not reset by the chart, and the simulator keeps an input's value until the environment changes it, so the emitted `A` stays present: `n = 2`."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "The environment sets `A` absent again: `n = 2`."
+    },
+    {
+      "inputs": {
+        "b": false
+      },
+      "note": "No change."
+    }
+  ],
+  "expect": "ok"
+}

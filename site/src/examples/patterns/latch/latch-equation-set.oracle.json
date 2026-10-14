@@ -1,0 +1,104 @@
+{
+  "hash": "e355b020749a6b3c16cad8419ab700d8849e6c03",
+  "chart": "src/examples/patterns/latch/latch-equation-set.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "arrived": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "arrived": false,
+        "button": true,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "button": true,
+        "arrived": true
+      },
+      "values": {
+        "arrived": true,
+        "button": true,
+        "lamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "arrived": true,
+        "button": false,
+        "lamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "arrived": false
+      },
+      "values": {
+        "arrived": false,
+        "button": false,
+        "lamp": false
+      },
+      "terminated": false
+    }
+  ]
+}

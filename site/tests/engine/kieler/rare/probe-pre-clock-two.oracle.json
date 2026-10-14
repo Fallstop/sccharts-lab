@@ -1,0 +1,170 @@
+{
+  "hash": "029bb89588422f5206d2894e7666583964bff249",
+  "chart": "tests/engine/kieler/rare/probe-pre-clock-two.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "e": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 1,
+        "c": false,
+        "e": false
+      },
+      "values": {
+        "c": false,
+        "e": false,
+        "v": 1,
+        "p": 0,
+        "q": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 2,
+        "c": true,
+        "e": false
+      },
+      "values": {
+        "c": true,
+        "e": false,
+        "v": 2,
+        "p": 0,
+        "q": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 3,
+        "c": false,
+        "e": true
+      },
+      "values": {
+        "c": false,
+        "e": true,
+        "v": 3,
+        "p": 0,
+        "q": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 4,
+        "c": true,
+        "e": true
+      },
+      "values": {
+        "c": true,
+        "e": true,
+        "v": 4,
+        "p": 3,
+        "q": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "v": 5,
+        "c": false,
+        "e": false
+      },
+      "values": {
+        "c": false,
+        "e": false,
+        "v": 5,
+        "p": 3,
+        "q": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "v": 6,
+        "c": true,
+        "e": false
+      },
+      "values": {
+        "c": true,
+        "e": false,
+        "v": 6,
+        "p": 3,
+        "q": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "v": 7,
+        "c": false,
+        "e": true
+      },
+      "values": {
+        "c": false,
+        "e": true,
+        "v": 7,
+        "p": 4,
+        "q": 4
+      },
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "v": 8,
+        "c": true,
+        "e": true
+      },
+      "values": {
+        "c": true,
+        "e": true,
+        "v": 8,
+        "p": 7,
+        "q": 7
+      },
+      "terminated": false
+    }
+  ]
+}

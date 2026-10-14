@@ -1,0 +1,11 @@
+// The same label in two concurrent regions' states: no clash.
+scchart LabelSameRegions {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  region R1:
+    initial state S
+      if a do { if (b) { goto skip } x += 1; skip: y += 1 } go to S
+  region R2:
+    initial state T
+      if a do { if (b) { goto skip } z += 1; skip: y += 10 } go to T
+}

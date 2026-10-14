@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"A": [1, 2, 3]}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "s = 1 * 100 + 2 * 10 + 3 = 123."},
+    {"inputs": {"A": [4]}, "note": "An input array given with fewer elements updates only those: A = [4, 2, 3], s = 423."},
+    {"inputs": {}, "note": "A keeps [4, 2, 3]: s = 423."}
+  ],
+  "expect": "ok"
+}

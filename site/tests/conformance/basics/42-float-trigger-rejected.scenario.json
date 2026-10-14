@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {"F": 2.5}, "note": "Rejected: a float cannot be a trigger on its own. \"Float tests must have a comparison operator!\" (An int can: see int-as-trigger.)"}
+  ],
+  "expect": "error",
+  "errorIncludes": "Float tests must have a comparison operator!"
+}

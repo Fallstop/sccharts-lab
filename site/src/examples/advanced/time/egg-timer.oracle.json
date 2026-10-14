@@ -1,0 +1,120 @@
+{
+  "hash": "df605df8419dbaf73d242122ac1b82a07d04d42f",
+  "chart": "src/examples/advanced/time/egg-timer.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "ring": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "ring": false,
+        "sleepT": 1000,
+        "t": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "ring": false,
+        "sleepT": 1000,
+        "t": 1000
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "ring": false,
+        "sleepT": 1000,
+        "t": 2000
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "ring": true,
+        "sleepT": 1000,
+        "t": 3000
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 1000
+      },
+      "values": {
+        "deltaT": 1000,
+        "ring": true,
+        "sleepT": 1000,
+        "t": 3000
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

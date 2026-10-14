@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Tick 1 enters Off: **t = 0**, **sleepT = 500**."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "The clock advances by deltaT: **t = 250**."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "**t = 500**: Off → On, **on = true**. The clock is not reset."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "**t = 600** ≥ 200: **on = false** after only 100 time units."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Back in Off with **t = 700** ≥ 500, so Off → On fires at once: **on = true**."
+    }
+  ],
+  "expect": "ok"
+}

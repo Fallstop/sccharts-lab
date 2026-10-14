@@ -1,0 +1,57 @@
+{
+  "hash": "6cf1439181e2309aae0badf33ff8dd34a898d0c4",
+  "chart": "src/examples/advanced/references/import-main.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "switchA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "hall": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "switchA": false
+      },
+      "values": {
+        "switchA": false,
+        "hall": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "switchA": true
+      },
+      "values": {
+        "switchA": true,
+        "hall": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "switchA": false
+      },
+      "values": {
+        "switchA": false,
+        "hall": true
+      },
+      "terminated": false
+    }
+  ]
+}

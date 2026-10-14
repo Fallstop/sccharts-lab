@@ -1,0 +1,9 @@
+scchart Bonus {
+  input bool gold, silver
+  output signal int points combine +
+
+  initial state Play
+    if gold && silver do points(10); points(5) go to Play
+    if gold do points(10) go to Play
+    if silver do points(5) go to Play
+}

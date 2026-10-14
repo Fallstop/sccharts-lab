@@ -1,0 +1,72 @@
+{
+  "hash": "5029d98853e8aff2de67692acb2a969219f7538a",
+  "chart": "tests/engine/kieler/rare/probe-overflow-basic.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "z": 9
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "z": 9
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

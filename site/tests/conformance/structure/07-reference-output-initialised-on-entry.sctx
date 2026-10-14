@@ -1,0 +1,15 @@
+// The initial value of an OUTPUT of the referenced chart is assigned to the bound variable every time the
+// referencing state is entered (KIELER turns it into an entry action). It overrides the parent's own initial value.
+// Initial values of the referenced chart's INPUTS are dropped.
+scchart St07Main {
+  input bool again
+  output int o = 0
+  initial state R is St07Counter(o)
+  if again go to R
+}
+
+scchart St07Counter {
+  output int count = 100
+  initial state S
+  do count++ go to S
+}

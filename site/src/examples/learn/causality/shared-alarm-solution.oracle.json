@@ -1,0 +1,177 @@
+{
+  "hash": "ed1d68ce5b5e5e2697c2f460f661fcdd91e3454a",
+  "chart": "src/examples/learn/causality/shared-alarm-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "ack": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "heat": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "smoke": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "smoke": false,
+        "heat": false,
+        "ack": false
+      },
+      "values": {
+        "ack": false,
+        "heat": false,
+        "smoke": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "smoke": true
+      },
+      "values": {
+        "ack": false,
+        "heat": false,
+        "smoke": true,
+        "alarm": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "smoke": false
+      },
+      "values": {
+        "ack": false,
+        "heat": false,
+        "smoke": false,
+        "alarm": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "ack": true
+      },
+      "values": {
+        "ack": true,
+        "heat": false,
+        "smoke": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "ack": false,
+        "heat": true
+      },
+      "values": {
+        "ack": false,
+        "heat": true,
+        "smoke": false,
+        "alarm": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "heat": true,
+        "ack": true
+      },
+      "values": {
+        "ack": true,
+        "heat": true,
+        "smoke": false,
+        "alarm": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "heat": false,
+        "ack": true
+      },
+      "values": {
+        "ack": true,
+        "heat": false,
+        "smoke": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "ack": false
+      },
+      "values": {
+        "ack": false,
+        "heat": false,
+        "smoke": false,
+        "alarm": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "hash": "20d0a34373c9a0629ca30af76c1f4d59425c0191",
+  "chart": "src/examples/learn/first-chart/err-case.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "6:35 The required feature 'targetState' of 'de.cau.cs.kieler.sccharts.impl.TransitionImpl@4de379b5{file:///tmp/sccharts-oracle-LRWV02/m1/err-case.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0}' must be set",
+    "Couldn't resolve reference to State 'dim'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to State 'dim'.",
+      "line": 6,
+      "column": 35,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'targetState' of 'de.cau.cs.kieler.sccharts.impl.TransitionImpl@4de379b5{file:///tmp/sccharts-oracle-LRWV02/m1/err-case.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0}' must be set",
+      "line": 6,
+      "column": 35,
+      "code": "org.eclipse.emf.ecore.1"
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 8,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

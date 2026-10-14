@@ -1,0 +1,20 @@
+{
+  "hash": "76ff1898588c5344a383dd824f461b1f3c70740b",
+  "chart": "tests/conformance/structure/155-err-scl-inline-loop.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3 to _cg3",
+    "Can't schedule from _g3 to _g4",
+    "Can't schedule from _g4 to _g3",
+    "Can't schedule from _g3 to _g5",
+    "Can't schedule from _g5 to _g1",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving i prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through i.",
+    "Potential instantaneous loop through i."
+  ],
+  "ticks": []
+}

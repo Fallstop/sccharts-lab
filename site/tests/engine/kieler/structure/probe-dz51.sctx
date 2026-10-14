@@ -1,0 +1,15 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz51 {
+  input bool t
+  output int a = 0
+  initial state Outer {
+    ref Dz51C c1(t, a)
+    initial state In
+  }
+}
+scchart Dz51C {
+  input bool step
+  output int n
+  initial state S
+  if step do n += 3 go to S
+}

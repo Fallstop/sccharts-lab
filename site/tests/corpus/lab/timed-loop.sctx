@@ -1,0 +1,12 @@
+scchart Blinker {
+  output int phase = 0
+  region {
+    clock x = 0
+    initial state Slow
+    if x > 10 do x = 0; phase = 1 go to Fast
+    state Fast
+    if x > 5 do x = 0; phase = 2 go to Pause
+    state Pause
+    if x > 3 do x = 0; phase = 0 go to Slow
+  }
+}

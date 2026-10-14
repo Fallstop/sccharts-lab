@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": {}, "note": "Tick 1 enters both regions of both charts. `x` starts at 1." },
+    { "inputs": {}, "note": "Both old-style updates run in this tick, and KIELER runs them in the order the regions are written. `OldUpdates` runs `Add` first: (1 + 2) * 3 = 9. `OldUpdatesSwapped` runs `Triple` first: 1 * 3 + 2 = 5. The same two updates, two results." },
+    { "inputs": {}, "note": "Nothing else happens: 9 on one side, 5 on the other." }
+  ],
+  "expect": "ok"
+}

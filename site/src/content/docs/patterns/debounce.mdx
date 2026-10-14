@@ -1,0 +1,189 @@
+---
+title: "Debouncing"
+description: "Ignoring a noisy button until its reading has stayed the same for a number of ticks in a row."
+sidebar:
+  order: 3
+---
+
+import { Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+When you press a mechanical button, its metal contacts do not close cleanly. They touch, spring apart,
+touch again, and only settle after a few milliseconds; releasing the button does the same. Nobody notices
+that by eye, but a chart that ticks every millisecond reads it as a burst of presses. **Debouncing** means
+accepting a new reading only once it has been stable for a while.
+
+This page builds a debouncer that counts ticks: first an attempt with a count delay that looks right and
+is not, then a state machine that works, then the same idea with an explicit counter, and finally a
+debouncer and a toggle working together in two regions. It builds on [edges](/patterns/edges/) and uses
+count delays from [the previous tick](/learn/pre/).
+
+## The problem
+
+Here is a toggle that switches on every rising edge of its input, fed with one press and one release of
+a bouncy button. Each `true` after a `false` is a rising edge:
+
+<Sim example="patterns/debounce/bouncy-toggle" caption="One press (ticks 2 to 11) and one release (from tick 12): four toggles, and the light ends up where it started." />
+
+The edge detection is correct. The input is the problem: the chart has no way to tell a bounce from a
+real press, unless you tell it how long a real press lasts.
+
+## The rule
+
+A debouncer turns the raw reading `raw` into a clean one, `pressed`:
+
+> `pressed` changes only when `raw` has disagreed with it for **N readings in a row**.
+
+A single disagreeing reading followed by an agreeing one is noise and is forgotten. The examples on this
+page use N = 3.
+
+## A first attempt with a count delay
+
+A count delay, `if 3 raw`, fires in the third tick in which `raw` is true. That sounds like "three
+readings", so it is tempting:
+
+<Sim example="patterns/debounce/debounce-naive" caption="Tick 5: the press is accepted after the readings true, false, true, true. Tick 6 releases it on a single false reading, and tick 9 accepts a second press from the same bounce." />
+
+It accepts the press in tick 5, after the readings `true`, `false`, `true`, `true`. A count delay counts
+the ticks in which its trigger holds *while its state is active*; they do not have to be consecutive, and
+the count only restarts when the state is entered again. So `if 3 raw` means "the third tick with `raw`
+since I got here", not "three in a row". (This first attempt also releases on the first false reading;
+that is the second bug, and the same fix cures it.)
+
+## The working debouncer
+
+To demand readings *in a row*, restart the count whenever a reading disagrees. Leaving a state and coming
+back does exactly that, because every entry of a state restarts its count delays. So add a "maybe" state
+on each side:
+
+<Sim example="patterns/debounce/debounce" caption="Bounces in ticks 3, 6 and 13 send the chart back without changing `pressed`. The press is accepted in tick 9, the release in tick 16." />
+
+`MaybePressed` is entered on the first `true`. Every `false` sends the chart back to `Released`, which
+throws the count away; the next `true` enters `MaybePressed` afresh, with a fresh count. Only if `raw`
+stays true in the next two ticks does `if 2 raw` fire, in the third reading in a row. The release side is
+the mirror image. Here is the press, tick by tick:
+
+| Tick | `raw` | State after | `pressed` |
+| ---: | --- | --- | --- |
+| 1 | false | Released | false |
+| 2 | true | MaybePressed | false |
+| 3 | false | Released | false |
+| 4 | true | MaybePressed | false |
+| 5 | true | MaybePressed | false |
+| 6 | false | Released | false |
+| 7 | true | MaybePressed | false |
+| 8 | true | MaybePressed | false |
+| 9 | true | Pressed | true |
+
+Why `if 2 raw` and not `if 3 raw`? The count delay is delayed: it does not count the tick in which
+`MaybePressed` is entered, and that tick already brought the first `true`. So the transition fires in the
+second counted tick, which is the third reading in a row. For N readings, write `if` N − 1 `raw`. With N = 2
+the count delay disappears: `MaybePressed` needs only a plain `if raw go to Pressed`, because a delayed
+transition already waits for the next reading.
+
+### Choosing N
+
+N has to cover the bounce. If the contacts bounce for at most *b* milliseconds and the chart ticks every
+*t* milliseconds, a bounce lasts up to *b* / *t* ticks, so pick N comfortably larger than that. Do not
+overdo it: the debouncer accepts a change in the N-th stable reading. That is N − 1 ticks after the
+first stable reading and N ticks after the last bounce: in the tour above, the last bounce is in tick 6,
+the first stable reading in tick 7, and the press is accepted in tick 9. So the user feels a delay of
+about N ticks. Button datasheets quote bounce times; when in doubt, measure.
+
+## The same with a counter
+
+For a large N, say 20 readings at one tick per millisecond, write the count as a number instead of as
+states. `run` counts how many readings in a row have disagreed with `pressed`:
+
+<Sim example="patterns/debounce/debounce-counter" view="both" show={['raw', 'pressed', 'run']} caption="`run` climbs to 2 and falls back to 0 on every bounce; on the third disagreeing reading in a row, `pressed` changes." />
+
+The single state `Filter` loops to itself in every tick, and its three transitions are tried in priority
+order:
+
+1. `raw` agrees with `pressed`: nothing to do, forget any run of disagreements.
+2. It disagrees, but the run is not long enough yet: `run++`.
+3. Otherwise this is the N-th disagreeing reading in a row: accept it and start again.
+
+The result is identical to `Debounce`, tick for tick, and the same chart debounces both edges. `run` is a
+local declared at the top of the chart, not inside `Filter`: a variable declared in a state is
+initialised again every time the state is entered, and `Filter` is entered in every tick, so a counter
+declared inside it would never count past 1.
+
+<Aside type="caution" title="A count delay needs a number">
+`N` here is a `const`, so you may wonder about `if N raw` in the state version. KIELER rejects it with a
+syntax error (`no viable alternative at input 'raw'`): the count of a count delay must be a number
+literal. With a `const`, use a counter.
+</Aside>
+
+## Debouncing, then reacting
+
+A debouncer is most useful as a separate piece that other parts of the chart listen to. Here one region
+debounces and emits a local signal `press` when it accepts a press; a second region toggles a light on
+`press`:
+
+<Sim example="patterns/debounce/debounced-toggle" caption="The same bouncy input as at the top of the page. One press, one toggle, in tick 9." />
+
+The two regions run in the same tick. In tick 9, `Debounce` emits `press`, and `Toggle` sees it in that
+same tick: KIELER schedules every emission of a signal before every test of it (see
+[Concurrent regions](/learn/concurrency/#talking-within-a-tick)). Note the order: debounce first, then
+react to the debounced event. Edge detection on the raw input counts the bounces, as the first example on
+this page shows.
+
+## Try it
+
+<TryIt example="patterns/debounce/debounce-asym-starter" solution="patterns/debounce/debounce-asym" title="Slow to press, quick to release">
+Change the debouncer so that a press needs **four** readings in a row, but a release only **two**. To
+test it, use the bouncy input of the `Debounce` tour above: `raw` true in ticks 2, 4 and 5, 7 to 11, and
+13. The starter accepts the press in tick 9 and the release in tick 16; your version should accept the
+press in tick 10 and the release in tick 15.
+</TryIt>
+
+<TryIt example="patterns/debounce/two-buttons-starter" solution="patterns/debounce/two-buttons" title="Two buttons">
+The starter debounces `rawA` into `pressedA` and ignores `rawB`. Make it debounce `rawB` into `pressedB`
+as well, independently, with the same rule. To test it: with `rawB` true from tick 5 to tick 8,
+`pressedB` should be true from tick 7 to tick 10, whatever `rawA` does. Hint: give each button its own
+region.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/debounce/debounce-predict"
+  ask={[{ tick: 6, value: 'pressed' }, { tick: 7, value: 'pressed' }, { tick: 12, value: 'pressed' }, { tick: 13, value: 'pressed' }]}
+  caption="The working debouncer, `Debounce`, with N = 3. What is `pressed` after ticks 6, 7, 12 and 13?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`pressed` is false after tick 6 and true after tick 7; it is still true after tick 12 and false after
+tick 13. The bounce in tick 4 sent the chart back to `Released`, so the three `true` readings in a row
+are those of ticks 5, 6 and 7, and the press is accepted in tick 7. On the way back, the bounce in tick
+10 returns to `Pressed`, and the release is accepted on the third `false` in a row, in tick 13.
+
+</details>
+
+<Quiz
+  question="A state has the transition `if 3 raw go to Pressed`, and is entered in tick 1. In ticks 2 to 6, `raw` reads true, false, true, false, true. When does the transition fire?"
+  options={['Never: `raw` is never true three ticks in a row', 'In tick 2', 'In tick 6, the third tick with `raw`', 'In tick 4']}
+  answer={2}
+>
+A count delay counts the ticks in which its trigger holds while the state is active, consecutive or not,
+starting after the entry tick. `raw` is true in ticks 2, 4 and 6, so the transition fires in tick 6. To
+require readings in a row, leave the state on a disagreeing reading, so that the next entry restarts the
+count.
+</Quiz>
+
+<KeyIdeas>
+- A bouncing contact produces several edges for one press. Debounce before detecting edges.
+- Accept a change only after N readings in a row. Pick N from the bounce time and the tick period; the
+  user feels a delay of about N ticks.
+- A count delay counts ticks in which its trigger holds, not ticks in a row. Leaving and re-entering a
+  state restarts its count delays, which is how the "maybe" states demand consecutive readings.
+- For large N, count in a variable declared outside the looping state.
+- Run the debouncer in its own region and let it emit a signal; other regions react to it in the same
+  tick.
+</KeyIdeas>
+
+Next, [Counters and timeouts](/patterns/counters/): counting ticks to measure time, with count delays
+and with variables.

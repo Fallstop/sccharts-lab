@@ -1,0 +1,43 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "W": false,
+        "A": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "Strong abort: the plain exit action runs (plainExit = 1), the `weak exit` does not (weakExit = 0)."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "N goes back to M."
+    },
+    {
+      "inputs": {
+        "W": true
+      },
+      "note": "Weak abort: the plain exit runs again (plainExit = 2), but the weak exit is skipped here too (weakExit = 0)."
+    },
+    {
+      "inputs": {
+        "W": false
+      },
+      "note": "N goes back to M."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "The inner region reaches F and M terminates through `join to`: both exit actions run (plainExit = 3, weakExit = 1). A weak exit runs only when the superstate terminates normally."
+    }
+  ],
+  "expect": "ok"
+}

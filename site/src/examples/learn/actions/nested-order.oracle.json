@@ -1,0 +1,123 @@
+{
+  "hash": "f9c68ebd84d939fdcee0c39db6a674cb27b2e75c",
+  "chart": "src/examples/learn/actions/nested-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "effectAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "immediateAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerEntryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerExitAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerExitAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "effectAt": 0,
+        "immediateAt": 0,
+        "innerEntryAt": 0,
+        "innerExitAt": 0,
+        "outerEntryAt": 0,
+        "outerExitAt": 0,
+        "step": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "effectAt": 3,
+        "immediateAt": 6,
+        "innerEntryAt": 5,
+        "innerExitAt": 1,
+        "outerEntryAt": 4,
+        "outerExitAt": 2,
+        "step": 6
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "effectAt": 3,
+        "immediateAt": 6,
+        "innerEntryAt": 5,
+        "innerExitAt": 1,
+        "outerEntryAt": 4,
+        "outerExitAt": 2,
+        "step": 6
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "take": false,
+        "serve": false
+      },
+      "note": "Tick 1: nobody waiting."
+    },
+    {
+      "inputs": {
+        "take": true
+      },
+      "note": "A ticket: 1."
+    },
+    {
+      "inputs": {
+        "take": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "take": true
+      },
+      "note": "Another ticket: 2."
+    },
+    {
+      "inputs": {
+        "take": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "serve": true
+      },
+      "note": "The counter serves one customer: 1."
+    },
+    {
+      "inputs": {
+        "serve": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "take": true,
+        "serve": true
+      },
+      "note": "A new ticket and a call to the counter in the same tick. The starter tries `if take` first and never looks at `serve`: 2. One customer has been served, but the count says otherwise."
+    },
+    {
+      "inputs": {
+        "take": false,
+        "serve": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "serve": true
+      },
+      "note": "Serve: 1. Your version shows 0 here."
+    },
+    {
+      "inputs": {
+        "serve": false
+      },
+      "note": "Nothing."
+    },
+    {
+      "inputs": {
+        "serve": true
+      },
+      "note": "Serve: 0. In your version the queue was already empty, so nothing changes."
+    },
+    {
+      "inputs": {
+        "serve": false
+      },
+      "note": "Nothing."
+    }
+  ],
+  "expect": "ok"
+}

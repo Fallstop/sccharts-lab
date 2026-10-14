@@ -1,0 +1,55 @@
+{
+  "hash": "7dc9fd329dd45bd9c3a7238ecda57fdad816bf57",
+  "chart": "tests/conformance/structure/29-ref-declaration-instance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "X": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "Y": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "X": true,
+        "Y": true
+      },
+      "values": {
+        "X": true,
+        "Y": true,
+        "O": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "Y": false
+      },
+      "values": {
+        "X": true,
+        "Y": false,
+        "O": false
+      },
+      "terminated": false
+    }
+  ]
+}

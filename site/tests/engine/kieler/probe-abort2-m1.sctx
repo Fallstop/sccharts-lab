@@ -1,0 +1,11 @@
+scchart M {
+  input bool c
+  output int y = 0
+  initial state A
+  go to S
+  state S {
+    initial state X
+  }
+  if c abort to S
+  do y += 2 abort to S
+}

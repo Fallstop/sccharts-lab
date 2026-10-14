@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"I": true, "J": false}, "note": "A is entered; its transition is delayed, so nothing fires: x = 0."},
+    {"inputs": {}, "note": "A's delayed transition fires (x = 1) and enters B in this same tick. B's immediate transition fires straight away (x = 11) and enters C. C's immediate transition is checked too, but J is false, so the reaction stops in C."},
+    {"inputs": {"J": true}, "note": "C was entered in the previous tick; its immediate transition is checked again in every later tick and now J holds: x = 111, state D."},
+    {"inputs": {}, "note": "D has no transitions: x stays 111."}
+  ],
+  "expect": "ok"
+}

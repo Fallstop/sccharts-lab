@@ -1,0 +1,172 @@
+{
+  "hash": "681e281f39a16d6cedf606a1a3cde23ee19bfbee",
+  "chart": "src/examples/learn/hierarchy/coffee.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "full": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "ground": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "cups": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "ready": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "ground": false,
+        "full": false
+      },
+      "values": {
+        "full": false,
+        "ground": false,
+        "start": false,
+        "cups": 0,
+        "ready": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "full": false,
+        "ground": false,
+        "start": true,
+        "cups": 0,
+        "ready": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false,
+        "ground": true
+      },
+      "values": {
+        "full": false,
+        "ground": true,
+        "start": false,
+        "cups": 0,
+        "ready": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "ground": false
+      },
+      "values": {
+        "full": false,
+        "ground": false,
+        "start": false,
+        "cups": 0,
+        "ready": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "full": true
+      },
+      "values": {
+        "full": true,
+        "ground": false,
+        "start": false,
+        "cups": 1,
+        "ready": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "full": false
+      },
+      "values": {
+        "full": false,
+        "ground": false,
+        "start": false,
+        "cups": 1,
+        "ready": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

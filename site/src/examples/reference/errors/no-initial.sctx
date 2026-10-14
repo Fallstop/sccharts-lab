@@ -1,0 +1,8 @@
+scchart NoInitial {
+  input bool A
+
+  state Idle
+    if A go to Busy
+
+  state Busy
+}

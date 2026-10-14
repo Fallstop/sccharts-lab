@@ -1,0 +1,220 @@
+{
+  "hash": "45aab0810ed813adab8b19a96739d3ddf7da4745",
+  "chart": "src/examples/learn/actions/labels.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 7,
+      "column": 8
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 10,
+      "column": 14
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 11,
+      "column": 15
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 12,
+      "column": 13
+    },
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 15,
+      "column": 10
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 18,
+      "column": 16
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 19,
+      "column": 15
+    },
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 22,
+      "column": 6
+    }
+  ],
+  "interface": {
+    "doorOpen": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "beep": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "openFor": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "doorOpen": false
+      },
+      "values": {
+        "doorOpen": false,
+        "beep": false,
+        "lamp": false,
+        "openFor": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "doorOpen": true
+      },
+      "values": {
+        "doorOpen": true,
+        "beep": false,
+        "lamp": true,
+        "openFor": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "doorOpen": true,
+        "beep": false,
+        "lamp": true,
+        "openFor": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "doorOpen": true,
+        "beep": false,
+        "lamp": true,
+        "openFor": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "doorOpen": true,
+        "beep": true,
+        "lamp": true,
+        "openFor": 3
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "doorOpen": true,
+        "beep": true,
+        "lamp": true,
+        "openFor": 4
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "doorOpen": false
+      },
+      "values": {
+        "doorOpen": false,
+        "beep": false,
+        "lamp": false,
+        "openFor": 5
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "doorOpen": false,
+        "beep": false,
+        "lamp": false,
+        "openFor": 5
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

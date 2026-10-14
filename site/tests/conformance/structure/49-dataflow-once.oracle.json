@@ -1,0 +1,52 @@
+{
+  "hash": "a24348927c511609f638c7cbd4fa4b32ea386e9b",
+  "chart": "tests/conformance/structure/49-dataflow-once.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "X": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "X": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

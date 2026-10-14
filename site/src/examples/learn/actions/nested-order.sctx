@@ -1,0 +1,26 @@
+scchart NestedOrder {
+  input bool leave
+  output int step = 0
+  output int innerExitAt = 0, outerExitAt = 0, effectAt = 0
+  output int outerEntryAt = 0, innerEntryAt = 0, immediateAt = 0
+
+  initial state Outer {
+    exit do step++; outerExitAt = step
+
+    initial state Inner {
+      exit do step++; innerExitAt = step
+    }
+  }
+  if leave do step++; effectAt = step go to Target
+
+  state Target {
+    entry do step++; outerEntryAt = step
+
+    initial state First {
+      entry do step++; innerEntryAt = step
+    }
+    immediate do step++; immediateAt = step go to Second
+
+    state Second
+  }
+}

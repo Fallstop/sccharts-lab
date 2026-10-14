@@ -1,0 +1,12 @@
+// The same for an initial superstate whose join leads to a plain state: warning, the join never fires.
+scchart C79NoFinalInitial {
+  input bool a
+  output bool done
+  initial state S {
+    initial state W
+    if a go to X
+    state X
+  }
+  join to D
+  state D
+}

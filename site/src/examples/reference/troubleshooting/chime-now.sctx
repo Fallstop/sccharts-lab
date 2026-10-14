@@ -1,0 +1,10 @@
+scchart ChimeNow {
+  input bool press
+  output signal chime
+
+  initial state Idle
+    if press go to Pressed
+
+  state Pressed
+    immediate do chime go to Idle
+}

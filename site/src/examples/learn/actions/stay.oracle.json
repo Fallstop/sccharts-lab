@@ -1,0 +1,88 @@
+{
+  "hash": "e213e8d346f5ce212bea712883e57472bed26583",
+  "chart": "src/examples/learn/actions/stay.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "press": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "presses": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "entries": 1,
+        "presses": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "entries": 1,
+        "presses": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "entries": 1,
+        "presses": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "entries": 1,
+        "presses": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "press": true,
+        "entries": 1,
+        "presses": 3
+      },
+      "terminated": false
+    }
+  ]
+}

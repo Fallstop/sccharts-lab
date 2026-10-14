@@ -1,0 +1,18 @@
+scchart Seatbelts {
+  input bool buckled[4]
+  output bool chime = true
+
+  initial state Checking {
+    region Seat for i : 0 to 3 {
+      initial state Open
+        if buckled[i] go to Fastened
+
+      final state Fastened
+    }
+  }
+  join to Ready
+
+  state Ready {
+    entry do chime = false
+  }
+}

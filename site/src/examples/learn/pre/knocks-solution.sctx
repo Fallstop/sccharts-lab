@@ -1,0 +1,13 @@
+scchart Knock {
+  input bool knock, away
+  output bool open = false
+
+  initial state Shut
+    if 3 knock && !pre(knock) do open = true go to Open
+    if away go to Away
+
+  state Away
+    if !away go to Shut
+
+  state Open
+}

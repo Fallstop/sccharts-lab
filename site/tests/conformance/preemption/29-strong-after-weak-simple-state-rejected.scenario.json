@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "W": false
+      },
+      "note": "The priority rule is checked for simple states too, even though strong and weak aborts behave alike there: KIELER rejects the chart."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Strong abort transitions must have a higher priority than weak abort or termination transitions."
+}

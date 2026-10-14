@@ -1,0 +1,7 @@
+scchart AssignSignal {
+  input bool A
+  output signal done
+
+  initial state Idle
+    if A do done = true go to Idle
+}

@@ -1,0 +1,16 @@
+scchart NestedRegionsConflict {
+  output int x
+
+  initial state S {
+    region I1 {
+      initial state A
+      do x = 1 go to B
+      state B
+    }
+    region I2 {
+      initial state A
+      do x = 2 go to B
+      state B
+    }
+  }
+}

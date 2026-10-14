@@ -1,0 +1,134 @@
+{
+  "hash": "215554e52e0d64fd2b2cab0ff7ffd3e068563a7b",
+  "chart": "src/examples/start/in-a-hurry/microwave-beep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "door": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "beep": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "heating": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "start": false,
+        "beep": false,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "door": false,
+        "start": true,
+        "beep": true,
+        "heating": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "door": false,
+        "start": false,
+        "beep": false,
+        "heating": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "door": false,
+        "start": true,
+        "beep": false,
+        "heating": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "start": false,
+        "door": true
+      },
+      "values": {
+        "door": true,
+        "start": false,
+        "beep": false,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

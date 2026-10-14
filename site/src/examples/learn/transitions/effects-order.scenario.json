@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "Tick 1 enters `A`."
+    },
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "The effects run left to right: `x = 1`, then `y = x + 1` reads that 1 and gives 2, then `x = 5`. After the tick, `x` is 5 and `y` is 2."
+    }
+  ],
+  "expect": "ok"
+}

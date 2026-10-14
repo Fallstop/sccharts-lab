@@ -1,0 +1,14 @@
+scchart SimpleEnum {
+  
+  enum Bit { ZERO, ONE }
+  
+  ref Bit b = Bit.ZERO
+  
+  initial state A
+   do b = Bit.ONE go to B
+   
+  state B
+   if b != Bit.ZERO go to C
+   
+  final state C
+}

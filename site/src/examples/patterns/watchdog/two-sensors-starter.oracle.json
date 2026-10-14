@@ -1,0 +1,260 @@
+{
+  "hash": "26227e9454b286625096ffbe838959c7e1ae91b3",
+  "chart": "src/examples/patterns/watchdog/two-sensors-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "interface": {
+    "beatA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "beatB": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "restart": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "expired": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false
+      },
+      "values": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "beatA": true,
+        "beatB": true
+      },
+      "values": {
+        "beatA": true,
+        "beatB": true,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "beatA": false,
+        "beatB": false
+      },
+      "values": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "beatA": true
+      },
+      "values": {
+        "beatA": true,
+        "beatB": false,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "beatA": false
+      },
+      "values": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "beatA": true
+      },
+      "values": {
+        "beatA": true,
+        "beatB": false,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "beatA": false
+      },
+      "values": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "beatA": true,
+        "restart": true,
+        "beatB": true
+      },
+      "values": {
+        "beatA": true,
+        "beatB": true,
+        "restart": true,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false
+      },
+      "values": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {},
+      "values": {
+        "beatA": false,
+        "beatB": false,
+        "restart": false,
+        "alarm": false,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

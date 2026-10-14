@@ -1,0 +1,280 @@
+{
+ "sourceHash": "335d145887ea606c",
+ "states": [
+  {
+   "path": [
+    "Counter"
+   ],
+   "rows": [
+    [
+     "Counter"
+    ],
+    [
+     "input bool ",
+     "start"
+    ],
+    [
+     "output int ",
+     "count = 0"
+    ],
+    [
+     "output bool ",
+     "done = false"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    595.5,
+    344.9
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Idle"
+   ],
+   "rows": [
+    [
+     "Idle"
+    ]
+   ],
+   "box": [
+    10,
+    144.5,
+    45.8,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Counting"
+   ],
+   "rows": [
+    [
+     "Counting"
+    ]
+   ],
+   "box": [
+    132.8,
+    10,
+    216.4,
+    195.7
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Counting",
+    0,
+    "Tick"
+   ],
+   "rows": [
+    [
+     "Tick"
+    ]
+   ],
+   "box": [
+    121.3,
+    10,
+    49.8,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Counting",
+    0,
+    "Full"
+   ],
+   "rows": [
+    [
+     "Full"
+    ]
+   ],
+   "box": [
+    120.3,
+    108.1,
+    51.8,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Finished"
+   ],
+   "rows": [
+    [
+     "Finished"
+    ]
+   ],
+   "box": [
+    493.4,
+    144.5,
+    78.3,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Counter",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    83.2,
+    581.7,
+    255.9
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Counting",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    7,
+    30.6,
+    203.1,
+    158.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NCounter$$N0$NCounting$$N0$NTick$EFull0",
+   "source": [
+    "Counter",
+    0,
+    "Counting",
+    0,
+    "Tick"
+   ],
+   "target": [
+    "Counter",
+    0,
+    "Counting",
+    0,
+    "Full"
+   ],
+   "text": "1: count >= 3",
+   "lines": [
+    "1: count >= 3"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NCounter$$N0$NCounting$$N0$NTick$ETick0",
+   "source": [
+    "Counter",
+    0,
+    "Counting",
+    0,
+    "Tick"
+   ],
+   "target": [
+    "Counter",
+    0,
+    "Counting",
+    0,
+    "Tick"
+   ],
+   "text": "2: / count++",
+   "lines": [
+    "2: / count++"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NCounter$$N0$NIdle$ECounting0",
+   "source": [
+    "Counter",
+    0,
+    "Idle"
+   ],
+   "target": [
+    "Counter",
+    0,
+    "Counting"
+   ],
+   "text": "start",
+   "lines": [
+    "start"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NCounter$$N0$NCounting$EFinished0",
+   "source": [
+    "Counter",
+    0,
+    "Counting"
+   ],
+   "target": [
+    "Counter",
+    0,
+    "Finished"
+   ],
+   "text": "/ done = true",
+   "lines": [
+    "/ done = true"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  },
+  {
+   "id": "$root$NCounter$$N0$NFinished$EIdle0",
+   "source": [
+    "Counter",
+    0,
+    "Finished"
+   ],
+   "target": [
+    "Counter",
+    0,
+    "Idle"
+   ],
+   "text": "!start / done = false; count = 0",
+   "lines": [
+    "!start",
+    "/ done = false;",
+    "  count = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

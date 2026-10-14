@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "tick": false
+      },
+      "note": "KIELER rejects the chart: the output `light` of `Flasher` is not connected to anything, and the referencing chart has no variable called `light` either."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Valued object in the referenced scope was not bound properly: light"
+}

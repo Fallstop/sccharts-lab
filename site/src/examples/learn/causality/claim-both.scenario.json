@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": {}, "note": "Rejected: each region's test of `busy` must wait for the other region's emission, and each emission comes after its own region's test." }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

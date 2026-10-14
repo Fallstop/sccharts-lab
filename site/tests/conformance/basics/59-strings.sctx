@@ -1,0 +1,9 @@
+scchart Strings {
+  input string S
+  output string t = "hi"
+  output string copy
+  output bool inputEqualsLiteral, variableEqualsLiteral, literalEqualsLiteral, isNull
+
+  initial state A
+  do inputEqualsLiteral = S == "hi"; variableEqualsLiteral = t == "hi"; literalEqualsLiteral = "x" == "x"; isNull = copy == null; copy = S go to A
+}

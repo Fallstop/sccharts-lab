@@ -1,0 +1,10 @@
+#hostcode "#include <stdlib.h>"
+// randomize() (srand) compiles when it does not run in the netlist compiler's tick-1 block and <stdlib.h> is
+// included. Current KIELER adds the include only for random(); official KIELER 0.3.0 adds none.
+scchart St99Reseed {
+  input bool A
+  output int n = 0
+  initial state S
+  if A do randomize(); n += 1 go to T
+  state T
+}

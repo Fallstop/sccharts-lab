@@ -1,0 +1,78 @@
+{
+  "hash": "58dad25d6f1f5073341b38850af8e628c7889972",
+  "chart": "src/examples/advanced/dataflow/sfby-chain.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "level": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "chain": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "two": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "level": 10
+      },
+      "values": {
+        "level": 10,
+        "chain": 1,
+        "two": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "level": 20
+      },
+      "values": {
+        "level": 20,
+        "chain": 2,
+        "two": 20
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "level": 30
+      },
+      "values": {
+        "level": 30,
+        "chain": 2,
+        "two": 30
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "level": 40
+      },
+      "values": {
+        "level": 40,
+        "chain": 2,
+        "two": 40
+      },
+      "terminated": false
+    }
+  ]
+}

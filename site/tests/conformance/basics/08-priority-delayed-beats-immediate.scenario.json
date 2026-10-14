@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": false, "J": false}, "note": "A is entered; the immediate transition is checked but J is false. x = 0."},
+    {"inputs": {"I": true, "J": true}, "note": "From the second tick in A on, every transition is a candidate and priority decides, whether delayed or immediate. Both are enabled; the delayed priority-1 transition wins: x = 1, state B."},
+    {"inputs": {}, "note": "B has no transitions; x stays 1."}
+  ],
+  "expect": "ok"
+}

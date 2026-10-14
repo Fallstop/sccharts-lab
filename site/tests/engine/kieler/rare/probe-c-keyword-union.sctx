@@ -1,0 +1,7 @@
+scchart KeywordUnion {
+  input bool A
+  output int union
+  initial state S
+    if A do union = 1 go to T
+  state T
+}

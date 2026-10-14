@@ -1,0 +1,18 @@
+scchart PriorityFirstWins {
+  input bool I, J
+  output int x = 0
+
+  initial state A
+  if I do x = 1 go to B
+  if J do x = 2 go to C
+  do x = 3 go to D
+
+  state B
+  go to A
+
+  state C
+  go to A
+
+  state D
+  go to A
+}

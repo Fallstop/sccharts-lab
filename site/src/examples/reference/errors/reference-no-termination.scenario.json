@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "tick": false
+      },
+      "note": "Tick 1 enters `Blinking`, a copy of the chart `Flip`."
+    },
+    {
+      "inputs": {
+        "tick": true
+      },
+      "note": "The copy switches the light on. `Flip` has no final state, so it never terminates and `join to Done` can never fire; that is what KIELER warns about."
+    },
+    {
+      "note": "The light goes off again; `finished` stays false for ever."
+    }
+  ],
+  "expect": "ok"
+}

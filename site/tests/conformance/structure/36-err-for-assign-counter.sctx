@@ -1,0 +1,9 @@
+// The counter of a for-region is a constant in each copy; assigning to it is rejected.
+scchart St36Bad {
+  output int s = 0
+  region for i : 1 to 2 {
+    initial state W
+    immediate do i = 5; s += i go to D
+    final state D
+  }
+}

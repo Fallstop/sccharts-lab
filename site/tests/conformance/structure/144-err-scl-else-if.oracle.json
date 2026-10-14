@@ -1,0 +1,28 @@
+{
+  "hash": "ecdc6e1112d6c3afe87ea8990bc7520387b401d3",
+  "chart": "tests/conformance/structure/144-err-scl-else-if.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "missing '{' at 'if'",
+    "missing '}' at 'go'"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "missing '{' at 'if'",
+      "line": 9,
+      "column": 12,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 1,
+      "message": "missing '}' at 'go'",
+      "line": 12,
+      "column": 5,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    }
+  ],
+  "ticks": []
+}

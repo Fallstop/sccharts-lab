@@ -1,0 +1,10 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz23 {
+  output int g = 100
+  output int o = 0
+  initial state S {
+    global int g = 5
+    initial state A
+    do g++; o = g go to A
+  }
+}

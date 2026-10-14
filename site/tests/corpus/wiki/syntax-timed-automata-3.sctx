@@ -1,0 +1,26 @@
+@DefaultSleep 1000
+scchart Motor {
+  output bool motorL = false, motorR = false
+
+  region Left {
+    @SoftReset
+    period 4.2
+    
+    initial state Off
+      do motorL = true go to On
+    
+    state On
+      do motorL = false go to Off
+  }
+  
+  region Right {
+    @SoftReset
+    period 1.0
+    
+    initial state Off
+      do motorR = true go to On
+    
+    state On
+      do motorR = false go to Off
+  }
+}

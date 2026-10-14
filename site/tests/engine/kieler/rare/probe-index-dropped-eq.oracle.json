@@ -1,0 +1,126 @@
+{
+  "hash": "bb2ad69590825c6005bc2d0271ede8cb2857067e",
+  "chart": "tests/engine/kieler/rare/probe-index-dropped-eq.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "the comparison will always evaluate as ‘false’ for the address of ‘ov’ will never be NULL [-Waddress]"
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "ov": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0,
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "n": 0,
+        "ov": [
+          0,
+          0
+        ],
+        "y": 0,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 0,
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "ov": [
+          0,
+          0
+        ],
+        "y": 0,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 1,
+        "a": true,
+        "b": true
+      },
+      "values": {
+        "a": true,
+        "n": 1,
+        "ov": [
+          0,
+          0
+        ],
+        "y": 0,
+        "b": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 0,
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "ov": [
+          0,
+          0
+        ],
+        "y": 0,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

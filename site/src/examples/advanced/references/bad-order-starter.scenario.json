@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "front": false, "back": false }, "note": "Tick 1 enters both bells." },
+    { "inputs": { "front": true }, "note": "Somebody rings at the front, but `frontRings` stays 0. No error, no warning." },
+    { "inputs": { "front": false }, "note": "Nothing." },
+    { "inputs": { "back": true }, "note": "The back bell does not ring either." },
+    { "inputs": { "back": false }, "note": "Nothing." }
+  ],
+  "expect": "ok"
+}

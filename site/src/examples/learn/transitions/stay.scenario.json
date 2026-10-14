@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1 enters `Off`."
+    },
+    {
+      "note": "`!button` holds, so the self-loop fires: the chart leaves `Off` and enters it again."
+    },
+    {
+      "note": "And again, in every tick in which `button` is false."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Now the second transition fires: `light` is true, `On`."
+    }
+  ],
+  "expect": "ok"
+}

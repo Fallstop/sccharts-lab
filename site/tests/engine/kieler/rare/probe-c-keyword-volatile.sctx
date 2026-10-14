@@ -1,0 +1,7 @@
+scchart KeywordVolatile {
+  input bool A
+  output int volatile
+  initial state S
+    if A do volatile = 1 go to T
+  state T
+}

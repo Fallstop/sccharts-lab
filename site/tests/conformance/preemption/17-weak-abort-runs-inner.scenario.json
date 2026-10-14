@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "W": false
+      },
+      "note": "Tick 1 enters M and I1."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "W": true
+      },
+      "note": "Weak abort (`go to`): the inner behaviour runs to completion first, including the immediate chain I1 → I2 → I3 (inner = 1, chained = 1); then M is left (effect = 1)."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "W": false
+      },
+      "note": "In Done: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

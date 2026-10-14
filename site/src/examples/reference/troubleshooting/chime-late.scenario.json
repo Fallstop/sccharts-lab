@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "press": true }, "note": "`press` takes the chart to `Pressed`. `Pressed` has just been entered, and its transition is delayed, so it waits." },
+    { "inputs": { "press": false }, "note": "Now the transition out of `Pressed` is checked. It has no trigger, so it fires: `chime` is emitted, one tick after the press." },
+    { "inputs": {}, "note": "Back in `Idle`, waiting." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "S": false, "A": false, "B": false }, "note": "M, P, X." },
+    { "inputs": { "A": true }, "note": "X -> Y (enters = 1)." },
+    { "inputs": { "S": true, "A": true, "B": true }, "note": "Weakly suspended: Y -> X runs, P -> Q runs (enters = 11), then every region goes back: P with Y." },
+    { "inputs": { "S": false, "A": false, "B": false }, "note": "Back in P / Y." },
+    { "inputs": { "A": true }, "note": "Y -> X." },
+    { "inputs": { "A": false, "B": true }, "note": "P -> Q (enters = 21)." },
+    { "inputs": { "S": true, "B": true }, "note": "Weakly suspended: Q -> P runs, then back to Q." },
+    { "inputs": { "S": false, "B": false }, "note": "In Q." }
+  ],
+  "expect": "ok"
+}

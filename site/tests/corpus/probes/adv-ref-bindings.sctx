@@ -1,0 +1,12 @@
+scchart Adder {
+  input int a, b
+  output int s
+  dataflow:
+  s = a + b
+}
+scchart UsesAdder {
+  input int x
+  output int y
+  ref Adder add(x to a, x to b, y to s)
+  initial state S
+}

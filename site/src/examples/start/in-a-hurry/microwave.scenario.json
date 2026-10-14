@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "door": false, "second": false }, "note": "Tick 1 enters `Idle` and `Dark`." },
+    { "inputs": { "start": true }, "note": "`start` becomes true. `start && !pre(start)` holds, because `start` was false in the previous tick. The oven beeps, heats and enters `Cooking`, and with it `Heat`. The lamp comes on." },
+    { "inputs": { "second": true }, "note": "The timer reports a second. `if 3 second` counts it: one." },
+    { "inputs": { "second": false }, "note": "No second has passed in this tick, so the count stays at one." },
+    { "inputs": { "second": true }, "note": "Two." },
+    { "inputs": { "second": false }, "note": "Still two." },
+    { "inputs": { "second": true }, "note": "Three: `Heat` goes to `Done`, a final state, so `Cooking` has finished. Its `join to` fires in the same tick: `heating` goes off and the oven beeps. The lamp goes dark." },
+    { "inputs": { "second": false }, "note": "`start` is still true: nobody has released it. Without `!pre(start)` the oven would start again now. With it, nothing happens, because `start` did not *become* true in this tick." },
+    { "inputs": { "start": false }, "note": "`start` is released." },
+    { "inputs": { "start": true }, "note": "A new press: the oven beeps and cooks again, and `if 3 second` starts counting from zero." },
+    { "inputs": { "door": true }, "note": "The door opens in the middle of cooking. The strong abort `abort to DoorOpen` leaves `Cooking` at once, before `Heat` reacts, and switches `heating` off. The lamp stays on: the door is open." },
+    { "inputs": { "door": false }, "note": "The door shuts: `DoorOpen` returns to `Idle`, and the lamp goes dark. `start` is still true, but that is not a new press." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,14 @@
+scchart JoinLoop {
+  input bool A
+  output int entries = 0
+
+  initial state M {
+    entry do entries += 1
+
+    initial state I
+    immediate go to F
+
+    final state F
+  }
+  join to M
+}

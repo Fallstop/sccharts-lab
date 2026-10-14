@@ -1,0 +1,215 @@
+{
+ "sourceHash": "8aba04b683f4f473",
+ "states": [
+  {
+   "path": [
+    "Pol"
+   ],
+   "rows": [
+    [
+     "Pol"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "host class ",
+     "Counter {"
+    ],
+    [
+     "policy ",
+     "P"
+    ],
+    [
+     "void ",
+     "increment( )"
+    ],
+    [
+     "int ",
+     "getValue( )"
+    ],
+    [
+     "} counter"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    366.9,
+    386.4
+   ]
+  },
+  {
+   "path": [
+    "Pol",
+    "P",
+    "count"
+   ],
+   "rows": [
+    [
+     "count"
+    ]
+   ],
+   "box": [
+    23.1,
+    55.6,
+    59.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Pol",
+    "P",
+    "read"
+   ],
+   "rows": [
+    [
+     "read"
+    ]
+   ],
+   "box": [
+    291.8,
+    55.6,
+    51.2,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Pol",
+    1,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    159.5,
+    85.6,
+    34,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Pol",
+    "P"
+   ],
+   "label": [
+    "policy ",
+    "P"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    352.9,
+    111.2
+   ]
+  },
+  {
+   "path": [
+    "Pol",
+    1
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    250.1,
+    352.9,
+    130.2
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NPol$NP$Ncount$Eread0",
+   "source": [
+    "Pol",
+    "P",
+    "count"
+   ],
+   "target": [
+    "Pol",
+    "P",
+    "read"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NPol$NP$Ncount$Ecount0",
+   "source": [
+    "Pol",
+    "P",
+    "count"
+   ],
+   "target": [
+    "Pol",
+    "P",
+    "count"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NPol$NP$Nread$Ecount0",
+   "source": [
+    "Pol",
+    "P",
+    "read"
+   ],
+   "target": [
+    "Pol",
+    "P",
+    "count"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NPol$$N1$NA$EA0",
+   "source": [
+    "Pol",
+    1,
+    "A"
+   ],
+   "target": [
+    "Pol",
+    1,
+    "A"
+   ],
+   "text": "/ counter.increment(); O = counter.getValue()",
+   "lines": [
+    "/ counter.increment();",
+    "  O = counter.getValue()"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

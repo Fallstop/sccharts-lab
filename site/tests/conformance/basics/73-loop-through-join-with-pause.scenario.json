@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Accepted: the cycle A -> B -> A has only immediate transitions at the top level (an untriggered join to is immediate), but every trip round it passes the delayed A1 -> A2 inside A, so no tick can go round twice. Tick 1 enters A and A1."},
+    {"inputs": {}, "note": "A1 -> A2 (delayed), so A's region is final; the join fires at once, B's immediate transition re-enters A (x = 1) and A1 waits again. taken = [1, 1, 1] (order: A's join, A1 -> A2, B -> A)."},
+    {"inputs": {}, "note": "The same each tick: x = 2."},
+    {"inputs": {}, "note": "Once more round the cycle: x = 3."}
+  ],
+  "expect": "ok"
+}

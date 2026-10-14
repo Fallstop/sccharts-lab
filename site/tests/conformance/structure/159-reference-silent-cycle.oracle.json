@@ -1,0 +1,208 @@
+{
+  "hash": "8a4c24001127ef42955407cd09d2e77dab43d269",
+  "chart": "tests/conformance/structure/159-reference-silent-cycle.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Spin2, Spin]",
+      "line": 31,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Spin2, Spin]",
+      "line": 29,
+      "column": 7
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "x": 1,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "x": 2,
+        "y": 1,
+        "z": 0
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "x": 2,
+        "y": 2,
+        "z": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "x": 3,
+        "y": 3,
+        "z": 0
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "x": 4,
+        "y": 4,
+        "z": 0
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "x": 4,
+        "y": 5,
+        "z": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "x": 5,
+        "y": 6,
+        "z": 0
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "hash": "981f7cc2fc0718fde84c71ade90270b09b00336b",
+  "chart": "tests/conformance/basics/66-kieler-bug-compound-then-read.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "shown": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "count": 1,
+        "shown": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "count": 2,
+        "shown": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "count": 3,
+        "shown": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

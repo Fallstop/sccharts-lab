@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters `ABO`, `WaitAB`, `WaitA` and `WaitB`." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` is done." },
+    { "inputs": { "A": false }, "note": "Waiting for `B`." },
+    { "inputs": { "B": true, "R": true }, "note": "`B` and `R` in the same tick. The reset is a strong abort, so `ABO` is left before anything inside it moves: `HandleB` never sees this `B`, the join does not happen and `O` is absent. `ABO` starts again from `WaitA` and `WaitB`." },
+    { "inputs": { "B": false, "R": false }, "note": "Waiting for `A` and `B` again." },
+    { "inputs": { "A": true, "B": true }, "note": "`A` and `B` together: both regions finish in this tick and `O` is present." },
+    { "inputs": { "A": false, "B": false }, "note": "In `Done` until the next `R`." }
+  ],
+  "expect": "ok"
+}

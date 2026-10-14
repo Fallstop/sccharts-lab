@@ -1,0 +1,16 @@
+scchart KnockRestartByHand {
+  input bool knock, restart
+  output signal unlock
+  output int count
+
+  initial state Door {
+    initial state Shut {
+      entry do count = 0
+      during if knock do count++
+    }
+    if count == 3 do unlock go to Open
+
+    state Open
+  }
+  if restart abort to Door
+}

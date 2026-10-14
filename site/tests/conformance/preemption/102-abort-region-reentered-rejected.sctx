@@ -1,0 +1,20 @@
+// A state with an abort region, re-entered by its own join in the tick it finishes, whose other region can finish
+// immediately: the regions run in sequence (a sequential fork), and re-entering them in the same tick is an
+// instantaneous loop (official: "Sequential forks must not be schizophrenic!").
+scchart P102Reentered {
+  input bool a
+  output int x = 0
+  initial state M {
+    region {
+      initial state I
+      immediate if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if a go to G
+      final state G
+    }
+  }
+  join to M
+}

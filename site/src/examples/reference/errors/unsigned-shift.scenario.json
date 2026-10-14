@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": 8
+      },
+      "note": "KIELER parses `>>>`, but C has no such operator, so the generated code fails to compile."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Compiler did not return success"
+}

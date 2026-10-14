@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: `Ping` and `Pong` are connected by a cycle of immediate transitions, so a tick could go round it for ever. KIELER does not look at the triggers: that `A` and `!A` exclude each other does not help."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}
