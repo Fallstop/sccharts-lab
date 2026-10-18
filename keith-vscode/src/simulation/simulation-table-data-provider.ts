@@ -30,7 +30,6 @@ import {
     ADD_CO_SIMULATION,
     COMPILE_AND_SIMULATE,
     COMPILE_AND_SIMULATE_SNAPSHOT,
-    LOAD_TRACE,
     NEW_VALUE_SIMULATION,
     STEP_BACK_SIMULATION,
     RUN_TO_BREAKPOINT,
@@ -39,7 +38,6 @@ import {
     PAUSE_SIMULATION,
     REBUILD_SIMULATION,
     RUN_SIMULATION,
-    SAVE_TRACE,
     SET_SIMULATION_STEP_DELAY,
     SET_SIMULATION_TYPE_TO,
     SHOW_INTERNAL_VARIABLES,
@@ -52,20 +50,19 @@ import {
     isInternal,
     isTimeDelta,
     isTimeRelated,
-    LoadedTraceMessage,
-    SavedTraceMessage,
     SimulationDataBlackList,
     SimulationStartedMessage,
     SimulationStepMessage,
     SimulationStoppedMessage,
     strMapToObj,
-    Trace,
 } from './helper'
 import { BreakpointPause, SimulationPhase } from './protocol'
 import { isCompatibleInput } from './input-value'
 import { inputValue, readDataPool } from './data-pool'
 import { StepController } from './step-controller'
 import { DebugStepFields, SimulationDebugger } from './debugger'
+import { TraceRecord, TraceRole, sameTraceValue } from './trace-file'
+import { ReplayTarget, TraceReplay, coerceInput } from './trace-replay'
 
 export const externalStepMessageType = 'keith/simulation/didStep'
 export const valuesForNextStepMessageType = 'keith/simulation/valuesForNextStep'
@@ -166,10 +163,15 @@ export class SimulationTableDataProvider {
      */
     public categories: string[] = []
 
+    /** A trace file driving the inputs; kept across restarts of the same model. */
+    public replay: TraceReplay | undefined
+
     /**
-     * The trace that is loaded for the current model.
+     * Set while several models run on one sequence: their simulations start without opening an
+     * editor or the diagram. The server redraws an open diagram after every tick, and at full speed
+     * those redraws pile up faster than it finishes them.
      */
-    public currentTrace: Trace
+    public quiet = false
 
     public simulationStep = -1
 
@@ -311,18 +313,6 @@ export class SimulationTableDataProvider {
         this.context.subscriptions.push(
             vscode.commands.registerCommand(RUN_SIMULATION.command, async () => {
                 await this.setPlaying(true)
-            })
-        )
-
-        this.context.subscriptions.push(
-            vscode.commands.registerCommand(SAVE_TRACE.command, async () => {
-                await this.saveTrace()
-            })
-        )
-
-        this.context.subscriptions.push(
-            vscode.commands.registerCommand(LOAD_TRACE.command, async () => {
-                await this.loadTrace()
             })
         )
 
@@ -586,7 +576,45 @@ export class SimulationTableDataProvider {
         this.onDidChangeOpenStateEmitter.dispose()
     }
 
-    async compileAndSimulate(snapshot: boolean, uri?: vscode.Uri): Promise<boolean> {
+    /** The simulation system the running (or last) simulation was built with. */
+    get systemId(): string | undefined {
+        return this.lastSystem?.id
+    }
+
+    /** The simulation systems offered for the model last shown in an editor. */
+    get simulationSystems(): CompilationSystem[] {
+        return this.systems
+    }
+
+    /** Builds `uri` with `systemId` and starts it, without showing the model in an editor. */
+    async simulateWithoutEditor(uri: vscode.Uri, systemId: string): Promise<boolean> {
+        if (
+            this.pickingSystem ||
+            this.phase === 'starting' ||
+            this.phase === 'stopping' ||
+            this.kico.compiling ||
+            this.kico.generatingCode ||
+            this.kico.preparingSimulation
+        )
+            return false
+        this.kico.preparingSimulation = true
+        try {
+            if (this.simulationRunning && !(await this.stopSimulation())) return false
+            const { generation } = this
+            const document = await vscode.workspace.openTextDocument(uri)
+            if (document.isDirty && !(await document.save())) throw new Error('The model could not be saved.')
+            if (generation !== this.generation) return false
+            return await this.startBuild(document, systemId, false)
+        } catch (error) {
+            this.fail(`The simulation could not be prepared: ${error}`)
+            return false
+        } finally {
+            this.kico.preparingSimulation = false
+        }
+    }
+
+    /** With `systemId` the model is built with that system without asking, as when running several models. */
+    async compileAndSimulate(snapshot: boolean, uri?: vscode.Uri, systemId?: string): Promise<boolean> {
         if (
             this.pickingSystem ||
             this.phase === 'starting' ||
@@ -624,10 +652,15 @@ export class SimulationTableDataProvider {
                 await vscode.window.showInformationMessage('Open a model and wait for its simulation systems to load.')
                 return false
             }
-            const selected = await vscode.window.showQuickPick(
-                systems.map((system) => ({ label: system.label, description: system.id, system })),
-                { title: snapshot ? 'Simulate diagram snapshot' : 'Simulate model' }
-            )
+            const items = systems.map((system) => ({ label: system.label, description: system.id, system }))
+            const selected = systemId
+                ? items.find((item) => item.system.id === systemId)
+                : await vscode.window.showQuickPick(items, {
+                      title: snapshot ? 'Simulate diagram snapshot' : 'Simulate model',
+                  })
+            if (systemId && !selected) {
+                throw new Error(`${path.basename(editor.document.uri.path)} has no simulation system ${systemId}.`)
+            }
             if (!selected || generation !== this.generation) return false
             this.kico.preparingSimulation = true
             if (this.simulationRunning && !(await this.stopSimulation())) return false
@@ -860,6 +893,14 @@ export class SimulationTableDataProvider {
         vscode.commands.executeCommand('setContext', 'keith.vscode:simulationRunning', this.simulationRunning)
         this.simulationStep = 0
         this.phase = 'running'
+        if (this.replay) {
+            // Restarting the same model replays the file again from tick 1; another model drops it.
+            this.replay =
+                this.replay.modelUri === this.modelUri
+                    ? this.replay.rebind(this.replayTargets(), this.modelUri)
+                    : undefined
+            this.queueReplayInputs()
+        }
         this.initializeTable()
         // Breakpoints and watches remembered for this model apply to the new run.
         if (this.modelUri) {
@@ -868,7 +909,7 @@ export class SimulationTableDataProvider {
             })
         }
         // The diagram preview carries the simulation controls, so bring it up next to the model being simulated.
-        if (this.modelUri) {
+        if (this.modelUri && !this.quiet) {
             vscode.commands.executeCommand('keith-vscode.diagram.open', vscode.Uri.parse(this.modelUri), {
                 preserveFocus: true,
             })
@@ -996,67 +1037,127 @@ export class SimulationTableDataProvider {
         }
     }
 
-    /**
-     * Asks the user for a file to store the simulation trace from the current simulation in a file.
-     */
-    async saveTrace(): Promise<void> {
-        // Ask the user where to save this trace
-        const currentFolder = vscode.workspace.workspaceFolders
-            ? vscode.workspace.workspaceFolders[0].uri.fsPath
-            : undefined
-        const uri = await vscode.window.showSaveDialog({
-            filters: { KTrace: ['ktrace'] },
-            title: 'Save current KTrace to...',
-            defaultUri: currentFolder ? vscode.Uri.file(`${currentFolder}/trace.ktrace`) : undefined,
-        })
-        if (uri === undefined) {
-            // The user did not pick any file to save to.
-            return
-        }
+    private replayTargets(): ReplayTarget[] {
+        return Array.from(this.simulationData.values()).map(({ id, input, output, type }) => ({
+            id,
+            input,
+            output,
+            type,
+        }))
+    }
 
-        // Request the LS to save the current trace into the file picked by the user.
-        const lsClient = await this.lsClient
-        const message = (await lsClient.sendRequest('keith/simulation/saveTrace', uri.path)) as SavedTraceMessage
-        if (!message.successful) {
-            const errorMessage = `could not save trace: ${message.reason}`
-            this.output.appendLine(`[ERROR]\t${errorMessage}`)
-            vscode.window.showErrorMessage(errorMessage)
+    /** Drives the inputs from `trace`, starting with the next tick, and checks the outputs against it. */
+    startReplay(label: string, trace: TraceRecord, checkOutputs = true): TraceReplay | undefined {
+        if (!this.simulationRunning || this.phase !== 'running') return undefined
+        this.replay = new TraceReplay(
+            label,
+            trace,
+            this.replayTargets(),
+            checkOutputs,
+            this.modelUri,
+            this.simulationStep
+        )
+        this.queueReplayInputs()
+        this.update()
+        return this.replay
+    }
+
+    stopReplay(): void {
+        this.replay = undefined
+        this.update()
+    }
+
+    /** Queues the replayed values for the next tick; they replace what the user queued. */
+    private queueReplayInputs(): void {
+        if (!this.replay) return
+        const values = this.replay.inputsFor(this.simulationStep + 1, (id) => this.valuesForNextStep.get(id))
+        values.forEach((value, id) => {
+            if (this.changedValuesForNextStep.has(id) || !sameTraceValue(this.valuesForNextStep.get(id), value)) {
+                this.valuesForNextStep.set(id, value)
+                this.changedValuesForNextStep.set(id, value)
+            }
+        })
+    }
+
+    /** Checks the tick that just ran against the replayed file; true when running should stop here. */
+    private checkReplay(): boolean {
+        const { replay } = this
+        if (!replay || this.simulationStep <= replay.offset || this.simulationStep > replay.end) return false
+        const before = replay.state(this.simulationStep).mismatchTicks
+        const found = replay.check(this.simulationStep, (id) => {
+            const { data } = this.simulationData.get(id)!
+            return data[data.length - 1]
+        })
+        this.queueReplayInputs()
+        // Running stops where the file ends, where it says pause, and where the outputs first differ.
+        return (
+            this.simulationStep === replay.end ||
+            replay.pausesAfter(this.simulationStep) ||
+            (found.length > 0 && before === 0)
+        )
+    }
+
+    /** The run so far as a trace: inputs, outputs and the model's own variables, without generated ones. */
+    currentTrace(): TraceRecord {
+        const entries = Array.from(this.simulationData.values()).filter(
+            (entry) => !this.isBlacklisted(entry) && !this.isInternal(entry)
+        )
+        const roleOf = (entry: SimulationData): TraceRole => {
+            if (entry.input) return 'input'
+            return entry.output ? 'output' : 'local'
+        }
+        const order: TraceRole[] = ['input', 'output', 'local']
+        entries.sort((a, b) => order.indexOf(roleOf(a)) - order.indexOf(roleOf(b)))
+        const ticks = Math.max(0, this.simulationStep)
+        return {
+            model: this.modelUri ? path.basename(vscode.Uri.parse(this.modelUri).path) : undefined,
+            variables: entries.map((entry) => ({ name: entry.id, role: roleOf(entry), type: entry.type })),
+            ticks: Array.from({ length: ticks }, (_, index) =>
+                Object.fromEntries(entries.map((entry) => [entry.id, entry.data[index]]))
+            ),
         }
     }
 
     /**
-     * Asks the user for a file to load simulation trace from and loads that onto the client and server.
+     * Queues values for the next tick, in the inputs' types. Names that are no input of the model are
+     * skipped; returns the inputs whose value does not fit.
      */
-    async loadTrace(): Promise<void> {
-        // Loading the trace file.
-        const uris = await vscode.window.showOpenDialog({
-            canSelectMany: false,
-            filters: { KTrace: ['ktrace'] },
+    queueInputs(values: Record<string, unknown>): string[] {
+        const unfit: string[] = []
+        Object.entries(values).forEach(([id, raw]) => {
+            const entry = this.simulationData.get(id)
+            if (!entry?.input || raw === undefined) return
+            const value = coerceInput(raw, entry.type)
+            if (!isCompatibleInput(value, this.valuesForNextStep.get(id))) {
+                unfit.push(id)
+            } else if (
+                this.changedValuesForNextStep.has(id) ||
+                !sameTraceValue(this.valuesForNextStep.get(id), value)
+            ) {
+                this.valuesForNextStep.set(id, value)
+                this.changedValuesForNextStep.set(id, value)
+            }
         })
-        if (uris === undefined) {
-            // The user did not pick any file to load.
-            return
-        }
-        await this.loadTraceFromUri(uris[0])
+        return unfit
     }
 
-    async loadTraceFromUri(uri: vscode.Uri): Promise<void> {
-        // Send the trace file uri to the server to convert it into a Trace model and to load it.
-        const lClient = await this.lsClient
-        const message = (await lClient.sendRequest('keith/simulation/loadTrace', uri.path)) as LoadedTraceMessage
-        if (message.successful) {
-            this.debugger.traceLoaded = true
-            this.onDidChangeViewStateEmitter.fire()
-        }
+    /** A variable's value after the last tick, or its initial value before the first. */
+    latestValue(id: string): unknown {
+        const data = this.simulationData.get(id)?.data
+        return data && data.length > 0 ? data[data.length - 1] : this.valuesForNextStep.get(id)
+    }
 
-        if (!message.successful) {
-            const errorMessage = `could not load trace: ${message.reason}`
-            this.output.appendLine(`[ERROR]\t${errorMessage}`)
-            vscode.window.showErrorMessage(errorMessage)
-            return
+    /** Runs `count` ticks as fast as the server answers; returns how many ran. */
+    async stepTimes(count: number, cancelled: () => boolean = () => false): Promise<number> {
+        const start = this.simulationStep
+        for (let tick = 0; tick < count; tick++) {
+            if (!this.simulationRunning || this.phase !== 'running' || this.play || cancelled()) break
+            // eslint-disable-next-line no-await-in-loop
+            await this.executeSimulationStep()
+            // A failed tick stops the simulation and leaves the count where it was.
+            if (this.simulationStep !== start + tick + 1) break
         }
-        // Store the trace model here as well.
-        this.currentTrace = message.trace
+        return this.simulationRunning ? this.simulationStep - start : 0
     }
 
     /**
@@ -1104,6 +1205,8 @@ export class SimulationTableDataProvider {
             })
             this.changedValuesForNextStep.clear()
             this.simulationStep = step
+            this.replay?.rewindTo(step)
+            this.queueReplayInputs()
             this.debugger.onStep(debug)
             this.update()
             return true
@@ -1117,9 +1220,12 @@ export class SimulationTableDataProvider {
             }
         })
         this.simulationStep++
+        const replayStops = this.checkReplay()
         this.stepper.acknowledge()
         if (this.debugger.onStep(debug) && this.play) {
             // A breakpoint fired: stop running ticks automatically, the user decides how to go on.
+            this.setPlaying(false)
+        } else if (replayStops && this.play) {
             this.setPlaying(false)
         }
         this.update()

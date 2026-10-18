@@ -139,7 +139,7 @@ test('Space respects buttons and selectors, ignores key repeats, and hidden view
     assert.deepEqual(sent.pop(), { kind: 'requestState', modelUri })
 })
 
-test('the trace drawer carries the generated-symbols toggle and the trace save and load buttons', () => {
+test('the trace drawer carries the generated-symbols toggle and the trace save, replay and compare buttons', () => {
     const { SimulationView } = load('src-webview/diagram/simulation/view.ts')
     const sent = []
     let update
@@ -147,16 +147,54 @@ test('the trace drawer carries the generated-symbols toggle and the trace save a
     update(state({ tick: 2 }))
     const tools = document.querySelector('.kv-drawer .kv-drawer-tools')
     assert.ok(tools, 'the tools sit inside the drawer')
-    for (const label of ['Generated', 'Save', 'Load']) {
+    for (const label of ['Generated', 'Save', 'Replay', 'Compare']) {
         assert.equal(document.querySelectorAll(`[aria-label="${label}"]`).length, 1, `${label} appears once, in the drawer`)
         assert.ok(tools.contains(document.querySelector(`[aria-label="${label}"]`)))
     }
     tools.querySelector('[aria-label="Generated"]').click()
     tools.querySelector('[aria-label="Save"]').click()
-    tools.querySelector('[aria-label="Load"]').click()
-    assert.deepEqual(sent.map((command) => command.kind), ['setShowInternal', 'saveTrace', 'loadTrace'])
+    tools.querySelector('[aria-label="Replay"]').click()
+    tools.querySelector('[aria-label="Compare"]').click()
+    assert.deepEqual(sent.map((command) => command.kind), ['setShowInternal', 'saveTrace', 'loadTrace', 'compareTrace'])
     assert.equal(sent[0].enabled, true)
     assert.equal(document.querySelector('.kv-toolbar [aria-label="Trace"]').getAttribute('aria-pressed'), 'true')
+})
+
+const replay = (patch = {}) => ({ label: 'run.csv', length: 4, tick: 2, checked: ['count'], ignored: [], unset: [], mismatchTicks: 0, problems: [], notes: [], ...patch })
+
+test('the replay notice shows progress, the first mismatch, and stays the same element while it updates', () => {
+    const { SimulationView } = load('src-webview/diagram/simulation/view.ts')
+    const sent = []
+    let update
+    new SimulationView({ onNotification: (_, handler) => { update = handler }, sendNotification: (_, __, command) => sent.push(command) })
+    update(state({ tick: 2 }))
+    const notice = document.querySelector('.kv-replay-notice')
+    assert.equal(notice.hidden, true, 'no notice without a replay')
+    update(state({ tick: 2, replay: replay({ unset: ['deltaT'], ignored: ['Timer'] }) }))
+    assert.equal(notice.hidden, false)
+    assert.match(notice.textContent, /Replaying run\.csv: tick 2 of 4\. The outputs match so far\./)
+    assert.match(notice.textContent, /Yours to set: deltaT · Not in this model: Timer/)
+    const stop = notice.querySelector('[aria-label="Stop replaying"]')
+    update(state({ tick: 4, replay: replay({ tick: 4, mismatchTicks: 2, firstMismatch: { tick: 3, text: 'count is 2, the trace has 3' } }) }))
+    assert.equal(document.querySelector('.kv-replay-notice'), notice)
+    assert.equal(notice.querySelector('[aria-label="Stop replaying"]'), stop, 'the stop button is never replaced')
+    assert.ok(notice.classList.contains('kv-replay-differs'))
+    assert.match(notice.textContent, /Replayed run\.csv: 4 ticks\. Differs at tick 3: count is 2, the trace has 3 \(2 ticks differ\)/)
+    stop.click()
+    assert.deepEqual(sent.map((command) => command.kind), ['stopReplay'])
+    update(state({ tick: 4, replay: replay({ tick: 4, checked: [] }) }))
+    assert.match(notice.textContent, /no outputs of this model to check/)
+})
+
+test('a cell the replayed trace disagrees with is marked and says what the trace has', () => {
+    const { Timeline } = load('src-webview/diagram/simulation/timeline.ts')
+    const timeline = new Timeline(() => {})
+    document.body.append(timeline.el)
+    const count = { id: 'count', label: 'count', role: 'output', history: [1, 2, 2], pending: false, internal: false, categories: [], expected: [{ tick: 2, value: 3 }] }
+    timeline.render(state({ tick: 3, variables: [count] }))
+    const marked = timeline.el.querySelectorAll('.kv-mismatch')
+    assert.equal(marked.length, 1)
+    assert.match(marked[0].title, /count = 2 after tick 2 \(was 1\)\. The replayed trace has 3\./)
 })
 
 test('switching previews clears the old trace, error, and unfinished input edit', () => {

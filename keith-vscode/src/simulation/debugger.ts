@@ -70,8 +70,6 @@ export class SimulationDebugger {
 
     runningToBreakpoint = false
 
-    traceLoaded = false
-
     /** The model's states as the server listed them when the simulation started. */
     states: ModelStateInfo[] = []
 
@@ -90,7 +88,6 @@ export class SimulationDebugger {
         this.modelUri = modelUri
         this.paused = undefined
         this.runningToBreakpoint = false
-        this.traceLoaded = false
         const stored = this.storage.get<StoredDebugSettings>(STORAGE_PREFIX + modelUri)
         this.breakpoints = (stored?.breakpoints ?? []).map((breakpoint) => ({ ...breakpoint }))
         this.watches = (stored?.watches ?? []).map((watch) => ({ ...watch }))
@@ -133,9 +130,8 @@ export class SimulationDebugger {
             states: this.states,
             watches: this.watches.map((watch) => ({ ...watch })),
             paused: this.paused,
-            canStepBack: tick > 0 && !this.traceLoaded,
+            canStepBack: tick > 0,
             runningToBreakpoint: this.runningToBreakpoint,
-            traceLoaded: this.traceLoaded,
         }
     }
 

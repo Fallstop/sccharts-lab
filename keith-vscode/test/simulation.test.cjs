@@ -464,3 +464,79 @@ test('Restart after a failed simulation build recompiles instead of reusing the 
     assert.equal(sent.filter((message) => message.name === 'keith/simulation/start').length, 1)
     assert.equal(sim.phase, 'starting')
 })
+
+test('a replayed trace drives the inputs tick by tick, checks the outputs, and stops a run at its end', async (t) => {
+    const { sim, start, sent, started } = setup(t)
+    await start()
+    const trace = {
+        variables: [{ name: 'input', role: 'input' }, { name: 'output', role: 'output' }],
+        ticks: [{ input: true, output: 1 }, { input: false, output: 5 }, { input: true, output: 3 }],
+    }
+    const replay = sim.startReplay('run.ktrace', trace)
+    assert.deepEqual(replay.driven, ['input'])
+    assert.equal(sim.changedValuesForNextStep.get('input'), true, 'tick 1 is queued at once')
+    sim.handleStepMessage({ values: { input: true, output: 1 } })
+    assert.equal(sim.changedValuesForNextStep.get('input'), false, 'tick 2 is queued after tick 1')
+    sim.play = true
+    sim.handleStepMessage({ values: { input: false, output: 2 } })
+    assert.equal(sim.play, false, 'running stops where the outputs first differ')
+    assert.deepEqual(sim.replay.state(2).firstMismatch, { tick: 2, text: 'output is 2, the trace has 5' })
+    sim.play = true
+    sim.changedValuesForNextStep.clear() // as dispatching the tick does
+    sim.handleStepMessage({ values: { input: true, output: 3 } })
+    assert.equal(sim.play, false, 'running stops at the end of the file')
+    assert.equal(sim.changedValuesForNextStep.size, 0, 'past the end the inputs are the user’s again')
+    assert.deepEqual(sim.currentTrace(), {
+        model: 'clock.sctx',
+        variables: [{ name: 'input', role: 'input', type: undefined }, { name: 'output', role: 'output', type: undefined }],
+        ticks: [{ input: true, output: 1 }, { input: false, output: 2 }, { input: true, output: 3 }],
+    })
+
+    // Going back replays the file's inputs again and forgets the later mismatch.
+    sim.handleStepMessage({ rewound: true, step: 1, values: { input: true, output: 1 } })
+    assert.equal(sim.replay.state(1).mismatchTicks, 0)
+    assert.equal(sim.changedValuesForNextStep.get('input'), false)
+
+    // A restart of the same model replays from tick 1 again; stopping the replay hands the inputs back.
+    await sim.stopSimulation()
+    await sim.simulate('file:///models/clock.sctx')
+    await sim.handleSimulationStarted(started)
+    assert.equal(sim.replay.label, 'run.ktrace')
+    assert.equal(sim.changedValuesForNextStep.get('input'), true)
+    sim.stopReplay()
+    assert.equal(sim.replay, undefined)
+    assert.ok(sent.length > 0)
+})
+
+test('a replay is dropped when another model starts, and stepTimes runs a fixed number of ticks', async (t) => {
+    const { sim, start, started, client } = setup(t)
+    await start()
+    sim.startReplay('run.csv', { variables: [{ name: 'input' }], ticks: [{ input: true }] })
+    await sim.stopSimulation()
+    await sim.simulate('file:///models/other.sctx')
+    await sim.handleSimulationStarted(started)
+    assert.equal(sim.replay, undefined)
+    let ticks = 0
+    client.sendNotification = async (name) => {
+        if (name === 'keith/simulation/step') setImmediate(() => sim.handleStepMessage({ values: { input: false, output: ++ticks } }))
+    }
+    assert.equal(await sim.stepTimes(3), 3)
+    assert.equal(sim.simulationStep, 3)
+    assert.equal(await sim.stepTimes(5, () => ticks >= 4), 1, 'stops when cancelled')
+})
+
+test('replaying from a later tick drives the next tick with the file’s first row', async (t) => {
+    const { sim, start } = setup(t)
+    await start()
+    sim.handleStepMessage({ values: { input: false, output: 0 } })
+    sim.handleStepMessage({ values: { input: false, output: 0 } })
+    sim.changedValuesForNextStep.clear()
+    const trace = { variables: [{ name: 'input', role: 'input' }, { name: 'output', role: 'output' }], ticks: [{ input: true, output: 7 }] }
+    sim.startReplay('late.csv', trace)
+    assert.equal(sim.changedValuesForNextStep.get('input'), true)
+    sim.play = true
+    sim.handleStepMessage({ values: { input: true, output: 7 } })
+    assert.equal(sim.play, false, 'the one-row file ends after tick 3')
+    assert.equal(sim.replay.state(3).mismatchTicks, 0)
+    assert.equal(sim.replay.state(3).tick, 1)
+})

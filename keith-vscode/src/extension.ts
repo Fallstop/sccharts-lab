@@ -37,6 +37,7 @@ import { registerSupportDiagnostics } from './support-diagnostics'
 import { RESTART_LANGUAGE_SERVER } from './simulation/commands'
 import { SimulationTableDataProvider } from './simulation/simulation-table-data-provider'
 import { SimulationViewBridge } from './simulation/simulation-view-bridge'
+import { TraceTools } from './simulation/trace-tools'
 // import 'simulation/index.css'
 
 /**
@@ -243,6 +244,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     simulationDataProvider.prepareBuild = (systemId, label) => runtime.prepareBuild(systemId, label)
     runtime.restartServer = () => restartLanguageServer(simulationDataProvider)
     context.subscriptions.push(new SimulationViewBridge(simulationDataProvider, diagrams, settingsService))
+    // Saving, replaying and comparing traces, and running several models on one input sequence.
+    // eslint-disable-next-line no-new
+    new TraceTools(simulationDataProvider, context, diagrams)
 
     context.subscriptions.push(
         vscode.commands.registerCommand(RESTART_LANGUAGE_SERVER.command, () =>

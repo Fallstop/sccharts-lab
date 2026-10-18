@@ -1,0 +1,16 @@
+scchart TraceTypes {
+  input int arr[2]
+  input float f
+  input string s
+  input signal S
+  output int sum = 0
+  output float g = 0
+  output string echo = ""
+  output signal T
+  int steps = 0
+
+  during do sum = arr[0] + arr[1]; g = f * 2; echo = s; steps++
+  during if S do T
+
+  initial state Running
+}

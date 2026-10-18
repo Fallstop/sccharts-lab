@@ -73,6 +73,13 @@ systems are listed with their source file, compile a model to C, are diagnosed o
 follow saved and unsaved edits, and disappear on delete. `test/workspace-systems.test.cjs`
 covers the compile menu grouping, selection by id, the folders parameter and the messages.
 
+`node test/server-traces.cjs` checks saved traces against the real server: KTrace written by the
+lab (arrays, negative numbers, floats, escaped strings, signals, a whole trace and an input
+sequence) loads in KIELER's own trace parser, KIELER's saved trace reads back as the run value for
+value, and CSV, JSON and XML keep every variable. `test/traces.test.cjs` covers the formats,
+hand-written and timed sequences, the tick schedules of timed runs, the comparison by tick and by
+time and its report, and replaying without a server.
+
 `node test/server-simulation-debug.cjs` drives the simulation debugger through the protocol
 with `test/fixtures/debug-counter.sctx`: state and condition breakpoints (accepted and
 rejected), watch values across ticks, run to breakpoint, the tick history and a rewind whose

@@ -209,12 +209,27 @@
       },
       {
         "command": "keith-vscode.simulation-save-trace",
-        "title": "Save trace",
+        "title": "Save Trace or Input Sequence...",
         "category": "Simulation"
       },
       {
         "command": "keith-vscode.simulation-load-trace",
-        "title": "Load trace",
+        "title": "Replay Trace...",
+        "category": "Simulation"
+      },
+      {
+        "command": "keith-vscode.simulation-compare-run",
+        "title": "Compare Run with Traces...",
+        "category": "Simulation"
+      },
+      {
+        "command": "keith-vscode.compare-traces",
+        "title": "Compare Traces...",
+        "category": "Simulation"
+      },
+      {
+        "command": "keith-vscode.run-models-on-trace",
+        "title": "Run Models on an Input Sequence...",
         "category": "Simulation"
       },
       {
@@ -478,6 +493,10 @@
           "when": "keith.vscode:simulationRunning"
         },
         {
+          "command": "keith-vscode.simulation-compare-run",
+          "when": "keith.vscode:simulationRunning"
+        },
+        {
           "command": "keith-vscode.simulation-step-back",
           "when": "keith.vscode:simulationRunning"
         },
@@ -709,6 +728,21 @@
           "command": "keith-vscode.generate-code",
           "when": "resourceExtname == .sctx && resourceScheme == file",
           "group": "2_codegen"
+        },
+        {
+          "command": "keith-vscode.compare-traces",
+          "when": "resourceExtname =~ /^\\.(ktrace|csv)$/i && listMultiSelection",
+          "group": "sccharts@1"
+        },
+        {
+          "command": "keith-vscode.run-models-on-trace",
+          "when": "resourceExtname =~ /^\\.(ktrace|csv)$/i && !listMultiSelection",
+          "group": "sccharts@2"
+        },
+        {
+          "command": "keith-vscode.simulation-load-trace",
+          "when": "resourceExtname =~ /^\\.(ktrace|csv)$/i && !listMultiSelection && keith.vscode:simulationRunning",
+          "group": "sccharts@3"
         }
       ]
     },
@@ -872,7 +906,7 @@
     "lint": "eslint .",
     "lint-fix": "eslint --fix .",
     "test": "node --test test/*.test.cjs",
-    "test:server": "node test/server-smoke.cjs && node test/server-compiler-recovery.cjs && node test/server-diagnostics.cjs && node test/server-codegen.cjs && node test/server-kieler-crashes.cjs && node test/server-live-diagnostics.cjs && node test/server-highlight.cjs && node test/server-cursor-sync.cjs && node test/server-compile-ide.cjs && node test/server-startup.cjs && node test/server-simulation-debug.cjs && node test/server-workspace-kico.cjs && node test/server-completion.cjs",
+    "test:server": "node test/server-smoke.cjs && node test/server-compiler-recovery.cjs && node test/server-diagnostics.cjs && node test/server-codegen.cjs && node test/server-kieler-crashes.cjs && node test/server-live-diagnostics.cjs && node test/server-highlight.cjs && node test/server-cursor-sync.cjs && node test/server-compile-ide.cjs && node test/server-startup.cjs && node test/server-simulation-debug.cjs && node test/server-traces.cjs && node test/server-workspace-kico.cjs && node test/server-completion.cjs",
     "build": "webpack --mode production",
     "watch": "webpack --watch",
     "package": "node scripts/package-extension.cjs",

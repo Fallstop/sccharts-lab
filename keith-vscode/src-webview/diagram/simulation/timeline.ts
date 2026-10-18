@@ -292,17 +292,22 @@ export class Timeline {
             const tick = state.firstTick + index
             const prev = index > 0 ? variable.history[index - 1] : undefined
             const changed = index > 0 && !sameValue(value, prev)
+            const expected = variable.expected?.find((entry) => entry.tick === tick)
             const classes = [
                 'kv-cell',
                 tick === state.tick ? 'kv-latest' : '',
                 changed ? 'kv-changed' : '',
                 state.debug?.paused?.step === tick ? 'kv-hit' : '',
+                expected ? 'kv-mismatch' : '',
             ]
                 .filter(Boolean)
                 .join('.')
             let title = `${variable.label} = ${formatValue(value, format)} after tick ${tick}`
             if (changed) {
                 title += ` (was ${formatValue(prev, format)})`
+            }
+            if (expected) {
+                title += `. The replayed trace has ${formatValue(expected.value, format)}.`
             }
             row.tr.appendChild(h(`td.${classes}`, { title }, valueNode(value, format)))
         })

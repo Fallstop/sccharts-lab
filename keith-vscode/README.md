@@ -41,7 +41,7 @@ as well. The tick the simulation paused at is marked in the trace.
 **Watch** expressions, on the trace drawer's top line, are evaluated after every tick in the
 same syntax and show their value or the reason they cannot be evaluated. The trace's own
 controls sit at the right end of that line: **Generated** shows the compiler's own symbols, and
-**Save** and **Load** write or replay a `.ktrace` file. What the last tick did (inputs present,
+**Save**, **Replay** and **Compare** work with saved traces (see below). What the last tick did (inputs present,
 outputs emitted, variables changed) is summarised directly above the table. Both are remembered per
 model, so a restarted or rebuilt simulation keeps them. The Command Palette has **Add
 simulation breakpoint...** (a pick list of the model's states, or a condition) and **Add
@@ -51,8 +51,8 @@ simulation watch expression...**.
 rewinds to it. This is a real rewind, not a replay of a recording: the compiled program is
 restarted and every input you gave is fed to it again up to that tick, so the diagram, the
 trace and the watches show the model exactly as it was, and stepping forward from there can
-take a different path if you change an input. A loaded `.ktrace` drives the inputs itself,
-so its ticks cannot be rewound.
+take a different path if you change an input. While a trace is replayed, stepping back keeps
+replaying it.
 
 The diagram follows the editor cursor: place the cursor in a state, region or transition and
 the diagram expands the regions around it and selects it. `keith-vscode.diagram.followCursor`
@@ -61,6 +61,82 @@ expanded them yourself and the diagram remembers expansion states) or `off`. **R
 in Diagram** (Command Palette, editor context menu) does the same once, whatever the setting;
 bind it to a key such as `ctrl+alt+r` if you use it often. Clicking an element in the diagram
 selects its text in the editor (`keith-vscode.diagram.selectText`).
+
+### Traces, input sequences and comparing models
+
+**Save** in the trace drawer writes the run so far, either as a **trace** (inputs, outputs and
+the model's own variables after every tick) or as an **input sequence** (the inputs only). The
+file extension picks the format:
+
+| Format | What it holds | Good for |
+|---|---|---|
+| `.ktrace` | Inputs and outputs, each value only when it changes | KIELER, whose tools load and check it |
+| `.csv` | One row per tick: `tick`, `time`, then a column per variable | pandas, R, spreadsheets |
+| `.json` | Variables with roles and types, then one tick per line | Scripts |
+| `.xml` | The same as JSON, as `<tick>` elements | XML tools |
+
+`time` is the simulated time, the running sum of `deltaT`. It appears for models with clocks.
+
+**Replay** reads any of these files and drives the running simulation's inputs from it, starting
+with the next tick. Inputs are matched by name, so a sequence recorded on one model can drive
+another. Inputs the model doesn't have are ignored, and inputs the file doesn't set stay yours to
+set. If the file has outputs, they are checked after every tick. Cells that differ are marked in
+the trace, the drawer names the first difference, and **Run** stops there and at the end of the
+file. **Restart** replays the file again from tick 1, and the drawer's close button stops
+replaying. A hand-written sequence only needs the changes: an empty CSV cell, or a value a JSON
+tick leaves out, keeps the value of the tick before.
+
+```csv
+start,speed
+true,1
+,
+false,2.5
+```
+
+**Compare** compares the run with one or more saved traces. **Compare Traces...** compares saved
+traces with each other: select two or more in the Explorer, or pick them in a dialog.
+
+**Run Models on an Input Sequence...** does a whole comparison in one go. Run it from the
+Command Palette or from the Explorer context menu of a `.ktrace` or `.csv` file. Pick the
+sequence, the models (any `.sctx` files in the workspace) and the number of ticks. Each model is
+built with the same simulation system and run on the sequence. Each run is saved as CSV and
+KTrace in a `<sequence>-runs` folder next to the sequence, with `comparison.md` and
+`comparison.csv`. One sequence can set inputs for several models at once. Each model takes the
+inputs it has, and the report says which inputs it ignored or did not get. The models run without
+opening an editor or a diagram, so long runs stay fast. If the preview shows a model while it runs,
+each tick waits for the diagram to redraw.
+
+A **timed sequence** has a `time` column in seconds, and no `deltaT`. It lists input changes at
+moments instead of per tick:
+
+```csv
+time,VehicleSensor
+0,false
+3.3,true
+3.4,false
+```
+
+On a timed sequence you give a time to run for instead of a number of ticks. Each model ticks at
+the sequence's moments, and in between in its own way:
+
+- A model with a clock (a `deltaT` input) also ticks when it asks to wake up (`sleepT`), with
+  `deltaT` set to the time since its last tick. This is how KIELER's dynamic ticks work.
+- For models without a clock you choose once for the whole run. They tick every so many
+  milliseconds with a timer input that is true on the timer's ticks, or only at the sequence's
+  moments.
+
+The saved traces then have a `time` column. The report compares the runs in time: at every moment
+one of them ticks, each run holds the value of its last tick. *Differs for* says how long the runs
+disagree, and shifts are in seconds. This lets a model that uses clocks and one that counts
+timer ticks be compared under the same conditions.
+
+The comparison report opens in the Markdown preview. It checks the inputs first, because
+outputs only compare fairly when every run read the same inputs. Then, for every variable the
+traces share, it gives the ticks that differ and the first of them. It also lines up the *value
+changes*: the n-th change of each trace, with its tick and simulated time. Changes still line up
+when one model reacts a tick, or a fraction of a second, later than the other. *Same order* says
+whether the models go through the same values in the same order. *Largest shift* says how far
+apart the changes are. `comparison.csv` has every change as a row, for plotting.
 
 ### Live diagnostics
 

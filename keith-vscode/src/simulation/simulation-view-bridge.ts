@@ -23,6 +23,7 @@ import { GENERATE_CODE } from '../kico/code-generation'
 import { SHOW_MODEL, SHOW_STAGE } from '../kico/commands'
 import { SettingsService } from '../settings'
 import {
+    COMPARE_RUN,
     COMPILE_AND_SIMULATE,
     LOAD_TRACE,
     PAUSE_SIMULATION,
@@ -148,6 +149,12 @@ export class SimulationViewBridge implements vscode.Disposable {
             case 'loadTrace':
                 await vscode.commands.executeCommand(LOAD_TRACE.command)
                 break
+            case 'stopReplay':
+                this.simulation.stopReplay()
+                break
+            case 'compareTrace':
+                await vscode.commands.executeCommand(COMPARE_RUN.command)
+                break
             case 'setInput': {
                 const data = this.simulation.simulationData.get(command.id)
                 if (data && data.input) {
@@ -221,6 +228,7 @@ export class SimulationViewBridge implements vscode.Disposable {
             stage: shown ? { name: shown.name, position: shown.index + 1, count: shown.count } : undefined,
             canGenerate: !!uri && uri.scheme === 'file' && uri.path.endsWith('.sctx'),
             debug: matches && sim.phase === 'running' ? sim.debugger.state(tick) : undefined,
+            replay: matches && sim.phase === 'running' && sim.replay ? sim.replay.state(tick) : undefined,
         }
     }
 
@@ -233,12 +241,17 @@ export class SimulationViewBridge implements vscode.Disposable {
         } else if (entry.output) {
             role = 'output'
         }
+        const expected = this.simulation.replay
+            ?.mismatchesOf(entry.id)
+            .filter((mismatch) => mismatch.tick >= firstTick && mismatch.tick <= tick)
+            .map((mismatch) => ({ tick: mismatch.tick, value: mismatch.expected }))
         return {
             id: entry.id,
             label: entry.label,
             role,
             categories: entry.categories,
             history,
+            expected: expected && expected.length > 0 ? expected : undefined,
             next: entry.input ? this.simulation.valuesForNextStep.get(entry.id) : undefined,
             pending: this.simulation.changedValuesForNextStep.has(entry.id),
             internal: this.simulation.isInternal(entry),

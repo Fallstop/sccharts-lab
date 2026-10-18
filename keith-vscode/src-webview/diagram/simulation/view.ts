@@ -31,7 +31,7 @@ import { renderSummary } from './summary'
 import { Timeline } from './timeline'
 import { Toolbar } from './toolbar'
 import { BreakpointPanel, WatchPanel, renderPauseNotice } from './debug'
-import { renderDrawerTools } from './drawer-tools'
+import { ReplayNotice, renderDrawerTools } from './drawer-tools'
 
 const DRAWER_KEY = 'keith.simulation.drawer'
 const DRAWER_HEIGHT_KEY = 'keith.simulation.drawerHeight'
@@ -93,6 +93,8 @@ export class SimulationView {
 
     private readonly timeline: Timeline
 
+    private readonly replay: ReplayNotice
+
     private state: SimulationViewState | undefined
 
     private drawerOpen = readSetting(DRAWER_KEY, 'open') === 'open'
@@ -105,6 +107,7 @@ export class SimulationView {
     constructor(private readonly messenger: Messenger) {
         this.breakpoints = new BreakpointPanel((command) => this.send(command))
         this.watches = new WatchPanel((command) => this.send(command))
+        this.replay = new ReplayNotice((command) => this.send(command))
         this.toolbar = new Toolbar({
             send: (command) => this.send(command),
             toggleDrawer: () => this.setDrawer(!this.drawerOpen),
@@ -183,7 +186,7 @@ export class SimulationView {
         })
         // Watches and the trace's tools share the top line; what the last tick did sits above the table.
         const header = h('div.kv-drawer-header', {}, this.watches.el, this.tools)
-        replaceChildren(this.drawer, handle, header, this.notice, this.summary, this.timeline.el)
+        replaceChildren(this.drawer, handle, header, this.notice, this.replay.el, this.summary, this.timeline.el)
         this.resizeDrawer(Number(readSetting(DRAWER_HEIGHT_KEY, '220')))
 
         replaceChildren(this.root, this.toolbar.el, this.breakpoints.el, container, this.drawer)
@@ -240,6 +243,7 @@ export class SimulationView {
                 )
             }
             replaceChildren(this.notice, renderPauseNotice(state.debug))
+            this.replay.render(state)
             this.watches.render(state)
             this.timeline.render(state)
         }

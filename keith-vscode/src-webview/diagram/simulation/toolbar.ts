@@ -213,9 +213,7 @@ export class Toolbar {
             this.button(
                 'debug-step-back',
                 'Back',
-                state.debug?.traceLoaded
-                    ? 'A loaded trace drives the inputs, so ticks cannot be replayed'
-                    : 'Back one tick (Backspace)',
+                'Back one tick (Backspace)',
                 () => this.host.send({ kind: 'stepBack' }),
                 '',
                 state.playing || !state.debug?.canStepBack || !!state.debug?.runningToBreakpoint

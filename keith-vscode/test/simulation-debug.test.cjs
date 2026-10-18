@@ -213,7 +213,6 @@ const debug = (patch = {}) => ({
     watches: [{ id: 'w1', expression: 'count * 10', value: 20 }, { id: 'w2', expression: '1 / 0', error: 'Division by zero.' }],
     canStepBack: true,
     runningToBreakpoint: false,
-    traceLoaded: false,
     states: [],
     ...patch,
 })

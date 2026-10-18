@@ -63,12 +63,27 @@ export const RUN_SIMULATION: vscode.Command = {
 
 export const SAVE_TRACE: vscode.Command = {
     command: 'keith-vscode.simulation-save-trace',
-    title: 'Save trace',
+    title: 'Save Trace or Input Sequence...',
 }
 
 export const LOAD_TRACE: vscode.Command = {
     command: 'keith-vscode.simulation-load-trace',
-    title: 'Load trace',
+    title: 'Replay Trace...',
+}
+
+export const COMPARE_RUN: vscode.Command = {
+    command: 'keith-vscode.simulation-compare-run',
+    title: 'Compare Run with Traces...',
+}
+
+export const COMPARE_TRACES: vscode.Command = {
+    command: 'keith-vscode.compare-traces',
+    title: 'Compare Traces...',
+}
+
+export const RUN_MODELS_ON_TRACE: vscode.Command = {
+    command: 'keith-vscode.run-models-on-trace',
+    title: 'Run Models on an Input Sequence...',
 }
 
 export const STEP_BACK_SIMULATION: vscode.Command = {
