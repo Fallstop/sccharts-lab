@@ -4,6 +4,36 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.10.0] - 2026-10-18
+
+- **Save a run as KTrace, CSV, JSON or XML.** **Save** in the trace drawer writes the whole run
+  (inputs, outputs and the model's own variables after every tick) or only its inputs, as an
+  input sequence. The file extension picks the format. KTrace is written the way KIELER writes it
+  and loads in the official tools. CSV has one row per tick and reads straight into pandas, R or
+  a spreadsheet. Models with clocks get a `time` column, the running sum of `deltaT`.
+- **Replay a trace or input sequence into any model.** **Replay** (it was **Load**) drives the
+  inputs from a saved file, tick by tick, and matches them by name. A sequence recorded on one
+  model can drive another: inputs the model doesn't have are ignored, and the ones the file
+  doesn't set stay yours. If the file has outputs, they are checked after every tick. Cells that
+  differ are marked, the drawer names the first difference, and **Run** stops there and at the
+  end of the file. Stepping back now works while replaying; it used to be blocked. Hand-written
+  sequences only need the changes: an empty CSV cell keeps the value of the tick before.
+- **Compare runs.** **Compare** puts the run next to saved traces, and **Compare Traces...**
+  compares saved traces with each other. The report opens in the Markdown preview. It checks that
+  the inputs were the same, then gives every shared variable's differing ticks and its value
+  changes side by side: the n-th change of each run, with its tick and time, whether the runs go
+  through the same values in the same order, and how far apart the changes are.
+- **Run several models on one input sequence.** **Run Models on an Input Sequence...** builds
+  each picked model with one simulation system, runs it on the sequence, and saves every run as
+  CSV and KTrace next to the sequence, with `comparison.md` and `comparison.csv`. One command
+  replaces a hand-written comparison harness.
+- **Timed sequences compare models that keep time differently.** A sequence with a `time` column
+  lists input changes at moments in seconds. A model with clocks ticks at those moments and
+  whenever it asks to wake up (`sleepT`), as KIELER's dynamic ticks do. A model without clocks
+  ticks every so many milliseconds with a timer input, or only at the moments. The report then
+  compares the runs in time, so a model that uses clocks and one that counts timer ticks are
+  compared under the same conditions.
+
 ## [0.9.10] - 2026-10-14
 
 - **Errors in an imported file are reported in that file.** When a chart used another chart through
