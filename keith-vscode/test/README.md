@@ -86,3 +86,9 @@ rejected), watch values across ticks, run to breakpoint, the tick history and a 
 replayed pool must equal the earlier tick's. `test/simulation-debug.test.cjs` covers the client:
 per-model persistence, breakpoint pauses of a running simulation, trace trimming after a rewind,
 the commands, and the preview's breakpoint list, watch chips and rewindable tick headers.
+
+`node test/server-simulation-flood.cjs` runs 300 ticks of `test/fixtures/printer.sctx` as fast
+as the server answers, with the diagram open, as Run does at step delay 0. It fails on any
+exception in the server log and when redraws still trail the last tick (the released 0.10.0
+server fails it with the layout NPEs). It also checks that what the model prints during a tick
+arrives on that tick's message.

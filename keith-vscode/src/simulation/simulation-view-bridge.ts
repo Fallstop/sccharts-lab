@@ -155,6 +155,9 @@ export class SimulationViewBridge implements vscode.Disposable {
             case 'compareTrace':
                 await vscode.commands.executeCommand(COMPARE_RUN.command)
                 break
+            case 'showPrinted':
+                this.simulation.printedOutput.show(true)
+                break
             case 'setInput': {
                 const data = this.simulation.simulationData.get(command.id)
                 if (data && data.input) {
@@ -229,6 +232,13 @@ export class SimulationViewBridge implements vscode.Disposable {
             canGenerate: !!uri && uri.scheme === 'file' && uri.path.endsWith('.sctx'),
             debug: matches && sim.phase === 'running' ? sim.debugger.state(tick) : undefined,
             replay: matches && sim.phase === 'running' && sim.replay ? sim.replay.state(tick) : undefined,
+            printed:
+                matches && sim.printed.some((lines) => lines.length > 0)
+                    ? Array.from(
+                          { length: tick - firstTick + 1 },
+                          (_, index) => sim.printed[firstTick - 1 + index] ?? []
+                      )
+                    : undefined,
         }
     }
 

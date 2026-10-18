@@ -1,0 +1,20 @@
+scchart Printer {
+  input bool snap
+  output int n = 0
+
+  region Count:
+  initial state Counting {
+    during do n++
+  }
+
+  region Camera:
+  initial state Idle
+  if snap do print("Snapshot taken") go to Busy
+  state Busy
+  if !snap go to Idle
+
+  region Once:
+  initial state Waiting
+  if n == 7 do print("seven") go to Done
+  state Done
+}

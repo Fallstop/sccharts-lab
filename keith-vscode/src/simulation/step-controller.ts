@@ -42,12 +42,28 @@ export class StepController {
         this.pending?.finish()
     }
 
-    async run(getDelay: () => number): Promise<void> {
+    /**
+     * Steps until paused, `getDelay` milliseconds apart. `pace` is called before each tick and the
+     * run waits for what it returns after the tick, e.g. the preview drawing the tick's diagram.
+     */
+    async run(getDelay: () => number, pace: () => Promise<void> | undefined = () => undefined): Promise<void> {
         const generation = ++this.generation
         while (generation === this.generation) {
+            const paced = pace()
             // eslint-disable-next-line no-await-in-loop
             await this.step()
             if (generation !== this.generation) return
+            if (paced) {
+                // A pause ends the wait at once.
+                // eslint-disable-next-line no-await-in-loop
+                await Promise.race([
+                    paced,
+                    new Promise<void>((resolve) => {
+                        this.wake = resolve
+                    }),
+                ])
+                if (generation !== this.generation) return
+            }
             // eslint-disable-next-line no-await-in-loop
             await new Promise<void>((resolve) => {
                 this.wake = resolve

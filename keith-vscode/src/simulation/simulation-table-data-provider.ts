@@ -61,7 +61,7 @@ import { isCompatibleInput } from './input-value'
 import { inputValue, readDataPool } from './data-pool'
 import { StepController } from './step-controller'
 import { DebugStepFields, SimulationDebugger } from './debugger'
-import { TraceRecord, TraceRole, sameTraceValue } from './trace-file'
+import { TraceRecord, TraceRole, printedOf, sameTraceValue } from './trace-file'
 import { ReplayTarget, TraceReplay, coerceInput } from './trace-replay'
 
 export const externalStepMessageType = 'keith/simulation/didStep'
@@ -117,10 +117,22 @@ export class SimulationTableDataProvider {
 
     output: vscode.OutputChannel
 
+    /** Every line the simulated models print, with the tick that printed it. */
+    readonly printedOutput: vscode.OutputChannel
+
     /**
      * Trace for each symbol.
      */
     public simulationData: Map<string, SimulationData> = new Map()
+
+    /** What the model printed during each tick: `printed[i]` for tick i + 1. */
+    printed: string[][] = []
+
+    /**
+     * While running, called before each tick; the next tick waits for what it returns. The preview
+     * uses it to hold the run until the tick's diagram is drawn.
+     */
+    pace: () => Promise<void> | undefined = () => undefined
     /**
      * Trace for each symbol.
      */
@@ -216,6 +228,8 @@ export class SimulationTableDataProvider {
         // Output channel
         this.output = vscode.window.createOutputChannel('KIELER Simulation')
         this.output.appendLine(`[INFO]\t${'Simulation view is created'}`)
+        this.printedOutput = vscode.window.createOutputChannel('SCCharts Printed')
+        context.subscriptions.push(this.printedOutput)
 
         this.lsClient = lsClient
         this.kico = kico
@@ -841,9 +855,13 @@ export class SimulationTableDataProvider {
             return
         }
         this.simulationData.clear()
+        this.printed = []
         this.valuesForNextStep.clear()
         this.changedValuesForNextStep.clear()
         this.simulationStatus.show()
+        this.printedOutput.appendLine(
+            `--- ${this.modelUri ? path.basename(vscode.Uri.parse(this.modelUri).path) : 'Simulation'} started ---`
+        )
 
         // Get the start configuration for the simulation
         const pool = readDataPool(startMessage.dataPool)
@@ -1006,6 +1024,7 @@ export class SimulationTableDataProvider {
         this.valuesForNextStep.clear()
         this.changedValuesForNextStep.clear()
         this.simulationData.clear()
+        this.printed = []
         this.simulationStep = -1
         // this.simulationTreeData = []
         this.play = false
@@ -1109,12 +1128,14 @@ export class SimulationTableDataProvider {
         const order: TraceRole[] = ['input', 'output', 'local']
         entries.sort((a, b) => order.indexOf(roleOf(a)) - order.indexOf(roleOf(b)))
         const ticks = Math.max(0, this.simulationStep)
+        const printed = printedOf(Array.from({ length: ticks }, (_, index) => this.printed[index] ?? []))
         return {
             model: this.modelUri ? path.basename(vscode.Uri.parse(this.modelUri).path) : undefined,
             variables: entries.map((entry) => ({ name: entry.id, role: roleOf(entry), type: entry.type })),
             ticks: Array.from({ length: ticks }, (_, index) =>
                 Object.fromEntries(entries.map((entry) => [entry.id, entry.data[index]]))
             ),
+            ...(printed ? { printed } : {}),
         }
     }
 
@@ -1166,7 +1187,10 @@ export class SimulationTableDataProvider {
     async waitForNextStep(): Promise<void> {
         const { generation } = this
         try {
-            await this.stepper.run(() => this.settings.get('simulationStepDelay'))
+            await this.stepper.run(
+                () => this.settings.get('simulationStepDelay'),
+                () => this.pace()
+            )
         } catch (error) {
             if (generation === this.generation) this.fail(`The simulation tick failed: ${error}`)
         }
@@ -1205,6 +1229,8 @@ export class SimulationTableDataProvider {
             })
             this.changedValuesForNextStep.clear()
             this.simulationStep = step
+            this.printed.length = Math.min(this.printed.length, step)
+            this.printedOutput.appendLine(`--- rewound to tick ${step} ---`)
             this.replay?.rewindTo(step)
             this.queueReplayInputs()
             this.debugger.onStep(debug)
@@ -1220,6 +1246,9 @@ export class SimulationTableDataProvider {
             }
         })
         this.simulationStep++
+        const printed = Array.isArray(debug.printed) ? debug.printed.map(String) : []
+        this.printed[this.simulationStep - 1] = printed
+        printed.forEach((line) => this.printedOutput.appendLine(`[tick ${this.simulationStep}] ${line}`))
         const replayStops = this.checkReplay()
         this.stepper.acknowledge()
         if (this.debugger.onStep(debug) && this.play) {

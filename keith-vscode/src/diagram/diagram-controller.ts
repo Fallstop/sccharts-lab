@@ -32,6 +32,7 @@ import { registerCommands, registerTextEditorSync } from './commandContributions
 import { command, diagramClientId, diagramType } from './constants'
 import { KlighdWebviewReopener } from './klighd-webview-reopener'
 import { LspHandler } from './lsp-handler'
+import { diagramDrawnNotification } from '../simulation/protocol'
 import { ReportChangeMessage } from './storage/messages'
 import { StorageService } from './storage/storage-service'
 import { ActionHandlerCallback, KLighDWebviewPanelManager } from './webview-panel-manager'
@@ -58,6 +59,11 @@ export class DiagramController {
     private readonly diagramChanged = new vscode.EventEmitter<void>()
 
     readonly onDidChangeDiagram = this.diagramChanged.event
+
+    private readonly modelDrawn = new vscode.EventEmitter<void>()
+
+    /** The preview missed a draw; Run does not wait for it until it draws again. */
+    private notDrawing = false
 
     private hasRun = false
 
@@ -106,6 +112,12 @@ export class DiagramController {
             })
         )
         this.disposables.push(vscode.commands.registerCommand(command.diagramRestart, () => this.restart()))
+        this.disposables.push(
+            this.onWebviewNotification(diagramDrawnNotification, () => {
+                this.notDrawing = false
+                this.modelDrawn.fire()
+            })
+        )
         context.subscriptions.push(...this.disposables)
     }
 
@@ -183,6 +195,35 @@ export class DiagramController {
         return new Promise((resolve) => {
             const subscription = manager.onDidReceiveModel(() => finish())
             const timer = setTimeout(finish, timeoutMs)
+            function finish() {
+                clearTimeout(timer)
+                subscription.dispose()
+                resolve()
+            }
+        })
+    }
+
+    /** Whether a visible preview shows the model, so its diagram is redrawn after every tick. */
+    drawsVisibly(uri: vscode.Uri | string | undefined): boolean {
+        const shown = this.manager?.currentUri?.toString()
+        if (!uri || !shown || shown !== vscode.Uri.parse(uri.toString()).toString()) return false
+        return this.manager!.isVisible
+    }
+
+    /**
+     * Resolves once the preview has drawn a simulation's diagram, or after the timeout. A preview that
+     * is scrolled away or in a minimized window draws nothing (the browser holds its animation frames),
+     * so after a timeout this resolves at once until the preview draws again: a preview that does not
+     * draw only swaps the waiting diagram for the newest, which costs next to nothing.
+     */
+    nextDraw(timeoutMs = 250): Promise<void> | undefined {
+        if (this.notDrawing) return undefined
+        return new Promise((resolve) => {
+            const subscription = this.modelDrawn.event(() => finish())
+            const timer = setTimeout(() => {
+                this.notDrawing = true
+                finish()
+            }, timeoutMs)
             function finish() {
                 clearTimeout(timer)
                 subscription.dispose()

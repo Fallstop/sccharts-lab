@@ -146,6 +146,11 @@ export interface SimulationViewState {
     debug?: SimulationDebugState
     /** The trace being replayed into the inputs, if any. */
     replay?: ReplayState
+    /**
+     * What the model printed during each tick from `firstTick` to `tick`, line by line; only
+     * when it printed anything in the run so far.
+     */
+    printed?: string[][]
 }
 
 export type SimulationViewCommand =
@@ -160,6 +165,7 @@ export type SimulationViewCommand =
     | { kind: 'loadTrace' }
     | { kind: 'stopReplay' }
     | { kind: 'compareTrace' }
+    | { kind: 'showPrinted' }
     | { kind: 'setInput'; id: string; value: unknown }
     | { kind: 'setStepDelay'; delay: number }
     | { kind: 'setShowInternal'; enabled: boolean }
@@ -184,6 +190,11 @@ export type SimulationViewRequest = SimulationViewCommand & { modelUri?: string 
 
 export const simulationCommandNotification: NotificationType<SimulationViewRequest> = {
     method: 'keith/simulation/viewCommand',
+}
+
+/** The preview drew a diagram model of a running simulation; Run waits for it before the next tick. */
+export const diagramDrawnNotification: NotificationType<void> = {
+    method: 'keith/simulation/diagramDrawn',
 }
 
 /** How many ticks of history are sent to the view. */

@@ -97,6 +97,12 @@ export class MessageConnection implements Connection {
     }
 
     logHandler(message: ActionMessage): void {
+        // The console keeps what it logged alive, even with the developer tools closed: logging every
+        // diagram a running simulation sends held gigabytes of old diagrams. Those are logged by kind.
+        if ('newRoot' in message.action) {
+            console.log(`MessageConnection received ${message.action.kind} action`)
+            return
+        }
         console.groupCollapsed(`MessageConnection received ${message.action.kind} action:`)
         console.log(message)
         console.groupEnd()

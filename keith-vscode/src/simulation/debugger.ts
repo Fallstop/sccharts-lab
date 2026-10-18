@@ -53,6 +53,8 @@ export interface DebugStepFields {
     watches?: { id: string; value?: unknown; error?: string }[]
     breakpoint?: BreakpointPause
     rewound?: boolean
+    /** What the model printed during the tick, line by line. */
+    printed?: string[]
 }
 
 const STORAGE_PREFIX = 'keith.simulation.debug:'

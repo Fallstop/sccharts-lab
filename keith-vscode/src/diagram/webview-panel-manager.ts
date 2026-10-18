@@ -99,6 +99,17 @@ export class KLighDWebviewPanelManager extends LspWebviewPanelManager {
         return this.endpoints.length > 0
     }
 
+    /** Some preview is on screen; a hidden webview draws nothing until it is shown again. */
+    get isVisible(): boolean {
+        return this.endpoints.some((endpoint) => {
+            try {
+                return endpoint.webviewContainer.visible === true
+            } catch {
+                return false
+            }
+        })
+    }
+
     get currentUri(): vscode.Uri | undefined {
         return this.lastUri
     }

@@ -406,3 +406,28 @@ test('reading an input without editing it never writes the value back', () => {
         assert.deepEqual(sent, [], `focusing and leaving ${JSON.stringify(value)} sent a value`)
     }
 })
+
+test('what the model printed shows in the summary and in a row of the table that opens the output', () => {
+    const { Timeline } = load('src-webview/diagram/simulation/timeline.ts')
+    const { renderSummary } = load('src-webview/diagram/simulation/summary.ts')
+    const sent = []
+    const timeline = new Timeline((command) => sent.push(command))
+    document.body.append(timeline.el)
+    timeline.render(state({ tick: 2 }))
+    assert.equal(timeline.el.querySelector('.kv-printed-row'), null, 'no row before anything was printed')
+    const printed = [[], ['Snapshot taken', 'twice']]
+    timeline.render(state({ tick: 2, printed }))
+    const cells = Array.from(timeline.el.querySelectorAll('.kv-printed-row td.kv-printed'))
+    assert.equal(cells.length, 2)
+    assert.equal(cells[0].textContent, '')
+    assert.equal(cells[1].textContent, 'Snapshot taken ⏎ twice')
+    assert.match(cells[1].title, /Printed during tick 2:\nSnapshot taken\ntwice/)
+    timeline.el.querySelector('[data-control="showPrinted"]').click()
+    assert.deepEqual(sent, [{ kind: 'showPrinted' }])
+    const summary = renderSummary(state({ tick: 2, printed }))
+    assert.deepEqual(
+        Array.from(summary.querySelectorAll('.kv-chip-printed')).map((chip) => chip.textContent),
+        ['Snapshot taken', 'twice']
+    )
+    assert.equal(renderSummary(state({ tick: 1, printed: [[]] })).querySelector('.kv-chip-printed'), null)
+})

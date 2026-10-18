@@ -104,6 +104,7 @@ export function renderSummary(state: SimulationViewState, formatFor: FormatFor =
     const locals = visible.filter(
         (variable) => variable.role !== 'input' && variable.role !== 'output' && changedThisTick(variable)
     )
+    const printed = state.printed?.[state.tick - state.firstTick] ?? []
 
     return h(
         'div.kv-summary',
@@ -124,6 +125,12 @@ export function renderSummary(state: SimulationViewState, formatFor: FormatFor =
                 'Changed',
                 'Variables that changed in this tick (hover for the previous value)',
                 locals.map((variable) => chip(variable, 'local', formatFor(variable.id)))
+            ),
+        printed.length > 0 &&
+            fact(
+                'Printed',
+                'What the model printed in this tick. Click printed in the table for every line so far.',
+                printed.map((line) => h('span.kv-chip.kv-chip-printed', { title: line }, line))
             ),
         queuedFact
     )

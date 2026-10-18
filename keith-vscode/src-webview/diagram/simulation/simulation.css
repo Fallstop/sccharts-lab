@@ -469,6 +469,18 @@ body .sidebar {
     color: #fff;
 }
 
+.kv-chip-printed {
+    max-width: 40ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+    background: transparent;
+    color: var(--vscode-foreground);
+    border: 1px solid var(--kv-border);
+    line-height: calc(1.6em - 2px);
+}
+
 .kv-chip-queued {
     background: transparent;
     color: var(--kv-queued);
@@ -1091,4 +1103,28 @@ body .sidebar {
 .kv-cell.kv-mismatch {
     box-shadow: inset 0 -2px 0 var(--vscode-editorWarning-foreground, #cca700);
     background: var(--vscode-inputValidation-warningBackground, rgba(205, 151, 49, 0.16));
+}
+
+/* ---- Printed text ---- */
+
+.kv-printed {
+    max-width: 18ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left !important;
+    font-style: italic;
+}
+
+.kv-printed-open {
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--vscode-textLink-foreground);
+    font: inherit;
+    cursor: pointer;
+}
+
+.kv-printed-open:hover,
+.kv-printed-open:focus-visible {
+    text-decoration: underline;
 }

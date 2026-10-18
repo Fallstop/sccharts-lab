@@ -71,11 +71,20 @@ file extension picks the format:
 | Format | What it holds | Good for |
 |---|---|---|
 | `.ktrace` | Inputs and outputs, each value only when it changes | KIELER, whose tools load and check it |
-| `.csv` | One row per tick: `tick`, `time`, then a column per variable | pandas, R, spreadsheets |
+| `.csv` | One row per tick: `tick`, `time`, `printed`, then a column per variable | pandas, R, spreadsheets |
 | `.json` | Variables with roles and types, then one tick per line | Scripts |
 | `.xml` | The same as JSON, as `<tick>` elements | XML tools |
 
 `time` is the simulated time, the running sum of `deltaT`. It appears for models with clocks.
+`printed` is what the model printed during the tick, with `print(...)` or `printf` in host code.
+It appears once the model has printed something. A tick that printed several lines has them in one
+quoted cell, separated by line breaks, as CSV readers expect. KTrace has no place for printed text,
+so it goes in a `// printed "..."` comment after the tick.
+
+**Printed text** also shows in the drawer while the simulation runs. The tick summary lists what
+the last tick printed, and a **Printed** row in the trace table shows it for every tick (hover a
+cell for the full text). Click **printed** in that row to open the **SCCharts Printed** output,
+which has every line of the run with its tick number.
 
 **Replay** reads any of these files and drives the running simulation's inputs from it, starting
 with the next tick. Inputs are matched by name, so a sequence recorded on one model can drive
@@ -83,7 +92,15 @@ another. Inputs the model doesn't have are ignored, and inputs the file doesn't 
 set. If the file has outputs, they are checked after every tick. Cells that differ are marked in
 the trace, the drawer names the first difference, and **Run** stops there and at the end of the
 file. **Restart** replays the file again from tick 1, and the drawer's close button stops
-replaying. A hand-written sequence only needs the changes: an empty CSV cell, or a value a JSON
+replaying.
+
+**Names that differ.** The file's columns don't have to be named exactly as the model's
+variables. If a name differs only in case or separators (`NS_Green` and `nsGreen`), Replay offers
+to read the one as the other: press Enter to accept. If the names differ in other ways, the
+message after Replay offers **Match names...** to pair them by hand. Pairs you accept are
+remembered for the workspace and used without asking next time, and the drawer lists them. The
+same matching applies to inputs in **Run Models on an Input Sequence...** and to the variables
+of the traces in a comparison. A hand-written sequence only needs the changes: an empty CSV cell, or a value a JSON
 tick leaves out, keeps the value of the tick before.
 
 ```csv
@@ -136,7 +153,9 @@ traces share, it gives the ticks that differ and the first of them. It also line
 changes*: the n-th change of each trace, with its tick and simulated time. Changes still line up
 when one model reacts a tick, or a fraction of a second, later than the other. *Same order* says
 whether the models go through the same values in the same order. *Largest shift* says how far
-apart the changes are. `comparison.csv` has every change as a row, for plotting.
+apart the changes are. If the models printed anything, the printed lines are lined up the same
+way: the n-th line of each run, with its tick and time. `comparison.csv` has every change and
+every printed line as a row, for plotting.
 
 ### Live diagnostics
 

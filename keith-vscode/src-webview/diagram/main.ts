@@ -26,6 +26,7 @@ import './diagnostics/diagnostics.css'
 
 import { bindServices, createKlighdDiagramContainer } from '@kieler/klighd-core'
 import { Container } from 'inversify'
+import { HOST_EXTENSION } from 'vscode-messenger-common'
 import { IActionDispatcher, KeyTool, onAction, SelectCommand, TYPES } from 'sprotty'
 import { ActionMessage, isActionMessage, SelectAction } from 'sprotty-protocol'
 import {
@@ -36,13 +37,14 @@ import {
 } from 'sprotty-vscode-webview'
 import { DisabledKeyTool } from 'sprotty-vscode-webview/lib/disabled-keytool'
 import { VsCodeApi, VsCodeMessenger } from 'sprotty-vscode-webview/lib/services'
-import { KeithDiagramServer, SimulationRunning } from './diagram-server'
+import { KeithDiagramServer, ModelDrawn, SimulationRunning } from './diagram-server'
 import { KlighdDiagramWidget } from './klighd-widget'
 import { MessageConnection } from './message-connection'
 import { MessagePersistenceStorage } from './persistence-storage'
 import { SimulationView } from './simulation/view'
 import { DiagnosticView } from './diagnostics/view'
 import { DIAGNOSTIC_SELECT, DiagnosticHighlighter } from './diagnostics/highlight'
+import { diagramDrawnNotification } from '../../src/simulation/protocol'
 /* global sessionStorage, window */
 
 /** Uses `klighd-core` and {@link SprottyStarter} to create a diagram container in a webview. */
@@ -104,6 +106,10 @@ export class KLighDSprottyStarter extends SprottyStarter {
         bindServices(container, { connection, sessionStorage, persistenceStorage })
         // Model updates during a simulation keep the user's zoom instead of refitting the diagram.
         container.bind(SimulationRunning).toConstantValue(() => this.simulationView.running)
+        // Run waits for this before the next tick, so ticks never outpace what the preview can draw.
+        container
+            .bind(ModelDrawn)
+            .toConstantValue(() => this.messenger.sendNotification(diagramDrawnNotification, HOST_EXTENSION))
         container.rebind(TYPES.ModelSource).to(KeithDiagramServer).inSingletonScope()
         onAction(
             container,

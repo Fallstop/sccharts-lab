@@ -247,6 +247,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     // Saving, replaying and comparing traces, and running several models on one input sequence.
     // eslint-disable-next-line no-new
     new TraceTools(simulationDataProvider, context, diagrams)
+    // Run waits for the preview to draw each tick's diagram: unpaced, a fast run sent diagrams faster
+    // than the webview could draw them, and they piled up until the editor froze.
+    simulationDataProvider.pace = () =>
+        diagrams.drawsVisibly(simulationDataProvider.modelUri) ? diagrams.nextDraw() : undefined
 
     context.subscriptions.push(
         vscode.commands.registerCommand(RESTART_LANGUAGE_SERVER.command, () =>

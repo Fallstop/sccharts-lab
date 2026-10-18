@@ -59,6 +59,16 @@ export interface VariableComparison {
     worstTimeShift?: number
 }
 
+/** The lines the models printed, each with its tick, lined up the n-th with the n-th like value changes. */
+export interface PrintedComparison {
+    /** Per trace, every printed line in order. */
+    lines: { tick: number; time?: number; text: string }[][]
+    /** Every trace printed the same lines in the same order. */
+    sameSequence: boolean
+    worstTickShift: number
+    worstTimeShift?: number
+}
+
 export interface TraceComparison {
     alignment: Alignment
     traces: { label: string; model?: string; ticks: number; duration?: number }[]
@@ -68,6 +78,8 @@ export interface TraceComparison {
     variables: VariableComparison[]
     /** Variables only some traces have, with the traces that have them. */
     partial: { name: string; labels: string[] }[]
+    /** When any trace printed something. */
+    printed?: PrintedComparison
 }
 
 const ROLE_ORDER: (TraceRole | undefined)[] = ['input', 'output', 'local', undefined]
@@ -194,8 +206,41 @@ export function compareTraces(traces: NamedTrace[]): TraceComparison {
         return { ...base, compared: shared, differing: differingTicks(traces, name, shared) }
     })
 
+    let printed: PrintedComparison | undefined
+    if (traces.some(({ trace }) => trace.printed?.some((lines) => lines.length > 0))) {
+        const lines = traces.map(({ trace }, index) =>
+            (trace.printed ?? []).flatMap((texts, tick) =>
+                texts.map((text) => ({ tick: tick + 1, time: times[index]?.[tick], text }))
+            )
+        )
+        const [first, ...rest] = lines
+        let worstTickShift = 0
+        let worstTimeShift = timed ? 0 : undefined
+        rest.forEach((other) =>
+            other.slice(0, first.length).forEach((line, index) => {
+                worstTickShift = Math.max(worstTickShift, Math.abs(line.tick - first[index].tick))
+                if (worstTimeShift !== undefined) {
+                    worstTimeShift = Math.max(
+                        worstTimeShift,
+                        round(Math.abs((line.time ?? 0) - (first[index].time ?? 0)))
+                    )
+                }
+            })
+        )
+        printed = {
+            lines,
+            sameSequence: rest.every(
+                (other) =>
+                    other.length === first.length && other.every((line, index) => line.text === first[index].text)
+            ),
+            worstTickShift,
+            worstTimeShift,
+        }
+    }
+
     return {
         alignment,
+        printed,
         traces: traces.map(({ label, trace }, index) => ({
             label,
             model: trace.model,
@@ -350,6 +395,21 @@ export function comparisonMarkdown(
         )
     }
 
+    const { printed } = comparison
+    if (printed) {
+        const shift = byTime
+            ? seconds(printed.worstTimeShift ?? 0)
+            : `${plural(printed.worstTickShift, 'tick')}${
+                  printed.worstTimeShift === undefined ? '' : ` (${seconds(printed.worstTimeShift)})`
+              }`
+        lines.push(
+            `**Printed:** ${printed.lines.map((entries) => entries.length).join(' / ')} lines; ${
+                printed.sameSequence ? 'the same text in the same order' : '**not the same text in the same order**'
+            }; largest shift ${shift}.`,
+            ''
+        )
+    }
+
     // Outputs always: their changes are the run's timeline. Other variables when they differ or move.
     const changed = variables.filter(
         (variable) =>
@@ -387,6 +447,34 @@ export function comparisonMarkdown(
         if (rows > maxRows) lines.push('', `${rows - maxRows} more changes are in the CSV of this comparison.`)
         lines.push('')
     })
+
+    if (printed) {
+        lines.push('## Printed', '')
+        lines.push(`| # | ${labels.map(cell).join(' | ')} | Shift |`, `|---|${labels.map(() => '---|').join('')}---|`)
+        const rows = Math.max(...printed.lines.map((each) => each.length))
+        for (let index = 0; index < Math.min(rows, maxRows); index++) {
+            const reference = printed.lines[0][index]
+            const entries = printed.lines.map((each) => each[index])
+            const shifts = entries.slice(1).map((entry) => {
+                if (!entry || !reference) return '—'
+                const ticks = signed(entry.tick - reference.tick)
+                if (entry.time === undefined || reference.time === undefined) return ticks
+                const time = signed(entry.time - reference.time, ' s')
+                return byTime ? time : `${ticks} (${time})`
+            })
+            const differs = entries.some((entry) => !entry || !reference || entry.text !== reference.text)
+            lines.push(
+                `| ${index + 1}${differs ? ' ≠' : ''} | ${entries
+                    .map((entry) =>
+                        entry ? `${code(entry.text)} at ${when(alignment, { ...entry, value: entry.text })}` : '—'
+                    )
+                    .map(cell)
+                    .join(' | ')} | ${shifts.join(', ')} |`
+            )
+        }
+        if (rows > maxRows) lines.push('', `${rows - maxRows} more lines are in the CSV of this comparison.`)
+        lines.push('')
+    }
 
     const differing = Array.from(new Set(variables.flatMap((variable) => variable.differing))).sort((a, b) => a - b)
     if (differing.length > 0) {
@@ -431,6 +519,7 @@ function csvCell(text: string): string {
 /**
  * Every change of every shared variable, aligned by its position: one row per n-th change, with
  * each trace's tick, time and value. The table behind "Value changes", for further analysis.
+ * Printed lines follow as rows of their own, the n-th line of each trace in one row.
  */
 export function comparisonCsv(comparison: TraceComparison): string {
     const timed = comparison.variables.some((variable) => variable.worstTimeShift !== undefined)
@@ -454,5 +543,20 @@ export function comparisonCsv(comparison: TraceComparison): string {
             rows.push(row)
         }
     })
+    const { printed } = comparison
+    if (printed) {
+        const count = Math.max(...printed.lines.map((entries) => entries.length))
+        for (let index = 0; index < count; index++) {
+            // The role column marks these rows; no variable is called "(printed)".
+            const row = ['(printed)', 'printed', String(index + 1)]
+            printed.lines.forEach((entries) => {
+                const entry = entries[index]
+                row.push(entry ? String(entry.tick) : '')
+                if (timed) row.push(entry?.time === undefined ? '' : String(entry.time))
+                row.push(entry ? entry.text : '')
+            })
+            rows.push(row)
+        }
+    }
     return `${rows.map((row) => row.map(csvCell).join(',')).join('\n')}\n`
 }

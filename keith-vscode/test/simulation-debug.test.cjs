@@ -25,7 +25,7 @@ function setup(t, workspaceState = memento()) {
     const requests = []
     const notifications = new Map()
     const noop = () => {}
-    const messages = { info: [], warning: [] }
+    const messages = { info: [], warning: [], channels: [] }
     const vscode = {
         EventEmitter,
         StatusBarAlignment: { Left: 0 },
@@ -35,7 +35,7 @@ function setup(t, workspaceState = memento()) {
             executeCommand: async (id, ...args) => commands.get(id)?.(...args),
         },
         window: {
-            createOutputChannel: () => ({ appendLine: noop, dispose: noop }),
+            createOutputChannel: (name) => ({ appendLine: (line) => { messages.channels.push([name, line]) }, show: noop, dispose: noop }),
             createStatusBarItem: () => ({ show: noop, hide: noop, dispose: noop }),
             showInformationMessage: async (text) => { messages.info.push(text) },
             showWarningMessage: async (text) => { messages.warning.push(text) },
@@ -367,4 +367,25 @@ test('picking a state from the completion list keeps the breakpoint popover open
     // A click anywhere else still closes it.
     document.body.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true }))
     assert.equal(panel.isOpen(), false)
+})
+
+test('printed lines are kept per tick, logged with their tick, trimmed by a rewind and saved with the trace', async (t) => {
+    const { sim, start, messages } = setup(t)
+    await start()
+    sim.handleStepMessage({ values: { start: true, count: 0 }, step: 1, watches: [], printed: ['hello'] })
+    sim.handleStepMessage({ values: { start: true, count: 1 }, step: 2, watches: [] })
+    sim.handleStepMessage({ values: { start: true, count: 2 }, step: 3, watches: [], printed: ['a', 'b'] })
+    assert.deepEqual(sim.printed, [['hello'], [], ['a', 'b']])
+    assert.deepEqual(sim.currentTrace().printed, [['hello'], [], ['a', 'b']])
+    const logged = () => messages.channels.filter(([name]) => name === 'SCCharts Printed').map(([, line]) => line)
+    assert.deepEqual(logged(), ['--- counter.sctx started ---', '[tick 1] hello', '[tick 3] a', '[tick 3] b'])
+    assert.equal(await sim.stepBack(1), true)
+    sim.handleStepMessage({ values: { start: true, count: 0 }, step: 1, watches: [], rewound: true })
+    assert.deepEqual(sim.printed, [['hello']])
+    assert.equal(logged().at(-1), '--- rewound to tick 1 ---')
+    sim.handleStepMessage({ values: { start: true, count: 1 }, step: 2, watches: [] })
+    // A run that printed nothing saves no printed column.
+    assert.deepEqual(sim.currentTrace().printed, [['hello'], []])
+    sim.printed = [[], []]
+    assert.equal(sim.currentTrace().printed, undefined)
 })

@@ -4,6 +4,34 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.10.1] - 2026-10-19
+
+- **Run at full speed no longer freezes VS Code with the diagram open.** At a step delay of 0,
+  ticks came faster than the diagram could be redrawn. Every tick queued a redraw on the server and
+  a diagram in the preview. Both fell further behind, the server failed with exceptions, memory
+  grew by gigabytes, and the editor stopped responding. Now **Run** waits for the preview to draw
+  each tick's diagram while the preview is on screen. When the preview is scrolled away or the
+  window is minimized, Run doesn't wait, and the preview keeps only the newest diagram. The server
+  coalesces redraws. Several leaks are fixed:
+  - finished diagram requests were kept until the next edit;
+  - ELK's spline edge router kept every layout;
+  - the diagram options were resent with every redraw, and the preview kept each copy;
+  - the preview logged every diagram to its console.
+
+  The simulation history kept for the server's history request is now capped at 2,000 ticks; it
+  was 100,000. A long run at full speed now stays at a steady memory use.
+- **See what the model prints.** Text printed during a tick, with `print(...)` or `printf`, now
+  reaches the editor. It used to go only to the server log. The tick summary lists it, a
+  **Printed** row in the trace table shows it per tick, and the **SCCharts Printed** output keeps
+  every line with its tick. Saved traces include it: a `printed` column in CSV, `printed` in JSON
+  and XML, and a comment in KTrace. The comparison report lines up the runs' printed lines like
+  value changes.
+- **Columns with other names.** Replay, Compare and Run Models on an Input Sequence match
+  variables named differently in the file and in the model. Names that differ only in case or
+  separators are offered for you to accept, and **Match names...** pairs the rest by hand. Pairs
+  you accept are remembered for the workspace.
+- A model variable named `time` or `printed` now reads back from a CSV as that variable.
+
 ## [0.10.0] - 2026-10-18
 
 - **Save a run as KTrace, CSV, JSON or XML.** **Save** in the trace drawer writes the whole run

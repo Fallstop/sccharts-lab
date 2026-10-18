@@ -367,3 +367,159 @@ test('in a one-column CSV a blank line is a tick that keeps the value; elsewhere
     assert.deepEqual(readTrace('start\nfalse\ntrue\n\n\nfalse\n\n\n', 'csv').ticks.map((t) => t.start), [false, true, true, true, false])
     assert.deepEqual(readTrace('\na,b\n1,2\n\n3,4\n,\n', 'csv').ticks, [{ a: 1, b: 2 }, { a: 3, b: 4 }, { a: 3, b: 4 }])
 })
+
+const printedRun = () => ({
+    model: 'Camera.sctx',
+    variables: [
+        { name: 'snap', role: 'input', type: 'bool' },
+        { name: 'busy', role: 'output', type: 'bool' },
+    ],
+    ticks: [
+        { snap: true, busy: false },
+        { snap: true, busy: true },
+        { snap: false, busy: false },
+        { snap: false, busy: false },
+    ],
+    printed: [[], ['Snapshot taken'], ['a, "quoted"', 'second line'], ['']],
+})
+
+test('printed lines survive CSV, JSON and XML, one CSV cell per tick with its line breaks', () => {
+    const csv = writeTrace(printedRun(), 'csv')
+    assert.equal(
+        csv,
+        [
+            'tick,printed,snap,busy',
+            '1,,true,false',
+            '2,Snapshot taken,true,true',
+            '3,"a, ""quoted""\nsecond line",false,false',
+            '4,"",false,false',
+            '',
+        ].join('\n')
+    )
+    for (const format of ['csv', 'json', 'xml']) {
+        const back = readTrace(writeTrace(printedRun(), format), format)
+        assert.deepEqual(back.printed, printedRun().printed, format)
+        assert.deepEqual(back.ticks, printedRun().ticks, format)
+    }
+    // KTrace has no place for it: a comment KIELER skips, and nothing comes back.
+    const ktrace = writeTrace(printedRun(), 'ktrace')
+    assert.match(ktrace, /=> busy = true; \/\/ printed "Snapshot taken"\n/)
+    assert.match(ktrace, /\/\/ printed "a, \\"quoted\\"" "second line"/)
+    assert.equal(readTrace(ktrace, 'ktrace').printed, undefined)
+    // An input sequence has no printed text, and a run that printed nothing writes no column.
+    assert.equal(inputsOnly(printedRun()).printed, undefined)
+    assert.doesNotMatch(writeTrace({ ...printedRun(), printed: [[], [], [], []] }, 'csv'), /printed/)
+})
+
+test('variables named time or printed read back as themselves', () => {
+    const trace = {
+        variables: [
+            { name: 'time', role: 'input', type: 'int' },
+            { name: 'printed', role: 'output', type: 'bool' },
+        ],
+        ticks: [
+            { time: 1, printed: false },
+            { time: 2, printed: true },
+        ],
+    }
+    const csv = writeTrace(trace, 'csv')
+    assert.equal(csv.split('\n')[0], 'tick,time,printed,time,printed')
+    const back = readTrace(csv, 'csv')
+    assert.deepEqual(back.variables.map((variable) => variable.name), ['time', 'printed'])
+    assert.deepEqual(back.ticks, trace.ticks)
+    assert.equal(back.times, undefined)
+    assert.equal(back.printed, undefined)
+})
+
+test('the comparison lines up printed lines like value changes', () => {
+    const late = printedRun()
+    late.printed = [[], [], ['Snapshot taken'], ['a, "quoted"', 'second line', '']]
+    const comparison = compareTraces([
+        { label: 'A', trace: printedRun() },
+        { label: 'B', trace: late },
+    ])
+    assert.equal(comparison.printed.sameSequence, true)
+    assert.equal(comparison.printed.worstTickShift, 1)
+    const markdown = comparisonMarkdown(comparison)
+    assert.match(markdown, /\*\*Printed:\*\* 4 \/ 4 lines; the same text in the same order; largest shift 1 tick\./)
+    assert.match(markdown, /## Printed\n\n\| # \| A \| B \| Shift \|/)
+    assert.match(markdown, /\| 1 \| `Snapshot taken` at tick 2 \| `Snapshot taken` at tick 3 \| \+1 \|/)
+    const csv = comparisonCsv(comparison)
+    assert.match(csv, /\n\(printed\),printed,1,2,Snapshot taken,3,Snapshot taken\n/)
+
+    const other = printedRun()
+    other.printed = [[], ['Snapshot failed'], [], []]
+    const differing = comparisonMarkdown(compareTraces([{ label: 'A', trace: printedRun() }, { label: 'C', trace: other }]))
+    assert.match(differing, /\*\*Printed:\*\* 4 \/ 1 lines; \*\*not the same text in the same order\*\*/)
+    assert.match(differing, /\| 1 ≠ \| `Snapshot taken` at tick 2 \| `Snapshot failed` at tick 2 \| \+0 \|/)
+    // Without prints there is no printed section.
+    assert.doesNotMatch(comparisonMarkdown(compareTraces([{ label: 'A', trace: run() }, { label: 'B', trace: run() }])), /Printed/)
+})
+
+const { suggestRenames, renameTrace, couldMatch, rememberAliases, forgetAliases, nameKey } = load(
+    'src/simulation/trace-rename.ts'
+)
+
+test('names that differ only in case and separators are suggested as one, inputs with inputs', () => {
+    const file = [
+        { name: 'NS_Car', role: 'input' },
+        { name: 'ped_button', role: 'input' },
+        { name: 'NS_Green', role: 'output' },
+        { name: 'extra', role: 'input' },
+    ]
+    const model = [
+        { name: 'nsCar', role: 'input' },
+        { name: 'PedButton', role: 'input' },
+        { name: 'nsgreen', role: 'output' },
+        { name: 'other', role: 'output' },
+    ]
+    assert.equal(nameKey('NS_Green'), nameKey('ns-green'))
+    assert.deepEqual(
+        suggestRenames(file, model).map(({ from, to, reason }) => [from, to, reason]),
+        [
+            ['NS_Car', 'nsCar', 'spelling'],
+            ['ped_button', 'PedButton', 'spelling'],
+            ['NS_Green', 'nsgreen', 'spelling'],
+        ]
+    )
+    // An input never pairs with an output, however it is spelled.
+    assert.deepEqual(suggestRenames([{ name: 'go', role: 'input' }], [{ name: 'GO', role: 'output' }]), [])
+    // A file without roles (CSV) pairs with either.
+    assert.equal(suggestRenames([{ name: 'go' }], [{ name: 'GO', role: 'output' }]).length, 1)
+    // Two names that both fit one are a guess, not a suggestion.
+    assert.deepEqual(suggestRenames([{ name: 'a_b' }, { name: 'aB' }], [{ name: 'ab' }]), [])
+    // Remembered pairs come first and need no likeness.
+    assert.deepEqual(
+        suggestRenames([{ name: 'cam' }], [{ name: 'camera' }], [['camera', 'cam']]).map(({ to, reason }) => [to, reason]),
+        [['camera', 'remembered']]
+    )
+    assert.equal(couldMatch([{ name: 'x', role: 'input' }], [{ name: 'y', role: 'output' }]), false)
+    assert.equal(couldMatch([{ name: 'x', role: 'input' }], [{ name: 'y', role: 'input' }]), true)
+    assert.equal(couldMatch([{ name: 'x' }], [{ name: 'x' }]), false)
+})
+
+test('a renamed trace keeps its values, times and printed lines, and refuses to merge two variables', () => {
+    const renamed = renameTrace({ ...printedRun(), times: [0, 1, 2, 3] }, { snap: 'Snap', busy: 'Busy' })
+    assert.deepEqual(renamed.variables.map(({ name }) => name), ['Snap', 'Busy'])
+    assert.deepEqual(renamed.ticks[1], { Snap: true, Busy: true })
+    assert.deepEqual(renamed.times, [0, 1, 2, 3])
+    assert.deepEqual(renamed.printed, printedRun().printed)
+    // A swap is fine; two names onto one, or onto a name the trace has, is not.
+    assert.deepEqual(renameTrace(printedRun(), { snap: 'busy', busy: 'snap' }).ticks[1], { busy: true, snap: true })
+    assert.throws(() => renameTrace(printedRun(), { snap: 'x', busy: 'x' }), /cannot both become x/)
+    assert.throws(() => renameTrace(printedRun(), { snap: 'busy' }), /has a variable busy already/)
+    // A replay then drives the model's input from the renamed column.
+    const replay = new TraceReplay('cam.csv', renameTrace(printedRun(), { snap: 'shutter' }), [
+        { id: 'shutter', input: true, output: false, type: 'bool' },
+    ])
+    assert.deepEqual(replay.driven, ['shutter'])
+    assert.deepEqual(Array.from(replay.inputsFor(1, () => false)), [['shutter', true]])
+})
+
+test('remembered aliases put the newest first and forget declined pairs either way round', () => {
+    let aliases = rememberAliases([], { a: 'A' })
+    aliases = rememberAliases(aliases, { b: 'B', A: 'a' })
+    assert.deepEqual(aliases, [['b', 'B'], ['A', 'a']])
+    assert.deepEqual(forgetAliases(aliases, { a: 'A' }), [['b', 'B']])
+    assert.equal(rememberAliases([], Object.fromEntries(Array.from({ length: 300 }, (_, i) => [`x${i}`, `y${i}`]))).length, 200)
+})

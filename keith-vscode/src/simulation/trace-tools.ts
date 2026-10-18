@@ -31,9 +31,27 @@ import {
     traceFormatOf,
     writeTrace,
 } from './trace-file'
+import {
+    Alias,
+    NamedVariable,
+    Renames,
+    couldMatch,
+    describeRenames,
+    forgetAliases,
+    rememberAliases,
+    renameTrace,
+    sameKind,
+    suggestRenames,
+    unmatched,
+} from './trace-rename'
 import { MAX_TIMED_TICKS, TickMode, TimedSchedule } from './trace-timing'
 
 const FORMAT_KEY = 'keith.trace.format'
+
+/** Names the user said stand for one variable, offered again in later matches. */
+const ALIAS_KEY = 'keith.trace.aliases'
+
+const MATCH_NAMES = 'Match names…'
 
 const OPEN_FILTERS = { Traces: TRACE_FORMATS.map((entry) => entry.extension) }
 
@@ -167,6 +185,155 @@ export class TraceTools {
         await vscode.workspace.fs.writeFile(uri, new TextEncoder().encode(writeTrace(trace, format)))
     }
 
+    /**
+     * Which names of `fromLabel` stand for which of `toLabel`. Pairs matched before apply as they
+     * are; names spelled alike are offered ticked; `byHand` also asks about the rest one by one.
+     * The answer is remembered for later matches. Undefined when the user cancelled.
+     */
+    private async matchNames(
+        fromLabel: string,
+        from: NamedVariable[],
+        toLabel: string,
+        to: NamedVariable[],
+        byHand = false
+    ): Promise<Renames | undefined> {
+        const aliases = this.context.workspaceState.get<Alias[]>(ALIAS_KEY) ?? []
+        const suggestions = suggestRenames(from, to, aliases)
+        const renames: Renames = {}
+        if (!byHand && suggestions.every((suggestion) => suggestion.reason === 'remembered')) {
+            suggestions.forEach((suggestion) => {
+                renames[suggestion.from] = suggestion.to
+            })
+            return renames
+        }
+        type Item = vscode.QuickPickItem & { from?: string; to?: string; byHand?: boolean }
+        const items: Item[] = [
+            ...suggestions.map((suggestion) => ({
+                label: `${suggestion.from} → ${suggestion.to}`,
+                description: suggestion.reason === 'remembered' ? 'matched before' : 'spelled differently',
+                picked: true,
+                from: suggestion.from,
+                to: suggestion.to,
+            })),
+            {
+                label: '$(edit) Match other names by hand…',
+                detail: `One by one, for the names of ${fromLabel} that ${toLabel} does not have`,
+                picked: byHand,
+                byHand: true,
+            },
+        ]
+        const picked = await vscode.window.showQuickPick(items, {
+            title: `${fromLabel} and ${toLabel} name some variables differently. Which are the same?`,
+            placeHolder: 'Ticked pairs are read as one variable; untick a pair to keep the names apart',
+            canPickMany: true,
+            ignoreFocusOut: true,
+        })
+        if (!picked) return undefined
+        picked.forEach((item) => {
+            if (item.from && item.to) renames[item.from] = item.to
+        })
+        const declined: Renames = {}
+        suggestions.forEach((suggestion) => {
+            if (!renames[suggestion.from]) declined[suggestion.from] = suggestion.to
+        })
+        if (picked.some((item) => item.byHand)) {
+            const left = unmatched(from, to)
+            const open = left.from.filter(
+                (variable) =>
+                    !renames[variable.name] &&
+                    !declined[variable.name] &&
+                    left.to.some((other) => sameKind(variable, other))
+            )
+            for (let index = 0; index < open.length; index++) {
+                const variable = open[index]
+                const taken = new Set(Object.values(renames))
+                const candidates = left.to.filter((other) => !taken.has(other.name) && sameKind(variable, other))
+                // eslint-disable-next-line no-await-in-loop
+                const choice = await vscode.window.showQuickPick(
+                    [
+                        ...candidates.map((other) => ({
+                            label: other.name,
+                            description: other.role,
+                            name: other.name,
+                        })),
+                        { label: `$(close) Not in ${toLabel}`, description: undefined, name: undefined },
+                    ],
+                    {
+                        title: `${index + 1}/${open.length}: what is ${
+                            variable.name
+                        } of ${fromLabel} called in ${toLabel}?`,
+                        ignoreFocusOut: true,
+                    }
+                )
+                if (!choice) break
+                if (choice.name) renames[variable.name] = choice.name
+            }
+        }
+        await this.context.workspaceState.update(ALIAS_KEY, rememberAliases(forgetAliases(aliases, declined), renames))
+        return renames
+    }
+
+    /** The running model's variables, as matched against a file's. */
+    private modelVariables(): NamedVariable[] {
+        return this.simulation.currentTrace().variables
+    }
+
+    /**
+     * Renames the variables of the other traces to the first's where they are named differently.
+     * Undefined when the user cancelled; otherwise the traces and a note per renamed trace.
+     */
+    private async alignNames(
+        traces: NamedTrace[],
+        byHand = false
+    ): Promise<{ traces: NamedTrace[]; notes: string[] } | undefined> {
+        const [reference, ...others] = traces
+        const aligned: NamedTrace[] = [reference]
+        const notes: string[] = []
+        for (const other of others) {
+            const renames = couldMatch(other.trace.variables, reference.trace.variables)
+                ? // eslint-disable-next-line no-await-in-loop
+                  await this.matchNames(
+                      other.label,
+                      other.trace.variables,
+                      reference.label,
+                      reference.trace.variables,
+                      byHand
+                  )
+                : {}
+            if (!renames) return undefined
+            aligned.push({ ...other, trace: renameTrace(other.trace, renames) })
+            if (Object.keys(renames).length > 0) notes.push(`${other.label}: compared ${describeRenames(renames)}.`)
+        }
+        return { traces: aligned, notes }
+    }
+
+    /**
+     * Some input or output of the other traces may be one of the first's under another name. The
+     * models' own variables are left out: two implementations rarely keep the same ones.
+     */
+    private static mayMatch(traces: NamedTrace[]): boolean {
+        return traces
+            .slice(1)
+            .some(({ trace }) => couldMatch(interfaceOf(trace.variables), interfaceOf(traces[0].trace.variables)))
+    }
+
+    /** Compares the traces and opens the report; offers to match names the traces still disagree on. */
+    private async showComparison(traces: NamedTrace[], byHand = false): Promise<void> {
+        const aligned = await this.alignNames(traces, byHand)
+        if (!aligned) return
+        await showReport(
+            aligned.traces,
+            aligned.notes.map((note) => `- ${note}`)
+        )
+        if (TraceTools.mayMatch(aligned.traces)) {
+            const choice = await vscode.window.showInformationMessage(
+                'Some variables are only in some of the traces. Are any of them the same variable under another name?',
+                MATCH_NAMES
+            )
+            if (choice) await this.showComparison(traces, true)
+        }
+    }
+
     /** Asks what to save (the whole run or only its inputs) and where; the file extension picks the format. */
     async save(): Promise<void> {
         if (!this.running || this.simulation.simulationStep < 1) {
@@ -224,7 +391,7 @@ export class TraceTools {
     }
 
     /** Replays a trace file into the running simulation's inputs, from the next tick on. */
-    async replay(uri?: vscode.Uri): Promise<void> {
+    async replay(uri?: vscode.Uri, byHand = false): Promise<void> {
         if (!this.running) {
             vscode.window.showInformationMessage('Start a simulation first, then replay a trace into it.')
             return
@@ -249,13 +416,40 @@ export class TraceTools {
             )
             return
         }
-        const replay = this.simulation.startReplay(path.basename(file.path), trace)
-        if (replay && replay.driven.length === 0) {
+        const label = path.basename(file.path)
+        const model = this.simulation.modelUri
+            ? path.basename(vscode.Uri.parse(this.simulation.modelUri).path)
+            : 'the model'
+        const renames = couldMatch(trace.variables, this.modelVariables())
+            ? await this.matchNames(label, trace.variables, model, this.modelVariables(), byHand)
+            : {}
+        if (!renames || !this.running) return
+        if (Object.keys(renames).length > 0) {
+            trace = renameTrace(trace, renames)
+            // The drawer shows notes as plain text, not Markdown.
+            const read = Object.entries(renames).map(([from, to]) => `${from} as ${to}`)
+            trace = { ...trace, notes: [...(trace.notes ?? []), `Read ${read.join(', ')}.`] }
+        }
+        const replay = this.simulation.startReplay(label, trace)
+        if (!replay) return
+        const offer = couldMatch(interfaceOf(trace.variables), interfaceOf(this.modelVariables())) ? [MATCH_NAMES] : []
+        let choice: string | undefined
+        if (replay.driven.length === 0) {
             this.simulation.stopReplay()
             const names = trace.variables.map((variable) => variable.name).join(', ')
-            vscode.window.showWarningMessage(
-                `${path.basename(file.path)} sets none of this model's inputs. It has ${names || 'no variables'}.`
+            choice = await vscode.window.showWarningMessage(
+                `${label} sets none of this model's inputs. It has ${names || 'no variables'}.`,
+                ...offer
             )
+        } else if (replay.ignored.length > 0 && offer.length > 0) {
+            choice = await vscode.window.showInformationMessage(
+                `${model} has no input ${replay.ignored.join(', ')}, which ${label} sets.`,
+                ...offer
+            )
+        }
+        if (choice === MATCH_NAMES) {
+            if (this.simulation.replay === replay) this.simulation.stopReplay()
+            await this.replay(file, true)
         }
     }
 
@@ -293,7 +487,7 @@ export class TraceTools {
         if (!uris || uris.length === 0) return
         const others = await this.readAll(uris)
         if (!others) return
-        await showReport([{ label: `This run (${run.model ?? 'model'})`, trace: run }, ...others])
+        await this.showComparison([{ label: `This run (${run.model ?? 'model'})`, trace: run }, ...others])
     }
 
     /** Two or more trace files; the first picked is the reference. */
@@ -305,7 +499,7 @@ export class TraceTools {
             return
         }
         const traces = await this.readAll(uris)
-        if (traces) await showReport(traces)
+        if (traces) await this.showComparison(traces)
     }
 
     /**
@@ -410,6 +604,10 @@ export class TraceTools {
                         notes.push(`${label} did not start: ${this.simulation.lastError ?? 'the build failed'}.`)
                     } else {
                         systemId = systemId ?? this.simulation.systemId
+                        // eslint-disable-next-line no-await-in-loop
+                        const named = await this.nameInputs(sequence, sequenceName, label)
+                        if (!named) return
+                        notes.push(...named.notes)
                         const outcome =
                             'ticks' in length
                                 ? // eslint-disable-next-line no-await-in-loop
@@ -417,12 +615,12 @@ export class TraceTools {
                                       models[index],
                                       label,
                                       sequenceName,
-                                      sequence,
+                                      named.sequence,
                                       length.ticks,
                                       token
                                   )
                                 : // eslint-disable-next-line no-await-in-loop
-                                  await this.runTimed(models[index], label, sequence, length.until, timing, token)
+                                  await this.runTimed(models[index], label, named.sequence, length.until, timing, token)
                         if (!outcome) return
                         notes.push(...outcome.notes)
                         if (outcome.trace.ticks.length > 0) {
@@ -439,6 +637,24 @@ export class TraceTools {
         )
     }
 
+    /** The sequence in the running model's names, where the two name an input differently. */
+    private async nameInputs(
+        sequence: TraceRecord,
+        sequenceName: string,
+        label: string
+    ): Promise<{ sequence: TraceRecord; notes: string[] } | undefined> {
+        const inputs = sequence.variables.filter((variable) => variable.role !== 'output' && variable.role !== 'local')
+        const model = this.modelVariables().filter((variable) => variable.role === 'input')
+        if (!couldMatch(inputs, model)) return { sequence, notes: [] }
+        const renames = await this.matchNames(sequenceName, inputs, label, model)
+        if (!renames) return undefined
+        if (Object.keys(renames).length === 0) return { sequence, notes: [] }
+        return {
+            sequence: renameTrace(sequence, renames),
+            notes: [`${label} read ${describeRenames(renames)} from the sequence.`],
+        }
+    }
+
     /** Opens the comparison of the runs, or says where the one run went. */
     private async report(
         results: NamedTrace[],
@@ -446,7 +662,8 @@ export class TraceTools {
         length: { ticks: number } | { until: number },
         sequenceName: string,
         folder: vscode.Uri,
-        systemId: string | undefined
+        systemId: string | undefined,
+        byHand = false
     ): Promise<void> {
         if (results.length === 0) {
             if (notes.length > 0) vscode.window.showErrorMessage(notes.join(' '))
@@ -468,7 +685,10 @@ export class TraceTools {
                 })
             return
         }
-        const comparison = compareTraces(results)
+        const aligned = await this.alignNames(results, byHand)
+        if (!aligned) return
+        aligned.notes.forEach((note) => preamble.push(`- ${note}`))
+        const comparison = compareTraces(aligned.traces)
         const report = vscode.Uri.joinPath(folder, 'comparison.md')
         await vscode.workspace.fs.writeFile(
             report,
@@ -479,6 +699,13 @@ export class TraceTools {
             new TextEncoder().encode(comparisonCsv(comparison))
         )
         await vscode.commands.executeCommand('markdown.showPreview', report)
+        if (TraceTools.mayMatch(aligned.traces)) {
+            const choice = await vscode.window.showInformationMessage(
+                'Some variables are only in some of the models. Are any of them the same variable under another name?',
+                MATCH_NAMES
+            )
+            if (choice) await this.report(results, notes, length, sequenceName, folder, systemId, true)
+        }
     }
 
     /** One tick per row of the sequence (and on, with the last values, for longer runs). */
@@ -638,6 +865,11 @@ export class TraceTools {
     }
 }
 
+/** The inputs and outputs, and the variables whose role the file does not say. */
+function interfaceOf(variables: NamedVariable[]): NamedVariable[] {
+    return variables.filter((variable) => variable.role !== 'local')
+}
+
 /** File names, or relative paths where two files share a name. */
 function uniqueLabels(uris: vscode.Uri[]): string[] {
     const names = uris.map((uri) => path.basename(uri.path))
@@ -649,11 +881,11 @@ function uniqueLabels(uris: vscode.Uri[]): string[] {
 }
 
 /** The comparison as an unsaved Markdown document, shown in the preview. */
-async function showReport(traces: NamedTrace[]): Promise<void> {
+async function showReport(traces: NamedTrace[], preamble: string[] = []): Promise<void> {
     const comparison = compareTraces(traces)
     const document = await vscode.workspace.openTextDocument({
         language: 'markdown',
-        content: comparisonMarkdown(comparison),
+        content: comparisonMarkdown(comparison, { preamble }),
     })
     await vscode.commands.executeCommand('markdown.showPreview', document.uri)
 }

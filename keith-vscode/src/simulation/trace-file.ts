@@ -46,6 +46,8 @@ export interface TraceRecord {
      * happen: such a sequence describes input changes in time rather than per tick.
      */
     times?: number[]
+    /** What the model printed during each tick, line by line: `printed[i]` for tick i + 1. */
+    printed?: string[][]
 }
 
 export type TraceFormat = 'ktrace' | 'csv' | 'json' | 'xml'
@@ -126,11 +128,17 @@ export function traceTimes(trace: TraceRecord): number[] | undefined {
     })
 }
 
+/** The printed lines per tick, or undefined when no tick printed anything. */
+export function printedOf(lines: string[][] | undefined): string[][] | undefined {
+    return lines?.some((tick) => tick.length > 0) ? lines : undefined
+}
+
 /** The record with only the inputs, as replayed into another model. */
 export function inputsOnly(trace: TraceRecord): TraceRecord {
     const variables = trace.variables.filter((variable) => variable.role === 'input')
     return {
         ...trace,
+        printed: undefined,
         variables,
         ticks: trace.ticks.map((tick) => Object.fromEntries(variables.map(({ name }) => [name, tick[name]]))),
     }
@@ -260,7 +268,10 @@ function writeKTrace(trace: TraceRecord): string {
         let line = ins.join(' ')
         if (outs.length > 0) line += `${line ? ' ' : ''}=> ${outs.join(' ')}`
         if (trace.pauses?.includes(index + 1)) line += `${line ? ' ' : ''}pause`
-        lines.push(`${line};`)
+        // KTrace has no place for printed text; a comment keeps it readable and KIELER skips it.
+        const printed = trace.printed?.[index] ?? []
+        const comment = printed.length > 0 ? ` // printed ${printed.map((text) => JSON.stringify(text)).join(' ')}` : ''
+        lines.push(`${line};${comment}`)
     })
     return `${lines.join('\n')}\n`
 }
@@ -452,23 +463,34 @@ function csvCell(text: string): string {
     return /[",\r\n]|^\s|\s$/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
 }
 
+/** A cell's text, where an empty string is quoted: an empty cell means the value is unknown. */
+function csvValue(text: string, emptyString: boolean): string {
+    return text === '' && emptyString ? '""' : csvCell(text)
+}
+
 /**
- * One row per tick: `tick`, `time` when the trace has a time delta, then a column per variable.
- * Booleans are true/false, arrays JSON. pandas, R and spreadsheets read it as it is.
+ * One row per tick: `tick`, `time` when the trace has a time delta, `printed` when the model
+ * printed something, then a column per variable. Booleans are true/false, arrays JSON, a tick's
+ * printed lines one cell with line breaks. pandas, R and spreadsheets read it as it is.
  */
 function writeCsv(trace: TraceRecord): string {
     const times = traceTimes(trace)
     const names = trace.variables.map((variable) => variable.name)
-    const header = ['tick', ...(times ? ['time'] : []), ...names]
-    const rows = trace.ticks.map((tick, index) => [
-        String(index + 1),
-        ...(times ? [String(times[index])] : []),
-        ...names.map((name) => formatTraceValue(tick[name])),
-    ])
-    // An empty string is quoted; an empty cell means the value is unknown.
-    const line = (row: string[], values?: Record<string, unknown>) =>
-        row.map((text, index) => (text === '' && values?.[header[index]] === '' ? '""' : csvCell(text))).join(',')
-    return `${[line(header), ...rows.map((row, index) => line(row, trace.ticks[index]))].join('\n')}\n`
+    const printed = printedOf(trace.printed)
+    // A variable named like a bookkeeping column still gets that column first, so it is read back as itself.
+    const timeColumn = !!times || names.includes('time')
+    const printedColumn = !!printed || names.includes('printed')
+    const header = ['tick', ...(timeColumn ? ['time'] : []), ...(printedColumn ? ['printed'] : []), ...names]
+    const rows = trace.ticks.map((tick, index) => {
+        const lines = printed?.[index] ?? []
+        return [
+            String(index + 1),
+            ...(timeColumn ? [times ? String(times[index]) : ''] : []),
+            ...(printedColumn ? [csvValue(lines.join('\n'), lines.length > 0)] : []),
+            ...names.map((name) => csvValue(formatTraceValue(tick[name]), tick[name] === '')),
+        ].join(',')
+    })
+    return `${[header.map(csvCell).join(','), ...rows].join('\n')}\n`
 }
 
 /**
@@ -531,9 +553,9 @@ function parseCsvRows(text: string): { cells: string[]; quoted: boolean[]; line:
 }
 
 /**
- * Reads a CSV with a header row and one row per tick. `tick` and, next to a time delta, `time`
- * are bookkeeping and skipped. Empty cells keep the value from the row before, so a hand-written
- * input sequence only has to note the changes.
+ * Reads a CSV with a header row and one row per tick. `tick`, `time` and `printed` at the start
+ * are bookkeeping, not variables. Empty cells keep the value from the row before, so a
+ * hand-written input sequence only has to note the changes.
  */
 function readCsv(text: string): TraceRecord {
     const isBlank = (row: { cells: string[]; quoted: boolean[] }) =>
@@ -546,15 +568,20 @@ function readCsv(text: string): TraceRecord {
     const rows = all[0]?.cells.length === 1 ? all : all.filter((row) => !isBlank(row))
     if (rows.length === 0) throw new TraceFileError('The file is empty.')
     const header = rows[0].cells.map((cell) => cell.trim())
+    const hasDelta = header.some((name) => isTimeDelta({ id: name, categories: [] }))
+    const timeColumn = header.findIndex((name, index) => name === 'time' && index <= 1)
+    let next = timeColumn >= 0 ? timeColumn + 1 : Number(header[0] === 'tick')
+    const printedColumn = header[next] === 'printed' ? next++ : -1
+    const skipped = header.map(
+        (name, index) => index < next && (name === 'tick' || name === 'time' || name === 'printed')
+    )
     const seen = new Set<string>()
     header.forEach((name, index) => {
         if (!name) throw new TraceFileError(`Column ${index + 1} has no name in the header row.`, rows[0].line)
+        if (skipped[index]) return
         if (seen.has(name)) throw new TraceFileError(`The header names ${name} twice.`, rows[0].line)
         seen.add(name)
     })
-    const hasDelta = header.some((name) => isTimeDelta({ id: name, categories: [] }))
-    const timeColumn = header.findIndex((name, index) => name === 'time' && index <= 1)
-    const skipped = header.map((name, index) => (index === 0 && name === 'tick') || index === timeColumn)
     const list = new VariableList()
     header.forEach((name, index) => {
         if (!skipped[index]) list.add(name)
@@ -586,7 +613,16 @@ function readCsv(text: string): TraceRecord {
                   list.variables,
                   (index) => `Line ${rows[index + 1].line}: the row`
               )
-    return { variables: list.variables, ticks: carryForward(ticks, list.variables), times }
+    const printed =
+        printedColumn < 0
+            ? undefined
+            : printedOf(
+                  rows.slice(1).map(({ cells, quoted }) => {
+                      const cell = cells[printedColumn] ?? ''
+                      return cell === '' && !quoted[printedColumn] ? [] : cell.split(/\r?\n/)
+                  })
+              )
+    return { variables: list.variables, ticks: carryForward(ticks, list.variables), times, printed }
 }
 
 // -- JSON -----------------------------------------------------------------------------------------
@@ -618,6 +654,7 @@ function writeJson(trace: TraceRecord): string {
     const ticks = trace.ticks.map((tick, index) => {
         const entry: Record<string, unknown> = { tick: index + 1 }
         if (times) entry.time = times[index]
+        if (trace.printed?.[index]?.length) entry.printed = trace.printed[index]
         trace.variables.forEach(({ name, role }) => {
             if (tick[name] === undefined) return
             const group = groupOf(role)
@@ -656,12 +693,17 @@ function readJson(text: string): TraceRecord {
         })
     }
     const times: (number | undefined)[] = []
+    const printed: string[][] = []
     const ticks = (root.ticks as unknown[]).map((tick, index) => {
         if (!tick || typeof tick !== 'object' || Array.isArray(tick)) {
             throw new TraceFileError(`Tick ${index + 1} is not an object.`)
         }
-        const { time } = tick as Record<string, unknown>
+        const { time, printed: lines } = tick as Record<string, unknown>
         times.push(typeof time === 'number' ? time : undefined)
+        if (lines !== undefined && !(Array.isArray(lines) && lines.every((line) => typeof line === 'string'))) {
+            throw new TraceFileError(`"printed" of tick ${index + 1} is not a list of strings.`)
+        }
+        printed.push((lines as string[] | undefined) ?? [])
         const values: Record<string, unknown> = {}
         GROUPS.forEach(({ key, role }) => {
             const group = (tick as Record<string, unknown>)[key]
@@ -681,6 +723,7 @@ function readJson(text: string): TraceRecord {
         variables: list.variables,
         ticks: carryForward(ticks, list.variables),
         times: givenTimes(times, list.variables, (index) => `Tick ${index + 1}`),
+        printed: printedOf(printed),
     }
 }
 
@@ -707,7 +750,8 @@ const XML_ELEMENT: Record<TraceRole, string> = { input: 'input', output: 'output
 
 /**
  * `<trace>` with the `<variable>` declarations, then one `<tick n="1" time="…">` per tick holding
- * `<input>`, `<output>`, `<local>` (or `<value>` for an unknown role) elements.
+ * `<input>`, `<output>`, `<local>` (or `<value>` for an unknown role) elements, and a `<printed>`
+ * per line the model printed.
  */
 function writeXml(trace: TraceRecord): string {
     const times = traceTimes(trace)
@@ -729,6 +773,7 @@ function writeXml(trace: TraceRecord): string {
                 `    <${element} name="${xmlEscape(name)}">${xmlEscape(formatTraceValue(tick[name]))}</${element}>`
             )
         })
+        trace.printed?.[index]?.forEach((text) => lines.push(`    <printed>${xmlEscape(text)}</printed>`))
         lines.push('  </tick>')
     })
     lines.push('</trace>')
@@ -825,6 +870,9 @@ function readXml(text: string): TraceRecord {
         value: undefined,
     }
     const elements = trace.children.filter((element) => element.name === 'tick')
+    const printed = elements.map((element) =>
+        element.children.filter((child) => child.name === 'printed').map((child) => child.text)
+    )
     const ticks = elements.map((element) => {
         const tick: Record<string, unknown> = {}
         element.children.forEach((child) => {
@@ -844,6 +892,7 @@ function readXml(text: string): TraceRecord {
         variables: list.variables,
         ticks: carryForward(ticks, list.variables),
         times: givenTimes(times, list.variables, (index) => `The <tick> on line ${elements[index].line}`),
+        printed: printedOf(printed),
     }
 }
 

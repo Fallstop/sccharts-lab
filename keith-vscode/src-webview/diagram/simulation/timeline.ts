@@ -104,6 +104,9 @@ export class Timeline {
 
     private head: HTMLElement | undefined
 
+    /** The row of what the model printed, shown once it printed anything. */
+    private printedRow: HTMLElement | undefined
+
     private groups: HTMLElement[] = []
 
     private shape = ''
@@ -118,6 +121,7 @@ export class Timeline {
         this.latest.clear()
         this.unconfirmed.clear()
         this.head = undefined
+        this.printedRow = undefined
         this.groups = []
         this.shape = ''
         replaceChildren(this.el)
@@ -128,6 +132,7 @@ export class Timeline {
         state.variables.forEach((variable) => this.latest.set(variable.id, this.confirmed(variable)))
         const shape = JSON.stringify([
             state.showInternal,
+            !!state.printed,
             state.variables.map((variable) => [
                 variable.id,
                 variable.label,
@@ -160,6 +165,7 @@ export class Timeline {
             const row = this.rows.get(variable.id)
             if (row) this.updateRow(row, this.latest.get(variable.id) ?? variable, state, elided)
         })
+        if (this.printedRow) this.updatePrinted(this.printedRow, state, elided)
         if (stickToEnd) {
             this.el.scrollLeft = this.el.scrollWidth
         }
@@ -189,7 +195,7 @@ export class Timeline {
             h('th.kv-col-name', {}, 'Variable'),
             h('th.kv-col-next', { title: 'What the model will read at the next tick' }, 'Next')
         )
-        const bodies = GROUPS.map((group) => {
+        const groups = GROUPS.map((group) => {
             const members = state.variables.filter((variable) => groupOf(variable) === group.key)
             if (members.length === 0 || (group.key === 'internal' && !state.showInternal)) {
                 return null
@@ -203,9 +209,70 @@ export class Timeline {
                 ...members.map((variable) => this.createRow(variable, previous.get(variable.id)).tr)
             )
         })
+        // Printed text sits with the outputs: like them, it is what the tick did.
+        const bodies = [...groups.slice(0, 2), this.printedBody(state), ...groups.slice(2)]
         replaceChildren(this.el, h('table.kv-table', {}, h('thead', {}, this.head), ...bodies))
         if (refocus?.isConnected) {
             refocus.focus({ preventScroll: true })
+        }
+    }
+
+    private printedBody(state: SimulationViewState): HTMLElement | null {
+        this.printedRow = undefined
+        if (!state.printed) return null
+        const title = h(
+            'th',
+            { title: 'What the model printed during each tick, with print() or printf.' },
+            h('span.kv-group-title', {}, 'Printed')
+        )
+        this.groups.push(title)
+        this.printedRow = h(
+            'tr.kv-row.kv-printed-row',
+            {},
+            h(
+                'td.kv-col-name',
+                {},
+                h(
+                    'button.kv-printed-open',
+                    {
+                        type: 'button',
+                        'data-control': 'showPrinted',
+                        title: 'Every line printed so far, with its tick, in the SCCharts Printed output',
+                        onclick: () => this.send({ kind: 'showPrinted' }),
+                    },
+                    'printed'
+                )
+            ),
+            h('td.kv-col-next')
+        )
+        return h('tbody', {}, h('tr.kv-group', {}, title), this.printedRow)
+    }
+
+    private updatePrinted(tr: HTMLElement, state: SimulationViewState, elided: boolean): void {
+        trimAfter(tr, 2)
+        if (elided) tr.appendChild(h('td.kv-col-more'))
+        for (let tick = state.firstTick; tick <= state.tick; tick++) {
+            const lines = state.printed?.[tick - state.firstTick] ?? []
+            const classes = [
+                'kv-cell',
+                'kv-printed',
+                tick === state.tick ? 'kv-latest' : '',
+                lines.length > 0 ? 'kv-changed' : '',
+            ]
+                .filter(Boolean)
+                .join('.')
+            tr.appendChild(
+                h(
+                    `td.${classes}`,
+                    {
+                        title:
+                            lines.length > 0
+                                ? `Printed during tick ${tick}:\n${lines.join('\n')}`
+                                : `Nothing printed during tick ${tick}`,
+                    },
+                    lines.length > 0 ? h('span.kv-value', {}, lines.join(' ⏎ ')) : undefined
+                )
+            )
         }
     }
 

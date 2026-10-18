@@ -22,6 +22,7 @@ function setup(t) {
     const simulation = {
         phase: 'running', play: false, simulationStep: 3, modelUri: first,
         simulationData: new Map([['input', { id: 'input', label: 'Input', input: true, categories: [], data: [1, 2, 3] }]]),
+        printed: [],
         valuesForNextStep: new Map([['input', 4]]), changedValuesForNextStep: new Map(),
         onDidChangeViewState: changed.subscribe,
         isBlacklisted: () => false, isInternal: () => false,
