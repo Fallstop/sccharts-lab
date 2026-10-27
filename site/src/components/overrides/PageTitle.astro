@@ -38,9 +38,10 @@ const width = pitch * chapters.length
 const lo = 22
 const hi = 8
 const x0 = current * pitch
-const wave = showRuler
-	? `M0 ${lo} H${x0} V${hi} H${x0 + pitch} V${lo} H${width}`
-	: ''
+// The trace is drawn in two parts: up to the end of the current chapter in ink (the time already run), the
+// chapters still ahead as a fainter line.
+const wave = showRuler ? `M0 ${lo} H${x0} V${hi} H${x0 + pitch} V${lo}` : ''
+const ahead = showRuler && x0 + pitch < width ? `M${x0 + pitch} ${lo} H${width}` : ''
 ---
 
 {
@@ -55,6 +56,7 @@ const wave = showRuler
 				preserveAspectRatio="none"
 			>
 				<rect class="sc-chapter-ruler__high" x={x0} y={hi} width={pitch} height={lo - hi} />
+				{ahead && <path class="sc-chapter-ruler__line sc-chapter-ruler__line--ahead" d={ahead} />}
 				<path class="sc-chapter-ruler__line" d={wave} />
 				{chapters.map((_, i) => (
 					<line class="sc-chapter-ruler__tick" x1={i * pitch} x2={i * pitch} y1={lo} y2={lo + 6} />
@@ -157,6 +159,10 @@ const wave = showRuler
 		stroke-linejoin: round;
 		vector-effect: non-scaling-stroke;
 	}
+	.sc-chapter-ruler__line--ahead {
+		stroke: var(--c-rule-strong);
+		stroke-width: 1.25;
+	}
 	.sc-chapter-ruler__high {
 		fill: var(--sc-wave-fill);
 	}
@@ -191,8 +197,11 @@ const wave = showRuler
 		color: var(--c-ink);
 		background-color: var(--c-accent-soft);
 	}
-	.sc-chapter-ruler__list a[aria-current='page'] {
+	.sc-chapter-ruler__list a.is-past {
 		color: var(--c-ink);
+	}
+	.sc-chapter-ruler__list a[aria-current='page'] {
+		color: var(--c-accent);
 		font-weight: 800;
 	}
 </style>

@@ -70,8 +70,8 @@ describe('How KIELER reads it', () => {
 })
 
 describe('the report link', () => {
-    it('is off by default', () => {
-        expect(REPORT_URL).toBeUndefined()
+    it('opens a GitHub issue, and is off without a template', () => {
+        expect(REPORT_URL).toMatch(/^https:\/\/github\.com\/Fallstop\/sccharts-lab\/issues\/new\?/)
         expect(reportHref(undefined, 'https://sccharts.jmw.nz/learn/ticks/', 'Thinking in ticks')).toBeUndefined()
     })
 

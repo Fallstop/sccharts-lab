@@ -568,6 +568,10 @@ kbd {
 	white-space: nowrap;
 	background: none;
 }
+/* The last row closes the trace with a firmer rule, as the head opens it. */
+.sl-markdown-content tbody tr:last-child td:not(:where(.not-content *)) {
+	border-bottom-color: var(--c-rule-strong);
+}
 .sl-markdown-content tbody tr:hover td:not(:where(.not-content *)) {
 	background-color: color-mix(in srgb, var(--c-rail) 70%, transparent);
 }
@@ -610,7 +614,8 @@ kbd {
 /* ===== Asides ====================================================================================== */
 
 .starlight-aside {
-	border-radius: var(--radius-md);
+	/* Square-cornered, like a note boxed on a drawing, so asides read differently from the rounded widgets. */
+	border-radius: var(--radius-xs);
 	border: 1px solid color-mix(in srgb, var(--sl-color-asides-border) 35%, transparent);
 	border-inline-start: 4px solid var(--sl-color-asides-border);
 	padding: 0.875rem 1.125rem 1rem;
@@ -809,18 +814,40 @@ footer .meta {
 	margin-top: var(--space-7);
 	gap: var(--space-4) !important;
 }
+/* Previous and next are the two ends of a time axis, not cards: each hangs from a ruled line with a tick
+ * at its outer end, like the header's ruler. */
 .pagination-links > a {
-	border: 1px solid var(--c-rule-strong) !important;
-	border-radius: var(--radius-frame) !important;
+	position: relative;
+	border: 0 !important;
+	border-top: 1.5px solid var(--c-ink) !important;
+	border-radius: 0 !important;
 	box-shadow: none !important;
-	background-color: var(--c-sheet);
+	background: none !important;
 	color: var(--c-muted) !important;
 	font-size: var(--text-sm);
-	padding: 0.875rem 1.125rem !important;
+	padding: 0.75rem 0.25rem 0.5rem !important;
 	transition: border-color 0.12s;
 }
+.pagination-links > a::before {
+	content: '';
+	position: absolute;
+	top: -0.5rem;
+	inset-inline-start: 0;
+	height: 0.5rem;
+	border-inline-start: 1.5px solid currentColor;
+	color: var(--c-ink);
+}
+.pagination-links > a[rel='next']::before {
+	inset-inline-start: auto;
+	inset-inline-end: 0;
+	border-inline-start: 0;
+	border-inline-end: 1.5px solid var(--c-ink);
+}
 .pagination-links > a:hover {
-	border-color: var(--c-accent-bright) !important;
+	border-top-color: var(--c-accent) !important;
+}
+.pagination-links > a:hover .link-title {
+	color: var(--c-accent) !important;
 }
 .pagination-links > a .link-title {
 	font-size: var(--text-lg) !important;

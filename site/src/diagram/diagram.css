@@ -494,3 +494,28 @@
 .sc-diagram .sc-state.sc-initial.is-exited:not(.is-active):not(.sc-root) > .sc-shape:not(.sc-final-inner) {
 	stroke-width: 3;
 }
+
+/* ----- Light theme: legibility on white paper ------------------------------------------------------------ */
+/* KIELER's hues, darkened just enough to hold up on the white sheet: coloured notation (nondeterministic and
+ * probabilistic transitions, override and reference regions) reaches 3:1 as graphics, schedule text 4.5:1, and
+ * region frames read as drawn boundaries rather than a faint wash. Shapes, weights and dashes are unchanged. */
+:where(:root[data-theme='light']) .sc-diagram .sc-sd {
+	fill: #1f7a64;
+}
+:where(:root[data-theme='light']) .sc-diagram .sc-nondeterministic > .sc-edge { stroke: #b8661c; }
+:where(:root[data-theme='light']) .sc-diagram .sc-nondeterministic > .sc-arrow { fill: #b8661c; stroke: #b8661c; }
+:where(:root[data-theme='light']) .sc-diagram .sc-probabilistic > .sc-edge { stroke: #3f7fbf; }
+:where(:root[data-theme='light']) .sc-diagram .sc-probabilistic > .sc-arrow { fill: #3f7fbf; stroke: #3f7fbf; }
+:where(:root[data-theme='light']) .sc-diagram .sc-override-region > .sc-region-frame {
+	stroke: #6f8a00;
+}
+:where(:root[data-theme='light']) .sc-diagram .sc-reference > .sc-region > .sc-region-frame,
+:where(:root[data-theme='light']) .sc-diagram .sc-reference-region > .sc-region-frame {
+	stroke: #b45bd0;
+}
+:where(:root[data-theme='light']) .sc-diagram .sc-region-frame {
+	stroke: #98a4b6;
+}
+:where(:root[data-theme='light']) .sc-diagram .sc-region-corner {
+	fill: #98a4b6;
+}

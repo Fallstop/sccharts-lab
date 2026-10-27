@@ -24,6 +24,17 @@ const href = reportHref(REPORT_URL, Astro.url.href, Astro.locals.starlightRoute.
 		font-size: var(--sl-text-sm);
 		color: var(--c-muted);
 	}
+	.sc-report a {
+		color: var(--c-muted);
+		text-decoration-line: underline;
+		text-decoration-color: var(--c-rule-strong);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.2em;
+	}
+	.sc-report a:hover {
+		color: var(--c-accent);
+		text-decoration-color: currentColor;
+	}
 	.sc-report + :global(footer) :global(.meta) {
 		margin-top: 1rem;
 	}

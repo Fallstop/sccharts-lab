@@ -735,9 +735,10 @@ main:has([data-sc-playground]) .sl-container {
 	min-width: 0;
 	min-height: 0;
 	border: 1px solid var(--c-rule-strong);
-	border-radius: var(--radius-frame);
+	/* Instrument panes, not floating cards: a tight corner and a hairline, no drop shadow. */
+	border-radius: var(--radius-md);
 	background-color: var(--c-sheet);
-	box-shadow: var(--shadow-frame);
+	box-shadow: none;
 	overflow: hidden;
 }
 .sc-pg__head {
@@ -745,7 +746,8 @@ main:has([data-sc-playground]) .sl-container {
 	flex-wrap: nowrap;
 	align-items: center;
 	gap: 0.625rem;
-	min-height: 2.625rem;
+	/* One head height for all three panes, so their rules line up. */
+	min-height: 2.75rem;
 	padding: 0.3125rem 0.5rem 0.3125rem 1rem;
 	background-color: var(--c-rail);
 	border-bottom: 1px solid var(--c-rule);

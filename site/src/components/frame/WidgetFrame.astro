@@ -239,9 +239,10 @@ const panelIds = (v: { id: string; show?: string[] }) => (v.show ?? [v.id]).map(
 
 	.sc-frame__box {
 		border: 1px solid var(--c-rule-strong);
-		border-radius: var(--radius-frame);
+		/* An instrument, not a card: a tight corner and a hard bottom edge instead of a soft drop shadow. */
+		border-radius: var(--radius-md);
 		background-color: var(--c-sheet);
-		box-shadow: var(--shadow-frame);
+		box-shadow: 0 1.5px 0 var(--c-rule-strong);
 		overflow: hidden;
 	}
 
