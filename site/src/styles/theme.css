@@ -577,6 +577,11 @@ kbd {
 }
 .sl-markdown-content td code:not(:where(.not-content *)) {
 	white-space: nowrap;
+	/* In a ruled table the column already sets code apart: plain mono ink, no chip, so a column of code
+	 * reads as a listing rather than a stack of tags, and code that wraps on a phone stays one piece. */
+	background-color: transparent;
+	padding: 0;
+	font-weight: 500;
 }
 /* On a phone a six-column trace has to fit a 358 px column: tighter cells, headings that may wrap, and code
  * in cells that may break at its spaces (short code still never breaks: code.sc-nobr). */
@@ -584,7 +589,7 @@ kbd {
 	.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
 		padding-inline: 0.375rem;
 	}
-	.sl-markdown-content :is(th, td) code:not(:where(.not-content *)) {
+	.sl-markdown-content th code:not(:where(.not-content *)) {
 		padding-inline: 0.18em;
 	}
 	.sl-markdown-content th:not(:where(.not-content *)),
@@ -609,6 +614,26 @@ kbd {
 	.sl-markdown-content :is(th, td) code:not(.sc-nobr, .sc-words):not(:where(.not-content *)) {
 		overflow-wrap: anywhere;
 	}
+}
+
+/* ===== Glossary ====================================================================================
+ * reference/glossary (the only page whose first section is "## A"): each term is an entry in a
+ * register, ruled off from the one before, rather than a section heading with a section's spacing. */
+.sl-markdown-content:has(> .sl-heading-wrapper > h2#a) > .sl-heading-wrapper.level-h3 {
+	margin-top: 1.5rem;
+	padding-top: 1.125rem;
+	border-top: 1px solid var(--c-rule);
+}
+.sl-markdown-content:has(> .sl-heading-wrapper > h2#a) > .sl-heading-wrapper.level-h2 + .sl-heading-wrapper.level-h3 {
+	border-top: 0;
+	padding-top: 0;
+}
+.sl-markdown-content:has(> .sl-heading-wrapper > h2#a) > .sl-heading-wrapper.level-h2 {
+	padding-bottom: 0.375rem;
+	border-bottom: 2px solid var(--c-ink);
+}
+.sl-markdown-content:has(> .sl-heading-wrapper > h2#a) h3 {
+	font-size: var(--sl-text-h4);
 }
 
 /* ===== Asides ====================================================================================== */
@@ -974,4 +999,49 @@ footer .meta {
 	letter-spacing: -0.018em;
 	color: var(--c-ink);
 	text-wrap: balance;
+}
+
+/* ===== Mobile (phones, below Starlight's 50rem sidebar breakpoint) =================================
+ * Owned by the mobile pass: everything phone-only lives in this block, at the end of the file so that it
+ * wins over the rules above without !important. */
+
+@media (max-width: 49.99rem) {
+	/* The menu toggle is a control, not a floating action button: drop Starlight's soft shadow and give it the
+	   same hairline and hard bottom edge as the widget frames. */
+	button.sl-menu-button {
+		border: 1px solid var(--c-control);
+		box-shadow: 0 1.5px 0 var(--c-rule-strong);
+		background-color: var(--c-sheet);
+		color: var(--c-ink);
+	}
+	button.sl-menu-button:has(~ :popover-open) {
+		box-shadow: none;
+	}
+}
+
+@media (max-width: 34rem) {
+	/* Hero actions: two equal full-width rows instead of two ragged capsules. */
+	html .sc-hero__actions > .sc-btn {
+		flex: 1 1 100%;
+		justify-content: center;
+	}
+
+	/* Widgets in the chapter flow run edge to edge, like a strip of chart paper: the diagram gains the two
+	   gutters (32px of a 390px screen), and the frame keeps its top and bottom rules. Frames inside asides,
+	   tabs or lists keep their box. */
+	html .sl-markdown-content > .sc-frame {
+		margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+		max-width: none;
+	}
+	html .sl-markdown-content > .sc-frame > .sc-frame__box {
+		border-inline: 0;
+		border-radius: 0;
+	}
+	/* The trace's signal names would otherwise sit on the screen edge. */
+	html .sl-markdown-content > .sc-frame .sc-trace {
+		border-inline-start: 0.5rem solid var(--c-sheet);
+	}
+	html .sl-markdown-content > .sc-frame > .sc-frame__caption {
+		padding-inline: var(--sl-content-pad-x, 1rem);
+	}
 }

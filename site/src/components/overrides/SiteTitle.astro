@@ -43,10 +43,25 @@ const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute
 	}
 	.sc-site-title:hover .sc-site-title__name {
 		color: var(--c-accent);
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+		text-underline-offset: 0.3em;
+	}
+	.sc-site-title:focus-visible {
+		outline-offset: 4px;
+		border-radius: 2px;
 	}
 	@media (min-width: 34em) {
 		.sc-site-title__sub {
 			display: inline;
 		}
+	}
+</style>
+
+<style is:global>
+	/* Header chrome. Starlight draws a divider after the social links even when there are none, which left
+	 * a stray rule at the header's end; with no links there is nothing to divide. */
+	header.header .social-icons:empty {
+		display: none;
 	}
 </style>

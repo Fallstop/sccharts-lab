@@ -81,16 +81,22 @@ const id = nextId('sct-')
 	.sc-tryit {
 		margin-block: 2rem;
 		max-width: var(--measure);
-		padding: 1rem 1.25rem 0.75rem;
+		padding: 0 1.25rem 0.75rem;
 		border: 1px solid var(--c-rule-strong);
-		border-inline-start: 4px solid var(--c-accent-bright);
+		/* Same instrument frame as the widgets: tight corner, hard bottom edge, a rail for the head. */
 		border-radius: var(--radius-md);
 		background-color: var(--c-sheet);
+		box-shadow: 0 1.5px 0 var(--c-rule-strong);
 	}
 	.sc-tryit__head {
 		display: flex;
 		align-items: center;
 		gap: 0.625rem;
+		margin-inline: -1.25rem;
+		padding: 0.625rem 1.25rem;
+		background-color: var(--c-rail);
+		border-bottom: 1px solid var(--c-rule);
+		border-radius: calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0 0;
 	}
 	/* An initial state: heavy outline. The reader starts here. */
 	.sc-tryit__glyph {
@@ -99,7 +105,7 @@ const id = nextId('sct-')
 		height: 0.875rem;
 		border-radius: var(--radius-capsule);
 		border: 3px solid var(--sc-state-stroke);
-		background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+		background-color: color-mix(in srgb, var(--sc-state-fill-end) 45%, var(--sc-state-fill));
 	}
 	.sc-tryit__title {
 		margin: 0;
@@ -109,7 +115,7 @@ const id = nextId('sct-')
 		color: var(--c-ink);
 	}
 	.sc-tryit__task {
-		margin-top: 0.625rem;
+		margin-top: 0.875rem;
 		color: var(--c-text);
 	}
 	.sc-tryit__task :global(* + *) {
@@ -178,7 +184,7 @@ const id = nextId('sct-')
 	.sc-tryit__code {
 		margin-top: 0.625rem;
 		border: 1px solid var(--c-rule);
-		border-radius: var(--radius-md);
+		border-radius: var(--radius-sm);
 		overflow: hidden;
 	}
 	.sc-tryit__code :global(.expressive-code .frame) {

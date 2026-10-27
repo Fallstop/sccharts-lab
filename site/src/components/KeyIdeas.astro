@@ -25,18 +25,18 @@ const id = nextId('sck-')
 		position: relative;
 		margin-block: 2.75rem 1rem;
 		max-width: var(--measure);
-		padding: 1.25rem 1.5rem 1.375rem;
+		padding: 1.125rem 1.375rem 1.25rem;
 		border: 1.5px solid var(--sc-state-stroke);
-		border-radius: 1.25rem;
-		background: linear-gradient(180deg, var(--sc-superstate-fill), var(--sc-superstate-fill-end));
+		border-radius: var(--radius-md);
+		background-color: var(--c-sheet);
 	}
 	/* The inner line of the final state's double outline. */
 	.sc-keyideas::before {
 		content: '';
 		position: absolute;
-		inset: 4px;
-		border: 1.5px solid var(--sc-state-stroke);
-		border-radius: calc(1.25rem - 4px);
+		inset: 3px;
+		border: 1px solid var(--sc-state-stroke);
+		border-radius: calc(var(--radius-md) - 3px);
 		pointer-events: none;
 	}
 	.sc-keyideas__title {
@@ -49,6 +49,8 @@ const id = nextId('sck-')
 	/* The summary comes from MDX: style its prose here (the box is outside Starlight's prose rules). */
 	.sc-keyideas__body {
 		margin-top: 0.625rem;
+		padding-top: 0.625rem;
+		border-top: 1px solid var(--c-rule);
 		color: var(--c-text);
 	}
 	.sc-keyideas__body :global(* + *) {
