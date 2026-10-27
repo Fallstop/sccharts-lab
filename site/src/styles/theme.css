@@ -107,7 +107,7 @@ starlight-theme-select select {
 site-search dialog {
 	border: 1px solid var(--c-rule-strong);
 	background-color: var(--c-paper);
-	border-radius: var(--radius-frame);
+	border-radius: var(--radius-md);
 	box-shadow: var(--shadow-pop);
 }
 #starlight__search {
@@ -470,6 +470,13 @@ main > .content-panel:first-of-type {
 .sl-markdown-content a code:not(:where(.not-content *)) {
 	color: inherit;
 }
+/* In a heading the display face already sets code apart: plain mono ink, no chip, so `>=` in a title reads
+ * as part of the line rather than a grey block bolted onto it (as in tables). */
+.sl-markdown-content :is(h1, h2, h3, h4) code:not(:where(.not-content *)) {
+	background-color: transparent;
+	padding: 0;
+	font-size: 0.92em;
+}
 /* Short inline code never breaks inside (`->` would split after the hyphen, `x += 1` would stop being one
  * expression): astro.config.mjs and inline-md.ts mark spans of up to 12 characters, and of up to 16 without spaces. */
 code.sc-nobr {
@@ -768,6 +775,14 @@ starlight-tabs .tab [role='tab'][aria-selected='true'] {
 
 .sl-markdown-content .expressive-code {
 	max-width: 100%;
+	/* Code frames take the widget frames' rule weight, so a listing and a live chart read as one kit. */
+	--ec-brdCol: var(--c-rule-strong);
+	--ec-frm-edTabBarBrdCol: var(--c-rule-strong);
+}
+.sl-markdown-content .expressive-code .frame {
+	/* The same instrument edge as widget, Quiz and TryIt frames: a hard 1.5px bottom rule, no drop shadow. */
+	border-radius: var(--radius-md);
+	box-shadow: 0 1.5px 0 var(--c-rule-strong);
 }
 .expressive-code .frame .header {
 	font-weight: 600;
@@ -777,7 +792,7 @@ starlight-tabs .tab [role='tab'][aria-selected='true'] {
 
 .card.sl-flex {
 	border: 1px solid var(--c-rule);
-	border-radius: var(--radius-frame);
+	border-radius: var(--radius-md);
 	background-color: var(--c-sheet);
 	box-shadow: none;
 }
@@ -786,7 +801,7 @@ starlight-tabs .tab [role='tab'][aria-selected='true'] {
 }
 .sl-link-card {
 	border: 1px solid var(--c-rule) !important;
-	border-radius: var(--radius-frame) !important;
+	border-radius: var(--radius-md) !important;
 	background-color: var(--c-sheet) !important;
 	box-shadow: none !important;
 }

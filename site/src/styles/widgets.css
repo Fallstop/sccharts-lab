@@ -73,7 +73,7 @@
 	position: relative;
 	padding: 0.125rem 0.75rem 0.125rem 0.375rem;
 	border: 1.5px solid var(--c-control);
-	border-radius: var(--radius-capsule);
+	border-radius: var(--radius-sm);
 	background-color: var(--c-sheet);
 	cursor: pointer;
 	user-select: none;
@@ -98,7 +98,7 @@
 	width: 2rem;
 	height: 1.125rem;
 	margin: 0;
-	border-radius: var(--radius-capsule);
+	border-radius: var(--radius-xs);
 	border: 1.5px solid var(--sc-wave-line);
 	background: var(--c-paper);
 	cursor: inherit;
@@ -111,7 +111,7 @@
 	left: 2px;
 	width: 0.75rem;
 	height: 0.75rem;
-	border-radius: 50%;
+	border-radius: 1px;
 	background-color: var(--sc-wave-line);
 	transform: translateY(-50%);
 	transition: left 0.12s;
@@ -138,7 +138,7 @@
 	margin: 0;
 	padding: 0;
 	border: 1.5px solid transparent;
-	border-radius: var(--radius-capsule);
+	border-radius: var(--radius-xs);
 	background: none;
 	color: var(--c-ink);
 	cursor: pointer;
@@ -815,7 +815,7 @@ svg .sc-focus-ring {
 	padding: 0.625rem 0.75rem;
 	border: 1px solid var(--c-caution-rule);
 	border-inline-start-width: 4px;
-	border-radius: var(--radius-md);
+	border-radius: var(--radius-xs);
 	background-color: var(--c-caution-bg);
 }
 .sc-diag__notice {
@@ -1141,4 +1141,11 @@ svg .sc-focus-ring {
 	.sc-noscript__ticks li {
 		break-inside: avoid;
 	}
+}
+
+/* Buttons inside a widget frame are squared off to the frame's hard-edged corners (the site-wide capsule reads
+ * as a soft card control next to an 8px frame and a timing diagram). */
+.sc-frame .sc-btn,
+.sc-frame .sc-simctl select {
+	border-radius: var(--radius-sm);
 }

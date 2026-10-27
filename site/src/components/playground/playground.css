@@ -208,9 +208,10 @@ main:has([data-sc-playground]) .sl-container {
 	min-width: 0;
 	padding: 0.1875rem 0.875rem 0.1875rem 0.25rem;
 	border: 1px solid var(--c-rule-strong);
-	border-inline-start: 4px solid var(--c-accent-bright);
 	border-radius: var(--radius-md);
 	background-color: var(--c-sheet);
+	/* A straight accent bar (an inset rule, not a 4px border bent round the corner) and the frames' hard bottom edge. */
+	box-shadow: inset 3px 0 0 var(--c-accent-bright), 0 1.5px 0 var(--c-rule-strong);
 }
 .sc-pg-task__head {
 	min-width: 0;
@@ -363,9 +364,10 @@ main:has([data-sc-playground]) .sl-container {
 	overflow: auto;
 	overscroll-behavior: contain;
 	border: 1px solid var(--c-rule-strong);
-	border-radius: var(--radius-frame);
+	/* The frames' instrument edge (8px corner, hard 1.5px bottom rule), not a floating soft-shadow card. */
+	border-radius: var(--radius-md);
 	background-color: var(--c-sheet);
-	box-shadow: var(--shadow-pop);
+	box-shadow: 0 1.5px 0 var(--c-rule-strong);
 }
 .sc-pg-pop--help .sc-pg-pop__panel {
 	left: auto;
@@ -1188,6 +1190,18 @@ main:has([data-sc-playground]) .sl-container {
 		min-width: 0;
 	}
 }
+@media (max-width: 30rem) {
+	/* Simulate tab: the diagram is there to watch, so its zoom read-out goes (1 still resets) and the chart's name
+	 * keeps its room instead of shrinking to a letter. */
+	.sc-pg[data-pg-js][data-tab='sim'] .sc-pg__panel--diagram .sc-pg__zoom-level {
+		display: none;
+	}
+	.sc-pg__panel--diagram .sc-pg__chart {
+		min-width: min(5.5rem, 30%);
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
 @media (max-width: 23.99rem) {
 	/* Narrower still (360 px): the zoom read-out goes (Fit and the zoom buttons stay; 0 and 1 work from the keyboard). */
 	.sc-pg__panel--diagram .sc-pg__zoom-level {
@@ -1635,8 +1649,8 @@ main:has([data-sc-playground]) .sl-container {
 .sc-pg-compare__result {
 	padding: 0.625rem 0.75rem;
 	border: 1px solid var(--c-rule-strong);
-	border-inline-start-width: 4px;
-	border-radius: var(--radius-sm);
+	border-inline-start-width: 3px;
+	border-radius: var(--radius-xs);
 	background-color: var(--c-rail);
 	color: var(--c-ink);
 	line-height: var(--leading-snug);
@@ -1914,6 +1928,21 @@ main:has([data-sc-playground]) .sl-container {
 	}
 }
 
+@media (max-width: 30rem) {
+	/* Phone, with the Guided tour | Free play switch: the head stays one row (title, switch, the two tools) instead
+	 * of dropping the tools to a row of their own. The diagram's head has the glyph; this one gives it up. */
+	.sc-pg__panel--sim > .sc-pg__head:has(> .sc-pg__mode:not([hidden])) {
+		gap: 0.5rem;
+		padding-inline-start: 0.75rem;
+	}
+	.sc-pg__panel--sim > .sc-pg__head:has(> .sc-pg__mode:not([hidden])) > .sc-pg__glyph {
+		display: none;
+	}
+	.sc-pg__panel--sim > .sc-pg__head .sc-pg__mode button {
+		padding-inline: 0.5rem;
+	}
+}
+
 /* ----- Simulation tools in the head: Variables, Copy link to this run ----- */
 
 .sc-pg__simtools {
@@ -2003,7 +2032,7 @@ main:has([data-sc-playground]) .sl-container {
 	min-height: 1.875rem;
 	padding: 0 0.625rem 0 0.4375rem;
 	border: 1.5px solid var(--c-control);
-	border-radius: var(--radius-capsule);
+	border-radius: var(--radius-sm);
 	background-color: var(--c-sheet);
 	color: var(--c-ink);
 	cursor: pointer;

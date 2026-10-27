@@ -316,12 +316,12 @@ const panelIds = (v: { id: string; show?: string[] }) => (v.show ?? [v.id]).map(
 		white-space: nowrap;
 	}
 
-	/* View switch: a segmented capsule. */
+	/* View switch: a segmented bar, squared off to match the frame's corners. */
 	.sc-frame__views {
 		display: inline-flex;
 		padding: 2px;
 		border: 1px solid var(--c-control);
-		border-radius: var(--radius-capsule);
+		border-radius: var(--radius-sm);
 		background-color: var(--c-sheet);
 	}
 	.sc-frame__views[hidden] {
@@ -353,7 +353,7 @@ const panelIds = (v: { id: string; show?: string[] }) => (v.show ?? [v.id]).map(
 		min-height: 1.875rem;
 		padding: 0.125rem 0.875rem;
 		border: 0;
-		border-radius: var(--radius-capsule);
+		border-radius: var(--radius-xs);
 		background: none;
 		color: var(--c-muted);
 		font: inherit;
@@ -383,7 +383,7 @@ const panelIds = (v: { id: string; show?: string[] }) => (v.show ?? [v.id]).map(
 		gap: 0.375rem;
 		min-height: 2rem;
 		padding: 0.25rem 0.625rem;
-		border-radius: var(--radius-capsule);
+		border-radius: var(--radius-sm);
 		color: var(--c-accent);
 		font-size: var(--text-xs);
 		font-weight: 700;
