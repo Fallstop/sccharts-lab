@@ -1,0 +1,7 @@
+---
+// Light only for now (see theme-middleware.ts): set the theme before the first paint, whatever was stored.
+---
+<script is:inline>
+    document.documentElement.dataset.theme = 'light'
+    try { localStorage.setItem('starlight-theme', 'light') } catch {}
+</script>

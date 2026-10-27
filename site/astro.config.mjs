@@ -133,6 +133,9 @@ export default defineConfig({
                 Head: './src/components/overrides/Head.astro',
                 // "Report a mistake on this page" when REPORT_URL is set (src/components/site.ts).
                 Footer: './src/components/overrides/Footer.astro',
+                // Light only for now (theme-middleware.ts).
+                ThemeProvider: './src/components/overrides/ThemeProvider.astro',
+                ThemeSelect: './src/components/overrides/ThemeSelect.astro',
             },
             tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
             // The site map is docs-internal/CONTENT-PLAN.md. Pages set their order with `sidebar.order`.

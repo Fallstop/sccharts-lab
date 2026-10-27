@@ -59,3 +59,11 @@ describe('theme without JavaScript', () => {
         expect(stripServerTheme('<html lang="en">')).toBe('<html lang="en">')
     })
 })
+
+describe('light-only theme', () => {
+    it('forces data-theme="light" on the <html> tag only', async () => {
+        const { forceLightTheme } = await import('../../src/components/overrides/theme-middleware')
+        expect(forceLightTheme('<html lang="en" data-theme="dark" data-has-toc><body data-theme="dark">')).toBe('<html data-theme="light" lang="en" data-has-toc><body data-theme="dark">')
+        expect(forceLightTheme('<html lang="en">')).toBe('<html data-theme="light" lang="en">')
+    })
+})
