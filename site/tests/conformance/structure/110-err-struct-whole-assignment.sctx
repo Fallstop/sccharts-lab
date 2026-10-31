@@ -1,0 +1,9 @@
+// A whole instance cannot be assigned or read: only its members.
+scchart St110Whole {
+  struct Point {
+    int x
+    int y
+  } p, q
+  initial state A
+  do q = p go to A
+}

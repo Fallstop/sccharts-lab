@@ -1,0 +1,6 @@
+// A chart that references itself would be copied forever. The lab server reports it; official KIELER's
+// compiler never finishes (it overflows its stack), so it rejects the chart too, without a message.
+scchart St21Main {
+  output int o
+  initial state R is St21Main(o)
+}

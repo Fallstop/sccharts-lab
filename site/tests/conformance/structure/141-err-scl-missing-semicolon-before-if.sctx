@@ -1,0 +1,11 @@
+// The rule holds for postfix assignments too, and before an if.
+scchart St141MissingIf {
+  output int a = 0, b = 0
+  initial state S
+  do {
+    a++
+    if (a > 1) {
+      b = 1
+    }
+  } go to S
+}

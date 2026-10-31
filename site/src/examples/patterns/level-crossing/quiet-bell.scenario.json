@@ -1,0 +1,78 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true,
+        "restart": false
+      },
+      "note": "Tick 1: open."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A train: `ringing` is set together with `flashing`. Left lamp, bell."
+    },
+    {
+      "inputs": {},
+      "note": "Right lamp."
+    },
+    {
+      "inputs": {},
+      "note": "Left lamp, bell."
+    },
+    {
+      "inputs": {},
+      "note": "Right; lower."
+    },
+    {
+      "inputs": {
+        "isUp": false
+      },
+      "note": "Left, bell."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Down: `ringing` is cleared on the way into `Closed`."
+    },
+    {
+      "inputs": {},
+      "note": "Left lamp, no bell."
+    },
+    {
+      "inputs": {},
+      "note": "Right."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "Left, silent. The barrier rises."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "Right."
+    },
+    {
+      "inputs": {},
+      "note": "Left, silent."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "Up: open, dark."
+    },
+    {
+      "inputs": {},
+      "note": "Open."
+    }
+  ],
+  "expect": "ok"
+}

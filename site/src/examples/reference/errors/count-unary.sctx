@@ -1,0 +1,9 @@
+scchart CountUnary {
+  input int I
+  output bool fired
+
+  initial state Wait
+    if 3 -I > 0 do fired = true go to Done
+
+  state Done
+}

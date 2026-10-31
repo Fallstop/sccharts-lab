@@ -1,0 +1,7 @@
+scchart PrintCalculation {
+  input int I
+  output int doubled
+
+  initial state Work
+    do doubled = I * 2; print(I / 2) go to Work
+}

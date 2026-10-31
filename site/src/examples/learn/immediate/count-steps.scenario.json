@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1 enters `Counting`. The self-loop is delayed, so it does not fire in `Counting`'s entry tick."
+    },
+    {
+      "inputs": {},
+      "note": "`n < 3` holds, so the self-loop fires and `n` is 1. Taking the loop leaves `Counting` and enters it again, which makes this tick `Counting`'s entry tick: the delayed loop cannot fire a second time in it."
+    },
+    {
+      "inputs": {},
+      "note": "The loop fires once more: `n` is 2."
+    },
+    {
+      "inputs": {},
+      "note": "`n` is 3."
+    },
+    {
+      "inputs": {},
+      "note": "`n < 3` is false now, so the loop does not fire. The chart rests in `Counting` for good."
+    }
+  ],
+  "expect": "ok"
+}

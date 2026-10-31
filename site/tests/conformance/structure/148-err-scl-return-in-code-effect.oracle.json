@@ -1,0 +1,24 @@
+{
+  "hash": "1e4a23aa8dab1ed751b6a7de3e0ef0d5234dd833",
+  "chart": "tests/conformance/structure/148-err-scl-return-in-code-effect.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "7:5 Return statements can only be used in method bodies.",
+    "variable or field ‘_fn0__effect0_return’ declared void",
+    "variable or field ‘_fn0__effect0_return’ declared void",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name _fn0__effect0_return is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Return statements can only be used in method bodies.",
+      "line": 7,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

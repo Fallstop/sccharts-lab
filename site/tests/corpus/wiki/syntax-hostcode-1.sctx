@@ -1,0 +1,10 @@
+scchart hostcode#10 {
+  output float r
+  extern @C "rand", 
+         @Java "Math.random"  rand
+    
+    entry do rand(0)
+        
+    initial state init 
+    do r = rand() go to init
+}

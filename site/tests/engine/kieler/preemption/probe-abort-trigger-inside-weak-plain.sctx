@@ -1,0 +1,19 @@
+// As probe-abort-trigger-inside-weak-count without the count delay: accepted.
+scchart W {
+  input bool a, beat
+  output signal expired
+  initial state Running {
+    region Watchdog {
+      initial state Watching
+        if beat go to Watching
+        if a do expired go to Expired
+      state Expired
+    }
+    region Work {
+      initial state Idle
+        if beat go to Idle
+    }
+  }
+  if expired go to Safe
+  state Safe
+}

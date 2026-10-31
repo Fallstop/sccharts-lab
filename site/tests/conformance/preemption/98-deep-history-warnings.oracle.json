@@ -1,0 +1,106 @@
+{
+  "hash": "407b3054cf32caf989e2982c0624240dcf650d7f",
+  "chart": "tests/conformance/preemption/98-deep-history-warnings.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HOuter is contained in the model but not in VariableStore.",
+    "ValuedObject with name _HMid is contained in the model but not in VariableStore.",
+    "ValuedObject with name _HInner is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "deeper": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "where": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false,
+        "deeper": false
+      },
+      "values": {
+        "deeper": false,
+        "leave": false,
+        "where": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": false,
+        "deeper": true
+      },
+      "values": {
+        "deeper": true,
+        "leave": false,
+        "where": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": true,
+        "deeper": false
+      },
+      "values": {
+        "deeper": false,
+        "leave": true,
+        "where": 2
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leave": false,
+        "deeper": false
+      },
+      "values": {
+        "deeper": false,
+        "leave": false,
+        "where": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

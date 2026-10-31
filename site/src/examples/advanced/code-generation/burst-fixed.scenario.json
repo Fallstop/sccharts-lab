@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "fire": false }, "note": "The loop now contains a delayed transition, `Reload` → `Ready`, so the netlist compiler accepts it. `fire` is false: `shots` = 0." },
+    { "inputs": { "fire": true }, "note": "`Ready` → `Reload` fires immediately: `shots` = 1. The way back waits for the next tick." },
+    { "note": "`Reload` → `Ready` (delayed), then at once `Ready` → `Reload` again: `shots` = 2." },
+    { "note": "`shots` = 3." },
+    { "note": "Back in `Ready`, but `shots < 3` is false: no more shots." },
+    { "inputs": { "fire": false }, "note": "`shots` = 3." }
+  ],
+  "expect": "ok"
+}

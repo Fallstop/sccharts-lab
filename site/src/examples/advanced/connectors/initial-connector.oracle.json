@@ -1,0 +1,101 @@
+{
+  "hash": "8b160c2d64293949cd604e2dbfb60c6d7ee74e0f",
+  "chart": "src/examples/advanced/connectors/initial-connector.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "boost": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "toggle": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "speed": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "boost": true,
+        "toggle": false
+      },
+      "values": {
+        "boost": true,
+        "toggle": false,
+        "speed": 3
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "boost": true,
+        "toggle": false,
+        "speed": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "toggle": true
+      },
+      "values": {
+        "boost": true,
+        "toggle": true,
+        "speed": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "toggle": false
+      },
+      "values": {
+        "boost": true,
+        "toggle": false,
+        "speed": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

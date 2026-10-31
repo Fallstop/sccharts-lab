@@ -1,0 +1,102 @@
+{
+  "hash": "56d390df00eb419a63458d0304f67923c8b871a8",
+  "chart": "tests/conformance/preemption/10-immediate-during.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "countA": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "countB": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "countC": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "next": false
+      },
+      "values": {
+        "next": false,
+        "countA": 1,
+        "countB": 0,
+        "countC": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "next": false,
+        "countA": 2,
+        "countB": 0,
+        "countC": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "next": true,
+        "countA": 3,
+        "countB": 1,
+        "countC": 0
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "next": false
+      },
+      "values": {
+        "next": false,
+        "countA": 3,
+        "countB": 1,
+        "countC": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+// A single region without any final state under "join to": the usual result is the warning and a join that never
+// fires (the crash of test 18 needs a join target with an entry or during action).
+scchart C78NoFinal {
+  input bool start, full
+  output bool done
+  initial state Idle
+  if start go to Programme
+  state Programme {
+    initial state Filling
+    if full go to Washing
+    state Washing
+  }
+  join to Idle
+}

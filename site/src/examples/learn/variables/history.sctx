@@ -1,0 +1,10 @@
+scchart History {
+  input int reading
+  output int last[3]
+  output int average = 0
+
+  initial state Sample
+    do last = {reading, last[0], last[1]};
+       average = (last[0] + last[1] + last[2]) / 3
+       go to Sample
+}

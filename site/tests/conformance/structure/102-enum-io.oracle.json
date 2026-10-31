@@ -1,0 +1,92 @@
+{
+  "hash": "2ac07f73ae737ed1940d22f911a39e6a0f3e8a75",
+  "chart": "tests/conformance/structure/102-enum-io.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "d": {
+      "type": "int",
+      "properties": [
+        "input",
+        "enum"
+      ]
+    },
+    "last": {
+      "type": "int",
+      "properties": [
+        "output",
+        "enum"
+      ]
+    },
+    "moves": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "d": 2
+      },
+      "values": {
+        "d": 2,
+        "last": 2,
+        "moves": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "d": 0
+      },
+      "values": {
+        "d": 0,
+        "last": 0,
+        "moves": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "d": 1
+      },
+      "values": {
+        "d": 1,
+        "last": 1,
+        "moves": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "d": 2
+      },
+      "values": {
+        "d": 2,
+        "last": 1,
+        "moves": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

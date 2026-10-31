@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1: nothing fires."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `A` → `B` writes `x = 1`."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `B` → `A` writes `x = 2`. Two different values written to `x` in one region are fine: a region's states are never active together."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`a` is false: `x = 2`."
+    }
+  ],
+  "expect": "ok"
+}

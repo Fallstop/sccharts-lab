@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: `done` is a signal, and signals are emitted (`do done`), not assigned."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Non-variables cannot be used in an assignment."
+}

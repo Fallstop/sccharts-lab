@@ -1,0 +1,7 @@
+scchart Random {
+  output float r
+  output int percent
+
+  initial state S
+  do r = random(); percent = random() * 100 go to S
+}

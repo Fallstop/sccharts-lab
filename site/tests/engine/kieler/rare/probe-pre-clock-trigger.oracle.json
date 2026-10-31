@@ -1,0 +1,172 @@
+{
+  "hash": "42d78157957aa1138a1a36515838cce6d5fb189a",
+  "chart": "tests/engine/kieler/rare/probe-pre-clock-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 1,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 1,
+        "n": 0,
+        "p": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 5,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 5,
+        "n": 0,
+        "p": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 6,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 6,
+        "n": 0,
+        "p": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 7,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 7,
+        "n": 1,
+        "p": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "v": 1,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 1,
+        "n": 2,
+        "p": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "v": 2,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 2,
+        "n": 3,
+        "p": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "v": 9,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 9,
+        "n": 3,
+        "p": 7
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "v": 3,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 3,
+        "n": 3,
+        "p": 7
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

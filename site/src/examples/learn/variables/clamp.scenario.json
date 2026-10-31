@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "speed": 4
+      },
+      "note": "Tick 1 enters `Show`; the self-loop is delayed."
+    },
+    {
+      "note": "`speed > 10 ? 10 : speed` reads as `speed > (10 ? 10 : speed)`. `10 ? 10 : speed` is 10 (10 is not zero, so it counts as true), so the whole expression is `speed > 10`: false, which is stored as 0."
+    },
+    {
+      "inputs": {
+        "speed": 25
+      },
+      "note": "`speed > 10` is true, stored as 1. The cap of 10 never appears."
+    },
+    {
+      "inputs": {
+        "speed": 10
+      },
+      "note": "`speed > 10` is false: 0."
+    },
+    {
+      "inputs": {
+        "speed": 11
+      },
+      "note": "1 again. `shown` is only ever 0 or 1."
+    }
+  ],
+  "expect": "ok"
+}

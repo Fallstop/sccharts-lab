@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 in Start: **work = 0, work2 = 0**."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "M is entered and its Watch finishes at once: Main never starts (**work = 0**); N is entered, Main starts first (**work2 = 1**), then Watch finishes: **done = 1**."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Done goes back to Start: **done = 1**."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "M is entered, Main starts: **work = 1**."
+    }
+  ],
+  "expect": "ok"
+}

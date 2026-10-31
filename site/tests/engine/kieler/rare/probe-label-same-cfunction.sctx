@@ -1,0 +1,32 @@
+// Two methods with loops (C functions) with the same label: KIELER crashes too.
+scchart LabelCFunction {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+
+  method void m1() {
+    for (int i = 0; i < 1; i++) {
+      x += 0
+    }
+    if (b) {
+      goto skip
+    }
+    x += 1;
+    skip:
+    y += 1
+  }
+
+  method void m2() {
+    for (int i = 0; i < 1; i++) {
+      z += 0
+    }
+    if (b) {
+      goto skip
+    }
+    z += 1;
+    skip:
+    y += 10
+  }
+
+  initial state S
+    if a do m1(); m2() go to S
+}

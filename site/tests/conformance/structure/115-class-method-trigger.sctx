@@ -1,0 +1,18 @@
+// A method call in a trigger: the transition fires in the tick in which c.big() holds.
+scchart St115Trigger {
+  output bool done = false
+  class C {
+    int v
+    void inc() {
+      v++
+    }
+    bool big() {
+      return v >= 2
+    }
+  } c
+  initial state A {
+    during do c.inc()
+  }
+  if c.big() do done = true go to B
+  final state B
+}

@@ -1,0 +1,127 @@
+{
+  "hash": "ac92d5c6be9f30cf302335a97555714cac452296",
+  "chart": "src/examples/learn/variables/limits.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "drain": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "flow": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "volume": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "flow": 200,
+        "drain": 0
+      },
+      "values": {
+        "drain": 0,
+        "flow": 200,
+        "volume": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "drain": 0,
+        "flow": 200,
+        "volume": 200
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "drain": 0,
+        "flow": 200,
+        "volume": 400
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "drain": 0,
+        "flow": 200,
+        "volume": 600
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "flow": 0,
+        "drain": 350
+      },
+      "values": {
+        "drain": 350,
+        "flow": 0,
+        "volume": 250
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "drain": 350,
+        "flow": 0,
+        "volume": -100
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "drain": 350,
+        "flow": 0,
+        "volume": -450
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

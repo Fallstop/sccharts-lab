@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Rejected: \"Can't schedule from ... to ...\", \"The SCG is NOT asc-schedulable!\", with the editor warning \"There is an immediate loop. The model is not SASC.\""
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

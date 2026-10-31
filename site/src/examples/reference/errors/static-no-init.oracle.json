@@ -1,0 +1,84 @@
+{
+  "hash": "8ed3ebdf58a3ff496c7b57088713e9a3b29e7dc2",
+  "chart": "src/examples/reference/errors/static-no-init.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Static variables should be initialized.",
+      "line": 6,
+      "column": 16
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "shown": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "StaticNoInit_region0_Room___visits": {
+      "type": "int",
+      "properties": [
+        "static"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "shown": 1,
+        "StaticNoInit_region0_Room___visits": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "shown": 1,
+        "StaticNoInit_region0_Room___visits": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "shown": 2,
+        "StaticNoInit_region0_Room___visits": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

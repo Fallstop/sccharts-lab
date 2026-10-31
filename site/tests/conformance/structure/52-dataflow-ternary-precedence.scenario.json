@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": 1,
+        "B": 2
+      },
+      "note": "B ? A : B is A (B is non-zero), and A > A is false: **wrong = 0**, **right = 2**."
+    },
+    {
+      "inputs": {
+        "A": 5,
+        "B": 4
+      },
+      "note": "B ? A : B is again A, and A > A is false: **wrong = 0**; **right = 5**."
+    }
+  ],
+  "expect": "ok"
+}

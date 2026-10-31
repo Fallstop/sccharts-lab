@@ -1,0 +1,161 @@
+{
+  "hash": "ae7ecfc7d3611be75a9348bd2c596f3e8f23087c",
+  "chart": "tests/conformance/preemption/104-abort-region-data-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 13,
+      "column": 19
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 23,
+      "column": 19
+    }
+  ],
+  "interface": {
+    "go1": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "sawS": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sawSLead": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "seenLead": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "seenTrail": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "go1": false
+      },
+      "values": {
+        "go1": false,
+        "S": false,
+        "sawS": false,
+        "sawSLead": false,
+        "seenLead": 0,
+        "seenTrail": 0,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "go1": true
+      },
+      "values": {
+        "go1": true,
+        "S": true,
+        "sawS": true,
+        "sawSLead": false,
+        "seenLead": 0,
+        "seenTrail": 0,
+        "x": 1
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "go1": true
+      },
+      "values": {
+        "go1": true,
+        "S": true,
+        "sawS": true,
+        "sawSLead": false,
+        "seenLead": 0,
+        "seenTrail": 0,
+        "x": 2
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "go1": false
+      },
+      "values": {
+        "go1": false,
+        "S": false,
+        "sawS": true,
+        "sawSLead": false,
+        "seenLead": 2,
+        "seenTrail": 0,
+        "x": 2
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

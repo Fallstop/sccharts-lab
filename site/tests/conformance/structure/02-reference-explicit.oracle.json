@@ -1,0 +1,66 @@
+{
+  "hash": "1078a3980975cffff336323ffa190e9dceafdec8",
+  "chart": "tests/conformance/structure/02-reference-explicit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "second": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "speaker": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "second": true
+      },
+      "values": {
+        "second": true,
+        "speaker": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "second": true,
+        "speaker": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "second": false
+      },
+      "values": {
+        "second": false,
+        "speaker": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "second": true
+      },
+      "values": {
+        "second": true,
+        "speaker": false
+      },
+      "terminated": false
+    }
+  ]
+}

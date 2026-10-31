@@ -1,0 +1,9 @@
+scchart Consts {
+  const int MAX = 5
+  initial state S0
+}
+scchart UsesConsts {
+  output int O
+  initial state S0
+  do O = scchart(Consts).MAX go to S0
+}

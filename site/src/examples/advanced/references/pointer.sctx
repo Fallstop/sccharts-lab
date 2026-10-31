@@ -1,0 +1,14 @@
+scchart PointerPuzzle {
+  output int number = 0
+  int seven = 7
+
+  initial state R is ThreeDigits(1 to b, 2, number, seven to a)
+}
+
+scchart ThreeDigits {
+  input int a, b, c
+  output int result
+
+  initial state Compute
+    do result = a * 100 + b * 10 + c go to Compute
+}

@@ -1,0 +1,14 @@
+scchart FloatCombine {
+  input bool a
+  output signal float V combine +
+
+  region R1 {
+    initial state X
+    if a do V(1.5) go to X
+  }
+
+  region R2 {
+    initial state X
+    if a do V(2.25) go to X
+  }
+}

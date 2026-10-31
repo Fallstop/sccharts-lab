@@ -1,0 +1,27 @@
+scchart TwoFloors {
+  input bool button1, button2      // call buttons on floors 1 and 2
+  input bool at1, at2              // the lift is at floor 1 / floor 2, doors open
+  output bool lamp1, lamp2
+
+  region Floor1 {
+    initial state Idle
+      if button1 && !at1 go to Waiting
+
+    state Waiting {
+      entry do lamp1 = true
+      exit do lamp1 = false
+    }
+    if at1 go to Idle
+  }
+
+  region Floor2 {
+    initial state Idle
+      if button2 && !at2 go to Waiting
+
+    state Waiting {
+      entry do lamp2 = true
+      exit do lamp2 = false
+    }
+    if at2 go to Idle
+  }
+}

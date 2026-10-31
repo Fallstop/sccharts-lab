@@ -1,0 +1,104 @@
+{
+  "hash": "8aa51cacbcb76f1eadd6c1bf9d2055cb4fc39aa3",
+  "chart": "tests/conformance/basics/49-logic-short-circuit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "suggest parentheses around comparison in operand of ‘&’ [-Wparentheses]"
+  ],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "Z": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "r": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "s": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "t": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 6,
+        "Z": 0
+      },
+      "values": {
+        "A": 6,
+        "Z": 0,
+        "p": false,
+        "r": false,
+        "s": false,
+        "t": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": 6,
+        "Z": 0,
+        "p": false,
+        "r": true,
+        "s": true,
+        "t": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": 0,
+        "Z": 1
+      },
+      "values": {
+        "A": 0,
+        "Z": 1,
+        "p": false,
+        "r": false,
+        "s": false,
+        "t": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

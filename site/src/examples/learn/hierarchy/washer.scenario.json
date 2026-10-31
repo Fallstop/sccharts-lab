@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "full": false, "timeUp": false }, "note": "Tick 1 enters the initial state, `Idle`. Its transition is delayed, so nothing else can happen in this tick." },
+    { "inputs": { "start": true }, "note": "`start` is true, so `Idle` → `Programme` fires. Entering `Programme` enters its initial state, `Filling`, in the same tick: two states are active now, `Programme` and `Filling` inside it." },
+    { "inputs": { "start": false }, "note": "`Filling` waits for `full`, which is false, so nothing fires. The chart stays in `Programme`, in `Filling`." },
+    { "inputs": { "full": true }, "note": "`full` is true: `Filling` → `Washing` fires inside `Programme` and switches the motor on. `Programme` stays active: moving between its inner states does not leave it." },
+    { "inputs": { "full": false }, "note": "Nothing is enabled. The machine keeps washing, and `motor` keeps its value." },
+    { "inputs": { "timeUp": true }, "note": "`timeUp` is true: `Washing` → `Draining` fires and switches the motor off." },
+    { "inputs": { "timeUp": false }, "note": "`Draining` has no outgoing transition, so the machine stays here for ever. The rest of the chapter gives it ways out." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,265 @@
+{
+ "sourceHash": "0a7e30521d2c5598",
+ "states": [
+  {
+   "path": [
+    "Audit"
+   ],
+   "rows": [
+    [
+     "Audit"
+    ],
+    [
+     "input bool ",
+     "trigger"
+    ],
+    [
+     "input string ",
+     "timeout_update_vals"
+    ],
+    [
+     "output bool ",
+     "result = false"
+    ],
+    [
+     "output string ",
+     "echoed"
+    ],
+    [
+     "const int ",
+     "LIMIT = 3"
+    ],
+    [
+     "int ",
+     "count = 0"
+    ]
+   ],
+   "box": [
+    0,
+    29.8,
+    463.4,
+    383.7
+   ]
+  },
+  {
+   "path": [
+    "Audit",
+    0,
+    "Idle"
+   ],
+   "rows": [
+    [
+     "Waiting"
+    ]
+   ],
+   "box": [
+    10,
+    112,
+    72.5,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Audit",
+    0,
+    "Active"
+   ],
+   "rows": [
+    [
+     "Active"
+    ],
+    [
+     "entry ",
+     "/ count = count + 1"
+    ]
+   ],
+   "box": [
+    273.9,
+    10,
+    166.1,
+    223.7
+   ]
+  },
+  {
+   "path": [
+    "Audit",
+    0,
+    "Active",
+    "main",
+    "On"
+   ],
+   "rows": [
+    [
+     "On"
+    ]
+   ],
+   "box": [
+    56.4,
+    20,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Audit",
+    0,
+    "Active",
+    "main",
+    "Off"
+   ],
+   "rows": [
+    [
+     "Off"
+    ]
+   ],
+   "box": [
+    51.8,
+    118.1,
+    48.7,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Audit",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    450,
+    243.7
+   ]
+  },
+  {
+   "path": [
+    "Audit",
+    0,
+    "Active",
+    "main"
+   ],
+   "label": [
+    "main"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    7,
+    49.4,
+    152.1,
+    168.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NAudit$$N0$NActive$Nmain$NOn$EOff0",
+   "source": [
+    "Audit",
+    0,
+    "Active",
+    "main",
+    "On"
+   ],
+   "target": [
+    "Audit",
+    0,
+    "Active",
+    "main",
+    "Off"
+   ],
+   "text": "count > LIMIT",
+   "lines": [
+    "count > LIMIT"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle"
+   ]
+  },
+  {
+   "id": "$root$NAudit$$N0$NIdle$EActive0",
+   "source": [
+    "Audit",
+    0,
+    "Idle"
+   ],
+   "target": [
+    "Audit",
+    0,
+    "Active"
+   ],
+   "text": "trigger / result = true; echoed = timeout_update_vals",
+   "lines": [
+    "trigger",
+    "/ result = true;",
+    "  echoed =",
+    "timeout_update_vals"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NAudit$$N0$NActive$EIdle0",
+   "source": [
+    "Audit",
+    0,
+    "Active"
+   ],
+   "target": [
+    "Audit",
+    0,
+    "Idle"
+   ],
+   "text": "1: !trigger / result = false",
+   "lines": [
+    "1: !trigger",
+    "/ result = false"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NAudit$$N0$NActive$EIdle1",
+   "source": [
+    "Audit",
+    0,
+    "Active"
+   ],
+   "target": [
+    "Audit",
+    0,
+    "Idle"
+   ],
+   "text": "2:",
+   "lines": [
+    "2: "
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  }
+ ],
+ "comments": [
+  {
+   "path": [
+    1
+   ],
+   "text": "The audit chart reacts to a trigger."
+  }
+ ]
+}

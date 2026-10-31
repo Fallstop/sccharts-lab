@@ -1,0 +1,9 @@
+scchart DuringCountDelay {
+  input bool A
+  output int n
+
+  initial state Counting {
+    during if 2 A do n++
+    initial state Inner
+  }
+}

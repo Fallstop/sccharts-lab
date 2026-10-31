@@ -1,0 +1,40 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false,
+        "Q": false
+      },
+      "note": "Chart 62 again, but now Top itself is the target of a history transition (from Out). Tick 1 enters Top, M, I."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "I → J (where = 2)."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "P": true
+      },
+      "note": "M is left (where = 9)."
+    },
+    {
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "note": "Because Top has an incoming history transition, KIELER also processes the history transitions inside it: M resumes in J (where = 2)."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "In J."
+    }
+  ],
+  "expect": "ok"
+}

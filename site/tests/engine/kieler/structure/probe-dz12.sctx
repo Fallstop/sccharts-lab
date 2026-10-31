@@ -1,0 +1,16 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz12 {
+  input int I
+  output int X = 0
+  output bool hit = false
+  region {
+    initial state S {
+      dataflow { X = I * 3 }
+    }
+  }
+  region {
+    initial state W
+    if X > 5 do hit = true go to V
+    state V
+  }
+}

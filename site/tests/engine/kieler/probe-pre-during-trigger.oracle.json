@@ -1,0 +1,152 @@
+{
+  "hash": "49fc030c61086400d922209d3beb4ebd81e4acc7",
+  "chart": "tests/engine/kieler/probe-pre-during-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "The official KIELER compiler fails in its Pre transformation (\"Pre expressions are only supported in assignments, triggers and other pre expressions\") on `pre(a)` used directly as the trigger of a during action. SCCharts Lab compiles it, but this chart will not compile in KIELER."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "S_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "arr": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "S_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "n": 1,
+        "S": false,
+        "S_val": 0,
+        "arr": [
+          0,
+          0
+        ],
+        "x": 0,
+        "y": 0,
+        "S_curval": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 2,
+        "S": false,
+        "S_val": 0,
+        "arr": [
+          0,
+          0
+        ],
+        "x": 0,
+        "y": 0,
+        "S_curval": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 3,
+        "S": false,
+        "S_val": 0,
+        "arr": [
+          0,
+          0
+        ],
+        "x": 1,
+        "y": 0,
+        "S_curval": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "n": 4,
+        "S": false,
+        "S_val": 0,
+        "arr": [
+          0,
+          0
+        ],
+        "x": 2,
+        "y": 0,
+        "S_curval": 0
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Tick 1 enters S: the period clock starts at 0: **n = 0, sleepT = 300**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "The period clock is at 100: S's contents do not run: **n = 0**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "The period clock is at 200: **n = 0**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "300 time units passed: the guarded transition runs in this tick: **n = 1**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "The period clock restarted at 0 and is at 100: **n = 1**."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "100 + 250 = 350 ≥ 300: **n = 2**, the period clock keeps the excess 50."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "50 + 250 = 300 ≥ 300: **n = 3**, the clock goes back to 0."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "The period clock is at 250: **n = 3**, **sleepT = 50**."
+    }
+  ],
+  "expect": "ok"
+}

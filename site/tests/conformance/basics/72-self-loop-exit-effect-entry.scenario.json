@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Each action appends a digit to log: exit 1, transition effect 2, entry 3. Tick 1 enters A: log = 3."},
+    {"inputs": {}, "note": "The self-loop leaves A (exit: 31), runs its effect (312) and enters A again (entry: 3123): exit, then effect, then entry."},
+    {"inputs": {}, "note": "The same again: log = 3123123."}
+  ],
+  "expect": "ok"
+}

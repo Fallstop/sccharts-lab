@@ -1,0 +1,8 @@
+scchart Both {
+  input signal A, B
+  output signal both, onlyA
+
+  initial state Watch
+    if A && B do both go to Watch
+    if A && !B do onlyA go to Watch
+}

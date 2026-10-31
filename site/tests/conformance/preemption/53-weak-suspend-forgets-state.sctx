@@ -1,0 +1,20 @@
+scchart WeakSuspend {
+  input bool S, A
+  output int entersJ = 0, entersK = 0
+
+  initial state M {
+    weak suspend if S
+
+    initial state I
+    if A go to J
+
+    state J {
+      entry do entersJ += 1
+    }
+    if A go to K
+
+    state K {
+      entry do entersK += 1
+    }
+  }
+}

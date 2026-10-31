@@ -1,0 +1,60 @@
+{
+  "hash": "21932a1109ed4fc971a21dbcd9b137f515d7b229",
+  "chart": "tests/conformance/basics/63-kieler-bug-tick1-reorder.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "y": 3,
+        "z": 11
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 3,
+        "y": 3,
+        "z": 11
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+scchart Stopwatch {
+  input bool start, stop
+  output bool running = false
+  output int elapsed = 0
+
+  initial state Stopped
+    if start go to Running
+
+  state Running {
+    entry do running = true; elapsed = 0
+    during do elapsed++
+    exit do running = false
+  }
+  if stop go to Stopped
+}

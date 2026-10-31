@@ -1,0 +1,4 @@
+scchart P { input bool a
+ region R1 { initial state S { initial final state F } join to T
+ state T }
+ region R2 { initial state U if a go to V state V } }

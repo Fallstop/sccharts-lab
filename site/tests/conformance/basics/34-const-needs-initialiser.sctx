@@ -1,0 +1,9 @@
+scchart ConstNeedsInitialiser {
+  const int N
+  output int x
+
+  initial state A
+  immediate do x = N go to B
+
+  state B
+}

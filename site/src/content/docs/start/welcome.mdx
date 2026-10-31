@@ -1,0 +1,177 @@
+---
+title: "Welcome"
+description: "What SCCharts is, where it comes from, and how this guide teaches it with charts you can run in the page."
+sidebar:
+  order: 1
+prev: false
+---
+
+import { Chart, Sim } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+SCCharts is a language for programs that react: controllers that watch their inputs and drive their
+outputs for as long as they run, like the software in a lift, a washing machine or a car's cruise
+control. You write such a program as states and transitions, the tools draw it as a diagram, and it
+runs in discrete steps called ticks, behaving the same way every time you give it the same inputs.
+
+This guide teaches SCCharts from the ground up, for readers who can program a little in C, Java or
+Python but have never met a statechart or a synchronous language. Nearly every example runs right
+here in the page.
+
+## A chart to poke
+
+Here is a turnstile, the kind that guards a station platform. It starts locked; a coin unlocks it, and
+pushing through locks it again.
+
+<Sim example="start/welcome/turnstile" caption="Press **Step** once to start the chart. Then switch `coin` on and press **Step** again: the turnstile unlocks in that tick." />
+
+Press **Step** to run one tick. Before each step, set the inputs with the switches: `coin` means a
+coin has been inserted, `push` means someone is pushing the bar. (The simulation opens with a guided
+tour ready, which **Step** follows; as soon as you change a switch, the tour ends and the controls are
+yours.) Things to try:
+
+- Press **Step** once before anything else. Tick 1 only starts the chart in `Locked`; its transition
+  is first checked in tick 2, even if `coin` is already on.
+  [Thinking in ticks](/learn/ticks/#what-happens-in-tick-1) explains why.
+- Push before paying. Nothing happens: the locked turnstile only reacts to `coin`.
+- Insert a coin and leave `coin` switched on for a few ticks. The turnstile unlocks once and then
+  ignores the coin, because the unlocked state only reacts to `push`.
+- Unlock it and push. It locks again, and `unlocked` goes back to false.
+
+If you would rather watch, press **Next** instead: the guided tour plays all of this, with a note on
+every tick explaining what happened and why.
+
+You have just seen most of what makes SCCharts tick. The chart is always in exactly one of its states,
+drawn as rounded boxes. It moves between them along transitions, the arrows, when their conditions
+hold. And it does nothing between ticks: each press of **Step** is one complete reaction.
+
+## How this guide works
+
+Most examples in the guide are live, like the turnstile. Each one shows the **Diagram**, the **Code**
+or **Both**, and links to the [playground](/playground/), where you can edit it. In a simulation:
+
+- **Step** runs one tick, **Back** undoes it, **Reset** goes back to before tick 1 and **Run** keeps
+  stepping. A **guided tour** plays scripted inputs with a note on every tick: follow it with
+  **Next**, or **Take over** and try your own.
+- An **input** keeps its value until you change it, as in KIELER and SCCharts Lab. To press a button
+  for a single tick, use the pulse button next to its switch.
+- The diagram marks the **active state** in red and the **transition that fired** in blue, as KIELER
+  does. The **timing diagram** under it has one row per variable and one column per tick, and the
+  foot of the frame says what the last tick did.
+
+You will also meet static **charts**, **comparisons** (two charts stepped side by side with the same
+inputs), **predictions** (you guess, then the simulation checks), **quizzes** and **exercises**, which
+open a starter chart in the playground and keep a solution ready.
+
+## Reading a diagram in a minute
+
+SCCharts diagrams follow a small set of conventions. Here is a kettle that heats until it boils, or until
+it is switched off:
+
+<Chart example="start/welcome/kettle" caption="A heavy outline marks the initial state, a double outline a final state, and the numbers say which transition wins." />
+
+- The **outer box** is the chart itself, `Kettle`. Its interface is listed under its name: two inputs,
+  `switchedOn` and `temperature`, and one output, `heating`.
+- Each **rounded box** is a state. The kettle is in exactly one of them at a time.
+- `Off` has a **heavy outline**: it is the **initial state**, where the chart starts.
+- `Boiled` has a **double outline**: it is a **final state**. When the chart reaches it, it has
+  finished, and nothing happens any more. Final states are explained in [chapter 4](/learn/immediate/).
+- Each **arrow** is a transition. Its label reads *trigger* `/` *effect*: `switchedOn / heating = true`
+  means "when `switchedOn` is true, set `heating` to true and follow the arrow".
+- `Heating` has two transitions, so their labels are **numbered**, `1:` and `2:`. If both conditions
+  hold in the same tick, number 1 wins. (A state with only one outgoing transition shows no number.)
+
+Later chapters add a few more symbols: dashed arrows, states that contain other states, and small
+markers at the start of an arrow. [Diagram notation](/reference/notation/) lists them all.
+
+## What SCCharts is
+
+The name stands for *Sequentially Constructive Statecharts*. It combines three ideas.
+
+**Statecharts.** In 1987 David Harel published statecharts, a visual notation for the behaviour of
+reactive systems. A statechart is a state machine with two powerful additions: a state can contain a
+whole state machine of its own (a superstate), and several state machines can run side by side
+(concurrent regions). Engineers in many fields find the diagrams easy to read, which is one reason
+statecharts spread widely, into UML among other places.
+
+**Synchronous languages.** Statecharts left a hard question open: when two things happen at once,
+what exactly happens? The synchronous languages of the 1980s, Esterel and Lustre among them, answered
+it by dividing time into ticks. In each tick the program reads its inputs, reacts as if in zero time,
+and writes its outputs. Because the reaction is a function of the inputs and the current state, the
+program is *determinate*: the same inputs always produce the same outputs, even when parts of it run
+concurrently. Charles André's SyncCharts brought this discipline to statecharts, and SCCharts takes its
+notation from SyncCharts.
+
+**Sequential constructiveness.** The classic synchronous languages achieve determinacy by insisting
+that every variable has a single value throughout a tick. That rules out code every C or Java
+programmer writes without thinking, such as `if (x < 0) x = 0`, where `x` is read and then written in
+the same tick. The *sequentially constructive* model of computation lifts the restriction: a chart may
+read and write a variable in any order, as long as the program itself fixes the order, so that no
+outcome depends on how the compiler happens to schedule things. The compiler checks this and rejects
+charts where the order is not clear. [Chapter 12](/learn/causality/) shows what that means in practice.
+
+Put together: SCCharts are statecharts, with synchronous ticks, with variables that behave the way a
+programmer expects. The language has a small core (states, transitions, concurrent regions) and many
+extended features (signals, strong aborts, entry and exit actions, history, and more), each of which the
+compiler translates into the core before it generates code.
+
+## Where it comes from
+
+SCCharts was created by Reinhard von Hanxleden's Real-Time and Embedded Systems group at Kiel
+University in Germany, with colleagues from Bamberg University and National Instruments. The language
+was introduced at the PLDI conference in 2014, building on the sequentially constructive model of
+computation the same group had published a year earlier.
+
+Kiel's tools for SCCharts are part of **KIELER**, the group's open-source modelling environment. KIELER
+contains the SCCharts compiler and simulator, and it draws the diagrams automatically from the text,
+using its own layout technology. Today you can use it as an Eclipse-based application or as an
+extension for VS Code. **SCCharts Lab**, the VS Code extension this guide recommends, is an independent
+fork of KIELER's extension that runs KIELER's own compiler. [Getting SCCharts](/start/tools/) compares
+all of them.
+
+## What it is used for
+
+SCCharts was designed for safety-critical reactive systems: control software in which you must know
+what the program does in every situation, and be able to test that it does it. The compiler turns a
+chart into plain C or Java code, essentially one function that performs a tick, so the same chart can
+run on a small microcontroller without an operating system or in a simulation on your laptop. The
+research behind it has also produced compilers to hardware.
+
+SCCharts is also used to teach reactive and embedded programming at universities, because it makes the
+synchronous model visible: you can watch a chart react, tick by tick. Many readers of this guide meet it
+in a course, such as COMPSYS 303 at the University of Auckland.
+
+<Aside>
+This guide is an independent project, not part of KIELER or Kiel University. It explains the language
+and its tools; it does not contain solutions to any course's assignments. Every example in it has been
+run through KIELER's own compiler and simulator and checked, tick for tick, against what you see here.
+In the few places where KIELER has a bug that the guide does not copy, the example says so.
+[How this guide is checked](/reference/about/) explains the method and its limits.
+</Aside>
+
+## How the guide is organised
+
+- **Start here.** This page, and [Getting SCCharts](/start/tools/), which shows how to install the tools.
+  You don't need them to read the guide, but you will want them for your own charts. With a lab
+  tomorrow, read [Short on time?](/start/in-a-hurry/) first: one chart in five steps, the eight
+  surprises, and the key ideas of every chapter on one page.
+- **Learn.** The core tutorial, in twelve chapters, from [Thinking in ticks](/learn/ticks/) to
+  [Why the compiler says no](/learn/causality/). Read them in order: each chapter uses only what came
+  before it, and ends with exercises, a few questions and a summary of its key ideas.
+- **Going further.** Features you will want sooner or later, such as suspension, history, clocks, reusing
+  charts, methods, [enums, structs and classes](/advanced/data-types/), and the C code the compiler
+  generates. Read these when you need them.
+- **Patterns.** Complete, explained charts for problems that come up again and again: ABRO, edge
+  detection, debouncing, counters and timeouts, latches, mode switching, handshakes, watchdogs,
+  [sharing a resource](/patterns/arbiter/) between clients, and a level-crossing controller that puts
+  them together.
+- **Reference.** A [cheat sheet](/reference/cheatsheet/) of all the syntax, the
+  [diagram notation](/reference/notation/), [operators](/reference/operators/), KIELER's
+  [compiler messages](/reference/errors/) explained, what to check when
+  [a chart does not do what you expect](/reference/troubleshooting/), a
+  [glossary](/reference/glossary/), [further reading](/reference/further-reading/) and
+  [how this guide is checked](/reference/about/).
+- **[Playground](/playground/).** An editor with a live diagram and a simulator, in the browser.
+
+Ready? Start with [Thinking in ticks](/learn/ticks/), or set up your tools first with
+[Getting SCCharts](/start/tools/).

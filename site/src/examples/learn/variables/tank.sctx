@@ -1,0 +1,13 @@
+scchart Tank {
+  input int flow
+  output int volume = 0
+  output bool full = false
+  const int CAPACITY = 500
+  int fills
+
+  initial state Filling
+    if volume + flow >= CAPACITY do volume = CAPACITY; full = true go to Full
+    do volume += flow; fills += 1 go to Filling
+
+  final state Full
+}

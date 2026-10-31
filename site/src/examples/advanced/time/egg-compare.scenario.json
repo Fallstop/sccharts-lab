@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 1300 }, "note": "Both egg timers are ticked every 1300 ms (`deltaT` = 1300). Tick 1 enters `Boiling`: `t` = 0." },
+    { "inputs": { "deltaT": 1300 }, "note": "`t` = 1300 in both." },
+    { "inputs": { "deltaT": 1300 }, "note": "`t` = 2600. (`sleepT` differs too: `EggTimer` asks to be woken in 400 ms, exactly at its timeout, while `==` gives `EggTimerEqual` no bound to aim for. More on `sleepT` [below](#sleept-when-to-wake-the-chart).)" },
+    { "inputs": { "deltaT": 1300 }, "note": "`t` = 3900: the clock has jumped over 3000. `EggTimer`: `t >= 3000` holds, so `ring` comes on, 900 ms late. `EggTimerEqual`: `t == 3000` was never true and never will be, so `ring` stays false." }
+  ],
+  "expect": "ok"
+}

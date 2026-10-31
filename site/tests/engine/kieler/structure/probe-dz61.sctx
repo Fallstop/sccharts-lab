@@ -1,0 +1,16 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz61 {
+  input bool A, B
+  output int c = 0
+  initial state R is Dz61C(c)
+  if A go to P
+  state P
+  if B go to R history
+}
+scchart Dz61C {
+  output int n
+  initial state X
+  do n++ go to Y
+  state Y
+  do n += 10 go to X
+}

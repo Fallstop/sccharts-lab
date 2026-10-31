@@ -1,0 +1,92 @@
+{
+  "hash": "600d753d38495e734dcadf8a19e8d89ea085f43e",
+  "chart": "src/examples/advanced/history/arrive-normal.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "walk": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chimes": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "steps": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "walk": false,
+        "chimes": 0,
+        "steps": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "walk": true
+      },
+      "values": {
+        "walk": true,
+        "chimes": 1,
+        "steps": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "walk": false,
+        "chimes": 1,
+        "steps": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "walk": false,
+        "chimes": 1,
+        "steps": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

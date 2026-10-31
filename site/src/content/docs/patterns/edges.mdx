@@ -1,0 +1,187 @@
+---
+title: "Edges and pulses"
+description: "Turning levels into events: rising and falling edges, one-shot pulses, and toggling once per press."
+sidebar:
+  order: 2
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A chart samples its inputs once per tick. A button that is held for half a second is read as `true` in
+every tick of that half second: at a thousand ticks a second, that is five hundred `true`s for one
+press. Most of the time you do not care about the *level* ("is it pressed?") but about the *moment it
+changes* ("has it just been pressed?"). That moment is an **edge**: a **rising edge** when the input goes
+from `false` to `true`, a **falling edge** when it goes back.
+
+[The previous tick](/learn/pre/#edges-and-pulses) introduced edges with `pre`. This page collects the
+recipes: edges with `pre`, the same with states (which treats a button held at start-up differently),
+and what you build on top of edges: a one-shot pulse of fixed length here, a long press and a toggle on
+release in the exercises.
+
+## Edges with pre
+
+`pre(button)` is the value `button` had at the end of the previous tick. Comparing it with the value now
+gives all three edges:
+
+```sctx
+immediate during do rise = button && !pre(button)     // was up, is down
+immediate during do fall = !button && pre(button)     // was down, is up
+immediate during do change = button != pre(button)    // either
+```
+
+The equations sit in `immediate during` actions written directly in the chart, so they are evaluated in
+every tick, the first one included. (A plain `during` action skips the tick its state is entered; for the
+chart itself, that is tick 1.)
+
+<Sim example="patterns/edges/edges" view="both" caption="Every edge lasts exactly one tick. `change` is true whenever `rise` or `fall` is." />
+
+Two ticks in the run deserve a second look:
+
+- **Tick 1.** The button is already held when the chart starts, and `rise` is true. In tick 1 there is
+  no previous tick, and `pre(button)` is the default of its type, `false`: not the button's real past,
+  and not the variable's initial value either. So a button held at start-up counts as a press. Whether
+  that is right depends on your device; the state-based detector below decides otherwise.
+- **Ticks 4 to 6.** However long the press lasts, `rise` is true only in its first tick.
+
+The same expressions work in a transition trigger, `if button && !pre(button) go to …`, as the one-shot
+below shows. If you would rather produce an event than a `bool`, emit a signal instead of assigning a
+variable:
+
+```sctx
+output signal pressed
+immediate during if button && !pre(button) do pressed
+```
+
+A signal is present only in a tick in which it is emitted, so `pressed` is a one-tick event by
+construction. `pre` works on signals too: `pre(S)` is true if `S` was present in the previous tick, so
+`S && !pre(S)` is the first tick of a run of ticks in which `S` is present.
+
+## Edges with states
+
+You can also detect edges without `pre`, by remembering the button's position in a state. `Up` waits for
+the button to go down, `Down` waits for it to come up, and each transition emits its edge as a signal on
+the way. Here is that chart next to `Edges`, with the same inputs:
+
+<Compare a="patterns/edges/edges" b="patterns/edges/press-events" scenario="b" caption="From tick 2 on, `rise` and `fall` agree. In tick 1, with the button already held, only `Edges` reports a rising edge." />
+
+The extra state `Start` decides where to begin. Its transitions are immediate, so in tick 1 the chart
+passes straight through it to `Down` or `Up`, and a button that is already held when the chart starts is
+treated as "already down", not as a new press. Without `Start`, with `Up` as the initial state, the
+press would be reported a tick late, in tick 2: `Up`'s transition is delayed, so it cannot fire in tick 1,
+and in tick 2 the button is still down.
+
+Which style should you use? The `pre` version is one line per edge, and you can drop it into any
+chart. The state version is easier to extend: once you have `Up` and `Down`, a long press or a
+[debounce](/patterns/debounce/) is a matter of adding states, as the first exercise below shows.
+
+## What edges are for
+
+Whenever one press should do one thing, trigger on the edge, never on the level:
+
+- **Toggling.** A light that `if button` switches on and off flickers for as long as the button is held,
+  and ends up on or off depending on whether the press lasted an odd or an even number of ticks. [The
+  previous tick](/learn/pre/#edges-in-triggers) runs the two versions side by side. KIELER gives no
+  warning for the level version: the chart is perfectly legal; it does not do what you meant.
+- **Counting presses.** `immediate during if button && !pre(button) do presses++` counts each press once,
+  however long it lasts.
+- **Starting something of fixed length**, whatever the length of the press. That is the one-shot.
+
+## A one-shot pulse
+
+A **one-shot** (or monostable) turns a press of any length into a pulse of a fixed length. Here a
+rising edge starts a pulse of three ticks:
+
+<Sim example="patterns/edges/one-shot" caption="Ticks 2 to 4 and 7 to 9: three ticks of `pulse` for a long press and for a short one. The press in tick 9 is ignored." />
+
+Two idioms do the work:
+
+- **An output that is true exactly while a state is active.** `Firing`'s entry action switches `pulse`
+  on and its exit action switches it off. Entry and exit actions run however the state is entered and
+  left, so `pulse` cannot be left on by mistake (see [Entry, during and exit actions](/learn/actions/)).
+- **A count delay.** `if 3 true go to Ready` fires in the third tick after `Firing` was entered,
+  counting only the ticks after the entry tick (see [The previous tick](/learn/pre/#count-delays)). The
+  [counters page](/patterns/counters/) compares this with an explicit counter.
+
+A press during the pulse is ignored, because `Firing` has no transition that looks at the button. And
+when the pulse ends while the button is still held (tick 10), `Ready` does not see a new rising edge, so
+one long press gives one pulse. If you wanted a held button to retrigger, you would test the level in
+`Ready` instead of the edge.
+
+## Try it
+
+<TryIt example="patterns/edges/long-press-starter" solution="patterns/edges/long-press" title="A long press">
+Many devices give a button a second meaning when it is held. Extend the state-based detector so that it
+also emits `longPress` once per press, in the tick in which the button has been held for three ticks in
+a row. A shorter press emits only `rise` and `fall`, and `fall` still comes when the button is
+released. To test it: a press in ticks 2 and 3 gives no `longPress`; a press from tick 5 to tick 9
+gives `longPress` in tick 7, and nothing more until `fall` in tick 10. Hint: a count delay on `Down`,
+and one more state. The tick in which `Down` is entered is already the first tick of the press, and a
+delayed count delay does not count it.
+</TryIt>
+
+<TryIt example="patterns/edges/toggle-release-starter" solution="patterns/edges/toggle-release" title="Toggle on release">
+Some devices switch when the button is released, not when it is pressed, so that a long press can mean
+something else. Change the starter so that the light toggles on the falling edge. To test it: hold the
+button in ticks 2 and 3, and again in tick 6. The starter switches on in tick 2 and off in tick 6; your
+version should switch on in tick 4 and off in tick 7.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/edges/one-shot-predict"
+  ask={[{ tick: 4, value: 'pulse' }, { tick: 5, value: 'pulse' }, { tick: 9, value: 'pulse' }, { tick: 11, value: 'pulse' }]}
+  caption="The one-shot from above, with new inputs. What is `pulse` after ticks 4, 5, 9 and 11?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`pulse` is true after ticks 4 and 9, and false after ticks 5 and 11. The press in tick 2 starts a pulse
+for ticks 2, 3 and 4; the press in tick 4 comes during the pulse, and `Firing` has no transition that
+looks at the button. The press from tick 7 starts a pulse for ticks 7, 8 and 9. The button is still
+held when the pulse ends, so `Ready` sees no new rising edge in tick 11.
+
+</details>
+
+<Quiz
+  question="A chart declares `input bool sensor` and computes `rise = sensor && !pre(sensor)` in an `immediate during` action. The sensor is `true` from tick 1 on and never changes. In which ticks is `rise` true?"
+  options={['Never: the sensor never changes', 'In every tick', 'Only in tick 2', 'Only in tick 1']}
+  answer={3}
+>
+In tick 1, `pre(sensor)` is `false`, the default for a `bool`, because there is no previous tick. So
+`rise` is true in tick 1. From tick 2 on, `pre(sensor)` is `true` and `rise` is false. If a sensor that is
+already active at start-up must not count as an edge, use a state-based detector with a `Start` state, as
+in `PressEvents`.
+</Quiz>
+
+<Quiz
+  question="You want a retriggerable one-shot: a new press during the pulse should restart its three ticks. Which change to `OneShot` does that?"
+  options={['Make the count delay immediate: `immediate if 3 true go to Ready`', 'Give `Firing` a first transition `if button && !pre(button) go to Firing`', 'Test the level in `Ready`: `if button go to Firing`']}
+  answer={1}
+>
+A self-loop leaves `Firing` and enters it again, and every entry restarts the count delay, as for the
+[stairwell light](/patterns/counters/#a-timeout-the-stairwell-light). Written first, it also wins over
+the end of the pulse when a press comes in the pulse's last tick. `pulse` stays on throughout: in the
+re-entry tick the exit action switches it off and the entry action on again. (KIELER warns about a
+potential instantaneous loop for this chart, a [false alarm](/reference/errors/#instantaneous-loop-detected).)
+The other two changes leave `Firing` without a transition for the button, so a press during the pulse
+still does nothing.
+</Quiz>
+
+<KeyIdeas>
+- An input is a level; an edge is the tick in which it changes. Rising: `x && !pre(x)`. Falling:
+  `!x && pre(x)`. Any change: `x != pre(x)`.
+- `pre(x)` in tick 1 is the type's default (`false`, `0`), so an input that is already active at start-up
+  shows a rising edge in tick 1.
+- Put an edge equation in an `immediate during` action to evaluate it in every tick, tick 1 included, or
+  use the expression directly in a trigger.
+- States can detect edges too; a `Start` state with immediate transitions decides how to treat a button
+  that is held at start-up, and more states give a long press.
+- Toggle on edges, never on levels. For a pulse of fixed length, combine an edge, a state with entry and
+  exit actions, and a count delay.
+</KeyIdeas>
+
+Next, [Debouncing](/patterns/debounce/): a real button bounces, and edge detection alone counts every
+bounce.

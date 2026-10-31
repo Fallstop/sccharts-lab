@@ -1,0 +1,17 @@
+scchart WeakEntry {
+  input bool S
+  output int plainEntry = 0, weakEntry = 0, innerWeakEntry = 0
+
+  initial state M {
+    entry do plainEntry += 1
+    weak entry do weakEntry += 1
+
+    initial state I {
+      weak entry do innerWeakEntry += 1
+    }
+  }
+  immediate if S abort to N
+
+  state N
+  go to M
+}

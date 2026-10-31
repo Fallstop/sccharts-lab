@@ -1,0 +1,10 @@
+scchart HandDryer {
+  input bool hands
+  output bool fan = false
+
+  initial state Idle
+    if hands do fan = true go to Drying
+
+  state Drying
+    if !hands do fan = false go to Idle
+}

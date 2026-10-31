@@ -1,0 +1,26 @@
+{
+  "hash": "389377c49842fce33a2440bb7c46120bc804076e",
+  "chart": "tests/conformance/structure/132-err-redefined-without-override.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Methods with the same signature is already inherited (value#0). Mark this declaration as override (keyword) to replace previous definitions. Note that method overloading is currently only supported for parameters of different length, not type.",
+    "Method (value) was redefined in the inheritance hierarchy but not marked as override."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Methods with the same signature is already inherited (value#0). Mark this declaration as override (keyword) to replace previous definitions. Note that method overloading is currently only supported for parameters of different length, not type.",
+      "line": 10,
+      "column": 3
+    },
+    {
+      "severity": 1,
+      "message": "Method (value) was redefined in the inheritance hierarchy but not marked as override.",
+      "line": 9,
+      "column": 27
+    }
+  ],
+  "ticks": []
+}

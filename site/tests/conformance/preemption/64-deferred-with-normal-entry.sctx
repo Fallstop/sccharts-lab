@@ -1,0 +1,16 @@
+scchart DeferredMixed {
+  input bool G, H
+  output int entries = 0, chained = 0
+
+  initial state A
+  if G go to B deferred
+  if H go to B
+
+  state B {
+    entry do entries += 1
+  }
+  immediate do chained += 1 go to C
+
+  state C
+  go to A
+}

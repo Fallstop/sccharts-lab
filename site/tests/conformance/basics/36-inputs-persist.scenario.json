@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {"inputs": {"I": true, "N": 5}, "note": "Tick 1 enters A; its transition is delayed."},
+    {"inputs": {}, "note": "No inputs are sent, but I and N keep their tick-1 values: last = 5. A -> B."},
+    {"inputs": {}, "note": "I is still true: count = 1, last = 5. An input is not reset between ticks; it holds until the environment changes it."},
+    {"inputs": {"N": 9}, "note": "Only N changes; I stays true: count = 2, last = 9."},
+    {"inputs": {"I": false}, "note": "I is now false: count stays 2."}
+  ],
+  "expect": "ok"
+}

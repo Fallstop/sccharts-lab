@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": { "a": false },
+      "note": "Accepted with the warning \"Every region should have a final state whenever its parent state has a termination transition.\" Only the target's missing entry action distinguishes this chart from test 18, which crashes the compiler."
+    },
+    {
+      "inputs": { "a": true },
+      "note": "W → X fires; X is not final, so S never terminates."
+    },
+    {
+      "inputs": { "a": true },
+      "note": "The join never fires: S stays in X (done = false)."
+    }
+  ],
+  "expect": "ok"
+}

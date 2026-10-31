@@ -1,0 +1,34 @@
+/*
+ * A sketch of a railway level-crossing
+ * controller. When a train approaches, the
+ * warning lights flash for three ticks
+ * before the barrier comes down; when the
+ * train has cleared the crossing, the
+ * barrier goes up and the lights stop two
+ * ticks later. A fault input overrides
+ * everything: lights on, barrier down,
+ * until it is repaired.
+ */
+scchart LevelCrossing {
+  input bool approach, cleared, fault, repaired
+  output bool lights = false
+  output bool barrierDown = false
+
+  initial state Normal {
+    initial state Open
+      if approach do lights = true go to Warning
+
+    state Warning
+      if 3 true do barrierDown = true go to Closed
+
+    state Closed
+      if cleared do barrierDown = false go to Raising
+
+    state Raising
+      if 2 true do lights = false go to Open
+  }
+  if fault do lights = true; barrierDown = true abort to Failsafe
+
+  state Failsafe
+    if repaired do lights = false; barrierDown = false go to Normal
+}

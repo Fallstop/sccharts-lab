@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Tick 1: arr = [1, 2, 3]; the self-loop is delayed."},
+    {"inputs": {}, "note": "Surprise: a vector assignment is not simultaneous. It is expanded into arr[0] = arr[1]; arr[1] = arr[2]; arr[2] = arr[0], run in that order, so the last element reads the new arr[0]: arr = [2, 3, 2], not the rotation [2, 3, 1]."},
+    {"inputs": {}, "note": "The same expansion again: arr = [3, 2, 3]."}
+  ],
+  "expect": "ok"
+}

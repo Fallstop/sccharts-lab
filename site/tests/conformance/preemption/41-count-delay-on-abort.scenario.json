@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Count 1; the inner self-loop runs (inner = 1)."
+    },
+    {
+      "inputs": {},
+      "note": "Count 2; inner = 2."
+    },
+    {
+      "inputs": {},
+      "note": "Count 3: the strong abort fires before the inner behaviour (inner stays 2, effect = 1)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

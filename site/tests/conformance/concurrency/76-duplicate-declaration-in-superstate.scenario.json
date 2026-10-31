@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Accepted with the warning \"The variable is declared multiple times in this scope.\" on the second `int x`. Tick 1: o = 0."
+    },
+    {
+      "inputs": {},
+      "note": "`x += 10; o = x` gives o = 11: `x` is the first declaration (initialised to 1). The nested locals are hoisted to the root under distinct generated names, so the C code has no duplicate member."
+    },
+    {
+      "inputs": {},
+      "note": "No further change."
+    }
+  ],
+  "expect": "ok"
+}

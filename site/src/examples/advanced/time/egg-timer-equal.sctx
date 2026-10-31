@@ -1,0 +1,9 @@
+scchart EggTimerEqual {
+  output bool ring = false
+  clock t
+
+  initial state Boiling
+    if t == 3000 do ring = true go to Done
+
+  final state Done
+}

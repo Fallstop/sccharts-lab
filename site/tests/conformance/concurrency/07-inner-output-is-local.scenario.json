@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "`output int z` declared inside `S` is not a chart output: the interface lists only `y`. Tick 1: `y = 0`."
+    },
+    {
+      "inputs": {},
+      "note": "`y = z` reads 3, then `z = 4`: `y = 3`."
+    },
+    {
+      "inputs": {},
+      "note": "`y = z` reads the 4 written last tick: `y = 4`."
+    }
+  ],
+  "expect": "ok"
+}

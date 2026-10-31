@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "Rejected: the inner state A1 pauses, but the immediate abort out of A does not wait for it, so A -> B -> A is still a loop within one tick."}
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

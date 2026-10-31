@@ -1,0 +1,236 @@
+{
+  "hash": "2b0b13e3cd9069e64e1f0261d092efbb1a29cf56",
+  "chart": "src/examples/advanced/history/nested-ignored.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "home": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "menu": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "power": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "right": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "screen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "power": false,
+        "menu": false,
+        "home": false,
+        "right": false
+      },
+      "values": {
+        "home": false,
+        "menu": false,
+        "power": false,
+        "right": false,
+        "screen": -1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "power": true
+      },
+      "values": {
+        "home": false,
+        "menu": false,
+        "power": true,
+        "right": false,
+        "screen": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "menu": true
+      },
+      "values": {
+        "home": false,
+        "menu": true,
+        "power": true,
+        "right": false,
+        "screen": 11
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "menu": false,
+        "right": true
+      },
+      "values": {
+        "home": false,
+        "menu": false,
+        "power": true,
+        "right": true,
+        "screen": 12
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "right": false,
+        "home": true
+      },
+      "values": {
+        "home": true,
+        "menu": false,
+        "power": true,
+        "right": false,
+        "screen": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "home": false,
+        "menu": true
+      },
+      "values": {
+        "home": false,
+        "menu": true,
+        "power": true,
+        "right": false,
+        "screen": 11
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "menu": false,
+        "power": false
+      },
+      "values": {
+        "home": false,
+        "menu": false,
+        "power": false,
+        "right": false,
+        "screen": -1
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "power": true
+      },
+      "values": {
+        "home": false,
+        "menu": false,
+        "power": true,
+        "right": false,
+        "screen": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {},
+      "values": {
+        "home": false,
+        "menu": false,
+        "power": true,
+        "right": false,
+        "screen": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

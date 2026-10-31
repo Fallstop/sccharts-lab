@@ -1,0 +1,8 @@
+scchart PreTrigger {
+  input bool press
+  output int count = 0
+
+  initial state Counting {
+    during if pre(press) do count++
+  }
+}

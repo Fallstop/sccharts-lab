@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Tick 1 enters S (p.x = 4, not in the pool): **seen = 0**."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "p.x becomes 5: **seen = 5**."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "The inner self-loop runs first (weak abort): p.x = 6, **seen = 6**, then S is left for T."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "T goes back to S, which is entered again: p.x is 4 again: **seen = 6**."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "p.x becomes 5: **seen = 5**: the member restarted from its initial value."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,71 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1: ready."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Rising edge: `Firing` is entered and `pulse` goes on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "The pulse continues."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A second press during the pulse: `Firing` ignores the button."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Third tick after the entry tick: `Firing` is left and `pulse` goes off."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Ready."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Rising edge: a new pulse."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Second tick of the pulse."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Third tick of the pulse."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "The count of three is complete: `pulse` goes off, although the button is still held."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Held, but there is no new rising edge, so no new pulse."
+    }
+  ],
+  "expect": "ok"
+}

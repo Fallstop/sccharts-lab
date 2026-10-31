@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Two superstates named `S` in different regions each declare their own `k`. Tick 1 only enters them: `y1 = 0`, `y2 = 0`."
+    },
+    {
+      "inputs": {},
+      "note": "Each increments its own `k`: `y1 = 2` (1 + 1), `y2 = 101` (100 + 1). The two `k` never interfere and are not scheduled against each other."
+    },
+    {
+      "inputs": {},
+      "note": "Nothing more happens: `y1 = 2`, `y2 = 101`."
+    }
+  ],
+  "expect": "ok"
+}

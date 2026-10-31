@@ -1,0 +1,16 @@
+// An argument of a C function call inside an assignment: the missing branch is the target, r = twice(c ? 3 : r).
+scchart CondNoElseCallAssign {
+  input bool c
+  output int r = 5
+
+  method int twice(int v) {
+    int s = 0
+    for (int i = 0; i < 2; i++) {
+      s += v
+    }
+    return s
+  }
+
+  initial state S
+    if true do r = twice((c) ? 3) go to S
+}

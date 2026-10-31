@@ -1,0 +1,21 @@
+scchart Lobby {
+  input bool readyA, readyB, leaveA
+  output bool playing
+
+  initial state Gathering {
+    region PlayerA {
+      initial state WaitingA
+        if readyA go to ReadyA
+      final state ReadyA
+        if leaveA go to WaitingA
+    }
+    region PlayerB {
+      initial state WaitingB
+        if readyB go to ReadyB
+      final state ReadyB
+    }
+  }
+  do playing = true join to Game
+
+  state Game
+}

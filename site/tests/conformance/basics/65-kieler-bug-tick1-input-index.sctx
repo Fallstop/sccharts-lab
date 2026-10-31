@@ -1,0 +1,9 @@
+scchart KielerBugTick1InputIndex {
+  input int I
+  output int arr[3]
+
+  initial state A
+  immediate do arr[I] = 5 go to B
+
+  state B
+}

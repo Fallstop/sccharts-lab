@@ -1,0 +1,69 @@
+{
+  "hash": "b97d9df3da54f1913770c5acadebc71f8ca8b863",
+  "chart": "tests/conformance/structure/101-enum-copy.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "same": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "enum"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "enum"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "same": false,
+        "a": 1,
+        "b": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "same": false,
+        "a": 1,
+        "b": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "same": true,
+        "a": 1,
+        "b": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

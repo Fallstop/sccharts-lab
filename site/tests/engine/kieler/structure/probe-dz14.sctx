@@ -1,0 +1,12 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz14 {
+  output bool done = false
+  output int n = 0
+  clock t
+  initial state A
+  if t >= 150 do n++; t = 0 go to B
+  state B
+  if t >= 300 do n += 10 go to C
+  if t > 50 && n > 100 go to A
+  final state C
+}

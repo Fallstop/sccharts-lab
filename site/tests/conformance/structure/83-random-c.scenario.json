@@ -1,0 +1,20 @@
+{
+  "needs": [
+    "c-random"
+  ],
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1 enters S; the self-loop is delayed, so random() was not called yet: **r = 0, i = 5**."
+    },
+    {
+      "inputs": {},
+      "note": "The first rand(): **r ≈ 0.8401877**; **i = 0** (the second call is truncated)."
+    },
+    {
+      "inputs": {},
+      "note": "**r ≈ 0.7830992** (third rand() of the run)."
+    }
+  ],
+  "expect": "ok"
+}

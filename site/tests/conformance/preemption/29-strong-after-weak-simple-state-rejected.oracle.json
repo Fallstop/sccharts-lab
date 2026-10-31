@@ -1,0 +1,19 @@
+{
+  "hash": "566aded1af5481c2f509ebeb58bb704ff6bbdc99",
+  "chart": "tests/conformance/preemption/29-strong-after-weak-simple-state-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "7:3 Causality problem!\nStrong abort transitions must have a higher priority than weak abort or termination transitions."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Causality problem!\nStrong abort transitions must have a higher priority than weak abort or termination transitions.",
+      "line": 7,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

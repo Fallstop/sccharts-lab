@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {"inputs": {"J": 3}, "note": "The same chart as input-initial-value, compiled with the priority-based compiler. There the initialisers run inside tick 1, after the inputs were read, so J = 42 overwrites the 3 the environment supplied (the netlist compiler runs them before reading inputs, so 3 wins there)."},
+    {"inputs": {}, "note": "J stays 42 (persistence keeps the overwritten value): x = 42, y = 42, b = true."},
+    {"inputs": {"I": 1, "B": false}, "note": "x = 1, y = 42, b = false."}
+  ],
+  "inputsLeftUnset": ["I", "B"],
+  "system": "priority",
+  "expect": "ok"
+}

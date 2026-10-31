@@ -1,0 +1,23 @@
+scchart FourPhase {
+  input bool start
+  output bool req, ack
+
+  region Client {
+    initial state Idle
+      if start do req = true go to Waiting
+
+    state Waiting
+      if ack do req = false go to Releasing
+
+    state Releasing
+      if !ack go to Idle
+  }
+
+  region Server {
+    initial state Ready
+      if pre(req) do ack = true go to Busy
+
+    state Busy
+      if !pre(req) do ack = false go to Ready
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "hash": "239ddb3413f52aca2fa9e20c7ee9f1a0b7ff4ba1",
+  "chart": "tests/conformance/structure/93-priority-first-tick-input-write.sctx",
+  "system": "priority",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 7,
+        "y": 7
+      },
+      "taken": [
+        1,
+        0
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "y": 2
+      },
+      "taken": [
+        0,
+        1
+      ]
+    }
+  ]
+}

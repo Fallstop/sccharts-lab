@@ -1,0 +1,9 @@
+scchart LoopGuarded {
+  input bool I
+
+  initial state A
+  immediate if I go to B
+
+  state B
+  immediate if !I go to A
+}

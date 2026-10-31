@@ -1,0 +1,84 @@
+{
+  "hash": "4550ca3e81e3a81f317a6652b57d40c0de02f146",
+  "chart": "tests/conformance/structure/42-dataflow-init-fby-pre.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "arrow": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "arrowPre": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "followed": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "previous": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 5
+      },
+      "values": {
+        "I": 5,
+        "arrow": 0,
+        "arrowPre": 0,
+        "followed": 0,
+        "previous": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 6
+      },
+      "values": {
+        "I": 6,
+        "arrow": 6,
+        "arrowPre": 5,
+        "followed": 5,
+        "previous": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 9
+      },
+      "values": {
+        "I": 9,
+        "arrow": 9,
+        "arrowPre": 6,
+        "followed": 6,
+        "previous": 6
+      },
+      "terminated": false
+    }
+  ]
+}

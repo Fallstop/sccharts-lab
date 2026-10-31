@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "key": [false, false, false] }, "note": "Tick 1 enters `Arming` and its three regions, one per key." },
+    { "inputs": { "key": [false, true, false] }, "note": "Key 1 is turned." },
+    { "inputs": { "key": [true, false, false] }, "note": "Key 0 is turned. The keys need not be held: each region remembers its key." },
+    { "inputs": { "key": [false, false, true] }, "note": "Key 2: all three regions are final, so `Arming` terminates and `launch` is set." },
+    { "note": "In `Launch`." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,9 @@
+scchart Packer {
+  input bool sensor
+  output int inBox = 0
+  output signal boxFull
+
+  initial state Counting
+    if sensor && !pre(sensor) && inBox == 3 do inBox = 0; boxFull go to Counting
+    if sensor && !pre(sensor) do inBox++ go to Counting
+}

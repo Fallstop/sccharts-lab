@@ -1,0 +1,23 @@
+{
+  "hash": "627373eac01e1957269857aa0305575b521ba36a",
+  "chart": "tests/conformance/structure/25-err-array-to-scalar.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "5:22 The referencing binding is erroneous!\nIt is not possible to bind array a to scalar v!",
+    "There are binding errors in a referenced state!\nIt is not possible to bind array a to scalar v!",
+    "The valued object reference points to a valued object (v) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nIt is not possible to bind array a to scalar v!",
+      "line": 5,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nIt is not possible to bind array a to scalar v!"
+    }
+  ],
+  "ticks": []
+}

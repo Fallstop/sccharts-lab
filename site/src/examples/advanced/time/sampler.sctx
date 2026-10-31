@@ -1,0 +1,10 @@
+scchart Sampler {
+  output int samples = 0
+
+  initial state Run {
+    period 500
+
+    initial state Measure
+      do samples++ go to Measure
+  }
+}

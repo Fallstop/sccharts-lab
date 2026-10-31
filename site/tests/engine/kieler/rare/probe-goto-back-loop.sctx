@@ -1,0 +1,19 @@
+// A method with a loop is a C function: the backward goto is dropped, the method ends there.
+scchart GotoMethodBackLoop {
+  input bool start
+  output int n = 0, m = 0
+
+  method void bump() {
+    for (int i = 0; i < 2; i++) {
+      m++
+    }
+    again:
+    n++;
+    if (n % 3 != 0) {
+      goto again
+    }
+  }
+
+  initial state S
+    if start do bump() go to S
+}

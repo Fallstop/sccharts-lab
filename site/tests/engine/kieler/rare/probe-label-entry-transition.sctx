@@ -1,0 +1,9 @@
+// A code block in an entry action and one on the state's transition share the state: KIELER crashes.
+scchart LabelEntryTrans {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S {
+    entry do { if (b) { goto skip } x += 1; skip: y += 1 }
+  }
+  if a do { if (b) { goto skip } z += 1; skip: y += 10 } go to S
+}

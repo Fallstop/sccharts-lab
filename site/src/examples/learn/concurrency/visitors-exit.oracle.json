@@ -1,0 +1,237 @@
+{
+  "hash": "b783bb865145b7df999bfdd26fd9cf0c0da4e073",
+  "chart": "src/examples/learn/concurrency/visitors-exit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "clear": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "leaving": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "north": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "south": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "crowded": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "inside": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "clear": false,
+        "north": false,
+        "south": false,
+        "leaving": false
+      },
+      "values": {
+        "clear": false,
+        "leaving": false,
+        "north": false,
+        "south": false,
+        "crowded": false,
+        "inside": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "north": true
+      },
+      "values": {
+        "clear": false,
+        "leaving": false,
+        "north": true,
+        "south": false,
+        "crowded": false,
+        "inside": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "north": false,
+        "south": true
+      },
+      "values": {
+        "clear": false,
+        "leaving": false,
+        "north": false,
+        "south": true,
+        "crowded": false,
+        "inside": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "north": true
+      },
+      "values": {
+        "clear": false,
+        "leaving": false,
+        "north": true,
+        "south": true,
+        "crowded": true,
+        "inside": 4
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "north": false,
+        "south": false,
+        "leaving": true
+      },
+      "values": {
+        "clear": false,
+        "leaving": true,
+        "north": false,
+        "south": false,
+        "crowded": true,
+        "inside": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "clear": false,
+        "leaving": true,
+        "north": false,
+        "south": false,
+        "crowded": false,
+        "inside": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "north": true
+      },
+      "values": {
+        "clear": false,
+        "leaving": true,
+        "north": true,
+        "south": false,
+        "crowded": false,
+        "inside": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "north": false,
+        "leaving": false
+      },
+      "values": {
+        "clear": false,
+        "leaving": false,
+        "north": false,
+        "south": false,
+        "crowded": false,
+        "inside": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

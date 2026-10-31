@@ -1,0 +1,8 @@
+scchart Scale {
+  input signal int V
+  output signal int Doubled
+  output int last = 0
+
+  initial state Wait
+    if V do Doubled(val(V) * 2); last = val(V) go to Wait
+}

@@ -1,0 +1,9 @@
+scchart UnknownVariable {
+  input bool button
+  output bool light
+
+  initial state Off
+    if Button do light = true go to On
+
+  state On
+}

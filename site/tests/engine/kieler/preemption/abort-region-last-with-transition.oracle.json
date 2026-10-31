@@ -1,0 +1,19 @@
+{
+  "hash": "442ae3273f2ae6331a376f19b8d74bb14c6fc8a0",
+  "chart": "tests/engine/kieler/preemption/abort-region-last-with-transition.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Illegal order of abort and non-abort regions. Abort regions are only allowed as first or last regions and cannot be mixed with regular regions."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 13,
+      "column": 19
+    }
+  ],
+  "ticks": []
+}

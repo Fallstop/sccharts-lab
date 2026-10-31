@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 250, "stop": false }, "note": "Rejected: `period` guards the transitions leaving `Run` too, and the guarded `go to` cannot be scheduled." }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

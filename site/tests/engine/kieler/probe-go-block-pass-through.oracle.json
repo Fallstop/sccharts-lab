@@ -1,0 +1,102 @@
+{
+  "hash": "ec38c4831d0d3bb2cd62f324b5b94ee518f377e5",
+  "chart": "tests/engine/kieler/probe-go-block-pass-through.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "i": 5,
+        "o": 5
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 2,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "i": 2,
+        "o": 5
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 3,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "i": 5,
+        "o": 5
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": 4,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "i": 4,
+        "o": 5
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

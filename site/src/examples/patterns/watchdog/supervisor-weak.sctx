@@ -1,0 +1,34 @@
+scchart SupervisorWeak {
+  input bool beat, demand, restart
+  output bool motor, alarm
+  output int starts = 0
+  signal expired
+
+  region Watchdog {
+    initial state Watching
+      if beat go to Watching
+      if 3 true do expired go to Expired
+
+    state Expired
+      if restart go to Watching
+  }
+
+  region Control {
+    initial state Running {
+      exit do motor = false
+
+      initial state Stopped
+        if demand do motor = true; starts++ go to Started
+
+      state Started
+        if !demand do motor = false go to Stopped
+    }
+    if expired go to Safe
+
+    state Safe {
+      entry do alarm = true
+      exit do alarm = false
+    }
+    if restart go to Running
+  }
+}

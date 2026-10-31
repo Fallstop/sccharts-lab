@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "A `join to` on a superstate whose only region has no final state: KIELER warns (\"Every region should have a final state ...\") and then its compiler crashes (NullPointerException in the SCG optimiser `SuperfluousForkRemover`), reported as \"The compiler failed during compilation setup.\""
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "The compiler failed"
+}

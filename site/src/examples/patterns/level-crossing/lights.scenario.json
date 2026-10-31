@@ -1,0 +1,69 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true
+      },
+      "note": "Tick 1: open, lamps dark."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A train: `Control` sets `flashing` and goes to `Warning`. In the same tick `Lights` reads `flashing` (after `Control` has written it) and lights the left lamp; the bell strikes."
+    },
+    {
+      "inputs": {},
+      "note": "Right lamp."
+    },
+    {
+      "inputs": {},
+      "note": "Left lamp, bell."
+    },
+    {
+      "inputs": {},
+      "note": "Right lamp; the barrier starts down."
+    },
+    {
+      "inputs": {
+        "isUp": false
+      },
+      "note": "Left, bell."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Right; the barrier is down."
+    },
+    {
+      "inputs": {},
+      "note": "Left, bell."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "Right; the train has gone and the barrier rises. The lamps keep flashing while it moves."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "Left, bell."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "The barrier is up: `Control` clears `flashing`, and `Lights` goes dark in the same tick."
+    },
+    {
+      "inputs": {},
+      "note": "Dark."
+    }
+  ],
+  "expect": "ok"
+}

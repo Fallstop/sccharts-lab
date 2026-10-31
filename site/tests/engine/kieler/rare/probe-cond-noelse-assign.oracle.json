@@ -1,0 +1,110 @@
+{
+  "hash": "5033468c6d68b73458aa418d614286f9dcd69d01",
+  "chart": "tests/engine/kieler/rare/probe-cond-noelse-assign.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": false,
+        "v": 1
+      },
+      "values": {
+        "c": false,
+        "v": 1,
+        "x": 7
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": true,
+        "v": 2
+      },
+      "values": {
+        "c": true,
+        "v": 2,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": false,
+        "v": 3
+      },
+      "values": {
+        "c": false,
+        "v": 3,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "c": true,
+        "v": 4
+      },
+      "values": {
+        "c": true,
+        "v": 4,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "c": false,
+        "v": 5
+      },
+      "values": {
+        "c": false,
+        "v": 5,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

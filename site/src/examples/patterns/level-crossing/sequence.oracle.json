@@ -1,0 +1,280 @@
+{
+  "hash": "c87b4f8f64619dd8a08ef8b9d8a2895449c0069b",
+  "chart": "src/examples/patterns/level-crossing/sequence.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "isDown": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "isUp": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "occupied": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lower": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true
+      },
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": false,
+        "lower": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "occupied": true
+      },
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": true,
+        "lower": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": true,
+        "lower": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": true,
+        "lower": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": true,
+        "lower": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "isUp": false
+      },
+      "values": {
+        "isDown": false,
+        "isUp": false,
+        "occupied": true,
+        "lower": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "isDown": true
+      },
+      "values": {
+        "isDown": true,
+        "isUp": false,
+        "occupied": true,
+        "lower": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "isDown": true,
+        "isUp": false,
+        "occupied": true,
+        "lower": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "occupied": false
+      },
+      "values": {
+        "isDown": true,
+        "isUp": false,
+        "occupied": false,
+        "lower": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "isDown": false
+      },
+      "values": {
+        "isDown": false,
+        "isUp": false,
+        "occupied": false,
+        "lower": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "isUp": true
+      },
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": false,
+        "lower": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {},
+      "values": {
+        "isDown": false,
+        "isUp": true,
+        "occupied": false,
+        "lower": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

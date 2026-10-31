@@ -1,0 +1,18 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "X": true,
+        "Y": true
+      },
+      "note": "The instance computes O = X && Y in every tick, from tick 1 on: **O = true**."
+    },
+    {
+      "inputs": {
+        "Y": false
+      },
+      "note": "**O = false** in the same tick Y falls."
+    }
+  ],
+  "expect": "ok"
+}

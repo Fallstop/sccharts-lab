@@ -1,0 +1,23 @@
+scchart WriteBeforeRead {
+  input bool a
+  output int x
+  output bool seenBefore, seenAfter
+
+  region ReaderBefore {
+    initial state A
+    if x == 5 do seenBefore = true go to B
+    state B
+  }
+
+  region Writer {
+    initial state A
+    if a do x = 5 go to B
+    state B
+  }
+
+  region ReaderAfter {
+    initial state A
+    if x == 5 do seenAfter = true go to B
+    state B
+  }
+}

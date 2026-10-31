@@ -1,0 +1,15 @@
+// A literal may be bound to an input of a referenced chart (it becomes a constant there).
+// Binding a literal to an OUTPUT is an error (see 19-err-literal-to-output).
+scchart St06Main {
+  output bool led
+  initial state R is St06Beep(true to second, led to beep)
+}
+
+scchart St06Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

@@ -1,0 +1,26 @@
+scchart OneOwner {
+  input bool hallButton, carButton, arrived
+  output bool lamp
+  signal request
+
+  region Hall {
+    initial state Watch
+      if hallButton do request go to Watch
+  }
+
+  region Car {
+    initial state Watch
+      if carButton do request go to Watch
+  }
+
+  region Latch {
+    initial state Idle
+      if request && !arrived go to Waiting
+
+    state Waiting {
+      entry do lamp = true
+      exit do lamp = false
+    }
+    if arrived go to Idle
+  }
+}

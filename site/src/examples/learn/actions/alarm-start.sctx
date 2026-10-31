@@ -1,0 +1,14 @@
+scchart Alarm {
+  input bool door, window, code
+  output bool siren = false
+
+  initial state Armed
+    if door do siren = true go to Ringing
+    if window do siren = true go to Ringing
+
+  state Ringing
+    if code do siren = false go to Disarmed
+
+  state Disarmed
+    if code go to Armed
+}

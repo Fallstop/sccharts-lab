@@ -1,0 +1,127 @@
+{
+  "hash": "bd816404b93eb856d786789401d95deb32dc6111",
+  "chart": "src/examples/learn/causality/passage-priority.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "aWants": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "bWants": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "aGoes": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "bGoes": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "aWants": false,
+        "bWants": false
+      },
+      "values": {
+        "aWants": false,
+        "bWants": false,
+        "aGoes": false,
+        "bGoes": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "aWants": true,
+        "bWants": true
+      },
+      "values": {
+        "aWants": true,
+        "bWants": true,
+        "aGoes": true,
+        "bGoes": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "aWants": true,
+        "bWants": true,
+        "aGoes": false,
+        "bGoes": true
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "aWants": true,
+        "bWants": true,
+        "aGoes": false,
+        "bGoes": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "aWants": true,
+        "bWants": true,
+        "aGoes": false,
+        "bGoes": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

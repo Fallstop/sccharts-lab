@@ -1,0 +1,21 @@
+scchart P132 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0 {
+    initial state I
+    go to J
+    state J
+  }
+  if A go to S1
+  state S1
+  if A go to S0 history
+  if B go to S0 shallow history
+  if A go to S0 reset
+  if B go to S0 deferred
+  if A go to S0 deep deferred
+  go to S0 deferred history
+}

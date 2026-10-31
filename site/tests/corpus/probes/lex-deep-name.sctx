@@ -1,0 +1,13 @@
+scchart P27 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  int deep
+  initial state S0
+  do deep = 1 go to S1
+  state S1
+
+}

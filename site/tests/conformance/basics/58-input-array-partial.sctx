@@ -1,0 +1,7 @@
+scchart InputArrayPartial {
+  input int A[3]
+  output int s
+
+  initial state S
+  do s = A[0] * 100 + A[1] * 10 + A[2] go to S
+}

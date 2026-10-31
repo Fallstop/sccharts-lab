@@ -1,0 +1,142 @@
+{
+  "hash": "d09b3317387a09df171248125b87a6a3939cc245",
+  "chart": "src/examples/start/in-a-hurry/microwave-priority.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "door": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "heating": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "start": false,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true,
+        "door": true
+      },
+      "values": {
+        "door": true,
+        "start": true,
+        "heating": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false,
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "start": false,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "door": false,
+        "start": true,
+        "heating": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "start": false,
+        "door": true
+      },
+      "values": {
+        "door": true,
+        "start": false,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "start": false,
+        "heating": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

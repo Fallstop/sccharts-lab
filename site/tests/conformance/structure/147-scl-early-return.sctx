@@ -1,0 +1,16 @@
+// A method may return early; every path of a method with a return type should end in a return.
+scchart St147Return {
+  input int x
+  output int y = 0
+  method int clamp(int v) {
+    if (v > 10) {
+      return 10
+    }
+    if (v < 0) {
+      return 0
+    }
+    return v
+  }
+  initial state S
+  do y = clamp(x) go to S
+}

@@ -1,0 +1,84 @@
+{
+  "hash": "9a30549634dc1ef286ca3cc613e4674a10b53885",
+  "chart": "tests/conformance/concurrency/23-root-terminates.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

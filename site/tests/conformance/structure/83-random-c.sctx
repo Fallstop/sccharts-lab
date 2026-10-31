@@ -1,0 +1,9 @@
+// random() is a float in [0, 1): ((float) rand() / RAND_MAX) in C. The C simulation never seeds rand(), so
+// the sequence is the same in every run (glibc: 0.840188, 0.394383, 0.783099, ...). Assigned to an int it
+// truncates to 0.
+scchart St83Dice {
+  output float r = 0
+  output int i = 5
+  initial state S
+  do r = random(); i = random() go to S
+}

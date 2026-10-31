@@ -1,0 +1,9 @@
+scchart ForCounterInitialiser {
+  output int sum = 0
+  region for i : 1 to 3 {
+    int k = i
+    initial state W
+      immediate do sum += k go to D
+    final state D
+  }
+}

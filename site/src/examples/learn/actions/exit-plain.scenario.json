@@ -1,0 +1,36 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "finish": false,
+        "cancel": false
+      },
+      "note": "Tick 1 enters `Task` and `Working`."
+    },
+    {
+      "inputs": {
+        "finish": true
+      },
+      "note": "`finish`: `Working` moves to the final state `Finished`, `Task` terminates, and `join to` leaves it. The exit action runs: `exits` is 1."
+    },
+    {
+      "inputs": {
+        "finish": false
+      },
+      "note": "`Idle`'s delayed transition starts a new `Task`."
+    },
+    {
+      "inputs": {
+        "cancel": true
+      },
+      "note": "`cancel` leaves `Task` with `go to`, a weak abort. The exit action runs again: `exits` is 2."
+    },
+    {
+      "inputs": {
+        "cancel": false
+      },
+      "note": "A new `Task` again."
+    }
+  ],
+  "expect": "ok"
+}

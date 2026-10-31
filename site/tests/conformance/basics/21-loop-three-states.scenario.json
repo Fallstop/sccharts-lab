@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "Rejected: the cycle A -> B -> C -> A consists of immediate transitions only; one guard on it does not help. The validator's warning lists the involved states (A, B and C, in no fixed order)."}
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

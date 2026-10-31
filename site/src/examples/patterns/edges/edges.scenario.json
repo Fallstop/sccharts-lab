@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "button": true }, "note": "Held at start-up: `pre(button)` is `false` in tick 1, so `rise` and `change` are true." },
+    { "inputs": { "button": true }, "note": "Held: no edge of either kind." },
+    { "inputs": { "button": false }, "note": "Released: `button` is false and `pre(button)` is true, so `fall` and `change` are true." },
+    { "inputs": { "button": true }, "note": "Pressed: `rise` and `change`." },
+    { "inputs": { "button": true }, "note": "Held." },
+    { "inputs": { "button": true }, "note": "Held." },
+    { "inputs": { "button": false }, "note": "Released: `fall` and `change`." },
+    { "inputs": { "button": true }, "note": "Pressed: `rise` and `change`." },
+    { "inputs": { "button": false }, "note": "Released: `fall` and `change`. Each edge lasts exactly one tick." }
+  ],
+  "expect": "ok"
+}

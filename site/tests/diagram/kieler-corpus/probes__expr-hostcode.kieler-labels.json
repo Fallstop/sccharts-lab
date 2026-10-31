@@ -1,0 +1,124 @@
+{
+ "sourceHash": "ef76c3d89a557cef",
+ "states": [
+  {
+   "path": [
+    "P185"
+   ],
+   "rows": [
+    [
+     "P185"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    258.9,
+    194.6
+   ]
+  },
+  {
+   "path": [
+    "P185",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P185",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    200,
+    10,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P185",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    245.5,
+    54.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP185$$N0$NS0$ES10",
+   "source": [
+    "P185",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P185",
+    0,
+    "S1"
+   ],
+   "text": "/ O = rand() + 1",
+   "lines": [
+    "/ O = rand() + 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

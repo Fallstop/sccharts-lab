@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": { "I": 1 },
+      "note": "Rejected: \"Can't schedule from … to …\", \"The SCG is NOT asc-schedulable!\" (lab: also \"Circular dependency prevents scheduling this tick.\"). Both equations are relative writes of X, but with different operators, which KIELER treats as a write-write conflict."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

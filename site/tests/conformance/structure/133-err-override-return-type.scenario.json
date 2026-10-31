@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "KIELER rejects the override returning bool instead of int."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Overriding methods must not declare a different return type (int vs. bool)."
+}

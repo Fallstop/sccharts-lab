@@ -1,0 +1,18 @@
+scchart ImmediateSuspend {
+  input bool S
+  output int entry1 = 0, innerEntry = 0, chained = 0, ticks = 0, iticks = 0
+
+  initial state M {
+    immediate suspend if S
+    entry do entry1 = 1
+    during do ticks += 1
+    immediate during do iticks += 1
+
+    initial state I {
+      entry do innerEntry = 1
+    }
+    immediate do chained = 1 go to J
+
+    state J
+  }
+}

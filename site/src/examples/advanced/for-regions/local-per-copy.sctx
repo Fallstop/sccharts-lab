@@ -1,0 +1,13 @@
+scchart ForLocalPerCopy {
+  output int sum = 0
+  region for i : 1 to 3 {
+    initial state W {
+      int k = i * 2
+      initial state X
+        immediate do sum += k go to Y
+      final state Y
+    }
+    join to D
+    final state D
+  }
+}

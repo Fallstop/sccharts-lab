@@ -1,0 +1,46 @@
+{
+  "hash": "3534292fc4de7dcb575aa187e47312ae00c286d2",
+  "chart": "src/examples/advanced/dataflow/changed-start.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "level": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "changed": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "level": 3
+      },
+      "values": {
+        "level": 3,
+        "changed": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "level": 4
+      },
+      "values": {
+        "level": 4,
+        "changed": false
+      },
+      "terminated": false
+    }
+  ]
+}

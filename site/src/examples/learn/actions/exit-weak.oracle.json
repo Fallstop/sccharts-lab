@@ -1,0 +1,121 @@
+{
+  "hash": "a869a53ab4036df394b9708a3a64178b52e8b273",
+  "chart": "src/examples/learn/actions/exit-weak.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "cancel": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "finish": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "exits": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "finish": false,
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "finish": false,
+        "exits": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "finish": true
+      },
+      "values": {
+        "cancel": false,
+        "finish": true,
+        "exits": 1
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "finish": false
+      },
+      "values": {
+        "cancel": false,
+        "finish": false,
+        "exits": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "cancel": true
+      },
+      "values": {
+        "cancel": true,
+        "finish": false,
+        "exits": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "finish": false,
+        "exits": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

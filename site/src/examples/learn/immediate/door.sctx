@@ -1,0 +1,10 @@
+scchart Door {
+  input bool open
+  output bool isOpen = false
+
+  initial state Closed
+    immediate if open do isOpen = true go to Opened
+
+  state Opened
+    immediate if !open do isOpen = false go to Closed
+}

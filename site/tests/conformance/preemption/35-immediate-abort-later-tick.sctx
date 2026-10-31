@@ -1,0 +1,12 @@
+scchart ImmediateAbortLater {
+  input bool S
+  output int inner = 0, effect = 0
+
+  initial state M {
+    initial state I
+    if true do inner += 1 go to I
+  }
+  immediate if S do effect = 1 abort to Done
+
+  state Done
+}

@@ -1,0 +1,23 @@
+{
+ "ticks": [
+  {
+   "inputs": {
+    "a": false
+   },
+   "note": "A superstate whose region is only a final state, with an abort: the abort machinery adds a region, no crash."
+  },
+  {
+   "inputs": {
+    "a": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "a": true
+   },
+   "note": "Next tick."
+  }
+ ],
+ "expect": "ok"
+}

@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: `x = 10`, `y = 1`."
+    },
+    {
+      "inputs": {},
+      "note": "Relative writes from concurrent regions all apply: `x = 10 + 2 - 5 + 1 = 8` (`+=`, `-=` and `++` commute with each other) and `y = 1 * 2 * 3 = 6` (two `*=` commute)."
+    },
+    {
+      "inputs": {},
+      "note": "No further change."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "Tick 1 enters A: the unguarded entry runs (entries = 1); G is false, so `entry if G` does not."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "A self-loop fires (G). The exit guard is evaluated when A is left (guardedExits = 1) and the entry guard when it is re-entered (guardedEntries = 1, entries = 2)."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "The other self-loop fires. G is false now: only the unguarded entry runs (entries = 3)."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "G again: guardedExits = 2, guardedEntries = 2, entries = 4."
+    }
+  ],
+  "expect": "ok"
+}

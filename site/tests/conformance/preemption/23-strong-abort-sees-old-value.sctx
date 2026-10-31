@@ -1,0 +1,15 @@
+scchart StrongAbortSeesOld {
+  input bool A
+  output bool flag = false
+  output int inner = 0, effect = 0
+
+  initial state M {
+    initial state I1
+    if A do flag = true; inner = 1 go to I2
+
+    state I2
+  }
+  if flag do effect = 1 abort to Done
+
+  state Done
+}

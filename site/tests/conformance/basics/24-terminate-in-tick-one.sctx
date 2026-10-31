@@ -1,0 +1,8 @@
+scchart TerminateInTickOne {
+  output int x = 0
+
+  initial state A
+  immediate do x = 7 go to B
+
+  final state B
+}

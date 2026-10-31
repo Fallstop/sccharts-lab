@@ -1,0 +1,66 @@
+{
+  "hash": "8a04b23a36a5a5ec0ba19da1096283ab4137c4dc",
+  "chart": "src/examples/reference/errors/implicit-binding.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Valued Objects are bound implicitly!\ntick, light, ",
+      "line": 5,
+      "column": 29,
+      "code": "Valued Objects are bound implicitly!\ntick, light, "
+    }
+  ],
+  "interface": {
+    "tick": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "light": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "tick": false
+      },
+      "values": {
+        "tick": false,
+        "light": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "tick": true
+      },
+      "values": {
+        "tick": true,
+        "light": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "tick": false
+      },
+      "values": {
+        "tick": false,
+        "light": true
+      },
+      "terminated": false
+    }
+  ]
+}

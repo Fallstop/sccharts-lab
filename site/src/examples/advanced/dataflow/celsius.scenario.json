@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "fahrenheit": 50 }, "note": "`freezing` is written first but reads `celsius`, so KIELER computes `celsius` first: (50 − 32) * 5 / 9 = 10, and `freezing` is false. The order of the lines does not matter." },
+    { "inputs": { "fahrenheit": 32 }, "note": "`celsius` = 0, so `freezing` is true, both in this tick." },
+    { "inputs": { "fahrenheit": 14 }, "note": "(14 − 32) * 5 / 9 = −90 / 9 = −10: still `freezing`." },
+    { "inputs": { "fahrenheit": 100 }, "note": "68 * 5 / 9 = 340 / 9, and `int` division truncates: `celsius` = 37 (37.8 in real numbers)." }
+  ],
+  "expect": "ok"
+}

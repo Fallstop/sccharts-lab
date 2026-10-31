@@ -1,0 +1,16 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz04 {
+  input bool leave
+  output int log = 0
+  initial state R is Dz04L(log)
+  if leave abort to D
+  state D
+  if !leave go to R
+}
+scchart Dz04L {
+  output int log
+  entry do log = log * 10 + 1
+  exit do log = log * 10 + 2
+  during do log += 100
+  initial state S
+}

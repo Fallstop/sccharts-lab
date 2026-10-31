@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": { "S": false, "A": false },
+      "note": "Accepted. Tick 1 enters M and I; the self-loop is delayed (n = 0)."
+    },
+    {
+      "inputs": { "S": false, "A": false },
+      "note": "The self-loop fires (n = 1)."
+    },
+    {
+      "inputs": { "S": true, "A": true },
+      "note": "The strong abort fires although the weak suspend holds: the inside does not run (n stays 1) and M is left for X."
+    },
+    {
+      "inputs": { "S": false, "A": false },
+      "note": "In X."
+    }
+  ],
+  "expect": "ok"
+}

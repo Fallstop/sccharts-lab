@@ -1,0 +1,7 @@
+// A plain input as the trigger is read as it is (256 holds): KIELER's guard variable is dropped for it.
+scchart TrigIntChar {
+  input int n
+  output int k = 0
+  initial state S
+    if n do k++ go to S
+}

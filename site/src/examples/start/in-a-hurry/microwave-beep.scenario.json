@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "door": false }, "note": "Tick 1 enters `Idle`. `beep` is absent: a signal is present only in a tick in which something emits it." },
+    { "inputs": { "start": true }, "note": "`start`: the transition sets `heating` and emits `beep`. Both are true after this tick." },
+    { "inputs": { "start": false }, "note": "Nothing fires. `heating` keeps its value, but `beep` is absent again: nothing emitted it in this tick." },
+    { "inputs": { "start": true }, "note": "`start` again, while the oven is cooking. `Cooking` does not react to `start`, so nothing is emitted." },
+    { "inputs": { "start": false, "door": true }, "note": "The door opens: `heating` goes off. This transition emits nothing, so there is no beep." }
+  ],
+  "expect": "ok"
+}

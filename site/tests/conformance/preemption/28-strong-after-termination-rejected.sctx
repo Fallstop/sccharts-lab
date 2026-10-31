@@ -1,0 +1,14 @@
+scchart StrongAfterJoin {
+  input bool S
+  output int x = 0
+
+  initial state M {
+    initial state I
+    if S go to F
+    final state F
+  }
+  join to Done
+  if S abort to Done
+
+  state Done
+}

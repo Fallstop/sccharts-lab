@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false, "cancel": false }, "note": "Tick 1 enters `Cooking` with `remaining` = 5." },
+    { "note": "Counting down: 4." },
+    { "inputs": { "doorOpen": true }, "note": "The door opens and `Cooking` is suspended." },
+    { "inputs": { "cancel": true }, "note": "`cancel` is pressed, but `if cancel go to Idle` belongs to `Cooking` itself, and a suspended state's own outgoing transitions are frozen with the rest of it. The press is ignored." },
+    { "inputs": { "cancel": false }, "note": "`cancel` is released. Still suspended." },
+    { "inputs": { "doorOpen": false }, "note": "The door shuts: cooking carries on (3). The cancel press was lost." },
+    { "note": "2. The oven never noticed the cancel." }
+  ],
+  "expect": "ok"
+}

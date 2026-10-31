@@ -1,0 +1,43 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "note": "Tick 1: the lamp is off in both charts."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A press: on in both."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released: `pre(lamp)` holds the lamp on in both."
+    },
+    {
+      "inputs": {
+        "button": true,
+        "arrived": true
+      },
+      "note": "A press while the lift is here. In `LatchEquation`, `&& !arrived` switches the lamp off; in `LatchEquationSet` the press is outside the bracket and wins, so the lamp stays on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "`arrived` alone: off in both."
+    },
+    {
+      "inputs": {
+        "arrived": false
+      },
+      "note": "The lift leaves. Off in both."
+    }
+  ],
+  "expect": "ok"
+}

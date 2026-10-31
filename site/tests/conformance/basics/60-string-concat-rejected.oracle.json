@@ -1,0 +1,20 @@
+{
+  "hash": "0dbe9b95cb518660e6329211fd1c8f269774b989",
+  "chart": "tests/conformance/basics/60-string-concat-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "invalid operands to binary + (have ‘char *’ and ‘char *’)",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads t, so the compiler treats it as an update of t (a relative write, as in the deprecated old SC syntax).\nWrite it as t += \"b\" to say so. In one region it means the same.\nIt only matters when another region also writes t in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 5,
+      "column": 6
+    }
+  ],
+  "ticks": []
+}

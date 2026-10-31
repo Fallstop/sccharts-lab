@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"A": 12, "B": 10}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "C bitwise operators on 32-bit two's complement ints: 12 & 10 = 8, 12 | 10 = 14, 12 ^ 10 = 6, ~12 = -13, 12 << 2 = 48. >> on a negative number shifts arithmetically: -12 >> 1 = -6."},
+    {"inputs": {"A": 1, "B": 3}, "note": "and = 1, or = 3, xor = 2, not = -2, shl = 4, shr = -1, neg = -1."}
+  ],
+  "expect": "ok"
+}

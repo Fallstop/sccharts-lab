@@ -1,0 +1,8 @@
+scchart StringConcatRejected {
+  output string t = "a"
+
+  initial state A
+  do t = t + "b" go to B
+
+  state B
+}

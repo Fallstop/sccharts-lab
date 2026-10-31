@@ -1,0 +1,12 @@
+scchart DelayedAborts {
+  input bool S, W
+  output int effect = 0
+
+  initial state M {
+    initial state I
+  }
+  if S do effect = 1 abort to Done
+  if W do effect = 2 go to Done
+
+  state Done
+}

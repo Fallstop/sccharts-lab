@@ -1,0 +1,9 @@
+// An old-style update and a compound assignment of the same variable do not commute (operators `=` and `+=`).
+scchart St59UpdateClash {
+  input int I
+  output int X
+  dataflow {
+    X = X + I
+    X += 2
+  }
+}

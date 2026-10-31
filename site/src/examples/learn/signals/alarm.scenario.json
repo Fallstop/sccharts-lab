@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "temperature": 20
+      },
+      "note": "Tick 1 enters `Watch`."
+    },
+    {
+      "inputs": {
+        "temperature": 95
+      },
+      "note": "Too hot: `alarm` becomes true."
+    },
+    {
+      "inputs": {
+        "temperature": 40
+      },
+      "note": "Back to normal, but `alarm` is a variable and nothing sets it back, so it stays true."
+    },
+    {
+      "note": "Still true."
+    }
+  ],
+  "expect": "ok"
+}

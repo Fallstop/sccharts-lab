@@ -1,0 +1,11 @@
+scchart Player {
+  input bool play, pause, stop
+  output bool sound = false
+  // 0: stopped, 1: playing, 2: paused
+  int mode = 0
+
+  initial state Run
+    if stop do mode = 0; sound = false go to Run
+    if play do mode = 1; sound = true go to Run
+    if pause && mode == 1 do mode = 2; sound = false go to Run
+}

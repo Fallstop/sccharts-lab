@@ -1,0 +1,8 @@
+scchart P62 {
+  enum Color { RED, GREEN, BLUE }
+  ref Color e = Color.RED
+  initial state S0
+  do e = Color.GREEN go to S1
+  state S1
+  if e == Color.GREEN go to S0
+}

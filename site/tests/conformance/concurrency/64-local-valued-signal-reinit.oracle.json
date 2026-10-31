@@ -1,0 +1,123 @@
+{
+  "hash": "fa16b8045f99663521c9b5115b461ce8139208a5",
+  "chart": "tests/conformance/concurrency/64-local-valued-signal-reinit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through seen."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "seen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "r": false
+      },
+      "values": {
+        "a": false,
+        "r": false,
+        "seen": 7
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "r": false,
+        "seen": 3
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "r": false,
+        "seen": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "r": true
+      },
+      "values": {
+        "a": false,
+        "r": true,
+        "seen": 7
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "a": false,
+        "r": false,
+        "seen": 7
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

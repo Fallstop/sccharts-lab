@@ -1,0 +1,70 @@
+{
+  "hash": "fd76c8a079c0a162b1ba989b6fd04a2d2b76f3b7",
+  "chart": "tests/engine/kieler/structure/probe-dz53.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__Dz53_local_sq_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 0
+      },
+      "values": {
+        "x": 0,
+        "y": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "y": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "y": 6
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "y": 12
+      },
+      "terminated": false
+    }
+  ]
+}

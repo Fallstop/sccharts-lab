@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "temperature": 20
+      },
+      "note": "Tick 1 enters `Idle`. It is 20 degrees and the heater is off."
+    },
+    {
+      "inputs": {
+        "temperature": 17
+      },
+      "note": "17 is below 18, so the trigger `temperature < 18` holds: the transition fires, `heating` becomes true and the chart is in `Heating`."
+    },
+    {
+      "inputs": {
+        "temperature": 19
+      },
+      "note": "19 degrees. `Heating` waits for `temperature >= 21`, which is false, so the heater stays on. `Idle`'s trigger is not checked at all: only the active state's transitions count."
+    },
+    {
+      "inputs": {
+        "temperature": 21
+      },
+      "note": "21 is at least 21: the heater goes off and the chart is back in `Idle`."
+    },
+    {
+      "inputs": {
+        "temperature": 19
+      },
+      "note": "19 degrees again, as in tick 3, but now the chart is in `Idle`, and 19 is not below 18. Same input, different reaction: the state remembers which way the temperature was going."
+    }
+  ],
+  "expect": "ok"
+}

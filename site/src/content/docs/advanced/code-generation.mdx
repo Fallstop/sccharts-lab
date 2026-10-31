@@ -1,0 +1,429 @@
+---
+title: "From chart to C"
+description: "What KIELER generates from a chart, how to drive it from a main loop on a microcontroller, and how netlist and priority-based compilation differ."
+sidebar:
+  order: 10
+---
+
+import { Chart, Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside, Steps } from '@astrojs/starlight/components'
+
+A simulator is where a chart is developed; a device is where it runs. There the chart is ordinary code:
+KIELER compiles it into a handful of C functions (or a Java class) that your program calls once per
+tick. This chapter looks at real output from KIELER's compiler, shows how a main loop on a
+microcontroller drives it, and compares KIELER's two code generators.
+
+## Getting the code
+
+<Steps>
+
+1. In SCCharts Lab, open the chart and press **Code** in the toolbar above the diagram preview (or use
+   **SCCharts: Generate Code...** from the Command Palette, or the icon in the editor's title bar).
+2. Choose **C**, **Java**, or **C and Java**. The generated files open as read-only tabs.
+3. Keep them with **Save Generated File As...** for one file, or **Save All Generated Files...** for
+   the whole set, headers included.
+
+</Steps>
+
+The **Code** button uses KIELER's netlist-based compiler, the compiler behind the netlist-based
+simulation that this guide uses throughout. It generates source code only: compiling it, and linking it
+with the rest of your program, is up to your own build. In the KIELER tools, compiling the chart with
+the system "Netlist-based Compilation (C)" gives the same files.
+
+## What the compiler generates
+
+Take the two-state toggle from [Thinking in ticks](/learn/ticks/):
+
+<Chart example="advanced/code-generation/toggle" caption="Each press of `button` switches `light`." />
+
+KIELER generates a header and a C file. This is its output for this chart, without the comment
+at the top of each file that says KIELER generated it, and without the header's include guard
+(`#ifndef TOGGLE_H` ... `#endif`). SCCharts Lab and the KIELER VS Code extension (0.3.0) generate
+exactly this code for it, so do the other listings on this page; for other charts, or other KIELER
+versions, the numbers in the `_g` names may differ:
+
+```c
+/* Toggle.h */
+typedef struct {
+  char button;
+  char light;
+  char _g2;
+  char _g5;
+  char _g6;
+  char _GO;
+  char _cg2;
+  char _cg5;
+  char _TERM;
+  char _pg5;
+  char _pg6;
+} TickData;
+
+void reset(TickData* d);
+void logic(TickData* d);
+void tick(TickData* d);
+```
+
+```c
+/* Toggle.c */
+#include "Toggle.h"
+
+void logic(TickData* d) {
+  d->_g5 = d->_pg5;
+  d->_g6 = d->_g5 && d->button;
+  if (d->_g6) {
+    d->light = 0;
+  }
+  d->_g2 = d->_pg6;
+  d->_g6 = d->_GO || d->_g6 || (d->_g2 && !d->button);
+  d->_g2 = d->_g2 && d->button;
+  if (d->_g2) {
+    d->light = 1;
+  }
+  d->_g5 = d->_g2 || (d->_g5 && !d->button);
+}
+
+void reset(TickData* d) {
+  d->_GO = 1;
+  d->_TERM = 0;
+  d->light = 0;
+  d->_pg5 = 0;
+  d->_pg6 = 0;
+}
+
+void tick(TickData* d) {
+  logic(d);
+
+  d->_pg5 = d->_g5;
+  d->_pg6 = d->_g6;
+  d->_GO = 0;
+}
+```
+
+The pieces:
+
+- **`TickData`** holds the whole state of the chart: one field for each input, output and local
+  variable, and the compiler's bookkeeping in fields that start with `_`. Inputs, outputs and the
+  chart's own locals keep their names; a local declared inside a state is renamed
+  `_<Chart>_local_<name>` (`seconds` in a chart `ResumeLocals` becomes `_ResumeLocals_local_seconds`). A
+  `bool` becomes a C `char`, an `int` an `int`, a `float` a `double`.
+- **`reset(d)`** prepares a fresh run: it gives variables their initial values (`light = 0`) and sets
+  `_GO`, which is true only in the first tick. Inputs declared without an initial value, like
+  `button`, are left alone.
+- **`tick(d)`** performs one reaction. It calls `logic(d)` and then saves what the next tick needs to
+  remember. You call `tick`; `logic` is its helper.
+- **`_TERM`** is set by a tick in which the chart terminates (here it never does).
+
+Inside `logic` there are no states, no loops and no jumps. The netlist compiler has turned the chart into
+straight-line code: `_pg6` and `_pg5` remember whether `Off` and `On` were active at the end of the
+previous tick, the `_g` variables are the conditions ("guards") for this tick, and each effect sits
+behind the guard of its transition. `d->light = 1` runs exactly when `Off` was active and `button` is
+true. The order of the statements is the schedule that the compiler worked out from the causality rules
+of [chapter 12](/learn/causality/).
+
+## A main loop
+
+Your program owns the `TickData` and drives it. On a microcontroller the loop has four steps:
+
+```c title="main.c"
+#include "Toggle.h"
+
+static TickData d;          /* static: it starts zeroed */
+
+int main(void) {
+    reset(&d);              /* once, before the first tick */
+    for (;;) {
+        d.button = read_button();   /* 1. sample the inputs */
+        tick(&d);                   /* 2. one reaction */
+        write_light(d.light);       /* 3. drive the outputs */
+        wait_for_next_tick();       /* 4. e.g. every 10 ms */
+    }
+}
+```
+
+`read_button`, `write_light` and `wait_for_next_tick` stand for whatever your platform provides. The
+rules behind the loop:
+
+- **Call `reset` once, before the first `tick`.** It leaves inputs without an initial value alone, so
+  start from a zeroed struct (a `static` or global variable is zeroed in C) or set every input before
+  the first tick.
+- **Write the inputs before every tick.** The struct keeps its values between ticks, so an input you do
+  not write keeps its old value. That is exactly why inputs "persist" in KIELER's simulator: its own
+  main loop keeps one global `TickData`, writes into it only the inputs you changed, calls `tick`, and
+  reports the struct.
+- **An event lasts one tick.** If the hardware reports a button press as an interrupt, set the input in
+  the next tick and clear it after that tick. A chart written for pulses misbehaves when the input
+  stays true.
+- **A tick must finish before the next one is due.** The synchronous model assumes that a reaction takes
+  no time; on the device that means the worst-case time of `tick` must be shorter than the tick period.
+
+### Signals in TickData
+
+A signal's presence lasts one tick, so it matters who sets it and who clears it. Here is a variant of
+the doorbell from [Signals](/learn/signals/), with an input signal, a pure output signal and a valued
+output signal that counts the rings:
+
+<Sim example="advanced/code-generation/doorbell" caption="`chime` and `rings` are present in the ticks in which `button` is; in between, `rings` is absent but keeps its value." />
+
+KIELER's `TickData` for it starts with the chart's own fields (the compiler's bookkeeping, the fields
+starting with `_`, left out here):
+
+```c
+typedef struct {
+  int count;
+  char button;
+  char chime;
+  int rings_val;
+  int rings_curval;
+  char rings;
+  /* ... */
+} TickData;
+```
+
+- A pure signal, input or output, is one `char`: 1 while it is present, 0 while it is absent
+  (`button`, `chime`).
+- A valued signal has three fields: its presence (`rings`), its value (`rings_val`, what `val(rings)`
+  reads), and `rings_curval`, which collects the value emitted in the tick (combined, for a signal with
+  a combine function) before it is copied into `rings_val`. Read `rings_val`; `rings_curval` is the
+  compiler's.
+
+The output signals are reset by the chart itself. `logic` starts every tick by marking them absent,
+and an emission sets them again:
+
+```c
+void logic(TickData* d) {
+  d->chime = 0;
+  d->rings = 0;
+  /* ... */
+  if (d->_g4) {
+    d->count++;
+    d->chime |= 1;
+    d->rings_curval = d->count;
+    d->rings |= 1;
+  }
+  /* ... */
+  if (d->_g13) {
+    d->rings_val = d->rings_curval;
+  }
+  /* ... */
+}
+```
+
+So after the tick that emits `chime`, `d.chime` is 1 until you call `tick` again. That next tick clears
+it at its start, and if nothing emits `chime` in it, `d.chime` is 0 when `tick` returns: in the
+simulation above, `chime` is present in tick 2 and absent in tick 3. Nothing ever clears `rings_val`:
+after tick 3 it still holds 1, the value of the last emission, while `rings` says that the signal is
+absent.
+
+Input signals are the other way round: the generated code never writes `button`, so your loop sets it
+for the tick in which the event happened and clears it for the ticks after. If it does not, the chart
+sees the button as present in every tick, as in tick 5 above, where it was never released. For a press
+that an interrupt reports, keep a flag and hand it to one tick:
+
+```c
+static volatile char pressed;  /* set by the interrupt */
+
+/* in the main loop: */
+d.button = pressed;  /* 1 if pressed since the last tick */
+pressed = 0;         /* so that each press lasts one tick */
+tick(&d);
+if (d.chime) ring_chime();
+if (d.rings) show_count(d.rings_val);
+```
+
+Test an output signal's presence field to see whether it was emitted in this tick, and read a valued
+signal's `_val` field for its value, which stays readable after the signal is absent again.
+
+### Charts with clocks
+
+For a chart with clocks (see [Time](/advanced/time/)) the struct also holds the clocks and the two
+generated variables, as `double`s. For the [stair light](/advanced/time/#resetting-a-clock) they are:
+
+```c
+  double t;
+  double deltaT;
+  double sleepT;
+```
+
+On a fixed tick, set `d.deltaT` to the period (say 10) before every `tick` and ignore `sleepT`. With
+dynamic ticks, measure the time since the previous tick, store it in `d.deltaT`, call `tick`, and then
+sleep until an input changes or `d.sleepT` has passed, whichever comes first.
+
+## Java
+
+The Java code generator produces one class with the same parts: the variables as public fields, and
+`reset()` and `tick()` as methods.
+
+```java
+public class Toggle {
+
+  public boolean button;
+  public boolean light;
+  public boolean _g2;
+  /* ... the other bookkeeping fields ... */
+
+  public void reset() {
+    _GO = true;
+    _TERM = false;
+    light = false;
+    _pg5 = false;
+    _pg6 = false;
+  }
+  /* logic() and tick() as in C */
+}
+```
+
+A chart without host code behaves the same in C and in Java. The exceptions are host code, which must
+be written for the language (see [Host code](/advanced/host-code/)), and comparisons of strings, which
+compare pointers in C and text in Java.
+
+## Netlist versus priority-based compilation
+
+KIELER has two code generators for SCCharts, and they do not accept the same charts.
+
+The **netlist-based** compiler is the default: the simulation, the **Code** button and every recording
+in this guide use it ([How this guide is checked](/reference/about/)). It produces straight-line code like the code above, which needs nothing but
+plain C. The price is that a tick can never go round a loop: every cycle of immediate transitions is
+rejected, even one whose guard always ends it.
+
+<Chart example="advanced/code-generation/burst" caption="Each pass round the loop adds a shot, and the guard `shots < 3` ends it after three. The netlist compiler rejects it anyway." />
+
+The netlist compiler reports `The SCG is NOT asc-schedulable!` (after a few `Can't schedule from ...`
+lines), and the editor warns
+
+```text wrap
+There is an immediate loop. The model is not SASC.
+Involved states: [Ready, Reload]
+```
+
+
+The **priority-based** compiler translates the chart into threads with priorities instead. Its C code
+uses labels, `goto` and a `pause` macro from a small runtime library (`sc.h`). This is its `tick` for
+the toggle from the top of the page:
+
+```c
+int tick(TickData* d) {
+  tickstart(1);
+  d->light = 0;
+  label_0:
+  pause;
+  if(d->button){
+    d->light = 1;
+    label_1:
+    pause;
+    if(d->button){
+      d->light = 0;
+      goto label_0;
+    } else {
+      goto label_1;
+    }
+  } else {
+    goto label_0;
+  }
+  tickreturn();
+}
+```
+
+Because it can jump back within a tick, it accepts the loop above and runs it:
+
+| Tick | `fire` | `shots` (priority-based) |
+| ---: | --- | ---: |
+| 1 | false | 0 |
+| 2 | true | 3 |
+| 3 | false | 3 |
+
+In tick 2 the chart went from `Ready` to `Reload` and back three times. A loop whose guard never
+fails compiles too, but then `tick` never returns.
+
+| What differs | Netlist-based | Priority-based |
+| --- | --- | --- |
+| Used by | simulation (default), **Code** button | on request |
+| Generated code | straight-line, no loops | labels, `goto`, `pause`, runtime library |
+| Cycles of immediate transitions | always rejected | accepted, run at run time |
+| Write–write conflicts, dataflow cycles | rejected | rejected (`The SCG is not IASC-schedulable!`) |
+| `_TERM` termination flag | yes | no |
+| A write to an input in tick 1 | lost: the environment overwrites it | kept |
+
+The last row is one of a few bugs in the netlist compiler's optimisations; they concern unusual
+combinations of assignments, mostly in tick 1. Apart from those, a chart that the netlist compiler
+accepts behaves the same under the priority-based one. Use the netlist compiler unless you need what
+only the other one accepts. KIELER also offers state-based code generators; they get
+several of the features in this guide wrong (clock timeouts fire a tick late, `period` never runs), so
+use them only if you know why.
+
+## Naming the generated functions
+
+All generated charts use the names `reset`, `tick`, `logic` and `TickData`, so two charts cannot be
+linked into one program as they are. The pragma `#code.naming`, at the top of the file, changes the
+names. Each of these lines is one choice; for the chart `Toggle` they give:
+
+```sctx
+// Togglereset, Toggletick, Togglelogic, ToggleTickData:
+#code.naming "prefix"
+
+// resetToggle, tickToggle, logicToggle, TickDataToggle:
+#code.naming "suffix"
+
+// your own names, in the order tick, reset, logic, struct:
+#code.naming "step", "init", "logic", "ToggleData"
+```
+
+## Try it
+
+<TryIt example="advanced/code-generation/burst" solution="advanced/code-generation/burst-fixed" title="One shot per tick">
+The netlist compiler rejects this chart. Change it so that it compiles with the netlist compiler and
+fires one shot per tick while `fire` is held, three at most.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="Your main loop forgets to write `d.button` before a tick. What does that tick see?"
+  options={['`button` is false, as `reset` sets it', 'The value written before the previous tick', 'A random value', 'The tick is skipped']}
+  answer={1}
+>
+The `TickData` struct keeps its values between ticks, and `reset` does not set `button`, which has no
+initial value. An input you do not write keeps whatever was last written into it: the same persistence
+you see in KIELER's simulator.
+</Quiz>
+
+In the [doorbell](#signals-in-tickdata), `button` is present in tick 2 and absent in tick 3. After
+tick 3, your main loop reads `d.chime` (is `chime` present?) and `d.rings_val` (the value of `rings`).
+Predict both, check, then open the explanation.
+
+<Predict
+  example="advanced/code-generation/doorbell"
+  ask={[{ tick: 3, value: 'chime' }, { tick: 3, value: 'rings' }]}
+  caption="`d.chime` is `chime`'s presence after the tick; `d.rings_val` is the value of `rings`."
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`chime` is absent: `logic` clears it at the start of tick 3, and nothing emits it in that tick, so
+`d.chime` is 0 when `tick` returns. The value of `rings` is still 1: nothing ever clears `rings_val`,
+so it keeps the value of the last emission, from tick 2, while `d.rings` says that the signal is
+absent.
+
+</details>
+
+<Quiz
+  question="A chart has a cycle of immediate transitions whose guard always ends the loop after a few passes. Which compiler accepts it?"
+  options={['Both', 'Only the netlist-based compiler', 'Only the priority-based compiler', 'Neither']}
+  answer={2}
+>
+The netlist compiler generates code without loops and rejects every cycle of immediate transitions,
+whatever its guards. The priority-based compiler accepts it and goes round the loop at run time.
+</Quiz>
+
+<KeyIdeas>
+- KIELER compiles a chart into a `TickData` struct and the functions `reset` and `tick` (plus `logic`,
+  which `tick` calls).
+- Call `reset` once, then for every tick: write all inputs, call `tick`, read the outputs.
+- The struct keeps its values between ticks; that is why inputs persist in KIELER's simulator.
+- The netlist compiler (the default, and SCCharts Lab's **Code** button) produces straight-line code
+  and rejects every cycle of immediate transitions; the priority-based compiler accepts guarded cycles.
+- `#code.naming` renames the generated functions so that several charts fit into one program.
+</KeyIdeas>
+
+That is the end of Going further. [Patterns](/patterns/abro/) puts the language to work in complete,
+explained charts, starting with ABRO.

@@ -1,0 +1,10 @@
+scchart Sensor {
+  input bool sample
+  input int reading
+  output signal int level = 0
+  output int last = 0
+
+  initial state Run
+    if sample do level(reading); last = val(level) go to Run
+    do last = val(level) go to Run
+}

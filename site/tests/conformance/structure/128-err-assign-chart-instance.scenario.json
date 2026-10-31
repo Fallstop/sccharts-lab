@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "KIELER rejects c = d between two chart instances."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Assignments to referenced SCCharts are not supported. Except with dataflow semantics (i.e. in a dataflow region)."
+}

@@ -1,0 +1,114 @@
+{
+  "hash": "449f6243bc973693e3dbcc7f91ff5fa057986d02",
+  "chart": "src/examples/learn/variables/floats.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "f": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "equal": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "tenth": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "whole": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "f": 0.1
+      },
+      "values": {
+        "f": 0.1,
+        "equal": false,
+        "tenth": 0.10000000149011612,
+        "whole": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "f": 0.1,
+        "equal": false,
+        "tenth": 0.10000000149011612,
+        "whole": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "f": 0.79
+      },
+      "values": {
+        "f": 0.79,
+        "equal": false,
+        "tenth": 0.10000000149011612,
+        "whole": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "f": -0.79
+      },
+      "values": {
+        "f": -0.79,
+        "equal": false,
+        "tenth": 0.10000000149011612,
+        "whole": -7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "f": 0.5
+      },
+      "values": {
+        "f": 0.5,
+        "equal": false,
+        "tenth": 0.10000000149011612,
+        "whole": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

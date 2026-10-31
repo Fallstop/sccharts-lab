@@ -1,0 +1,26 @@
+// A call is analysed as its body: two regions incrementing the same field are commuting updates, and a region
+// reading the field through get() waits for both.
+scchart St120Concurrent {
+  output int seen = 0
+  class C {
+    int v
+    void inc() {
+      v++
+    }
+    int get() {
+      return v
+    }
+  } c
+  region Reader {
+    initial state A
+    do seen = c.get() go to A
+  }
+  region One {
+    initial state A
+    do c.inc() go to A
+  }
+  region Two {
+    initial state A
+    do c.inc() go to A
+  }
+}

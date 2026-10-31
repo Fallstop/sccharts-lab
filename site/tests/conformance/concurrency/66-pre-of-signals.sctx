@@ -1,0 +1,19 @@
+scchart PreOfSignals {
+  input signal In
+  input bool a
+  output signal S
+  output signal int V
+  output bool wasIn, wasS, wasV
+  output int lastV
+
+  region Emit {
+    initial state X
+    if a do S; V(42) go to X
+  }
+
+  region Watch {
+    initial state X {
+      immediate during do wasIn = pre(In); wasS = pre(S); wasV = pre(V); lastV = pre(val(V))
+    }
+  }
+}

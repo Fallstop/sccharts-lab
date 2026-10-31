@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "f": 0.1
+      },
+      "note": "Tick 1: `tenth` is initialised from the literal `0.1`, which KIELER rounds to single precision: 0.10000000149011612."
+    },
+    {
+      "note": "The input `f` is exactly the double 0.1, so `f == tenth` is false although both were written as 0.1. `whole = f * 10` stores 1.0 in an int: 1."
+    },
+    {
+      "inputs": {
+        "f": 0.79
+      },
+      "note": "`f * 10` is 7.9; storing it in an int cuts off the fraction: 7."
+    },
+    {
+      "inputs": {
+        "f": -0.79
+      },
+      "note": "−7.9 becomes −7: the conversion truncates towards zero, it does not round down."
+    },
+    {
+      "inputs": {
+        "f": 0.5
+      },
+      "note": "0.5 is exact in single precision too, but `tenth` is still the rounded 0.1, so `equal` stays false. `whole` is 5."
+    }
+  ],
+  "expect": "ok"
+}

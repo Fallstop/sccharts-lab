@@ -1,0 +1,11 @@
+scchart InitialFinalOnlyAbort {
+  input bool b
+  output bool left
+
+  initial state S {
+    initial final state F
+  }
+  if b do left = true go to X
+
+  state X
+}

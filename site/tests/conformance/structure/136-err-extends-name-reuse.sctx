@@ -1,0 +1,9 @@
+// A chart may not declare a variable with the name of an inherited one.
+scchart St136Main extends St136Base {
+  int v = 2
+  initial state A
+}
+
+scchart St136Base {
+  int v = 1
+}

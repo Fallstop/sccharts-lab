@@ -1,0 +1,198 @@
+{
+ "sourceHash": "7ebb3d0494d65714",
+ "states": [
+  {
+   "path": [
+    "P72"
+   ],
+   "rows": [
+    [
+     "P72"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    243,
+    249.1
+   ]
+  },
+  {
+   "path": [
+    "P72",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    37.3,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P72",
+    0,
+    "C"
+   ],
+   "rows": [],
+   "box": [
+    103.4,
+    49.6,
+    10,
+    10
+   ]
+  },
+  {
+   "path": [
+    "P72",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    180.1,
+    10,
+    35.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P72",
+    0,
+    "S2"
+   ],
+   "rows": [
+    [
+     "S2"
+    ]
+   ],
+   "box": [
+    180.1,
+    64.6,
+    39.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P72",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    229.7,
+    109.1
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP72$$N0$NS0$EC0",
+   "source": [
+    "P72",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P72",
+    0,
+    "C"
+   ],
+   "text": "A",
+   "lines": [
+    "A"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP72$$N0$NC$ES10",
+   "source": [
+    "P72",
+    0,
+    "C"
+   ],
+   "target": [
+    "P72",
+    0,
+    "S1"
+   ],
+   "text": "1: B",
+   "lines": [
+    "1: B"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP72$$N0$NC$ES20",
+   "source": [
+    "P72",
+    0,
+    "C"
+   ],
+   "target": [
+    "P72",
+    0,
+    "S2"
+   ],
+   "text": "2:",
+   "lines": [
+    "2: "
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

@@ -1,0 +1,44 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "X": 1
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "X": 2
+      },
+      "note": "previous = pre(X) = 1."
+    },
+    {
+      "inputs": {
+        "S": true,
+        "X": 3
+      },
+      "note": "Suspended: the transition does not run (previous stays 1)."
+    },
+    {
+      "inputs": {
+        "X": 4
+      },
+      "note": "Suspended."
+    },
+    {
+      "inputs": {
+        "S": false,
+        "X": 5
+      },
+      "note": "Resumed: pre(X) is the value of X in the previous tick, 4, even though M was suspended then. `pre` is not frozen by suspension."
+    },
+    {
+      "inputs": {
+        "X": 6
+      },
+      "note": "previous = 5."
+    }
+  ],
+  "expect": "ok"
+}

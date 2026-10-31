@@ -1,0 +1,94 @@
+---
+/**
+ * <KeyIdeasDigest />: the Key ideas of every Learn chapter, in chapter order, each under a link to its
+ * chapter. Gathered at build time from the chapters' MDX (the `<KeyIdeas>` block of each), so the digest
+ * never drifts from the chapters. A chapter without a `<KeyIdeas>` list is a build error.
+ *
+ * The lists are inline Markdown (code, bold, italic, links), as KeyIdeas bodies are; anything richer
+ * would need a real Markdown pass.
+ */
+import { getCollection } from 'astro:content'
+import { inlineMd } from './frame/inline-md'
+
+interface Props {
+	/** Heading level of each chapter's title (the digest sits under an h2 by default). */
+	level?: 3 | 4
+}
+const { level = 3 } = Astro.props
+const Heading = `h${level}` as 'h3' | 'h4'
+
+/** Typographic quotes outside code spans, as the MDX pages get them: it's, “quoted”. */
+function smartQuotes(text: string): string {
+	return text
+		.split(/(`[^`]*`)/g)
+		.map((part) =>
+			part.startsWith('`')
+				? part
+				: part
+						.replace(/(\w)'/g, '$1\u2019')
+						.replace(/'(\w)/g, '\u2018$1')
+						.replace(/"(?=\S)/g, '\u201c')
+						.replace(/"/g, '\u201d'),
+		)
+		.join('')
+}
+
+/** The bullets of the first `<KeyIdeas>…</KeyIdeas>` block: one string per `- ` item, continuation lines joined. */
+function keyIdeas(body: string, id: string): string[] {
+	const block = /<KeyIdeas(?:\s[^>]*)?>([\s\S]*?)<\/KeyIdeas>/.exec(body)
+	if (!block) throw new Error(`<KeyIdeasDigest>: the chapter ${id} has no <KeyIdeas> block`)
+	const items: string[] = []
+	for (const raw of block[1].split('\n')) {
+		const line = raw.trim()
+		if (!line) continue
+		if (line.startsWith('- ')) items.push(line.slice(2))
+		else if (items.length) items[items.length - 1] += ` ${line}`
+	}
+	if (!items.length) throw new Error(`<KeyIdeasDigest>: the <KeyIdeas> block of ${id} has no list items`)
+	return items
+}
+
+const chapters = (await getCollection('docs', (entry) => entry.id.startsWith('learn/') && !entry.data.draft))
+	.sort((a, b) => (a.data.sidebar?.order ?? Infinity) - (b.data.sidebar?.order ?? Infinity))
+	.map((entry, index) => ({
+		number: entry.data.sidebar?.order ?? index + 1,
+		title: entry.data.title,
+		href: `/${entry.id}/`,
+		ideas: keyIdeas(entry.body ?? '', entry.id),
+	}))
+---
+
+<div class="sc-digest">
+	{
+		chapters.map((chapter) => (
+			<section class="sc-digest__chapter">
+				<Heading class="sc-digest__title">
+					<span class="sc-digest__number">{chapter.number}</span>{' '}
+					<a href={chapter.href}>{chapter.title}</a>
+				</Heading>
+				<ul>
+					{chapter.ideas.map((idea) => (
+						<li set:html={inlineMd(smartQuotes(idea))} />
+					))}
+				</ul>
+			</section>
+		))
+	}
+</div>
+
+<style>
+	/* The number hangs: a title that wraps continues under the title, not under the number. */
+	.sc-digest__title {
+		display: flex;
+		align-items: baseline;
+	}
+	.sc-digest__number {
+		flex: none;
+		min-width: 3.25ch;
+		color: var(--c-muted);
+		font-variant-numeric: tabular-nums;
+	}
+	.sc-digest__number::after {
+		content: '.';
+	}
+</style>

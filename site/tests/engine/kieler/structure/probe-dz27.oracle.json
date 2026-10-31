@@ -1,0 +1,134 @@
+{
+  "hash": "844e8c4b5c8af30f2e612d901b12e905b1149020",
+  "chart": "tests/engine/kieler/structure/probe-dz27.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "V": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "V_val": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "W_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "last": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "W_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "V": false,
+        "V_val": 0
+      },
+      "values": {
+        "V": false,
+        "V_val": 0,
+        "W": false,
+        "W_val": 0,
+        "last": 0,
+        "W_curval": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "V": true,
+        "V_val": 10
+      },
+      "values": {
+        "V": true,
+        "V_val": 10,
+        "W": true,
+        "W_val": 22,
+        "last": 22,
+        "W_curval": 22
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "V": true,
+        "V_val": 20
+      },
+      "values": {
+        "V": true,
+        "V_val": 20,
+        "W": true,
+        "W_val": 42,
+        "last": 42,
+        "W_curval": 42
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "V": true,
+        "V_val": 30
+      },
+      "values": {
+        "V": true,
+        "V_val": 30,
+        "W": true,
+        "W_val": 62,
+        "last": 62,
+        "W_curval": 62
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

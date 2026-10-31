@@ -1,0 +1,12 @@
+scchart Inc3 {
+  input int i
+  output int o
+  dataflow:
+  o = i + 1
+}
+scchart DfRef3 {
+  input int I
+  ref Inc3 inc
+  dataflow:
+  inc = I
+}

@@ -1,0 +1,10 @@
+scchart Watchdog {
+  input bool beat
+  output bool alarm
+
+  initial state Watching
+    if beat go to Watching
+    if 3 true do alarm = true go to Expired
+
+  state Expired
+}

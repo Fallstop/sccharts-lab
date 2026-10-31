@@ -1,0 +1,131 @@
+{
+  "hash": "1b08eda52f568807026c0aeb1c0635f6118b192c",
+  "chart": "tests/conformance/structure/72-period-guards-entry-actions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on _St72Guards_local_c.",
+    "Potential instantaneous loop through the timed transitions on _St72Guards_local_c1."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "e1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "e2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "n1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "n2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "e1": 0,
+        "e2": 1,
+        "n1": 0,
+        "n2": 0,
+        "sleepT": 300
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "e1": 0,
+        "e2": 1,
+        "n1": 0,
+        "n2": 0,
+        "sleepT": 200
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "e1": 0,
+        "e2": 1,
+        "n1": 0,
+        "n2": 0,
+        "sleepT": 100
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "e1": 1,
+        "e2": 2,
+        "n1": 1,
+        "n2": 1,
+        "sleepT": 300
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

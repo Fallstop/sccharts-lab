@@ -1,0 +1,13 @@
+// Nested for-regions (a for-region inside a state of another for-region) crash KIELER's compiler.
+scchart St35Grid {
+  output int s = 0
+  region for i : 1 to 2 {
+    initial state A {
+      region for j : 1 to 3 {
+        initial state W
+        immediate do s += j go to D
+        final state D
+      }
+    }
+  }
+}

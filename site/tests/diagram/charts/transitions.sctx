@@ -1,0 +1,10 @@
+scchart Transitions {
+  input bool A, B
+  output int X, Y
+
+  initial state A
+    immediate if A do X++ go to B
+    
+  state B
+    if A && B do X++; Y = X * 2 go to A
+}

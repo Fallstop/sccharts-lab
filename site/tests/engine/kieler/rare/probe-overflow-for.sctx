@@ -1,0 +1,9 @@
+// The copy i = 3 of a for-region writes a[3], which is z.
+scchart OverflowFor {
+  output int a[3] = {0, 0, 0}
+  output int z = 0
+  region for i : 0 to 3 {
+    initial state W
+      do a[i] = i + 10 go to W
+  }
+}

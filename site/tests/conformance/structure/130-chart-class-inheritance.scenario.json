@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "toggle": false
+      },
+      "note": "Tick 1 enters First: counter1.start() sets its counting flag; nothing has been counted: **O1 = 0, O2 = 0**."
+    },
+    {
+      "inputs": {
+        "toggle": false
+      },
+      "note": "counter1 counts: **O1 = 1**."
+    },
+    {
+      "inputs": {
+        "toggle": false
+      },
+      "note": "**O1 = 2**."
+    },
+    {
+      "inputs": {
+        "toggle": true
+      },
+      "note": "First is left (counter1.stop()) and Second entered (counter2.start()); counter1 is stopped before it counts: **O1 = 2, O2 = 0**."
+    },
+    {
+      "inputs": {
+        "toggle": false
+      },
+      "note": "counter2 counts: **O2 = 1**."
+    },
+    {
+      "inputs": {
+        "toggle": false
+      },
+      "note": "**O2 = 2**."
+    },
+    {
+      "inputs": {
+        "toggle": true
+      },
+      "note": "Back to First: counter2 stops, counter1 starts again: **O1 = 2, O2 = 2**."
+    },
+    {
+      "inputs": {
+        "toggle": false
+      },
+      "note": "counter1 resumes from its old value: **O1 = 3**."
+    }
+  ],
+  "expect": "ok"
+}

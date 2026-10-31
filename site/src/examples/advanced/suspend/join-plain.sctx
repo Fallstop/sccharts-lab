@@ -1,0 +1,16 @@
+scchart PreheatPlain {
+  input bool doorOpen
+  output bool heater = false
+
+  initial state Prepare {
+    initial state Check
+      immediate go to Ready
+
+    final state Ready
+  }
+  join to Heating
+
+  state Heating {
+    entry do heater = true
+  }
+}

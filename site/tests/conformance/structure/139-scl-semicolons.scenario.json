@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1 enters S; the self-loop is delayed: **a = 0, b = 0, c = 0, d = 0**."
+    },
+    {
+      "inputs": {},
+      "note": "inc() sets a = 1, the loop adds 3 to d, steps() sets b to 1, 2, then 10 (a > 0) and c = b, then d + 1: **a = 1, b = 10, c = 10, d = 4**."
+    },
+    {
+      "inputs": {},
+      "note": "**a = 2, b = 10, c = 10, d = 8**."
+    }
+  ],
+  "expect": "ok"
+}

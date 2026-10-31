@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "walk": false }, "note": "Tick 1 enters `Outside` in both charts." },
+    { "inputs": { "walk": true }, "note": "Both enter `House` deferred. Every transition into `House` is deferred, so KIELER really enters it a tick later: in this tick nothing of `House` happens in either chart." },
+    { "inputs": { "walk": false }, "note": "The inside starts. `HouseDeferred`: the inner initial state `Hall` is entered normally, so its entry action runs (`lights` = 1) and its immediate transition fires (`steps` = 1). `HouseDeep`: `deep deferred` extends the quiet arrival to `Hall`, so its entry action is skipped (`lights` = 0); only its immediate transition runs (`steps` = 1). Neither chart runs `House`'s own entry action (`chimes` = 0)." },
+    { "inputs": {}, "note": "Both in `Room`. The entry actions that were skipped never run for this visit." }
+  ],
+  "expect": "ok"
+}

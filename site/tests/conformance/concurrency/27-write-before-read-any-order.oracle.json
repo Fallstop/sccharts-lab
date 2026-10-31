@@ -1,0 +1,90 @@
+{
+  "hash": "e357aec360b2d9262bd085b8766953afef5c5406",
+  "chart": "tests/conformance/concurrency/27-write-before-read-any-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "seenAfter": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "seenBefore": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "seenAfter": false,
+        "seenBefore": false,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "seenAfter": true,
+        "seenBefore": true,
+        "x": 5
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "seenAfter": true,
+        "seenBefore": true,
+        "x": 5
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

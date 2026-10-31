@@ -1,0 +1,15 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz53 {
+  input int x
+  output int y = 0
+  initial state R is Dz53M(x, y)
+}
+scchart Dz53M {
+  input int in
+  output int out
+  method int sq(int v) {
+    return v * v + in
+  }
+  initial state S
+  do out = sq(in) go to S
+}

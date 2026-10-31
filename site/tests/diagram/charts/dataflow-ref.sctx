@@ -1,0 +1,20 @@
+scchart Twice {
+  input int x
+  output int y, z
+  ref Adder add, add2
+
+  dataflow:
+  add = {x, x}
+  add2.a = add.sum
+  add2.b = 1
+  y = add2.sum
+  z = add.sum * 2
+}
+
+scchart Adder {
+  input int a, b
+  output int sum
+
+  dataflow:
+  sum = a + b
+}

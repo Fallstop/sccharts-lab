@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER accepts the chart at first, but the generated C code fails to compile: `default` is a keyword in C."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Compiler did not return success"
+}

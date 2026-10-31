@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1: `V_val = 0`."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `V(pre(val(V)) + 1)`: last tick's value 0, plus 1: `V_val = 1`."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`V_val = 2`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "No emission: `V_val` stays 2."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`pre(val(V))` is 2 (the value persists while `V` is absent): `V_val = 3`."
+    }
+  ],
+  "expect": "ok"
+}

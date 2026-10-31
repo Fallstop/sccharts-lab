@@ -1,0 +1,15 @@
+scchart OldUpdates {
+  output int x = 1
+
+  region Add {
+    initial state A
+      do x = x + 2 go to B
+    state B
+  }
+
+  region Triple {
+    initial state A
+      do x = x * 3 go to B
+    state B
+  }
+}

@@ -1,0 +1,6 @@
+scchart EmitAnno {
+  signal S
+  output int o
+  initial state A
+  do @tag S; @q "v" S; @k v o = 1 go to A
+}

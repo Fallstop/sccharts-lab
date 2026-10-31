@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    { "inputs": { "menu": false, "home": false, "down": false, "right": false }, "note": "Tick 1 enters `Home` (`screen` = 0)." },
+    { "inputs": { "menu": true }, "note": "The first visit to `Settings` starts in `Display` and `Brightness` (11)." },
+    { "inputs": { "menu": false, "right": true }, "note": "`Brightness` to `Contrast` (12)." },
+    { "inputs": { "right": false, "home": true }, "note": "Back `Home` (0)." },
+    { "inputs": { "home": false, "menu": true }, "note": "`shallow history` restores only the level directly inside `Settings`: `Display` is resumed, but `Display` itself starts again in `Brightness` (11)." },
+    { "inputs": { "menu": false, "down": true }, "note": "`Display` to `Sound`, which starts in `Volume` (21)." },
+    { "inputs": { "down": false, "right": true }, "note": "`Volume` to `Balance` (22)." },
+    { "inputs": { "right": false, "home": true }, "note": "`Home` (0)." },
+    { "inputs": { "home": false, "menu": true }, "note": "Shallow history: `Sound` is resumed, starting in `Volume` (21)." },
+    { "inputs": { "menu": false }, "note": "On the `Volume` screen." }
+  ],
+  "expect": "ok"
+}

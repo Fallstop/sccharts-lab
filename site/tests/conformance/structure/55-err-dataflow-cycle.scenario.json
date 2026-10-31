@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": 1
+      },
+      "note": "Rejected: \"Can't schedule from ... to ...\", \"The SCG is NOT asc-schedulable!\", \"Circular dependency prevents scheduling this tick.\""
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

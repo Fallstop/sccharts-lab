@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Tick 1 enters `Work` and its initial state `Step1`."
+    },
+    {
+      "note": "`go to Done` has no trigger, so it leaves `Work` in the first tick after it was entered. Because it is a weak abort, `Step1` still takes its own transition to `Step2` in this tick first; then `Work` is left. KIELER warns because a trigger-less abort out of a superstate is usually a mistake (`join to` waits for the inside to finish)."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "C": false }, "note": "Tick 1 enters the three waiting states." },
+    { "inputs": { "A": true, "C": true }, "note": "`A` and `C` together: two regions finish in one tick." },
+    { "inputs": { "A": false, "C": false }, "note": "Still waiting for `B`." },
+    { "inputs": { "B": true }, "note": "`B`: all three regions are final, the join fires, `O` is present." },
+    { "inputs": { "B": false }, "note": "Done." }
+  ],
+  "expect": "ok"
+}

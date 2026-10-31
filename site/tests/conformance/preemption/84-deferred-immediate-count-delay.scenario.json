@@ -1,0 +1,28 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "G": false,
+        "B": true
+      },
+      "note": "Tick 1 enters A."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "Deferred entry into S. Counting for an immediate count delay is immediate behaviour, so the entry tick is not counted (after a normal entry it would be)."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "Count 1."
+    },
+    {
+      "inputs": {},
+      "note": "Count 2: fires (fired = 1), one tick later than after a normal entry."
+    }
+  ],
+  "expect": "ok"
+}

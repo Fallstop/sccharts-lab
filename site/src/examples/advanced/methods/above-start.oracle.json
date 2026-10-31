@@ -1,0 +1,94 @@
+{
+  "hash": "eafbbbfb161bb33cde152c1b31c9f1d8220a5d1c",
+  "chart": "src/examples/advanced/methods/above-start.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "samples": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "threshold": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "high": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "samples": [
+          3,
+          8,
+          1,
+          9
+        ],
+        "threshold": 5
+      },
+      "values": {
+        "samples": [
+          3,
+          8,
+          1,
+          9
+        ],
+        "threshold": 5,
+        "high": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "samples": [
+          3,
+          8,
+          1,
+          9
+        ],
+        "threshold": 5,
+        "high": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "threshold": 0
+      },
+      "values": {
+        "samples": [
+          3,
+          8,
+          1,
+          9
+        ],
+        "threshold": 0,
+        "high": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

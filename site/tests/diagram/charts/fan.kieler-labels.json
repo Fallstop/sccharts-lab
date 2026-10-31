@@ -1,0 +1,153 @@
+{
+ "sourceHash": "c959fb232b4489a2",
+ "states": [
+  {
+   "path": [
+    "Fan"
+   ],
+   "rows": [
+    [
+     "Fan"
+    ],
+    [
+     "input bool ",
+     "button"
+    ],
+    [
+     "output int ",
+     "power = 0"
+    ],
+    [
+     "enum ",
+     "Speed {"
+    ],
+    [
+     "OFF, LOW, HIGH"
+    ],
+    [
+     "}"
+    ],
+    [
+     "ref ",
+     "Speed ",
+     "speed = Speed.OFF"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    195,
+    457.8
+   ]
+  },
+  {
+   "path": [
+    "Fan",
+    0,
+    "Run"
+   ],
+   "rows": [
+    [
+     "Run"
+    ]
+   ],
+   "box": [
+    67.4,
+    273.2,
+    46.7,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Fan",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    181.6,
+    317.8
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NFan$$N0$NRun$ERun0",
+   "source": [
+    "Fan",
+    0,
+    "Run"
+   ],
+   "target": [
+    "Fan",
+    0,
+    "Run"
+   ],
+   "text": "1: button && speed == Speed.OFF / speed = Speed.LOW; power = 40",
+   "lines": [
+    "1: button && speed ==",
+    "Speed.OFF",
+    "/ speed = Speed.LOW;",
+    "  power = 40"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NFan$$N0$NRun$ERun1",
+   "source": [
+    "Fan",
+    0,
+    "Run"
+   ],
+   "target": [
+    "Fan",
+    0,
+    "Run"
+   ],
+   "text": "2: button && speed == Speed.LOW / speed = Speed.HIGH; power = 100",
+   "lines": [
+    "2: button && speed ==",
+    "Speed.LOW",
+    "/ speed = Speed.HIGH;",
+    "  power = 100"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NFan$$N0$NRun$ERun2",
+   "source": [
+    "Fan",
+    0,
+    "Run"
+   ],
+   "target": [
+    "Fan",
+    0,
+    "Run"
+   ],
+   "text": "3: button / speed = Speed.OFF; power = 0",
+   "lines": [
+    "3: button",
+    "/ speed = Speed.OFF;",
+    "  power = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

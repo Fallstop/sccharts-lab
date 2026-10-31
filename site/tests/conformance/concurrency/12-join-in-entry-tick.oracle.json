@@ -1,0 +1,71 @@
+{
+  "hash": "7b85942575df08e4df77cef379dcbf6dcce864ed",
+  "chart": "tests/conformance/concurrency/12-join-in-entry-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads n, so the compiler treats it as an update of n (a relative write, as in the deprecated old SC syntax).\nWrite it as n *= 10; n += 2 to say so. In one region it means the same.\nIt only matters when another region also writes n in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 9,
+      "column": 18
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads n, so the compiler treats it as an update of n (a relative write, as in the deprecated old SC syntax).\nWrite it as n *= 10; n += 3 to say so. In one region it means the same.\nIt only matters when another region also writes n in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 15,
+      "column": 14
+    }
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "n": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "n": 123
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "n": 123
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

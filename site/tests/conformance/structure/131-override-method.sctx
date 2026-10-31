@@ -1,0 +1,24 @@
+// override method replaces an inherited method everywhere: twice() of the base calls value(), which on the
+// subclass is the override. Official KIELER 0.3.0 cannot compile this.
+scchart St131Override {
+  output int O = 0, P = 0, Q = 0
+  ref St131Loud a
+  ref St131Base b
+  initial state A
+  do O = a.value(); P = a.twice(); Q = b.twice() go to A
+}
+
+scchart St131Loud extends St131Base {
+  override method int value() {
+    return 5
+  }
+}
+
+scchart St131Base {
+  method int value() {
+    return 1
+  }
+  method int twice() {
+    return value() * 2
+  }
+}

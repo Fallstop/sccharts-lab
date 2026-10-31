@@ -1,0 +1,25 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz01 {
+  input bool a, b
+  output int x = 0
+  output signal S
+  initial state R is Dz01Mid(a, x, S)
+  if x > 4 go to D
+  state D
+}
+scchart Dz01Mid {
+  input bool gate
+  output int n = 1
+  output signal O
+  region { initial state I is Dz01In(gate, n) }
+  region { initial state W
+    if n > 2 do O go to W }
+}
+scchart Dz01In {
+  input bool t
+  output int c
+  initial state A
+  if t do c++ go to B
+  state B
+  if !t do c += 2 go to A
+}

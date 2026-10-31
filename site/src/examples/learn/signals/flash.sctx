@@ -1,0 +1,8 @@
+scchart Flash {
+  input bool press
+  output signal flash
+  output bool pressed = false
+
+  initial state Ready
+    if press do flash; pressed = true go to Ready
+}

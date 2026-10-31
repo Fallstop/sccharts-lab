@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Waiting`. `ding` is false." },
+    { "inputs": { "press": true }, "note": "`press`: the self-loop sets `ding` to true." },
+    { "inputs": { "press": false }, "note": "Nothing sets `ding` back, so it stays true." },
+    { "inputs": {}, "note": "Still true." },
+    { "inputs": { "press": true }, "note": "Another press sets it to true again." },
+    { "inputs": { "press": false }, "note": "A variable keeps its value until something writes it." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,74 @@
+{
+  "hash": "c667aeceb439e7d1d6c2efce0ec9220c7b1e4e0c",
+  "chart": "tests/conformance/structure/138-override-super-keeps-base.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name twice is contained in the model but not in VariableStore.",
+    "ValuedObject with name value is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "P": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "O": 0,
+        "P": 0,
+        "a": {}
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "O": 5,
+        "P": 2,
+        "a": {}
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "O": 5,
+        "P": 2,
+        "a": {}
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

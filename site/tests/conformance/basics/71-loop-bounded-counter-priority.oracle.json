@@ -1,0 +1,46 @@
+{
+  "hash": "250e1d1eafecb8c4ae95209710dc6a12e80e8141",
+  "chart": "tests/conformance/basics/71-loop-bounded-counter-priority.sctx",
+  "system": "priority",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A]",
+      "line": 5,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 3
+      },
+      "taken": [
+        3
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 3
+      },
+      "taken": [
+        0
+      ]
+    }
+  ]
+}

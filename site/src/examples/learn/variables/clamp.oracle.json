@@ -1,0 +1,92 @@
+{
+  "hash": "40530793b239293aaa5cec13b3203c3eba6660ef",
+  "chart": "src/examples/learn/variables/clamp.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "speed": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "shown": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "speed": 4
+      },
+      "values": {
+        "speed": 4,
+        "shown": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "speed": 4,
+        "shown": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "speed": 25
+      },
+      "values": {
+        "speed": 25,
+        "shown": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "speed": 10
+      },
+      "values": {
+        "speed": 10,
+        "shown": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "speed": 11
+      },
+      "values": {
+        "speed": 11,
+        "shown": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

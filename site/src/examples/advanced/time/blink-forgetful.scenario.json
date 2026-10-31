@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 250 }, "note": "Tick 1: `t` = 0." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 250." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 500: on. Nothing resets the clock." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 750, already ≥ 500: off again after only 250 ms." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 1000: on. From now on every timeout test is true at once." },
+    { "inputs": { "deltaT": 250 }, "note": "Off." },
+    { "inputs": { "deltaT": 250 }, "note": "On." },
+    { "inputs": { "deltaT": 250 }, "note": "Off: the LED flips in every tick." }
+  ],
+  "expect": "ok"
+}

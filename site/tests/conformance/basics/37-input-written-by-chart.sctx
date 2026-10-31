@@ -1,0 +1,7 @@
+scchart InputWrittenByChart {
+  input int I
+  output int seen = 0
+
+  initial state A
+  do seen = I; I += 10 go to A
+}

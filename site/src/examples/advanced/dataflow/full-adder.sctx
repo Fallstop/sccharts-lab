@@ -1,0 +1,22 @@
+scchart FullAdder {
+  input bool a, b, carryIn
+  output bool sum, carryOut
+  ref HalfAdderCell h1, h2
+
+  dataflow {
+    h1 = {a, b}
+    h2 = {h1.s, carryIn}
+    sum = h2.s
+    carryOut = h1.c || h2.c
+  }
+}
+
+scchart HalfAdderCell {
+  input bool x, y
+  output bool s, c
+
+  dataflow {
+    s = x != y
+    c = x && y
+  }
+}

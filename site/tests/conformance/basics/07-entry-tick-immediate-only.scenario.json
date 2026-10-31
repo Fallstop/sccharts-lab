@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {"I": true, "J": true}, "note": "In the tick A is entered only its immediate transitions are candidates. Priority 1 is delayed, so it is skipped although I is true, and the immediate priority-2 transition fires: x = 2, state C."},
+    {"inputs": {}, "note": "C has no transitions; x stays 2."}
+  ],
+  "expect": "ok"
+}

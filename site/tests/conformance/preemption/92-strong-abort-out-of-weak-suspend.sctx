@@ -1,0 +1,15 @@
+// For contrast with #90: a state with a weak suspend may have a strong abort. WeakSuspend does not guard the
+// state's own outgoing transitions (P-46), so there is no cycle.
+scchart WeakSuspendStrongOut {
+  input bool S, A
+  output int n = 0
+
+  initial state M {
+    weak suspend if S
+    initial state I
+    do n += 1 go to I
+  }
+  if A abort to X
+
+  state X
+}

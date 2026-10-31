@@ -1,0 +1,148 @@
+{
+ "sourceHash": "bf5f4a53797dbb9d",
+ "states": [
+  {
+   "path": [
+    "Derived"
+   ],
+   "rows": [
+    [
+     "Derived ",
+     "extends ",
+     "Base"
+    ],
+    [
+     "output int ",
+     "shared = 0"
+    ],
+    [
+     "output int ",
+     "shared = 1"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    298.3,
+    180.1
+   ]
+  },
+  {
+   "path": [
+    "Derived",
+    "Main",
+    "Run"
+   ],
+   "rows": [
+    [
+     "Run"
+    ]
+   ],
+   "box": [
+    61.6,
+    63.6,
+    46.7,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Derived",
+    "Main",
+    "Go"
+   ],
+   "rows": [
+    [
+     "Go"
+    ]
+   ],
+   "box": [
+    34.9,
+    63.6,
+    39.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Derived",
+    "Main"
+   ],
+   "label": [
+    "Main"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    170,
+    108.1
+   ]
+  },
+  {
+   "path": [
+    "Derived",
+    "Main"
+   ],
+   "label": [
+    "Main"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    182,
+    66.3,
+    109.5,
+    108.1
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NDerived$NMain$NRun$ERun0",
+   "source": [
+    "Derived",
+    "Main",
+    "Run"
+   ],
+   "target": [
+    "Derived",
+    "Main",
+    "Run"
+   ],
+   "text": "/ shared = shared + 1",
+   "lines": [
+    "/ shared = shared + 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NDerived$NMain$$copy2$NGo$EGo0",
+   "source": [
+    "Derived",
+    "Main",
+    "Go"
+   ],
+   "target": [
+    "Derived",
+    "Main",
+    "Go"
+   ],
+   "text": "/ shared = 0",
+   "lines": [
+    "/ shared = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

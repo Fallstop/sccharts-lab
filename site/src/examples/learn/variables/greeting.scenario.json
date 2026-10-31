@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "name": "hi"
+      },
+      "note": "Tick 1: `reply` gets the literal `\"hi\"`. The self-loop is delayed, so nothing is compared yet."
+    },
+    {
+      "note": "`reply == \"hi\"` is true, but `name == \"hi\"` is false although `name` is \"hi\" too. In the C code strings are pointers: `reply` points at the same literal `\"hi\"`, while the input's text lives somewhere else."
+    },
+    {
+      "inputs": {
+        "name": "bye"
+      },
+      "note": "`nameIsHi` is false whatever `name` holds: an input string never compares equal to a literal."
+    }
+  ],
+  "expect": "ok"
+}

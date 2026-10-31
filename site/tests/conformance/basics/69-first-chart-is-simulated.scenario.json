@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "When a file holds several scchart definitions, KIELER compiles and simulates the first one (its reference expansion keeps only the first root state). Only First's variables I and a exist in the simulation; Second is ignored."},
+    {"inputs": {"I": true}, "note": "a = 1. taken has one entry: only First's transitions are counted."},
+    {"inputs": {}, "note": "Nothing else happens; b never appears."}
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,119 @@
+{
+  "hash": "5945daff375349b57996159dce569bd8e0760236",
+  "chart": "src/examples/advanced/connectors/resting.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Connector states should have an outgoing transition without trigger.",
+      "line": 9,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "coin": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "enough": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "coins": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "coin": false,
+        "enough": false
+      },
+      "values": {
+        "coin": false,
+        "enough": false,
+        "coins": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "coin": true
+      },
+      "values": {
+        "coin": true,
+        "enough": false,
+        "coins": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "coin": false
+      },
+      "values": {
+        "coin": false,
+        "enough": false,
+        "coins": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "enough": true
+      },
+      "values": {
+        "coin": false,
+        "enough": true,
+        "coins": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "enough": false
+      },
+      "values": {
+        "coin": false,
+        "enough": false,
+        "coins": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

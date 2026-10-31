@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "unused": false
+      },
+      "note": "KIELER warns 'Abort transitions should have a trigger.' but compiles. Tick 1 enters M; the abort is delayed."
+    },
+    {
+      "inputs": {},
+      "note": "An abort without a trigger is always enabled: M is left in its second tick (left = 1). To leave when the inner behaviour finishes, use `join to` instead."
+    },
+    {
+      "inputs": {},
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

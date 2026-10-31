@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "speed": 4
+      },
+      "note": "Tick 1 enters `Show`; the self-loop is delayed."
+    },
+    {
+      "note": "With the condition in parentheses, the ternary means what it says: `speed` is not above 10, so `shown` is 4."
+    },
+    {
+      "inputs": {
+        "speed": 25
+      },
+      "note": "`speed > 10`, so `shown` is capped at 10."
+    },
+    {
+      "inputs": {
+        "speed": 10
+      },
+      "note": "10 is not above 10: `shown` is `speed`, 10."
+    },
+    {
+      "inputs": {
+        "speed": 11
+      },
+      "note": "Capped: 10."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,9 @@
+scchart PrimeLocal {
+  input bool A
+  output int o = 0
+  initial state S {
+    int c' = 0
+    initial state T
+      if A do c'++; o = c' go to T
+  }
+}

@@ -1,0 +1,384 @@
+{
+  "hash": "3a63df4389b40769dc3da95653c2af8b580a6acb",
+  "chart": "src/components/playground/showcase/level-crossing.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "approach": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "cleared": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fault": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "repaired": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "barrierDown": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "lights": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false
+      },
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "approach": true
+      },
+      "values": {
+        "approach": true,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "approach": false
+      },
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": true,
+        "lights": true
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": true,
+        "lights": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "cleared": true
+      },
+      "values": {
+        "approach": false,
+        "cleared": true,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "cleared": false
+      },
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {},
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {},
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {},
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "fault": true
+      },
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": true,
+        "repaired": false,
+        "barrierDown": true,
+        "lights": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "fault": false
+      },
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": true,
+        "lights": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "repaired": true
+      },
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": true,
+        "barrierDown": false,
+        "lights": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {
+        "repaired": false
+      },
+      "values": {
+        "approach": false,
+        "cleared": false,
+        "fault": false,
+        "repaired": false,
+        "barrierDown": false,
+        "lights": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "press": false,
+        "rest": false
+      },
+      "note": "Tick 1 enters `Set`, which initialises its local `reps` to 0, and `Counting` inside it."
+    },
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "A press: `reps` and `total` both become 1."
+    },
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "No press, nothing happens."
+    },
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "Another press: `reps` and `total` are 2."
+    },
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "No press."
+    },
+    {
+      "inputs": {
+        "rest": true
+      },
+      "note": "`rest` leaves `Set` for `Resting`. `shown` is an output and keeps its value, 2."
+    },
+    {
+      "inputs": {
+        "rest": false,
+        "press": true
+      },
+      "note": "A press starts the next set. Entering `Set` resets `reps` to 0; `total` is not declared in `Set` and keeps 2."
+    },
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "No press."
+    },
+    {
+      "inputs": {
+        "press": true
+      },
+      "note": "The first rep of the new set: `reps` restarts at 1, but `total` is 3. `total` is declared at the top of the chart, outside `Set`, so entering `Set` does not reset it."
+    },
+    {
+      "inputs": {
+        "press": false
+      },
+      "note": "No press."
+    }
+  ],
+  "expect": "ok"
+}

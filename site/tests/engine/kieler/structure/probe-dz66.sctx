@@ -1,0 +1,15 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz66 {
+  output int n = 0
+  region {
+    initial state A {
+      clock t
+      initial state Q
+      if t >= 100 go to F
+      final state F
+    }
+    join to B
+    state B
+    do n++ go to A
+  }
+}

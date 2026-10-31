@@ -1,0 +1,49 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false,
+        "fault": false
+      },
+      "note": "Tick 1: `Operating`, `Serving`, `Ready`."
+    },
+    {
+      "inputs": {
+        "brew": true
+      },
+      "note": "`brew`: heater on."
+    },
+    {
+      "inputs": {
+        "brew": false
+      },
+      "note": "Pouring: pump on."
+    },
+    {
+      "inputs": {
+        "fault": true
+      },
+      "note": "A `fault` in the middle of the cup. The strong abort `if fault abort to Halted` stops everything inside `Operating` before it reacts. But the exit actions still run, innermost first: `Pouring`'s stops the pump, `Serving`'s switches the heater off."
+    },
+    {
+      "inputs": {
+        "fault": false
+      },
+      "note": "`Halted`, everything off."
+    },
+    {
+      "inputs": {
+        "brew": true
+      },
+      "note": "Nothing gets the machine out of `Halted`: a brew request is ignored."
+    },
+    {
+      "inputs": {
+        "brew": false
+      },
+      "note": "Halted."
+    }
+  ],
+  "expect": "ok"
+}

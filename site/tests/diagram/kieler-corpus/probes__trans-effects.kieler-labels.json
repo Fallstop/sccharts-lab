@@ -1,0 +1,130 @@
+{
+ "sourceHash": "54a6dce91e6c4daf",
+ "states": [
+  {
+   "path": [
+    "P123"
+   ],
+   "rows": [
+    [
+     "P123"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    219.7,
+    295
+   ]
+  },
+  {
+   "path": [
+    "P123",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    60.2,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P123",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    160.8,
+    60.2,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P123",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    206.4,
+    155
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP123$$N0$NS0$ES10",
+   "source": [
+    "P123",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P123",
+    0,
+    "S1"
+   ],
+   "text": "A / O = 1; X = true; S; V(3); O++; O += 2",
+   "lines": [
+    "A",
+    "/ O = 1;",
+    "  X = true;",
+    "  S;",
+    "  V(3);",
+    "  O++;",
+    "  O += 2"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

@@ -1,0 +1,62 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Tick 1."
+    },
+    {
+      "inputs": {
+        "clean": true
+      },
+      "note": "`clean` in `Ready`: the during action records it, and `Ready`, which reads `cleanWanted` after that write, commits at once: `Cleaning`."
+    },
+    {
+      "inputs": {
+        "clean": false,
+        "brew": true
+      },
+      "note": "`brew` during cleaning: `Cleaning` has no transition for it, so it is ignored."
+    },
+    {
+      "inputs": {
+        "brew": false
+      },
+      "note": "Cleaning finishes and `Serving` starts again in `Ready`."
+    },
+    {
+      "inputs": {
+        "brew": true
+      },
+      "note": "`brew`: heater on."
+    },
+    {
+      "inputs": {
+        "brew": false,
+        "clean": true
+      },
+      "note": "`clean` during the brew: recorded."
+    },
+    {
+      "inputs": {
+        "clean": false
+      },
+      "note": "Pouring."
+    },
+    {
+      "inputs": {},
+      "note": "The cup is done."
+    },
+    {
+      "inputs": {},
+      "note": "Commit: `Cleaning`."
+    },
+    {
+      "inputs": {},
+      "note": "Cleaning."
+    }
+  ],
+  "expect": "ok"
+}

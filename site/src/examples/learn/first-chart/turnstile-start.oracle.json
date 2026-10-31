@@ -1,0 +1,55 @@
+{
+  "hash": "2005372890c52a7ae2ee9f48b1f8d9ca40f0cbbf",
+  "chart": "src/examples/learn/first-chart/turnstile-start.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "coin": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "push": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "unlocked": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "coin": false,
+        "push": false
+      },
+      "values": {
+        "coin": false,
+        "push": false,
+        "unlocked": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "coin": true
+      },
+      "values": {
+        "coin": true,
+        "push": false,
+        "unlocked": false
+      },
+      "terminated": false
+    }
+  ]
+}

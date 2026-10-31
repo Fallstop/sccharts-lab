@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M; delayed during actions and delayed transitions wait."
+    },
+    {
+      "inputs": {},
+      "note": "The first during action sets fromDuring = true, and I's transition sees it in the same tick: innerSaw = 1. A superstate's during actions behave like an extra concurrent region: writes happen before reads."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Now the inner region sets fromInner = true, and the second during action sees it in the same tick: duringSaw = 1. The order follows the data, not the nesting."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Nothing new happens."
+    }
+  ],
+  "expect": "ok"
+}

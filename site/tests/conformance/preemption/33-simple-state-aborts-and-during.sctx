@@ -1,0 +1,13 @@
+scchart SimpleStateAborts {
+  input bool S, W
+  output int count = 0
+
+  initial state A {
+    immediate during do count += 1
+  }
+  immediate if S abort to B
+  immediate if W go to B
+
+  state B
+  go to A
+}

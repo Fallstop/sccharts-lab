@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "F is reached and M terminates in the same tick. A final state with actions is left when its parent terminates: its exit action runs (finalExit = 1); its delayed during action never gets a tick (finalDuring = 0)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Done: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

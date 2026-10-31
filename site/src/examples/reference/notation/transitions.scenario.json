@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Tick 1 enters `Wait`. Its three transitions are numbered 1 to 3 in the order they are written: that is their priority."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A` holds and `A && B` does not, so transition 2 fires (`x` = 1). `Fast` is entered, and its dashed transition is immediate, so it fires in the same tick: `x` = 2 and the chart is in `Both`."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "The transition out of `Both` has no label: no trigger, no effect. It is delayed, so it fires in the tick after `Both` was entered."
+    },
+    {
+      "inputs": {
+        "B": true
+      },
+      "note": "`B` holds for the first time since `Wait` was entered."
+    },
+    {
+      "note": "`B` holds for the second time: the count delay `2 B` is complete and the self-loop fires."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A && B` holds, and transition 1 has the highest priority: `x` = 3 and the chart goes to `Both`."
+    }
+  ],
+  "expect": "ok"
+}

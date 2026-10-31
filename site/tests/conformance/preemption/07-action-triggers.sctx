@@ -1,0 +1,12 @@
+scchart ActionTriggers {
+  input bool G
+  output int entries = 0, guardedEntries = 0, guardedExits = 0
+
+  initial state A {
+    entry do entries += 1
+    entry if G do guardedEntries += 1
+    exit if G do guardedExits += 1
+  }
+  if G go to A
+  if !G go to A
+}

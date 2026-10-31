@@ -1,0 +1,9 @@
+scchart BoolIntMixing {
+  input int I
+  input bool B
+  output int plus, logical, fromBool, twice
+  output bool nonZero, negation, big, wrapped, half
+
+  initial state S
+  do plus = B + 1; logical = I && 3; nonZero = I; negation = !I; big = 5; fromBool = big; twice = big + big; wrapped = 256; half = 0.5 go to S
+}

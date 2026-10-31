@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "a": true, "a_val": 2, "b": false, "b_val": 0 }, "note": "Only `a` is present: `sum` carries its value, 2. The during actions are `immediate`, so they run in tick 1 too." },
+    { "inputs": { "a": true, "a_val": 3, "b": true, "b_val": 4 }, "note": "Both regions emit `sum` in the same tick; `combine +` adds the values: 3 + 4 = 7." },
+    { "inputs": { "a": false, "b": true, "b_val": 5 }, "note": "Only `b`: `sum` is 5." },
+    { "inputs": { "b": false }, "note": "No emission: `sum` is absent. `val(sum)` keeps its last value." }
+  ]
+}

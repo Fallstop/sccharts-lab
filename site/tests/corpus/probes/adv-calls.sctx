@@ -1,0 +1,9 @@
+scchart Callee {
+  input bool c
+  initial state S
+}
+scchart Caller {
+  input bool c
+  initial state S calls Callee(c)
+  state T calls Callee()
+}

@@ -1,0 +1,37 @@
+{
+  "hash": "6c9d4491aaa5e94c2e1aaa93e126df45309607fa",
+  "chart": "src/examples/reference/errors/instant-loop.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _cg1",
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _g3",
+    "Can't schedule from _g3 to _cg3",
+    "Can't schedule from _g3 to _g4",
+    "Can't schedule from _g4 to _g1",
+    "Can't schedule from _g3 to _g5",
+    "Can't schedule from _g1 to _g7",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Ping, Pong]",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Ping, Pong]",
+      "line": 9,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

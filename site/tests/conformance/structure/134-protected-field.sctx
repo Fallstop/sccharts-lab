@@ -1,0 +1,18 @@
+// A protected field of a base chart is visible in the extending chart (not outside). Inherited fields appear in
+// the pool as <Base>_<field>.
+scchart St134Main {
+  output int O = 0
+  ref St134Sub s
+  initial state A
+  do O = s.get() go to A
+}
+
+scchart St134Sub extends St134Base {
+  method int get() {
+    return secret * 2
+  }
+}
+
+scchart St134Base {
+  protected int secret = 21
+}

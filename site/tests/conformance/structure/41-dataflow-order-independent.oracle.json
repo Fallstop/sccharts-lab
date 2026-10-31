@@ -1,0 +1,62 @@
+{
+  "hash": "a5e2d76db9508d6338fca97ad45230081da58c20",
+  "chart": "tests/conformance/structure/41-dataflow-order-independent.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "X": 2,
+        "Y": 4,
+        "Z": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 5
+      },
+      "values": {
+        "I": 5,
+        "X": 6,
+        "Y": 12,
+        "Z": 11
+      },
+      "terminated": false
+    }
+  ]
+}

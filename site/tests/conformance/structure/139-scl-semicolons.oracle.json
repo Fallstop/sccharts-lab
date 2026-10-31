@@ -1,0 +1,82 @@
+{
+  "hash": "56c9704225a284d9dd72b39623d341e64d663e6a",
+  "chart": "tests/conformance/structure/139-scl-semicolons.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name t is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name _effect0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "c": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "d": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": 1,
+        "b": 10,
+        "c": 10,
+        "d": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": 2,
+        "b": 10,
+        "c": 10,
+        "d": 8
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

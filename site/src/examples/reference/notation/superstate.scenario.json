@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "R": false
+      },
+      "note": "Tick 1 enters the superstate `Counter`: its local `step` is set to 1, its entry action sets `count` to 0, and its inner initial state `Counting` is entered."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "The inner self-loop adds `step`: `count` = 1."
+    },
+    {
+      "note": "`count` = 2."
+    },
+    {
+      "inputs": {
+        "R": true
+      },
+      "note": "`R` is true. The inner self-loop runs once more (`count` = 3), then `Counter` is left and entered again, and its entry action resets `count` to 0."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "Counting starts again from 0: `count` = 1."
+    }
+  ],
+  "expect": "ok"
+}

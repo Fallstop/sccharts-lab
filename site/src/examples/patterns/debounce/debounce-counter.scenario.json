@@ -1,0 +1,107 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Tick 1 enters `Filter`. Its transitions are delayed, so the first reading is compared in tick 2; `run` is 0."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "First disagreement: `run` is 1."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "`raw` agrees again: `run` goes back to 0."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Disagrees: 1."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Disagrees: 2."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Agrees: 0."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Disagrees: 1."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Disagrees: 2."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Disagrees for the third tick in a row: `run < N - 1` is false, so the last transition fires, sets `pressed` to `raw` and restarts `run`."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Agrees."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Agrees."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Disagrees: 1."
+    },
+    {
+      "inputs": {
+        "raw": true
+      },
+      "note": "Agrees: 0."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Disagrees: 1."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Disagrees: 2."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Third in a row: `pressed` becomes false."
+    },
+    {
+      "inputs": {
+        "raw": false
+      },
+      "note": "Agrees. The same result as `Debounce`, tick for tick."
+    }
+  ],
+  "expect": "ok"
+}

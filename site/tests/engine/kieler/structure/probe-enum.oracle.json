@@ -1,0 +1,66 @@
+{
+  "hash": "6cddf171d186a81407a14f44fdf850960bb9565a",
+  "chart": "tests/engine/kieler/structure/probe-enum.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "int",
+      "properties": [
+        "enum"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "b": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "b": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "b": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "b": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

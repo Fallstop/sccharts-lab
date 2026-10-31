@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    { "inputs": { "menu": false, "home": false, "down": false, "right": false }, "note": "Tick 1 enters `Home` in both menus (`screen` = 0)." },
+    { "inputs": { "menu": true }, "note": "The first visit to `Settings`: there is nothing to remember yet, so both start in `Display` and `Brightness` (`screen` = 11)." },
+    { "inputs": { "menu": false, "right": true }, "note": "`Brightness` to `Contrast` (12)." },
+    { "inputs": { "right": false, "home": true }, "note": "Back `Home` (0). Both charts remember where `Settings` was." },
+    { "inputs": { "home": false, "menu": true }, "note": "Back to `Settings` with history. `MenuDeep`: `history` is deep, so `Settings` resumes in `Display`, and `Display` resumes in `Contrast` (12). `MenuShallow`: `shallow history` restores only the level directly inside `Settings`, so `Display` is resumed but starts again in `Brightness` (11)." },
+    { "inputs": { "menu": false, "down": true }, "note": "`Display` to `Sound`, which starts in `Volume` (21) in both." },
+    { "inputs": { "down": false, "right": true }, "note": "`Volume` to `Balance` (22)." },
+    { "inputs": { "right": false, "home": true }, "note": "`Home` (0)." },
+    { "inputs": { "home": false, "menu": true }, "note": "Deep history resumes `Sound` and, inside it, `Balance` (22). Shallow history resumes `Sound`, starting in `Volume` (21)." },
+    { "inputs": { "menu": false }, "note": "`MenuDeep` is on the `Balance` screen, `MenuShallow` on `Volume`." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,15 @@
+scchart RegionDeclaration {
+  input bool r
+  output int seen
+
+  initial state S {
+    region R {
+      int c = 5
+      initial state A
+      do c++; seen = c go to B
+      state B
+      go to A
+    }
+  }
+  if r go to S
+}

@@ -1,0 +1,10 @@
+scchart P50 {
+  signal int a combine +
+  signal int b combine *
+  signal int c combine max
+  signal int d combine min
+  signal bool e combine &
+  signal int f combine none
+  signal int g = 1 combine host
+  initial state S0
+}

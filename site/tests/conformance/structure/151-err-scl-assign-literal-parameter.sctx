@@ -1,0 +1,12 @@
+// An inlined method that assigns its parameter cannot be called with a literal (or another expression) as the
+// argument: the compiler fails (official KIELER 0.3.0 never answers).
+scchart St151LiteralParam {
+  output int y = 0
+  method int twiceInc(int k) {
+    k = k * 2;
+    k++;
+    return k
+  }
+  initial state S
+  do y = twiceInc(3) go to S
+}

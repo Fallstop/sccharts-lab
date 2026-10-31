@@ -1,0 +1,16 @@
+{
+  "ticks": [
+    { "inputs": { "button": false, "deltaT": 1000 }, "note": "One second per tick. Tick 1 enters `Off`." },
+    { "inputs": { "button": true }, "note": "Pressed: `On` is entered, its entry action switches the `light` on, and its own clock starts at 0." },
+    { "inputs": { "button": false }, "note": "The clock of `On` is at 1000. It is declared inside `On`, so the trace does not show it." },
+    { "note": "2000." },
+    { "inputs": { "button": true }, "note": "Pressed again: the self-loop leaves `On` (the exit action switches the light off) and enters it afresh (the entry action switches it on again). Entering `On` re-initialises its clock to 0, with no reset written anywhere." },
+    { "inputs": { "button": false }, "note": "1000." },
+    { "note": "2000." },
+    { "note": "3000." },
+    { "note": "4000." },
+    { "note": "5000: `Lit` → `Expired` reaches the final state, `join to Off` fires in the same tick and the exit action switches the `light` off." },
+    { "note": "In `Off`. There is no clock running now: it belongs to `On`." }
+  ],
+  "expect": "ok"
+}

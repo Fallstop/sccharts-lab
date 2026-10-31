@@ -1,0 +1,16 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz52 {
+  input signal P
+  output int got = 0
+  signal Q
+  region { initial state R is Dz52Ec(P, Q) }
+  region { initial state W if Q do got++ go to W }
+}
+scchart Dz52Ec {
+  input signal I
+  output signal O
+  initial state S
+  if I do O go to T
+  state T
+  go to S
+}

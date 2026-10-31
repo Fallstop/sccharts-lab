@@ -1,0 +1,15 @@
+scchart PureEmissionOfValued {
+  input bool a, b
+  output signal int P combine +
+  output signal int N
+
+  region WithValue {
+    initial state X
+    if a do P(4); N(4) go to X
+  }
+
+  region WithoutValue {
+    initial state X
+    if b do P; N go to X
+  }
+}

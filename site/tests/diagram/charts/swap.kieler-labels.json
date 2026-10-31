@@ -1,0 +1,89 @@
+{
+ "sourceHash": "8d1b7e26556d7925",
+ "states": [
+  {
+   "path": [
+    "Swap"
+   ],
+   "rows": [
+    [
+     "Swap"
+    ],
+    [
+     "input bool ",
+     "swap"
+    ],
+    [
+     "output int ",
+     "a = 1, b = 2"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    192.5,
+    188.7
+   ]
+  },
+  {
+   "path": [
+    "Swap",
+    0,
+    "Hold"
+   ],
+   "rows": [
+    [
+     "Hold"
+    ]
+   ],
+   "box": [
+    63,
+    72.1,
+    52.5,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Swap",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    178.5,
+    116.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NSwap$$N0$NHold$EHold0",
+   "source": [
+    "Swap",
+    0,
+    "Hold"
+   ],
+   "target": [
+    "Swap",
+    0,
+    "Hold"
+   ],
+   "text": "swap / {int t = aa = b; b = t;}",
+   "lines": [
+    "swap",
+    "/ {int t = aa = b; b = t;}"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

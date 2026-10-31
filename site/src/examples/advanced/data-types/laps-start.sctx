@@ -1,0 +1,17 @@
+scchart Laps {
+  input bool lap
+  output int laps = 0
+
+  class Counter {
+    private int count = 0
+    void add() {
+      count++
+    }
+    int get() {
+      return count
+    }
+  } counter
+
+  initial state Racing
+    if lap do counter.add(); laps = counter.get() go to Racing
+}

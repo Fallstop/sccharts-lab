@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": { "I": 1 },
+      "note": "Accepted. Old-style updates in textual order: X = 1 * 2 + 3 = 5 and Y = (1 + 3) * 2 = 8 (the other order would give 8 and 5). Z = 0 + 1 + 2 = 3. W: the absolute `W = I` runs before the update: (1) * 10 = 10."
+    },
+    {
+      "inputs": { "I": 2 },
+      "note": "The variables keep their values between ticks, so the updates build on them: X = 5 * 2 + 3 = 13, Y = (8 + 3) * 2 = 22, Z = 3 + 2 + 2 = 7, W = 2 * 10 = 20."
+    }
+  ],
+  "expect": "ok"
+}

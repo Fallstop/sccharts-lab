@@ -1,0 +1,41 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "Entering `S` initialises `c = 5` and (implicitly) `d = 0`. The self-loop is delayed, so `seenC = 0`, `seenD = 0`."
+    },
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "Self-loop: `c = 6`, `d = 1`."
+    },
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "Self-loop: `c = 7`, `d = 2`."
+    },
+    {
+      "inputs": {
+        "r": true
+      },
+      "note": "`r` holds. `if r go to S` is a weak abort, so the inner self-loop still runs first (`seenC = 8`, `seenD = 3`); then `S` is left and re-entered, which re-initialises `c = 5` and `d = 0` (not visible yet: `seenC`/`seenD` were written before)."
+    },
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "After the re-entry the counters start again: `seenC = 6`, `seenD = 1`. A local without an initialiser is reset to 0 on every entry, just like one with an initialiser is reset to it."
+    },
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "`seenC = 7`, `seenD = 2`."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,114 @@
+{
+  "hash": "543d6f9119f8ec12c97c8afb10d30901fc0c6042",
+  "chart": "src/examples/advanced/dataflow/full-adder.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "carryIn": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "carryOut": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sum": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "carryIn": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "carryIn": false,
+        "carryOut": false,
+        "sum": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "carryIn": false,
+        "carryOut": false,
+        "sum": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "carryIn": false,
+        "carryOut": true,
+        "sum": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "carryIn": true
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "carryIn": true,
+        "carryOut": true,
+        "sum": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "carryIn": true,
+        "carryOut": true,
+        "sum": false
+      },
+      "terminated": false
+    }
+  ]
+}

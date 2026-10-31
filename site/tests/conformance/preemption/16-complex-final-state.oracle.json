@@ -1,0 +1,87 @@
+{
+  "hash": "e389f8eb51b9e38055fa3a874028b4f25533ba90",
+  "chart": "tests/conformance/preemption/16-complex-final-state.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "done": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "finalDuring": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "finalExit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "done": 0,
+        "finalDuring": 0,
+        "finalExit": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "done": 1,
+        "finalDuring": 0,
+        "finalExit": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "done": 1,
+        "finalDuring": 0,
+        "finalExit": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

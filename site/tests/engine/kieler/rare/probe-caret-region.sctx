@@ -1,0 +1,8 @@
+scchart CaretRegion {
+  input bool A
+  output int o = 0
+  region ^go {
+    initial state S
+      if A do o++ go to S
+  }
+}

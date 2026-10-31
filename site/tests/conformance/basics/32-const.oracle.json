@@ -1,0 +1,112 @@
+{
+  "hash": "2429ab3b4376a6e228f7d1e3e30f049ab8075bba",
+  "chart": "tests/conformance/basics/32-const.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "b": false,
+        "f": 0,
+        "x": 0,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 1,
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "b": true,
+        "f": 1.5,
+        "x": 7,
+        "y": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 10
+      },
+      "values": {
+        "I": 10,
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "b": true,
+        "f": 1.5,
+        "x": 16,
+        "y": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

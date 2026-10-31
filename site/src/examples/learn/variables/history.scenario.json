@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "reading": 3
+      },
+      "note": "Tick 1: `last` starts as `{0, 0, 0}`. The self-loop is delayed, so the reading 3 is not stored."
+    },
+    {
+      "inputs": {
+        "reading": 6
+      },
+      "note": "The vector assignment runs as `last[0] = reading; last[1] = last[0]; last[2] = last[1]`, in that order, so every element ends up 6."
+    },
+    {
+      "inputs": {
+        "reading": 9
+      },
+      "note": "Every element 9: the history is lost each time."
+    },
+    {
+      "inputs": {
+        "reading": 12
+      },
+      "note": "Every element 12, and `average` is just the latest reading."
+    }
+  ],
+  "expect": "ok"
+}

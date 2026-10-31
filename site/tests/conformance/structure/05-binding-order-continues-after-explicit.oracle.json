@@ -1,0 +1,40 @@
+{
+  "hash": "fad9203f33c103d143a44fdbc0a550c517ef99c6",
+  "chart": "tests/conformance/structure/05-binding-order-continues-after-explicit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "z": 7
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 712,
+        "z": 7
+      },
+      "terminated": false
+    }
+  ]
+}

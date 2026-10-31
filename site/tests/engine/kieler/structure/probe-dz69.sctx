@@ -1,0 +1,11 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz69 {
+  output int a = 0, b = 0
+  region for i : 0 to 1 {
+    initial state P {
+      period 100
+      initial state Q
+      do a += i + 1 go to Q
+    }
+  }
+}

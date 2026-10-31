@@ -1,0 +1,34 @@
+import "beep"
+
+/**
+ * Getting there!
+ */
+scchart Root {
+  /** Test */
+  input bool second
+  output bool speaker
+
+  /**
+   * Main region!
+   */
+  region main:
+
+  /** 
+   * The initial state
+   * This is entered as soon as the program starts.
+   * @@foreground f0f024
+   * @@background ffffcc
+   * @@backgroundTarget fff9ba
+   */
+  initial state R is Beep(second to second, speaker to beep)
+  /** Transition */
+  /** Transition 2 */
+  join to S
+
+  /**
+   * The final state!
+   * @@foreground f0f0240
+   * @@background ffc
+   */
+  final state S
+}

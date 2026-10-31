@@ -1,0 +1,70 @@
+{
+  "hash": "ae652ea08450fb0151c3109123c7675604ef69c3",
+  "chart": "src/examples/reference/errors/relative-write.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads count, so the compiler treats it as an update of count (a relative write, as in the deprecated old SC syntax).\nWrite it as count += 1 to say so. In one region it means the same.\nIt only matters when another region also writes count in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 6,
+      "column": 13
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "count": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "count": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "count": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+scchart ABROOffSwitch {
+  input signal A, B, R, off
+  output signal O
+
+  initial state ABO {
+    initial state WaitAB {
+      region HandleA {
+        initial state WaitA
+          if A go to DoneA
+        final state DoneA
+      }
+      region HandleB {
+        initial state WaitB
+          if B go to DoneB
+        final state DoneB
+      }
+    }
+    do O join to Done
+
+    state Done
+  }
+  if off go to Off
+  if R abort to ABO
+
+  state Off
+}

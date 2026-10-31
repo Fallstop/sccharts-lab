@@ -1,0 +1,130 @@
+{
+  "hash": "7eec5ec258eafb99754f6a01599362238bbc54ad",
+  "chart": "tests/conformance/preemption/03-self-loop-exit-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "again": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "effectAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "entryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "exitAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "exits": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "again": false
+      },
+      "values": {
+        "again": false,
+        "effectAt": 0,
+        "entries": 1,
+        "entryAt": 1,
+        "exitAt": 0,
+        "exits": 0,
+        "step": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "again": true
+      },
+      "values": {
+        "again": true,
+        "effectAt": 3,
+        "entries": 2,
+        "entryAt": 4,
+        "exitAt": 2,
+        "exits": 1,
+        "step": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "again": false
+      },
+      "values": {
+        "again": false,
+        "effectAt": 3,
+        "entries": 2,
+        "entryAt": 4,
+        "exitAt": 2,
+        "exits": 1,
+        "step": 4
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "again": true
+      },
+      "values": {
+        "again": true,
+        "effectAt": 6,
+        "entries": 3,
+        "entryAt": 7,
+        "exitAt": 5,
+        "exits": 2,
+        "step": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

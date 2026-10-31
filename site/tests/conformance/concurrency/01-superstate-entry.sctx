@@ -1,0 +1,15 @@
+scchart SuperstateEntry {
+  input bool enter
+  output int step
+  initial state Outside
+  if enter go to Inside
+
+  state Inside {
+    entry do step = 1
+    initial state A
+    immediate do step = step * 10 + 2 go to B
+    state B
+    do step = step * 10 + 3 go to C
+    state C
+  }
+}

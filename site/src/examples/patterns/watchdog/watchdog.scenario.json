@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Tick 1: watching. The entry tick does not count."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat: the self-loop `if beat go to Watching` re-enters the state, which restarts the count."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Quiet: one."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat: restart."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Quiet: one."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Two."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Three quiet ticks in a row: the watchdog expires and raises the alarm."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Expired."
+    }
+  ],
+  "expect": "ok"
+}

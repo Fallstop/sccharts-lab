@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": {}, "note": "Region `A` tests `!busy` before its own emission: a region does not see its own future, so `busy` is absent at that point, A emits it and starts working. Region `B`'s test waits for every emission of `busy` in this tick, sees it present and stays in `Idle`." },
+    { "inputs": {}, "note": "Nobody emits `busy` now, so it is absent. `B`'s immediate transition fires." },
+    { "inputs": {}, "note": "Both are working." }
+  ],
+  "expect": "ok"
+}

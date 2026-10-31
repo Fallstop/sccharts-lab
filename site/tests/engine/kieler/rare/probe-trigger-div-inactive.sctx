@@ -1,0 +1,11 @@
+// The trigger of B is computed in every tick, also while B is not active: with n = 0 its division kills KIELER's C simulation in tick 1 (its values stay those of the tick before).
+scchart TrigDivInactive {
+  input int n
+  input bool start
+  output int x = 0
+  initial state A
+    if start go to B
+    do x++ go to A
+  state B
+    if x + 10 / n > 100 go to A
+}

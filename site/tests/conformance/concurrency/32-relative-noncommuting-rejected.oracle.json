@@ -1,0 +1,19 @@
+{
+  "hash": "a1f4d2cc203e2833459f597d616521d0d62e23e1",
+  "chart": "tests/conformance/concurrency/32-relative-noncommuting-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g2b to _g7b",
+    "Can't schedule from _g7b to _g2b",
+    "Can't schedule from _g2b to _g3",
+    "Can't schedule from _g7b to _g8",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "ticks": []
+}

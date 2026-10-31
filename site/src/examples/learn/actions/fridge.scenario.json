@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false }, "note": "Tick 1 enters `Closed`. The lamp starts off (`lamp = false` from its declaration)." },
+    { "inputs": { "doorOpen": true }, "note": "The door opens: `Closed` to `Open` fires, and entering `Open` runs its entry action, `lamp = true`. The transition itself has no effect." },
+    { "note": "`doorOpen` is still true (inputs keep their value). `Open` has nothing to do, so `lamp` stays true." },
+    { "inputs": { "doorOpen": false }, "note": "The door closes: leaving `Open` runs its exit action, `lamp = false`." },
+    { "inputs": { "doorOpen": true }, "note": "Open again: the entry action runs again, as it does on every entry." }
+  ],
+  "expect": "ok"
+}

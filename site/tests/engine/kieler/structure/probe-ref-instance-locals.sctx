@@ -1,0 +1,18 @@
+// The locals of a `ref` instance are the members of an object named after the declaration in KIELER's data pool.
+scchart RefLocals {
+  input bool tick
+  output int total = 0
+  ref Counter g(tick, total)
+  region {
+    initial state Idle
+  }
+}
+
+scchart Counter {
+  input bool step
+  output int out
+  int k = 0
+  bool seen = false
+  initial state A
+  if step do k++; seen = true; out = k go to A
+}

@@ -1,0 +1,16 @@
+scchart LocalSignal {
+  input bool a
+  output int n
+
+  initial state S {
+    signal L
+    region R1 {
+      initial state X
+      if a do L go to X
+    }
+    region R2 {
+      initial state X
+      if L do n++ go to X
+    }
+  }
+}

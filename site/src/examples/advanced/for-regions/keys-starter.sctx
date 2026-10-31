@@ -1,0 +1,30 @@
+scchart LaunchKeys {
+  input bool key[3]
+  output bool launch = false
+
+  initial state Arming {
+    region Key0 {
+      initial state Off
+        if key[0] go to Turned
+
+      final state Turned
+    }
+    region Key1 {
+      initial state Off
+        if key[1] go to Turned
+
+      final state Turned
+    }
+    region Key2 {
+      initial state Off
+        if key[2] go to Turned
+
+      final state Turned
+    }
+  }
+  join to Launch
+
+  state Launch {
+    entry do launch = true
+  }
+}

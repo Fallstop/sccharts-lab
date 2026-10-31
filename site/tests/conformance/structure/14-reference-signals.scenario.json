@@ -1,0 +1,34 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "Press": false,
+        "V": false,
+        "V_val": 0
+      },
+      "note": "Nothing is present: **count = 0**, W absent."
+    },
+    {
+      "inputs": {
+        "Press": true,
+        "V": true,
+        "V_val": 4
+      },
+      "note": "The relay emits Beat in the tick Press is present and the counting region sees it in the same tick: **count = 1**. The doubler emits **W(8)**."
+    },
+    {
+      "inputs": {
+        "Press": false,
+        "V": false
+      },
+      "note": "Signals are absent again; W keeps its value 8 but is absent."
+    },
+    {
+      "inputs": {
+        "Press": true
+      },
+      "note": "Press is present again, so the relay emits Beat and the counter sees it in the same tick: **count = 2**. V is absent, so W is absent too."
+    }
+  ],
+  "expect": "ok"
+}

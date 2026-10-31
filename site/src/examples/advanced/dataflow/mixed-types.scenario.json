@@ -1,0 +1,8 @@
+{
+  "kielerBug": "The helper variable of -> (and fby) gets the type inferred from all leaves of the expression; a bool literal mixed with int leaves (level, 3) gives UNKNOWN, which the simulation cannot serialise.",
+  "ticks": [
+    { "inputs": { "level": 1 }, "note": "Rejected: KIELER cannot work out a type for the helper variable it creates for `->`, because the operands mix `false` with the `int` values `level` and `3`." }
+  ],
+  "expect": "error",
+  "errorIncludes": "Unsupported type"
+}

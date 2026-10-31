@@ -1,0 +1,7 @@
+scchart RotateTemp {
+  output int ring[3] = {1, 2, 3}
+  int first
+
+  initial state Turn
+    do first = ring[0]; ring = {ring[1], ring[2], first} go to Turn
+}

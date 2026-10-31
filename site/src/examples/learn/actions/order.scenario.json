@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "leave": false }, "note": "Tick 1 enters `A`. Its `during` action waits for the next tick: `step` is 0." },
+    { "note": "`A`'s during action runs: `step` is 1, so `duringAt` is 1." },
+    { "inputs": { "leave": true }, "note": "`leave` is true. In this one tick: `A`'s during action (`duringAt = 2`), `A`'s exit action (`exitAt = 3`), the transition's effect (`effectAt = 4`) and `B`'s entry action (`entryAt = 5`). Each action adds 1 to `step` and records what it got." },
+    { "inputs": { "leave": false }, "note": "`B` has no transitions and no during action: nothing changes." }
+  ],
+  "expect": "ok"
+}

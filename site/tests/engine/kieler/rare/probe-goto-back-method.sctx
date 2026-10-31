@@ -1,0 +1,16 @@
+// The same backward goto in a short method: KIELER inlines it, and rejects the loop.
+scchart GotoMethodBack {
+  input bool start
+  output int n = 0
+
+  method void bump() {
+    again:
+    n++;
+    if (n < 3) {
+      goto again
+    }
+  }
+
+  initial state S
+    if start do bump() go to S
+}

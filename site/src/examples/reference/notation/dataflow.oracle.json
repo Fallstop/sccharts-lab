@@ -1,0 +1,86 @@
+{
+  "hash": "2f1296d0d70b1f9ba2168bbb5aefacb11d9e6623",
+  "chart": "src/examples/reference/notation/dataflow.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "N": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": true,
+        "B": false,
+        "I": 3
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "I": 3,
+        "N": 7,
+        "O": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "B": true
+      },
+      "values": {
+        "A": true,
+        "B": true,
+        "I": 3,
+        "N": 7,
+        "O": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": -2
+      },
+      "values": {
+        "A": true,
+        "B": true,
+        "I": -2,
+        "N": -3,
+        "O": false
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER warns 'Connector states should have an outgoing transition without trigger.'. Tick 1 enters S."
+    },
+    {
+      "inputs": {},
+      "note": "S → C. No transition out of C is enabled, so control stays in C, like in a normal state."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "C's immediate transition fires: target = 1."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In X."
+    }
+  ],
+  "expect": "ok"
+}

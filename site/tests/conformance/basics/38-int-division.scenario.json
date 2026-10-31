@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {"inputs": {"A": 7, "B": 2}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "int / int is integer division: q = 3, r = 1. f = A / B is also 3: the division happens in int before the result is stored in the float."},
+    {"inputs": {"A": -7}, "note": "Division truncates towards zero and the remainder takes the sign of the dividend (as in C): q = -3, r = -1."},
+    {"inputs": {"A": 7, "B": -2}, "note": "q = 7 / -2 = -3, r = 7 % -2 = 1."},
+    {"inputs": {"A": -7}, "note": "q = -7 / -2 = 3, r = -7 % -2 = -1."}
+  ],
+  "expect": "ok"
+}

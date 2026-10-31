@@ -1,0 +1,66 @@
+scchart LevelCrossing {
+  input bool occupied        // track circuit: a train is near or on the crossing
+  input bool isDown, isUp    // the barrier's limit switches
+  input bool restart         // the maintainer's key
+  output bool lower          // barrier motor: true lowers, false raises
+  output bool lampL, lampR   // the two red lamps
+  output signal bell         // one stroke of the bell
+  output bool fault          // fault lamp for the maintainer
+  output int trains = 0      // trains that have passed
+  bool flashing = false      // Control asks Lights to flash
+  bool ringing = false       // Control asks Lights to ring the bell
+
+  during if pre(occupied) && !occupied do trains++
+
+  region Lights {
+    initial state Dark
+      if flashing go to Left
+
+    state Left {
+      entry do lampL = true
+      entry if ringing do bell
+      exit do lampL = false
+    }
+    if !flashing go to Dark
+    go to Right
+
+    state Right {
+      entry do lampR = true
+      exit do lampR = false
+    }
+    if !flashing go to Dark
+    go to Left
+  }
+
+  region Control {
+    initial state Working {
+      initial state Open
+        if occupied do flashing = true; ringing = true go to Warning
+
+      state Warning
+        if 3 true do lower = true go to Lowering
+
+      state Lowering
+        if isDown do ringing = false go to Closed
+        if 4 true go to Stuck
+
+      state Closed
+        if !occupied do lower = false go to Raising
+
+      state Raising
+        if occupied do lower = true; ringing = true go to Lowering
+        if isUp do flashing = false go to Open
+        if 4 true go to Stuck
+
+      final state Stuck
+    }
+    if isUp && isDown abort to Fault
+    join to Fault
+
+    state Fault {
+      entry do fault = true; flashing = true; lower = true; ringing = false
+      exit do fault = false; flashing = false; lower = false
+    }
+    if restart go to Working
+  }
+}

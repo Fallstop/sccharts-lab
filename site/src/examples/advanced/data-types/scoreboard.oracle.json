@@ -1,0 +1,241 @@
+{
+  "hash": "926e3dca8585ce97e1df163f4233e8f03f004c3b",
+  "chart": "src/examples/advanced/data-types/scoreboard.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "awayGoal": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "homeGoal": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "newMatch": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "awayScore": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "homeScore": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Counter.count": {
+      "type": "int",
+      "properties": []
+    },
+    "away": {
+      "type": "class",
+      "properties": []
+    },
+    "home": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "homeGoal": false,
+        "awayGoal": false,
+        "newMatch": false
+      },
+      "values": {
+        "awayGoal": false,
+        "homeGoal": false,
+        "newMatch": false,
+        "awayScore": 0,
+        "homeScore": 0,
+        "away": {
+          "count": 0
+        },
+        "home": {
+          "count": 0
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "homeGoal": true
+      },
+      "values": {
+        "awayGoal": false,
+        "homeGoal": true,
+        "newMatch": false,
+        "awayScore": 0,
+        "homeScore": 1,
+        "away": {
+          "count": 0
+        },
+        "home": {
+          "count": 1
+        }
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "homeGoal": false,
+        "awayGoal": true
+      },
+      "values": {
+        "awayGoal": true,
+        "homeGoal": false,
+        "newMatch": false,
+        "awayScore": 1,
+        "homeScore": 1,
+        "away": {
+          "count": 1
+        },
+        "home": {
+          "count": 1
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "homeGoal": true
+      },
+      "values": {
+        "awayGoal": true,
+        "homeGoal": true,
+        "newMatch": false,
+        "awayScore": 2,
+        "homeScore": 2,
+        "away": {
+          "count": 2
+        },
+        "home": {
+          "count": 2
+        }
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "homeGoal": false,
+        "awayGoal": false
+      },
+      "values": {
+        "awayGoal": false,
+        "homeGoal": false,
+        "newMatch": false,
+        "awayScore": 2,
+        "homeScore": 2,
+        "away": {
+          "count": 2
+        },
+        "home": {
+          "count": 2
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "newMatch": true
+      },
+      "values": {
+        "awayGoal": false,
+        "homeGoal": false,
+        "newMatch": true,
+        "awayScore": 0,
+        "homeScore": 0,
+        "away": {
+          "count": 0
+        },
+        "home": {
+          "count": 0
+        }
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "newMatch": false,
+        "awayGoal": true
+      },
+      "values": {
+        "awayGoal": true,
+        "homeGoal": false,
+        "newMatch": false,
+        "awayScore": 1,
+        "homeScore": 0,
+        "away": {
+          "count": 1
+        },
+        "home": {
+          "count": 0
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

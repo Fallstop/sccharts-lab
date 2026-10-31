@@ -1,0 +1,121 @@
+{
+  "hash": "e37fa1b86ce890dae4784e942c2eddc0aff67135",
+  "chart": "tests/conformance/preemption/45-suspend-blocks-own-transitions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "left": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "moves": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "S": false,
+        "left": 0,
+        "moves": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "G": false,
+        "S": false,
+        "left": 0,
+        "moves": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true,
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "S": true,
+        "left": 0,
+        "moves": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "G": true,
+        "S": false,
+        "left": 1,
+        "moves": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "S": false,
+        "left": 1,
+        "moves": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

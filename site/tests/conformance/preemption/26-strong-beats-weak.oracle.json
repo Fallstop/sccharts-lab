@@ -1,0 +1,102 @@
+{
+  "hash": "79bfa49431019adca6c915b5adc42d78b7d3d761",
+  "chart": "tests/conformance/preemption/26-strong-beats-weak.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "strongEffect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "weakEffect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "W": false
+      },
+      "values": {
+        "S": false,
+        "W": false,
+        "inner": 0,
+        "strongEffect": 0,
+        "weakEffect": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": true,
+        "W": true
+      },
+      "values": {
+        "S": true,
+        "W": true,
+        "inner": 0,
+        "strongEffect": 1,
+        "weakEffect": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": false,
+        "W": false
+      },
+      "values": {
+        "S": false,
+        "W": false,
+        "inner": 0,
+        "strongEffect": 1,
+        "weakEffect": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

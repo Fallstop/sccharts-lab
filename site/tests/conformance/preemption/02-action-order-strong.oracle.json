@@ -1,0 +1,118 @@
+{
+  "hash": "73f84c9089a94c2ec791c1c3db5503cf8dac54ca",
+  "chart": "tests/conformance/preemption/02-action-order-strong.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "duringAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "effectAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "entryAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "exitAt": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "duringAt": 0,
+        "effectAt": 0,
+        "entryAt": 0,
+        "exitAt": 0,
+        "step": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "leave": false,
+        "duringAt": 1,
+        "effectAt": 0,
+        "entryAt": 0,
+        "exitAt": 0,
+        "step": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "duringAt": 1,
+        "effectAt": 3,
+        "entryAt": 4,
+        "exitAt": 2,
+        "step": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "duringAt": 1,
+        "effectAt": 3,
+        "entryAt": 4,
+        "exitAt": 2,
+        "step": 4
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

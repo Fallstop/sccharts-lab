@@ -1,0 +1,102 @@
+{
+  "hash": "13c075adf477b90365b525615ef0236365f2f7a1",
+  "chart": "src/examples/advanced/history/house-deep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "walk": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chimes": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "lights": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "steps": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "walk": false,
+        "chimes": 0,
+        "lights": 0,
+        "steps": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "walk": true
+      },
+      "values": {
+        "walk": true,
+        "chimes": 0,
+        "lights": 0,
+        "steps": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "walk": false,
+        "chimes": 0,
+        "lights": 0,
+        "steps": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "walk": false,
+        "chimes": 0,
+        "lights": 0,
+        "steps": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+scchart UnreachableTransition {
+  input bool A
+  output int x
+
+  initial state Idle
+    go to Busy
+    if A do x = 1 go to Busy
+
+  state Busy
+}

@@ -1,0 +1,12 @@
+scchart P189 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0
+  if state(S1) go to S1
+  state S1
+
+}

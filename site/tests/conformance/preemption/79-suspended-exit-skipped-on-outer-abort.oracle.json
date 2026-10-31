@@ -1,0 +1,116 @@
+{
+  "hash": "3759a834b29d1a1b6dedf5cb70d840759805da58",
+  "chart": "tests/conformance/preemption/79-suspended-exit-skipped-on-outer-abort.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "exits": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "left": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "moves": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "X": false
+      },
+      "values": {
+        "S": false,
+        "X": false,
+        "exits": 0,
+        "left": 0,
+        "moves": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "X": false,
+        "exits": 0,
+        "left": 0,
+        "moves": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "X": true
+      },
+      "values": {
+        "S": true,
+        "X": true,
+        "exits": 0,
+        "left": 1,
+        "moves": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "S": false,
+        "X": false
+      },
+      "values": {
+        "S": false,
+        "X": false,
+        "exits": 0,
+        "left": 1,
+        "moves": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

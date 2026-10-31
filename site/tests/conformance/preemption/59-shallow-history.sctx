@@ -1,0 +1,28 @@
+scchart ShallowHistory {
+  input bool A, B, P, R
+  output int outer = 0, inner = 0
+
+  initial state M {
+    initial state I {
+      entry do outer = 1
+    }
+    if A go to J
+
+    state J {
+      entry do outer = 2
+
+      initial state X {
+        entry do inner = 1
+      }
+      if B go to Y
+
+      state Y {
+        entry do inner = 2
+      }
+    }
+  }
+  if P go to Paused
+
+  state Paused
+  if R go to M shallow history
+}

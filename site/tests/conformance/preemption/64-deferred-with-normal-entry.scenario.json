@@ -1,0 +1,40 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "G": false,
+        "H": false
+      },
+      "note": "Tick 1 enters A."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "Deferred entry into B: entry action and immediate transition are suppressed."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "B's immediate transition fires one tick later (chained = 1)."
+    },
+    {
+      "inputs": {},
+      "note": "C goes back to A."
+    },
+    {
+      "inputs": {
+        "H": true
+      },
+      "note": "Normal entry into B: the entry action runs (entries = 1) and the immediate transition fires in the same tick (chained = 2)."
+    },
+    {
+      "inputs": {
+        "H": false
+      },
+      "note": "C goes back to A."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,11 @@
+scchart Turnstile {
+  input bool coin
+  input bool push
+  output bool unlocked = false
+
+  initial state Locked
+    if coin do unlocked = true go to Unlocked
+
+  state Unlocked
+    if push do unlocked = false go to Locked
+}

@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "Tick 1 enters `Idle` in both charts."
+    },
+    {
+      "inputs": {
+        "job": true
+      },
+      "note": "`job`: both charts enter `Printing` and set `busy`."
+    },
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "In both charts both regions reach their final states. In `PrintFixed` the `join to` fires at once, and `busy` is false again. In `PrintStuck`, whose `Printing` declares the signal `fed` and has an entry action, it never fires."
+    },
+    {
+      "inputs": {},
+      "note": "`PrintStuck` stays in `Printing` for good."
+    },
+    {
+      "inputs": {
+        "job": true
+      },
+      "note": "A second `job`: only `PrintFixed` can start again."
+    },
+    {
+      "inputs": {
+        "job": false
+      },
+      "note": "`PrintFixed` has counted two pages, `PrintStuck` one."
+    }
+  ],
+  "expect": "ok"
+}

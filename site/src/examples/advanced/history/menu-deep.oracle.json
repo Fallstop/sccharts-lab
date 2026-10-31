@@ -1,0 +1,266 @@
+{
+  "hash": "749558475c6388c3c1030cbcfe3947da9e8be0f2",
+  "chart": "src/examples/advanced/history/menu-deep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HSettings is contained in the model but not in VariableStore.",
+    "ValuedObject with name _HDisplay is contained in the model but not in VariableStore.",
+    "ValuedObject with name _HSound is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "down": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "home": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "menu": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "right": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "screen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "menu": false,
+        "home": false,
+        "down": false,
+        "right": false
+      },
+      "values": {
+        "down": false,
+        "home": false,
+        "menu": false,
+        "right": false,
+        "screen": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "menu": true
+      },
+      "values": {
+        "down": false,
+        "home": false,
+        "menu": true,
+        "right": false,
+        "screen": 11
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "menu": false,
+        "right": true
+      },
+      "values": {
+        "down": false,
+        "home": false,
+        "menu": false,
+        "right": true,
+        "screen": 12
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "right": false,
+        "home": true
+      },
+      "values": {
+        "down": false,
+        "home": true,
+        "menu": false,
+        "right": false,
+        "screen": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "home": false,
+        "menu": true
+      },
+      "values": {
+        "down": false,
+        "home": false,
+        "menu": true,
+        "right": false,
+        "screen": 12
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "menu": false,
+        "down": true
+      },
+      "values": {
+        "down": true,
+        "home": false,
+        "menu": false,
+        "right": false,
+        "screen": 21
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "down": false,
+        "right": true
+      },
+      "values": {
+        "down": false,
+        "home": false,
+        "menu": false,
+        "right": true,
+        "screen": 22
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "right": false,
+        "home": true
+      },
+      "values": {
+        "down": false,
+        "home": true,
+        "menu": false,
+        "right": false,
+        "screen": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "home": false,
+        "menu": true
+      },
+      "values": {
+        "down": false,
+        "home": false,
+        "menu": true,
+        "right": false,
+        "screen": 22
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "menu": false
+      },
+      "values": {
+        "down": false,
+        "home": false,
+        "menu": false,
+        "right": false,
+        "screen": 22
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

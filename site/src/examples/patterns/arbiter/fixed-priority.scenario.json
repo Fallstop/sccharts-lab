@@ -1,0 +1,57 @@
+{
+  "ticks": [
+    {
+      "inputs": { "reqA": false, "reqB": false, "done": false },
+      "note": "Tick 1 enters `Free`. Nobody has a job, so `user` is 0."
+    },
+    {
+      "inputs": { "reqA": true },
+      "note": "Computer A sends a job. `Free`'s transitions are immediate, so the job starts in this very tick: `user` is 1."
+    },
+    {
+      "inputs": { "reqA": false, "reqB": true },
+      "note": "A's only job is printing, so A has nothing waiting any more. Now B has a job, but the printer is busy: `PrintingA` looks only at `done`, and B waits."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "A's job is finished. `PrintingA` goes back to `Free`, and `Free`'s immediate transition hands the printer to B in the same tick: `user` is 2, and the printer never stands idle."
+    },
+    {
+      "inputs": { "done": false, "reqB": false },
+      "note": "B's job prints. Nothing else is waiting."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "B's job is finished and nobody is waiting: the arbiter stays in `Free`, and `user` is 0."
+    },
+    {
+      "inputs": { "done": false, "reqA": true, "reqB": true },
+      "note": "Both computers send a job in the same tick. Both of `Free`'s transitions are enabled, and the one written first, with priority 1, wins: A prints."
+    },
+    {
+      "inputs": {},
+      "note": "From now on both computers have long queues: `reqA` and `reqB` stay true. B waits."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "A's job is finished, both have jobs waiting, and A wins again. `PrintingA` is left and entered again in the same tick: a new job."
+    },
+    {
+      "inputs": { "done": false },
+      "note": "B is still waiting."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "And A wins again."
+    },
+    {
+      "inputs": { "done": false },
+      "note": "B is still waiting."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "And again. As long as A keeps sending jobs, B never prints: it **starves**."
+    }
+  ],
+  "expect": "ok"
+}

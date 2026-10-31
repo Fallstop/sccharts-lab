@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "temp": 20 }, "note": "Tick 1 enters `Off` and `Ok`." },
+    { "inputs": { "temp": 40 }, "note": "The cut-out had not tripped in the previous tick, so the heater switches on." },
+    { "inputs": { "temp": 80 }, "note": "Heating." },
+    { "inputs": { "temp": 97 }, "note": "Too hot while heating: the sensor trips `cutOut` in this tick. The heater only sees it in the next tick." },
+    { "inputs": { "temp": 99 }, "note": "`pre(cutOut)` is true: the heater switches off, one tick after the cut-out tripped." },
+    { "inputs": { "temp": 90 }, "note": "Off, and the cut-out stays tripped." }
+  ],
+  "expect": "ok"
+}

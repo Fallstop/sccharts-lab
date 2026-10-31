@@ -1,0 +1,7 @@
+// Inside a larger expression the missing branch is the assignment's target too.
+scchart CondNoElseNested {
+  input bool c
+  output int x = 3, y = 5
+  initial state S
+    if true do x = 1 + ((c) ? 2); y = ((c) ? 10) * 2 go to S
+}

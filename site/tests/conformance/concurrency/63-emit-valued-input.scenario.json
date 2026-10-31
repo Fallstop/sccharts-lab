@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "V": false,
+        "V_val": 0,
+        "a": false
+      },
+      "note": "Emitting a valued input signal gives the warning \"Valued input signals currently do not support emission (overwriting).\" Tick 1: `V` absent, value 0."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `V(5)` makes `V` present, but the value is dropped: `V_val` stays 0 (`seen = 0`)."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`V` stays present (inputs are not reset and the environment did not change it); value still 0."
+    },
+    {
+      "inputs": {
+        "V": false,
+        "V_val": 9
+      },
+      "note": "The environment sets `V` absent with value 9: `seen = 9`."
+    }
+  ],
+  "expect": "ok"
+}

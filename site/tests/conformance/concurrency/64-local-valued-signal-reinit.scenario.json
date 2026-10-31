@@ -1,0 +1,36 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "r": false
+      },
+      "note": "`signal int L = 7` is local to `S`: `seen = 7` in tick 1."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `L(3)`, and `R2` reads `val(L) = 3` in the same tick."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Value kept: `seen = 3`."
+    },
+    {
+      "inputs": {
+        "r": true
+      },
+      "note": "`r`: `S` is left and re-entered (weak abort, so the inner transitions run first). Re-entry re-initialises `L` to 7 and `X` → `Y` (immediate) reads `seen = 7`."
+    },
+    {
+      "inputs": {
+        "r": false
+      },
+      "note": "`seen = 7`."
+    }
+  ],
+  "expect": "ok"
+}

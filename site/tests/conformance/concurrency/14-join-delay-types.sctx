@@ -1,0 +1,40 @@
+scchart JoinDelayTypes {
+  input bool c
+  output bool doneTrigger, doneImmediate, doneDelayed
+
+  region RTrigger {
+    initial state S {
+      initial state W
+      immediate go to F
+      final state F
+    }
+    if c join to D
+    state D {
+      entry do doneTrigger = true
+    }
+  }
+
+  region RImmediate {
+    initial state S {
+      initial state W
+      immediate go to F
+      final state F
+    }
+    immediate if c join to D
+    state D {
+      entry do doneImmediate = true
+    }
+  }
+
+  region RDelayed {
+    initial state S {
+      initial state W
+      immediate go to F
+      final state F
+    }
+    delayed join to D
+    state D {
+      entry do doneDelayed = true
+    }
+  }
+}

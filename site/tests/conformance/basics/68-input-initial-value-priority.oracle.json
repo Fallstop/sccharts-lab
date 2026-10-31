@@ -1,0 +1,98 @@
+{
+  "hash": "daf9353362966a9ef08547435454cbcf47715fc6",
+  "chart": "tests/conformance/basics/68-input-initial-value-priority.sctx",
+  "system": "priority",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "J": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "J": 3
+      },
+      "values": {
+        "B": true,
+        "I": 42,
+        "J": 42,
+        "b": false,
+        "x": 0,
+        "y": 0
+      },
+      "taken": [
+        0
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "B": true,
+        "I": 42,
+        "J": 42,
+        "b": true,
+        "x": 42,
+        "y": 42
+      },
+      "taken": [
+        1
+      ]
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 1,
+        "B": false
+      },
+      "values": {
+        "B": false,
+        "I": 1,
+        "J": 42,
+        "b": false,
+        "x": 1,
+        "y": 42
+      },
+      "taken": [
+        1
+      ]
+    }
+  ]
+}

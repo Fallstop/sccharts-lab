@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "start": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "Three transitions in one tick. `Idle` → `Work` sets `steps` to 1 and enters `Work` and `Begin`. `Begin`'s transition is immediate, so it fires at once: `steps` is 2 and `Done`, a final state, is reached. `Work` has terminated, and a `join to` without a trigger is immediate, so it fires too: `steps` is 3 and the chart is in `Finished`." },
+    { "inputs": { "start": false }, "note": "`Finished` has no transitions. Nothing happens any more." }
+  ],
+  "expect": "ok"
+}

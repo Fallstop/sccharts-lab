@@ -1,0 +1,7 @@
+scchart TernaryBindsTight {
+  input int A
+  output int y
+
+  initial state S
+  do y = A > 2 ? A : 0 go to S
+}

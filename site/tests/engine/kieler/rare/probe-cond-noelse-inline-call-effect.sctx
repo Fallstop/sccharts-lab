@@ -1,0 +1,12 @@
+// An argument of an inlined method: substituted into r += v, so r += c ? 3 : r.
+scchart CondNoElseInlineCallEffect {
+  input bool c
+  output int r = 5
+
+  method void add(int v) {
+    r += v
+  }
+
+  initial state S
+    if true do add((c) ? 3) go to S
+}

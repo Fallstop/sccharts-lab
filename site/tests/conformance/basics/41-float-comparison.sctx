@@ -1,0 +1,8 @@
+scchart FloatComparison {
+  input float F
+  output float lit = 0.1
+  output bool inputEqualsLiteral, variableEqualsLiteral, inputBelowLiteral, exact
+
+  initial state S
+  do inputEqualsLiteral = F == 0.1; variableEqualsLiteral = lit == 0.1; inputBelowLiteral = F < 0.1; exact = F * 4 == 0.4 go to S
+}

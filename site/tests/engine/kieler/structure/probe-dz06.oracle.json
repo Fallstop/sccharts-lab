@@ -1,0 +1,147 @@
+{
+  "hash": "4417f01ec8248fa7594b6d7ebd25e388cdb48242",
+  "chart": "tests/engine/kieler/structure/probe-dz06.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 8,
+      "column": 17
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": [
+          false,
+          false,
+          false
+        ]
+      },
+      "values": {
+        "A": [
+          false,
+          false,
+          false
+        ],
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": [
+          true,
+          false,
+          false
+        ]
+      },
+      "values": {
+        "A": [
+          true,
+          false,
+          false
+        ],
+        "n": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": [
+          false,
+          true,
+          false
+        ]
+      },
+      "values": {
+        "A": [
+          false,
+          true,
+          false
+        ],
+        "n": 3
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": [
+          false,
+          false,
+          true
+        ]
+      },
+      "values": {
+        "A": [
+          false,
+          false,
+          true
+        ],
+        "n": 6
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": [
+          false,
+          false,
+          true
+        ]
+      },
+      "values": {
+        "A": [
+          false,
+          false,
+          true
+        ],
+        "n": 6
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

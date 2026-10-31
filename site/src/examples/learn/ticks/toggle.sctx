@@ -1,0 +1,10 @@
+scchart Toggle {
+  input bool button
+  output bool light = false
+
+  initial state Off
+    if button do light = true go to On
+
+  state On
+    if button do light = false go to Off
+}

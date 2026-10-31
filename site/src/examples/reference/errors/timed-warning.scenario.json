@@ -1,0 +1,30 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "deltaT": 100
+      },
+      "note": "Tick 1 enters `Idle`. The chart has a clock, so it gets the input `deltaT` (time since the last tick, here 100 every tick) and the output `sleepT`. KIELER warns about a possible instantaneous loop through the timed transitions."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start` is true: `Idle` goes to `Waiting` and sets the clock `t` to 0."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "100 time units have passed: `t` = 100."
+    },
+    {
+      "note": "`t` = 200."
+    },
+    {
+      "note": "`t` = 300: the timeout fires once, `alarm` is true, and the chart is back in `Idle`. The loop KIELER warned about never happens: each timed transition waits for a later tick."
+    }
+  ],
+  "expect": "ok"
+}

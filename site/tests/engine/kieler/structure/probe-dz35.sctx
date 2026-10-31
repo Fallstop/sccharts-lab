@@ -1,0 +1,11 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz35 {
+  input bool A
+  output int n = 0
+  clock t
+  initial state Idle
+  if A do t = 0 go to Run
+  state Run
+  if t >= 200 do n++ go to Idle
+  if !A go to Idle
+}

@@ -1,0 +1,126 @@
+{
+ "sourceHash": "850bc3bfa19f602a",
+ "states": [
+  {
+   "path": [
+    "P209"
+   ],
+   "rows": [
+    [
+     "P209"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    260.3,
+    220.7
+   ]
+  },
+  {
+   "path": [
+    "P209",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    23.2,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P209",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    201.3,
+    23.2,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P209",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    246.9,
+    80.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP209$$N0$NS0$ES10",
+   "source": [
+    "P209",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P209",
+    0,
+    "S1"
+   ],
+   "text": "/ print(\"x\"); print(\"%d\", O); print(O + 1)",
+   "lines": [
+    "/ print(\"x\");",
+    "  print(\"%d\", O);",
+    "  print(O + 1)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

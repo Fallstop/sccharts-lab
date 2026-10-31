@@ -1,0 +1,225 @@
+---
+title: "How this guide is checked"
+description: "Every example is run through KIELER’s own compiler, and the guide’s simulations are tested against those runs: what that covers, where it stops and what the notices mean."
+sidebar:
+  order: 7
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import { REPORT_URL } from '~components/site'
+import { exampleIds, loadRecording } from '~components/frame/examples'
+import corpusFiles from '../../../../tests/corpus/expectations.json'
+import corpusSnippets from '../../../../tests/corpus/syntax-probes.json'
+
+export const counted = (what, list) => {
+  // The counts on this page are taken from the recordings when the page is built, so they cannot go stale.
+  if (list.length < 100) throw new Error(`reference/about: only ${list.length} ${what} recordings found; have they moved?`)
+  return list
+}
+export const examples = counted('example', exampleIds().filter((id) => !id.startsWith('design/')).map((id) => loadRecording(id)).filter((r) => r !== undefined))
+export const tests = counted('test', Object.values(import.meta.glob(['/tests/conformance/**/*.oracle.json', '/tests/engine/kieler/**/*.oracle.json'], { eager: true, import: 'default' })))
+export const accepted = (list) => list.filter((r) => r.ok).length
+export const rejected = (list) => list.filter((r) => !r.ok).length
+
+This guide makes a strong promise: an example behaves in the page exactly as it does in KIELER, tick for
+tick. This page explains how that promise is kept, where it stops, and what the notices you will see on a
+few examples mean.
+
+Last checked against KIELER: October 2026.
+
+## Every example is run through KIELER
+
+Each example in the guide is a `.sctx` file with a script of inputs, the same script its guided tour
+plays. A program runs that script through KIELER itself:
+
+- **The compiler.** The chart is compiled by the language server of SCCharts Lab, which is built from
+  KIELER's own sources: the same compiler and simulator as KIELER, with clearer messages added.
+- **The simulation.** It uses KIELER's default system, **Netlist-based Simulation (C)**, the one you
+  pick in SCCharts Lab: the chart is translated into C, compiled with gcc and run, one tick for each step
+  of the script.
+- **The recording.** For every tick it stores the value of every input, output and variable, which
+  transitions fired, and whether the chart terminated. For every chart it stores whether KIELER accepts
+  it, and KIELER's errors and warnings, word for word.
+
+The guide has {examples.length} examples. KIELER accepts {accepted(examples)} of them, and each of those is
+recorded tick by tick; for the other {rejected(examples)}, which KIELER rejects, the recording holds its verdict
+and its messages.
+
+The recordings are kept next to the examples, as part of the guide's source, and the guide's pages are
+built from them. The tick tables in the text come from them. "KIELER rejects this chart" appears under
+an example only when KIELER did reject it, and the message quoted with it is the one KIELER gave. When a
+chart changes, it is run again, and a run that contradicts what its page expects, such as an error from a
+chart that is meant to work, is reported as a failure.
+
+<Aside>
+The language server is built from KIELER's sources in the
+[kieler/semantics](https://github.com/kieler/semantics) repository (commit `5f02d129`), with SCCharts
+Lab's additions. They change messages, report some of KIELER's crashes as proper errors, and repair a few
+crashes outright; an example that needs such a repair carries a notice, *Official KIELER differs here*.
+How a chart behaves, tick by tick, is KIELER's.
+</Aside>
+
+## The simulations in the page
+
+The simulations you step through in the guide run a different program: the guide's own engine, a
+reimplementation of KIELER's compiler checks and simulator, written in TypeScript so that it runs in
+your browser. It follows KIELER's rules, including the surprising ones.
+
+The engine is tested against the recordings. Every recording is replayed in it, and the test fails on
+the first difference: in the value of any variable in any tick, in the transitions that fired, in the
+tick the chart terminates, or in whether the chart is accepted at all. Behind the examples sit
+{tests.length} smaller test charts, each pinning down one detail of KIELER's behaviour (what tick 1 does, which
+of two concurrent writes comes first, what a strong abort does to an exit action), recorded in the same
+way: {accepted(tests)} tick by tick, and {rejected(tests)} that KIELER rejects, with its verdict and messages. The
+engine's parser is checked against KIELER's verdict on {Object.keys(corpusFiles).length} more files, with their
+messages, and on {corpusSnippets.length} short snippets.
+
+So an example in the guide behaves as KIELER does. A chart you write yourself in the
+[playground](/playground/) runs on the same engine, but nobody has compared it with KIELER. When it
+matters, such as a chart you hand in or code for a real device, run it in SCCharts Lab or KIELER.
+
+### What the engine does not run
+
+A few constructs are beyond the engine, and an example that uses them shows a notice instead of the
+simulation controls. Its diagram and code are still there, and SCCharts Lab and KIELER run it as usual:
+
+- **Host code**: C code in backticks, `extern` functions, and host classes and enums. Running them takes
+  a C compiler, which a browser does not have.
+- **User-written schedules** (`schedule`) and `ode` actions.
+- **A few rare combinations**, such as a chart that `extends` another with bindings or generic
+  parameters, recursive methods, arrays of class instances, and an abort region in a state that is left
+  and entered again in the same tick.
+
+The engine follows KIELER's default system only. KIELER's other systems, such as
+**Priority-based Simulation (C)**, differ from it in a few details, and the guide does not reproduce
+those.
+
+## Official KIELER and SCCharts Lab
+
+Many readers use the official *KIELER VS Code* extension, version 0.3.0 from May 2024. Its compiler is
+older than the KIELER sources the recordings come from. Many of the charts behind the guide's rules were
+run through that compiler too, in particular wherever the two versions might differ. Every chart checked
+that both accept behaved identically in both; the differences are in which charts they accept and in what
+they say:
+
+- **`random()`** compiles in 0.3.0 only if the file starts with `#hostcode "#include <stdlib.h>"`.
+  Current KIELER, and so SCCharts Lab, includes `<stdlib.h>` in the generated C code itself whenever a
+  chart calls `random()`; your file stays as it is. `randomize()` needs the line in both, unless the
+  chart also calls `random()`.
+- **`const` with `input` or `output`.** 0.3.0 accepts `const output int M` and current KIELER
+  `output const int M`; each rejects the other order. Leave `const` off inputs and outputs.
+- **Crashes.** On a handful of unusual charts the 0.3.0 compiler crashes: its message is a Java
+  exception, or the compilation never finishes. It never finishes on some common syntax errors too, such
+  as a keyword used as a name ([Compiler messages](/reference/errors/#fix-the-first-message-first)).
+  SCCharts Lab gives a message with a line number instead.
+- **A file without any `scchart`.** 0.3.0 compiles nothing and says nothing; SCCharts Lab says:
+
+  ```text wrap
+  There is no SCChart to compile. Add a scchart declaration first.
+  ```
+
+- **Wording.** SCCharts Lab rewrites some of KIELER's messages in plainer English and adds a few of its
+  own. [Compiler messages](/reference/errors/) quotes both where they differ.
+
+## Notices on examples
+
+Most examples carry no notice at all. These are the ones you may meet, and what they mean:
+
+- **KIELER rejects this chart.** KIELER refused to compile it. The frame lists the errors that stop it,
+  each in the guide's words, then KIELER's exact words, and a hint.
+- **Official KIELER differs here.** SCCharts Lab and the guide compile the chart, but official KIELER
+  fails on it. The notice usually says how to write the chart so that both accept it.
+- **KIELER may reject this chart.** KIELER accepts this chart in some compilations and rejects it in
+  others: for a few charts, the order in which its compiler untangles certain superstates changes from
+  run to run, and so does the verdict. The guide does not simulate such a chart.
+- **A note about a KIELER quirk,** among the warnings: KIELER does something that looks wrong, and the
+  guide does the same, because it is what you will see in KIELER. For example, in KIELER's simulator a
+  chart that declares a signal never terminates.
+- **A note about a KIELER bug:** KIELER's default compiler gets a result wrong by its own rules. Two such
+  bugs are known, both in the way it optimises assignments, and one of them matters only in tick 1. The
+  guide's examples avoid them. The guide computes the intended result, and for the tick-1 bug a note
+  says that KIELER computes something else.
+- **Warnings** are listed under the simulation, collapsed. They are KIELER's own, such as
+  `Instantaneous loop detected!`, or the C compiler's, which SCCharts Lab passes on (marked *The C
+  compiler says*); where KIELER warns about a chart that works, the warning says so. **Notes** in the
+  same list are the guide's: the quirks and bugs above, and two of its own checks. `KIELER reads this
+  as …` shows how KIELER groups an expression with a
+  [ternary](/reference/operators/#the-ternary-takes-atoms) in it, and another points out a line that
+  KIELER [swallows](/advanced/annotations/#an-empty--swallows-the-next-line) into an empty `//` comment
+  on the line above.
+
+## Random numbers
+
+In KIELER's C simulation `random()` is C's `rand()`, divided to give a number between 0 and 1, and the
+generator is never seeded. So every run gives the same sequence: 0.840, 0.394, 0.783, and so on, one
+number per call. The guide reproduces that sequence number for number, in the order KIELER's code makes
+the calls, so an example with `random()` shows the same numbers as its recording.
+
+The recordings are made on Linux, with the GNU C library's `rand()`. Other systems' C libraries have
+their own `rand()`, so on Windows or a Mac SCCharts Lab may well show different numbers. A chart that
+calls `randomize()` asks for a new seed from the clock, and gets different numbers in KIELER on every
+run; the guide keeps the fixed sequence.
+
+## Random charts, compared with KIELER
+
+The recordings check the charts someone thought of. To find the cases nobody thought of, a second
+program writes random charts, mixing superstates, regions, signals, aborts, actions, count delays,
+history, references to other charts, dataflow and clocks. It runs each one through KIELER and through the
+guide's engine, and compares whether KIELER accepts it and, if it does, every value in every one of 14
+ticks.
+
+By October 2026, 8,480 random charts had been compared in eleven rounds, after about 1,500 in earlier,
+smaller runs. Of the 8,480:
+
+- 5,434 were rejected by both KIELER and the engine, which tests the engine's checks;
+- 2,858 were accepted by both and simulated, with the same value in every tick;
+- 53 are charts on which KIELER's verdict or behaviour changes from one compilation to the next, and
+  the engine says so;
+- 100 could not be compared: KIELER timed out or failed, or the engine does not run the chart;
+- 35 disagreed, 2 of them in the latest round.
+
+Every disagreement was shrunk to a small chart that still showed it, and fixed in the engine or
+explained; a few turned out to be KIELER's own run-to-run variation, which the guide now reports. The
+latest round's two are explained: in one chart KIELER may order two updates of a variable either way,
+and the guide warns that it cannot promise KIELER's order; the other KIELER accepts in only 2 of 13
+runs, and the guide rejects it. The small charts became permanent tests. From the sixth round on,
+KIELER's warnings were compared too, each at its place in the chart.
+
+## What the checks cannot promise
+
+- **Your own charts.** The playground has not been compared with KIELER on them. Confirm in SCCharts
+  Lab or KIELER when it matters.
+- **Future versions of KIELER.** The guide describes KIELER as it is now. A later release may behave
+  differently, and the guide will follow it once it has been checked.
+- **The prose.** The recordings check behaviour, not sentences. If the text and an example disagree,
+  the example is the one that ran through KIELER.
+
+## Who made this
+
+This guide is independent of Kiel University's KIELER team, who created SCCharts and KIELER. Its author
+also makes SCCharts Lab, the VS Code extension the guide recommends, which is independent of the KIELER
+team too. Where SCCharts Lab and official KIELER differ, the guide follows KIELER's sources and says
+what official KIELER does ([Official KIELER and SCCharts Lab](#official-kieler-and-sccharts-lab)).
+
+## Found a mistake?
+
+{REPORT_URL ? (
+  <p>
+    Every page has a link at its foot, <em>Report a mistake on this page</em>, which tells the guide’s
+    author which page you were on.
+  </p>
+) : (
+  <p>
+    Write it in the <a href="https://marketplace.visualstudio.com/items?itemName=qinnovate.sccharts-lab&ssr=false#qna">Q &amp; A</a>{' '}
+    of SCCharts Lab’s page on the Visual Studio Marketplace (you need a Microsoft account to post):
+    SCCharts Lab and this guide have the same author.
+  </p>
+)}
+
+These help most:
+
+- the page and the example (its name is at the top of its frame);
+- the inputs, tick by tick, or for your own chart the playground's **Copy link**, which carries the
+  chart in the link;
+- what you expected, and what you saw;
+- what SCCharts Lab or KIELER does with the same chart and inputs, and which version you used.

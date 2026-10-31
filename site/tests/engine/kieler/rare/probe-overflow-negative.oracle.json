@@ -1,0 +1,56 @@
+{
+  "hash": "026ca945c00aba418d8f363c5200710610102fc5",
+  "chart": "tests/engine/kieler/rare/probe-overflow-negative.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "n": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "n": 9
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

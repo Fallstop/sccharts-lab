@@ -1,0 +1,117 @@
+{
+  "hash": "e99e2edc795d1eaec6e3aa2fea727fbaec43b2c1",
+  "chart": "tests/conformance/preemption/66-deferred-superstate-mixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "H": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false,
+        "H": false
+      },
+      "values": {
+        "G": false,
+        "H": false,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step1": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "H": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step1": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "H": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step1": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "G": false,
+        "H": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step1": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

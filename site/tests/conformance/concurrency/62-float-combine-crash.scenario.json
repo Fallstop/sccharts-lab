@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "A `float` valued signal with a combine function: KIELER has no neutral element for float and its compiler fails (\"UnsupportedConstructException: Unhandled parameter types: [null]\")."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "UnsupportedConstructException"
+}

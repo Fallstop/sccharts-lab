@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "A": false }, "note": "Tick 1: B entered (entries = 1)." },
+    { "inputs": { "A": true }, "note": "B -> C -> B deferred: the deferred transition is on an immediate loop, so KIELER enters a copy of B whose transitions are delayed." },
+    { "inputs": { "A": true }, "note": "The copy's delayed transition to C, and back to the copy." },
+    { "inputs": { "A": false }, "note": "Stays." },
+    { "inputs": { "A": true }, "note": "Again; B's entry action never runs again." }
+  ],
+  "expect": "ok"
+}

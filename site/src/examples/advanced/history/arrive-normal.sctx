@@ -1,0 +1,14 @@
+scchart ArriveNormal {
+  input bool walk
+  output int chimes = 0, steps = 0
+
+  initial state Outside
+    if walk go to Hall
+
+  state Hall {
+    entry do chimes++
+  }
+  immediate do steps++ go to Room
+
+  state Room
+}

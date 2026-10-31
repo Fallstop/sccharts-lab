@@ -1,0 +1,134 @@
+{
+  "hash": "fa7e16f1512fd4d39be664284448065426eddfb2",
+  "chart": "tests/engine/kieler/rare/probe-index-kept-for.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "armed": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "key": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "key": [
+          false,
+          false
+        ],
+        "armed": false
+      },
+      "values": {
+        "armed": false,
+        "key": [
+          false,
+          false
+        ],
+        "y": 0,
+        "a": false,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "key": [
+          false,
+          false
+        ],
+        "armed": true
+      },
+      "values": {
+        "armed": true,
+        "key": [
+          false,
+          false
+        ],
+        "y": 0,
+        "a": true,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "key": [
+          true,
+          false
+        ],
+        "armed": true
+      },
+      "values": {
+        "armed": true,
+        "key": [
+          true,
+          false
+        ],
+        "y": 1,
+        "a": true,
+        "b": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "key": [
+          false,
+          true
+        ],
+        "armed": false
+      },
+      "values": {
+        "armed": false,
+        "key": [
+          false,
+          true
+        ],
+        "y": 1,
+        "a": true,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

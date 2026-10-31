@@ -1,0 +1,21 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz59 {
+  input bool go1
+  output int x = 0
+  initial state R is Dz59O(go1, x)
+}
+scchart Dz59O {
+  input bool g
+  output int v
+  initial state Q is Dz59I(g, v)
+  join to E
+  state E
+  do v += 100 go to E
+}
+scchart Dz59I {
+  input bool h
+  output int w
+  initial state A
+  if h do w = 7 go to F
+  final state F
+}

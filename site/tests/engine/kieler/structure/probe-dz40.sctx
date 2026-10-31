@@ -1,0 +1,14 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz40 {
+  output int a = 0, b = 0
+  method int fact(int n) {
+    int f = 1
+    while (n > 1) {
+      f *= n
+      n--
+    }
+    return f
+  }
+  region { initial state S do a = fact(4) go to S }
+  region { initial state T do b = fact(a) go to T }
+}

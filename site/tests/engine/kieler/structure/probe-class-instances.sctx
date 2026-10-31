@@ -1,0 +1,25 @@
+// Two instances of a class (member initial values, a method with a parameter) and a struct: each instance has its
+// own members, an object in the data pool.
+scchart Classes {
+  input bool up
+  output int O = 0, P = 0
+
+  class Counter {
+    int count = 2
+    void add(int k) {
+      count = count + k
+    }
+    int get() {
+      return count
+    }
+  } c1, c2
+
+  struct Point {
+    int x
+    int y
+  } pt
+
+  initial state A
+  if up do c1.add(1); pt.x = pt.x + 1 go to A
+  if !up do c2.add(3); O = c1.get(); P = c2.get() + pt.x go to A
+}

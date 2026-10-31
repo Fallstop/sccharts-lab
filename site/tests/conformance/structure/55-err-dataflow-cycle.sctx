@@ -1,0 +1,9 @@
+// A cycle of instantaneous equations (X needs Y needs X) cannot be scheduled. Break it with pre or fby.
+scchart St55Bad {
+  input int I
+  output int X, Y
+  dataflow {
+    X = Y + I
+    Y = X
+  }
+}

@@ -1,0 +1,13 @@
+import "DF-0006"
+
+scchart df#0603 {
+  input int I, I2
+  output int O
+  ref df#0006 A, A2
+
+  dataflow:
+  A = {0, 1, _, I}
+  A2 = {0, A.O, I + 1, I - 1}
+  A.I3 = 100
+  O = A2.O
+}

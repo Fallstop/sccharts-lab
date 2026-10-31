@@ -1,0 +1,336 @@
+{
+ "sourceHash": "8dd06c0ecbb2ed29",
+ "states": [
+  {
+   "path": [
+    "P132"
+   ],
+   "rows": [
+    [
+     "P132"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    241,
+    385
+   ]
+  },
+  {
+   "path": [
+    "P132",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    48.6,
+    71.3,
+    148.1
+   ]
+  },
+  {
+   "path": [
+    "P132",
+    0,
+    "S0",
+    0,
+    "I"
+   ],
+   "rows": [
+    [
+     "I"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P132",
+    0,
+    "S0",
+    0,
+    "J"
+   ],
+   "rows": [
+    [
+     "J"
+    ]
+   ],
+   "box": [
+    10,
+    64.6,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P132",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    182,
+    105.2,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P132",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    227.6,
+    245
+   ]
+  },
+  {
+   "path": [
+    "P132",
+    0,
+    "S0",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    30.6,
+    54,
+    109.1
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP132$$N0$NS0$$N0$NI$EJ0",
+   "source": [
+    "P132",
+    0,
+    "S0",
+    0,
+    "I"
+   ],
+   "target": [
+    "P132",
+    0,
+    "S0",
+    0,
+    "J"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP132$$N0$NS0$ES10",
+   "source": [
+    "P132",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P132",
+    0,
+    "S1"
+   ],
+   "text": "A",
+   "lines": [
+    "A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP132$$N0$NS1$ES00",
+   "source": [
+    "P132",
+    0,
+    "S1"
+   ],
+   "target": [
+    "P132",
+    0,
+    "S0"
+   ],
+   "text": "1: A",
+   "lines": [
+    "1: A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "history-deep"
+   ]
+  },
+  {
+   "id": "$root$NP132$$N0$NS1$ES01",
+   "source": [
+    "P132",
+    0,
+    "S1"
+   ],
+   "target": [
+    "P132",
+    0,
+    "S0"
+   ],
+   "text": "2: B",
+   "lines": [
+    "2: B"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "history-shallow"
+   ]
+  },
+  {
+   "id": "$root$NP132$$N0$NS1$ES02",
+   "source": [
+    "P132",
+    0,
+    "S1"
+   ],
+   "target": [
+    "P132",
+    0,
+    "S0"
+   ],
+   "text": "3: A",
+   "lines": [
+    "3: A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP132$$N0$NS1$ES03",
+   "source": [
+    "P132",
+    0,
+    "S1"
+   ],
+   "target": [
+    "P132",
+    0,
+    "S0"
+   ],
+   "text": "4: B",
+   "lines": [
+    "4: B"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle"
+   ]
+  },
+  {
+   "id": "$root$NP132$$N0$NS1$ES04",
+   "source": [
+    "P132",
+    0,
+    "S1"
+   ],
+   "target": [
+    "P132",
+    0,
+    "S0"
+   ],
+   "text": "5: A",
+   "lines": [
+    "5: A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle-deep"
+   ]
+  },
+  {
+   "id": "$root$NP132$$N0$NS1$ES05",
+   "source": [
+    "P132",
+    0,
+    "S1"
+   ],
+   "target": [
+    "P132",
+    0,
+    "S0"
+   ],
+   "text": "6:",
+   "lines": [
+    "6: "
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "history-deep",
+    "red-circle"
+   ]
+  }
+ ],
+ "comments": []
+}

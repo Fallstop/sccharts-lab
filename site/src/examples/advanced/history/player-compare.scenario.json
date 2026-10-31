@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "next": false, "call": false, "hangUp": false }, "note": "Tick 1 enters `Playing` and `Track1` in both players (`track` = 1)." },
+    { "inputs": { "next": true }, "note": "`Track1` to `Track2` (`track` = 2)." },
+    { "inputs": { "next": false }, "note": "Listening to track 2." },
+    { "inputs": { "call": true }, "note": "A call comes in: both players leave `Playing` for `OnCall` (`track` = 0). `PlayerHistory` remembers that `Playing` was in `Track2`." },
+    { "inputs": { "call": false, "hangUp": true }, "note": "Hang up. `PlayerRestart`: `go to Playing` enters `Playing` afresh, in its initial state `Track1` (`track` = 1). `PlayerHistory`: `go to Playing history` resumes `Track2`, and since `Track2` is entered again, its entry action runs (`track` = 2)." },
+    { "inputs": { "hangUp": false }, "note": "`PlayerRestart` has lost its place; `PlayerHistory` carries on with track 2." },
+    { "inputs": { "next": true, "call": true }, "note": "`next` and `call` in the same tick. `go to OnCall` is a weak abort, so the inside of `Playing` first takes its last step: `Track1` to `Track2` in `PlayerRestart`, `Track2` to `Track3` in `PlayerHistory`. Then both go to `OnCall` (`track` = 0)." },
+    { "inputs": { "next": false, "call": false, "hangUp": true }, "note": "Hang up. `PlayerRestart` starts at track 1 again. `PlayerHistory` resumes the state entered last, `Track3`, the one reached in the abort tick (`track` = 3)." },
+    { "inputs": { "hangUp": false }, "note": "Track 1 in `PlayerRestart`, track 3 in `PlayerHistory`." }
+  ],
+  "expect": "ok"
+}

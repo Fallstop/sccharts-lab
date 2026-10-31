@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "go1": false
+      },
+      "note": "Tick 1 enters M: everything 0."
+    },
+    {
+      "inputs": {
+        "go1": true
+      },
+      "note": "Main emits S and sets x = 1; Trail (after Main) sees S: **sawS = true**; Lead (before) does not: **sawSLead = false**."
+    },
+    {
+      "inputs": {
+        "go1": true
+      },
+      "note": "x = 2; Lead read x = 1 before the write: no finish yet."
+    },
+    {
+      "inputs": {
+        "go1": false
+      },
+      "note": "Lead now reads x = 2 > 1 and finishes: **seenLead = 2**, M is done (Trail never saw x > 2)."
+    }
+  ],
+  "expect": "ok"
+}

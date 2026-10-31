@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Two regions emit `V(1)` and `V(2)` and `V` has no combine function: the two value writes conflict, rejected as \"NOT asc-schedulable\"."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

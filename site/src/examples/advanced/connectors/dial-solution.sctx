@@ -1,0 +1,13 @@
+scchart Dial {
+  input bool up, down
+  output int digit = 0
+
+  initial state Idle
+    if up do digit++ go to Wrap
+    if down do digit-- go to Wrap
+
+  connector state Wrap
+    immediate if digit > 9 do digit = 0 go to Idle
+    immediate if digit < 0 do digit = 9 go to Idle
+    immediate go to Idle
+}

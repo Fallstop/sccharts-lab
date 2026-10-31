@@ -1,0 +1,90 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "occupied": false,
+        "isDown": false,
+        "isUp": true,
+        "restart": false
+      },
+      "note": "Tick 1: open."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A train."
+    },
+    {
+      "inputs": {},
+      "note": "Warning."
+    },
+    {
+      "inputs": {},
+      "note": "Warning."
+    },
+    {
+      "inputs": {},
+      "note": "Lower."
+    },
+    {
+      "inputs": {
+        "isUp": false
+      },
+      "note": "Moving."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Down: closed."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "The train has gone: raise."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "Rising."
+    },
+    {
+      "inputs": {
+        "occupied": true
+      },
+      "note": "A second train while the barrier is rising: `Raising` tries `if occupied` first, so the barrier is lowered again at once."
+    },
+    {
+      "inputs": {
+        "isDown": true
+      },
+      "note": "Down again: closed."
+    },
+    {
+      "inputs": {
+        "occupied": false
+      },
+      "note": "Clear: raise."
+    },
+    {
+      "inputs": {
+        "isDown": false
+      },
+      "note": "Rising."
+    },
+    {
+      "inputs": {
+        "isUp": true
+      },
+      "note": "Up: open."
+    },
+    {
+      "inputs": {},
+      "note": "Open."
+    }
+  ],
+  "expect": "ok"
+}

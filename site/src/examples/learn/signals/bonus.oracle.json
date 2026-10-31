@@ -1,0 +1,144 @@
+{
+  "hash": "a412a62b9ca6733ce7c5a12ac4617473b750ec17",
+  "chart": "src/examples/learn/signals/bonus.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "gold": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "silver": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "points": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "points_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "points_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "gold": false,
+        "silver": false
+      },
+      "values": {
+        "gold": false,
+        "silver": false,
+        "points": false,
+        "points_val": 0,
+        "points_curval": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "gold": true
+      },
+      "values": {
+        "gold": true,
+        "silver": false,
+        "points": true,
+        "points_val": 10,
+        "points_curval": 10
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "silver": true
+      },
+      "values": {
+        "gold": true,
+        "silver": true,
+        "points": true,
+        "points_val": 5,
+        "points_curval": 5
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "gold": false
+      },
+      "values": {
+        "gold": false,
+        "silver": true,
+        "points": true,
+        "points_val": 5,
+        "points_curval": 5
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "silver": false
+      },
+      "values": {
+        "gold": false,
+        "silver": false,
+        "points": false,
+        "points_val": 5,
+        "points_curval": 5
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

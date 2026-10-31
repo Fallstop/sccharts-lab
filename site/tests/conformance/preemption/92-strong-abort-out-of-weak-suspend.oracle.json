@@ -1,0 +1,98 @@
+{
+  "hash": "414d262301d2fb8f53c9b4d1edb93dec0ac412b7",
+  "chart": "tests/conformance/preemption/92-strong-abort-out-of-weak-suspend.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": false,
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true,
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "S": true,
+        "n": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "S": false,
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

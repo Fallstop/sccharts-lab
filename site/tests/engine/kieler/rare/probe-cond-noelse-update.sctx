@@ -1,0 +1,7 @@
+// x += (c) ? 1 is x += c ? 1 : x: it doubles x when c is false.
+scchart CondNoElseUpdate {
+  input bool c
+  output int x = 3
+  initial state S
+    if true do x += (c) ? 1 go to S
+}

@@ -1,0 +1,17 @@
+scchart SignalActionNoJoin {
+  output int n
+  output bool done
+
+  initial state S {
+    signal L
+    exit do n = 5
+    initial state A
+    do L go to F
+    final state F
+  }
+  join to D
+
+  state D {
+    entry do done = true
+  }
+}

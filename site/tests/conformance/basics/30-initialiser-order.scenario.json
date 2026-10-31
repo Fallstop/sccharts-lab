@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Initialisers run in declaration order. y's initialiser reads x before x's own initialiser has run, when x still holds its zero default, so y = 1, not 6. (Both KIELER compilers agree.)"},
+    {"inputs": {}, "note": "Unchanged: x = 5, y = 1."}
+  ],
+  "expect": "ok"
+}

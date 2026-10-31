@@ -1,0 +1,16 @@
+// An instance declared in a nested state is a local of that state: hidden from the pool and initialised again
+// whenever the state is entered.
+scchart St112NestedStruct {
+  input bool leave
+  output int seen = 0
+  initial state S {
+    struct Point {
+      int x = 4
+    } p
+    initial state A
+    do p.x++; seen = p.x go to A
+  }
+  if leave go to T
+  state T
+  go to S
+}

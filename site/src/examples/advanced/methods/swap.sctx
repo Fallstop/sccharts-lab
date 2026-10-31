@@ -1,0 +1,11 @@
+scchart Swap {
+  input bool swap
+  output int a = 1, b = 2
+
+  initial state Hold
+    if swap do {
+      int t = a
+      a = b;
+      b = t
+    } go to Hold
+}

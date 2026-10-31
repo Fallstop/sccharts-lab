@@ -1,0 +1,38 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "note": "Tick 1 enters `S`."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "c": false
+      },
+      "note": "`a`: `W` → `F` (`n = 1`). `S` has terminated, but the join's trigger `c` is false, so it waits in the terminated state."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "note": "Still waiting: `c` is false."
+    },
+    {
+      "inputs": {
+        "c": true
+      },
+      "note": "`c` holds while `S` is still terminated: the join fires and its effect runs: `n = 11`."
+    },
+    {
+      "inputs": {
+        "c": false
+      },
+      "note": "In `D`: `n = 11`."
+    }
+  ],
+  "expect": "ok"
+}

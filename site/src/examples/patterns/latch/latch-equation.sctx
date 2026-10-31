@@ -1,0 +1,6 @@
+scchart LatchEquation {
+  input bool button, arrived
+  output bool lamp
+
+  immediate during do lamp = (pre(lamp) || button) && !arrived
+}

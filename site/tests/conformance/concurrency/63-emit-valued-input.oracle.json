@@ -1,0 +1,115 @@
+{
+  "hash": "c924b324bb5444ba211dc8d85acce97677afdcdf",
+  "chart": "tests/conformance/concurrency/63-emit-valued-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Valued input signals currently do not support emission (overwriting).",
+      "line": 8,
+      "column": 13
+    }
+  ],
+  "interface": {
+    "V": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "V_val": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "seen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "V": false,
+        "V_val": 0,
+        "a": false
+      },
+      "values": {
+        "V": false,
+        "V_val": 0,
+        "a": false,
+        "seen": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "V": true,
+        "V_val": 0,
+        "a": true,
+        "seen": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "V": true,
+        "V_val": 0,
+        "a": false,
+        "seen": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "V": false,
+        "V_val": 9
+      },
+      "values": {
+        "V": false,
+        "V_val": 9,
+        "a": false,
+        "seen": 9
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

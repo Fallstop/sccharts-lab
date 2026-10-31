@@ -1,0 +1,21 @@
+scchart Logger {
+  input bool sample
+  input int temperature
+  output int peak = 0, peakNumber = 0
+  struct Reading {
+    int value
+    int number
+  } latest, highest
+
+  initial state Log
+    if sample do {
+      latest.value = temperature;
+      latest.number++;
+      if (latest.number == 1 || latest.value > highest.value) {
+        highest.value = latest.value;
+        highest.number = latest.number
+      }
+      peak = highest.value;
+      peakNumber = highest.number
+    } go to Log
+}

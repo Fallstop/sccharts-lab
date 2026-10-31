@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "g": false
+      },
+      "note": "The inner `x` (10) shadows the output `x` (1) inside `S`. Nothing fires in tick 1: `x = 1`, `y = 0`."
+    },
+    {
+      "inputs": {
+        "g": true
+      },
+      "note": "`g` holds: the inner `x` becomes 11 and `y = 11`. The output `x` is untouched and stays 1."
+    },
+    {
+      "inputs": {
+        "g": false
+      },
+      "note": "No further change: `x = 1`, `y = 11`."
+    }
+  ],
+  "expect": "ok"
+}

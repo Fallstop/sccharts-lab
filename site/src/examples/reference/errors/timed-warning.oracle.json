@@ -1,0 +1,135 @@
+{
+  "hash": "774cf91b295a1522dbe5b42fcde24004e1b008e5",
+  "chart": "src/examples/reference/errors/timed-warning.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on t."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "start": false,
+        "alarm": false,
+        "sleepT": 1000,
+        "t": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "deltaT": 100,
+        "start": true,
+        "alarm": false,
+        "sleepT": 300,
+        "t": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "deltaT": 100,
+        "start": false,
+        "alarm": false,
+        "sleepT": 200,
+        "t": 100
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "deltaT": 100,
+        "start": false,
+        "alarm": false,
+        "sleepT": 100,
+        "t": 200
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "deltaT": 100,
+        "start": false,
+        "alarm": true,
+        "sleepT": 1000,
+        "t": 300
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

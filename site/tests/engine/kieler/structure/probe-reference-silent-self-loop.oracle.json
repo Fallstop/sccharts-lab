@@ -1,0 +1,141 @@
+{
+  "hash": "61186d12b7373ef2668e045e10e7f4100dfbba31",
+  "chart": "tests/engine/kieler/structure/probe-reference-silent-self-loop.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 28,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [C0xs1r0s1]",
+      "line": 24,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "The transition is not reachable.",
+      "line": 25,
+      "column": 7
+    }
+  ],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "d": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "d": false,
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "d": false,
+        "x": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "d": true,
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "d": true,
+        "x": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "d": true,
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "d": true,
+        "x": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "d": false,
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "d": false,
+        "x": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "d": false,
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "d": false,
+        "x": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "d": true,
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "d": true,
+        "x": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "d": false,
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "d": false,
+        "x": 2
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+scchart SuspendCountIgnored {
+  input bool A
+  output int moves = 0
+
+  initial state M {
+    suspend if 2 A
+
+    initial state I
+    if true do moves += 1 go to I
+  }
+}

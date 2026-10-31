@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": { "front": false, "back": false },
+      "note": "Tick 1 enters `Front` and `Back`, two copies of `Tally`, each in its own `Counting` state."
+    },
+    {
+      "inputs": { "front": true },
+      "note": "Someone comes in at the front: the self-loop of `Front`'s copy fires and adds one to `frontCount`. `Back`'s copy does nothing."
+    },
+    {
+      "inputs": {},
+      "note": "`front` is still true (inputs keep their value), so `Front`'s copy counts again: 2."
+    },
+    {
+      "inputs": { "front": false, "back": true },
+      "note": "Now the back door: only `Back`'s copy counts."
+    },
+    {
+      "inputs": { "front": true },
+      "note": "Both doors at once: both copies take their self-loop in the same tick, each adding one to its own output."
+    },
+    {
+      "inputs": { "front": false, "back": false },
+      "note": "Nobody: 3 at the front, 2 at the back. Each copy has counted only its own door."
+    }
+  ],
+  "expect": "ok"
+}

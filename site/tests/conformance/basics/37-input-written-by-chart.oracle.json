@@ -1,0 +1,88 @@
+{
+  "hash": "bd94446d435417457021789a2d49e3573e07a68a",
+  "chart": "tests/conformance/basics/37-input-written-by-chart.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "seen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "seen": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 11,
+        "seen": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "I": 21,
+        "seen": 11
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 7
+      },
+      "values": {
+        "I": 17,
+        "seen": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "I": 27,
+        "seen": 17
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

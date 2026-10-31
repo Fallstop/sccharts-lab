@@ -1,0 +1,147 @@
+---
+title: Design specimen
+description: Every element a chapter can use, in the guide's styles. For writers and reviewers; not part of the guide.
+# A draft: shown by the dev server (tools/dev-server.sh), left out of production builds (so out of the
+# sitemap and the search index too).
+draft: true
+pagefind: false
+head:
+  - tag: meta
+    attrs:
+      name: robots
+      content: noindex
+---
+
+import { Chart, Sim, Compare, Quiz, Predict, TryIt, KeyIdeas } from '~components/guide'
+import Playground from '~components/Playground.astro'
+import { Aside, Tabs, TabItem, Steps, Badge } from '@astrojs/starlight/components'
+
+This page shows the building blocks of a chapter with the guide's styles applied. Its running example is the
+landing page's chart, `Toggle`: one boolean input, `button`, one boolean output, `light`, and two states.
+Body text is set in Atkinson Hyperlegible Next at 18 px, at most about 75 characters to the line; inline code such as
+`pre(I)`, `l`, `O = 0` and `if A go to B` uses Atkinson Hyperlegible Mono, so `I`, `l` and `1` stay apart.
+
+## A section heading
+
+Paragraphs keep a comfortable measure even where the column is wider, because widgets use the full
+width of the column. **Strong text** is set in the ink colour, *emphasis* in italics, and
+[links](/learn/ticks/) in the accent colour, KIELER's keyword plum.
+
+### A subsection heading
+
+- A tick is one reaction of the whole chart.
+- Lists use muted markers, so the text leads.
+- Nested structure stays shallow in a beginner's guide.
+
+1. Ordered lists are for real sequences.
+2. Their numbers use tabular figures.
+
+#### A minor heading
+
+Use minor headings sparingly; most chapters need only `##` and `###`.
+
+## Tick tables
+
+The guide's standard table: one row per tick. This one is KIELER's own trace of `Toggle` for the inputs of
+the landing page's opening.
+
+| Tick | `button` | State after | `light` after |
+| ---: | --- | --- | --- |
+| 1 | false | Off | false |
+| 2 | true | On | true |
+| 3 | false | On | true |
+| 4 | false (held) | On | true |
+| 5 | true | Off | false |
+| 6 | false | Off | false |
+| 7 | true | On | true |
+
+## Code
+
+```sctx title="toggle.sctx" {5}
+scchart Toggle {
+  input bool button
+  output bool light = false
+
+  initial state Off
+    if button do light = true go to On
+
+  state On
+    if button do light = false go to Off
+}
+```
+
+A snippet that is not a whole chart (the fence may also say `sct`):
+
+```sct
+state Waiting
+  immediate if A && !B do count++ go to Done
+  if pre(S) abort to Error   // strong abort
+```
+
+## Asides
+
+<Aside>A note adds context that the reader can skip.</Aside>
+
+<Aside type="tip">A tip offers a better way to do something.</Aside>
+
+<Aside type="caution" title="A common mistake">
+A caution names a mistake beginners make, and quotes the compiler message they will see.
+</Aside>
+
+<Aside type="danger">Danger is for behaviour that silently does the wrong thing.</Aside>
+
+## Tabs and steps
+
+<Tabs>
+  <TabItem label="VS Code">Install SCCharts Lab from the marketplace.</TabItem>
+  <TabItem label="KIELER">Download the KIELER tools from Kiel University.</TabItem>
+</Tabs>
+
+<Steps>
+
+1. The first step is drawn as an initial state.
+
+2. Steps in between are simple states.
+
+3. The last step is a final state.
+
+</Steps>
+
+Badges: <Badge text="Extended SCCharts" variant="note" /> <Badge text="Core" variant="tip" /> <Badge text="Not simulated" variant="caution" />
+
+---
+
+## Widgets
+
+<Chart example="landing/toggle" caption="A chart: the diagram, with the source one click away." />
+
+<Sim example="landing/toggle" caption="A simulation, with the guided tour from `toggle.scenario.json`." />
+
+<Compare a="landing/toggle" b="landing/toggle" caption="Two charts, stepped with the same inputs." />
+
+<Playground example="landing/toggle" />
+
+<Predict example="landing/toggle" ask={[{ tick: 3, value: 'light' }, { tick: 5, state: 'On' }]} />
+
+## Try it
+
+<TryIt example="landing/toggle" solution="landing/toggle" title="Two buttons">
+Change `Toggle` so that it has two inputs, `on` and `off`: `on` switches the light on and `off` switches it off.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="In tick 1, `button` is true. Which state is `Toggle` in after the tick?"
+  options={['`Off`: the transition is delayed, so it cannot fire in the tick `Off` is entered', '`On`: `button` is true, so the transition fires', 'Neither: the chart has not started yet']}
+  answer={0}
+>
+Tick 1 enters the initial state. A delayed transition is checked from the next tick on, so `Toggle` stays in
+`Off` whatever `button` is. KIELER's simulation shows the same.
+</Quiz>
+
+<KeyIdeas>
+- A chart reacts in ticks: inputs are read, the chart reacts, outputs are written.
+- A delayed transition cannot fire in the tick its source state was entered.
+- Inputs keep their value until they are changed.
+</KeyIdeas>

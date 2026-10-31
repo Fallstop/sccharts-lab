@@ -1,0 +1,24 @@
+scchart HistoryWarning {
+  input bool next, leave
+  output int at
+
+  initial state Steps {
+    initial state One {
+      entry do at = 1
+    }
+    if next go to Two
+    state Two {
+      entry do at = 2
+    }
+    if next go to Three
+    state Three {
+      entry do at = 3
+    }
+  }
+  if leave go to Away
+
+  state Away {
+    entry do at = 0
+  }
+  if leave go to Steps history
+}

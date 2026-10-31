@@ -1,0 +1,107 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1: dark."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `On` is entered and its entry action switches the light on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "`if 4 true` counts its first tick (the entry tick does not count)."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Two."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Three."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Four: the timeout fires and `On`'s exit action switches the light off. On for ticks 2 to 5: four ticks."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Dark."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "One."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Two."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed again before the timeout. `if button go to On` is written first, so it wins: `On` is left and entered again, and the re-entry restarts the count. The exit and entry actions run, but the light ends the tick on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "One, counted from the new entry."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Two."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Three."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Four: off. The second press bought four more ticks from tick 11."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Dark."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Dark."
+    }
+  ],
+  "expect": "ok"
+}

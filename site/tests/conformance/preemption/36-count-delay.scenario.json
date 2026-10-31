@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`if 3 A` fires in the third tick in which A holds. The tick S is entered does not count for a delayed transition: count 0."
+    },
+    {
+      "inputs": {},
+      "note": "A holds: count 1."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "A is absent: the count stays 1. The ticks need not be consecutive."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Count 2."
+    },
+    {
+      "inputs": {},
+      "note": "Count 3: the transition fires (fired = 1)."
+    },
+    {
+      "inputs": {},
+      "note": "In T."
+    }
+  ],
+  "expect": "ok"
+}

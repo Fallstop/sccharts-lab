@@ -1,0 +1,364 @@
+---
+title: "History and deferred transitions"
+description: "Coming back to a superstate where you left it with history and shallow history, and arriving quietly with deferred transitions."
+sidebar:
+  order: 2
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Your phone is playing the second track of an album when a call comes in. After the call you expect
+the music to carry on with track 2, not to start the album again. A transition into a
+[superstate](/learn/hierarchy/) normally does start it again, from its initial states. A **history
+transition** brings it back to where it was when it was left.
+
+The second half of this chapter is about a different modifier for transitions into a state,
+`deferred`, which makes the arrival quiet: the target state does nothing in the tick it is entered.
+
+## Coming back where you left off
+
+Both players below leave `Playing` for `OnCall` when `call` is pressed, and go back when `hangUp` is
+pressed. The only difference is the last line: `PlayerRestart` goes back with `go to Playing`,
+`PlayerHistory` with `go to Playing history`.
+
+<Compare
+  a="advanced/history/player-restart"
+  b="advanced/history/player-history"
+  scenario="advanced/history/player-compare"
+  caption="The tour skips to track 2, takes a call in tick 4 and hangs up in tick 5: `PlayerRestart` is back on track 1, `PlayerHistory` on track 2."
+/>
+
+The value of `track` after each tick of the tour:
+
+| Tick | Inputs | Restart | History |
+| ---: | --- | --- | --- |
+| 1 | none | 1 | 1 |
+| 2 | `next` | 2 | 2 |
+| 3 | none | 2 | 2 |
+| 4 | `call` | 0 | 0 |
+| 5 | `hangUp` | 1 | 2 |
+| 6 | none | 1 | 2 |
+| 7 | `next` and `call` | 0 | 0 |
+| 8 | `hangUp` | 1 | 3 |
+| 9 | none | 1 | 3 |
+
+In the diagram a history transition ends in a small dark circle with an **H** in it, next to the
+arrowhead (here **H\***, for reasons explained [below](#shallow-and-deep-history)).
+
+## The rule
+
+`go to S history` enters `S` in the states that were active in each of its regions when `S` was last
+left, at every level of nesting. The first time `S` is entered this way, there is nothing to
+remember, and it starts from its initial states as usual.
+
+Three details matter in practice:
+
+- **The resumed states are entered again.** Their entry actions run, and their immediate transitions
+  are checked, just as for any other entry. In tick 5, `Track2`'s entry action sets `track` back to 2.
+- **History remembers the state that was entered last.** In tick 7, `next` and `call` arrive together.
+  `go to OnCall` is a weak abort, so the inside of `Playing` first takes its last step, from `Track2`
+  to `Track3` (see [Aborts](/learn/preemption/)). That step counts: in tick 8, history resumes
+  `Track3`. The one exception is a state entered with `deferred`, which history does not record at
+  all ([below](#deferred-entries-are-not-remembered)).
+- **History belongs to the transition, not to the state.** Every other transition into `S` still
+  starts it from its initial states. You can say so explicitly with `go to S reset`, which is the
+  same as writing nothing.
+
+<Aside title="The _H warnings">
+A chart with history compiles with warnings such as
+
+```text wrap
+ValuedObject with name _HPlaying is contained in the model but not in VariableStore.
+```
+
+KIELER keeps each remembered state in a hidden variable `_H<state>`, and the warning is about that variable: one for
+the target of each history transition, and with deep history one more for every superstate inside it
+whose position is remembered too. The warnings are harmless.
+</Aside>
+
+## History restores states, not data
+
+History brings back where you were, but not what your variables held. Here `Playing` counts the
+seconds of the current track in a local variable, `seconds`, and copies it to the output `shown`. A
+call comes in during tick 4, and the player is resumed with history in tick 5. What does `shown` say
+in tick 6? Predict, check, then open the explanation.
+
+<Predict
+  example="advanced/history/locals-reset"
+  ask={[{ tick: 6, value: 'shown' }]}
+  caption="`seconds` is declared inside `Playing`. Does history bring back its value?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`shown` is 1. Resuming with history is still an *entry* of `Playing`, and a state's local variables
+are initialised every time the state is entered (see [Superstates](/learn/hierarchy/)). So `seconds`
+starts again from 0 while `Track` is resumed. The same goes for the locals of the resumed inner
+states, and for their entry actions, which run again.
+
+</details>
+
+If a value must survive the visit, declare it outside the superstate, or mark it **`static`**:
+
+```sctx
+initial state Playing {
+  static int seconds = 0
+```
+
+A `static` local is initialised once, when the chart starts, and keeps its value when its state is left
+and entered again, like a `static` local variable in C. With that one word, the player above carries on counting after the
+call: `shown` is 4 in tick 6.
+
+## Shallow and deep history
+
+`history` on its own is *deep*: it restores every level of nesting. `shallow history` restores only the
+states directly inside the target; any superstate among them starts from its own initial states.
+
+The menu below has a `Settings` superstate with two pages, `Display` and `Sound`, each a superstate
+with two screens. The screen shown is a number in `screen`: 11 and 12 for the two display screens, 21
+and 22 for the two sound screens, 0 for `Home`.
+
+<Compare
+  a="advanced/history/menu-deep"
+  b="advanced/history/menu-shallow"
+  scenario="advanced/history/menu-compare"
+  caption="The tour opens `Contrast` in tick 3, goes home and opens the menu again in tick 5: deep history shows `Contrast` (12), shallow history `Brightness` (11)."
+/>
+
+The value of `screen` after each tick, from tick 2:
+
+| Tick | Inputs | Deep | Shallow |
+| ---: | --- | --- | --- |
+| 2 | `menu` | 11 | 11 |
+| 3 | `right` | 12 | 12 |
+| 4 | `home` | 0 | 0 |
+| 5 | `menu` | 12 | 11 |
+| 6 | `down` | 21 | 21 |
+| 7 | `right` | 22 | 22 |
+| 8 | `home` | 0 | 0 |
+| 9 | `menu` | 22 | 21 |
+| 10 | none | 22 | 21 |
+
+Both kinds remember which page was open. Only deep history also remembers the screen within the page.
+In the diagram, deep history is drawn as **H\***, shallow history as **H**.
+
+## A history transition that is silently ignored
+
+Now put the menu inside a device that can be switched off. `Home` and `Settings` move into a superstate
+`On`, next to an `Off` state:
+
+<Compare
+  a="advanced/history/nested-ignored"
+  b="advanced/history/nested-fixed"
+  scenario="advanced/history/nested-compare"
+  caption="The tour opens `Contrast` in tick 4, goes home and opens the menu again in tick 6: `MenuNested` forgets, `MenuNestedFixed` remembers."
+/>
+
+In `MenuNested` the history transition `if menu go to Settings history` has no effect at all: in tick 6
+`Settings` starts again in `Brightness`. KIELER gives no error and no warning. (The note under the
+comparison is this guide's: it marks [KIELER quirks](/reference/about/#notices-on-examples) that KIELER
+itself does not mention.)
+
+The reason is a limitation of KIELER's compiler. It only processes history transitions into states of
+the chart's **top-level regions**, and, inside them, history transitions into states nested in a state
+that is **itself the target of a history transition**. Any other history transition is quietly
+treated as a plain `go to`. `Settings` is nested inside `On`, and `On` is only ever entered with a plain
+`go to On`, so the history on `Settings` is dropped.
+
+<Aside type="danger" title="History inside a nested superstate">
+A `history` or `shallow history` transition into a state that is not in a top-level region works only
+if every superstate around that state is itself the target of some history transition. Otherwise it
+silently restarts the state. Check the behaviour in the simulator whenever you nest a history target.
+</Aside>
+
+`MenuNestedFixed` makes `On` a history target: `Off` goes back with `go to On shallow history`. Now the
+history inside `On` works (tick 6 shows `Contrast` again). But the fix also changes what switching on
+does: in tick 8 the device comes back on the `Settings` page instead of `Home`. When that is not what you
+want, restructure the chart so that the state you return to with history sits in a top-level region.
+
+## Deferred transitions
+
+A transition into a state can also be marked `deferred`: `go to S deferred`. A **deferred** entry is a
+quiet one. In the tick it happens, `S` does none of its immediate behaviour:
+
+- its entry actions do not run, and they never will for this visit;
+- its `immediate during` actions and its immediate outgoing transitions wait until the next tick.
+
+From the next tick on, `S` behaves as if it had been entered normally one tick earlier: its delayed
+transitions and `during` actions can already run, and so can the immediate behaviour that waited.
+
+In this chart, entering `Hall` rings a chime (an entry action) and walks straight on into `Room` (an
+immediate transition). The transition into `Hall` is deferred:
+
+<Sim example="advanced/history/arrive-deferred" caption="Tick 2 arrives in `Hall` quietly; the immediate transition fires in tick 3; the chime never rings." />
+
+`chimes` and `steps` after each tick, with a normal `go to Hall` and with `go to Hall deferred`:
+
+| Tick | `walk` | Normal | Deferred |
+| ---: | --- | --- | --- |
+| 1 | false | 0, 0 | 0, 0 |
+| 2 | true | 1, 1 | 0, 0 |
+| 3 | false | 1, 1 | 0, 1 |
+
+In the diagram, a deferred transition has a small red circle next to its arrowhead.
+
+### What deferred is for
+
+`deferred` is for coming back to a state whose immediate transitions should not fire again in the very
+tick you arrive, because the inputs of that tick still describe the job that has just finished. This
+coffee machine starts filling as soon as a cup stands under the spout, `immediate if cup do fills++ go
+to Filling`, and goes back to `Ready` when the cup is `full`. The inputs of a tick are read at its
+start, so in the tick of `full` the full cup is still there:
+
+<Compare
+  a="advanced/history/filler-normal"
+  b="advanced/history/filler-deferred"
+  scenario="advanced/history/filler-compare"
+  caption="Each full cup is still under the spout in the tick it is full (ticks 3 and 6): `FillerNormal` starts filling it again at once, `FillerDeferred` waits a tick and finds it gone."
+/>
+
+With a plain `go to Ready`, `Ready`'s immediate transition reads `cup` in the same tick and starts on the
+full cup again: two cups, three fills. With `go to Ready deferred`, `Ready` arrives quietly and first
+looks at `cup` in the next tick, when the cup has been taken. The initial entry in tick 1 is never
+deferred: both machines start on the first cup at once.
+
+`deferred` buys exactly one tick. If a cup may stay under the spout for longer, wait until it has gone
+instead, with a state between `Filling` and `Ready` that is left `if !cup`.
+
+### Deferred entry into a superstate
+
+For a superstate, `deferred` always skips the superstate's *own* immediate behaviour: its entry
+actions, its `immediate during` actions and its immediate outgoing transitions. Whether its inside
+starts a tick late as well depends, surprisingly, on the superstate's other incoming transitions. The
+rule of thumb: **a deferred entry into a superstate may start its inside one tick late, so check the
+timing in the simulator.**
+
+The two charts below are identical except that `DeferredMixed` has a second, normal transition into
+`Inside`, which is never even taken:
+
+<Compare
+  a="advanced/history/deferred-super-only"
+  b="advanced/history/deferred-super-mixed"
+  scenario="advanced/history/deferred-super-compare"
+  caption="The same deferred entry in tick 2: the inside of `Inside` starts a tick late in `DeferredOnly`, on time in `DeferredMixed`."
+/>
+
+<details>
+<summary>The exact rule</summary>
+
+KIELER picks one of two implementations of `deferred` for a superstate:
+
+- If **every** transition into the superstate is deferred, all in the same way, and the superstate cannot
+  get back to itself through immediate transitions, KIELER really enters it one tick later. In the
+  deferred tick nothing inside happens; in the next tick the inner initial states are entered (their
+  entry actions run) and the inside starts, so its delayed transitions fire one tick later than after a
+  normal entry. That is `DeferredOnly`.
+- **Otherwise** the superstate is entered in the deferred tick: the entry actions of its inner initial
+  states run, and the inside keeps its normal timing. That is `DeferredMixed`.
+
+`deferred` can also be combined with history (`go to M deep deferred history`). KIELER then resumes `M`
+one tick late: in the deferred tick nothing happens, and in the next tick the remembered inner state is
+entered and its entry action runs, while `M`'s own entry action does not.
+
+</details>
+
+### Deep deferred
+
+`go to B deep deferred` extends the quiet arrival to the inner initial states, all the way down: their
+entry actions never run for this visit, and their immediate transitions wait a tick. The two charts
+below differ only in the word `deep`:
+
+<Compare
+  a="advanced/history/house-deferred"
+  b="advanced/history/house-deep"
+  scenario="advanced/history/house-compare"
+  caption="The inside of `House` starts in tick 3. `Hall`'s entry action switches on a light in `HouseDeferred` (`lights` = 1) but not in `HouseDeep`; neither chart runs `House`'s own entry action."
+/>
+
+Every transition into `House` is deferred, so in both charts the inside starts a tick late (the first
+case of [the exact rule](#deferred-entry-into-a-superstate) above). `deep` decides only whether the
+inner initial state `Hall` arrives quietly as well.
+
+### Deferred entries are not remembered
+
+KIELER keeps the history of a superstate with an entry action that it adds to every state inside: each
+entry records the state. A deferred entry skips the entry actions, and that one with them. So history
+does not remember a state entered with `deferred`; it resumes the state that was recorded before it:
+
+<Sim example="advanced/history/history-deferred" caption="`Kitchen` is entered with `deferred` in tick 2. After the garden, `go to House history` in tick 5 resumes `Hall`, not `Kitchen`." />
+
+KIELER gives no warning. If history must come back to a state, enter that state without `deferred`.
+
+<Aside title="What the KIELER wiki says">
+The KIELER wiki says that history and deferred transitions are not fully supported, may behave
+unexpectedly when combined, and may not be shown correctly in the simulator. What this chapter shows is
+what KIELER's simulation does. If a deferred transition seems to do something odd, step it in the
+simulator and compare with the rules above.
+</Aside>
+
+## Try it
+
+<TryIt example="advanced/history/kiosk-starter" solution="advanced/history/kiosk-solution" title="Wake up on the right page">
+`Kiosk` shows news and weather pages; `open` shows the details of a page, and `idle` switches to a
+screensaver. At the moment a `touch` on the screensaver always goes back to the news headlines. Change
+the chart so that a touch goes back to the page that was showing before the screensaver (news or
+weather), but always to that page's first screen (11 or 21), never to the details.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="Superstate `M` was left while its inner state `J` was active. Later `go to M history` fires. Which of these happens in that tick?"
+  options={[
+    '`J` becomes active again, but its entry action does not run: it is only resumed',
+    '`J` becomes active again and the locals of `M` keep the values they had when `M` was left',
+    "`M` starts from its initial state, because history only works for strong aborts",
+    "`J` is entered again: its entry action runs, and `M`'s local variables are initialised again",
+  ]}
+  answer={3}
+>
+Resuming with history is an entry like any other: `M` and `J` are entered, their entry actions run and
+their locals are initialised. Only the choice of the inner state comes from history.
+</Quiz>
+
+<Quiz
+  question="A chart has a superstate `On` that is entered only by `if power go to On`. Inside `On`, a transition `if menu go to Settings history` leads to a nested superstate `Settings`. What does KIELER do with that history transition?"
+  options={[
+    'It works as written: `Settings` resumes where it was',
+    'It rejects the chart with an error',
+    'It treats it as a plain `go to Settings`, without a warning',
+    'It treats it as `shallow history`',
+  ]}
+  answer={2}
+>
+KIELER processes history transitions only into states of the top-level regions, and inside states that
+are themselves history targets. `On` is not one, so the history on `Settings` is dropped silently.
+</Quiz>
+
+<Quiz
+  question="State `B` has `entry do n++`. The chart goes to `B` with `go to B deferred` in tick 6 and stays there. When does `n++` run?"
+  options={['In tick 6', 'In tick 7', 'Never during this visit']}
+  answer={2}
+>
+A deferred entry skips the entry actions for good. The immediate behaviour of `B` that waited (immediate
+transitions, `immediate during` actions) runs in tick 7, but entry actions are not postponed.
+</Quiz>
+
+<KeyIdeas>
+- `go to S history` resumes `S` in the states it was in when it was last left, at every level;
+  `shallow history` resumes only the level directly inside `S`.
+- Resuming is an entry: entry actions run again and local variables start again from their initial
+  values. History restores states, not data.
+- KIELER ignores history transitions into nested states unless every state around them is also a
+  history target. Keep history targets in top-level regions.
+- `go to S deferred` arrives quietly: `S`'s entry actions are skipped and its immediate behaviour waits
+  a tick. Use it when the inputs of the arrival tick still belong to the job just finished. History
+  does not record a deferred entry.
+- For a superstate, whether a deferred entry also delays the inside depends on whether all of its
+  incoming transitions are deferred.
+</KeyIdeas>
+
+Next, [Connector states](/advanced/connectors/): junctions where transitions meet and branch again
+within a tick.

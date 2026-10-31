@@ -1,0 +1,182 @@
+{
+  "hash": "2c3a3383cb18fd65f93687cf4f38afc9d6ff4892",
+  "chart": "tests/conformance/preemption/59-shallow-history.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HM is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "P": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "R": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outer": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "B": false,
+        "P": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "P": false,
+        "R": false,
+        "inner": 0,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "B": false,
+        "P": false,
+        "R": false,
+        "inner": 1,
+        "outer": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "values": {
+        "A": false,
+        "B": true,
+        "P": false,
+        "R": false,
+        "inner": 2,
+        "outer": 2
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "B": false,
+        "P": true
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "P": true,
+        "R": false,
+        "inner": 2,
+        "outer": 2
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "P": false,
+        "R": true,
+        "inner": 1,
+        "outer": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "B": false,
+        "P": false,
+        "R": false,
+        "inner": 1,
+        "outer": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

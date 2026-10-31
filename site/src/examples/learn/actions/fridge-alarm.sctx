@@ -1,0 +1,23 @@
+scchart FridgeAlarm {
+  input bool doorOpen
+  output bool lamp = false, beep = false
+  output int openFor = 0
+
+  initial state Closed
+    if doorOpen go to Open
+
+  state Open {
+    entry do lamp = true; openFor = 0
+    during do openFor++
+    exit do lamp = false
+
+    initial state Quiet
+      if openFor == 3 go to Beeping
+
+    state Beeping {
+      entry do beep = true
+      exit do beep = false
+    }
+  }
+  if !doorOpen go to Closed
+}

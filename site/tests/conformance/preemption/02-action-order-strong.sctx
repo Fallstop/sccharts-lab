@@ -1,0 +1,15 @@
+scchart ActionOrderStrong {
+  input bool leave
+  output int step = 0
+  output int duringAt = 0, exitAt = 0, effectAt = 0, entryAt = 0
+
+  initial state A {
+    during do step += 1; duringAt = step
+    exit do step += 1; exitAt = step
+  }
+  if leave do step += 1; effectAt = step abort to B
+
+  state B {
+    entry do step += 1; entryAt = step
+  }
+}

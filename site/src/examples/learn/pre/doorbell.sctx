@@ -1,0 +1,9 @@
+scchart Doorbell {
+  input signal press
+  output signal chime
+  output signal int rings
+
+  initial state Watch {
+    immediate during if press && !pre(press) do chime; rings(pre(val(rings)) + 1)
+  }
+}

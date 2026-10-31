@@ -1,0 +1,10 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz28 {
+  output int s = 0
+  region R for k : 2 to 0 {
+    initial state A
+    immediate do s = s * 10 + k + 1 go to B
+    state B
+    go to A
+  }
+}

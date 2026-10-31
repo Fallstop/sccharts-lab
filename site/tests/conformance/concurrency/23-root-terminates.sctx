@@ -1,0 +1,18 @@
+scchart RootTerminates {
+  input bool a
+  output int n
+
+  during do n++
+
+  region R1 {
+    initial state W
+    if a go to F
+    final state F
+  }
+
+  region R2 {
+    initial state W
+    go to F
+    final state F
+  }
+}

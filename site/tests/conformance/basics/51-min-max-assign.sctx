@@ -1,0 +1,8 @@
+scchart MinMaxAssign {
+  input int I
+  output int lowest = 10, highest = 10
+  output float fl = 1.5
+
+  initial state S
+  do lowest min= I; highest max= I + 1; fl min= I go to S
+}

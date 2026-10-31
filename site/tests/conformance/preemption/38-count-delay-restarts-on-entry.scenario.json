@@ -1,0 +1,42 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "note": "S is entered: count 0 (entry tick)."
+    },
+    {
+      "inputs": {},
+      "note": "Count 1."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "S is left to U before the count is reached."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": false
+      },
+      "note": "U goes back to S. Entering S starts the count again from 0 (entry tick, not counted)."
+    },
+    {
+      "inputs": {},
+      "note": "Count 1."
+    },
+    {
+      "inputs": {},
+      "note": "Count 2."
+    },
+    {
+      "inputs": {},
+      "note": "Count 3: fires (fired = 1). Without the restart it would have fired two ticks earlier."
+    }
+  ],
+  "expect": "ok"
+}

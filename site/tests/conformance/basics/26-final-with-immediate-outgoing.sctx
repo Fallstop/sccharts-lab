@@ -1,0 +1,11 @@
+scchart FinalWithImmediateOutgoing {
+  output int x = 0
+
+  initial state A
+  immediate go to B
+
+  final state B
+  immediate do x = 5 go to C
+
+  state C
+}

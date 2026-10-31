@@ -1,0 +1,8 @@
+scchart DuplicateDeclaration {
+  output int x
+  int x
+
+  initial state A
+  do x = 1 go to B
+  state B
+}

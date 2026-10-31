@@ -1,0 +1,78 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beat": false,
+        "demand": false,
+        "restart": false
+      },
+      "note": "Tick 1: watching and running, motor stopped."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat."
+    },
+    {
+      "inputs": {
+        "beat": false,
+        "demand": true
+      },
+      "note": "Demand: the motor starts (`starts` is 1)."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat."
+    },
+    {
+      "inputs": {
+        "beat": false,
+        "demand": false
+      },
+      "note": "No demand: the motor stops. From now on no more beats arrive."
+    },
+    {
+      "inputs": {},
+      "note": "Second quiet tick."
+    },
+    {
+      "inputs": {
+        "demand": true
+      },
+      "note": "Third quiet tick: the watchdog emits `expired`. In the same tick demand rises again, but the strong abort `if expired abort to Safe` is decided before `Running` reacts: the motor is not started, `starts` stays 1. `Running`'s exit action makes sure the motor is off, and `Safe` raises the alarm."
+    },
+    {
+      "inputs": {
+        "demand": false
+      },
+      "note": "Safe: the alarm stays on, whatever the inputs."
+    },
+    {
+      "inputs": {
+        "restart": true,
+        "beat": true
+      },
+      "note": "`restart`, with the beats back: the watchdog watches again and the controller returns to `Running`."
+    },
+    {
+      "inputs": {
+        "restart": false
+      },
+      "note": "Running."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {},
+      "note": "Quiet."
+    }
+  ],
+  "expect": "ok"
+}

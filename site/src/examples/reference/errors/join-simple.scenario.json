@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: `join to` waits for the inside of a superstate to finish, and `Idle` has no inside."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "A state with a termination transition must have inner behaviour."
+}

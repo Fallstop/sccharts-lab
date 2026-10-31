@@ -1,0 +1,28 @@
+// A referenced chart's `immediate go to C0xs1` has no effects in KIELER: Surface/Depth merges C0xs0 into the final
+// state, the instance's region is then only a final state, and the delayed self-loop of the referencing state makes
+// the chart unschedulable ("Can't schedule ...").
+scchart RefSilentMerge {
+  input bool a, c
+  output int z = 0
+  output signal S
+  region R1 {
+    initial state R1s0
+    go to R1s2
+    state R1s2 {
+      region {
+        initial state R1s2r0s0 is C0(c to p, a to q, z to o, S to T)
+        go to R1s2r0s0
+      }
+    }
+    go to R1s0
+  }
+}
+
+scchart C0 {
+  input bool p, q
+  output int o = 0
+  output signal T
+  initial state C0xs0
+  immediate go to C0xs1
+  final state C0xs1
+}

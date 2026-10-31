@@ -1,0 +1,7 @@
+// A chart method with a parameter and an empty body fails in gcc as in a class (probe-empty-method-class); without the parameter it compiles.
+scchart L {
+  method void nothing(int k) {
+  }
+  initial state S
+  do nothing(1) go to S
+}

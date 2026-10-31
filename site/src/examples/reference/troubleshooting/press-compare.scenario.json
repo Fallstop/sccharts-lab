@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Counting` in both charts." },
+    { "inputs": { "press": true }, "note": "The button goes down. Both charts count one." },
+    { "inputs": {}, "note": "The button is still down: an input keeps its value. `PressCounter` sees `press` true again and counts two. `PressCounterEdge` waits for `press` to *become* true, and it already was." },
+    { "inputs": {}, "note": "Still held: `PressCounter` is at three, `PressCounterEdge` still at one." },
+    { "inputs": { "press": false }, "note": "The button is released." },
+    { "inputs": { "press": true }, "note": "A second press. `PressCounterEdge` counts two presses, `PressCounter` four ticks." },
+    { "inputs": { "press": false }, "note": "Released." }
+  ],
+  "expect": "ok"
+}

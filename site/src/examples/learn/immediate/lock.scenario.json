@@ -1,0 +1,37 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "code": 42,
+        "enter": true
+      },
+      "note": "Tick 1 enters `Idle`. Its transition is delayed, so `enter` has no effect yet."
+    },
+    {
+      "inputs": {
+        "code": 7
+      },
+      "note": "`enter` is still true, so `Idle` → `Check` fires and `tries` is 1. `Check`'s transitions are immediate and `Check` has just been entered, so they are checked in this tick: `code` is 7, so priority 1 fails, and priority 2, which has no trigger, takes the chart back to `Idle` with `open` false. `Check` was entered and left within the tick."
+    },
+    {
+      "inputs": {
+        "enter": false
+      },
+      "note": "`enter` is false, so the chart stays in `Idle`."
+    },
+    {
+      "inputs": {
+        "code": 42,
+        "enter": true
+      },
+      "note": "`Idle` → `Check` → `Idle` again, but this time `code` is 42, so priority 1 fires and `open` becomes true. `tries` is 2."
+    },
+    {
+      "inputs": {
+        "enter": false
+      },
+      "note": "Nothing fires. `open` keeps its value: it is a variable, and nothing assigned it in this tick."
+    }
+  ],
+  "expect": "ok"
+}

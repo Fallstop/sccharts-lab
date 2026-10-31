@@ -1,0 +1,55 @@
+---
+/**
+ * A disabled simulation control bar (reset / back / step / run, the tick counter, one control per input) for
+ * server rendering: the playground shows it until its island hydrates. The live bar is SimPanel's; both use
+ * the same class names, which carry the styles.
+ */
+import type { InterfaceItem } from './examples'
+import { icons } from './icons'
+
+interface Props {
+	inputs: InterfaceItem[]
+	tick?: number
+	note?: string
+}
+const { inputs, tick = 0, note = 'The simulator is not connected yet.' } = Astro.props
+---
+
+<div class="sc-simctl">
+	<div class="sc-simctl__buttons" role="group" aria-label="Simulation">
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-btn--icon" disabled aria-label="Reset" title="Reset">
+			<Fragment set:html={icons.reset} />
+		</button>
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-btn--icon" disabled aria-label="Back one tick" title="Back one tick">
+			<Fragment set:html={icons.back} />
+		</button>
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--initial" disabled>
+			<Fragment set:html={icons.step} />Step
+		</button>
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-btn--icon" disabled aria-label="Run" title="Run">
+			<Fragment set:html={icons.play} />
+		</button>
+	</div>
+	<output class="sc-simctl__tick" aria-live="polite">Tick <b>{tick}</b></output>
+	{
+		inputs.length > 0 && (
+			<fieldset class="sc-simctl__inputs" disabled>
+				<legend class="sc-visually-hidden">Inputs for the next tick</legend>
+				{inputs.map((i) =>
+					i.type === 'bool' || i.type === 'signal' ? (
+						<label class="sc-input sc-input--bool">
+							<input type="checkbox" role="switch" />
+							<span class="sc-input__name">{i.name}</span>
+						</label>
+					) : (
+						<label class="sc-input sc-input--value">
+							<span class="sc-input__name">{i.name}</span>
+							<input type={i.type === 'string' ? 'text' : 'number'} value={i.type === 'string' ? '' : '0'} />
+						</label>
+					)
+				)}
+			</fieldset>
+		)
+	}
+	{note && <p class="sc-simctl__note">{note}</p>}
+</div>

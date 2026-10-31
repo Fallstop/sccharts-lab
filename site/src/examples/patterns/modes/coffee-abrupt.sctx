@@ -1,0 +1,34 @@
+scchart CoffeeAbrupt {
+  input bool brew, clean
+  output bool heater, pump, rinsing
+  output int cups = 0
+
+  initial state Serving {
+    initial state Ready
+      if brew do heater = true go to Heating
+
+    state Heating
+      go to Pouring
+
+    state Pouring {
+      entry do pump = true
+      exit do pump = false
+    }
+    if 2 true do heater = false; cups++ go to Ready
+  }
+  if clean go to Cleaning
+
+  state Cleaning {
+    entry do rinsing = true
+    exit do rinsing = false
+
+    initial state Rinse
+      go to Flush
+
+    state Flush
+      go to Rinsed
+
+    final state Rinsed
+  }
+  join to Serving
+}

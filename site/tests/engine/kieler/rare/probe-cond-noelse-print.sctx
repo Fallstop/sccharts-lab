@@ -1,0 +1,7 @@
+// In print there is nothing to fill in: gcc rejects KIELER's __CONDSELF__.
+scchart CondNoElsePrint {
+  input bool c
+  output int n = 0
+  initial state S
+    if true do print((c) ? 1); n++ go to S
+}

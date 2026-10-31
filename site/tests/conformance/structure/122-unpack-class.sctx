@@ -1,0 +1,15 @@
+// @UnpackClass turns the members of the single instance into plain variables named <instance>_<member>, which
+// is what the pool shows (official KIELER 0.3.0 ignores the annotation and shows the object acc).
+scchart St122Unpack {
+  input bool up
+  output int O = 0
+  @UnpackClass
+  class Acc {
+    int sum = 1
+    void add(int k) {
+      sum = sum + k
+    }
+  } acc
+  initial state A
+  if up do acc.add(2); O = acc.sum go to A
+}

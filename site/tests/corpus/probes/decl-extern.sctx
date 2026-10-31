@@ -1,0 +1,7 @@
+scchart P52 {
+  output int O
+  extern "rand" rand
+  extern @C "abs", @Java "Math.abs" abs
+  initial state S0
+  do O = rand() go to S0
+}

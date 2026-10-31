@@ -1,0 +1,28 @@
+// The semicolon rule: only an assignment (x = e, x += e, x++) that is followed by another statement needs ";".
+// After an if, a loop, a block, a label, a declaration or a call (m(), print(...)) none is needed, and a ";"
+// after the last statement is allowed.
+scchart St139Semicolons {
+  output int a = 0, b = 0, c = 0, d = 0
+  method inc() {
+    a++
+  }
+  method steps() {
+    b = 1;
+    b += 1;
+    if (a > 0) {
+      b = 10
+    }
+    c = b
+  }
+  initial state S
+  do {
+    int t = 3
+    inc()
+    print("a is ", a)
+    for (int i = 0; i < t; i++) {
+      d++
+    }
+    steps()
+    d = d + 1;
+  } go to S
+}

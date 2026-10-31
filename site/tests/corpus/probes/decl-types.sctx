@@ -1,0 +1,16 @@
+scchart P36 {
+  input bool b
+  input int i
+  input float f
+  input string s
+  output signal o
+  output signal int vi
+  signal float vf combine max
+  signal bool vb combine |
+  signal string vs
+  clock c
+  clock-time ct
+  host "unsigned char" h
+  signal pure p
+  initial state S0
+}

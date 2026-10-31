@@ -1,0 +1,104 @@
+{
+  "hash": "5f74921699e124baec02c22adcc4c80faa336049",
+  "chart": "src/examples/advanced/references/lamp-panel.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "left": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "right": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "leftLamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "rightLamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "left": false,
+        "right": false
+      },
+      "values": {
+        "left": false,
+        "right": false,
+        "leftLamp": false,
+        "rightLamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "left": true
+      },
+      "values": {
+        "left": true,
+        "right": false,
+        "leftLamp": true,
+        "rightLamp": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "left": false,
+        "right": true
+      },
+      "values": {
+        "left": false,
+        "right": true,
+        "leftLamp": true,
+        "rightLamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "right": false,
+        "left": true
+      },
+      "values": {
+        "left": true,
+        "right": false,
+        "leftLamp": false,
+        "rightLamp": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "left": false
+      },
+      "values": {
+        "left": false,
+        "right": false,
+        "leftLamp": false,
+        "rightLamp": true
+      },
+      "terminated": false
+    }
+  ]
+}

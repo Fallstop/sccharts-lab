@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "level": -3 }, "note": "First tick: `->` takes `level` itself: `highest` = −3. (Starting from `pre(highest)`, which is 0, would be wrong for negative readings.)" },
+    { "inputs": { "level": -5 }, "note": "−5 is not above −3: `highest` stays −3." },
+    { "inputs": { "level": 2 }, "note": "A new maximum: `highest` = 2." },
+    { "inputs": { "level": 1 }, "note": "`highest` = 2." },
+    { "inputs": { "level": 7 }, "note": "`highest` = 7." }
+  ],
+  "expect": "ok"
+}

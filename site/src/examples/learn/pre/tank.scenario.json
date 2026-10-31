@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "note": "`level` starts at 50, but in tick 1 `pre(level)` is the type's default, 0, not the initial value. So `before` is 0." },
+    { "note": "Now `pre(level)` is 50, the value at the end of tick 1. The delayed during action adds 10: `level` is 60." },
+    { "note": "`before` is 60, `level` is 70." },
+    { "note": "`before` is always the value `level` had one tick earlier." }
+  ],
+  "expect": "ok"
+}

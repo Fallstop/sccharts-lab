@@ -1,0 +1,17 @@
+scchart OvenTimer {
+  input bool start, stop
+  output int remaining = 0
+
+  initial state Idle
+    if start go to Timing
+
+  state Timing is Countdown(remaining to left)
+    if stop go to Idle
+}
+
+scchart Countdown {
+  output int left = 3
+
+  initial state Counting
+    if left > 0 do left-- go to Counting
+}

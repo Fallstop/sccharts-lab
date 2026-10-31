@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "walk": false, "rush": false }, "note": "Tick 1 enters `Outside`. `rush` stays false throughout: `DeferredMixed`'s normal transition into `Inside` is never taken, but it is there." },
+    { "inputs": { "walk": true }, "note": "The deferred entry into `Inside`. `DeferredOnly`: every transition into `Inside` is deferred, so KIELER postpones the whole entry by a tick, and nothing inside happens yet (`innerEntry` = 0). `DeferredMixed`: `Inside` is entered now; only its own entry action is skipped, and `First`'s entry action runs (`innerEntry` = 1)." },
+    { "inputs": { "walk": false }, "note": "`DeferredOnly` really enters `Inside` now: `First`'s entry action runs (`innerEntry` = 1). In `DeferredMixed`, `First`'s delayed transition fires at the normal time (`step` = 1)." },
+    { "inputs": {}, "note": "`DeferredOnly`'s `First` fires one tick later than after a normal entry (`step` = 1). `Inside`'s own entry action has run in neither chart (`outerEntry` = 0)." },
+    { "inputs": {}, "note": "Both in `Second`." }
+  ],
+  "expect": "ok"
+}

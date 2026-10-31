@@ -1,0 +1,10 @@
+// A clock is reset by assigning it (t = 0). It belongs to the state that declares it (here the root), so it
+// keeps running across the states Off and On unless reset.
+scchart St61Blink {
+  output bool on = false
+  clock t
+  initial state Off
+  if t >= 500 do on = true; t = 0 go to On
+  state On
+  if t >= 200 do on = false; t = 0 go to Off
+}

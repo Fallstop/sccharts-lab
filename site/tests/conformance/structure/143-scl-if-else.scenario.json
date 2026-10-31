@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "x": 0
+      },
+      "note": "Tick 1 enters S; the self-loop is delayed: **grade = 0, tripled = 0**."
+    },
+    {
+      "inputs": {
+        "x": 7
+      },
+      "note": "x = 7: the else block, then the inner if: **grade = 1**; t = 21: **tripled = 21**."
+    },
+    {
+      "inputs": {
+        "x": 12
+      },
+      "note": "x = 12: **grade = 2, tripled = 36**."
+    },
+    {
+      "inputs": {
+        "x": 3
+      },
+      "note": "x = 3: **grade = 0, tripled = 9**."
+    }
+  ],
+  "expect": "ok"
+}

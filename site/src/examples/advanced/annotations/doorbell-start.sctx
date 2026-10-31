@@ -1,0 +1,10 @@
+scchart Doorbell {
+  input bool press
+  output bool ring = false
+
+  initial state Quiet
+    if press do ring = true go to Ringing
+
+  state Ringing
+    do ring = false go to Quiet
+}

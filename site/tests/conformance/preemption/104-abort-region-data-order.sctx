@@ -1,0 +1,26 @@
+// The regions of a state with abort regions run one after the other, in order: Lead reads x and S before Main
+// writes them, Trail after. Their accesses are not concurrent, so there is no causality problem.
+scchart P104DataOrder {
+  input bool go1
+  output int x = 0, seenLead = 0, seenTrail = 0
+  output signal S
+  output bool sawS = false, sawSLead = false
+  initial state M {
+    abort region Lead {
+      initial state W
+      if x > 1 do seenLead = x go to F
+      if S do sawSLead = true go to W
+      final state F
+    }
+    region Main {
+      initial state I
+      if go1 do x += 1; S go to I
+    }
+    abort region Trail {
+      initial state W
+      if x > 2 do seenTrail = x go to F
+      if S do sawS = true go to W
+      final state F
+    }
+  }
+}

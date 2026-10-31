@@ -1,0 +1,10 @@
+// A suspend trigger is an assignment to the suspend flag, which is true at that point: c false suspends.
+scchart CondNoElseSuspend {
+  input bool c, a
+  output int n = 0
+  initial state S {
+    suspend if (c) ? a
+    initial state T
+      do n++ go to T
+  }
+}

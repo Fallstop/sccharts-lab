@@ -1,0 +1,16 @@
+// An enum declares a type; "ref Color c" declares a variable of it. KIELER replaces every value by its
+// position (RED = 0, GREEN = 1, BLUE = 2) and the variable by an int, so the pool shows numbers. A variable
+// without initial value starts at 0, the first value. Comparisons work on the positions, also with ints.
+scchart St100Enum {
+  enum Color { RED, GREEN, BLUE }
+  ref Color c = Color.BLUE
+  ref Color d
+  output int n = 0
+  output bool isGreen = false
+  initial state A
+  if c == Color.BLUE do c = Color.RED; n = 1 go to B
+  state B
+  if c < Color.GREEN do c = Color.GREEN; n = 2 go to C
+  state C
+  do isGreen = c == 1 go to C
+}

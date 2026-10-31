@@ -1,0 +1,18 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz26 {
+  input bool A, B
+  output int x = 0
+  signal S
+  region { initial state R is Dz26Em(A, S) }
+  region {
+    initial state W
+    if S do x += 1 go to W
+  }
+  region { initial state Q is Dz26Em(B, S) }
+}
+scchart Dz26Em {
+  input bool c
+  output signal O
+  initial state S
+  if c do O go to S
+}

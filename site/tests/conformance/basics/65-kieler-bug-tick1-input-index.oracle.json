@@ -1,0 +1,58 @@
+{
+  "hash": "d915c389f0163ac774648d8e4b0d884302438efd",
+  "chart": "tests/conformance/basics/65-kieler-bug-tick1-input-index.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "arr": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "arr": [
+          5,
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": 2,
+        "arr": [
+          5,
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

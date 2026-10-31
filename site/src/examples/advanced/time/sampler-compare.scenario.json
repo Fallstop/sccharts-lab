@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 200 }, "note": "Tick 1 enters `Run` in both charts, and both hidden period clocks start at 0. A plain `period` waits for the first period, so nothing inside runs: `samples` = 0." },
+    { "inputs": { "deltaT": 200 }, "note": "Both period clocks are at 200. Nothing runs." },
+    { "inputs": { "deltaT": 200 }, "note": "400. Still nothing." },
+    { "inputs": { "deltaT": 200 }, "note": "600: the period has elapsed, so the inside runs once in both: `samples` = 1. `Sampler`'s soft reset subtracts 500 and keeps the 100 ms excess; `SamplerHard`'s hard reset sets its clock back to 0." },
+    { "inputs": { "deltaT": 200 }, "note": "Soft: 100 + 200 = 300. Hard: 200." },
+    { "inputs": { "deltaT": 200 }, "note": "Soft: 500, so `Sampler` takes its second sample, exactly one period after the first. Hard: 400, nothing yet." },
+    { "inputs": { "deltaT": 200 }, "note": "Soft: 200. Hard: 600, so `SamplerHard` takes its second sample, 600 ms after its first." },
+    { "inputs": { "deltaT": 200 }, "note": "Soft: 400. Hard: 200." },
+    { "inputs": { "deltaT": 200 }, "note": "Soft: 600, the third sample, with 100 kept. Hard: 400." },
+    { "inputs": { "deltaT": 400 }, "note": "From now on the ticks come 400 ms apart. Soft: 100 + 400 = 500, the fourth sample. Hard: 800, its third." },
+    { "inputs": { "deltaT": 400 }, "note": "400 on both clocks: no sample in either." },
+    { "inputs": { "deltaT": 400 }, "note": "800 on both clocks, and both take a sample. After the same 2800 ms the soft reset has 5 samples and the hard reset 4: with the hard reset, every late tick shifts all the following ones." }
+  ],
+  "expect": "ok"
+}

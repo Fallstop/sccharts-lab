@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "The instance is entered in its initial state S; its delayed transition waits: **O = 0**."
+    },
+    {
+      "inputs": {},
+      "note": "S → M sets the instance's O: **O = 1**."
+    },
+    {
+      "inputs": {},
+      "note": "**O = 2**, and the instance reaches its final state (terminates)."
+    },
+    {
+      "inputs": {},
+      "note": "The wrapper's delayed transition re-enters the instance; nothing else happens yet: **O = 2**."
+    },
+    {
+      "inputs": {},
+      "note": "**O = 1** again: the pulse restarts with a period of three ticks."
+    },
+    {
+      "inputs": {},
+      "note": "M → F again: **O = 2**, and the instance terminates once more."
+    }
+  ],
+  "expect": "ok"
+}

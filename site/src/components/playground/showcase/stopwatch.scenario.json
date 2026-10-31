@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    { "inputs": { "startStop": false, "clear": false, "lap": false }, "note": "The clock is stopped and the display is live." },
+    { "inputs": { "startStop": true }, "note": "`startStop` starts the clock. The during action is delayed, so `time` starts counting in the next tick." },
+    { "inputs": { "startStop": false }, "note": "`time` counts one per tick; the display follows it in the same tick." },
+    { "inputs": {} },
+    { "inputs": { "lap": true }, "note": "`lap` freezes the display at the current time." },
+    { "inputs": { "lap": false }, "note": "The clock keeps running, the display does not." },
+    { "inputs": {} },
+    { "inputs": { "lap": true }, "note": "A second `lap` makes the display live again: it shows the time at once." },
+    { "inputs": { "lap": false, "startStop": true }, "note": "`startStop` stops the clock. `go to` is a weak abort, so the during action still counted this tick." },
+    { "inputs": { "startStop": false, "clear": true }, "note": "`clear` sets the stopped clock back to zero." },
+    { "inputs": { "clear": false } }
+  ]
+}

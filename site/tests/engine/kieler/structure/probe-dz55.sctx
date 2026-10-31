@@ -1,0 +1,8 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+@NoSleep
+scchart Dz55 {
+  output int n = 0
+  clock t
+  initial state W
+  if t >= 100 do n++; t = 0 go to W
+}

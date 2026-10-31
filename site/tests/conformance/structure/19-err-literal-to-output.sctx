@@ -1,0 +1,14 @@
+// A literal cannot be bound to an output of the referenced chart (it would be written).
+scchart St19Main {
+  input bool s
+  initial state R is St19Beep(s to second, false to beep)
+}
+
+scchart St19Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

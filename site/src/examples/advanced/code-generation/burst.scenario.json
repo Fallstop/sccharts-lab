@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "fire": false }, "note": "Rejected by the netlist compiler: `Ready` and `Reload` form a cycle of immediate transitions, and the netlist compiler rejects every such cycle, whatever its guards." }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

@@ -1,0 +1,36 @@
+// KIELER's dependency analysis walks the compiled graph depth first, the last region first, and stops at the first
+// region that starts in a state without code. In a referenced chart, a state whose first immediate transition goes
+// back to it without trigger has no code (the transition has no take counter there): here C's Spin, the start of
+// Busy's region. Write and Read have not been reached by then, so there is no dependency between the emission of S
+// and its test, nor between its reset and its emission: KIELER tests S before Write emits it, and resets it
+// afterwards, so Count never counts and S is never present at the end of a tick.
+scchart RefDependencyStop {
+  input bool a, b
+  output int y = 0, z = 0
+  output signal S
+  region Read {
+    initial state Count
+    if S do y += 1 go to Count
+  }
+  region Write {
+    initial state Emit
+    if a do S go to Emit
+  }
+  region Ref {
+    initial state I is C(b, z)
+  }
+}
+
+scchart C {
+  input bool p
+  output int o = 0
+  initial state Wait
+  go to Busy
+  state Busy {
+    region {
+      initial state Spin
+      immediate go to Spin
+    }
+  }
+  go to Wait
+}

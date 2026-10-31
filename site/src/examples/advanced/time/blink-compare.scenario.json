@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 250 }, "note": "Both blinkers are ticked every 250 ms. Tick 1: `t` = 0, the LED is off." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 250 in both." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 500: both LEDs come on. `Blink` resets the clock on the way (`t` = 0); `BlinkForgetful` does not (`t` = 500)." },
+    { "inputs": { "deltaT": 250 }, "note": "`Blink`: `t` = 250. `BlinkForgetful`: `t` = 750, already past 500, so its LED goes off again after only 250 ms." },
+    { "inputs": { "deltaT": 250 }, "note": "`Blink`: `t` = 500, so the LED goes off after 500 ms on, and `t` = 0 again. `BlinkForgetful`: `t` = 1000, and its LED is on again: from now on, every timeout test it makes is already true." },
+    { "inputs": { "deltaT": 250 }, "note": "`Blink` stays off (`t` = 250); `BlinkForgetful` flips off." },
+    { "inputs": { "deltaT": 250 }, "note": "`Blink` comes on after 500 ms off; `BlinkForgetful` flips on." },
+    { "inputs": { "deltaT": 250 }, "note": "`Blink` keeps its rhythm, 500 ms on and 500 ms off. `BlinkForgetful` flips in every tick." }
+  ],
+  "expect": "ok"
+}

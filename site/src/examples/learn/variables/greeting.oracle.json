@@ -1,0 +1,85 @@
+{
+  "hash": "f362e6f771769906f72dbf28e15cb8ddb464daee",
+  "chart": "src/examples/learn/variables/greeting.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "comparison with string literal results in unspecified behavior [-Waddress]",
+    "comparison with string literal results in unspecified behavior [-Waddress]"
+  ],
+  "interface": {
+    "name": {
+      "type": "string",
+      "properties": [
+        "input"
+      ]
+    },
+    "nameIsHi": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "reply": {
+      "type": "string",
+      "properties": [
+        "output"
+      ]
+    },
+    "replyIsHi": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "name": "hi"
+      },
+      "values": {
+        "name": "hi",
+        "nameIsHi": false,
+        "reply": "hi",
+        "replyIsHi": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "name": "hi",
+        "nameIsHi": false,
+        "reply": "hi",
+        "replyIsHi": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "name": "bye"
+      },
+      "values": {
+        "name": "bye",
+        "nameIsHi": false,
+        "reply": "hi",
+        "replyIsHi": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

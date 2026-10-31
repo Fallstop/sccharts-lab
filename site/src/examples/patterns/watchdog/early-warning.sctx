@@ -1,0 +1,12 @@
+scchart EarlyWarning {
+  input bool beat
+  output bool alarm, late
+  output int quiet = 0   // ticks since the last beat
+
+  initial state Watching
+    if beat do quiet = 0; late = false go to Watching
+    if quiet == 2 do quiet++; late = false; alarm = true go to Expired
+    do quiet++; late = quiet == 2 go to Watching
+
+  state Expired
+}

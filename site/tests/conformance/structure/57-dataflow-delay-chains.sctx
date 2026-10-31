@@ -1,0 +1,9 @@
+// Chains: a -> b -> c uses only the first and the last operand; a fby b fby c is a two-tick delay line.
+scchart St57Chains {
+  input int I
+  output int arrows, fbys
+  dataflow {
+    arrows = 1 -> 2 -> I
+    fbys = 1 fby 2 fby I
+  }
+}

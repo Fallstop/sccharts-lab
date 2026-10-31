@@ -1,0 +1,112 @@
+{
+  "hash": "a320191074348c771319e868f6725179c2480def",
+  "chart": "tests/conformance/preemption/63-deferred-simple-state.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chained": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "entered": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "iticks": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "ticks": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "chained": 0,
+        "entered": 0,
+        "iticks": 0,
+        "ticks": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "chained": 0,
+        "entered": 0,
+        "iticks": 0,
+        "ticks": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "chained": 1,
+        "entered": 0,
+        "iticks": 1,
+        "ticks": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "G": false,
+        "chained": 1,
+        "entered": 0,
+        "iticks": 1,
+        "ticks": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

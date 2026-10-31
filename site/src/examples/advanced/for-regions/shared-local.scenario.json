@@ -1,0 +1,5 @@
+{
+  "ticks": [ { "note": "`int k` at the top of the for region belongs to the enclosing state, so the three copies share one `k`, and each writes a different value into it in the same tick: a write–write conflict." } ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

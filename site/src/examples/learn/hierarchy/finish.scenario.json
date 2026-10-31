@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "full": false, "timeUp": false, "empty": false, "stop": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start`: the machine enters `Programme` and `Filling`." },
+    { "inputs": { "start": false, "full": true }, "note": "`full`: `Filling` → `Washing`, motor on." },
+    { "inputs": { "full": false, "timeUp": true }, "note": "`timeUp`: `Washing` → `Draining`, motor off." },
+    { "inputs": { "timeUp": false, "empty": true }, "note": "`empty`: `Draining` → `Done`. `Done` is a final state, so `Programme` has finished: it *terminates*. Its termination transition, `join to Idle`, fires in this same tick: `beep` is emitted and the machine is back in `Idle`." },
+    { "inputs": { "empty": false }, "note": "`beep` is a signal, so it was present for that one tick only. The machine waits in `Idle` for the next `start`." }
+  ],
+  "expect": "ok"
+}

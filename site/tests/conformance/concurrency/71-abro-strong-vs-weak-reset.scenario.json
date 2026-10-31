@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "Two copies of ABRO, reset by a strong abort (`abort to`) and by a weak abort (`go to`). Tick 1: nothing."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": false,
+        "R": false
+      },
+      "note": "`A` in both copies."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true,
+        "R": true
+      },
+      "note": "`B` and `R` in the same tick: the strong abort pre-empts the inner behaviour, so `OStrong` is absent. The weak abort lets the inner regions run first, so the join fires and `OWeak` is present, and then the weak abort re-enters `ABO` anyway."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "Both copies have been reset."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "note": "`A` and `B`: both copies emit their `O`."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "Nothing."
+    }
+  ],
+  "expect": "ok"
+}

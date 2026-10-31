@@ -1,0 +1,12 @@
+scchart CombineMax {
+  input int a, b
+  output signal int peak combine max
+
+  region Left:
+    initial state L
+      do peak(a) go to L
+
+  region Right:
+    initial state R
+      do peak(b) go to R
+}

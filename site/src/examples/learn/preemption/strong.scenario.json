@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false, "cancel": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start`: the printer enters `Job` and `Printing`." },
+    { "inputs": { "start": false, "sheet": true }, "note": "A sheet comes out: `printed` is 1." },
+    { "inputs": {}, "note": "Another sheet: 2." },
+    { "inputs": { "cancel": true }, "note": "`cancel` and a sheet in the same tick. `abort to` is a strong abort: `Job` is left before anything inside it runs, so this sheet is not counted. `printed` stays 2." },
+    { "inputs": { "cancel": false, "sheet": false }, "note": "Idle again." }
+  ],
+  "expect": "ok"
+}

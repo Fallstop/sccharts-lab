@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false, "cancel": false }, "note": "Tick 1 enters `Oven` and the suspendable `Cooking` inside it, with `remaining` = 5." },
+    { "note": "Counting down: 4." },
+    { "inputs": { "doorOpen": true }, "note": "The door opens and `Cooking` is suspended. `Oven` is not suspended: only the state that carries the `suspend` freezes." },
+    { "inputs": { "cancel": true }, "note": "`if cancel go to Idle` belongs to `Oven`, which is not suspended, so it fires: the oven goes to `Idle` with `remaining` still 4." },
+    { "inputs": { "cancel": false }, "note": "In `Idle`." },
+    { "inputs": { "doorOpen": false }, "note": "Shutting the door changes nothing now." },
+    { "note": "Still in `Idle`." }
+  ],
+  "expect": "ok"
+}

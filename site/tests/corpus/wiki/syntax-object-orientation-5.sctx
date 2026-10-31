@@ -1,0 +1,25 @@
+import controlled-counting-counter
+
+scchart TwoCounterApplication {
+  input bool toggle
+  output int O1 = 0, O2 = 0
+
+  ref ControlledCountingCounter counter1, counter2
+  
+  immediate during do O1 = counter1.getValue()
+  immediate during do O2 = counter2.getValue()
+
+  region {
+    initial state First {
+      entry do counter1.start()
+      exit do counter1.stop()
+    } if toggle
+      go to Second
+    
+    state Second {
+      entry do counter2.start()
+      exit do counter2.stop()
+    } if toggle
+      go to First
+  }
+}

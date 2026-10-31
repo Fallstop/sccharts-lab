@@ -1,0 +1,9 @@
+// ov[n] == 0 && a: the address is never 0.
+scchart IdxEq {
+  input int n
+  input bool a
+  output int y = 0
+  output int ov[2] = {0, 0}
+  initial state A
+    if ov[n] == 0 && a do y++ go to A
+}

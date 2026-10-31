@@ -1,0 +1,360 @@
+{
+ "sourceHash": "7a33f623135c0304",
+ "states": [
+  {
+   "path": [
+    "ABRO"
+   ],
+   "rows": [
+    [
+     "ABRO"
+    ],
+    [
+     "input bool ",
+     "A, B, R"
+    ],
+    [
+     "output bool ",
+     "O"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    248.2,
+    475.8
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO"
+   ],
+   "rows": [
+    [
+     "ABO"
+    ],
+    [
+     "entry ",
+     "/ O = false"
+    ]
+   ],
+   "box": [
+    10,
+    53.6,
+    214.2,
+    340.3
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB"
+   ],
+   "rows": [
+    [
+     "WaitAB"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    177,
+    165.1
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    0,
+    "wA"
+   ],
+   "rows": [
+    [
+     "wA"
+    ]
+   ],
+   "box": [
+    10,
+    13,
+    40.9,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    0,
+    "dA"
+   ],
+   "rows": [
+    [
+     "dA"
+    ]
+   ],
+   "box": [
+    104.7,
+    10,
+    44.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    1,
+    "wB"
+   ],
+   "rows": [
+    [
+     "wB"
+    ]
+   ],
+   "box": [
+    10,
+    13,
+    40.9,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    1,
+    "dB"
+   ],
+   "rows": [
+    [
+     "dB"
+    ]
+   ],
+   "box": [
+    104.7,
+    10,
+    44.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "done"
+   ],
+   "rows": [
+    [
+     "done"
+    ]
+   ],
+   "box": [
+    71.6,
+    238.7,
+    53.8,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "ABRO",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    234.2,
+    403.8
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    49.4,
+    197,
+    283.3
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    9,
+    30.6,
+    159,
+    60.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    1
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    9,
+    96.1,
+    159,
+    60.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NABRO$$N0$NABO$$N0$NWaitAB$$N0$NwA$EdA0",
+   "source": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    0,
+    "wA"
+   ],
+   "target": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    0,
+    "dA"
+   ],
+   "text": "A",
+   "lines": [
+    "A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NABRO$$N0$NABO$$N0$NWaitAB$$N1$NwB$EdB0",
+   "source": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    1,
+    "wB"
+   ],
+   "target": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    1,
+    "dB"
+   ],
+   "text": "B",
+   "lines": [
+    "B"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NABRO$$N0$NABO$$N0$NWaitAB$Edone0",
+   "source": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB"
+   ],
+   "target": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "done"
+   ],
+   "text": "/ O = true",
+   "lines": [
+    "/ O = true"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  },
+  {
+   "id": "$root$NABRO$$N0$NABO$EABO0",
+   "source": [
+    "ABRO",
+    0,
+    "ABO"
+   ],
+   "target": [
+    "ABRO",
+    0,
+    "ABO"
+   ],
+   "text": "R",
+   "lines": [
+    "R"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow",
+    "red-circle"
+   ]
+  }
+ ],
+ "comments": []
+}

@@ -1,0 +1,25 @@
+// KIELER checks the order of abort regions on its compiled graph, which has no nodes for states that cannot be
+// reached: R0s1 has an abort region before the region KIELER adds for its weak abort (an illegal order), but it is
+// never entered, so the chart is accepted.
+scchart P101Unreachable {
+  input bool a, b
+  output int x = 0
+  region R0 {
+    initial state R0s0
+    if a do x++ go to R0s2
+    state R0s1 {
+      region {
+        initial state I
+        if b go to I
+      }
+      abort region Watch {
+        initial state W
+        if b go to F
+        final state F
+      }
+    }
+    go to R0s2
+    state R0s2
+    if b go to R0s0
+  }
+}

@@ -1,0 +1,13 @@
+// Two charts with the same name: KIELER warns "There are multiple root states with the same name. 'St28Twin'"
+// and simulates the first.
+scchart St28Twin {
+  output int o = 0
+  initial state S
+  do o++ go to S
+}
+
+scchart St28Twin {
+  output int p = 0
+  initial state S
+  do p--; p-- go to S
+}

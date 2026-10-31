@@ -1,0 +1,12 @@
+// A clock tested by the transitions of a state cannot also be tested inside that state.
+scchart St68Nested {
+  output bool a = false
+  clock t
+  initial state Outer {
+    initial state W
+    if t >= 100 go to D
+    final state D
+  }
+  if t >= 500 do a = true go to Done
+  state Done
+}

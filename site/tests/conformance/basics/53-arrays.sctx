@@ -1,0 +1,14 @@
+scchart Arrays {
+  input int I
+  output int arr[5] = {1, 2, 3, 4, 5}
+  output int partial[3] = {7, 8}
+  output int grid[2][2] = {{1, 2}, {3, 4}}
+  output bool flags[2]
+  output int sum = 0
+
+  initial state S
+  do arr = {6, 7, 8, 9, 10} go to T
+
+  state T
+  do arr = {0, 0}; arr[I] += 100; grid[1][0] = grid[0][1] * 10; flags[1] = true; sum = arr[0] + arr[4] go to T
+}

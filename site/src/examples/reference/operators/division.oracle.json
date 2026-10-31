@@ -1,0 +1,109 @@
+{
+  "hash": "cb370fc765b9bc3a80de0a77a9ee19ae95408201",
+  "chart": "src/examples/reference/operators/division.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "quotient": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "real": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "remainder": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "stillWhole": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 7,
+        "B": 2
+      },
+      "values": {
+        "A": 7,
+        "B": 2,
+        "quotient": 3,
+        "real": 3.5,
+        "remainder": 1,
+        "stillWhole": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": -7
+      },
+      "values": {
+        "A": -7,
+        "B": 2,
+        "quotient": -3,
+        "real": -3.5,
+        "remainder": -1,
+        "stillWhole": -3
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "B": -2
+      },
+      "values": {
+        "A": -7,
+        "B": -2,
+        "quotient": 3,
+        "real": -3.5,
+        "remainder": -1,
+        "stillWhole": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": 7
+      },
+      "values": {
+        "A": 7,
+        "B": -2,
+        "quotient": -3,
+        "real": 3.5,
+        "remainder": 1,
+        "stillWhole": -3
+      },
+      "terminated": false
+    }
+  ]
+}

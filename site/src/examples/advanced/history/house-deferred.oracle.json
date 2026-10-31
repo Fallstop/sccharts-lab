@@ -1,0 +1,102 @@
+{
+  "hash": "ec0b6bfdd0dc01b144bc3d49ee44f087ada33396",
+  "chart": "src/examples/advanced/history/house-deferred.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "walk": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chimes": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "lights": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "steps": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "walk": false,
+        "chimes": 0,
+        "lights": 0,
+        "steps": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "walk": true
+      },
+      "values": {
+        "walk": true,
+        "chimes": 0,
+        "lights": 0,
+        "steps": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "walk": false,
+        "chimes": 0,
+        "lights": 1,
+        "steps": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "walk": false,
+        "chimes": 0,
+        "lights": 1,
+        "steps": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

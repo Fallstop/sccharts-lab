@@ -1,0 +1,21 @@
+scchart ReferenceNoTermination {
+  input bool tick
+  output bool light, finished
+
+  initial state Blinking is Flip(tick to tick, light to light)
+    join to Done
+
+  state Done
+    do finished = true go to Done
+}
+
+scchart Flip {
+  input bool tick
+  output bool light
+
+  initial state Dark
+    if tick do light = true go to Lit
+
+  state Lit
+    if tick do light = false go to Dark
+}

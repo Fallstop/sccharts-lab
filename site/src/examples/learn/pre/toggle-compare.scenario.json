@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Tick 1 enters `Off` in both charts." },
+    { "inputs": { "button": true }, "note": "The button goes down. For `Toggle` `button` is true; for `EdgeToggle` it is a rising edge, `button && !pre(button)`. Both go from `Off` to `On`: the light is on." },
+    { "inputs": {}, "note": "The button is still held. `Toggle` sees `button` true in `On` and goes straight back to `Off`. `EdgeToggle` sees `pre(button)` true: no edge, so it stays `On`." },
+    { "inputs": {}, "note": "Still held: `Toggle` flips back to `On`, and will flicker for as long as the button is held. `EdgeToggle` still sees no edge." },
+    { "inputs": { "button": false }, "note": "Released. Neither chart reacts to a falling button. `Toggle`'s light is wherever the flicker left it, here on." },
+    { "inputs": { "button": true }, "note": "A new press, a new rising edge: both charts go from `On` to `Off`." },
+    { "inputs": { "button": false }, "note": "Released. `EdgeToggle` toggled exactly once per press." }
+  ],
+  "expect": "ok"
+}

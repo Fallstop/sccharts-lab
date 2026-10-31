@@ -1,0 +1,9 @@
+// @IntegerClockType makes clocks, deltaT and sleepT int instead of float.
+@IntegerClockType
+scchart St65Ints {
+  output bool done = false
+  clock t
+  initial state Wait
+  if t >= 300 do done = true go to Done
+  final state Done
+}

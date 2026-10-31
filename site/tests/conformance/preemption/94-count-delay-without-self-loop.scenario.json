@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "Tick 1 enters ABO and WaitAB; the count delay is delayed, the entry tick does not count: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "First counted tick: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Second: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Third: **late absent**."
+    },
+    {
+      "inputs": {},
+      "note": "Fourth tick in which true held: WaitAB goes to Done: **late present**."
+    },
+    {
+      "inputs": {},
+      "note": "Resting in Done: **late absent**."
+    }
+  ],
+  "expect": "ok"
+}

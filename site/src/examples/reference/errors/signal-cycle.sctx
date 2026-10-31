@@ -1,0 +1,12 @@
+scchart SignalCycle {
+  input bool A
+  output signal P, Q
+
+  region Left:
+    initial state L
+      if !Q do P go to L
+
+  region Right:
+    initial state R
+      if !P do Q go to R
+}

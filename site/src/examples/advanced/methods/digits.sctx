@@ -1,0 +1,18 @@
+scchart Digits {
+  input int value
+  output int digits = 1
+
+  method int countDigits(int v) {
+    int rest
+    int n = 1
+    rest = v;
+    while (rest >= 10) {
+      rest = rest / 10;
+      n++
+    }
+    return n
+  }
+
+  initial state Count
+    do digits = countDigits(value) go to Count
+}

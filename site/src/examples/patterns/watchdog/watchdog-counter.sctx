@@ -1,0 +1,12 @@
+scchart WatchdogCounter {
+  input bool beat
+  output bool alarm
+  output int quiet = 0   // ticks since the last beat
+
+  initial state Watching
+    if beat do quiet = 0 go to Watching
+    if quiet == 2 do quiet++; alarm = true go to Expired
+    do quiet++ go to Watching
+
+  state Expired
+}

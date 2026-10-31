@@ -1,0 +1,102 @@
+{
+  "hash": "bbdce4b4c640c6b88fcbb6ce8692c15279caf570",
+  "chart": "tests/conformance/preemption/14-weak-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "innerWeakEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "plainEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "weakEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "innerWeakEntry": 1,
+        "plainEntry": 1,
+        "weakEntry": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "innerWeakEntry": 1,
+        "plainEntry": 1,
+        "weakEntry": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "S": true,
+        "innerWeakEntry": 1,
+        "plainEntry": 2,
+        "weakEntry": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "innerWeakEntry": 2,
+        "plainEntry": 3,
+        "weakEntry": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

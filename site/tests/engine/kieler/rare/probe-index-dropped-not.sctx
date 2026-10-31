@@ -1,0 +1,9 @@
+// !ok[n] && a: !address is false.
+scchart IdxNot {
+  input int n
+  input bool a
+  output int y = 0
+  output bool ok[2] = {false, false}
+  initial state A
+    if !ok[n] && a do y++ go to A
+}

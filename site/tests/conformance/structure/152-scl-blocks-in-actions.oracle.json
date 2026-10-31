@@ -1,0 +1,132 @@
+{
+  "hash": "fa8859ce08e76ee8b00c2b4cb412eecb41e64741",
+  "chart": "tests/conformance/structure/152-scl-blocks-in-actions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nWrite it as x += q to say so. In one region it means the same.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 11,
+      "column": 35
+    }
+  ],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "d": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "e": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "d": 0,
+        "e": 1,
+        "p": 0,
+        "q": 0,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "d": 1,
+        "e": 1,
+        "p": 0,
+        "q": 0,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "d": 2,
+        "e": 1,
+        "p": 1,
+        "q": 2,
+        "x": 22
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "d": 0,
+        "e": 2,
+        "p": 1,
+        "q": 2,
+        "x": 22
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+ "sourceHash": "8c62cadb7c6bef06",
+ "states": [
+  {
+   "path": [
+    "VendingWithout"
+   ],
+   "rows": [
+    [
+     "VendingWithout"
+    ],
+    [
+     "input bool ",
+     "coin10, coin20"
+    ],
+    [
+     "output signal ",
+     "vend"
+    ],
+    [
+     "output int ",
+     "credit = 0"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    253.5,
+    442.4
+   ]
+  },
+  {
+   "path": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "rows": [
+    [
+     "Waiting"
+    ]
+   ],
+   "box": [
+    83.7,
+    308.8,
+    72.5,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "VendingWithout",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    83.2,
+    239.9,
+    353.4
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NVendingWithout$$N0$NWaiting$EWaiting0",
+   "source": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "target": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "text": "1: coin20 && credit + 20 >= 30 / credit += 20; credit -= 30; vend",
+   "lines": [
+    "1: coin20 && credit + 20 >= 30",
+    "/ credit += 20;",
+    "  credit -= 30;",
+    "  vend"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NVendingWithout$$N0$NWaiting$EWaiting1",
+   "source": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "target": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "text": "2: coin20 / credit += 20",
+   "lines": [
+    "2: coin20",
+    "/ credit += 20"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NVendingWithout$$N0$NWaiting$EWaiting2",
+   "source": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "target": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "text": "3: coin10 && credit + 10 >= 30 / credit += 10; credit -= 30; vend",
+   "lines": [
+    "3: coin10 && credit + 10 >= 30",
+    "/ credit += 10;",
+    "  credit -= 30;",
+    "  vend"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NVendingWithout$$N0$NWaiting$EWaiting3",
+   "source": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "target": [
+    "VendingWithout",
+    0,
+    "Waiting"
+   ],
+   "text": "4: coin10 / credit += 10",
+   "lines": [
+    "4: coin10",
+    "/ credit += 10"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

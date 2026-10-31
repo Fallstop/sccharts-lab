@@ -1,0 +1,13 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz05 {
+  input bool a
+  output int o = 0
+  int z = 3
+  initial state R is Dz05Inc(5 to step, o)
+}
+scchart Dz05Inc {
+  input int step
+  output int out
+  initial state S
+  do out += step; step-- go to S
+}

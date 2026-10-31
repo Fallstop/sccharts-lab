@@ -1,0 +1,10 @@
+scchart PulseTimer {
+  input bool start, second
+  output bool done = false
+
+  initial state Idle
+    if start do done = false go to Waiting
+
+  state Waiting
+    if 2 second do done = true go to Idle
+}

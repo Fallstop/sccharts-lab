@@ -1,0 +1,16 @@
+scchart ClaimBoth {
+  output signal busy
+  output bool aWorks = false, bWorks = false
+
+  region A {
+    initial state Idle
+      immediate if !busy do busy; aWorks = true go to Working
+    state Working
+  }
+
+  region B {
+    initial state Idle
+      immediate if !busy do busy; bWorks = true go to Working
+    state Working
+  }
+}

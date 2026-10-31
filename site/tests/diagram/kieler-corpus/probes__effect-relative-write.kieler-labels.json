@@ -1,0 +1,126 @@
+{
+ "sourceHash": "490a851eb5b8426f",
+ "states": [
+  {
+   "path": [
+    "P223"
+   ],
+   "rows": [
+    [
+     "P223"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    258.8,
+    220.7
+   ]
+  },
+  {
+   "path": [
+    "P223",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    23.2,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P223",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    199.9,
+    23.2,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P223",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    245.5,
+    80.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP223$$N0$NS0$ES10",
+   "source": [
+    "P223",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P223",
+    0,
+    "S1"
+   ],
+   "text": "/ O = O + 1; O = O * 2 + O; O = 1 + O",
+   "lines": [
+    "/ O = O + 1;",
+    "  O = O * 2 + O;",
+    "  O = 1 + O"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

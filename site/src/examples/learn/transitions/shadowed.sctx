@@ -1,0 +1,10 @@
+scchart Shadowed {
+  input bool a, b
+  output int choice = 0
+
+  initial state Start
+    if a || b do choice = 1 go to Done
+    if a do choice = 2 go to Done
+
+  state Done
+}

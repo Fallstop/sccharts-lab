@@ -1,0 +1,317 @@
+---
+title: "My chart does not do what I expect"
+description: "Troubleshooting a chart that compiles but misbehaves: the usual symptoms, their causes and fixes, problems setting up SCCharts Lab, and a checklist for testing a chart."
+sidebar:
+  label: "Troubleshooting"
+  order: 4.5
+---
+
+import { Compare } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Your chart compiles, but it does something other than what you meant. Find the symptom below: each
+comes with its usual cause, the fix, and a link to the full explanation. If the compiler gives you a
+message instead, look it up in [Compiler messages](/reference/errors/).
+
+## Nothing happens in tick 1
+
+Tick 1 only starts the chart: it gives every variable its initial value and enters the initial
+states. An ordinary transition out of a state is checked from the tick *after* the state was entered,
+so the first one can fire in tick 2, whatever the inputs are in tick 1. If something must happen in
+tick 1, write it as an entry action of the initial state or make the transition `immediate`.
+[What happens in tick 1](/learn/ticks/#what-happens-in-tick-1)
+
+## My transition fires a tick late
+
+The same rule, one state further on: a transition is not checked in the tick its state is entered, so
+every state on a path costs a tick. `ChimeLate` reaches `Pressed` in the tick of the press and chimes
+in the next. In `ChimeNow` the transition out of `Pressed` is immediate, so it chimes at once:
+
+<Compare a="reference/troubleshooting/chime-late" b="reference/troubleshooting/chime-now" scenario="reference/troubleshooting/chime-compare" caption="The press comes in tick 2: `ChimeNow` chimes in tick 2, `ChimeLate` in tick 3." />
+
+`immediate` is the fix when the transition should fire on arrival, but a cycle made only of immediate
+transitions is rejected, so at least one transition on every loop must stay delayed. Count delays
+(`if 3 A`) and a `join to` with a trigger do not count the entry tick either.
+[Delayed and immediate transitions](/learn/immediate/)
+
+## My output stays true
+
+A variable keeps its value until something writes it again. Setting `ding = true` on a transition
+does not set it back afterwards, however briefly you meant it to be true:
+
+<Compare a="reference/troubleshooting/bell-variable" b="reference/troubleshooting/bell-signal" scenario="reference/troubleshooting/bell-compare" caption="Both react to the presses in ticks 2 and 5: the variable stays true from tick 2 on, while the signal is present only in ticks 2 and 5." />
+
+If the output marks an event ("a coin was inserted", "beep now"), declare it as a signal: a signal is
+present only in a tick that emits it. If it is a setting that lasts, keep the variable and write
+`false` where the setting ends, on the transition that leaves the state or in its exit action.
+[Signals or variables?](/learn/signals/#signals-or-variables) and
+[Entry, during and exit actions](/learn/actions/)
+
+## A button press counts many times
+
+A chart sees values, not changes. While a button is held down, `press` is true in every tick, and an
+input in the simulators keeps its value until you change it, so a button you switched on stays
+pressed. To react once per press, react to the tick in which it *becomes* true,
+`press && !pre(press)`:
+
+<Compare a="reference/troubleshooting/press-counter" b="reference/troubleshooting/press-counter-edge" scenario="reference/troubleshooting/press-compare" caption="The first press is held for three ticks: `PressCounter` counts ticks, `PressCounterEdge` counts presses." />
+
+To press a button for a single tick in this guide's simulations, use the pulse button next to its
+switch; in SCCharts Lab, switch the input on, step, and switch it off again.
+[Edges and pulses](/patterns/edges/) has the recipes, and [Debouncing](/patterns/debounce/) the cure
+for a real button that bounces.
+
+## My counter starts from 0 again
+
+A variable declared inside a state is initialised again every time that state is entered: by a
+self-loop, by a transition back into its superstate, even by a history transition. So a counter
+declared there starts over on every visit, and an `entry do n = 0` does the same on every self-loop.
+Declare the counter one level further out, at the top of the chart or in a superstate that stays
+active, or make it `static`.
+[Fresh on every entry](/learn/hierarchy/#fresh-on-every-entry),
+[Self-loops leave and come back](/learn/actions/#self-loops-leave-and-come-back) and
+[History restores states, not data](/advanced/history/#history-restores-states-not-data)
+
+## Two regions set the same variable
+
+KIELER rejects a chart in which two concurrent regions could set one variable to different values, with
+`The SCG is NOT asc-schedulable!` and a list of `Can't schedule from …` lines. It does so even when you
+know that the two writes never happen in the same tick: the check looks at the chart's structure, not
+at its triggers. Give the variable one owner, a single region that does all the writing, and let the
+other regions send it requests with signals. Increments such as `count += 1` from several regions are
+allowed: they add up. [Write–write conflicts](/learn/causality/#writewrite-conflicts),
+[One writer per variable](/patterns/latch/#one-writer-per-variable), and
+[Sharing a resource](/patterns/arbiter/) for an owner that hands a device to one region at a time.
+
+If such a chart compiles but its result changes when you swap the order of its regions in the file,
+look for updates written the old way, `x = x + 1`, in two regions.
+[A trap: old-style updates](/learn/causality/#a-trap-old-style-updates-in-two-regions)
+
+## I need a timeout in seconds
+
+A chart counts ticks, not seconds. If whatever runs it ticks at a fixed rate, counting ticks is
+measuring time: at one tick every 10 ms, `if 300 true go to Off` waits three seconds. If the hardware
+has a timer that sets an input once a second, count that input instead, `if 3 second`, as the oven in
+[Short on time?](/start/in-a-hurry/#timing-an-abort-and-an-edge) does. And if the environment can say
+how much time has passed, a clock measures it directly. [Counters and timeouts](/patterns/counters/)
+and [Time](/advanced/time/)
+
+## I cannot leave a superstate from inside it
+
+A transition connects two states on the same level, so a state inside a superstate cannot `go to` a
+state outside it: KIELER says `Couldn't resolve reference to State 'Idle'.`, with your state's name.
+There are two ways out. A transition written on the superstate itself, after its closing brace, leaves
+it whatever the inside is doing. Or the inside reaches a final state, and the superstate's `join to`
+fires. [Leaving from anywhere](/learn/hierarchy/#leaving-from-anywhere) and
+[Final states and `join to`](/learn/hierarchy/#finishing-final-states-and-join-to)
+
+## My `join to` never fires
+
+A `join to` fires when every region of its superstate is in a final state at the same time. Look for
+one of these:
+
+- **A region without a final state,** or one whose final state is never reached. KIELER warns about
+  a missing one
+  ([`Every region should have a final state…`](/reference/errors/#every-region-should-have-a-final-state-whenever-its-parent-state-has-a-termination-transition),
+  [`All or none concurrent regions…`](/reference/errors/#all-or-none-concurrent-regions-should-have-final-states)).
+  Give every region a final state that it can reach.
+- **A region that leaves its final state again.** A final state may have outgoing transitions; if a
+  region moves on before the others arrive, the regions are never final together.
+- **A signal declared in the superstate, together with an action.** In KIELER a superstate that
+  declares a signal and also has an entry, during or exit action never terminates, even when all its
+  regions are final. There is no warning:
+
+<Compare a="reference/troubleshooting/print-stuck" b="reference/troubleshooting/print-fixed" scenario="reference/troubleshooting/join-compare" caption="Both charts reach `Fed` and `Counted` in tick 3, but only `PrintFixed`, which declares `fed` in the chart instead of in `Printing`, leaves through its `join to`." />
+
+Declare the signal one level further out, as `PrintFixed` does, or move the action onto the
+transition that enters the superstate.
+[Final states and `join to`](/learn/hierarchy/#finishing-final-states-and-join-to) ends with this
+case.
+
+## History brings me back to the start
+
+Only `go to S history` (or `shallow history`) resumes `S` where it was left; a plain `go to S` always
+starts it again from its initial states. If you did write `history` and the state still starts over,
+look at where it is nested. KIELER honours a history transition into a nested state only if every
+superstate around that state is itself the target of some history transition, and silently treats
+any other one as a plain `go to`:
+
+<Compare a="advanced/history/nested-ignored" b="advanced/history/nested-fixed" scenario="advanced/history/nested-compare" caption="Both open `Contrast` in tick 4, go home and open the menu again in tick 6: `MenuNested` starts `Settings` again, `MenuNestedFixed` resumes it." />
+
+[A history transition that is silently ignored](/advanced/history/#a-history-transition-that-is-silently-ignored)
+has the details and the fix.
+
+## My chart never terminates
+
+A chart terminates when every region at its top level is in a final state, and then it does nothing
+more. If yours runs on:
+
+- **Check the final states,** as for a `join to` above: every top-level region needs one, and all of
+  them must be final in the same tick.
+- **A chart that declares any signal never terminates** in KIELER's simulator, even in its final
+  states: an input, output or local signal is enough. The simulation adds an action of its own to every
+  chart, so the rule of the previous section applies to the chart itself. This guide's simulations do
+  the same.
+
+Most reactive systems never terminate, and do not need to. If yours should stop, letting it rest in
+final states without outgoing transitions is usually all you need: the chart then stays there.
+[Signals and termination](/learn/signals/#signals-and-termination)
+
+## The wrong transition fires
+
+When several transitions could fire, the order decides:
+
+- **The first transition written wins.** A state's transitions are tried in the order they are
+  written (`1:`, `2:` in the diagram), and only the first whose trigger holds fires. Put the one that
+  must win first; a safety check goes at the top.
+  [Priority](/learn/transitions/#several-transitions-out-of-one-state-priority)
+- **A transition without a trigger hides the ones after it.** It always holds, so a delayed
+  transition written after it can never fire, and KIELER warns
+  [`The transition is not reachable.`](/reference/errors/#the-transition-is-not-reachable) Write it last.
+- **`abort to` beats `go to`.** Strong aborts must be written first, so they win over weak aborts and
+  `join to` in the same tick. [Several ways out](/learn/preemption/#several-ways-out)
+- **The inside of a superstate still fired** in the tick you left it. That is a weak abort, `go to`: the
+  inside finishes its tick first. If it must not, use `abort to`.
+  [Weak and strong](/learn/preemption/#weak-and-strong)
+
+## An exit action ran although I used `abort to`
+
+That is KIELER's rule: exit actions run however a state is left, a strong abort included. `abort to`
+skips the inner transitions and the `during` actions of the tick it fires in, never the `exit` actions
+(the KIELER wiki says otherwise, and is out of date there). Write exit actions as clean-up that always
+happens, and put what must not happen on an emergency stop on the transitions that end the state
+normally. [Actions and aborts](/learn/actions/#actions-and-aborts)
+
+## My outputs are wrong only in tick 1
+
+Tick 1 has no previous tick, so in tick 1 `pre(x)` is the default of the type, 0 or `false`, not the
+initial value of `x`. A test such as `temp > pre(temp)` is then true in tick 1 although nothing has
+changed. A plain `during` action does not run in the tick its state is entered, so for the initial
+state it skips tick 1:
+
+<Compare a="reference/troubleshooting/rising" b="reference/troubleshooting/rising-from-tick-2" scenario="reference/troubleshooting/rising-compare" caption="`temp` is 20 from tick 1, and only `Rising`, with `immediate during`, reports a rise in tick 1." />
+
+So if a comparison with `pre` must skip tick 1, put it in a plain `during` action, as
+`RisingFromTick2` does, or on a delayed transition: neither runs in the tick its state is entered.
+
+Another cause: a variable whose initial value is built on another one that reads an input can come
+out wrong in tick 1, because of a bug in KIELER's compiler; compute it on a transition instead
+([Tick 1 runs input-free initial values first](/learn/variables/#tick-1-runs-input-free-initial-values-first)).
+[Tick 1 has no past](/learn/pre/#tick-1-has-no-past) has more on `pre` in tick 1.
+
+## The playground and SCCharts Lab disagree
+
+The playground runs this guide's own engine, a reimplementation of KIELER's compiler checks and
+simulator that runs in the browser. Every example in the guide has been checked against KIELER, but
+your own chart has not, and SCCharts Lab runs KIELER's actual compiler. Before you suspect either of
+them, check that the two runs really are the same:
+
+- **The same inputs in the same ticks.** Both keep an input's value until you change it, so an input
+  left on in one and switched off in the other gives different runs.
+- **The same simulation system.** The guide follows **Netlist-based Simulation (C)**. Others, such as
+  **Priority-based Simulation (C)**, differ in a few details, for example in tick 1.
+- **The same chart.** Both run the first `scchart` in the file.
+- **The same KIELER.** The official *KIELER VS Code* extension (0.3.0) has an older compiler than
+  SCCharts Lab. They behave the same on the charts checked so far, but they do not accept quite the
+  same charts. [How this guide is checked](/reference/about/#official-kieler-and-sccharts-lab) lists
+  the differences.
+
+If they still disagree, trust SCCharts Lab, and please [report it](/reference/about/#found-a-mistake),
+with the playground's **Copy link** for your chart and the inputs that show the difference.
+
+## Setup problems
+
+[Getting SCCharts](/start/tools/) has the installation steps. When something still does not work:
+
+### The diagram does not open
+
+The file must end in `.sctx`: the status bar then shows the language mode `SCTX`. Open the diagram
+with the preview button in the editor's title bar or **Open Diagram Preview** (`Ctrl+Alt+V`). If no
+SCCharts Lab command works at all, the extension has not started: look for one of the two messages
+below, about KIELER VS Code or about Java. A diagram that stops updating comes back with **Restart
+diagram** (`Ctrl+Alt+D`), or with **Restart KIELER language server** from the Command Palette.
+
+### The simulation never starts
+
+- **Fix the errors first.** A chart with errors in the Problems panel does not compile, so it cannot
+  run.
+- **Choose a system.** **Simulate…** in the preview's toolbar asks for one: choose
+  **Netlist-based Simulation (C)**. The first run compiles the chart to C and takes a few seconds.
+- **A C compiler.** The C simulation needs one. Without it SCCharts Lab says
+  `C simulation needs a C compiler.` On Windows it offers to download a portable GCC; on macOS run
+  `xcode-select --install`; on Linux install `gcc` (`sudo apt install build-essential` on Debian or
+  Ubuntu).
+- **In the KIELER VS Code extension,** a chart with certain syntax errors never finishes compiling,
+  and no message says so: a keyword used as a name (`input bool reset`, `go`, `period`), a number above
+  2147483647, or `if 3 == level`. Fix the errors the editor marks, and simulate again.
+  [Compiler messages](/reference/errors/#fix-the-first-message-first) explains them; SCCharts Lab
+  stops at them with an error instead.
+
+**SCCharts Lab: Show Java runtime and C compiler in use** in the Command Palette says what the
+extension found.
+
+### Java and C compiler problems
+
+On Windows (x64), Apple Silicon Macs and Linux (x64) the extension brings its own Java. On other
+platforms it needs Java 21 or newer, and says so if it finds none:
+
+```text wrap
+SCCharts Lab needs Java 21 or newer and found none.
+```
+
+Install a Java 21 JDK, or point the setting `keith-vscode.javaHome` at one, then reload the window. To
+use a C compiler that is not on your `PATH`, such as an existing MinGW or MSYS2 `gcc.exe` on Windows, set
+`keith-vscode.cCompilerPath` to it; if that path is wrong, the message is
+`The configured C compiler was not found:` followed by the path. You never need `javac`: it is only for the Java
+simulations, and the C simulation is the one to use. KIELER's own extension needs Java on your `PATH`
+and a C compiler too.
+
+### SCCharts Lab and KIELER VS Code
+
+The two extensions register the same commands and languages, so they cannot run side by side. With
+KIELER VS Code enabled, SCCharts Lab does not start and says:
+
+```text wrap
+SCCharts Lab cannot run beside KIELER VS Code. Uninstall it, then reload the window.
+```
+
+**Uninstall and reload** does exactly that; disabling KIELER VS Code in the Extensions view and
+reloading works too. If your course needs the official extension, disable SCCharts Lab instead: your
+`.sctx` files work in both.
+
+## Test your chart
+
+A chart is only as good as the runs you have tried. Before you hand one in:
+
+- **Set every input in tick 1,** and remember that tick 1 only enters the initial states.
+- **Press and hold.** Try each button for a single tick and held down for several. Inputs keep their
+  value, so a held button is what you get if you forget to switch it off.
+- **Run the coincidences.** Two inputs in the same tick, an input in the very tick a timeout fires,
+  an input in the tick a state is entered. Each is decided by one detail of the chart, a priority or a
+  delay, and each takes one tick to try.
+- **Run the failures,** not only the expected sequence: a sensor that never reports, a door opened at
+  the worst moment, two inputs that should never come together.
+- **Check the end of every phase,** not only its start: does the output go off in the tick you
+  expect, or one tick later?
+
+SCCharts Lab helps with all of this:
+
+- **Save** and **Load**, at the right end of the trace's top line, write a run to a `.ktrace` file and
+  replay it. Save a test once and replay it after every change to the chart.
+- **Breakpoints**, in the preview's toolbar, pause the simulation when a state is entered, or after a
+  tick in which a condition holds, such as `heating && door`. The `C` key runs ticks until one fires.
+- **Watch** expressions, in the trace's top line, are evaluated after every tick: `pre(count) != count`,
+  say.
+- **Back** (`Backspace`) rewinds one tick, and clicking an earlier tick's header in the trace rewinds
+  to it, so you can try another input from there.
+
+In the [playground](/playground/), **Rebuild** after an edit replays the inputs you have given so far on
+the new version of the chart, as long as its inputs and outputs are unchanged. Under **Variables**,
+**Watch** shows the value of an expression in the tick shown, and **Run until** steps until the watch
+holds or a state you choose is active.
+
+<Aside type="tip">
+[Patterns](/patterns/abro/) has complete, explained charts for the problems that come up again and
+again, each with a tour of the ticks that matter. [The level crossing](/patterns/level-crossing/#testing-it)
+shows a larger chart and how to test it.
+</Aside>

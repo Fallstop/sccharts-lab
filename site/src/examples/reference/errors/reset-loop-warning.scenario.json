@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true,
+        "R": false
+      },
+      "note": "Tick 1 enters `Run`. KIELER warns about a possible instantaneous loop (the transition from `Run` back to itself), but compiles the chart."
+    },
+    {
+      "note": "`A` is true: the inner self-loop counts, `n` = 1."
+    },
+    {
+      "inputs": {
+        "R": true
+      },
+      "note": "`R` is true. `go to Run` is a weak abort, so the inside finishes its tick first (`n` = 2); then `Run` is left and entered again. No loop happens: the transition back to `Run` is delayed."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "Counting goes on (`n` = 3). The warning was a false alarm."
+    }
+  ],
+  "expect": "ok"
+}

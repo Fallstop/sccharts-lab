@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "P": false, "R": false }, "note": "M and I (where = 1)." },
+    { "inputs": { "A": true }, "note": "I -> J deferred: J's entry actions are removed, also the one that records J for M's history (where stays 1)." },
+    { "inputs": { "A": false }, "note": "In J." },
+    { "inputs": { "P": true }, "note": "M is left (where = 9)." },
+    { "inputs": { "P": false, "R": true }, "note": "go to M history resumes I, the last state KIELER recorded, not J (where = 1)." },
+    { "inputs": { "R": false }, "note": "In I." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,126 @@
+{
+ "sourceHash": "a5def5b2cd4ab460",
+ "states": [
+  {
+   "path": [
+    "P202"
+   ],
+   "rows": [
+    [
+     "P202"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    221.5,
+    220.7
+   ]
+  },
+  {
+   "path": [
+    "P202",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    23.2,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P202",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    162.6,
+    23.2,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P202",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    208.2,
+    80.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP202$$N0$NS0$ES10",
+   "source": [
+    "P202",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P202",
+    0,
+    "S1"
+   ],
+   "text": "/ S; V(1); V((I + 1))",
+   "lines": [
+    "/ S;",
+    "  V(1);",
+    "  V((I + 1))"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

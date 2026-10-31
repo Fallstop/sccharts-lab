@@ -1,0 +1,9 @@
+scchart Greeting {
+  input string name
+  output string reply = "hi"
+  output bool nameIsHi = false
+  output bool replyIsHi = false
+
+  initial state Compare
+    do nameIsHi = name == "hi"; replyIsHi = reply == "hi" go to Compare
+}

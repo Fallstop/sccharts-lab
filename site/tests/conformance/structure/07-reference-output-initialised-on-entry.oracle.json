@@ -1,0 +1,92 @@
+{
+  "hash": "a45f2f32d2884b91b38bb30823be3eded282f63d",
+  "chart": "tests/conformance/structure/07-reference-output-initialised-on-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "interface": {
+    "again": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "again": false
+      },
+      "values": {
+        "again": false,
+        "o": 100
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "again": false,
+        "o": 101
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "again": false,
+        "o": 102
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "again": true
+      },
+      "values": {
+        "again": true,
+        "o": 100
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "again": false
+      },
+      "values": {
+        "again": false,
+        "o": 101
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

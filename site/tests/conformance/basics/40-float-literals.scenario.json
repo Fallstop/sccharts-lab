@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"F": 0.1}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "float is a C double, but KIELER stores every float literal in single precision first: a = 0.1 becomes 0.10000000149011612, and d = F + 0.2 = 0.1 + 0.20000000298023224 = 0.3000000029802322. Literals that are exact in single precision stay exact (b = 2.5, e = 1500). c = 1.0 / 3 = 0.3333333333333333 (double arithmetic). A float stored into an int is truncated towards zero: i = 7, j = -7, k = 3."},
+    {"inputs": {"F": 0.5}, "note": "d = 0.5 + 0.20000000298023224 = 0.7000000029802322."}
+  ],
+  "expect": "ok"
+}

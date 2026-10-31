@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: nothing fires."
+    },
+    {
+      "inputs": {},
+      "note": "`R2` runs `z = x; x = 1`. Its own read comes before its own write, so `z = 0`. `R1`'s read of `x` is concurrent to `R2`'s write, so it waits for it: `y = 1`."
+    },
+    {
+      "inputs": {},
+      "note": "No further change."
+    }
+  ],
+  "expect": "ok"
+}

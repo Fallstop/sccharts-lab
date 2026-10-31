@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Two regions write different values to `x` (`x = 3` and `x = 4`). KIELER rejects the chart: \"The SCG is NOT asc-schedulable!\" (the lab's server adds \"Circular dependency involving x prevents scheduling this tick.\")."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

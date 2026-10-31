@@ -1,0 +1,6 @@
+scchart Spin {
+  output int n = 0
+
+  initial state Counting
+    immediate if n < 3 do n += 1 go to Counting
+}

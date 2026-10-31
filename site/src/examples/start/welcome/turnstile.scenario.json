@@ -1,0 +1,41 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "coin": false,
+        "push": false
+      },
+      "note": "Tick 1 starts the chart in its initial state, `Locked`. Nothing has happened yet, so `unlocked` has its initial value, false."
+    },
+    {
+      "inputs": {
+        "push": true
+      },
+      "note": "Someone pushes the bar. `Locked` only reacts to `coin`, so nothing happens: the turnstile stays locked."
+    },
+    {
+      "inputs": {
+        "push": false,
+        "coin": true
+      },
+      "note": "A coin drops. The transition from `Locked` to `Unlocked` fires and sets `unlocked` to true, in this same tick."
+    },
+    {
+      "note": "`coin` is still true, because an input keeps its value until it is changed. `Unlocked` does not look at `coin`, so a second coin changes nothing."
+    },
+    {
+      "inputs": {
+        "coin": false,
+        "push": true
+      },
+      "note": "A push. The transition from `Unlocked` back to `Locked` fires and sets `unlocked` to false."
+    },
+    {
+      "inputs": {
+        "push": false
+      },
+      "note": "All quiet. The turnstile waits in `Locked` for the next coin."
+    }
+  ],
+  "expect": "ok"
+}

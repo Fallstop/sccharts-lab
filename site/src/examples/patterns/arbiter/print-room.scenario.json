@@ -1,0 +1,49 @@
+{
+  "ticks": [
+    {
+      "inputs": { "jobA": false, "jobB": false, "done": false },
+      "note": "Tick 1 enters `Idle` in both computers and `Free` in `Arbiter`."
+    },
+    {
+      "inputs": { "jobA": true },
+      "note": "A job for computer A. `ComputerA` enters `Waiting`, whose immediate during action emits `reqA`. `Arbiter` reads `reqA` in the same tick, writes `user` and emits `startA`, and `ComputerA`, seeing `startA`, goes back to `Idle`. One tick, three regions."
+    },
+    {
+      "inputs": { "jobA": false, "jobB": true },
+      "note": "A job for computer B. `ComputerB` waits and emits `reqB` in every tick, but `Arbiter` is in `PrintingA` and does not look at it."
+    },
+    {
+      "inputs": { "jobB": false },
+      "note": "`ComputerB` remembers its job: it stays in `Waiting` and keeps asking."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "The printer is finished. `Arbiter` hands it to B (`user` is 2) and emits `startB`, and `ComputerB` stops asking, all in this tick."
+    },
+    {
+      "inputs": { "done": false },
+      "note": "B's job prints."
+    },
+    {
+      "inputs": { "jobA": true },
+      "note": "A new job for A, while B's job prints. `ComputerA` waits."
+    },
+    {
+      "inputs": { "jobA": false },
+      "note": "Still waiting."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "B's job is finished: A gets the printer in the same tick."
+    },
+    {
+      "inputs": { "done": false },
+      "note": "A's job prints."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "Finished, and nothing is waiting: `user` is 0. Only `Arbiter` has ever written `user`."
+    }
+  ],
+  "expect": "ok"
+}

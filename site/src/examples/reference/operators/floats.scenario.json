@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "F": 0.1
+      },
+      "note": "The literal `0.1` is rounded to single precision when the chart is compiled, so `literal` holds 0.10000000149011612, which the trace rounds to 0.1. The input `F` keeps full double precision, so `F == 0.1` is false."
+    },
+    {
+      "inputs": {
+        "F": 2.75
+      },
+      "note": "`F * 10` is 27.5; stored in an `int`, it is truncated to 27."
+    },
+    {
+      "inputs": {
+        "F": -2.75
+      },
+      "note": "Truncation goes towards zero: −27.5 becomes −27."
+    }
+  ],
+  "expect": "ok"
+}

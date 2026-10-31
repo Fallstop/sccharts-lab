@@ -1,0 +1,28 @@
+{
+  "hash": "c03712bff98a260821cf53d0563b6dc5b3fe9662",
+  "chart": "src/examples/reference/errors/int-too-large.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "5:14 The required feature 'value' of 'de.cau.cs.kieler.kexpressions.impl.IntValueImpl@71032f1d{file:///tmp/sccharts-oracle-CLjfYA/m32/int-too-large.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@expression}' must be set",
+    "For input string: \"3000000000\""
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "For input string: \"3000000000\"",
+      "line": 5,
+      "column": 14,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'value' of 'de.cau.cs.kieler.kexpressions.impl.IntValueImpl@71032f1d{file:///tmp/sccharts-oracle-CLjfYA/m32/int-too-large.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@expression}' must be set",
+      "line": 5,
+      "column": 14,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

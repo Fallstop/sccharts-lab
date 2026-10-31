@@ -1,0 +1,33 @@
+{
+  "hash": "0b8bb35b492e04cd81ec3cc68841d81834dda0e0",
+  "chart": "tests/conformance/basics/22-loop-through-superstate.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _cg1",
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _g1",
+    "Can't schedule from _g1 to _g3",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [B, A]",
+      "line": 10,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [B, A]",
+      "line": 7,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

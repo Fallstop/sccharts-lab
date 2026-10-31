@@ -1,0 +1,80 @@
+{
+  "hash": "44492cde147aba4b4cba6d96a19c29986cf3d232",
+  "chart": "tests/engine/kieler/structure/probe-dz11.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "X": 2,
+        "Y": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "X": 4,
+        "Y": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "X": 6,
+        "Y": 7
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 4
+      },
+      "values": {
+        "I": 4,
+        "X": 8,
+        "Y": 9
+      },
+      "terminated": false
+    }
+  ]
+}

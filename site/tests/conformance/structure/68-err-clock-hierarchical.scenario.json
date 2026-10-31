@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Rejected. Lab server: \"Clock t is read both by Outer and inside it.\" Official KIELER: \"Cannot handle hierarchical timed automata. Add @ClocksUseSD annotation for experimental support based on SDs.\""
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "is read both by Outer and inside it"
+}

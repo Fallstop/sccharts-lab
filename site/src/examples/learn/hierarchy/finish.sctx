@@ -1,0 +1,20 @@
+scchart Washer {
+  input bool start, full, timeUp, empty, stop
+  output bool motor
+  output signal beep
+
+  initial state Idle
+    if start go to Programme
+
+  state Programme {
+    initial state Filling
+      if full do motor = true go to Washing
+    state Washing
+      if timeUp do motor = false go to Draining
+    state Draining
+      if empty go to Done
+    final state Done
+  }
+  if stop do motor = false go to Idle
+  do beep join to Idle
+}

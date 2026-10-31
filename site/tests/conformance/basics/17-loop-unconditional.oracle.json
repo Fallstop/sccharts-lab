@@ -1,0 +1,31 @@
+{
+  "hash": "c9ae3f8db1ba628aca1962d9e4fcf669ebe18a0c",
+  "chart": "tests/conformance/basics/17-loop-unconditional.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _g1",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick.",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A, B]",
+      "line": 3,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A, B]",
+      "line": 6,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

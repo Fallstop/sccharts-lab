@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "KIELER netlist bug. The entry action runs in every tick (tick 1 enters A, then the self-loop re-enters it in every tick), so shown should equal count: 1, 2, 3, ... (the priority-based compiler does: see the -priority twin). The netlist optimiser treats count += 1 as if it were count = 1 when it propagates constants through code that runs unconditionally, so shown = 1 for ever. Tick 1: count = 1, shown = 1."},
+    {"inputs": {}, "note": "count = 2 but shown = 1."},
+    {"inputs": {}, "note": "count = 3, shown = 1."}
+  ],
+  "expect": "ok",
+  "kielerBug": "Netlist PartialAssignmentEvaluation ignores the assignment operator: after x += c in unconditional code it assumes x == c. Intended (priority) result: shown = count = 1, 2, 3."
+}

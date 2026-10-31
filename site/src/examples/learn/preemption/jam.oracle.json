@@ -1,0 +1,208 @@
+{
+  "hash": "c819b49d4d0752f2584968a3a2284b56e122cfb8",
+  "chart": "src/examples/learn/preemption/jam.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "cancel": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "jam": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "sheet": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "printed": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "sheet": false,
+        "cancel": false,
+        "jam": false
+      },
+      "values": {
+        "cancel": false,
+        "jam": false,
+        "sheet": false,
+        "start": false,
+        "printed": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "cancel": false,
+        "jam": false,
+        "sheet": false,
+        "start": true,
+        "printed": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false,
+        "sheet": true
+      },
+      "values": {
+        "cancel": false,
+        "jam": false,
+        "sheet": true,
+        "start": false,
+        "printed": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "jam": true
+      },
+      "values": {
+        "cancel": false,
+        "jam": true,
+        "sheet": true,
+        "start": false,
+        "printed": 1
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "jam": false,
+        "start": true
+      },
+      "values": {
+        "cancel": false,
+        "jam": false,
+        "sheet": true,
+        "start": true,
+        "printed": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "cancel": false,
+        "jam": false,
+        "sheet": true,
+        "start": false,
+        "printed": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "cancel": true
+      },
+      "values": {
+        "cancel": true,
+        "jam": false,
+        "sheet": true,
+        "start": false,
+        "printed": 3
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "cancel": false,
+        "sheet": false
+      },
+      "values": {
+        "cancel": false,
+        "jam": false,
+        "sheet": false,
+        "start": false,
+        "printed": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "hash": "da7313aecc44076ab96e706cc8899be29502ce32",
+  "chart": "tests/conformance/basics/31-input-initial-value.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "J": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "J": 3
+      },
+      "values": {
+        "B": true,
+        "I": 42,
+        "J": 3,
+        "b": false,
+        "x": 0,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "B": true,
+        "I": 42,
+        "J": 3,
+        "b": true,
+        "x": 42,
+        "y": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 1,
+        "B": false
+      },
+      "values": {
+        "B": false,
+        "I": 1,
+        "J": 3,
+        "b": false,
+        "x": 1,
+        "y": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

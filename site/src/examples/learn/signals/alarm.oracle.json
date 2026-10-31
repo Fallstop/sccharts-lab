@@ -1,0 +1,78 @@
+{
+  "hash": "f26a51b4a5aa6c7006c621a4f6812bc8d6c6994e",
+  "chart": "src/examples/learn/signals/alarm.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "temperature": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "temperature": 20
+      },
+      "values": {
+        "temperature": 20,
+        "alarm": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "temperature": 95
+      },
+      "values": {
+        "temperature": 95,
+        "alarm": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "temperature": 40
+      },
+      "values": {
+        "temperature": 40,
+        "alarm": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "temperature": 40,
+        "alarm": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

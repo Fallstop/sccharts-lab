@@ -1,0 +1,10 @@
+scchart DebounceNaive {
+  input bool raw
+  output bool pressed
+
+  initial state Released
+    if 3 raw do pressed = true go to Pressed
+
+  state Pressed
+    if !raw do pressed = false go to Released
+}

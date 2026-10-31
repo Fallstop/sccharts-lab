@@ -1,0 +1,353 @@
+---
+title: "Reusing charts"
+description: "Using one chart inside another with state S is Other(...), wiring up its inputs and outputs, and keeping several charts in one file or in imported files."
+sidebar:
+  order: 4
+---
+
+import { Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A building has dozens of light switches, and every one of them works the same way. You would not want
+to draw the same two states and two transitions for each lamp. SCCharts lets you write the switch once,
+as a chart of its own, and use it wherever you need a switch. Each use is a **reference**: a state that
+says "I behave like that chart, wired to these variables".
+
+## A chart inside a state
+
+`PushSwitch` is an ordinary chart: one press switches its lamp on, the next switches it off.
+`LampPanel` uses it twice, once for each lamp, in two [concurrent regions](/learn/concurrency/):
+
+<Sim example="advanced/references/lamp-panel" references="expanded" caption="`left` and `right` each drive their own copy of `PushSwitch`, drawn inside `Left` and `Right`: pressing one never affects the other lamp." />
+
+The line that does the work is
+
+```sctx
+initial state Left is PushSwitch(left to press, leftLamp to lit)
+```
+
+`state Left is PushSwitch(...)` makes `Left` a **referencing state**: it behaves exactly like the chart
+`PushSwitch`. The list in brackets is the **binding**, the wiring between the two charts. `left to press`
+means "my `left` is your `press`", and `leftLamp to lit` means "my `leftLamp` is your `lit`". Every
+input and output of the referenced chart must be wired to something; [bindings](#wiring-bindings) below
+shows the ways to do it.
+
+In the diagram, a referencing state shows the name of the chart it uses after an `@` sign, followed by
+the actuals it is bound to. KIELER draws it collapsed, as a box that you can expand to see the chart
+inside. The simulations on this page show the copies expanded, so that you can watch their states.
+
+## What `is` really does: a copy
+
+KIELER treats a reference like a macro. Before compiling, it replaces `Left` with a **copy** of
+`PushSwitch`'s inside: its regions, its states and transitions, its local declarations and its own
+`entry`, `during` and `exit` actions. The copy keeps the name `Left`, its `initial` or `final` flag, and
+its incoming and outgoing transitions. Everywhere in the copy, `press` is replaced by `left` and `lit` by
+`leftLamp`.
+
+So a referencing state is simply a [superstate](/learn/hierarchy/) that you did not have to write out,
+and everything you know about superstates applies to it: it can be left by a weak or strong
+[abort](/learn/preemption/), it can be suspended, and it can be the target of a history transition. A few
+consequences are worth spelling out:
+
+- **Every reference is a separate copy.** `Left` and `Right` each have their own `Off` and `On`. If the
+  referenced chart has local variables, each copy has its own set. (A variable declared `global` in the
+  referenced chart is the exception: all copies share it.)
+- **The referenced chart's own actions become the referencing state's.** An `entry do ...` written at the
+  top of `PushSwitch` would run every time `Left` is entered; its `exit` actions every time `Left` is
+  left.
+- **Aborts see the copy's writes like any inner behaviour.** A weak abort `if leftLamp go to ...` on
+  `Left` sees what the copy wrote in that tick and fires at once; a strong abort `abort to` reads the
+  value from before the copy ran, so it fires a tick later.
+
+Two copies of one counter show the first point. `Tally` counts clicks with a self-loop; `DoorCounters`
+uses it for the front door and for the back door:
+
+<Sim example="advanced/references/door-counters" references="expanded" caption="Each door has its own copy of `Tally`, drawn inside `Front` and `Back`. In tick 5 both doors click, and both copies count, each into its own output." />
+
+The two copies share nothing but their source: `Front`'s `Counting` state and self-loop are not
+`Back`'s, and `count` is `frontCount` in one copy and `backCount` in the other.
+
+## Several charts in one file
+
+A file may contain any number of `scchart` definitions, in any order: a reference may name a chart that
+is defined further down. But only one chart in a file is simulated, and it is **the first one**. The
+others are only there to be referenced.
+
+Here is the lamp panel again, with the two charts the other way round:
+
+<Sim example="advanced/references/wrong-order" caption="With the switch first in the file, the switch is what runs: the interface is `press` and `lit`, and the panel never starts." />
+
+The panel, `PanelSecond`, is not broken. It is simply not the chart that runs. Put the chart you want to
+run at the top of the file and the charts it uses below it. SCCharts Lab's Simulate command and this
+site's simulator both follow KIELER here.
+
+Two more rules apply to files with several charts:
+
+- **The whole file is checked.** A misspelt variable in a chart that nothing uses still rejects the file,
+  with the usual `Couldn't resolve reference to ValuedObject 'q'.` Problems that only the scheduler finds,
+  such as a [causality cycle](/learn/causality/), are found only in the simulated chart and the charts it
+  references.
+- **Give every chart its own name.** With two charts of the same name, KIELER warns
+
+  ```text wrap
+  There are multiple root states with the same name. 'Twin'
+  ```
+
+  and simulates the first; a reference to the name may pick either. This happens easily when you copy a chart within a file and forget to rename it.
+
+## Charts in other files: `import`
+
+To use a chart that lives in another file, import the file. Its charts can then be referenced by name.
+`HallLights` imports the file `push-switch.sctx`, shown below it, and uses its chart `ImportedSwitch`:
+
+<Sim example="advanced/references/import-main" references="expanded" caption='Switch to Code: the first line, `import "push-switch"`, makes the chart `ImportedSwitch` from the other file available.' />
+
+```sctx title="push-switch.sctx"
+scchart ImportedSwitch {
+  input bool press
+  output bool lit = false
+
+  initial state Off
+    if press do lit = true go to On
+
+  state On
+    if press do lit = false go to Off
+}
+```
+
+- `import "push-switch"` loads `push-switch.sctx` from the folder of the importing file. The `.sctx` may
+  be left out or written. A path relative to that folder works too, and `import "lib/*"` loads every
+  `.sctx` file in the folder `lib`.
+- Imports come first in the file, before the first `scchart`.
+- Imported charts are only for referencing. The chart that runs is still the first chart of the file you
+  simulate, here `HallLights`.
+- `import` names a *file*; `is` names a *chart*. The two names need not match, and a file may hold
+  several charts.
+
+Three mistakes, and what KIELER says about them:
+
+- **No `import`.** A chart in another file is invisible, even if it sits in the same folder:
+
+  ```text wrap
+  Couldn't resolve reference to NamedObject 'ImportedSwitch'.
+  ```
+
+- **A file that does not exist.** KIELER only warns,
+
+  ```text wrap
+  Broken Import: There is no SCCharts model with the given name.
+  ```
+
+  and then reports the references it cannot resolve, as above.
+- **The old pragma `#import "beep"`**, which older examples use. Current KIELER does not accept it
+  (`no viable alternative at input 'import'`): write `import`.
+
+## Wiring: bindings
+
+The **formals** of a referenced chart are its inputs and outputs, in the order they are declared. A
+binding connects each formal to an **actual**: a variable or signal of the referencing chart, or for an
+input, a constant. There are three ways to write it.
+
+### Explicit bindings
+
+`actual to formal`, as in `left to press`: "my `left` to your `press`". Explicit bindings say exactly what
+is meant, they survive changes to the referenced chart, and they can be written in any order. Prefer them.
+
+### Bindings by order
+
+You may leave out the names: `PushSwitch(left, leftLamp)` binds `left` to the first formal and `leftLamp`
+to the second, in the order the formals are declared in `PushSwitch`. This is shorter, but it breaks
+silently as soon as someone reorders or adds declarations in the referenced chart, and KIELER does not
+check that the types match. The exercise at the end of this chapter shows how badly that can go.
+
+You can mix the two styles, but the order bindings then follow a rule that few people guess. Here
+`ThreeDigits` has the formals `a`, `b`, `c` (inputs) and `result` (an output), and computes
+`result = a * 100 + b * 10 + c`. The reference is `ThreeDigits(1 to b, 2, number, seven to a)`, where
+`seven` is a local with the value 7. (If you switch to the diagram, note that it lists only the actuals,
+not the formals they are bound to.) Predict `number` in tick 2, then open the explanation:
+
+<Predict
+  example="advanced/references/pointer"
+  ask={[{ tick: 2, value: 'number' }]}
+  caption="`1 to b` comes first. Which formal does the `2` after it bind to?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`number` is 712. KIELER binds the arguments left to right with a pointer into the list of formals. An
+explicit binding `x to f` moves the pointer to `f` and then one past it; an order binding takes the formal
+at the pointer and moves on. So after `1 to b`, the `2` binds to `c`, the formal declared *after* `b`, and
+`number` binds to `result`. Then `seven to a` binds `a`. If the pointer runs past the last formal, the
+binding is an error.
+
+</details>
+
+### Implicit bindings
+
+A formal that is not bound by any argument is bound by **name** to a variable or signal of the same name
+that is visible at the referencing state (declared in it, in a state around it, or in the chart).
+`is ImplicitSwitch()`, or just `is ImplicitSwitch`, binds every formal this way:
+
+<Sim example="advanced/references/implicit" references="expanded" caption="`press` and `lit` are wired to the parent's `press` and `lit` because the names match. The editor warns about it." />
+
+The editor warns `Valued Objects are bound implicitly!`, followed on the next line by the names, each
+followed by a comma (here `press, lit, `). Implicit binding saves typing when a big interface is passed
+straight through, but it is easy to bind something you did not mean to. If no variable of that name is
+visible, the binding is an error.
+
+### What can be bound
+
+A variable or a signal, of course, and for an input also a literal such as `true` or `3`: the input is
+then that constant inside the copy. Any other expression, such as `a && b`, cannot be bound: compute it
+into a variable of the referencing chart first and bind the variable.
+
+<details>
+<summary>Arrays, signals and types</summary>
+
+| Actual | to an input | to an output |
+| --- | --- | --- |
+| a variable or signal | yes | yes |
+| a whole array | yes, to an array formal | yes, to an array formal |
+| one array element, `a[1]` | yes, to a scalar formal | yes, to a scalar formal |
+| a literal, `true` or `3` | yes: the input is that constant inside the copy | no |
+| any other expression, `a && b` | no | no |
+
+Signals bind to signals, valued signals included. Types are not checked: KIELER will happily bind a
+`float` to a `bool` input.
+
+</details>
+
+<Aside type="caution" title="When a binding is wrong">
+A formal left unbound, one argument too many, a literal bound to an output or an array bound to a single
+value: the editor reports each of these as `The referencing binding is erroneous!`, with the reason on
+the next line. A misspelt formal after `to` gives `Couldn't resolve reference to ValuedObject 'nope'.`,
+and an unknown chart after `is` gives `Couldn't resolve reference to NamedObject 'Nope'.` An expression as
+an actual is not flagged by the editor at all; only compiling fails. [Compiler
+messages](/reference/errors/#the-referencing-binding-is-erroneous) lists every binding message.
+</Aside>
+
+## Inside the copy, the formal is your variable
+
+Binding is not copying values in and out. Inside the copy, the formal is *replaced* by the actual, so the
+copy works directly on your variables:
+
+- When the copy writes an output, the bound variable changes at that moment, and the regions next to the
+  referencing state see the new value in the same tick, as with any write.
+- When the copy writes one of its *inputs*, it writes the variable you bound to it. A referenced chart
+  that does `level -= 1` on its input `level` changes your variable.
+- Bind one variable to two outputs and both writes go to that variable.
+
+Initial values follow the same logic, with a result that surprises most people, so they get a section
+of their own.
+
+## Output initial values are applied on every entry
+
+In the chart below, `remaining` starts at 0, but the referenced `Countdown` declares its output as
+`output int left = 3`. KIELER turns that initial value into an entry action of the referencing state: the
+bound variable is set to 3 *every time* `Timing` is entered.
+
+<Sim example="advanced/references/initial-values" references="expanded" caption="`remaining` is 0 in tick 1, becomes 3 when `Timing` is entered in tick 2, and is set to 3 again on the next entry in tick 8." />
+
+Here that is convenient: every start restarts the countdown. But it also means that the referenced chart's
+initial value wins over yours, and that a value you wanted to keep across visits is overwritten whenever
+the state is entered. Leave the initial value off the referenced chart's output if the referencing chart
+should decide. Initial values of the referenced chart's *inputs*, on the other hand, are ignored: the
+input is your variable, with your value.
+
+## Waiting for a referenced chart to finish
+
+A referenced chart terminates when all its regions reach final states, and then the referencing state
+terminates: a `join to` on it fires in the same tick, as for any superstate. This combination lock uses
+one small chart, `Await`, twice: once for `a`, then once for `b`.
+
+<Sim example="advanced/references/join" references="expanded" caption="Pressing `b` first (tick 2) does nothing; `a` (tick 3) finishes `First`, and `b` (tick 5) finishes `Second` and opens the lock." />
+
+If the referenced chart has no final state in some region, it can never finish. KIELER then warns
+
+```text wrap
+The referenced SCChart does not terminate, but you are using a termination to proceed.
+```
+
+and the `join to` never fires.
+
+## Other forms you may meet
+
+- **`ref` declarations.** `ref C g(X, Y, O)` among a state's declarations also makes a copy of `C`, which
+  runs alongside the state's regions. They are mostly used in
+  [dataflow regions](/advanced/dataflow/#wiring-up-instances-of-other-charts); elsewhere, an extra region
+  with `initial state G is C(X, Y, O)` says the same more visibly.
+- **`region R is C(...)` is not a reference.** KIELER rejects it with
+  `Couldn't resolve reference to NamedObject 'C'.` The form belongs to inheritance (`extends`,
+  `override`), which [Enums, structs and classes](/advanced/data-types/#classes-data-with-its-own-methods)
+  touches on and the KIELER wiki's
+  [Object Orientation](https://github.com/kieler/semantics/wiki/Syntax:-Object-Orientation) page describes.
+  To run a chart as a region, write `region { initial state R is C(...) }`.
+- **`state S calls C(...)`** is accepted by KIELER's grammar, but its C simulation cannot compile it.
+- **A chart cannot contain itself**, directly or through other charts: the copies would never end.
+  Official KIELER's compiler runs out of stack on such a chart, without a useful message; SCCharts Lab
+  reports
+
+  ```text wrap
+  Recursive reference: chart Main uses itself (Main -> Main).
+  ```
+
+  [Compiler messages](/reference/errors/#recursive-reference-chart-main-uses-itself-main---main)
+  explains it.
+
+## Try it
+
+<TryIt example="advanced/references/bad-order-starter" solution="advanced/references/bad-order-solution" title="The silent doorbells" hint="`Bell(front, frontRings)` binds by order. In which order does `Bell` declare its input and its output?">
+`DoorbellPanel` uses the chart `Bell` for its front and back doors, but neither bell ever rings: press
+`front` or `back`, and `frontRings` and `backRings` stay 0. KIELER reports no error and no warning. Find
+out why, and fix the panel without changing `Bell`.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="A file contains `scchart Helper { ... }` followed by `scchart Main { ... }`, and `Main` references `Helper`. What happens when you simulate the file?"
+  options={[
+    '`Main` runs, because it is the chart that uses the other',
+    'KIELER asks which chart to run',
+    'KIELER rejects the file, because `Helper` is defined before it is used',
+    '`Helper` runs, because it is the first chart in the file',
+  ]}
+  answer={3}
+>
+KIELER always simulates the first chart in a file, and nothing chooses another. Move `Main` to the top. The
+order of definitions does not matter for references: a reference may name a chart defined further down.
+</Quiz>
+
+<Quiz
+  question="`Counter` declares `output int n = 10` and counts `n` up with a delayed self-loop, `do n++ go to Count`. A chart declares `output int total = 0` and has `state C is Counter(total to n)`, entered in tick 3. What is `total` at the end of tick 3?"
+  options={['0', '10', '11']}
+  answer={1}
+>
+The initial value of `Counter`'s output becomes an entry action of `C`, applied to the bound variable on
+every entry: `total` = 10. The counting is delayed, so it starts in tick 4.
+</Quiz>
+
+<Quiz
+  question="Two regions contain `state A is Count(...)` and `state B is Count(...)`. `Count` has a local variable `k`. How many `k` are there?"
+  options={['One, shared by both instances', 'None: locals of referenced charts are removed', 'Two: each reference is a separate copy of `Count`']}
+  answer={2}
+>
+A reference is expanded into a copy of the referenced chart, locals included, so each instance counts on
+its own. To share a value, bind the same variable of the referencing chart to both.
+</Quiz>
+
+<KeyIdeas>
+- `state S is C(bindings)` makes `S` a copy of chart `C`, wired to your variables; it then behaves like any
+  superstate.
+- Only the first chart in a file is simulated. Put the main chart first; other charts, and imported files,
+  are there to be referenced.
+- `import "file"` makes another file's charts available; `is` names the chart.
+- Bind explicitly (`actual to formal`). Order bindings and implicit bindings work, but break silently.
+- Inside the copy, a formal is your variable: writes go straight to it, and an output's initial value is
+  assigned to it on every entry.
+- `join to` on a referencing state fires when the referenced chart reaches its final states.
+</KeyIdeas>
+
+Next, [Arrays and for regions](/advanced/for-regions/): a region written once and copied for every
+index of an array.

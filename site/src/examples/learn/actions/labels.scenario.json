@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false }, "note": "The same fridge as before: labels change only what the diagram shows." },
+    { "inputs": { "doorOpen": true }, "note": "**door opens**: the lamp comes on." },
+    { "note": "`openFor` is 1." },
+    { "note": "`openFor` is 2." },
+    { "note": "**open too long**: the fridge beeps." },
+    { "note": "Still beeping." },
+    { "inputs": { "doorOpen": false }, "note": "**door closes**: both exit actions run." },
+    { "note": "Closed." }
+  ],
+  "expect": "ok"
+}

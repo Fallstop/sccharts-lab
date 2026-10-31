@@ -1,0 +1,6 @@
+scchart CountSteps {
+  output int n = 0
+
+  initial state Counting
+    if n < 3 do n += 1 go to Counting
+}

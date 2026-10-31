@@ -1,0 +1,31 @@
+scchart WatchdogInside {
+  input bool beat, demand
+  output bool motor, alarm
+  output int starts = 0
+  signal expired
+
+  initial state Running {
+    exit do motor = false
+
+    region Watchdog {
+      initial state Watching
+        if beat go to Watching
+        if 3 true do expired go to Expired
+
+      state Expired
+    }
+
+    region Work {
+      initial state Stopped
+        if demand do motor = true; starts++ go to Started
+
+      state Started
+        if !demand do motor = false go to Stopped
+    }
+  }
+  if expired abort to Safe
+
+  state Safe {
+    entry do alarm = true
+  }
+}

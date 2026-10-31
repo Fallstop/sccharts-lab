@@ -1,0 +1,10 @@
+{
+  "needs": ["c-random"],
+  "ticks": [
+    { "inputs": {}, "note": "Tick 1 enters `Roll`; the self-loop is delayed, so `random()` has not been called: `r` = 0." },
+    { "inputs": {}, "note": "The first number of C's `rand()`: `r` ≈ 0.840, so `face` = 6." },
+    { "inputs": {}, "note": "`r` ≈ 0.394, `face` = 3." },
+    { "inputs": {}, "note": "`r` ≈ 0.783, `face` = 5. Run it again and you get exactly the same numbers: the generator is never seeded." }
+  ],
+  "expect": "ok"
+}

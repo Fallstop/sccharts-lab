@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "level": 3 }, "note": "First tick: `->` gives `false`, although `differs` is true here (`pre(level)` is 0)." },
+    { "inputs": { "level": 3 }, "note": "Same level as before: `changed` = false." },
+    { "inputs": { "level": 4 }, "note": "3 → 4: `changed` = true." },
+    { "inputs": { "level": 4 }, "note": "Unchanged: `changed` = false." },
+    { "inputs": { "level": 0 }, "note": "4 → 0: `changed` = true." }
+  ],
+  "expect": "ok"
+}

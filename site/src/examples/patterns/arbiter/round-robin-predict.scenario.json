@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": { "reqA": false, "reqB": false, "done": false },
+      "note": "Tick 1 enters `Free`."
+    },
+    {
+      "inputs": { "reqA": true },
+      "note": "A's job starts at once."
+    },
+    {
+      "inputs": { "reqA": false },
+      "note": "A's job prints; nobody else is waiting."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "A's job is finished and nobody is waiting: `Free`, and `user` is 0."
+    },
+    {
+      "inputs": { "done": false, "reqA": true, "reqB": true },
+      "note": "Both send a job. `pre(user)` is the `user` of tick 4, which is 0: the memory of A's turn is gone, and A wins the tie."
+    },
+    {
+      "inputs": {},
+      "note": "A's job prints; B waits."
+    },
+    {
+      "inputs": { "done": true },
+      "note": "A's job is finished while both have jobs waiting. `pre(user)` is 1, so now B gets its turn."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,96 @@
+{
+  "hash": "37d3ce1284f97bcc795d04932471733c2ee18fae",
+  "chart": "src/examples/learn/preemption/immediate-abort.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "cancel": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "busy": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "start": false,
+        "busy": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true,
+        "cancel": true
+      },
+      "values": {
+        "cancel": true,
+        "start": true,
+        "busy": false
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "cancel": true,
+        "start": false,
+        "busy": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "start": false,
+        "busy": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

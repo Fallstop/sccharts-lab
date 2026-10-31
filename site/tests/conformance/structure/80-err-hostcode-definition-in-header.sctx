@@ -1,0 +1,10 @@
+// #hostcode is pasted into both the generated header and the C file, which includes the header: a function
+// defined there is defined twice. Use #hostcode-c for definitions.
+#hostcode "static int twice(int v) { return 2 * v; }"
+scchart St80Twice {
+  input int a
+  output int x = 0
+  extern "twice" tw
+  initial state S
+  do x = tw(a) go to S
+}

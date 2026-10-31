@@ -1,0 +1,10 @@
+// The end of a numeric range must be an integer literal; even a const is not accepted.
+scchart St34Bad {
+  const int N = 3
+  output int s = 0
+  region for i : 0 to N {
+    initial state W
+    immediate do s += i go to D
+    final state D
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: a region starts in exactly one state, and two are marked `initial`."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Every region must not have more than one initial state."
+}

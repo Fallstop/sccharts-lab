@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER cannot compile the chart: `Work` has a `join to`, but its only region has no final state, and the compiler crashes on this shape instead of reporting it."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "The compiler failed during compilation setup."
+}

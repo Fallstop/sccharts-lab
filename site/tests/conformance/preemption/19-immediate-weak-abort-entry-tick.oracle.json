@@ -1,0 +1,76 @@
+{
+  "hash": "1746217d372951cecc32e7502d36069d7c9bfc14",
+  "chart": "tests/conformance/preemption/19-immediate-weak-abort-entry-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "W": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chained": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "effect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "W": true
+      },
+      "values": {
+        "W": true,
+        "chained": 1,
+        "effect": 1,
+        "innerEntry": 1,
+        "outerEntry": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "W": true,
+        "chained": 1,
+        "effect": 1,
+        "innerEntry": 1,
+        "outerEntry": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

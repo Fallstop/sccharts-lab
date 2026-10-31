@@ -1,0 +1,69 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "note": "ABRO with signals. Tick 1: `A` and `B` are present but the transitions are delayed, so they are ignored."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": false,
+        "R": false
+      },
+      "note": "`A`: `HandleA` finishes."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true,
+        "R": false
+      },
+      "note": "`B`: `HandleB` finishes; the join fires and `O` is present."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "note": "`O` is a signal, so it is absent again; `A`, `B` are ignored now."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": true
+      },
+      "note": "`R`: strong abort, `ABO` re-entered."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "note": "`A` and `B`: both finish in one tick, `O` present."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": true
+      },
+      "note": "`A`, `B` and `R`: `R` resets ABRO again (strong abort out of `Done`). `A` and `B` in the reset tick are ignored because the re-entered transitions are delayed: `O` absent."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "Nothing."
+    }
+  ],
+  "expect": "ok"
+}

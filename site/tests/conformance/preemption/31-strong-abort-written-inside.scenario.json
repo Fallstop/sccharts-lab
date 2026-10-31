@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M with regions R1 and R2."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Surprise: R1 checks the strong abort first (stop is still false), then sets stop = true. R2 must read stop after that write, so R2 sees stop = true and is aborted: its self-loop does not run (countR2 = 0). R1 is not aborted, so M is not left either (done = 0)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Now stop is true when R1 checks it: R1 is aborted too, M is left (done = 1). Neither self-loop ever ran (countR1 = 0, countR2 = 0). Avoid strong aborts whose trigger is written inside the aborted state."
+    },
+    {
+      "inputs": {},
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

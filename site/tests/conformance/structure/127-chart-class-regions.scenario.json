@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Tick 1 enters S and the instance (count = 0): **O = 0**."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "The ticker counts to 1 and A reads it after the write: **O = 1**."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "count = 2, **O = 2**, then S is left for T."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "T goes back to S: the instance starts again with count = 0: **O = 2**."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "The new instance counts to 1: **O = 1**."
+    }
+  ],
+  "expect": "ok"
+}

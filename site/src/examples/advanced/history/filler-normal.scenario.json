@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "cup": true, "full": false }, "note": "A cup is under the spout in tick 1: `Ready`'s immediate transition starts filling it at once (`fills` = 1)." },
+    { "inputs": {}, "note": "`Filling`." },
+    { "inputs": { "full": true }, "note": "The cup is full but still under the spout (`cup` is true). `go to Ready` enters `Ready`, and its immediate transition starts filling the full cup again in the same tick (2)." },
+    { "inputs": { "full": false, "cup": false }, "note": "The cup has been taken away, but the machine is `Filling` with nothing under the spout." },
+    { "inputs": { "cup": true }, "note": "A new cup. The machine is still in `Filling` and counts nothing." },
+    { "inputs": { "full": true }, "note": "The second cup is full and still there: filled again (3)." },
+    { "inputs": { "full": false, "cup": false }, "note": "Two cups, three fills." }
+  ],
+  "expect": "ok"
+}

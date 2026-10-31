@@ -1,0 +1,8 @@
+scchart FloatLiterals {
+  input float F
+  output float a, b, c, d, e
+  output int i, j, k
+
+  initial state S
+  do a = 0.1; b = 2.5; c = 1.0 / 3; d = F + 0.2; e = 1.5e3; i = 7.9; j = -7.9; k = 7 / 2.0 go to S
+}

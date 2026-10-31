@@ -1,0 +1,15 @@
+/** Switches the lamp on and off with one button. */
+scchart Lamp {
+  /** The push button, true while pressed. */
+  input bool button
+  output bool light = false
+
+  /** Waiting for a press. */
+  initial state Off
+  /** Press: switch on. */
+    if button do light = true go to On
+
+  /** The lamp is lit. */
+  state On
+    if button do light = false go to Off
+}

@@ -1,0 +1,30 @@
+// Surface/Depth's depth transition optimisation does not stop at the state: WaitC has a single, immediate incoming
+// transition (from the connector the Abort transformation puts after WaitAB's join), and the connector's other
+// transition equals WaitC's delayed abort check (`if R`). The depth of WaitC then continues in the connector, so the
+// join's transition counts again in every tick WaitC waits.
+scchart DtoIntoConnector {
+  input signal A, B, C, R
+  output signal O
+
+  initial state ABO {
+    initial state WaitAB {
+      region {
+        initial state WaitA
+        if A go to DoneA
+        final state DoneA
+      }
+      region {
+        initial state WaitB
+        if B go to DoneB
+        final state DoneB
+      }
+    }
+    join to WaitC
+
+    state WaitC
+    immediate if C do O go to Done
+
+    state Done
+  }
+  if R abort to ABO
+}

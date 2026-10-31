@@ -1,0 +1,8 @@
+// Signals cannot be the left-hand side of an equation.
+scchart St53Bad {
+  input signal A, B
+  output signal S
+  dataflow {
+    S = A && B
+  }
+}

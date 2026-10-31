@@ -1,0 +1,13 @@
+scchart OneShot {
+  input bool button
+  output bool pulse
+
+  initial state Ready
+    if button && !pre(button) go to Firing
+
+  state Firing {
+    entry do pulse = true
+    exit do pulse = false
+  }
+  if 3 true go to Ready
+}

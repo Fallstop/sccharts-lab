@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "reading": 3
+      },
+      "note": "Tick 1: `last` starts as `{0, 0, 0}`. The self-loop is delayed, so the reading 3 is not stored."
+    },
+    {
+      "inputs": {
+        "reading": 6
+      },
+      "note": "Shifting from the back first keeps the old values: `last[2] = last[1]` and `last[1] = last[0]` copy zeros, then `last[0]` gets 6. `average` is 6 / 3 = 2."
+    },
+    {
+      "inputs": {
+        "reading": 9
+      },
+      "note": "`last` is `{9, 6, 0}`; the average is 15 / 3 = 5."
+    },
+    {
+      "inputs": {
+        "reading": 12
+      },
+      "note": "`last` is `{12, 9, 6}`; the average is 27 / 3 = 9."
+    }
+  ],
+  "expect": "ok"
+}

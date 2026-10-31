@@ -1,0 +1,34 @@
+// Rejected by KIELER as without the abort region (a superstate with exit actions left and re-entered
+// immediately inside Main): the abort region changes nothing about that.
+scchart Nested {
+  input bool A, B
+  output int work = 0, exits = 0, done = 0
+
+  initial state M {
+    region Main {
+      initial state Outer {
+        exit do exits += 1
+        region {
+          initial state P
+          if B do work += 100 go to Q
+          state Q {
+            exit do exits += 10
+          }
+          if true do work += 1 go to Q
+        }
+      }
+      if B go to Outer
+    }
+    abort region Watch {
+      initial state W
+      if A go to F
+      final state F
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done += 1
+  }
+  go to M
+}

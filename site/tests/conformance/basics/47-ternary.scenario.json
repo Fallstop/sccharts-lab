@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"A": 3, "B": false}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "pick = 20; guarded = 3. keep = B ? 5 has no else part: it keeps its current value (1) when B is false. The ternary binds tighter than + and its three parts must be simple (a literal, a name or a parenthesised expression): sum = B ? 10 : 20 + 1 means (B ? 10 : 20) + 1 = 21. nested = 3. (The inner condition needs its own parentheses, (A > 2), for the reason shown in ternary-binds-tight.)"},
+    {"inputs": {"B": true}, "note": "pick = 10, keep = 5, sum = 11, nested = 1 (A > 2)."},
+    {"inputs": {"A": 0}, "note": "guarded = 0 (A > 2 is false), nested = 2."}
+  ],
+  "expect": "ok"
+}

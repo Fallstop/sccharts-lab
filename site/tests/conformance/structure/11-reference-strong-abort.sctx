@@ -1,0 +1,14 @@
+// A strong abort (abort to) out of a referencing state: the trigger is tested before the instance runs, and in
+// the tick it fires the instance does not run at all. Compare 10-reference-weak-abort (one tick earlier).
+scchart St11Main {
+  output int o = 0
+  initial state R is St11Counter(o)
+  if o >= 3 abort to E
+  state E
+}
+
+scchart St11Counter {
+  output int count
+  initial state S
+  do count++ go to S
+}

@@ -1,0 +1,61 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Tick 1: all regions start: **x = 0, y = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "Write increments x, but Read is not ordered after it (the dependency analysis stopped at the instance) and tests x first: **x = 1, y = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "note": "Read sees the x of before this tick (1 > 0): **x = 2, y = 1**; the instance is aborted by its p (b)."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "a is false: x stays, Read counts: **x = 2, y = 2**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "**x = 3, y = 3**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "note": "**x = 4, y = 4**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "note": "a is false: **x = 4, y = 5**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "**x = 5, y = 6**."
+    }
+  ],
+  "expect": "ok"
+}

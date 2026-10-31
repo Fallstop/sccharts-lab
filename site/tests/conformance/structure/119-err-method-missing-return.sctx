@@ -1,0 +1,12 @@
+// A method with a return type must return a value.
+scchart St119NoReturn {
+  output int O = 0
+  class C {
+    int v
+    int get() {
+      v++
+    }
+  } c
+  initial state A
+  do O = c.get() go to A
+}

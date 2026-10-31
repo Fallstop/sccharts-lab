@@ -1,0 +1,9 @@
+// Greedy bounds: a disjunction of two bounds on the same clock (x >= 999 || x >= 1000) requests sleep only up to
+// the later bound, but the transition already fires at the earlier one. sleepT counts every state active in the
+// tick, including one that is just being left, as long as its clock is still below the bound (x < bound).
+scchart St73Greedy {
+  output int n = 0
+  clock x
+  initial state S
+  if x >= 999 || x >= 1000 do x = 0; n++ go to S
+}

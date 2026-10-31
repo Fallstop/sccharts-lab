@@ -1,0 +1,110 @@
+{
+  "hash": "f814ef544f6803da71e711370eb6ff8f8378e215",
+  "chart": "src/examples/advanced/connectors/no-immediate.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Outgoing transitions of connector states should be marked as immediate.",
+      "line": 11,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "Outgoing transitions of connector states should be marked as immediate.",
+      "line": 12,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "coin10": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "coin20": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "credit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "vend": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "coin10": false,
+        "coin20": false
+      },
+      "values": {
+        "coin10": false,
+        "coin20": false,
+        "credit": 0,
+        "vend": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "coin20": true
+      },
+      "values": {
+        "coin10": false,
+        "coin20": true,
+        "credit": 20,
+        "vend": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "coin20": false,
+        "coin10": true
+      },
+      "values": {
+        "coin10": true,
+        "coin20": false,
+        "credit": 0,
+        "vend": true
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

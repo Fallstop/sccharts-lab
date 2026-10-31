@@ -1,0 +1,15 @@
+---
+/**
+ * Starlight's Head, plus preloads of the two fonts every page draws above the fold: the display face (page
+ * title, header) and the text face's latin roman. Without them the browser finds the fonts only after the CSS,
+ * and the late swap moves the title and the header (a layout shift on every first visit). The `?url` imports
+ * resolve to the same hashed files the stylesheets use (display-font.css, @fontsource-variable/atkinson-...).
+ */
+import Default from '@astrojs/starlight/components/Head.astro'
+import displayFont from '../../styles/fonts/archivo-display-latin.woff2?url'
+import textFont from '@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2?url'
+---
+
+<Default />
+<link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={textFont} as="font" type="font/woff2" crossorigin />

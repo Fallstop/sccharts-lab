@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "coin10": false, "coin20": false }, "note": "KIELER warns twice, `Outgoing transitions of connector states should be marked as immediate.`, and makes the transitions immediate anyway. Tick 1 enters `Waiting`." },
+    { "inputs": { "coin20": true }, "note": "20c: through `Check` and back to `Waiting` in the same tick (`credit` = 20), although `Check`'s transitions look delayed." },
+    { "inputs": { "coin20": false, "coin10": true }, "note": "10c: through `Check`, which vends at once (`credit` = 0, `vend` present)." }
+  ],
+  "expect": "ok"
+}

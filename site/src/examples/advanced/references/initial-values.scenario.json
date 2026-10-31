@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "stop": false }, "note": "Tick 1 starts in `Idle`. `remaining` has the parent's initial value, 0." },
+    { "inputs": { "start": true }, "note": "Entering `Timing` applies `Countdown`'s initial value for its output `left` to the bound variable: `remaining` = 3, not 0." },
+    { "inputs": { "start": false }, "note": "Counting down: 2." },
+    { "note": "1." },
+    { "note": "0." },
+    { "note": "The countdown has finished; `remaining` stays 0." },
+    { "inputs": { "stop": true }, "note": "Back to `Idle`." },
+    { "inputs": { "stop": false, "start": true }, "note": "Every entry of `Timing` applies the initial value again: `remaining` = 3." },
+    { "inputs": { "start": false }, "note": "2." }
+  ],
+  "expect": "ok"
+}

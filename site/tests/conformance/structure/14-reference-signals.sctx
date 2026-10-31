@@ -1,0 +1,29 @@
+// Signals can be bound to signals. The instance's output signal O is the parent's local signal Beat, so a
+// concurrent region sees it in the same tick. Valued signals are bound the same way.
+scchart St14Main {
+  input signal Press
+  input signal int V
+  output signal int W
+  output int count = 0
+  signal Beat
+  region { initial state R is St14Relay(Press to I, Beat to O) }
+  region { initial state D is St14Double(V, W) }
+  region {
+    initial state C
+    if Beat do count++ go to C
+  }
+}
+
+scchart St14Relay {
+  input signal I
+  output signal O
+  initial state S
+  if I do O go to S
+}
+
+scchart St14Double {
+  input signal int I
+  output signal int O
+  initial state S
+  if I do O(val(I) * 2) go to S
+}

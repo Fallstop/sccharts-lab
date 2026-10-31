@@ -1,0 +1,16 @@
+scchart SimpleEnum {
+  
+  ref EnumDecl.Bit b = scchart(EnumDecl).Bit.ZERO
+  
+  initial state A
+   do b = scchart(EnumDecl).Bit.ONE go to B
+   
+  state B
+   if b != scchart(EnumDecl).Bit.ZERO go to C
+   
+  final state C
+}
+
+scchart EnumDecl {
+  enum Bit { ZERO, ONE }
+}

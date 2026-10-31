@@ -1,0 +1,260 @@
+{
+ "sourceHash": "f4f066018a749dfb",
+ "states": [
+  {
+   "path": [
+    "Declarations"
+   ],
+   "rows": [
+    [
+     "Declarations"
+    ],
+    [
+     "input bool ",
+     "i1, i2 = true"
+    ],
+    [
+     "output bool ",
+     "o1"
+    ],
+    [
+     "input output int ",
+     "io"
+    ],
+    [
+     "const int ",
+     "K = 10"
+    ],
+    [
+     "const float ",
+     "PI = 3.14"
+    ],
+    [
+     "int ",
+     "arr[3][2]"
+    ],
+    [
+     "int ",
+     "vec[3] = {1, 2, 3}"
+    ],
+    [
+     "input signal ",
+     "S1"
+    ],
+    [
+     "output signal ",
+     "S2, S3"
+    ],
+    [
+     "signal int ",
+     "L = 0 ",
+     "combine ",
+     "+"
+    ],
+    [
+     "output signal float ",
+     "F ",
+     "combine ",
+     "*"
+    ],
+    [
+     "string ",
+     "text = \"hello\""
+    ],
+    [
+     "unsigned char ",
+     "hc"
+    ],
+    [
+     "extern ",
+     "rand ",
+     "rnd"
+    ],
+    [
+     "static int ",
+     "st = 1"
+    ],
+    [
+     "global int ",
+     "gl"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    448,
+    553.2
+   ]
+  },
+  {
+   "path": [
+    "Declarations",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ],
+    [
+     "int ",
+     "local = 0"
+    ],
+    [
+     "entry ",
+     "/ o1 = true"
+    ],
+    [
+     "entry ",
+     "i1 ",
+     "/ io = 1"
+    ],
+    [
+     "during ",
+     "/ io++"
+    ],
+    [
+     "immediate during ",
+     "i2 ",
+     "/ io += 2"
+    ],
+    [
+     "exit ",
+     "/ o1 = false"
+    ],
+    [
+     "exit ",
+     "i1 ",
+     "/ io = 0"
+    ],
+    [
+     "suspend ",
+     "i2 ",
+     ""
+    ],
+    [
+     "weak suspend ",
+     "i1 ",
+     ""
+    ],
+    [
+     "immediate suspend ",
+     "!i1 ",
+     ""
+    ],
+    [
+     "entry ",
+     "user action"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    196.9,
+    224.2
+   ]
+  },
+  {
+   "path": [
+    "Declarations",
+    0,
+    "B"
+   ],
+   "rows": [
+    [
+     "B"
+    ],
+    [
+     "entry ",
+     "/ o1 = false"
+    ]
+   ],
+   "box": [
+    226.9,
+    95.4,
+    116.8,
+    53.4
+   ]
+  },
+  {
+   "path": [
+    "Declarations",
+    0,
+    "C"
+   ],
+   "rows": [
+    [
+     "C"
+    ],
+    [
+     "bool ",
+     "lb"
+    ]
+   ],
+   "box": [
+    363.7,
+    95.4,
+    60.3,
+    53.4
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Declarations",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    302.6,
+    434,
+    244.2
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NDeclarations$$N0$NA$EB0",
+   "source": [
+    "Declarations",
+    0,
+    "A"
+   ],
+   "target": [
+    "Declarations",
+    0,
+    "B"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NDeclarations$$N0$NB$EC0",
+   "source": [
+    "Declarations",
+    0,
+    "B"
+   ],
+   "target": [
+    "Declarations",
+    0,
+    "C"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

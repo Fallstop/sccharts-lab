@@ -1,0 +1,64 @@
+{
+  "hash": "7aa3b5250e54974952fd5b52338a272850241ac1",
+  "chart": "tests/conformance/structure/52-dataflow-ternary-precedence.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "right": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "wrong": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 1,
+        "B": 2
+      },
+      "values": {
+        "A": 1,
+        "B": 2,
+        "right": 2,
+        "wrong": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": 5,
+        "B": 4
+      },
+      "values": {
+        "A": 5,
+        "B": 4,
+        "right": 5,
+        "wrong": 0
+      },
+      "terminated": false
+    }
+  ]
+}

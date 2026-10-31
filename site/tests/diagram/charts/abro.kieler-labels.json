@@ -1,0 +1,359 @@
+{
+ "sourceHash": "3f2d8900e8c7b715",
+ "states": [
+  {
+   "path": [
+    "ABRO"
+   ],
+   "rows": [
+    [
+     "ABRO"
+    ],
+    [
+     "input bool ",
+     "A, B, R"
+    ],
+    [
+     "output bool ",
+     "O"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    296.7,
+    477.8
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO"
+   ],
+   "rows": [
+    [
+     "ABO"
+    ]
+   ],
+   "box": [
+    10,
+    53.6,
+    262.7,
+    342.3
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB"
+   ],
+   "rows": [
+    [
+     "WaitAB"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    225,
+    185.1
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleA",
+    "WaitA"
+   ],
+   "rows": [
+    [
+     "WaitA"
+    ]
+   ],
+   "box": [
+    10,
+    23,
+    61,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleA",
+    "DoneA"
+   ],
+   "rows": [
+    [
+     "DoneA"
+    ]
+   ],
+   "box": [
+    124.8,
+    20,
+    72.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleB",
+    "WaitB"
+   ],
+   "rows": [
+    [
+     "WaitB"
+    ]
+   ],
+   "box": [
+    10,
+    23,
+    61,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleB",
+    "DoneB"
+   ],
+   "rows": [
+    [
+     "DoneB"
+    ]
+   ],
+   "box": [
+    124.8,
+    20,
+    72.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "Done"
+   ],
+   "rows": [
+    [
+     "Done"
+    ]
+   ],
+   "box": [
+    94.3,
+    258.7,
+    56.5,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "ABRO",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    282.7,
+    405.8
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    30.6,
+    245,
+    303.3
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleA"
+   ],
+   "label": [
+    "HandleA"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    9,
+    30.6,
+    207,
+    70.6
+   ]
+  },
+  {
+   "path": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleB"
+   ],
+   "label": [
+    "HandleB"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    9,
+    106.1,
+    207,
+    70.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NABRO$$N0$NABO$$N0$NWaitAB$NHandleA$NWaitA$EDoneA0",
+   "source": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleA",
+    "WaitA"
+   ],
+   "target": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleA",
+    "DoneA"
+   ],
+   "text": "A",
+   "lines": [
+    "A"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NABRO$$N0$NABO$$N0$NWaitAB$NHandleB$NWaitB$EDoneB0",
+   "source": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleB",
+    "WaitB"
+   ],
+   "target": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB",
+    "HandleB",
+    "DoneB"
+   ],
+   "text": "B",
+   "lines": [
+    "B"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NABRO$$N0$NABO$$N0$NWaitAB$EDone0",
+   "source": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "WaitAB"
+   ],
+   "target": [
+    "ABRO",
+    0,
+    "ABO",
+    0,
+    "Done"
+   ],
+   "text": "/ O = true",
+   "lines": [
+    "/ O = true"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  },
+  {
+   "id": "$root$NABRO$$N0$NABO$EABO0",
+   "source": [
+    "ABRO",
+    0,
+    "ABO"
+   ],
+   "target": [
+    "ABRO",
+    0,
+    "ABO"
+   ],
+   "text": "R",
+   "lines": [
+    "R"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

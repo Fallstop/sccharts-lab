@@ -1,0 +1,12 @@
+scchart P123 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0
+  if A do O = 1; X = true; S; V(3); O++; O += 2 go to S1
+  state S1
+
+}

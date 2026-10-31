@@ -1,0 +1,9 @@
+scchart TicketQueue {
+  input signal take    // a customer takes a ticket
+  input signal serve   // the counter calls the next customer
+  output int waiting = 0
+
+  initial state Counting
+    if take do waiting++ go to Counting
+    if serve && waiting > 0 do waiting-- go to Counting
+}

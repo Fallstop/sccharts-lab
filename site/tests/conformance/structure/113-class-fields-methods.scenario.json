@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "up": true
+      },
+      "note": "Tick 1: both instances start with **count = 10**; the self-loops are delayed."
+    },
+    {
+      "inputs": {
+        "up": false
+      },
+      "note": "c2.add(5): **c2.count = 15, b = 15, report = 115**; c1 is unchanged."
+    },
+    {
+      "inputs": {
+        "up": true
+      },
+      "note": "c1.add(1): **c1.count = 11, a = 11, report = 111**."
+    },
+    {
+      "inputs": {
+        "up": false
+      },
+      "note": "c2 again: **c2.count = 20, b = 20, report = 120**."
+    }
+  ],
+  "expect": "ok"
+}

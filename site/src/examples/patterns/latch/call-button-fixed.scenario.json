@@ -1,0 +1,90 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "note": "Tick 1: no call in either chart; both lamps are off."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A press: both charts move from `Idle` to `Waiting`, whose entry action lights the lamp."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "The button is released, but both charts stay in `Waiting`: the state is the memory."
+    },
+    {
+      "inputs": {},
+      "note": "Waiting for the lift."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A second press while a call is registered changes nothing: `Waiting` has no transition for the button."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Waiting."
+    },
+    {
+      "inputs": {
+        "arrived": true
+      },
+      "note": "The lift arrives: `if arrived go to Idle` fires in both, and the exit action switches the lamp off."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A press while the doors are still open. `CallButton`'s `Idle` tests only `button`, registers the press and lights its lamp. `CallButtonFixed` tests `button && !arrived`, which is false: its lamp stays off."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "The doors are still open, so `CallButton` serves its needless call at once: a one-tick flash of the lamp."
+    },
+    {
+      "inputs": {
+        "arrived": false
+      },
+      "note": "The lift leaves."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A new call in both charts."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Waiting."
+    },
+    {
+      "inputs": {
+        "button": true,
+        "arrived": true
+      },
+      "note": "The lift arrives in the same tick as another press. Both charts are in `Waiting`, whose only transition is `if arrived go to Idle`: the press is served together with the earlier call, and both lamps go off."
+    },
+    {
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "note": "Idle."
+    }
+  ],
+  "expect": "ok"
+}

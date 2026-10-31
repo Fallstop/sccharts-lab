@@ -1,0 +1,88 @@
+{
+  "hash": "5899381aa976dd228fa695b082c363903db5d78b",
+  "chart": "tests/conformance/structure/65-clock-integer-type.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "deltaT": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "done": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "done": false,
+        "sleepT": 300,
+        "t": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 150
+      },
+      "values": {
+        "deltaT": 150,
+        "done": false,
+        "sleepT": 150,
+        "t": 150
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 150
+      },
+      "values": {
+        "deltaT": 150,
+        "done": true,
+        "sleepT": 1000,
+        "t": 300
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    }
+  ]
+}

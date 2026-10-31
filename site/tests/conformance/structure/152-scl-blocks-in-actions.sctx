@@ -1,0 +1,14 @@
+// Code effects work in entry, during and exit actions too, and a block may stand in a list of effects
+// (a "; " after the block before the next effect).
+scchart St152Actions {
+  input bool leave
+  output int e = 0, d = 0, x = 0, p = 0, q = 0
+  initial state S {
+    entry do { e++; d = 0 }
+    during do { d++; }
+    exit do { x = d * 10 }
+  }
+  if leave do p++; { q = p * 2 }; x = x + q go to T
+  state T
+  go to S
+}

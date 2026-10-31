@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "coin10": false, "coin20": false }, "note": "Tick 1 enters `Waiting` in both machines. A drink costs 30 cents." },
+    { "inputs": { "coin20": true }, "note": "A 20c coin. `Vending`: `credit += 20`, then straight on through the connector `Check` in the same tick; `credit >= 30` is false, so its untriggered transition goes back to `Waiting`. `VendingWithout`: the guard `coin20 && credit + 20 >= 30` is false, so its second transition adds the coin. `credit` = 20 in both." },
+    { "inputs": { "coin20": false }, "note": "No coin. Both machines wait." },
+    { "inputs": { "coin10": true }, "note": "A 10c coin. `Vending`: `credit` becomes 30, and `Check` sees the new value at once, so it takes the price off and emits `vend`. `VendingWithout`: the guard `credit + 10 >= 30` works out the new credit in advance and holds, so one transition does all of it. Same result in both: `vend`, and `credit` = 0." },
+    { "inputs": { "coin10": false }, "note": "`vend` is a signal, so it is present only in the tick it was emitted." },
+    { "inputs": { "coin20": true }, "note": "20c again (`credit` = 20)." },
+    { "inputs": { "coin20": false }, "note": "No coin." },
+    { "inputs": { "coin10": true, "coin20": true }, "note": "Both coins in one tick. In both charts the 20c transitions come first in `Waiting`'s priority order, so the 10c coin is ignored. 20 + 20 = 40: both machines vend and keep 10c." },
+    { "inputs": { "coin10": false, "coin20": false }, "note": "Back in `Waiting` with 10c of credit, in both." }
+  ],
+  "expect": "ok"
+}

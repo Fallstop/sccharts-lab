@@ -1,0 +1,10 @@
+scchart ResetLoopWarning {
+  input bool A, R
+  output int n
+
+  initial state Run {
+    initial state Count
+      if A do n++ go to Count
+  }
+  if R go to Run
+}

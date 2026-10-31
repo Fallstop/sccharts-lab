@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "`do b` emits a bool variable. Official KIELER only warns \"Non-signals should not be used in an emission.\" and then fails in code generation; the lab's server reports \"b is an output bool variable, not a signal, so it cannot be emitted.\" Either way the chart is rejected."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "cannot be emitted"
+}

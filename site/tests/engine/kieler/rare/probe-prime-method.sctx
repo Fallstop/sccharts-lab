@@ -1,0 +1,9 @@
+scchart PrimeMethod {
+  input bool A
+  output int o = 0
+  method int m'() {
+    return 5
+  }
+  initial state S
+    if A do o = m'() go to S
+}

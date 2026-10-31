@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "KIELER rejects the chart: names are case-sensitive, and the input is called `button`, not `Button`."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Couldn't resolve reference to ValuedObject 'Button'."
+}

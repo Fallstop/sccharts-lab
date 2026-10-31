@@ -1,0 +1,54 @@
+{
+  "hash": "fa27443ac8bc88023b819e36030e9ac9df8d218e",
+  "chart": "tests/engine/kieler/rare/probe-overflow-bool.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "b": [
+          false,
+          false
+        ],
+        "z": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "b": [
+          false,
+          false
+        ],
+        "z": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

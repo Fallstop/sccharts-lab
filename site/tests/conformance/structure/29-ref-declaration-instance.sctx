@@ -1,0 +1,19 @@
+// "ref Chart g(args)" declares an instance with bindings (same rules as "state S is Chart(args)"). Outside a
+// dataflow region the instance runs concurrently with the declaring state's regions for as long as that state is
+// active.
+scchart St29Main {
+  input bool X, Y
+  output bool O
+  ref St29And g(X, Y, O)
+  region {
+    initial state Idle
+  }
+}
+
+scchart St29And {
+  input bool A, B
+  output bool O
+  dataflow {
+    O = A && B
+  }
+}

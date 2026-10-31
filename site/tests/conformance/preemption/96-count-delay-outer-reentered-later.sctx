@@ -1,0 +1,14 @@
+// Leaving the enclosing state for another state and coming back later is fine: ABO is never left and entered
+// in the same tick. The count restarts on every entry (P-29).
+scchart P96CountReenteredLater {
+  input signal R
+  output signal late
+  initial state ABO {
+    initial state Wait
+    if 4 true do late go to Done
+    state Done
+  }
+  if R abort to Off
+  state Off
+  go to ABO
+}

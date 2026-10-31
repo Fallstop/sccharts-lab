@@ -1,0 +1,314 @@
+---
+title: "Time"
+description: "Clocks that measure real time, timeouts, periodic behaviour, and what to do when your platform only gives you a timer input."
+sidebar:
+  order: 7
+---
+
+import { Chart, Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A tick is a step of logical time: it takes no time at all, and nothing in a chart says how far apart
+two ticks are. Real controllers still have to wait real time. A stairwell light stays on for five seconds, an LED
+blinks twice a second, a sensor is read every half second. SCCharts gives you two ways to do this.
+**Timed SCCharts** add clock variables that measure the time the environment reports to the chart.
+The other way is to count the pulses of a timer input that your hardware provides. This chapter covers
+both, starting with clocks.
+
+## Clocks and `deltaT`
+
+<Sim example="advanced/time/egg-timer" show={['t', 'ring']} caption="Each tick is 1000 ms after the last. Watch `t` stay at 0 in tick 1 and reach 3000 in tick 4." />
+
+`clock t` declares a **clock**: a `float` variable that starts at 0 and measures time. Declaring a clock
+adds two variables to the chart's interface:
+
+- the input `deltaT`: how much time has passed since the previous tick. The environment supplies it.
+- the output `sleepT`: how long the environment may wait before the next tick (more on this below).
+
+Time passes only through `deltaT`. At the start of every tick, **before** any transition is tested,
+KIELER adds `deltaT` to the clock. It does so in whatever state the clock's region is in (the region
+whose transitions test the clock), whether or not that state looks at the clock itself. The one tick in
+which the clock does not move is the tick in which that region is entered: tick 1 for the egg timer.
+
+| Tick | `deltaT` | `t` | State after | `ring` |
+| ---: | ---: | ---: | --- | --- |
+| 1 | 1000 | 0 | Boiling | false |
+| 2 | 1000 | 1000 | Boiling | false |
+| 3 | 1000 | 2000 | Boiling | false |
+| 4 | 1000 | 3000 | Done | true |
+
+So the timeout `if t >= 3000` fires in the tick in which the clock reaches 3000, three ticks after
+`Boiling` was entered. Clocks have no built-in unit: `t` counts in whatever unit the environment uses
+for `deltaT`. This chapter uses milliseconds.
+
+In a simulator you play the environment, so you type in how much time passed. If `deltaT` stays 0, no
+clock ever moves and nothing times out.
+
+<Aside type="tip">
+SCCharts Lab lists `deltaT` as an ordinary input. When a simulation starts it sets `deltaT` to 1, or to
+the last value you gave it in that workspace, so that timed charts move on every Step.
+</Aside>
+
+## Use `>=`, never `==`
+
+Time arrives in steps of `deltaT`, and a clock seldom lands exactly on the number you wrote. Here is the
+same egg timer ticked every 1300 ms, next to a copy that tests `t == 3000`:
+
+<Compare a="advanced/time/egg-timer-coarse" b="advanced/time/egg-timer-equal" scenario="advanced/time/egg-compare" caption="Both are ticked every 1300 ms. In tick 4 the clock jumps from 2600 to 3900: `>=` notices, 900 ms late; `==` never fires." />
+
+`t >= 3000` fires in the first tick at or after 3000, so at most one step of `deltaT` late. `t == 3000`
+is true only if a tick happens to fall on 3000 exactly, and here none does. `t > 3000` works, but it is
+false at exactly 3000: with steps of 1000 it fires a tick later than `>=` does. Write every timeout as
+`clock >= value`.
+
+## Resetting a clock
+
+A clock starts at 0 when the state that declares it is entered. For a clock declared at the top of the
+chart that is tick 1, and from then on it never stops: it keeps counting in states that never look at
+it. To time an interval, set the clock back to 0 on the transition that starts the interval:
+
+<Sim example="advanced/time/stair-light" show={['button', 't', 'light']} caption="Press in tick 2, press again in tick 5: the light goes off five seconds after the last press." />
+
+The transition into `On` resets the clock, and so does the self-loop that a second press takes. In
+tick 5 the clock first advances to 3000, then the self-loop sets it back to 0. (The
+[counters pattern](/patterns/counters/#a-timeout-the-stairwell-light) builds the same light without a
+clock, by counting ticks.)
+
+Forgetting the reset is the classic bug of timed charts. Without it the clock keeps the time since tick
+1, and once it has passed a bound, every later test against that bound is already true:
+
+<Compare a="advanced/time/blink" b="advanced/time/blink-forgetful" scenario="advanced/time/blink-compare" caption="Both are ticked every 250 ms. `Blink`: 500 ms on, 500 ms off. `BlinkForgetful`: the clock is never reset, so after the first timeout the LED flips in every tick." />
+
+## Local clocks
+
+A clock declared inside a superstate belongs to that state. Like any local variable it is set to its
+initial value, 0, every time the state is entered, so restarting the timer is the same as entering the
+state again:
+
+<Sim example="advanced/time/stair-light-local" caption="The same light, with the clock declared inside `On`. A second press re-enters `On`, which restarts its clock." />
+
+There is no `t = 0` anywhere in this version. The clock of `On` is a local of a nested state, not part
+of the chart's interface, so the trace does not show it.
+
+### One clock per region
+
+KIELER handles a clock only if the transitions that test it all belong to the states of one region:
+
+<Chart example="advanced/time/two-timers" caption="Two concurrent regions test the same clock `t`." />
+
+KIELER rejects two arrangements:
+
+- **One clock tested in two concurrent regions**, as above. Official KIELER says (the misspelling is
+  KIELER's)
+
+  ```text wrap
+  Cannot handle concurrent timed automata using the same clock. Add @ClocksUseSD annotation for experimental support based on schduling directives.
+  ```
+
+  and SCCharts Lab says
+
+  ```text wrap
+  Clock t is read by several concurrent regions of TwoTimers.
+  ```
+
+- **One clock tested by a superstate's own transitions and inside it.** Official KIELER says
+
+  ```text wrap
+  Cannot handle hierarchical timed automata. Add @ClocksUseSD annotation for experimental support based on SDs.
+  ```
+
+  and SCCharts Lab says `Clock t is read both by Outer and inside it.`
+
+<Aside type="caution" title="A clock shared between regions">
+Give each region its own clock: move `clock t` into each `region { ... }`, and both timers work. For a
+superstate that waits while something inside it waits too, declare a second clock for the inner waiting.
+</Aside>
+
+Charts in which a timeout lies on a cycle of states, such as the blinker and the stair light, compile
+with a warning: `Instantaneous loop detected!` in official KIELER, and in SCCharts Lab
+
+```text wrap
+Potential instantaneous loop through the timed transitions on t.
+```
+ The loop analysis does not know that a clock needs time to reach a timeout. The warning is advisory: the chart is accepted
+and runs as shown here, as long as no timeout is 0
+([more about this warning](/reference/errors/#instantaneous-loop-detected)).
+
+## `sleepT`: when to wake the chart
+
+On a real device a chart does not have to be ticked all the time. With **dynamic ticks** the
+environment runs a tick when an input changes or when the chart asks for one, measures how long it
+waited, and passes that time in as the next `deltaT`. The chart asks through `sleepT`: at the end of
+every tick it is the time until the nearest timeout of the active states, or 1000 if that is further
+away or there is no timeout. Take the egg timer ticked every 1300 ms again. Predict `sleepT` after
+ticks 2 and 3, check, then open the explanation:
+
+<Predict
+  example="advanced/time/egg-timer-coarse"
+  ask={[{ tick: 2, value: 'sleepT' }, { tick: 3, value: 'sleepT' }]}
+  caption="`deltaT` is 1300 in every tick, and the timeout is `t >= 3000`."
+/>
+
+<details>
+<summary>Explanation</summary>
+
+After tick 2 the clock is at 1300, so the timeout is 1700 away. That is more than 1000, so `sleepT` is
+1000. After tick 3 the clock is at 2600, 400 short of the timeout: `sleepT` is 400. Tick by tick:
+
+| Tick | `deltaT` | `t` | `sleepT` | Why |
+| ---: | ---: | ---: | ---: | --- |
+| 1 | 1300 | 0 | 1000 | 3000 to go; at most 1000 |
+| 2 | 1300 | 1300 | 1000 | 1700 to go |
+| 3 | 1300 | 2600 | 400 | 400 to go |
+| 4 | 1300 | 3900 | 1000 | fired; no timeout left |
+
+</details>
+
+If the environment had woken the chart 400 ms after tick 3, `ring` would have come on exactly at 3000.
+You can play such an environment on this site: next to the `deltaT` field of a timed chart, **Advance by
+sleepT** sets `deltaT` to the `sleepT` of the tick shown and steps.
+
+A chart running on a fixed tick instead (every 10 ms, say) ignores `sleepT` and passes `deltaT = 10` in
+every tick. [From chart to C](/advanced/code-generation/) shows both kinds of main loop.
+
+Annotations on the chart change the defaults. They go before `scchart`:
+
+- `@SimulateSleep`: in every tick after the first, `deltaT` is set to the previous `sleepT`, so the
+  chart pretends that exactly the requested time passed.
+- `@DefaultSleep 5000`: the largest (and the default) `sleepT` is 5000 instead of 1000.
+- `@IntegerClockType`: clocks, `deltaT` and `sleepT` are `int` instead of `float`.
+- `@NoSleep`: no `sleepT` output at all.
+
+`@SimulateSleep` is the easiest way to watch a timed chart in a simulator, because you never type a
+`deltaT`. The chart jumps from timeout to timeout:
+
+<Sim example="advanced/time/blink-sleep" show={['t', 'led']} caption="On for 300 ms, off for 500 ms: every tick is a timeout, and `deltaT` is filled in from `sleepT`." />
+
+## Doing something every so often: `period`
+
+`period 500` in a state makes the inside of that state run only in ticks in which another 500 time units
+have passed. KIELER gives the state a hidden clock and guards every action and transition inside with
+"has the period elapsed?". The default **soft reset** keeps any excess time; `@HardReset` before the
+`period` throws it away:
+
+<Compare a="advanced/time/sampler" b="advanced/time/sampler-hard" scenario="advanced/time/sampler-compare" caption="Nine ticks 200 ms apart, then three ticks 400 ms apart. After those 2800 ms the soft reset has taken 5 samples, the hard reset 4." />
+
+The hidden period clocks are not part of the interface, so the simulation cannot show them. Here they
+are at the end of each tick (`deltaT` is 200 up to tick 9, then 400):
+
+| Tick | Soft clock | `samples` | Hard clock | `samples` |
+| ---: | ---: | ---: | ---: | ---: |
+| 1 | 0 | 0 | 0 | 0 |
+| 2 | 200 | 0 | 200 | 0 |
+| 3 | 400 | 0 | 400 | 0 |
+| 4 | 100 | 1 | 0 | 1 |
+| 5 | 300 | 1 | 200 | 1 |
+| 6 | 0 | 2 | 400 | 1 |
+| 7 | 200 | 2 | 0 | 2 |
+| 8 | 400 | 2 | 200 | 2 |
+| 9 | 100 | 3 | 400 | 2 |
+| 10 | 0 | 4 | 0 | 3 |
+| 11 | 400 | 4 | 400 | 3 |
+| 12 | 300 | 5 | 0 | 4 |
+
+With the soft reset a late tick lets the next period come sooner, so in the long run the inside runs
+once per period. With the hard reset every late tick shifts all the following ones.
+
+<Aside type="caution" title="The KIELER wiki has the default the wrong way round">
+The wiki says that `@HardReset` is the default and that `@SoftReset` has to be asked for. KIELER's code,
+and the recordings above, say the opposite: soft reset unless you write `@HardReset`.
+</Aside>
+
+Two more details. Like a delayed transition, a plain `period` waits for the first period: nothing inside
+runs in the tick the state is entered, not even the entry action of its initial state.
+`immediate period 500` lets the inside run in the entry tick as well. And the guard also covers the
+transitions leaving the state that declares the period.
+
+<Aside type="caution" title="A state with period and its own outgoing transition">
+`state Run { period 500 ... } if stop go to Stopped` is rejected with `The SCG is NOT asc-schedulable!`.
+With `abort to` instead of `go to` it compiles, but the abort can then fire only in the tick after a
+period has elapsed. Put the period into a region inside the state, so that it does not guard the
+state's own transitions:
+
+```sctx
+initial state Run {
+  region {
+    period 500
+    initial state Measure
+      do samples++ go to Measure
+  }
+}
+if stop go to Stopped
+```
+</Aside>
+
+## Without clocks: counting a timer input
+
+Not every platform has dynamic ticks, or reports elapsed time at all. A common alternative is a
+hardware timer that turns an input on once per period, say `second`, true in one tick each second. The
+chart then counts pulses, for instance with a count delay (see [chapter 11](/learn/pre/)):
+
+<Sim example="advanced/time/pulse-timer" caption="Ticks every 500 ms, a pulse every other tick. The same `if 2 second` waits 1.5 s the first time and 2 s the second." />
+
+The count starts when `Waiting` is entered, and that can be anywhere between two pulses. Started just
+before a pulse, the first pulse counts almost at once; started in a tick that has a pulse, that pulse is
+not counted, because a delayed transition ignores the tick its state was entered in. So "wait for 2
+pulses" lasts somewhere between one and two periods. In general, counting `n` pulses of a timer with
+period `P` waits between `(n - 1) * P` and `n * P`. This is the **phase** problem: your interval is not
+aligned with the timer's.
+
+How much this matters depends on the job. A faster timer shrinks the error: counting 20 pulses of
+100 ms is never more than 100 ms short of two seconds. If the wait must be exact, begin it on a pulse:
+let the transition into the waiting state wait for `second` as well (through an intermediate state, if
+the request can come between pulses). The pulse in the entry tick is not counted, so the wait is then
+exactly `n` periods long, at the price of up to one period before it begins. And if the platform can
+report elapsed time, clocks avoid the problem altogether.
+
+Counting the chart's own ticks measures time only if the environment ticks the chart at a fixed rate.
+Under dynamic ticks it measures nothing useful.
+
+## Try it
+
+<TryIt example="advanced/time/hand-dryer-start" solution="advanced/time/hand-dryer-solution" title="Hand dryer">
+The starter runs the fan only while `hands` is true. Change it so that the fan keeps running for 2000 ms
+after the hands are taken away, and keeps running (with a fresh 2000 ms afterwards) if they come back in
+the meantime. Use a clock. Once the chart has a `clock`, it gets a `deltaT` input: test it with
+`deltaT = 500`.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="A transition with the effect `t = 0` enters a state in tick 5. That state has `if t >= 300 go to Next`, and `deltaT` is 100 in every tick. In which tick does the timeout fire?"
+  options={['Tick 7', 'Tick 8', 'Tick 9', 'Tick 5: the clock is already at a bound']}
+  answer={1}
+>
+The effect sets the clock to 0 in tick 5, after any advance in that tick. The clock then reaches 100 in
+tick 6, 200 in tick 7 and 300 in tick 8. It advances before the transition is tested, so the timeout
+fires in tick 8.
+</Quiz>
+
+<Quiz
+  question="A state is entered with its clock at 0. It has two transitions, `if t >= 800 go to A` and `if t >= 300 go to B`. What is `sleepT` at the end of the entry tick?"
+  options={['300', '800', '1000', '0']}
+  answer={0}
+>
+`sleepT` asks for the nearest timeout of the active states: 300 time units. Neither bound is more than
+1000 away, so the default maximum does not come into it.
+</Quiz>
+
+<KeyIdeas>
+- `clock t` measures time. The environment reports elapsed time in the input `deltaT`; the chart asks
+  to be woken through the output `sleepT`.
+- A clock advances by `deltaT` at the start of every tick, before any transition is tested, whatever
+  state its region is in; only in the tick its region is entered does it stay put. Write timeouts as
+  `t >= value`.
+- Reset a clock (`t = 0`) when a waiting period starts, or declare it in the superstate whose entry
+  should restart it. One clock per region.
+- `period v` runs a state's inside once per period. The default is the soft reset, which keeps excess
+  time; `@HardReset` drops it.
+- Counting a timer input waits between `(n - 1)` and `n` periods, depending on the phase.
+</KeyIdeas>
+
+Next, [Methods and code effects](/advanced/methods/): a few lines of code in a transition, with `if`,
+loops and local variables.

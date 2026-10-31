@@ -1,0 +1,9 @@
+// pre(v, c) next to pre(v): one memory, made for the last one in the chart, pre(v): both are unclocked.
+scchart PreClock {
+  input int v
+  input bool c
+  output int p = 0, q = 0
+  initial state S {
+    immediate during do p = pre(v, c); q = pre(v)
+  }
+}

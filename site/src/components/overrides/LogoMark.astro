@@ -1,0 +1,51 @@
+---
+/**
+ * The guide's mark: an initial state (KIELER draws one as a state with a heavy outline) holding a pulse
+ * one tick wide. Drawn inline so it follows the theme through the --sc-* tokens. Decorative: the site
+ * title next to it carries the name.
+ */
+import { nextId } from '../frame/ids'
+
+interface Props {
+	size?: number
+	class?: string
+}
+const { size = 28, class: className } = Astro.props
+const id = `sc-mark-${nextId()}`
+---
+
+<svg
+	class:list={['sc-mark', className]}
+	viewBox="0 0 32 32"
+	width={size}
+	height={size}
+	aria-hidden="true"
+	focusable="false"
+>
+	<defs>
+		<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0" style="stop-color: var(--sc-state-fill)"></stop>
+			<stop offset="1" style="stop-color: var(--sc-state-fill-end)"></stop>
+		</linearGradient>
+	</defs>
+	<rect x="2" y="6" width="28" height="20" rx="10" fill={`url(#${id})`} class="sc-mark__state"></rect>
+	<path d="M7.5 20.5 H12.25 V11.5 H19.75 V20.5 H24.5" class="sc-mark__pulse"></path>
+</svg>
+
+<style>
+	.sc-mark {
+		flex: none;
+		display: block;
+	}
+	.sc-mark__state {
+		stroke: var(--sc-state-stroke);
+		stroke-width: 3;
+	}
+	.sc-mark__pulse {
+		fill: none;
+		stroke: var(--sc-keyword);
+		stroke-width: 2.75;
+		stroke-linejoin: round;
+		stroke-linecap: round;
+	}
+</style>

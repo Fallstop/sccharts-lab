@@ -1,0 +1,114 @@
+{
+  "hash": "ecc6b3f0a2bf798a53f1e2bcf7f7cfca9b1e5d4c",
+  "chart": "tests/conformance/preemption/34-strong-self-loop-restarts.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "R": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "exits": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerEntries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "moved": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "R": false
+      },
+      "values": {
+        "R": false,
+        "entries": 1,
+        "exits": 0,
+        "innerEntries": 1,
+        "moved": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "R": true
+      },
+      "values": {
+        "R": true,
+        "entries": 2,
+        "exits": 1,
+        "innerEntries": 2,
+        "moved": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "R": false
+      },
+      "values": {
+        "R": false,
+        "entries": 2,
+        "exits": 1,
+        "innerEntries": 2,
+        "moved": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "R": true
+      },
+      "values": {
+        "R": true,
+        "entries": 3,
+        "exits": 2,
+        "innerEntries": 3,
+        "moved": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

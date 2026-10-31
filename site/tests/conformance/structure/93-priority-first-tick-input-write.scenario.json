@@ -1,0 +1,18 @@
+{
+  "system": "priority",
+  "ticks": [
+    {
+      "inputs": {
+        "x": 1
+      },
+      "note": "Priority-based simulation: x = 7 is executed in tick 1, after the environment set x = 1: **x = 7, y = 7**."
+    },
+    {
+      "inputs": {
+        "x": 2
+      },
+      "note": "**y = 2**: the environment sets x again each tick."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,235 @@
+---
+title: "Aborts"
+description: "Cutting a superstate short: weak and strong aborts, immediate aborts, priorities, and what the inside may still do in the tick it is left."
+sidebar:
+  order: 9
+---
+
+import { Chart, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Press cancel on a printer, and one of two things can happen: it finishes the sheet it is printing
+and then stops, or it stops dead. Both are right in their place. A cancelled job should not leave
+half a sheet in the printer; a paper jam has to stop the rollers at once, whatever they were about to
+do.
+
+SCCharts has a transition for each. You met the first kind in [Superstates](/learn/hierarchy/): a
+transition written after a superstate's closing brace leaves the superstate from whichever state is
+active inside it. Such a transition is an **abort**, and it comes in two strengths: the `go to` you know
+is the weak one, and ABRO's reset at the end of [Concurrent regions](/learn/concurrency/),
+`if R abort to ABO`, is the strong one.
+(Aborts and suspension, which comes in [Going further](/advanced/suspend/), together make up
+**preemption**: something outside a state taking control away from it.) This chapter is about the
+tick in which a superstate is left: what its inside may still do, and which way out wins when several
+apply at once.
+
+## Weak and strong
+
+Here is a print job twice, once ended by `go to` and once by `abort to`. Every sheet that comes out
+of the printer is counted, and `cancel` ends the job.
+
+<Compare a="learn/preemption/weak" b="learn/preemption/strong" scenario="learn/preemption/weak-vs-strong" caption="In tick 5 `cancel` and a sheet arrive together: `WeakCancel` counts the sheet, `StrongCancel` does not." />
+
+The tour starts the job in tick 2, sends a sheet in every tick from tick 3 and cancels in tick 5.
+KIELER gives:
+
+| Tick | `sheet` | `cancel` | `printed`, weak | `printed`, strong |
+| ---: | --- | --- | --- | --- |
+| 3 | true | false (held) | 1 | 1 |
+| 4 | true (held) | false (held) | 2 | 2 |
+| 5 | true (held) | true | 3 | 2 |
+
+In tick 5 the two kinds of abort part ways:
+
+- A **weak abort**, written `go to`, is the default. In the tick it fires, the inside of the
+  superstate first completes its reaction: its transitions fire, chains of immediate transitions run
+  to their end. Only then is the superstate left. `WeakCancel` counts the sheet of tick 5.
+- A **strong abort**, written `abort to`, leaves the superstate before anything inside it reacts in
+  that tick. `StrongCancel` never sees the sheet of tick 5.
+
+Either way, the abort's own effect runs next, and then its target is entered. In the diagram KIELER
+marks a strong abort with a red circle where it starts; a weak abort has no mark.
+
+Which one to use is a question of what the inside may still do. Use a strong abort when nothing
+inside may act any more once the trigger is there: an emergency stop, a reset that has to win. Use a
+weak abort when the inside should finish what it is doing in this tick: complete a step, let a last
+output out. A weak abort grants the inside a last wish.
+
+States can also carry actions of their own, which run when a state is entered, while it is active
+and when it is left. What an abort does to them is part of the next chapter,
+[Entry, during and exit actions](/learn/actions/).
+
+## Delayed and immediate aborts
+
+An abort is a transition, and the rule from [Delayed and immediate transitions](/learn/immediate/)
+applies to it: without `immediate`, it is not checked in the tick its superstate is entered.
+Usually that is what you want. It makes a difference when the trigger is already there as the
+superstate is entered:
+
+<Compare a="learn/preemption/delayed-abort" b="learn/preemption/immediate-abort" scenario="learn/preemption/abort-entry" caption="`start` arrives in tick 2 while `cancel` is held: `DelayedAbort` stays in `Job` for that tick, `ImmediateAbort` is back in `Idle` at once." />
+
+With `immediate`, the abort is checked in the entry tick and in every tick after it. If it fires in
+the entry tick, the superstate is entered and left in that one tick. For a weak abort, the immediate
+transitions inside the superstate still run first; a strong abort skips them.
+
+## When the trigger is read
+
+A strong abort is decided before the inside reacts, a weak abort after it. That matters when the
+inside itself changes the abort's trigger. This print job ends by itself once three sheets are out:
+
+<Compare a="learn/preemption/tray-weak" b="learn/preemption/tray-strong" scenario="learn/preemption/tray-compare" caption="Tick 5 counts the third sheet: `TrayWeak` leaves in that tick, `TrayStrong` one tick later." />
+
+In tick 5 the third sheet makes `printed` 3. The weak abort reads its trigger after the inside has
+reacted, sees 3, and leaves at once. The strong abort read its trigger before the inside reacted,
+when `printed` was still 2, so it fires one tick later, in tick 6, and skips that tick's sheet.
+
+*Strong looks before the inside moves; weak looks after.* To leave a superstate because of something
+its inside did, use a weak abort or, better, a final state and `join to`. Avoid strong aborts whose
+trigger is written by the state they abort: with several regions inside, KIELER then aborts the
+regions one by one, some a tick later than others, and some such charts are rejected as causality
+cycles. [Watchdogs](/patterns/watchdog/#keep-the-watchdog-outside) shows both outcomes, and the
+arrangement that avoids them.
+
+## Several ways out
+
+A superstate can have several outgoing transitions. As for any state, they are tried in the order
+written, and the first whose trigger holds wins (see
+[Triggers, effects and priority](/learn/transitions/)). Aborts add one rule: **strong aborts come
+first.** KIELER rejects any state, simple states included, in which a strong abort is written after a
+weak abort or a termination transition.
+
+<Chart example="learn/preemption/order-error" caption="`jam` is a strong abort, written below the weak `cancel`. KIELER rejects the chart." />
+
+The fix is to move every `abort to` of a state above its `go to` and `join to` transitions.
+
+The rule follows from the timing in the previous section. A strong abort has to be decided before
+the inside reacts; a weak abort or a join can only be decided after. A weak abort with a higher
+priority than a strong one would have to be decided first, so it would need the inside's reaction
+before the strong abort had its chance to prevent that reaction. KIELER calls that a causality
+problem and refuses.
+
+With the order right, a strong and a weak abort that hold in the same tick are easy to decide: the
+strong one comes first, so it wins, and nothing inside runs.
+
+## Finishing versus being stopped
+
+A termination transition is the third way out of a superstate. It is not an abort: it leaves because
+the inside has finished, not because something outside says so. In its timing it behaves like a weak
+abort, though. The inside reacts first in the tick, and the join fires after it.
+
+Now suppose the inside finishes in the same tick in which a weak abort fires. Both ways out apply,
+and the order decides:
+
+<Compare a="learn/preemption/two-pages" b="learn/preemption/two-pages-join-first" scenario="learn/preemption/two-pages-compare" caption="In tick 4 both jobs finish and are cancelled. In each chart the transition written first wins." />
+
+In both charts the second sheet is counted in tick 4 (both ways out are weak, so the inside reacts
+first), and `Job` has both finished and been cancelled. `TwoPages` writes the cancel first and emits
+`cancelled`; `TwoPagesJoinFirst` writes the join first and emits `finished`. Put first the transition
+that should win.
+
+To leave a superstate when its inside is done, use `join to`, not a `go to` without a trigger. On a
+superstate, an abort without a trigger only gets the warning `Abort transitions should have a
+trigger.`, and it fires in the tick after the superstate was entered, whatever the inside is doing.
+
+## Aborts on simple states
+
+A transition out of a simple state counts as an abort too, but a simple state has no inside to finish
+or to skip. For a simple state without actions, `go to` and `abort to` behave exactly alike; KIELER
+turns such strong aborts into weak ones. A state with a `during` action is the one case where they
+differ, and the next chapter shows it.
+
+## ABRO, the classic
+
+Back to ABRO from [Concurrent regions](/learn/concurrency/). Its last line, `if R abort to ABO`, is a
+strong abort from `ABO` back to itself. Such a self-loop is a full exit and re-entry: `ABO` is left
+and entered again from its initial state, so every region inside starts over.
+
+Why strong? Look at the tick in which `R` arrives together with the last of `A` and `B`. ABRO's
+specification says that `R` starts again from the beginning, so that `B` should not complete the old
+round. Here is ABRO next to a copy whose reset is weak:
+
+<Compare a="learn/preemption/abro" b="learn/preemption/abro-weak" scenario="learn/preemption/abro-compare" caption="`A` comes in tick 2, then `B` and `R` together in tick 4: the strong reset suppresses `O`; with the weak one the inside finishes first, and `O` is present." />
+
+With `abort to`, `ABO` is left before `HandleB` sees `B`: no join, no `O`, and in tick 4 the new
+round starts with both regions waiting. That `B` does not count for the new round either: `WaitB` was
+entered in tick 4, and its delayed transition cannot fire in its entry tick. With `go to`, the last
+wish lets `HandleB` finish, `WaitAB` terminates and emits `O`, and only then is `ABO` restarted.
+
+Which behaviour is right is a matter of specification. The classic answer is the strong one: `R`
+wins.
+
+KIELER compiles `ABROWeak` with a warning, `Instantaneous loop detected!` (SCCharts Lab:
+`Potential instantaneous loop.`). KIELER gives this warning for many charts in which a weak abort leads
+straight back into its own superstate; the chart still compiles and behaves as described here
+([more about this warning](/reference/errors/#instantaneous-loop-detected)).
+
+<Aside type="danger" title="Immediate waits break ABRO in KIELER">
+ABRO with immediate waits, `immediate if A go to DoneA`, so that an `A` in the tick of a reset counts,
+compiles with only the instantaneous-loop warning, but KIELER does not run it as written: with `A`
+and `B` both in tick 1 there is no `O`, and the chart never reacts again, not even to `R`. Keep the
+waits delayed; [The immediate variant](/patterns/abro/#the-immediate-variant) shows a version with
+flags that works.
+</Aside>
+
+## Try it
+
+<TryIt example="learn/preemption/weak" solution="learn/preemption/jam" title="A paper jam" hint="The sheet of the jam's tick must not be counted, so nothing inside `Job` may react in that tick. And KIELER wants one kind of abort written before the other.">
+Add an input `jam` to `WeakCancel` that ends the job at once: a sheet that comes out in the tick of the
+jam must not be counted. `cancel` keeps its behaviour and still counts the sheet of its tick. Check
+both in the simulation, and mind the order of the two transitions.
+</TryIt>
+
+## Check your understanding
+
+`TwoPagesStrong` is `TwoPages` with a strong cancel, written first as it must be. In tick 4 the second
+sheet and `cancel` arrive together.
+
+<Predict example="learn/preemption/two-pages-strong" ask={[{ tick: 4, value: 'printed' }, { tick: 4, value: 'finished' }, { tick: 4, value: 'cancelled' }]} caption="`finished` and `cancelled` are signals: is each present in tick 4?" />
+
+<details>
+<summary>Explanation</summary>
+
+`printed` is 1, `finished` is absent and `cancelled` is present. The strong cancel is decided before
+anything inside `Job` reacts, so the second sheet of tick 4 is not counted, `Job` never reaches `Done`,
+and the join cannot fire. In `TwoPages`, with its weak cancel, the inside counted that sheet first.
+
+</details>
+
+<Quiz
+  question="A superstate's outgoing transitions are written in this order: `if A go to X`, then `if B abort to Y`. What happens when `A` and `B` are both true?"
+  options={['`A` wins: it is written first', '`B` wins: strong aborts beat weak ones', 'The question does not arise: KIELER rejects the chart']}
+  answer={2}
+>
+Strong aborts must come before every weak abort and termination transition of the same state.
+Written after a `go to`, the `abort to` makes KIELER reject the chart:
+
+```text wrap
+Causality problem!
+Strong abort transitions must have a higher priority than weak abort or termination transitions.
+```
+</Quiz>
+
+<Quiz
+  question="A simple state without any actions has the transition `if A go to B`. You change it to `if A abort to B`. What changes?"
+  options={['Nothing', 'The transition now fires one tick earlier', 'The transition now fires before the state is entered']}
+  answer={0}
+>
+A simple state has no inside, so there is nothing for a strong abort to skip: KIELER treats strong
+aborts of simple states without actions as weak ones. With a `during` action the two would differ in
+the leaving tick, as the next chapter shows.
+</Quiz>
+
+<KeyIdeas>
+- A transition written on a superstate is an abort: it can cut the inside short. A weak abort
+  (`go to`) lets the inside finish its tick first; a strong abort (`abort to`) leaves before the
+  inside moves.
+- Aborts are delayed unless written `immediate`. A strong abort reads its trigger before the inside
+  reacts, a weak abort after.
+- Transitions are tried in the order written, and strong aborts must come first. A join behaves like
+  a weak abort; when a join and a weak abort both apply, the first written wins.
+- On a simple state there is no inside to skip: `go to` and `abort to` behave alike unless the state
+  has a `during` action.
+</KeyIdeas>
+
+Next, [Entry, during and exit actions](/learn/actions/): effects that belong to a state, and which of
+them still run when the state is aborted.

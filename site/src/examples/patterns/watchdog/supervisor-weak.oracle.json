@@ -1,0 +1,357 @@
+{
+  "hash": "45107783d75391c29d13aaa6ffea3a4cef5097da",
+  "chart": "src/examples/patterns/watchdog/supervisor-weak.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "interface": {
+    "beat": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "demand": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "restart": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "motor": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "starts": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "expired": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "beat": false,
+        "demand": false,
+        "restart": false
+      },
+      "values": {
+        "beat": false,
+        "demand": false,
+        "restart": false,
+        "alarm": false,
+        "motor": false,
+        "starts": 0,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "demand": false,
+        "restart": false,
+        "alarm": false,
+        "motor": false,
+        "starts": 0,
+        "expired": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "beat": false,
+        "demand": true
+      },
+      "values": {
+        "beat": false,
+        "demand": true,
+        "restart": false,
+        "alarm": false,
+        "motor": true,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "demand": true,
+        "restart": false,
+        "alarm": false,
+        "motor": true,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "beat": false,
+        "demand": false
+      },
+      "values": {
+        "beat": false,
+        "demand": false,
+        "restart": false,
+        "alarm": false,
+        "motor": false,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "beat": false,
+        "demand": false,
+        "restart": false,
+        "alarm": false,
+        "motor": false,
+        "starts": 1,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "demand": true
+      },
+      "values": {
+        "beat": false,
+        "demand": true,
+        "restart": false,
+        "alarm": true,
+        "motor": false,
+        "starts": 2,
+        "expired": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "demand": false
+      },
+      "values": {
+        "beat": false,
+        "demand": false,
+        "restart": false,
+        "alarm": true,
+        "motor": false,
+        "starts": 2,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "restart": true,
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "demand": false,
+        "restart": true,
+        "alarm": false,
+        "motor": false,
+        "starts": 2,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "restart": false
+      },
+      "values": {
+        "beat": true,
+        "demand": false,
+        "restart": false,
+        "alarm": false,
+        "motor": false,
+        "starts": 2,
+        "expired": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "demand": false,
+        "restart": false,
+        "alarm": false,
+        "motor": false,
+        "starts": 2,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {},
+      "values": {
+        "beat": false,
+        "demand": false,
+        "restart": false,
+        "alarm": false,
+        "motor": false,
+        "starts": 2,
+        "expired": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

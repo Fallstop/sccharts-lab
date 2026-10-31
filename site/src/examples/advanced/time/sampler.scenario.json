@@ -1,0 +1,77 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "Tick 1 enters `Run`. The period has not elapsed, so nothing inside runs: `samples` = 0. (KIELER's hidden period clock starts at 0.)"
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "200 ms: nothing inside `Run` runs."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "400 ms: still nothing."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "600 ms: the period has elapsed, so the inside runs in this tick: `samples` = 1. The default soft reset subtracts 500 and keeps the 100 ms excess."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "100 + 200 = 300."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "500: `samples` = 2, exactly one period later."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "200."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "400."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "600: `samples` = 3; 100 carried over."
+    },
+    {
+      "inputs": {
+        "deltaT": 400
+      },
+      "note": "Now the ticks come late, 400 ms apart: 100 + 400 = 500, `samples` = 4."
+    },
+    {
+      "inputs": {
+        "deltaT": 400
+      },
+      "note": "400: no sample."
+    },
+    {
+      "inputs": {
+        "deltaT": 400
+      },
+      "note": "800: `samples` = 5, 300 carried over. Five samples in 2800 ms: the soft reset keeps the long-run rate right."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,246 @@
+{
+  "hash": "e8a975a6c9c47a123e19df071a116e4567b308e9",
+  "chart": "src/examples/advanced/time/stair-light.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on t."
+  ],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "light": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false,
+        "deltaT": 1000
+      },
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": false,
+        "sleepT": 1000,
+        "t": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "deltaT": 1000,
+        "light": true,
+        "sleepT": 1000,
+        "t": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": true,
+        "sleepT": 1000,
+        "t": 1000
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": true,
+        "sleepT": 1000,
+        "t": 2000
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "deltaT": 1000,
+        "light": true,
+        "sleepT": 1000,
+        "t": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": true,
+        "sleepT": 1000,
+        "t": 1000
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": true,
+        "sleepT": 1000,
+        "t": 2000
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": true,
+        "sleepT": 1000,
+        "t": 3000
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {},
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": true,
+        "sleepT": 1000,
+        "t": 4000
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {},
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": false,
+        "sleepT": 1000,
+        "t": 5000
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {},
+      "values": {
+        "button": false,
+        "deltaT": 1000,
+        "light": false,
+        "sleepT": 1000,
+        "t": 6000
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

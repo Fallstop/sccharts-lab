@@ -1,0 +1,331 @@
+---
+title: "Superstates"
+description: "Put a state machine inside a state: nesting, the scope of declarations, and finishing with a termination transition."
+sidebar:
+  order: 7
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A washing machine is more than on and off. Once you press start, it runs a programme: it fills the
+drum, washes, and drains. The phases of the programme belong together, and some things have to work
+whichever phase the machine is in. The stop button is one of them.
+
+Every chart so far has been a single, flat state machine. A **superstate** expresses this grouping:
+it is a state with states inside it. From the outside it is one state (in the chart below it is
+called `Programme`); inside, it is a small state machine of its own. This chapter shows how a chart
+enters and leaves a superstate, how declarations inside one behave, and how a superstate finishes.
+
+## A state with states inside
+
+Here is the washing machine's controller. It waits in `Idle` until `start`, then runs the programme.
+The inputs `full` and `timeUp` come from the machine's sensors: the drum is full, the wash time is
+over.
+
+<Sim example="learn/hierarchy/washer" caption="Step to tick 2 and look at the diagram: `Programme` and `Filling` are both active." />
+
+`Programme` is declared like any other state, followed by a block in braces. Inside the braces you
+write states and transitions exactly as you would at the top of a chart, with one of them marked
+`initial`. This is what KIELER does with it, tick by tick:
+
+| Tick | `start` | `full` | `timeUp` | State after | `motor` after |
+| ---: | --- | --- | --- | --- | --- |
+| 1 | false | false | false | Idle | false |
+| 2 | true | false (held) | false (held) | Programme (Filling) | false |
+| 3 | false | false (held) | false (held) | Programme (Filling) | false |
+| 4 | false (held) | true | false (held) | Programme (Washing) | true |
+| 5 | false (held) | false | false (held) | Programme (Washing) | true |
+| 6 | false (held) | false (held) | true | Programme (Draining) | false |
+| 7 | false (held) | false (held) | false | Programme (Draining) | false |
+
+Three things to notice:
+
+- **Entering a superstate enters its initial state in the same tick.** Tick 2 takes a single
+  transition, `Idle` to `Programme`, and ends with two active states: `Programme` and, inside it,
+  `Filling`. A superstate is never active on its own; one of its inner states is always active as
+  well. When superstates are nested, entering the outer one enters every level, all the way down,
+  in the same tick.
+- **Inside, the usual rules hold.** `Filling` was entered in tick 2, so its delayed transition can
+  fire from tick 3 on. An immediate transition out of `Filling` could have fired in tick 2 already
+  (see [Delayed and immediate transitions](/learn/immediate/)).
+- **Moving between inner states does not leave the superstate.** The machine changes phase in
+  ticks 4 and 6, but `Programme` stays active the whole time.
+
+KIELER draws a superstate as a large rounded box with its name at the top and its inner states
+inside. Declarations of the superstate, if it has any, are listed under its name, the way the chart
+lists its inputs and outputs. In SCCharts Lab the diagram also follows the editor's cursor: put the
+cursor inside `Programme`'s braces, and the diagram selects `Programme` and expands the regions
+around it, which in a large chart is the quickest way to see where you are.
+
+## Leaving from anywhere
+
+The machine needs a stop button that works in every phase. You could give each of `Filling`,
+`Washing` and `Draining` its own `if stop go to Idle`. A superstate lets you write it once:
+
+<Sim example="learn/hierarchy/stop" caption="In tick 4, `stop` leaves `Programme` while it is in `Washing`. In tick 5 the machine starts again at `Filling`." />
+
+The transition `if stop do motor = false go to Idle` is written after `Programme`'s closing brace,
+so it belongs to `Programme` itself, not to any state inside it. It can fire whichever inner state is
+active, and when it fires, the inner state is left along with `Programme`.
+
+Two details matter in practice:
+
+- **The superstate does not remember where it was.** When `Programme` is entered again in tick 5,
+  it starts at its initial state, `Filling`. A machine that should resume where it stopped needs a
+  history transition, which comes much later, in
+  [History and deferred transitions](/advanced/history/).
+- **Leaving undoes nothing.** That is why the stop transition switches the motor off. Without
+  `do motor = false`, a stop during `Washing` would leave `Programme` with `motor` still true, and it
+  would stay true in `Idle` and after the next start: a variable keeps its value until something
+  assigns it.
+
+A transition written on a superstate, after its closing brace, is called an **abort**: it can cut
+short whatever the inside is doing. The `go to` you have used all along makes a *weak* abort: if a
+transition inside is enabled in the same tick as `stop`, the inside takes its step first, and only
+then is `Programme` left. Its counterpart, the *strong* abort `abort to`, leaves before anything
+inside moves. [Aborts](/learn/preemption/) is about the difference.
+
+<Aside type="caution" title="Transitions stay on their own level">
+A transition connects two states on the same level: both inside the same superstate, or both at the
+top of the chart. You cannot jump into the middle of a superstate. `if start go to Washing`, written
+on `Idle`, is rejected with `Couldn't resolve reference to State 'Washing'.`: seen from `Idle`'s level
+there is no state called `Washing`. A superstate is always entered at its initial state. In the same
+way, `Washing` cannot go straight to `Idle`. The ways out of a superstate are its own transitions,
+like `stop`, and a final state with `join to`, which comes below.
+</Aside>
+
+## Declarations inside a superstate
+
+A superstate can declare its own variables and signals. They go at the start of its block, before
+its first state, in the same way as the chart declares its inputs and outputs at the top.
+
+### The nearest declaration wins
+
+A declaration inside a superstate is a **local** of that superstate. The transitions inside it can
+use the name; the rest of the chart cannot. A transition outside the superstate that used one of
+its locals would be rejected with `Couldn't resolve reference to ValuedObject '…'.`, naming the
+variable.
+
+Every superstate is a **scope**, and scopes nest. If the same name is declared in several of them, a
+use of the name means the nearest declaration, looking outwards from where it is used. The inner
+declaration hides, or *shadows*, the outer one:
+
+<Sim example="learn/hierarchy/shadow" show={['press', 'count', 'Outer.count', 'seen']} caption="Watch the two `count` lanes: the output `count` stays 1, because the transition updates `Outer.count`, `Outer`'s own, from 10 to 11. `seen` copies it." />
+
+KIELER does not warn about shadowing. The chart works, but whoever reads it (you, next week) can
+easily mistake one `count` for the other. Give locals names of their own.
+
+Two more facts about scope, both of which surprise people:
+
+- `input` and `output` only mean something at the top of a chart. Written inside a superstate,
+  `output int z` declares an ordinary local: it is not part of the chart's interface, and nothing
+  outside the chart can see it.
+- A superstate's own outgoing transitions, the ones written after its closing brace, can read the
+  superstate's locals too. KIELER's validator has a check that was meant to forbid this, but the
+  check never fires, so such charts compile. Don't build on it: if the way out of a superstate
+  depends on a variable, declare the variable one level further out.
+
+### Fresh on every entry
+
+A rep counter for the gym shows the repetitions of the current set. A press on the button counts a
+rep; `rest` ends the set; the next press starts a new set.
+
+<Sim example="learn/hierarchy/reps" caption="In tick 9 the first rep of the second set shows 1, not 3: `reps` started again from 0 when `Set` was entered in tick 7." />
+
+`reps` is declared in `Set`, so it is initialised every time `Set` is entered: in tick 1, and again
+in tick 7. (The press of tick 7 only starts the set: `Counting` is entered in that tick, and its
+transition is delayed.) That is the rule for every local: **a variable declared in a superstate gets its initial
+value on every entry of the superstate**, or, if it has none, its type's default (`0` for `int`,
+`false` for `bool`). Think of a superstate as a function and its locals as the function's local
+variables: every call starts from scratch.
+
+For the reps of one set, that is what you want. A value that has to survive leaving and re-entering,
+such as the total over all sets, belongs one level further out, at the top of the chart. You will
+build it in the second exercise below.
+
+## Finishing: final states and `join to`
+
+So far the programme never ends: the machine drains for ever. Let the drain lead to a final state,
+and let `Programme` react when its inside has finished:
+
+<Sim example="learn/hierarchy/finish" caption="In tick 5 three things happen at once: `Draining` moves to `Done`, `Programme` terminates, and the join takes the machine back to `Idle` with a beep." />
+
+`Done` is a final state, drawn with a double outline (see
+[Delayed and immediate transitions](/learn/immediate/)). At the top level of a chart a final state
+ends the chart; inside a superstate it ends the superstate's inner state machine. When the inside of
+a superstate reaches a final state, the superstate **terminates**.
+
+Termination on its own does not move anything: a terminated superstate stays active until one of its
+transitions leaves it. The transition written `join to` is a **termination transition**: it fires
+when its superstate has terminated. KIELER draws it with a green triangle where it starts, as on the
+transition from `Programme` back to `Idle` in the diagram above. It is drawn dashed because it is
+immediate, which is the next point.
+
+In detail:
+
+- **The join fires in the tick the superstate terminates.** In tick 5 the inner transition to `Done`
+  and the join both fire, and the beep belongs to that same tick.
+- **The join's effects run after everything the inside did in that tick.** If the inside writes a
+  variable on its way to the final state, the join's effect already sees the new value.
+- **A join without a trigger is immediate.** It is checked in every tick in which its superstate is
+  active, including the tick in which the superstate was entered.
+
+The diagram numbers `Programme`'s two outgoing transitions: `1: stop` and `2: / beep`. They are
+priorities, as for any state with several outgoing transitions (see
+[Triggers, effects and priority](/learn/transitions/)). What happens when a stop and the end of the
+programme fall into the same tick is a question for [Aborts](/learn/preemption/).
+
+### In and out in one tick
+
+Because a trigger-less join is immediate, a superstate whose inside finishes at once is left again
+in the tick it was entered. Predict what this chart does when `start` arrives, run it, then open the explanation:
+
+<Predict example="learn/hierarchy/quick" ask={[{ tick: 2, value: 'steps' }, { tick: 2, state: 'Finished' }]} caption="`Begin`'s transition is `immediate`, and the join has no trigger." />
+
+<details>
+<summary>Explanation</summary>
+
+In tick 2, `Idle` to `Work` fires and sets `steps` to 1. Entering `Work` enters `Begin`, whose
+immediate transition fires in the same tick: `steps` is 2 and `Work` reaches its final state, `Done`.
+`Work` has terminated, and its join is immediate, so it fires too: `steps` is 3 and the chart is in
+`Finished`. Three transitions in one tick, and `Work` was active for no time at all.
+
+</details>
+
+### A join with a trigger waits a tick
+
+A termination transition can have a trigger: `if ready join to After` fires once its superstate has
+terminated *and* `ready` holds. Like every transition with a trigger, it is then delayed: it is not
+checked in the tick its superstate was entered, even if the superstate terminates in that tick and
+the trigger is true. Compare the two versions:
+
+<Compare a="learn/hierarchy/join-plain" b="learn/hierarchy/join-guarded" scenario="learn/hierarchy/join-compare" caption="`ready` is true throughout and `start` comes in tick 2: `PlainJoin` reaches `After` in tick 2, `GuardedJoin` one tick later." />
+
+The diagrams show the difference as well: `PlainJoin`'s join is drawn dashed, because it is
+immediate, and `GuardedJoin`'s solid, because it is delayed. The four ways to write a join, and
+whether each is checked in the tick its superstate is entered:
+
+| Termination transition | Checked in the entry tick? |
+| --- | --- |
+| `join to After` | yes: no trigger, so immediate |
+| `if ready join to After` | no: a trigger makes it delayed |
+| `immediate if ready join to After` | yes |
+| `delayed join to After` | no |
+
+After the entry tick, a delayed join is checked in every tick for as long as its superstate stays
+terminated, so it fires in the first tick in which its trigger holds.
+
+<Aside type="caution" title="A join with nothing to wait for">
+`join to` needs an inside that can finish. On a simple state KIELER rejects it:
+
+```text wrap
+A state with a termination transition must have inner behaviour.
+```
+
+On a superstate without a final state it only warns (a *region* is the state machine inside a
+superstate; the next chapter has superstates with several):
+
+```text wrap
+Every region should have a final state whenever its parent state has a termination transition.
+```
+
+The join can then never fire. KIELER skips even this warning when the superstate has
+[actions](/learn/actions/) of its own, and on a few charts of this shape its compiler fails
+outright. The fix in every case: give the inside a final state it can reach, or leave with an
+ordinary transition instead of `join to`.
+</Aside>
+
+<Aside type="caution" title="A signal and an action stop termination">
+In KIELER, a superstate that declares a [signal](/learn/signals/) and also has an entry, during or exit
+action ([chapter 10](/learn/actions/)) never terminates, even when its inside reaches a final state:
+its `join to` never fires. Declare the signal one level further out. The chart itself is the extreme
+case: KIELER's simulator gives every chart an action of its own, so a chart that declares any signal
+never terminates ([Signals and termination](/learn/signals/#signals-and-termination)).
+[My `join to` never fires](/reference/troubleshooting/#my-join-to-never-fires) shows the stuck and
+the fixed chart side by side.
+</Aside>
+
+## Superstates inside superstates
+
+A superstate can contain superstates, which can contain superstates, to any depth. The rules are the
+same at every level:
+
+- Entering a superstate enters its initial state, and if that is a superstate, its initial state,
+  and so on, all in one tick.
+- A transition of a superstate leaves it whichever state is active inside it, however deep.
+- Termination travels outwards. When an inner superstate terminates and its join leads to a final
+  state of the outer superstate, the outer one terminates in that same tick, and its own join can
+  fire as well.
+
+A coffee machine shows the last rule. `Brew` sits inside `Make`, and both finish with a join:
+
+<Sim example="learn/hierarchy/coffee" caption="Tick 5: the cup is full, and `Brew`, then `Make`, terminate in the same tick. Watch `cups` and `ready`." />
+
+In tick 5 three transitions fire, from the inside out: `Pouring` to the final state `Poured`, which
+ends `Brew`; `Brew`'s join, which counts the cup and enters `Served`, a final state of `Make`; and,
+since `Make` has now terminated as well, `Make`'s join, which emits `ready` and returns to `Idle`. Both
+joins have no trigger, so both are immediate and fire in the tick their superstate terminates.
+
+The first exercise builds a rinse cycle this way.
+
+## Try it
+
+<TryIt example="learn/hierarchy/finish" solution="learn/hierarchy/rinse" title="A rinse cycle">
+After draining, the machine should rinse before it beeps: fill the drum again (`full`), rinse with
+the motor running until `timeUp`, and drain again (`empty`). Put the rinse in a superstate of its
+own, `Rinse`, inside `Programme`, and let `Programme` finish only when the rinse has finished.
+Run your chart and check that the beep comes in the same tick as the second `empty`.
+</TryIt>
+
+<TryIt example="learn/hierarchy/reps" solution="learn/hierarchy/reps-total" title="A running total">
+Give `RepCounter` a second output, `total`, that counts every rep of the session, across all sets,
+while `shown` keeps showing the reps of the current set only.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="A superstate `S` has the termination transition `if c join to T`. Its inside reaches a final state in the tick `S` is entered, and `c` is true in that tick and in the next. When does the join fire?"
+  options={['In the tick `S` is entered', 'In the tick after that', 'Never: the final state was reached before the join was checked']}
+  answer={1}
+>
+A join with a trigger is delayed, like every transition with a trigger, so it is not checked in the
+tick `S` is entered. In the next tick `S` is still terminated and `c` is still true, so the join
+fires. `GuardedJoin` above does exactly this. Without the trigger, `join to T` would have fired in
+the entry tick.
+</Quiz>
+
+<Quiz
+  question="A chart declares `output int n = 0`. Its superstate `S` declares `int n = 5`, and a transition inside `S` does `n++`. What is the output `n` after that transition?"
+  options={['0', '1', '6']}
+  answer={0}
+>
+Inside `S`, the name `n` means the nearest declaration, `S`'s own local. That local goes from 5 to 6.
+The output `n` is shadowed inside `S` and nothing assigns it, so it is still 0.
+</Quiz>
+
+<Quiz
+  question="`Set` declares `int reps` without an initial value. The chart leaves `Set` while `reps` is 4, and later enters `Set` again. What is `reps` right after the new entry?"
+  options={['4', '0', 'It has no defined value']}
+  answer={1}
+>
+Variables do keep their values, but a local of a superstate is initialised again on every entry of
+the superstate: to its initial value if it has one, otherwise to its type's default, `0` for an
+`int`. `RepCounter` above shows the same re-initialisation, there to its initial value, 0: the first
+rep of the second set, in tick 9, shows 1.
+</Quiz>
+
+<KeyIdeas>
+- A superstate is a state with states inside. Entering it enters its initial state in the same
+  tick, all the way down.
+- A superstate's own transitions, written after its closing brace, leave it whichever inner state
+  is active. The next entry starts again at the initial state.
+- Declarations inside a superstate are local to it. The nearest declaration wins, and locals are
+  initialised again on every entry.
+- When the inside reaches a final state the superstate terminates, and `join to` can fire in that
+  same tick. A join without a trigger is immediate; `if c join to` waits at least one tick.
+</KeyIdeas>
+
+Next, [Concurrent regions](/learn/concurrency/): several state machines side by side, in one chart or
+one superstate.

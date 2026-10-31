@@ -1,0 +1,10 @@
+scchart StaticAccessArray {
+  input bool A
+  output int o = 0
+  initial state S
+    if A do o = scchart(StaticTable).T[1] go to S
+}
+scchart StaticTable {
+  const int T[3] = {4, 5, 6}
+  initial state I
+}

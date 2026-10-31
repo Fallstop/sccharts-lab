@@ -1,0 +1,112 @@
+{
+  "hash": "6920fabb1305c94dcaa0bfa31e83d4f704459f2d",
+  "chart": "tests/conformance/preemption/12-during-concurrent-with-inner.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "duringSaw": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "fromDuring": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "fromInner": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "innerSaw": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "duringSaw": 0,
+        "fromDuring": false,
+        "fromInner": false,
+        "innerSaw": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": false,
+        "duringSaw": 0,
+        "fromDuring": true,
+        "fromInner": false,
+        "innerSaw": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "duringSaw": 1,
+        "fromDuring": true,
+        "fromInner": true,
+        "innerSaw": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "duringSaw": 1,
+        "fromDuring": true,
+        "fromInner": true,
+        "innerSaw": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

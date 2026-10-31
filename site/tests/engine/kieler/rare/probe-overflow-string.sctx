@@ -1,0 +1,7 @@
+// strings are pointers: s[1] is t.
+scchart OverflowString {
+  output string s[1] = {"a"}
+  output string t = "b"
+  initial state Run
+    do s[1] = "c" go to Run
+}

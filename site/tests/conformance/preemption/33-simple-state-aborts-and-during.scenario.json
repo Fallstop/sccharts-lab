@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": true,
+        "W": false
+      },
+      "note": "A is entered and strongly aborted in tick 1. On a simple state the during action counts as inner behaviour: the strong abort skips it (count = 0)."
+    },
+    {
+      "inputs": {
+        "S": false,
+        "W": true
+      },
+      "note": "B goes back to A and the immediate weak abort fires in A's entry tick: the during action runs first (count = 1)."
+    },
+    {
+      "inputs": {
+        "W": false
+      },
+      "note": "B goes back to A; no abort: count = 2."
+    },
+    {
+      "inputs": {},
+      "note": "A stays: count = 3."
+    }
+  ],
+  "expect": "ok"
+}

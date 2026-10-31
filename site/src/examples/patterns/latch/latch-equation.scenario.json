@@ -1,0 +1,90 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "note": "Tick 1: `lamp` = (`false` or `false`) and not `false`: off. In tick 1, `pre(lamp)` is `false`."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `button` makes the bracket true and `arrived` is false: on, in the tick of the press."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released: `pre(lamp)` keeps the bracket true. The previous tick's lamp holds the lamp on."
+    },
+    {
+      "inputs": {},
+      "note": "Held by `pre(lamp)`."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A second press: still on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "On."
+    },
+    {
+      "inputs": {
+        "arrived": true
+      },
+      "note": "`arrived`: `&& !arrived` switches the lamp off, whatever the bracket says."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A press while the lift is here: `!arrived` keeps the lamp off."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Off."
+    },
+    {
+      "inputs": {
+        "arrived": false
+      },
+      "note": "The lift leaves; `pre(lamp)` is false, so the lamp stays off."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A new call: on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "On."
+    },
+    {
+      "inputs": {
+        "button": true,
+        "arrived": true
+      },
+      "note": "Press and arrival in the same tick: the arrival wins."
+    },
+    {
+      "inputs": {
+        "button": false,
+        "arrived": false
+      },
+      "note": "Off."
+    }
+  ],
+  "expect": "ok"
+}

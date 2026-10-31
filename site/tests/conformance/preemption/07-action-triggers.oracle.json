@@ -1,0 +1,104 @@
+{
+  "hash": "43bc7794ce5116ca8e425794e4d74b08a82ca5ff",
+  "chart": "tests/conformance/preemption/07-action-triggers.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "guardedEntries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "guardedExits": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "entries": 1,
+        "guardedEntries": 0,
+        "guardedExits": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "entries": 2,
+        "guardedEntries": 1,
+        "guardedExits": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "entries": 3,
+        "guardedEntries": 1,
+        "guardedExits": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "entries": 4,
+        "guardedEntries": 2,
+        "guardedExits": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

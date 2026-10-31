@@ -1,0 +1,11 @@
+// An enum declared inside a nested state cannot be used as a type: "ref" only looks at the root charts and
+// the declarations at the top of its own chart.
+scchart St105EnumNested {
+  output int n = 0
+  initial state S {
+    enum Phase { ONE, TWO, THREE }
+    ref Phase p = Phase.ONE
+    initial state A
+    if p == Phase.ONE do p = Phase.TWO; n = 2 go to A
+  }
+}

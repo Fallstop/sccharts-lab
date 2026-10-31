@@ -1,0 +1,77 @@
+{
+  "hash": "826619a38d98641450cd25222b091ff6c623d051",
+  "chart": "tests/engine/kieler/structure/probe-dz31.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _Dz31_local_seq0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "A": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "B": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "A": 2,
+        "B": 3,
+        "C": 6
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "A": 4,
+        "B": 5,
+        "C": 20
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "A": 6,
+        "B": 7,
+        "C": 42
+      },
+      "terminated": false
+    }
+  ]
+}

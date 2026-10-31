@@ -1,0 +1,8 @@
+scchart FloatTrigger {
+  input float level
+
+  initial state Low
+    if level go to High
+
+  state High
+}

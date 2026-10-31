@@ -1,0 +1,60 @@
+{
+  "hash": "3d33755cb196453da2d30486944d986c09ac15a2",
+  "chart": "tests/conformance/concurrency/06-transition-sees-source-locals.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "fired": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "c": 1,
+        "fired": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "c": 1,
+        "fired": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "c": 1,
+        "fired": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

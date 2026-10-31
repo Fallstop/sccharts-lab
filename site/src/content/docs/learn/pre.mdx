@@ -1,0 +1,380 @@
+---
+title: "The previous tick"
+description: "With pre(x), the value x had one tick ago, a chart can react to changes instead of levels: detect edges, fire one-tick pulses and count."
+sidebar:
+  order: 11
+---
+
+import { Chart, Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A doorbell should ring once per press, however long the finger stays on the button. A light switch
+should toggle once per press, not once per tick. Reacting to a *change* needs two values: the one
+now and the one a tick ago. So far a chart could only see the first. This chapter adds the second,
+with `pre`, and then shows count delays, which are built on it.
+
+## Looking one tick back
+
+<Sim
+  example="learn/pre/change"
+  caption="`previous` is always last tick's `temp`. Look at tick 1, where there is no last tick."
+/>
+
+`pre(temp)` is the value `temp` had at the end of the previous tick. The chart computes it in an
+`immediate during` action, so it runs in every tick including the first (see
+[Entry, during and exit actions](/learn/actions/)):
+
+| Tick | `temp` | `previous` | `delta` |
+| ---: | ---: | ---: | ---: |
+| 1 | 20 | 0 | 20 |
+| 2 | 21 | 20 | 1 |
+| 3 | 21 (held) | 21 | 0 |
+| 4 | 19 | 21 | −2 |
+| 5 | 22 | 19 | 3 |
+
+`pre` works on inputs, outputs and local variables alike, and it fits into any expression:
+`temp - pre(temp)` is "how much did `temp` change since the last tick". Writes in the current tick
+don't affect `pre(x)`: it reads a copy that was taken when the previous tick ended, so a chart may
+both write `x` and read `pre(x)` in the same tick.
+
+### Tick 1 has no past
+
+In tick 1, `delta` is 20, as if the temperature had jumped from 0. There is no previous tick, so
+what does `pre` give there? `temp` is an input without an initial value. Predict what happens for a
+variable that does have one, then run it and open the explanation:
+
+<Predict
+  example="learn/pre/tank"
+  ask={[
+    { tick: 1, value: 'before' },
+    { tick: 2, value: 'before' },
+  ]}
+  caption="`level` starts at 50 and a delayed during action adds 10 every tick. What is `before`, which is `pre(level)`, after ticks 1 and 2?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`before` is 0 after tick 1 and 50 after tick 2. `level` is 50 throughout tick 1, but `pre(level)` in
+tick 1 is 0, not 50. From tick 2 on it is what you expect: 50 in tick 2 while `level` has already moved
+on to 60, 60 in tick 3, and so on.
+
+</details>
+
+In tick 1, KIELER fills the gap with the default of the variable's type: 0 for an `int`, `false` for a
+`bool`, even for a variable with an initial value.
+
+The same happens whenever a scope starts afresh: a variable declared inside a superstate gets a new
+past each time the superstate is entered, so in that entry tick `pre` of it is the default again.
+Inputs, outputs and the chart's other top-level variables belong to the chart itself, which is
+entered only once, in tick 1.
+
+<Aside type="caution" title="A change that happens in tick 1">
+A test such as `x != pre(x)` is true in tick 1 whenever `x` starts with anything but the default,
+because `pre(x)` is the default there. If tick 1 should not count, compute it where tick 1 is skipped: a plain
+`during` action of the initial state does not run in tick 1, the tick the state is entered.
+</Aside>
+
+## Edges and pulses
+
+A **rising edge** is the tick in which a `bool` goes from false to true, a **falling edge** the tick in
+which it goes from true to false. With `pre` both are one expression: `pressed` below is
+`button && !pre(button)`, "true now and false a tick ago", and `released` is `!button && pre(button)`.
+
+<Sim
+  example="learn/pre/edges"
+  caption="`pressed` and `released` are each true for exactly one tick per change, however long the button is held."
+/>
+
+| Tick | `button` | `pressed` | `released` |
+| ---: | --- | --- | --- |
+| 1 | false | false | false |
+| 2 | true | true | false |
+| 3 | true (held) | false | false |
+| 4 | true (held) | false | false |
+| 5 | false | false | true |
+| 6 | false (held) | false | false |
+| 7 | true | true | false |
+| 8 | false | false | true |
+
+`pressed` is a **one-tick pulse**: true in one tick, false in the next, whatever the input does. Ticks 7
+and 8 show the shortest press there is, one tick long: a rising edge, and a falling edge right after.
+Because `pre(button)` is `false` in tick 1, a button that is already held in tick 1 counts as a rising
+edge in tick 1.
+
+### Edges in triggers
+
+Edges matter most in triggers. Here is the toggle from [Thinking in ticks](/learn/ticks/) next to a
+version that triggers on the rising edge, both with the button held for three ticks:
+
+<Compare
+  a="learn/pre/toggle"
+  b="learn/pre/edge-toggle"
+  scenario="learn/pre/toggle-compare"
+  caption="`Toggle`: `if button`. `EdgeToggle`: `if button && !pre(button)`. The button is held from tick 2 to tick 4: watch `light` in both charts."
+/>
+
+| Tick | `button` | `light` in `Toggle` | `light` in `EdgeToggle` |
+| ---: | --- | --- | --- |
+| 1 | false | false | false |
+| 2 | true | true | true |
+| 3 | true (held) | false | true |
+| 4 | true (held) | true | true |
+| 5 | false | true | true |
+| 6 | true | false | false |
+| 7 | false | false | false |
+
+`Toggle` flickers for as long as the button is held: in every tick `button` is true, so whichever state
+the chart is in, its transition fires. On a real controller a tick may last a millisecond and a press a
+few hundred, so the light would end up on or off at random. `EdgeToggle` toggles exactly once per press.
+When one press should do one thing, trigger on the edge. [Edges and pulses](/patterns/edges/) collects
+more patterns of this kind. Edges help in testing too: in SCCharts Lab a breakpoint can be a condition
+that uses `pre`, so `button != pre(button)` pauses the simulation on every edge of `button`
+([Test your chart](/reference/troubleshooting/#test-your-chart) has more on breakpoints).
+
+## `pre` with signals
+
+For a signal, `pre(S)` asks whether `S` was present in the previous tick. For a valued signal `V`,
+`pre(V)` is its presence in the previous tick and `pre(val(V))` its value at the end of the previous
+tick (which, like any signal value, stays put while the signal is absent). A doorbell that chimes once
+per press and counts its rings:
+
+<Sim
+  example="learn/pre/doorbell"
+  caption="`chime` is emitted on the first tick of each press. `rings` carries the number of rings so far."
+/>
+
+| Tick | `press` | `chime` | `rings` | `val(rings)` |
+| ---: | --- | --- | --- | ---: |
+| 1 | absent | absent | absent | 0 |
+| 2 | present | present | present | 1 |
+| 3 | present (held) | absent | absent | 1 |
+| 4 | absent | absent | absent | 1 |
+| 5 | present | present | present | 2 |
+| 6 | absent | absent | absent | 2 |
+
+The emission `rings(pre(val(rings)) + 1)` builds on last tick's value. `rings(val(rings) + 1)` would
+read the value it is about to set, and KIELER rejects it, as you saw in
+[Signals](/learn/signals/#building-on-the-last-value). Reading the previous value is the standard way
+to build on a signal's value.
+
+<Aside type="caution" title="pre(val(V)), not val(pre(V))">
+The order matters. `val` must be applied directly to a valued signal, so `val(pre(V))` is not
+translated at all, and the chart fails when KIELER compiles the generated C code, typically with
+`implicit declaration of function ‘val’` (the exact message depends on your C compiler). Write
+`pre(val(V))`.
+</Aside>
+
+## Further back
+
+`pre` can be nested: `pre(pre(x))` is the value two ticks ago. A long press is a button held now, one
+tick ago and two ticks ago:
+
+<Sim
+  example="learn/pre/held"
+  caption="`longPress` needs three ticks in a row. Ticks 7 and 8 are a press of two ticks: not long enough."
+/>
+
+Each `pre` adds one remembered value to the compiled program. To look ten ticks back, count instead:
+with a counter variable, or with a count delay.
+
+## Count delays
+
+A **count delay** puts a number in front of a trigger: `if 3 knock go to Open` fires in the third tick
+in which `knock` holds while the state is active. A door that opens after three knocks:
+
+<Sim
+  example="learn/pre/knock"
+  caption="The visitor knocks twice, walks away, comes back and knocks three times. Watch when the door opens."
+/>
+
+| Tick | `knock` | `away` | State after | `open` |
+| ---: | --- | --- | --- | --- |
+| 1 | false | false | Shut | false |
+| 2 | true | false (held) | Shut | false |
+| 3 | false | false (held) | Shut | false |
+| 4 | true | false (held) | Shut | false |
+| 5 | false | true | Away | false |
+| 6 | false (held) | false | Shut | false |
+| 7 | true | false (held) | Shut | false |
+| 8 | false | false (held) | Shut | false |
+| 9 | true | false (held) | Shut | false |
+| 10 | true (held) | false (held) | Open | true |
+
+Read off the rules:
+
+- **The ticks need not be consecutive.** Ticks 2 and 4 both count, with a pause between them.
+- **Every entry restarts the count.** In tick 5 the visitor leaves with two knocks counted. When `Shut`
+  is entered again in tick 6, the count starts from zero, and it takes three more ticks with `knock`
+  (7, 9 and 10) to open the door. A self-loop is an entry too, so it restarts the count as well.
+- **The entry tick doesn't count** for a delayed count delay, just as a delayed transition is not
+  checked in its source's entry tick. With `immediate if 3 knock`, the entry tick counts.
+
+`if 1 knock` means the same as `if knock`. `if 0 knock` is rejected with
+`A count delay of 0 is not allowed on a trigger.`. And because `true` holds in every tick,
+`if 5 true go to Next` waits for five ticks after the state was entered: a simple timeout, measured in
+ticks. Ticks are not seconds, though: how long a tick lasts depends on how often the program is run.
+[Time](/advanced/time/) shows how to work with real time.
+
+Count delays are for transitions. On an entry or exit action a count is a syntax error, and on a
+during action it is ignored: `during if 3 knock do …` compiles, but runs exactly as
+`during if knock do …`, and KIELER warns (the spelling is KIELER's):
+
+```text wrap
+Count Delays on During Actions are not supported yet. The valued will be ignored by the transformation.
+```
+
+To count in an action, use a counter variable, as `KnockByHand` does below.
+
+Count delays count ticks, not presses. Predict what a held knock does, then run it and open the
+explanation:
+
+<Predict
+  example="learn/pre/knock-held"
+  ask={[
+    { tick: 3, value: 'open' },
+    { tick: 4, value: 'open' },
+  ]}
+  caption="`knock` is true from tick 1 and stays true: one long knock. Is the door open after tick 3? After tick 4?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+The door is still shut after tick 3 and open after tick 4. Tick 1 is `Shut`'s entry tick and doesn't
+count; ticks 2, 3 and 4 do, so one long knock opens the door in tick 4.
+
+</details>
+
+If you mean three separate knocks, count rising edges: that is the second exercise below.
+
+### What a count delay really is
+
+KIELER has no counting transitions at run time. Its compiler rewrites `if 3 knock` into a counter and
+`pre`, and you can write the same thing by hand:
+
+<Compare
+  a="learn/pre/knock"
+  b="learn/pre/knock-by-hand"
+  scenario="learn/pre/knock-compare"
+  caption="`Knock`: the count delay. `KnockByHand`: the same logic with a counter, `count`, that you can watch. With the same knocks both doors open in tick 10."
+/>
+
+```sctx
+output int count                 // an output, so you can watch it
+initial state Shut {
+  entry do count = 0             // every entry restarts
+  during if knock do count++     // delayed: skips the entry tick
+}
+if pre(count) == 2 && knock do open = true go to Open
+```
+
+The trigger asks "two knocks counted before this tick, and a knock now". Each rule above is visible
+in the expansion: the entry action restarts the count, and the plain `during` skips the entry tick.
+For `immediate if 3 knock`, the compiler writes `immediate during` instead.
+
+That expansion has one consequence that nobody would design on purpose:
+
+<Sim
+  example="learn/pre/immediate-count"
+  caption="`immediate if 3 knock`. Two knocks, a walk away, and on return a single knock opens the door."
+/>
+
+In tick 4 the visitor comes back and knocks once, and the door opens. Entering `Shut` did reset the
+counter to 0 and the knock counted 1, but the trigger reads `pre(count)`, which is still 2: the value
+when the previous tick ended. The reset only shows in `pre` from the next tick on. A delayed count delay
+can't do this, because its transition is not checked in the entry tick.
+
+<Aside type="danger" title="Immediate count delays and re-entry">
+An `immediate if n T` transition can fire in the very tick its state is entered again, if the state
+was left with n − 1 counted, even though the count was supposed to restart. Use a delayed count delay,
+or your own counter, when a state can be left and entered again.
+</Aside>
+
+### Count delays inside a reset loop
+
+ABRO's reset from [Aborts](/learn/preemption/#abro-the-classic), the self-loop `if R abort to ABO`
+around the whole behaviour, is the usual way to start a chart over. KIELER cannot compile a count
+delay anywhere inside a state with such a loop:
+
+<Chart example="learn/pre/knock-restart" caption="`if 3 knock` inside `Door`, and `if restart abort to Door` around it. KIELER rejects the chart." />
+
+The messages are the scheduling errors that [Why the compiler says no](/learn/causality/) explains,
+ending in `The SCG is NOT asc-schedulable!`, although the chart has no concurrent regions. The count
+delay on its own compiles, and so does the reset loop; together they leave no valid order in the code
+KIELER generates for the count delay. It makes no difference whether the reset is `abort to` or
+`go to`, or how deep inside the state the count delay sits.
+
+The way out is to count by hand, with a counter declared at the top of the chart, outside the state
+with the reset loop:
+
+<Sim example="learn/pre/knock-restart-by-hand" caption="The same door with its own counter, `count`. `restart` in tick 5 starts the count again, and the third knock after it, in tick 9, unlocks the door." />
+
+The transition tests `count == 3` itself: it reads `count` after the during action has updated it,
+so the door unlocks in the tick of the third knock, as with `if 3 knock`. KIELER compiles this
+version with an instantaneous-loop warning, as it does for many charts with a reset loop around
+actions; the chart behaves as described ([more about this warning](/reference/errors/#instantaneous-loop-detected)).
+[Count delay or counter?](/patterns/counters/#count-delay-or-counter) weighs the two in general.
+
+## Try it
+
+<TryIt example="learn/pre/presses-start" solution="learn/pre/presses-solution" title="Count presses, not ticks">
+`Presses` should count how often the button is pressed, but holding it down counts every tick. Change
+the during action so that each press counts once, however long it lasts.
+</TryIt>
+
+<TryIt example="learn/pre/knock" solution="learn/pre/knocks-solution" title="Three separate knocks" hint="`if 3 knock` counts the ticks in which `knock` holds. Which trigger holds only in the first tick of each knock?">
+In `Knock`, one long knock opens the door. Change the transition so that it opens only after three
+separate knocks: three rising edges of `knock`. Keep the count delay; only its trigger needs to change.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="A chart declares `output int level = 50`. What is `pre(level)` in tick 1?"
+  options={[
+    '0, the default for an `int`',
+    '50, the initial value',
+    'Undefined: `pre` cannot be used in tick 1',
+  ]}
+  answer={0}
+>
+In tick 1 there is no previous tick, and `pre` gives the default of the type, not the initial value.
+`Tank` above shows it: `before` is 0 in tick 1 and 50 in tick 2.
+</Quiz>
+
+<Quiz
+  question="Which expression is true for exactly one tick when `b` changes from true to false?"
+  options={['`b && !pre(b)`', '`!b && pre(b)`', '`!pre(b)`']}
+  answer={1}
+>
+`!b && pre(b)` means "false now, true a tick ago": a falling edge. `b && !pre(b)` is the rising edge,
+and `!pre(b)` is true in every tick after a tick in which `b` was false.
+</Quiz>
+
+<Quiz
+  question="In `Knock`, the visitor knocks twice, walks away (`Shut` is left) and comes back. How many more ticks with `knock` open the door?"
+  options={['1', '3', 'None: two knocks are remembered, so the door opens at once']}
+  answer={1}
+>
+Every entry of `Shut` restarts the count, so the two earlier knocks are forgotten: it takes three more,
+as ticks 7, 9 and 10 of the simulation show. (With an `immediate` count delay it can be different, as
+the quirk above shows.)
+</Quiz>
+
+<KeyIdeas>
+- `pre(x)` is the value `x` had at the end of the previous tick. Writes in the current tick don't
+  change it.
+- In tick 1, and when a superstate is entered again for its own locals, `pre(x)` is the default of the
+  type (0, `false`), not the initial value.
+- `b && !pre(b)` is a rising edge and `!b && pre(b)` a falling edge: each is true for exactly one tick.
+  Trigger on the edge when one press should do one thing.
+- `pre(S)` asks whether a signal was present in the previous tick; `pre(val(V))` is a valued signal's
+  previous value.
+- `if n T` fires in the n-th tick in which `T` holds since the state was entered. Only `immediate`
+  counts the entry tick, and every entry restarts the count. Inside a state with a reset self-loop
+  KIELER rejects count delays: count by hand there.
+</KeyIdeas>
+
+Next, [Why the compiler says no](/learn/causality/), the last chapter of Learn: the checks behind
+KIELER's scheduling errors, and how to change a chart it refuses.

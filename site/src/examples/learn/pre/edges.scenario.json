@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Not pressed. `pre(button)` is false in tick 1 (the default)." },
+    { "inputs": { "button": true }, "note": "Pressed now, not pressed before: a rising edge, so `pressed` is true for this tick." },
+    { "note": "Still held: `button` and `pre(button)` are both true, so no edge." },
+    { "note": "Still held: no edge." },
+    { "inputs": { "button": false }, "note": "Released now, pressed before: a falling edge, `released` is true." },
+    { "note": "Not pressed, and not pressed before: nothing." },
+    { "inputs": { "button": true }, "note": "A new press: `pressed` again." },
+    { "inputs": { "button": false }, "note": "A one-tick press gives a rising edge and, one tick later, a falling edge." }
+  ],
+  "expect": "ok"
+}

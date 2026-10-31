@@ -1,0 +1,160 @@
+{
+  "hash": "2adabeb07e78a18790e3189e6067aaff301bd9b6",
+  "chart": "src/examples/advanced/code-generation/doorbell.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "chime": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "rings": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "rings_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": []
+    },
+    "rings_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "chime": false,
+        "rings": false,
+        "rings_val": 0,
+        "count": 0,
+        "rings_curval": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "chime": true,
+        "rings": true,
+        "rings_val": 1,
+        "count": 1,
+        "rings_curval": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "chime": false,
+        "rings": false,
+        "rings_val": 1,
+        "count": 1,
+        "rings_curval": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "chime": true,
+        "rings": true,
+        "rings_val": 2,
+        "count": 2,
+        "rings_curval": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "chime": true,
+        "rings": true,
+        "rings_val": 3,
+        "count": 3,
+        "rings_curval": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "chime": false,
+        "rings": false,
+        "rings_val": 3,
+        "count": 3,
+        "rings_curval": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+scchart VectorAssignSequential {
+  output int arr[3] = {1, 2, 3}
+
+  initial state S
+  do arr = {arr[1], arr[2], arr[0]} go to S
+}

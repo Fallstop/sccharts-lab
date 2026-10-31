@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": false, "cancel": false }, "note": "Tick 1 enters both ovens with `remaining` = 5. In `CancelTrap` the `suspend` and `if cancel go to Idle` are both on `Cooking`. In `CancelFixed` the cancel transition is on `Oven`, the state around `Cooking`." },
+    { "inputs": {}, "note": "Both count down: 4." },
+    { "inputs": { "doorOpen": true }, "note": "The door opens and both `Cooking` states are suspended: `remaining` stays 4. In `CancelFixed`, `Oven` is not suspended: only the state that carries the `suspend` freezes." },
+    { "inputs": { "cancel": true }, "note": "`cancel` is pressed while the door is open. `CancelTrap`: the cancel transition belongs to the suspended `Cooking`, so it is frozen with the rest of it, and the press is ignored. `CancelFixed`: the transition belongs to `Oven`, which is not suspended, so it fires and the oven goes to `Idle`." },
+    { "inputs": { "cancel": false }, "note": "`cancel` is released. `CancelTrap` is still suspended; `CancelFixed` is in `Idle`." },
+    { "inputs": { "doorOpen": false }, "note": "The door shuts. `CancelTrap` carries on cooking (3): the cancel press was lost. `CancelFixed` stays in `Idle`, with `remaining` still 4." },
+    { "inputs": {}, "note": "`CancelTrap` counts on (2). `CancelFixed` never resumes." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,80 @@
+{
+  "hash": "2b1026b92a2ff8974b4357b35f41a06a4aa6fe23",
+  "chart": "tests/conformance/structure/91-priority-runs-guarded-loop.sctx",
+  "system": "priority",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [S, T]",
+      "line": 7,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [S, T]",
+      "line": 9,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "n": 5
+      },
+      "taken": [
+        5,
+        5
+      ]
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "n": 5
+      },
+      "taken": [
+        0,
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {"inputs": {"I": 1}, "note": "Tick 1 enters A; its transition is delayed. I = 1."},
+    {"inputs": {}, "note": "The self-loop reads I (seen = 1) and writes I = 11. A chart may assign to its own inputs."},
+    {"inputs": {}, "note": "No new value is supplied, so I keeps the value the chart wrote: seen = 11, I = 21. Persistence carries forward whatever the input held at the end of the last tick."},
+    {"inputs": {"I": 7}, "note": "A supplied value overwrites the chart's write before the tick runs: seen = 7, I = 17."},
+    {"inputs": {}, "note": "seen = 17, and the chart writes I = 27."}
+  ],
+  "expect": "ok"
+}

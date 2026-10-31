@@ -1,0 +1,83 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1: ready."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: a rising edge, so the chart enters `Firing`, whose entry action switches `pulse` on."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "`pulse` stays on, although nothing happens to the button."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Third tick of the pulse."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "`if 3 true` has now counted three ticks after the entry tick: `Firing` is left, its exit action switches `pulse` off. The button is still held, but that does not matter."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "A short press of one tick ..."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "... still gives a pulse of three ticks: the length of the pulse does not depend on the press."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed again while the pulse is running: `Firing` has no transition for the button, so the new press is ignored."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "The pulse ends. `Ready` is entered while the button is held, and that is no new rising edge: no new pulse."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Held: still nothing."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Ready for the next press."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,50 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0,
+        "kick": false
+      },
+      "note": "**sleepT = 300**. The local clock is renamed internally and not shown in the pool."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Run's clock advances by deltaT (100): **sleepT = 200**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "The clock is at 200: **sleepT = 100**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100,
+        "kick": true
+      },
+      "note": "The clock reaches 300 in this tick, so the inner timeout fires (timeout = true): kick is a weak abort, so Run's inner behaviour runs first. Then the kick's effect sets timeout = false and re-enters Run, which restarts the clock: **timeout = false, sleepT = 300**, taken = [1, 1]."
+    },
+    {
+      "inputs": {
+        "deltaT": 100,
+        "kick": false
+      },
+      "note": "The restarted clock is at 100: **sleepT = 200**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "The restarted clock is at 200: **sleepT = 100**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "The restarted clock reaches 300, 300 time units after the kick: **timeout = true**, **sleepT = 1000**."
+    }
+  ],
+  "expect": "ok"
+}

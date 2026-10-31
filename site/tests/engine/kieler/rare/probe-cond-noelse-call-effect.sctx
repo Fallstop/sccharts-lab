@@ -1,0 +1,14 @@
+// An argument of a C function call that is a whole effect: gcc rejects __CONDSELF__.
+scchart CondNoElseCallEffect {
+  input bool c
+  output int r = 5
+
+  method void add(int v) {
+    for (int i = 0; i < 1; i++) {
+      r += v
+    }
+  }
+
+  initial state S
+    if true do add((c) ? 3) go to S
+}

@@ -1,0 +1,17 @@
+// Two scchart roots in one file: KIELER compiles and simulates the FIRST one only.
+// The second is ignored (it is not even checked for scheduling problems).
+scchart St01First {
+  input bool A
+  output bool X = false
+  initial state S
+  if A do X = true go to T
+  state T
+}
+
+scchart St01Second {
+  input bool B
+  output bool Y = false
+  initial state S
+  if B do Y = true go to T
+  state T
+}

@@ -1,0 +1,10 @@
+scchart CountNeedsLiteral {
+  input bool raw
+  output bool pressed
+  const int N = 3
+
+  initial state Released
+    if N raw do pressed = true go to Pressed
+
+  state Pressed
+}

@@ -1,0 +1,18 @@
+scchart Actions {
+  input bool trigger
+  output int effect
+
+  initial state A
+  immediate go to B
+
+  state B {
+    entry do effect = 0
+    entry if trigger do effect++
+    during if trigger do effect++
+    immediate during if trigger do effect++
+    exit if trigger do effect *= 10
+    initial state B1
+    if trigger go to B2
+    state B2
+  }
+}

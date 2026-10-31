@@ -1,0 +1,351 @@
+{
+ "sourceHash": "3324de872a5d65c1",
+ "states": [
+  {
+   "path": [
+    "SelfLoops"
+   ],
+   "rows": [
+    [
+     "SelfLoops"
+    ],
+    [
+     "input bool ",
+     "on, off, toggle"
+    ],
+    [
+     "output bool ",
+     "lamp = false"
+    ],
+    [
+     "output int ",
+     "count = 0"
+    ],
+    [
+     "output int ",
+     "level = 0"
+    ],
+    [
+     "output bool ",
+     "high = false"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    607.2,
+    358
+   ]
+  },
+  {
+   "path": [
+    "SelfLoops",
+    "Lamp",
+    "Watch"
+   ],
+   "rows": [
+    [
+     "Watch"
+    ]
+   ],
+   "box": [
+    28.7,
+    136.3,
+    63.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "SelfLoops",
+    "Counter",
+    "Count"
+   ],
+   "rows": [
+    [
+     "Count"
+    ]
+   ],
+   "box": [
+    47.4,
+    190.4,
+    61,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "SelfLoops",
+    "Nested",
+    "Outer"
+   ],
+   "rows": [
+    [
+     "Outer"
+    ]
+   ],
+   "box": [
+    10,
+    20,
+    286.4,
+    119.7
+   ]
+  },
+  {
+   "path": [
+    "SelfLoops",
+    "Nested",
+    "Outer",
+    0,
+    "Inner"
+   ],
+   "rows": [
+    [
+     "Inner"
+    ]
+   ],
+   "box": [
+    203.1,
+    23.1,
+    55.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "SelfLoops",
+    "Lamp"
+   ],
+   "label": [
+    "Lamp"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    117,
+    121,
+    235
+   ]
+  },
+  {
+   "path": [
+    "SelfLoops",
+    "Counter"
+   ],
+   "label": [
+    "Counter"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    133,
+    117,
+    155.8,
+    235
+   ]
+  },
+  {
+   "path": [
+    "SelfLoops",
+    "Nested"
+   ],
+   "label": [
+    "Nested"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    293.8,
+    117,
+    306.4,
+    235
+   ]
+  },
+  {
+   "path": [
+    "SelfLoops",
+    "Nested",
+    "Outer",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    30.6,
+    268.8,
+    80.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NSelfLoops$NLamp$NWatch$EWatch0",
+   "source": [
+    "SelfLoops",
+    "Lamp",
+    "Watch"
+   ],
+   "target": [
+    "SelfLoops",
+    "Lamp",
+    "Watch"
+   ],
+   "text": "1: on / lamp = true",
+   "lines": [
+    "1: on",
+    "/ lamp = true"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSelfLoops$NLamp$NWatch$EWatch1",
+   "source": [
+    "SelfLoops",
+    "Lamp",
+    "Watch"
+   ],
+   "target": [
+    "SelfLoops",
+    "Lamp",
+    "Watch"
+   ],
+   "text": "2: off / lamp = false",
+   "lines": [
+    "2: off",
+    "/ lamp = false"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSelfLoops$NCounter$NCount$ECount0",
+   "source": [
+    "SelfLoops",
+    "Counter",
+    "Count"
+   ],
+   "target": [
+    "SelfLoops",
+    "Counter",
+    "Count"
+   ],
+   "text": "1: toggle / count = count + 1",
+   "lines": [
+    "1: toggle",
+    "/ count = count + 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSelfLoops$NCounter$NCount$ECount1",
+   "source": [
+    "SelfLoops",
+    "Counter",
+    "Count"
+   ],
+   "target": [
+    "SelfLoops",
+    "Counter",
+    "Count"
+   ],
+   "text": "2: on && off / count = 0",
+   "lines": [
+    "2: on && off",
+    "/ count = 0"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSelfLoops$NCounter$NCount$ECount2",
+   "source": [
+    "SelfLoops",
+    "Counter",
+    "Count"
+   ],
+   "target": [
+    "SelfLoops",
+    "Counter",
+    "Count"
+   ],
+   "text": "3: count > 9 / count = 9",
+   "lines": [
+    "3: count > 9",
+    "/ count = 9"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSelfLoops$NNested$NOuter$$N0$NInner$EInner0",
+   "source": [
+    "SelfLoops",
+    "Nested",
+    "Outer",
+    0,
+    "Inner"
+   ],
+   "target": [
+    "SelfLoops",
+    "Nested",
+    "Outer",
+    0,
+    "Inner"
+   ],
+   "text": "1: on / level = 1",
+   "lines": [
+    "1: on",
+    "/ level = 1"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSelfLoops$NNested$NOuter$$N0$NInner$EInner1",
+   "source": [
+    "SelfLoops",
+    "Nested",
+    "Outer",
+    0,
+    "Inner"
+   ],
+   "target": [
+    "SelfLoops",
+    "Nested",
+    "Outer",
+    0,
+    "Inner"
+   ],
+   "text": "2: off / level = 2; high = true",
+   "lines": [
+    "2: off",
+    "/ level = 2;",
+    "  high = true"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

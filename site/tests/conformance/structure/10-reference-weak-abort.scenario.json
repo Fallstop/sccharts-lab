@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1 enters R and the instance's initial state S; its delayed count++ waits: **o = 0**. The abort trigger o >= 3 is false."
+    },
+    {
+      "inputs": {},
+      "note": "The instance increments o (bound to count): **o = 1**. The weak abort is tested after it and is still false."
+    },
+    {
+      "inputs": {},
+      "note": "The instance increments again: **o = 2**."
+    },
+    {
+      "inputs": {},
+      "note": "The instance increments o to 3 and the weak abort, evaluated after it, fires in the same tick: **o = 3**, R is left."
+    },
+    {
+      "inputs": {},
+      "note": "In E nothing counts any more: **o = 3**."
+    }
+  ],
+  "expect": "ok"
+}

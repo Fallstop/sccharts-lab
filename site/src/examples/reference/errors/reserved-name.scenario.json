@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "KIELER rejects the chart: `reset` is a keyword of SCTX (it belongs to `go to S reset`), so it cannot be a variable name."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "mismatched input 'reset' expecting RULE_ID"
+}

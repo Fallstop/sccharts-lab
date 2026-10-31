@@ -1,0 +1,123 @@
+{
+  "hash": "1c90b13ef5b185c04266df99997e389fb3bb5361",
+  "chart": "tests/engine/kieler/structure/probe-dz69.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on _Dz69_local_c.",
+    "Potential instantaneous loop through the timed transitions on _Dz69_local_c1."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "a": 0,
+        "b": 0,
+        "sleepT": 100
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "a": 0,
+        "b": 0,
+        "sleepT": 40
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "a": 3,
+        "b": 0,
+        "sleepT": 80
+      },
+      "taken": [
+        2
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "a": 3,
+        "b": 0,
+        "sleepT": 20
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "a": 6,
+        "b": 0,
+        "sleepT": 60
+      },
+      "taken": [
+        2
+      ],
+      "terminated": false
+    }
+  ]
+}

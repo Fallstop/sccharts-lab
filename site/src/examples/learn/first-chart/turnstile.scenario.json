@@ -1,0 +1,38 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "coin": false,
+        "push": false
+      },
+      "note": "Tick 1 enters `Locked`."
+    },
+    {
+      "inputs": {
+        "push": true
+      },
+      "note": "Pushing a locked turnstile does nothing."
+    },
+    {
+      "inputs": {
+        "push": false,
+        "coin": true
+      },
+      "note": "A coin: `Unlocked`, `unlocked` is true."
+    },
+    {
+      "inputs": {
+        "coin": false,
+        "push": true
+      },
+      "note": "A push: `Locked` again."
+    },
+    {
+      "inputs": {
+        "push": false
+      },
+      "note": "Waiting for the next coin."
+    }
+  ],
+  "expect": "ok"
+}

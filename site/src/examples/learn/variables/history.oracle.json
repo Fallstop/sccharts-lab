@@ -1,0 +1,106 @@
+{
+  "hash": "c927a954a6be0791d7a2875cf6e9566803dfa82f",
+  "chart": "src/examples/learn/variables/history.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "reading": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "average": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "last": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reading": 3
+      },
+      "values": {
+        "reading": 3,
+        "average": 0,
+        "last": [
+          0,
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "reading": 6
+      },
+      "values": {
+        "reading": 6,
+        "average": 6,
+        "last": [
+          6,
+          6,
+          6
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "reading": 9
+      },
+      "values": {
+        "reading": 9,
+        "average": 9,
+        "last": [
+          9,
+          9,
+          9
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "reading": 12
+      },
+      "values": {
+        "reading": 12,
+        "average": 12,
+        "last": [
+          12,
+          12,
+          12
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

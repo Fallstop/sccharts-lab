@@ -1,0 +1,13 @@
+// Campaign 5 (objects-51-111, reduced): a code block with a loop is not inlined; KIELER's dependency analysis gives the call node the block's accesses (DependencyTransformationV2.processInnerAccesses) with the call node's operator '=', so its y += 1 does not commute with the concurrent y += 1.
+scchart F2 {
+  input bool a
+  output int y = 0
+  region {
+    initial state A
+      do y += 1 go to A
+  }
+  region {
+    initial state S
+      if a do { for (int j = 0; j < 2; j++) { y += 1; } } go to S
+  }
+}

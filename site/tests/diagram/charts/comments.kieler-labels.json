@@ -1,0 +1,299 @@
+{
+ "sourceHash": "d215a2969931fa3b",
+ "states": [
+  {
+   "path": [
+    "Comments"
+   ],
+   "rows": [
+    [
+     "Comments"
+    ],
+    [
+     "input bool ",
+     "button"
+    ],
+    [
+     "output bool ",
+     "light = false"
+    ]
+   ],
+   "box": [
+    0,
+    29.8,
+    594.7,
+    397.4
+   ]
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    "Off"
+   ],
+   "rows": [
+    [
+     "Off"
+    ]
+   ],
+   "box": [
+    34.6,
+    145.4,
+    42.7,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    "On"
+   ],
+   "rows": [
+    [
+     "On"
+    ]
+   ],
+   "box": [
+    260.9,
+    39.8,
+    310.7,
+    245.7
+   ]
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    "On",
+    "Inner",
+    "I1"
+   ],
+   "rows": [
+    [
+     "I1"
+    ]
+   ],
+   "box": [
+    142.8,
+    20,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    "On",
+    "Inner",
+    "I2"
+   ],
+   "rows": [
+    [
+     "I2"
+    ]
+   ],
+   "box": [
+    142.7,
+    159.7,
+    34.3,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Comments",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    581.5,
+    325.4
+   ]
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    "On",
+    "Inner"
+   ],
+   "label": [
+    "Inner"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    7,
+    30.6,
+    297.3,
+    208.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NComments$$N0$NOn$NInner$NI1$EI20",
+   "source": [
+    "Comments",
+    0,
+    "On",
+    "Inner",
+    "I1"
+   ],
+   "target": [
+    "Comments",
+    0,
+    "On",
+    "Inner",
+    "I2"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ],
+   "comments": [
+    {
+     "text": "This transition comment is rather long, much longer than two hundred pixels, so it wraps.",
+     "lines": [
+      "This transition comment is",
+      "rather long, much longer",
+      "than two hundred pixels, so it wraps."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "$root$NComments$$N0$NOff$EOn0",
+   "source": [
+    "Comments",
+    0,
+    "Off"
+   ],
+   "target": [
+    "Comments",
+    0,
+    "On"
+   ],
+   "text": "button / light = true",
+   "lines": [
+    "button",
+    "/ light = true"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ],
+   "comments": [
+    {
+     "text": "Press: switch on.",
+     "lines": [
+      "Press: switch on."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "$root$NComments$$N0$NOn$EOff0",
+   "source": [
+    "Comments",
+    0,
+    "On"
+   ],
+   "target": [
+    "Comments",
+    0,
+    "Off"
+   ],
+   "text": "button / light = false",
+   "lines": [
+    "button",
+    "/ light = false"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ],
+   "comments": [
+    {
+     "text": "Press again:\nswitch off.",
+     "lines": [
+      "Press again:",
+      "switch off."
+     ]
+    }
+   ]
+  }
+ ],
+ "comments": [
+  {
+   "path": [
+    "Comments",
+    0,
+    1
+   ],
+   "text": "Waiting for a press."
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    "On",
+    "Inner",
+    1
+   ],
+   "text": "Inner start."
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    "On",
+    "Inner",
+    3
+   ],
+   "text": "Two lines\n\nwith a blank line between."
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    "On",
+    "Inner",
+    4
+   ],
+   "text": "The inner region."
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    3
+   ],
+   "text": "The lamp is lit."
+  },
+  {
+   "path": [
+    "Comments",
+    0,
+    4
+   ],
+   "text": "A second comment on the same state."
+  },
+  {
+   "path": [
+    1
+   ],
+   "text": "Doc comments, drawn as KIELER draws them by default (\"Comment Nodes\")."
+  }
+ ]
+}

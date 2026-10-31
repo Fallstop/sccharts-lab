@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M; its delayed during action waits."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "The inner region reaches F and M terminates in this tick, but M's during action still runs first: ticks = 1, done = 1."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "M has been left: ticks stays 1."
+    }
+  ],
+  "expect": "ok"
+}

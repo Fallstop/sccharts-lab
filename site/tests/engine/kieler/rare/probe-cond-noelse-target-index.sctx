@@ -1,0 +1,7 @@
+// The index of the assigned element: gcc rejects __CONDSELF__.
+scchart CondNoElseTargetIndex {
+  input bool c
+  output int x[2] = {0, 0}
+  initial state S
+    if true do x[(c) ? 1] = 5 go to S
+}

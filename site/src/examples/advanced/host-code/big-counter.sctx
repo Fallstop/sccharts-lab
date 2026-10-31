@@ -1,0 +1,9 @@
+#hostcode "typedef long long int64;"
+
+scchart BigCounter {
+  output int low = 0
+  host "int64" big = `1LL << 40`
+
+  initial state Count
+    do big += 1; low = `(int) (d->big & 0xFF)` go to Count
+}

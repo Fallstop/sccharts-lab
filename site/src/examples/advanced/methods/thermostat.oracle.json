@@ -1,0 +1,108 @@
+{
+  "hash": "412e51e462d1d4c516afe33c0a4911071b0dce7c",
+  "chart": "src/examples/advanced/methods/thermostat.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "temperature": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "heater": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "temperature": 20
+      },
+      "values": {
+        "temperature": 20,
+        "heater": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "temperature": 17
+      },
+      "values": {
+        "temperature": 17,
+        "heater": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "temperature": 20
+      },
+      "values": {
+        "temperature": 20,
+        "heater": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "temperature": 23
+      },
+      "values": {
+        "temperature": 23,
+        "heater": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "temperature": 20
+      },
+      "values": {
+        "temperature": 20,
+        "heater": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "temperature": 15
+      },
+      "values": {
+        "temperature": 15,
+        "heater": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

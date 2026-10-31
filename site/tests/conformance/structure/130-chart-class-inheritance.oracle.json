@@ -1,0 +1,240 @@
+{
+  "hash": "e3c615d4128af451d8ba713b519220e4f7e2ed24",
+  "chart": "tests/conformance/structure/130-chart-class-inheritance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "toggle": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "St130Controlled1.St130Counter_counter": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    },
+    "St130Controlled1.counting": {
+      "type": "bool",
+      "properties": []
+    },
+    "counter1": {
+      "type": "class",
+      "properties": []
+    },
+    "counter2": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "toggle": false
+      },
+      "values": {
+        "toggle": false,
+        "O1": 0,
+        "O2": 0,
+        "counter1": {
+          "St130Counter_counter": 0,
+          "counting": true
+        },
+        "counter2": {
+          "St130Counter_counter": 0,
+          "counting": false
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "toggle": false
+      },
+      "values": {
+        "toggle": false,
+        "O1": 1,
+        "O2": 0,
+        "counter1": {
+          "St130Counter_counter": 1,
+          "counting": true
+        },
+        "counter2": {
+          "St130Counter_counter": 0,
+          "counting": false
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "toggle": false
+      },
+      "values": {
+        "toggle": false,
+        "O1": 2,
+        "O2": 0,
+        "counter1": {
+          "St130Counter_counter": 2,
+          "counting": true
+        },
+        "counter2": {
+          "St130Counter_counter": 0,
+          "counting": false
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "toggle": true
+      },
+      "values": {
+        "toggle": true,
+        "O1": 2,
+        "O2": 0,
+        "counter1": {
+          "St130Counter_counter": 2,
+          "counting": false
+        },
+        "counter2": {
+          "St130Counter_counter": 0,
+          "counting": true
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "toggle": false
+      },
+      "values": {
+        "toggle": false,
+        "O1": 2,
+        "O2": 1,
+        "counter1": {
+          "St130Counter_counter": 2,
+          "counting": false
+        },
+        "counter2": {
+          "St130Counter_counter": 1,
+          "counting": true
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "toggle": false
+      },
+      "values": {
+        "toggle": false,
+        "O1": 2,
+        "O2": 2,
+        "counter1": {
+          "St130Counter_counter": 2,
+          "counting": false
+        },
+        "counter2": {
+          "St130Counter_counter": 2,
+          "counting": true
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "toggle": true
+      },
+      "values": {
+        "toggle": true,
+        "O1": 2,
+        "O2": 2,
+        "counter1": {
+          "St130Counter_counter": 2,
+          "counting": true
+        },
+        "counter2": {
+          "St130Counter_counter": 2,
+          "counting": false
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "toggle": false
+      },
+      "values": {
+        "toggle": false,
+        "O1": 3,
+        "O2": 2,
+        "counter1": {
+          "St130Counter_counter": 3,
+          "counting": true
+        },
+        "counter2": {
+          "St130Counter_counter": 2,
+          "counting": false
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

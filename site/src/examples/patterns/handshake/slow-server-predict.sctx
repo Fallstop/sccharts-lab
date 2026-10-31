@@ -1,0 +1,21 @@
+scchart SlowServer {
+  input bool start
+  output int served = 0
+  signal req, ack
+
+  region Client {
+    initial state Idle
+      if start do req go to Waiting
+
+    state Waiting
+      immediate if ack do served++ go to Idle
+  }
+
+  region Server {
+    initial state Ready
+      if req go to Working
+
+    state Working
+      if 2 true do ack go to Ready
+  }
+}

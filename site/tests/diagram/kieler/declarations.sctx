@@ -1,0 +1,42 @@
+scchart Declarations {
+  input bool i1, i2 = true
+  output bool o1
+  input output int io
+  const int K = 10
+  const float PI = 3.14
+  int arr[3][2]
+  int vec[3] = {1, 2, 3}
+  input signal S1
+  output signal S2, S3
+  signal int L = 0 combine +
+  output signal float F combine *
+  string text = "hello"
+  host "unsigned char" hc
+  extern "rand" rnd
+  static int st = 1
+  global int gl
+
+  initial state A {
+    int local = 0
+    entry do o1 = true
+    entry if i1 do io = 1
+    during do io++
+    immediate during if i2 do io += 2
+    exit do o1 = false
+    exit if i1 do io = 0
+    suspend if i2
+    weak suspend if i1
+    immediate suspend if !i1
+    entry if i1 do io = 5 label "user action"
+  }
+  go to B
+
+  state B {
+    entry do o1 = false
+  }
+  go to C
+
+  state C {
+    bool lb
+  }
+}

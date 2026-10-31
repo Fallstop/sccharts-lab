@@ -1,0 +1,14 @@
+// An enum declared in another chart: the type is "St103Decl.Bit", each value "scchart(St103Decl).Bit.ZERO".
+// The wiki's example.
+scchart St103EnumElsewhere {
+  ref St103Decl.Bit b = scchart(St103Decl).Bit.ZERO
+  initial state A
+  do b = scchart(St103Decl).Bit.ONE go to B
+  state B
+  if b != scchart(St103Decl).Bit.ZERO go to C
+  final state C
+}
+
+scchart St103Decl {
+  enum Bit { ZERO, ONE }
+}

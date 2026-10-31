@@ -1,0 +1,17 @@
+scchart SuspendNested {
+  input bool S, T
+  output int outer = 0, inner = 0
+
+  initial state M {
+    suspend if S
+    during do outer += 1
+
+    initial state N {
+      suspend if T
+      during do inner += 1
+
+      initial state I
+      if true go to I
+    }
+  }
+}

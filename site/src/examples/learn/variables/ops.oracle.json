@@ -1,0 +1,123 @@
+{
+  "hash": "ada741c896daa561859f202e9e78b33403cac895",
+  "chart": "src/examples/learn/variables/ops.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "reading": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "doubling": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "highest": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "lowest": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reading": 40
+      },
+      "values": {
+        "reading": 40,
+        "count": 0,
+        "doubling": 10,
+        "highest": 0,
+        "lowest": 1000
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "reading": 40,
+        "count": 1,
+        "doubling": 20,
+        "highest": 40,
+        "lowest": 40
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "reading": 75
+      },
+      "values": {
+        "reading": 75,
+        "count": 2,
+        "doubling": 40,
+        "highest": 75,
+        "lowest": 40
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "reading": 12
+      },
+      "values": {
+        "reading": 12,
+        "count": 3,
+        "doubling": 80,
+        "highest": 75,
+        "lowest": 12
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "reading": 12,
+        "count": 4,
+        "doubling": 160,
+        "highest": 75,
+        "lowest": 12
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

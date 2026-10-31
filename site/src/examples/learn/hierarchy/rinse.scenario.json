@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "full": false, "timeUp": false, "empty": false, "stop": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start`: `Programme` and `Filling`." },
+    { "inputs": { "start": false, "full": true }, "note": "`full`: washing, motor on." },
+    { "inputs": { "full": false, "timeUp": true }, "note": "`timeUp`: draining, motor off." },
+    { "inputs": { "timeUp": false, "empty": true }, "note": "`empty`: `Draining` → `Rinse`, which enters `Refilling` in the same tick. Three states are active: `Programme`, `Rinse` and `Refilling`." },
+    { "inputs": { "empty": false, "full": true }, "note": "`full`: `Refilling` → `Rinsing`, motor on." },
+    { "inputs": { "full": false, "timeUp": true }, "note": "`timeUp`: `Rinsing` → `Emptying`, motor off." },
+    { "inputs": { "timeUp": false, "empty": true }, "note": "`empty`: `Emptying` → `Rinsed`, so `Rinse` terminates and its `join to Done` fires; `Done` is final, so `Programme` terminates too and its join fires. All of it in this one tick: `beep` is present and the machine is in `Idle`." },
+    { "inputs": { "empty": false }, "note": "Back in `Idle`, waiting." }
+  ],
+  "expect": "ok"
+}

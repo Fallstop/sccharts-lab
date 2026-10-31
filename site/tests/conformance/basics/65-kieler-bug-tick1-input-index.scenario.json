@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": 2}, "note": "KIELER netlist bug. arr[I] = 5 should set arr[2] (the priority-based compiler gives [0, 0, 5]). The netlist compiler only checks the right-hand side for inputs, so it moves this assignment into reset(), where I is still 0: arr = [5, 0, 0]."},
+    {"inputs": {}, "note": "Unchanged: arr = [5, 0, 0]."}
+  ],
+  "expect": "ok",
+  "kielerBug": "Netlist GOInitOptimizer ignores input references in array indices. Intended (priority) result: arr = [0, 0, 5]."
+}

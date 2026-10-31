@@ -1,0 +1,13 @@
+scchart CaretMethodLoop {
+  input bool A
+  output int o = 0
+  method int ^max(int n) {
+    int r = 0
+    while (r < n) {
+      r++
+    }
+    return r
+  }
+  initial state S
+    if A do o = ^max(4) go to S
+}

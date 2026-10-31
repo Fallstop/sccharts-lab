@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Tick 1 enters `WaitAB` and both of its regions."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "The first region (shown with its label, *Wait for A*) reaches its final state. The other region is still waiting."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "The second region reaches its final state too. Both regions are final, so the termination fires: `O` is true and the chart terminates in `Done`."
+    }
+  ],
+  "expect": "ok"
+}

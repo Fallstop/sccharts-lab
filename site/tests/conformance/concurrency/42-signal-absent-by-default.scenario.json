@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1: signal `S` absent, bool `B` false."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `S` is emitted (present) and `B = true`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`S` is absent again (signals are reset to absent at the start of every tick); `B` keeps its value `true`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Same: `S` absent, `B = true`."
+    }
+  ],
+  "expect": "ok"
+}

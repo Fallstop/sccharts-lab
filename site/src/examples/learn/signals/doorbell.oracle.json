@@ -1,0 +1,120 @@
+{
+  "hash": "3e74925330a6990699fd661c3583542bbebcf600",
+  "chart": "src/examples/learn/signals/doorbell.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "ring": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "chime": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "rings": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "ring": false
+      },
+      "values": {
+        "ring": false,
+        "chime": false,
+        "rings": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "ring": true
+      },
+      "values": {
+        "ring": true,
+        "chime": true,
+        "rings": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "ring": true,
+        "chime": true,
+        "rings": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "ring": false
+      },
+      "values": {
+        "ring": false,
+        "chime": false,
+        "rings": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "ring": true
+      },
+      "values": {
+        "ring": true,
+        "chime": true,
+        "rings": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "ring": false
+      },
+      "values": {
+        "ring": false,
+        "chime": false,
+        "rings": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "hash": "3e3acc2df378970d5143195ac3d3861b4711ec88",
+  "chart": "src/examples/advanced/time/pulse-timer.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "second": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "done": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "second": false
+      },
+      "values": {
+        "second": false,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "values": {
+        "second": true,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "second": false,
+        "start": true
+      },
+      "values": {
+        "second": false,
+        "start": true,
+        "done": false
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "values": {
+        "second": true,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "second": false,
+        "start": false
+      },
+      "values": {
+        "second": false,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "values": {
+        "second": true,
+        "start": false,
+        "done": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "second": false,
+        "start": false
+      },
+      "values": {
+        "second": false,
+        "start": false,
+        "done": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "second": true,
+        "start": true
+      },
+      "values": {
+        "second": true,
+        "start": true,
+        "done": false
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "second": false,
+        "start": false
+      },
+      "values": {
+        "second": false,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "values": {
+        "second": true,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "second": false,
+        "start": false
+      },
+      "values": {
+        "second": false,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "values": {
+        "second": true,
+        "start": false,
+        "done": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

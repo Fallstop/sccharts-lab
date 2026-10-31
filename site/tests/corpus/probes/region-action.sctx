@@ -1,0 +1,13 @@
+scchart P111 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  region R:
+  entry do O = 1
+  initial state A
+  go to F
+  final state F
+}

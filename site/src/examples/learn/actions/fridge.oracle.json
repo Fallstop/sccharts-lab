@@ -1,0 +1,97 @@
+{
+  "hash": "2b21bb7fb2ab97f1b74035cfe7d59dc81e81496b",
+  "chart": "src/examples/learn/actions/fridge.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "doorOpen": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "doorOpen": false
+      },
+      "values": {
+        "doorOpen": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "doorOpen": true
+      },
+      "values": {
+        "doorOpen": true,
+        "lamp": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "doorOpen": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "doorOpen": false
+      },
+      "values": {
+        "doorOpen": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "doorOpen": true
+      },
+      "values": {
+        "doorOpen": true,
+        "lamp": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

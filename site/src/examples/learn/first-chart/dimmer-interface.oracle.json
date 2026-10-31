@@ -1,0 +1,46 @@
+{
+  "hash": "c6ee94e19f8e19276f784a181dc584a14c92f5e8",
+  "chart": "src/examples/learn/first-chart/dimmer-interface.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "level": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "level": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "level": 0
+      },
+      "terminated": false
+    }
+  ]
+}

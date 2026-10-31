@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "start": false }, "note": "Tick 1 enters `Idle` in both charts." },
+    { "inputs": { "start": true }, "note": "`Idle` to `Busy` fires in both charts, so `Busy` is entered in this tick. `DuringCount`'s plain `during` action skips the entry tick: `n` stays 0. `ImmediateDuringCount`'s `immediate during` runs in it: `n` is 1 at once." },
+    { "inputs": {}, "note": "`Busy` was active when the tick began, so both during actions run: 1 in `DuringCount`, 2 in `ImmediateDuringCount`." },
+    { "inputs": {}, "note": "One more in each, every tick: the `immediate during` version stays one ahead." }
+  ],
+  "expect": "ok"
+}

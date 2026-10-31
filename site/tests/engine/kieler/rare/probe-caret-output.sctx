@@ -1,0 +1,6 @@
+scchart CaretOutput {
+  input bool A
+  output int ^max = 0
+  initial state S
+    if A do ^max++ go to S
+}

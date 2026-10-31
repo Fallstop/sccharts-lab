@@ -1,0 +1,10 @@
+scchart Burst {
+  input bool fire
+  output int shots = 0
+
+  initial state Ready
+    immediate if fire && shots < 3 do shots++ go to Reload
+
+  state Reload
+    immediate go to Ready
+}

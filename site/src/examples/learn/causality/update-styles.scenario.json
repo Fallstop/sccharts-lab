@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "a": false, "b": false }, "note": "Rejected: `score = score + 1` counts as an update, but KIELER only lets updates commute when they use the same assignment operator, or all use `+=`, `-=`, `++` and `--`. Here one uses `=` and the other `+=`." }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

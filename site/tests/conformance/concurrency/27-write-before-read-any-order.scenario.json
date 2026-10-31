@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1: all regions enter `A`; nothing fires."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `Writer` sets `x = 5`. Both readers test `x == 5` in the same tick and both see 5 (`seenBefore` and `seenAfter` are true): every concurrent read waits for the write, whatever the textual order of the regions."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "No further change."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,20 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz34 {
+  input int I
+  output int O, Q
+  ref Dz34Add g1
+  ref Dz34Add g2
+  dataflow {
+    g1 = {I, 1}
+    g2 = {g1.S, g1.S}
+    O = g2.S
+    Q = g1.S
+  }
+}
+scchart Dz34Add {
+  input int a, b
+  output int S
+  dataflow {
+    S = a + b
+  }
+}

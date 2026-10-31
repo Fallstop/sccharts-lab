@@ -1,0 +1,69 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "The ABRO chart from KIELER's Quick Start Guide (bool inputs). Tick 1 enters everything: `O = false`."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": false,
+        "R": false
+      },
+      "note": "`A`: `wA` → `dA`."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true,
+        "R": false
+      },
+      "note": "`B`: `wB` → `dB`; both regions are final, so the join fires and sets `O = true` in the same tick."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "`O` is a variable and keeps `true`."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "note": "`A` and `B` again: nothing happens, ABRO is done until `R`."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": true
+      },
+      "note": "`R`: strong abort to `ABO`; re-entry runs `entry do O = false`."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "B": true,
+        "R": false
+      },
+      "note": "`A` and `B` together in one tick: both regions finish and the join fires: `O = true`."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "R": false
+      },
+      "note": "`O` stays true."
+    }
+  ],
+  "expect": "ok"
+}

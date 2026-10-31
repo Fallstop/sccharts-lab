@@ -1,0 +1,75 @@
+{
+  "hash": "6af0f6362ab7d90f2bb8ec41ebc45a8eae691ee1",
+  "chart": "src/examples/reference/operators/floats.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "F": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "literal": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "same": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "truncated": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "F": 0.1
+      },
+      "values": {
+        "F": 0.1,
+        "literal": 0.10000000149011612,
+        "same": false,
+        "truncated": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "F": 2.75
+      },
+      "values": {
+        "F": 2.75,
+        "literal": 0.10000000149011612,
+        "same": false,
+        "truncated": 27
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "F": -2.75
+      },
+      "values": {
+        "F": -2.75,
+        "literal": 0.10000000149011612,
+        "same": false,
+        "truncated": -27
+      },
+      "terminated": false
+    }
+  ]
+}

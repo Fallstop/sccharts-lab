@@ -1,0 +1,78 @@
+{
+  "hash": "f545dba32ca99f3cc63c0c24a671a1bddffb8905",
+  "chart": "tests/engine/kieler/structure/probe-dz08.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "t": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "t": false
+      },
+      "values": {
+        "t": false,
+        "a": 0,
+        "b": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "t": true
+      },
+      "values": {
+        "t": true,
+        "a": 2,
+        "b": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "t": true
+      },
+      "values": {
+        "t": true,
+        "a": 4,
+        "b": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "t": true
+      },
+      "values": {
+        "t": true,
+        "a": 6,
+        "b": 0
+      },
+      "terminated": false
+    }
+  ]
+}

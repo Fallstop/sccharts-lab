@@ -1,0 +1,9 @@
+scchart MotorWithButton
+  extends ButtonBehavior, MotorBehavior {
+    
+  override region HandleMotor {
+    suspend if !buttonPressed
+    
+    region is super.HandleMotor
+  }
+}

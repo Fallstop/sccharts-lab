@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "cup": true, "full": false }, "note": "A cup stands under the spout in tick 1. `Ready`'s transition is immediate, so both machines start filling it at once (`fills` = 1). The initial entry is never deferred." },
+    { "inputs": {}, "note": "Both are `Filling`." },
+    { "inputs": { "full": true }, "note": "The cup is full. Nobody has taken it away yet, so `cup` is still true in this tick. `FillerNormal`: `go to Ready` enters `Ready`, whose immediate transition sees `cup` and starts filling the full cup again (2). `FillerDeferred`: `go to Ready deferred` arrives in `Ready` quietly, so its immediate transition waits (1)." },
+    { "inputs": { "full": false, "cup": false }, "note": "The cup has been taken away. `FillerDeferred`'s `Ready` now looks at `cup`, finds no cup, and waits. `FillerNormal` is `Filling` with nothing under the spout." },
+    { "inputs": { "cup": true }, "note": "A new cup. `FillerDeferred` starts filling it (2). `FillerNormal` is still in `Filling` and counts nothing." },
+    { "inputs": { "full": true }, "note": "The second cup is full and still there. `FillerNormal` starts on it again (3); `FillerDeferred` waits a tick (2)." },
+    { "inputs": { "full": false, "cup": false }, "note": "The cup is gone. Two cups: `FillerDeferred` counted two fills, `FillerNormal` three." }
+  ],
+  "expect": "ok"
+}

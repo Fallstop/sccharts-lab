@@ -1,0 +1,9 @@
+// Two clocks: the last one (e) applies to both.
+scchart PreClockTwo {
+  input int v
+  input bool c, e
+  output int p = 0, q = 0
+  initial state S {
+    immediate during do p = pre(v, c); q = pre(v, e)
+  }
+}

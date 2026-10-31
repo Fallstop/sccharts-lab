@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": { "level": 5 },
+      "note": "Rejected: \"Cannot serialize simulation interface. Unsupported type: UNKNOWN\" for the helpers of `->` and `fby` (official KIELER adds \"Compiler did not return success\"). `false -> B` with a bool B, `1 -> f` with a float f, and `(level > 9) -> (level > 3)` all compile; it is the mix of the bool literal with an int expression that fails."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Unsupported type: UNKNOWN"
+}

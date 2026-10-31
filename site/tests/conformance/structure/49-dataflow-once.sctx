@@ -1,0 +1,12 @@
+// dataflow once: the equations run only in the first tick, then the region terminates.
+scchart St49Once {
+  input int I
+  output int X
+  initial state S {
+    dataflow once {
+      X = I * 2
+    }
+  }
+  join to T
+  final state T
+}

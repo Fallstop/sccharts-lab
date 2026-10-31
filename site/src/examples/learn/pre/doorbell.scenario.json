@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "No press. `rings` has the value 0 (the default)." },
+    { "inputs": { "press": true }, "note": "`press` is present and `pre(press)` is absent: a new press. The chart emits `chime` and emits `rings` with `pre(val(rings)) + 1` = 1." },
+    { "note": "`press` is still present (held), but it was present last tick too: no chime. `rings` is absent this tick; its value stays 1." },
+    { "inputs": { "press": false }, "note": "Released." },
+    { "inputs": { "press": true }, "note": "A second press: `chime`, and `rings` carries 2." },
+    { "inputs": { "press": false }, "note": "Released. The value of `rings` stays 2 until the next emission." }
+  ],
+  "expect": "ok"
+}

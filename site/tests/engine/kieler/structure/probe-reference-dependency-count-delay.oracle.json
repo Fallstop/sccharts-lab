@@ -1,0 +1,334 @@
+{
+  "hash": "280ba083b0259b7fecf168ce985be25e7336e20d",
+  "chart": "tests/engine/kieler/structure/probe-reference-dependency-count-delay.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 32,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [C0xs1r0s0]",
+      "line": 29,
+      "column": 7
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "d": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "d": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": true,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": true
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": true,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": true,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

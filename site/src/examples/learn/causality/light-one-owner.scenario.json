@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "on": false, "off": false }, "note": "One region owns `light`, so there is nothing to order between regions." },
+    { "inputs": { "on": true }, "note": "`on`: the light is on." },
+    { "inputs": { "on": false }, "note": "The light stays on." },
+    { "inputs": { "off": true }, "note": "`off`: the light is off." },
+    { "inputs": { "on": true }, "note": "`on` while `off` is still held. This chart says that `off` wins: `Dark` switches on only when `off` is not held." },
+    { "inputs": { "off": false }, "note": "`off` is released while `on` is held: now the light comes on." }
+  ],
+  "expect": "ok"
+}

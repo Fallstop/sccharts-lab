@@ -1,0 +1,9 @@
+scchart DelayedWaits {
+  input bool I
+  output int x = 0
+
+  initial state A
+  if I do x = 1 go to B
+
+  state B
+}

@@ -1,0 +1,199 @@
+{
+ "sourceHash": "0542112d8fedbc8c",
+ "states": [
+  {
+   "path": [
+    "Counter"
+   ],
+   "rows": [
+    [
+     "Counter"
+    ],
+    [
+     "input bool ",
+     "tick"
+    ],
+    [
+     "output int ",
+     "count = 0"
+    ],
+    [
+     "const int ",
+     "LIMIT = 3"
+    ]
+   ],
+   "box": [
+    0,
+    29.8,
+    369.4,
+    234.6
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Idle"
+   ],
+   "rows": [
+    [
+     "Waiting"
+    ]
+   ],
+   "box": [
+    10,
+    55.5,
+    72.5,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Counting"
+   ],
+   "rows": [
+    [
+     "Counting"
+    ],
+    [
+     "int ",
+     "local = 0"
+    ]
+   ],
+   "box": [
+    153.7,
+    10,
+    192.1,
+    125.6
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Counting",
+    "main",
+    "Running"
+   ],
+   "rows": [
+    [
+     "Running"
+    ]
+   ],
+   "box": [
+    10,
+    23,
+    76.5,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Counting",
+    "main",
+    "Done"
+   ],
+   "rows": [
+    [
+     "Done"
+    ]
+   ],
+   "box": [
+    106.5,
+    20,
+    62.5,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Counter",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    83.2,
+    355.8,
+    145.6
+   ]
+  },
+  {
+   "path": [
+    "Counter",
+    0,
+    "Counting",
+    "main"
+   ],
+   "label": [
+    "main"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    7,
+    49.4,
+    179,
+    70.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NCounter$$N0$NIdle$ECounting0",
+   "source": [
+    "Counter",
+    0,
+    "Idle"
+   ],
+   "target": [
+    "Counter",
+    0,
+    "Counting"
+   ],
+   "text": "tick",
+   "lines": [
+    "tick"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NCounter$$N0$NCounting$EIdle0",
+   "source": [
+    "Counter",
+    0,
+    "Counting"
+   ],
+   "target": [
+    "Counter",
+    0,
+    "Idle"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": [
+  {
+   "path": [
+    1
+   ],
+   "text": "Counter chart used by the completion suite."
+  }
+ ]
+}

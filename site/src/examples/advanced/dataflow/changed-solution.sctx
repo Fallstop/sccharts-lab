@@ -1,0 +1,10 @@
+scchart Changed {
+  input int level
+  output bool changed
+  bool differs
+
+  dataflow {
+    differs = level != pre(level)
+    changed = false -> differs
+  }
+}

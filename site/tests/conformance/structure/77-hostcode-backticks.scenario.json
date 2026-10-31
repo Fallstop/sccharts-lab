@@ -1,0 +1,16 @@
+{
+  "needs": [
+    "c-hostcode"
+  ],
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1 enters S; the self-loop is delayed, so no host code ran yet: **x = 0, y = 0**."
+    },
+    {
+      "inputs": {},
+      "note": "The C statement and the C expression ran: **x = 42, y = 42**."
+    }
+  ],
+  "expect": "ok"
+}

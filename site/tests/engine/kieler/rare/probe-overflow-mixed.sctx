@@ -1,0 +1,8 @@
+// An int written over two bools sets both (257 is the bytes 1, 1, 0, 0).
+scchart OverflowMixed {
+  output int a[3] = {0, 0, 0}
+  output bool z = false
+  output bool y = false
+  initial state Run
+    do a[3] = 257 go to Run
+}

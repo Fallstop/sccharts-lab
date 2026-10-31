@@ -1,0 +1,57 @@
+// The wiki's TwoCounterApplication: chart classes with inheritance (extends), an override region that wraps
+// the base region (region ... is super.Counting) and methods called in entry and exit actions. Inherited private
+// fields appear in the pool as <Base>_<field>.
+scchart St130TwoCounters {
+  input bool toggle
+  output int O1 = 0, O2 = 0
+  ref St130Controlled counter1, counter2
+  immediate during do O1 = counter1.getValue()
+  immediate during do O2 = counter2.getValue()
+  region {
+    initial state First {
+      entry do counter1.start()
+      exit do counter1.stop()
+    } if toggle go to Second
+    state Second {
+      entry do counter2.start()
+      exit do counter2.stop()
+    } if toggle go to First
+  }
+}
+
+scchart St130Controlled extends St130Counting {
+  private bool counting = false
+  public method start() {
+    counting = true
+  }
+  public method stop() {
+    counting = false
+  }
+  override region Counting {
+    initial state Waiting
+    immediate if counting go to Counting
+    state Counting {
+      region Counting is super.Counting
+    } if !counting abort to Waiting
+  }
+}
+
+scchart St130Counting extends St130Counter {
+  region Counting {
+    initial final state Counting
+    do increment() go to Counting
+  }
+}
+
+scchart St130Counter {
+  private int counter
+  method increment() {
+    counter++
+  }
+  method decrement() {
+    counter--
+  }
+  method int getValue() {
+    return counter
+  }
+}

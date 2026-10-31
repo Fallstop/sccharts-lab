@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 sets the output `count` to 1, enters `Outer` and sets `Outer`'s own `count` to 10. Two variables now have the same name." },
+    { "inputs": { "press": true }, "note": "The transition inside `Outer` fires. Its `count` means the nearest declaration, `Outer`'s local: 10 becomes 11, and `seen` copies it. The output `count` is untouched: still 1." },
+    { "inputs": { "press": false }, "note": "Nothing else happens. KIELER gave no warning about the second `count`." }
+  ],
+  "expect": "ok"
+}

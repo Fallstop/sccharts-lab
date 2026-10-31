@@ -1,0 +1,15 @@
+// The same for an immediate transition's trigger.
+scchart TrigRandomImmediate {
+  input bool start
+  output float r = 0.0
+  output int k = 0
+  region R1:
+    initial state A
+      if start go to B
+    state B
+      immediate if random() > 2.0 go to A
+      go to A
+  region R2:
+    initial state C
+      do r = random() go to C
+}

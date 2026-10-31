@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Tick 1 enters M; S is false."
+    },
+    {
+      "inputs": {},
+      "note": "The inner self-loop runs: inner = 1."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "`immediate` only adds the entry tick; an immediate abort is also checked in every later tick. Strong: inner stays 1, effect = 1."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

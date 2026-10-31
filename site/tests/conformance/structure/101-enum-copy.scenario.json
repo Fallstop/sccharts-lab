@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: two variables in one declaration, **a = 1, b = 2, same = false**."
+    },
+    {
+      "inputs": {},
+      "note": "same is computed before the copy (still false), then **b = a = 1**."
+    },
+    {
+      "inputs": {},
+      "note": "Now a == b: **same = true**."
+    }
+  ],
+  "expect": "ok"
+}

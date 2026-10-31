@@ -1,0 +1,106 @@
+{
+  "hash": "b0264ed50a0475544f4e2bb153bc95bc57c0b99f",
+  "chart": "src/examples/reference/operators/grouping.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "suggest parentheses around comparison in operand of ‘&’ [-Wparentheses]"
+  ],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "masked": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "maskedRight": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "plus": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "right": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "wrong": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 6,
+        "B": false
+      },
+      "values": {
+        "A": 6,
+        "B": false,
+        "masked": 0,
+        "maskedRight": 1,
+        "plus": 21,
+        "right": 6,
+        "wrong": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": 1,
+        "B": true
+      },
+      "values": {
+        "A": 1,
+        "B": true,
+        "masked": 0,
+        "maskedRight": 0,
+        "plus": 11,
+        "right": 0,
+        "wrong": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": 7
+      },
+      "values": {
+        "A": 7,
+        "B": true,
+        "masked": 0,
+        "maskedRight": 0,
+        "plus": 11,
+        "right": 7,
+        "wrong": 0
+      },
+      "terminated": false
+    }
+  ]
+}

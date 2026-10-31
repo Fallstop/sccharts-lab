@@ -1,0 +1,12 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz11 {
+  input int I
+  output int X, Y
+  method int twice(int v) {
+    return v + v
+  }
+  dataflow {
+    X = twice(I)
+    Y = X + 1
+  }
+}

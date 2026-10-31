@@ -1,0 +1,9 @@
+scchart P235 {
+  initial state S0 {
+    int x = 0
+    initial state I
+    do x++ go to I
+  }
+  if x > 3 go to S1
+  state S1
+}

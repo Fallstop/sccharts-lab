@@ -1,0 +1,22 @@
+{
+  "hash": "97a8eb25012830620fa3e0566d1814adcba3e1d8",
+  "chart": "tests/conformance/basics/18-loop-self.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _g1",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick.",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [A]",
+      "line": 3,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

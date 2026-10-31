@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "ok": false
+      },
+      "note": "Both transitions are immediate, so they are checked in tick 1, the entry tick of `Check`. `ok` is false, so priority 1 fails, and priority 2, which has no trigger, takes the chart to the final state `Fault`. The chart terminates in tick 1. (With `ok` true in tick 1, priority 1 would have fired instead: `running` true and the chart in `Ready` by the end of tick 1.)"
+    },
+    {
+      "inputs": {
+        "ok": true
+      },
+      "note": "`ok` is true now, but the chart has terminated, so no transition is checked any more and `running` stays false."
+    },
+    {
+      "inputs": {},
+      "note": "Nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

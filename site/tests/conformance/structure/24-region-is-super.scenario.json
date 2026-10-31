@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "hold": false
+      },
+      "note": "St24Hold (the first chart) is simulated with St24Base's declarations: **o = 0**."
+    },
+    {
+      "inputs": {},
+      "note": "The inherited counter runs inside the overriding region: **o = 1**."
+    },
+    {
+      "inputs": {
+        "hold": true
+      },
+      "note": "The suspension holds the inherited counter: **o = 1**."
+    },
+    {
+      "inputs": {},
+      "note": "hold is still true: the suspension keeps the counter frozen at **o = 1**."
+    },
+    {
+      "inputs": {
+        "hold": false
+      },
+      "note": "hold is false again and counting resumes: **o = 2**."
+    }
+  ],
+  "expect": "ok"
+}

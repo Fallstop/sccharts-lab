@@ -1,0 +1,137 @@
+{
+  "hash": "eb9b1ce3b1f3e60b431464368c2e03772d847787",
+  "chart": "tests/engine/kieler/rare/probe-state-access-abort.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "rst": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "step": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "step": false,
+        "rst": false
+      },
+      "values": {
+        "rst": false,
+        "step": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "step": true
+      },
+      "values": {
+        "rst": false,
+        "step": true,
+        "n": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "step": false
+      },
+      "values": {
+        "rst": false,
+        "step": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "rst": true
+      },
+      "values": {
+        "rst": true,
+        "step": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "rst": false
+      },
+      "values": {
+        "rst": false,
+        "step": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "rst": false,
+        "step": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

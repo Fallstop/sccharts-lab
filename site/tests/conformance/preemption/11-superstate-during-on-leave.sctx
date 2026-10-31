@@ -1,0 +1,17 @@
+scchart DuringOnLeave {
+  input bool W, S
+  output int outerDuring = 0, innerDuring = 0
+
+  initial state M {
+    during do outerDuring += 1
+
+    initial state I {
+      during do innerDuring += 1
+    }
+  }
+  if S abort to N
+  if W go to N
+
+  state N
+  go to M
+}

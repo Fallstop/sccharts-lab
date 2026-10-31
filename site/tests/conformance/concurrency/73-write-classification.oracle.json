@@ -1,0 +1,71 @@
+{
+  "hash": "40d33265bc983d871caf35370878771f599b0990",
+  "chart": "tests/conformance/concurrency/73-write-classification.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment looks like old relative write SC syntax and is considered deprecated.\nIf you want to create a relative write in new syntax, please use an infix assignment operator.",
+      "line": 7,
+      "column": 8
+    }
+  ],
+  "interface": {
+    "w": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "w": 3,
+        "x": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "w": 7,
+        "x": 10
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "w": 7,
+        "x": 10
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

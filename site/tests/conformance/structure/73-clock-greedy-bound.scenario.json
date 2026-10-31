@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Only the later bound counts for sleeping: **sleepT = 1000**."
+    },
+    {
+      "inputs": {
+        "deltaT": 500
+      },
+      "note": "**x = 500, sleepT = 500**."
+    },
+    {
+      "inputs": {
+        "deltaT": 499
+      },
+      "note": "x = 999 satisfies the earlier bound: the self-loop fires (**n = 1**) and resets **x = 0**. The S being left still had x = 999 < 1000, so it asks for 1: **sleepT = 1** (the re-entered S asks for 1000)."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "**x = 100, sleepT = 900**."
+    }
+  ],
+  "expect": "ok"
+}

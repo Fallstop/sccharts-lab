@@ -1,0 +1,42 @@
+// C functions: a backward goto ends the method, a forward one skips, a label ending a branch is the method's end.
+scchart GotoCFn {
+  input bool start, skip
+  output int n = 0, m = 0, a = 0, b = 0, w = 0
+
+  method void bump() {
+    for (int i = 0; i < 1; i++) {
+      w++
+    }
+    again:
+    n++;
+    if (n % 3 != 0) {
+      goto again
+    }
+    m++;
+    if (skip) {
+      goto done
+    }
+    a++;
+    done:
+    b++
+  }
+
+  method void branchEnd() {
+    while (false) {
+      w++
+    }
+    if (skip) {
+      goto out;
+      a++;
+      out:
+    }
+    b++
+  }
+
+  region R1:
+  initial state S
+    if start do bump() go to S
+  region R2:
+  initial state T
+    if start do branchEnd() go to T
+}

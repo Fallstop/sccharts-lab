@@ -1,0 +1,38 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "sample": false,
+        "reading": 0
+      },
+      "note": "Tick 1 enters `Waiting`; both outputs start at 0."
+    },
+    {
+      "inputs": {
+        "sample": true,
+        "reading": 5
+      },
+      "note": "`latest = reading` runs first, so `latest` is 5; then `previous = latest` reads that new value, so `previous` is 5 too."
+    },
+    {
+      "inputs": {
+        "sample": false,
+        "reading": 8
+      },
+      "note": "`sample` is false, so nothing fires, even though `reading` changed."
+    },
+    {
+      "inputs": {
+        "sample": true
+      },
+      "note": "Both become 8. With this order, `previous` can never hold an older value."
+    },
+    {
+      "inputs": {
+        "sample": false
+      },
+      "note": "Nothing fires; the outputs keep their values."
+    }
+  ],
+  "expect": "ok"
+}

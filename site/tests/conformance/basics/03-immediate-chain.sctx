@@ -1,0 +1,17 @@
+scchart ImmediateChain {
+  output int x = 0
+
+  initial state A
+  immediate do x = 1 go to B
+
+  state B
+  immediate do x *= 10 go to C
+
+  state C
+  immediate do x += 5 go to D
+
+  state D
+  go to E
+
+  state E
+}

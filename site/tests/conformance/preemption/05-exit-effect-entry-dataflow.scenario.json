@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Tick 1 enters A. Nothing else happens: all values 0."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "In one tick: the exit action sets x = 5; the effect reads it (y = 10); B's entry reads y (z = 11); B's immediate transition reads z and fires (w = 1). Each step sees the values written by the steps before it."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "C has no transitions: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

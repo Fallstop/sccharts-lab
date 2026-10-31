@@ -1,0 +1,9 @@
+scchart ExtraBrace {
+  input bool A
+
+  initial state Idle
+    if A go to Done
+
+  state Done
+}
+}

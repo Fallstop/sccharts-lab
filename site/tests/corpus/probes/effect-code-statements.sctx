@@ -1,0 +1,13 @@
+scchart P214 {
+  output int O
+  output bool X
+  initial state S0
+  do {
+    int i = 0;
+    for (int k = 0; k < 3; k++) { O += k; }
+    while (i < 2) { i++ }
+    if (O > 3) { X = true } else { X = false }
+    { O = O * 2 }
+    print("done")
+  } go to S0
+}

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- SCCharts guide mark: an initial state (a capsule with a heavy outline) holding a one-tick pulse. -->
+  <style>
+    .fill-a { stop-color: #f8f9fd } .fill-b { stop-color: #cddcf3 }
+    .stroke { stroke: #111a2c } .pulse { stroke: #7a1452 }
+    @media (prefers-color-scheme: dark) {
+      .fill-a { stop-color: #3a4760 } .fill-b { stop-color: #4f5d7a }
+      .stroke { stroke: #eef2f8 } .pulse { stroke: #f0b2df }
+    }
+  </style>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" class="fill-a"/><stop offset="1" class="fill-b"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="6" width="28" height="20" rx="10" fill="url(#g)" class="stroke" stroke-width="3"/>
+  <path d="M7.5 20.5 H12.25 V11.5 H19.75 V20.5 H24.5" fill="none" class="pulse" stroke-width="2.75" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,176 @@
+{
+  "hash": "3914ca833456d58671cdf06d439186ee6a964edc",
+  "chart": "src/examples/advanced/data-types/laps-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "lap": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "laps": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Counter.count": {
+      "type": "int",
+      "properties": []
+    },
+    "counter": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "lap": false
+      },
+      "values": {
+        "lap": false,
+        "laps": 0,
+        "counter": {
+          "count": 0
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "lap": true
+      },
+      "values": {
+        "lap": true,
+        "laps": 1,
+        "counter": {
+          "count": 1
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "lap": false
+      },
+      "values": {
+        "lap": false,
+        "laps": 1,
+        "counter": {
+          "count": 1
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "lap": true
+      },
+      "values": {
+        "lap": true,
+        "laps": 2,
+        "counter": {
+          "count": 2
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "lap": false
+      },
+      "values": {
+        "lap": false,
+        "laps": 2,
+        "counter": {
+          "count": 2
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "lap": true
+      },
+      "values": {
+        "lap": true,
+        "laps": 3,
+        "counter": {
+          "count": 3
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "lap": false
+      },
+      "values": {
+        "lap": false,
+        "laps": 3,
+        "counter": {
+          "count": 3
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": true
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "lap": true
+      },
+      "values": {
+        "lap": true,
+        "laps": 3,
+        "counter": {
+          "count": 3
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

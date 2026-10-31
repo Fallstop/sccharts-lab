@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "note": "Region `R1` is only `initial final state F`; `R2` waits for `a`."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "c": true
+      },
+      "note": "`a` and `c`: `R2` reaches `F`, so every region is final and `c` holds, but the triggered join `if c join to D` does not fire. It never will (`done` stays false) because `R1`'s state is never entered by a transition."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "c": true
+      },
+      "note": "`c` still holds: no join."
+    },
+    {
+      "inputs": {
+        "c": false
+      },
+      "note": "No join."
+    }
+  ],
+  "expect": "ok"
+}

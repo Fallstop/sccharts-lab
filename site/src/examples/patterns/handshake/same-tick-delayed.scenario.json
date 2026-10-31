@@ -1,0 +1,47 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Tick 1: both clients are `Idle`."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start`: in both charts the client emits `req` and enters `Waiting`, and the server answers with `ack` in the same tick. `SameTick`'s immediate transition sees it and counts the job. `SameTickDelayed`'s `Waiting` was entered in this tick, so its delayed transition is not checked yet."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "`ack` is gone: `SameTickDelayed`'s client waits."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "It waits for an acknowledgement that will never come."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start` again: `SameTick` serves it in this tick (`served` is 2). `SameTickDelayed` ignores it: its client is not in `Idle`."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "`SameTickDelayed` is stuck in `Waiting`."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Stuck: `served` stays 0."
+    }
+  ],
+  "expect": "ok"
+}

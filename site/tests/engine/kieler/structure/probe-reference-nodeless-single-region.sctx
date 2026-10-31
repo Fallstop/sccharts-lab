@@ -1,0 +1,37 @@
+// A single-region superstate (Busy) whose region starts in a state without code: KIELER's Superfluous Fork Remover
+// re-routes the flow into Busy's fork to that state's (missing) node. Busy is the start of region B, so only a
+// thread's entry is left without target: accepted, and the dependency analysis stops there (Read sees x late).
+scchart RefNodelessSingleRegion {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  region Read {
+    initial state Check
+    if x > 0 do y += 1 go to Check
+  }
+  region Write {
+    initial state Set
+    if a do x += 1 go to Set
+  }
+  region Ref {
+    initial state I is C(b, z)
+  }
+}
+
+scchart C {
+  input bool p
+  output int o = 0
+  initial state Outer {
+    region A {
+      initial state A0
+      if p do o += 1 go to A0
+    }
+    region B {
+      initial state Busy {
+        region {
+          initial state Spin
+          immediate go to Spin
+        }
+      }
+    }
+  }
+}

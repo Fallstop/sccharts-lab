@@ -1,0 +1,19 @@
+// A transition (other than a thread's start) into a referenced chart's state without code (a state whose first
+// immediate transition goes back to it without trigger) has no control flow in KIELER's graph, and its dependency
+// analysis throws a NullPointerException when it gets there.
+scchart St163NodelessTransition {
+  input bool a, b
+  output int z = 0
+  region Ref {
+    initial state I is St163Sub(b, z)
+  }
+}
+
+scchart St163Sub {
+  input bool p
+  output int o = 0
+  initial state Wait
+  go to Spin
+  state Spin
+  immediate go to Spin
+}

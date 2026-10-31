@@ -1,0 +1,129 @@
+{
+  "hash": "95343ad385ac7e5161f0c67c42d0c64d48d22919",
+  "chart": "tests/conformance/basics/47-ternary.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "guarded": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "keep": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "nested": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "pick": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sum": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 3,
+        "B": false
+      },
+      "values": {
+        "A": 3,
+        "B": false,
+        "guarded": 0,
+        "keep": 1,
+        "nested": 0,
+        "pick": 0,
+        "sum": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": 3,
+        "B": false,
+        "guarded": 3,
+        "keep": 1,
+        "nested": 3,
+        "pick": 20,
+        "sum": 21
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "B": true
+      },
+      "values": {
+        "A": 3,
+        "B": true,
+        "guarded": 3,
+        "keep": 5,
+        "nested": 1,
+        "pick": 10,
+        "sum": 11
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": 0
+      },
+      "values": {
+        "A": 0,
+        "B": true,
+        "guarded": 0,
+        "keep": 5,
+        "nested": 2,
+        "pick": 10,
+        "sum": 11
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

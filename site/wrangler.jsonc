@@ -1,0 +1,16 @@
+{
+	// The guide is a static site: `pnpm build` writes dist/, Cloudflare serves it as Worker static assets.
+	//   pnpm build && pnpm dlx wrangler deploy        (wrangler is not a dependency; account: Jasper M-W)
+	"$schema": "https://unpkg.com/wrangler@4/config-schema.json",
+	"name": "sccharts-guide",
+	"compatibility_date": "2026-10-01",
+	// dist/ is Astro's static build: one directory per page (learn/ticks/index.html), dist/404.html for unknown
+	// paths, hashed files in dist/_astro. public/_headers (copied to dist/_headers) caches those for a year and sets
+	// a few security headers.
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "404-page",
+		"html_handling": "auto-trailing-slash"
+	},
+	"routes": [{ "pattern": "sccharts.jmw.nz", "custom_domain": true }]
+}

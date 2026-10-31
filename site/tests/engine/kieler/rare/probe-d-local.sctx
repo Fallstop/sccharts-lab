@@ -1,0 +1,10 @@
+scchart LocalD {
+  output int r = 0
+  initial state S
+    do {
+      int d = 2
+      for (int i = 0; i < 2; i++) {
+        r += d
+      }
+    } go to S
+}

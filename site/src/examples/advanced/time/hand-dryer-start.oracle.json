@@ -1,0 +1,69 @@
+{
+  "hash": "ea1af2a78b033fab9bded00ebbb59b30a7d5a620",
+  "chart": "src/examples/advanced/time/hand-dryer-start.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "hands": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fan": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "hands": false
+      },
+      "values": {
+        "hands": false,
+        "fan": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "hands": true
+      },
+      "values": {
+        "hands": true,
+        "fan": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "hands": false
+      },
+      "values": {
+        "hands": false,
+        "fan": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

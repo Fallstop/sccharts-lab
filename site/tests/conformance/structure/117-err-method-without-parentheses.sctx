@@ -1,0 +1,12 @@
+// A method must be called with parentheses, even without arguments.
+scchart St117NoParens {
+  class C {
+    int v
+    int get() {
+      return v
+    }
+  } c
+  output int o = 0
+  initial state A
+  do o = c.get go to A
+}

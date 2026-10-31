@@ -1,0 +1,14 @@
+scchart Pump {
+  input bool start
+  input bool fault
+  output bool pumping = false
+
+  initial state Idle
+    if fault go to Blocked
+    if start do pumping = true go to Running
+
+  state Running
+    if fault do pumping = false go to Blocked
+
+  state Blocked
+}

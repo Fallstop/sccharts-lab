@@ -1,0 +1,12 @@
+scchart Player {
+  input bool play, pause, stop
+  output bool sound = false
+
+  enum Mode { STOPPED, PLAYING, PAUSED }
+  ref Mode mode = Mode.STOPPED
+
+  initial state Run
+    if stop do mode = Mode.STOPPED; sound = false go to Run
+    if play do mode = Mode.PLAYING; sound = true go to Run
+    if pause && mode == Mode.PLAYING do mode = Mode.PAUSED; sound = false go to Run
+}

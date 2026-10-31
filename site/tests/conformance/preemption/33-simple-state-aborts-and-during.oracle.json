@@ -1,0 +1,98 @@
+{
+  "hash": "fbe55ea110e1311cd740ed23a7d6bea9637086c6",
+  "chart": "tests/conformance/preemption/33-simple-state-aborts-and-during.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": true,
+        "W": false
+      },
+      "values": {
+        "S": true,
+        "W": false,
+        "count": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": false,
+        "W": true
+      },
+      "values": {
+        "S": false,
+        "W": true,
+        "count": 1
+      },
+      "taken": [
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "W": false
+      },
+      "values": {
+        "S": false,
+        "W": false,
+        "count": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "W": false,
+        "count": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

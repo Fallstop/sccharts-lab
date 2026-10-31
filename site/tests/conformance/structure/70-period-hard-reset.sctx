@@ -1,0 +1,10 @@
+// @HardReset on the period resets its clock to 0 when it elapses (excess time is lost). Compare 69-period.
+scchart St70Every {
+  output int n = 0
+  initial state S {
+    @HardReset
+    period 300
+    initial state A
+    do n++ go to A
+  }
+}

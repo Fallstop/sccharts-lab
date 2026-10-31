@@ -1,0 +1,13 @@
+scchart Lock {
+  input int code
+  input bool enter
+  output bool open = false
+  output int tries = 0
+
+  initial state Idle
+    if enter do tries += 1 go to Check
+
+  state Check
+    immediate if code == 42 do open = true go to Idle
+    immediate do open = false go to Idle
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "boost": true, "toggle": false }, "note": "The initial state is the connector `Start`, so in tick 1 the chart passes straight through it. `boost` is true, so the fan starts in `High` (`speed` = 3). Set `boost` to false and reset to see it start in `Low`." },
+    { "note": "In `High`. `boost` only mattered in tick 1: nothing leads back to `Start`." },
+    { "inputs": { "toggle": true }, "note": "`toggle`: `High` to `Low` (`speed` = 1)." },
+    { "inputs": { "toggle": false }, "note": "In `Low`." }
+  ],
+  "expect": "ok"
+}

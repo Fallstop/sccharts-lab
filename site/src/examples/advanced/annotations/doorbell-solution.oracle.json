@@ -1,0 +1,89 @@
+{
+  "hash": "cf002084cd952349e0b2fbf2bfac2b3b09fec4b9",
+  "chart": "src/examples/advanced/annotations/doorbell-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 8,
+      "column": 8
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 8,
+      "column": 17
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 12,
+      "column": 8
+    }
+  ],
+  "interface": {
+    "press": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "ring": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "ring": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "press": true
+      },
+      "values": {
+        "press": true,
+        "ring": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "press": false
+      },
+      "values": {
+        "press": false,
+        "ring": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

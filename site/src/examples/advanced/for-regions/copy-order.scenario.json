@@ -1,0 +1,6 @@
+{
+  "ticks": [
+    { "note": "Every region runs its immediate transition in tick 1, and each one multiplies `log` by 10 and adds a digit. KIELER runs these concurrent updates in region order: `First` (9), `Last` (7), then the copies of `R` for `i` = 3, 2, 1. So `log` = 97321: the copies come after all the other regions." }
+  ],
+  "expect": "ok"
+}

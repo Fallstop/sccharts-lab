@@ -1,0 +1,32 @@
+// As probe-reference-dependency-stop, with a variable: the dependency analysis stops at C's Spin before it reaches
+// Write and Read, so nothing orders the write of x before its test. KIELER tests x first, so Read sees each new
+// value of x one tick late.
+scchart RefDependencyStopLate {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  region Read {
+    initial state Check
+    if x > 0 do y += 1 go to Check
+  }
+  region Write {
+    initial state Set
+    if a do x += 1 go to Set
+  }
+  region Ref {
+    initial state I is C(b, z)
+  }
+}
+
+scchart C {
+  input bool p
+  output int o = 0
+  initial state Wait
+  go to Busy
+  state Busy {
+    region {
+      initial state Spin
+      immediate go to Spin
+    }
+  }
+  go to Wait
+}

@@ -1,0 +1,134 @@
+{
+  "hash": "effbe9389dbdc78fe0341c0b1cc58a73a9469c24",
+  "chart": "tests/engine/kieler/preemption/suspend-nested-flags.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "T": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outer": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "T": false
+      },
+      "values": {
+        "S": false,
+        "T": false,
+        "inner": 0,
+        "outer": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "T": false,
+        "inner": 1,
+        "outer": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "T": false,
+        "inner": 1,
+        "outer": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "S": false,
+        "T": true
+      },
+      "values": {
+        "S": false,
+        "T": true,
+        "inner": 1,
+        "outer": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "S": true,
+        "T": true
+      },
+      "values": {
+        "S": true,
+        "T": true,
+        "inner": 1,
+        "outer": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "S": false,
+        "T": false
+      },
+      "values": {
+        "S": false,
+        "T": false,
+        "inner": 2,
+        "outer": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

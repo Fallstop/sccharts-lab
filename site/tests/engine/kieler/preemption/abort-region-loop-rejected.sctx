@@ -1,0 +1,19 @@
+// An abort region in a state that is re-entered in the tick it finishes, with an immediately finishing region:
+// the sequential fork is in an instantaneous loop, which KIELER rejects.
+scchart L {
+  input bool a
+  output int x = 0
+  initial state M {
+    region {
+      initial state I
+      immediate if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if a go to G
+      final state G
+    }
+  }
+  join to M
+}

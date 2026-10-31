@@ -1,0 +1,19 @@
+{
+  "hash": "de35bd202beccd742bdeb91bac725c937fb36070",
+  "chart": "tests/conformance/concurrency/30-write-write-exclusive-guards-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g4 to _g11",
+    "Can't schedule from _g11 to _g4",
+    "Can't schedule from _g4 to _g5",
+    "Can't schedule from _g11 to _g12",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving x prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through x.",
+    "Potential instantaneous loop through x."
+  ],
+  "ticks": []
+}

@@ -1,0 +1,82 @@
+{
+  "hash": "7039328cfdbd330efd7a8f38287f9100f4d494c1",
+  "chart": "src/examples/advanced/host-code/gauge.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name clamp is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "reading": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "needle": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reading": 42
+      },
+      "values": {
+        "reading": 42,
+        "needle": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "reading": 250
+      },
+      "values": {
+        "reading": 250,
+        "needle": 100
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "reading": -7
+      },
+      "values": {
+        "reading": -7,
+        "needle": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "reading": 42
+      },
+      "values": {
+        "reading": 42,
+        "needle": 42
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

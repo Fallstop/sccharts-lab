@@ -1,0 +1,124 @@
+{
+ "sourceHash": "991734c7875a9e53",
+ "states": [
+  {
+   "path": [
+    "P217"
+   ],
+   "rows": [
+    [
+     "P217"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    271.4,
+    194.6
+   ]
+  },
+  {
+   "path": [
+    "P217",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P217",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    212.5,
+    10,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P217",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    258,
+    54.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP217$$N0$NS0$ES10",
+   "source": [
+    "P217",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P217",
+    0,
+    "S1"
+   ],
+   "text": "/ {l: O = 1; goto l;}",
+   "lines": [
+    "/ {l: O = 1; goto l;}"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

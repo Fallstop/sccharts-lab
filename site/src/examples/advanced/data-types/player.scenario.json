@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "play": false, "pause": false, "stop": false }, "note": "Tick 1: `mode` is `Mode.STOPPED`, 0." },
+    { "inputs": { "play": true }, "note": "`Mode.PLAYING`, 1, and `sound` is on." },
+    { "inputs": { "play": false, "pause": true }, "note": "`Mode.PAUSED`, 2: the same numbers as the codes of the starter." },
+    { "inputs": { "pause": false }, "note": "Paused: nothing changes." },
+    { "inputs": { "stop": true }, "note": "`Mode.STOPPED`, 0." }
+  ],
+  "expect": "ok"
+}

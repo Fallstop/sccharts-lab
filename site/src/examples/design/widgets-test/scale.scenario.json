@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "V": false, "V_val": 0 }, "note": "Tick 1 enters `Wait`. Its transition is delayed." },
+    { "inputs": { "V": true, "V_val": 4 }, "note": "`V` is present with the value 4: `Doubled` is emitted with 8 and `last` is 4." },
+    { "inputs": { "V": false }, "note": "`V` is absent, so nothing fires. `Doubled` is absent too, but keeps its value, 8." },
+    { "inputs": { "V": true, "V_val": 5 }, "note": "`V` is present again with 5: `Doubled(10)`." }
+  ],
+  "expect": "ok"
+}

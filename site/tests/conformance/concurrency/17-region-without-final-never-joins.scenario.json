@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Warnings: \"Every region should have a final state whenever its parent state has a termination transition.\" and \"All or none concurrent regions should have final states.\" The chart still compiles."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `RA` reaches `F`, `RB` reaches the non-final `X`. `RB` can never be final, so the join never fires: `done = false`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Still `done = false`, for ever."
+    }
+  ],
+  "expect": "ok"
+}

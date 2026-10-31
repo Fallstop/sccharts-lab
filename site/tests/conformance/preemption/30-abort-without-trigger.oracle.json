@@ -1,0 +1,70 @@
+{
+  "hash": "864d4832f85214eb1ac5485bdc78cd0b0e29dea8",
+  "chart": "tests/conformance/preemption/30-abort-without-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 8,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "unused": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "left": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "unused": false
+      },
+      "values": {
+        "unused": false,
+        "left": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "unused": false,
+        "left": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "unused": false,
+        "left": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

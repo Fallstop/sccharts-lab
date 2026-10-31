@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "d": 2
+      },
+      "note": "Tick 1: the input is STOP (2); the self-loop is delayed: **last = 2, moves = 0**."
+    },
+    {
+      "inputs": {
+        "d": 0
+      },
+      "note": "d = UP (0) is not STOP: **last = 0, moves = 1**."
+    },
+    {
+      "inputs": {
+        "d": 1
+      },
+      "note": "d = DOWN: **last = 1, moves = 2**."
+    },
+    {
+      "inputs": {
+        "d": 2
+      },
+      "note": "d = STOP: the trigger is false, nothing changes: **last = 1, moves = 2**."
+    }
+  ],
+  "expect": "ok"
+}

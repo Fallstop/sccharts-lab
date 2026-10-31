@@ -1,0 +1,122 @@
+{
+  "hash": "80213e9f209c57b99cf46bdedcb33460f7a49b5f",
+  "chart": "src/examples/learn/signals/gauge.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "reading": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "high": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reading": 20
+      },
+      "values": {
+        "reading": 20,
+        "alarm": false,
+        "high": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "reading": 20,
+        "alarm": false,
+        "high": false
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "reading": 130
+      },
+      "values": {
+        "reading": 130,
+        "alarm": true,
+        "high": true
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "reading": 130,
+        "alarm": true,
+        "high": true
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "reading": 90
+      },
+      "values": {
+        "reading": 90,
+        "alarm": false,
+        "high": false
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

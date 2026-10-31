@@ -1,0 +1,64 @@
+{
+  "hash": "225ed8464ea965eebf075af9626296edb186afa5",
+  "chart": "tests/engine/kieler/rare/probe-overflow-mixed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "y": false,
+        "z": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "y": true,
+        "z": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

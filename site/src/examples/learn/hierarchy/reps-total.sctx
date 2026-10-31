@@ -1,0 +1,14 @@
+scchart RepCounter {
+  input bool press, rest
+  output int shown, total
+
+  initial state Set {
+    int reps = 0
+    initial state Counting
+      if press do reps++; total++; shown = reps go to Counting
+  }
+  if rest go to Resting
+
+  state Resting
+    if press go to Set
+}

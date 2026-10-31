@@ -1,0 +1,98 @@
+{
+  "hash": "7492668544803715df0b9c50263c7a7d5d7e0fe9",
+  "chart": "src/examples/advanced/data-types/shared-counter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "left": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "right": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "total": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Counter.count": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "left": false,
+        "right": false
+      },
+      "values": {
+        "left": false,
+        "right": false,
+        "total": 0,
+        "c": {
+          "count": 0
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "left": true,
+        "right": true
+      },
+      "values": {
+        "left": true,
+        "right": true,
+        "total": 2,
+        "c": {
+          "count": 2
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "left": true,
+        "right": true,
+        "total": 4,
+        "c": {
+          "count": 4
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

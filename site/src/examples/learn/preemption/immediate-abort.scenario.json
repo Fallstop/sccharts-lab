@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "cancel": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true, "cancel": true }, "note": "`start` while `cancel` is held down. `Job` is entered (`busy` is set to true) and, because the abort is immediate, it is checked in this same tick: it fires, `busy` is false again, and the printer is back in `Idle`. `Job` was entered and left in one tick." },
+    { "inputs": { "start": false }, "note": "Idle." },
+    { "inputs": { "cancel": false }, "note": "Idle." }
+  ],
+  "expect": "ok"
+}

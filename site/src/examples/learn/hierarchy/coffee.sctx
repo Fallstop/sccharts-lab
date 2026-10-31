@@ -1,0 +1,24 @@
+scchart Coffee {
+  input bool start, ground, full
+  output signal ready
+  output int cups = 0
+
+  initial state Idle
+    if start go to Make
+
+  state Make {
+    initial state Grinding
+      if ground go to Brew
+
+    state Brew {
+      initial state Pouring
+        if full go to Poured
+
+      final state Poured
+    }
+    do cups++ join to Served
+
+    final state Served
+  }
+  do ready join to Idle
+}

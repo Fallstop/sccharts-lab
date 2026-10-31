@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "G": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "S": true,
+        "G": true
+      },
+      "note": "Weakly suspended, but M's own outgoing transition still fires: left = 1."
+    },
+    {
+      "inputs": {
+        "S": false,
+        "G": false
+      },
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

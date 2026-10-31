@@ -1,0 +1,9 @@
+scchart SelfLoopExitEffectEntry {
+  output int log = 0
+
+  initial state A {
+    entry do log = log * 10 + 3
+    exit do log = log * 10 + 1
+  }
+  do log = log * 10 + 2 go to A
+}

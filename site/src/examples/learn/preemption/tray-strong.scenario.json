@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start`: `Job`." },
+    { "inputs": { "start": false, "sheet": true }, "note": "Sheet 1." },
+    { "inputs": {}, "note": "Sheet 2." },
+    { "inputs": {}, "note": "Sheet 3. A strong abort reads its trigger *before* the inside runs: it saw 2, so it did not fire, and `Job` is still active." },
+    { "inputs": {}, "note": "Now the abort sees 3 and fires, before the inside runs: this tick's sheet is not counted." },
+    { "inputs": { "sheet": false }, "note": "Idle." }
+  ],
+  "expect": "ok"
+}

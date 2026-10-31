@@ -1,0 +1,49 @@
+{
+ "ticks": [
+  {
+   "inputs": {
+    "run": false,
+    "clear": false
+   },
+   "note": "A weak-abort reset loop around states with entry actions: superfluous forks are removed before the schizophrenia cure."
+  },
+  {
+   "inputs": {
+    "run": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "run": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "run": false
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "clear": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "clear": false,
+    "run": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "run": true
+   },
+   "note": "Next tick."
+  }
+ ],
+ "expect": "ok"
+}

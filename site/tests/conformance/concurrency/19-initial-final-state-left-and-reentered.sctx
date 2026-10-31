@@ -1,0 +1,16 @@
+scchart InitialFinalLeft {
+  input bool a
+  output bool done
+
+  initial state S {
+    initial final state F
+    if a go to G
+    state G
+    go to F
+  }
+  join to D
+
+  state D {
+    entry do done = true
+  }
+}

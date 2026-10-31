@@ -1,0 +1,19 @@
+scchart First {
+  input bool I
+  output int a
+
+  initial state A
+  if I do a = 1 go to B
+
+  state B
+}
+
+scchart Second {
+  input bool J
+  output int b
+
+  initial state C
+  do b = 2 go to D
+
+  state D
+}

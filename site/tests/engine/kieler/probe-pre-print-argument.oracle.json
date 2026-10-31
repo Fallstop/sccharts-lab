@@ -1,0 +1,19 @@
+{
+  "hash": "91d1b2a2e1c2b97d6788deea745df38ca2286a6e",
+  "chart": "tests/engine/kieler/probe-pre-print-argument.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "`pre(n)` cannot be passed directly as an argument of print(...)."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "You do a calculation inside a print call effect. You should use printf syntax to be safe on different code generators.",
+      "line": 8,
+      "column": 8
+    }
+  ],
+  "ticks": []
+}

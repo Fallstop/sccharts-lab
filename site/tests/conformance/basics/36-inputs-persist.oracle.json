@@ -1,0 +1,118 @@
+{
+  "hash": "d2cbf2388588d5dad9db8fcf991b7f8d8551c92b",
+  "chart": "tests/conformance/basics/36-inputs-persist.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "N": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "last": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": true,
+        "N": 5
+      },
+      "values": {
+        "I": true,
+        "N": 5,
+        "count": 0,
+        "last": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "N": 5,
+        "count": 0,
+        "last": 5
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "I": true,
+        "N": 5,
+        "count": 1,
+        "last": 5
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "N": 9
+      },
+      "values": {
+        "I": true,
+        "N": 9,
+        "count": 2,
+        "last": 9
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "I": false
+      },
+      "values": {
+        "I": false,
+        "N": 9,
+        "count": 2,
+        "last": 9
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

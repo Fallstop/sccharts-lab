@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false, "cancel": false }, "note": "Tick 1 enters `Idle` in both charts." },
+    { "inputs": { "start": true }, "note": "`start`: both printers enter `Job` and `Printing`." },
+    { "inputs": { "start": false, "sheet": true }, "note": "A sheet comes out: `printed` is 1 on both sides." },
+    { "inputs": {}, "note": "Another sheet (`sheet` is still true): 2 on both sides." },
+    { "inputs": { "cancel": true }, "note": "`cancel` and a sheet in the same tick. `WeakCancel`'s `go to` is a weak abort: the inside of `Job` first finishes its tick, so the sheet is counted (3), and only then is `Job` left. `StrongCancel`'s `abort to` is a strong abort: `Job` is left before anything inside it runs, so the sheet is not counted and `printed` stays 2." },
+    { "inputs": { "cancel": false, "sheet": false }, "note": "Both printers are back in `Idle`." }
+  ],
+  "expect": "ok"
+}

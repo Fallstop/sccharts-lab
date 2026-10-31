@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "Tick 1 enters **A**. A delayed `during` action does not run in the tick its state is entered: step = 0."
+    },
+    {
+      "inputs": {},
+      "note": "A has been active since tick 1, so its during action runs: step = 1, duringAt = 1. **leave** is false, so A stays."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "**leave** is true and `go to` is a weak abort: A's during action still runs this tick (duringAt = 2), then A's exit action (exitAt = 3), then the transition effect (effectAt = 4), then B's entry action (entryAt = 5)."
+    },
+    {
+      "inputs": {
+        "leave": false
+      },
+      "note": "B has no transitions: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

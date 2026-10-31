@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "**N1 = 1** ((0 fby N1) + 1 = 0 + 1), **N2 = 0**."
+    },
+    {
+      "inputs": {},
+      "note": "N1 = (previous N1) + 1 = 2; N2 = previous (N2 + 1) = 1: **N1 = 2, N2 = 1**."
+    },
+    {
+      "inputs": {},
+      "note": "**N1 = 3, N2 = 2**: N1 runs one ahead because the + 1 is outside the fby."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,98 @@
+{
+  "hash": "63c77d73321e61b09d3e47722f54ceac8a1464a1",
+  "chart": "src/examples/advanced/dataflow/delays.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "level": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "before": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "late": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "now": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "start": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "level": 5
+      },
+      "values": {
+        "level": 5,
+        "before": 0,
+        "late": 100,
+        "now": 5,
+        "start": 100
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "level": 6
+      },
+      "values": {
+        "level": 6,
+        "before": 5,
+        "late": 5,
+        "now": 6,
+        "start": 6
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "level": 9
+      },
+      "values": {
+        "level": 9,
+        "before": 6,
+        "late": 6,
+        "now": 9,
+        "start": 9
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "level": 9
+      },
+      "values": {
+        "level": 9,
+        "before": 9,
+        "late": 9,
+        "now": 9,
+        "start": 9
+      },
+      "terminated": false
+    }
+  ]
+}

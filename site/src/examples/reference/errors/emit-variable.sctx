@@ -1,0 +1,9 @@
+scchart EmitVariable {
+  input bool A
+  output bool done
+
+  initial state Idle
+    if A do done go to Finished
+
+  state Finished
+}

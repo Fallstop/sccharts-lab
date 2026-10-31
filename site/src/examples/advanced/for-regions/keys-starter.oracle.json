@@ -1,0 +1,143 @@
+{
+  "hash": "ababcc69acda35d07a616737b9e4eb71b25520a9",
+  "chart": "src/examples/advanced/for-regions/keys-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "key": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "launch": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "key": [
+          false,
+          false,
+          false
+        ]
+      },
+      "values": {
+        "key": [
+          false,
+          false,
+          false
+        ],
+        "launch": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "key": [
+          false,
+          true,
+          false
+        ]
+      },
+      "values": {
+        "key": [
+          false,
+          true,
+          false
+        ],
+        "launch": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "key": [
+          true,
+          false,
+          false
+        ]
+      },
+      "values": {
+        "key": [
+          true,
+          false,
+          false
+        ],
+        "launch": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "key": [
+          false,
+          false,
+          true
+        ]
+      },
+      "values": {
+        "key": [
+          false,
+          false,
+          true
+        ],
+        "launch": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "key": [
+          false,
+          false,
+          true
+        ],
+        "launch": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

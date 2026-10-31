@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "G": false, "S": false }, "note": "P and A." },
+    { "inputs": { "G": true }, "note": "A -> B deferred: every transition into B is deferred, so B is entered one tick late through Deferred's _deferred_entry state." },
+    { "inputs": { "G": false, "S": true }, "note": "P is suspended, but the delayed entry into B is created after Suspend and is not frozen: B's region is entered, while I's entry action (guarded by the suspend) does not run." },
+    { "inputs": { "S": false }, "note": "I is active and its entry action never runs (innerEntry stays 0)." }
+  ],
+  "expect": "ok"
+}

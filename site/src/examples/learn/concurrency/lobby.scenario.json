@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "readyA": false, "readyB": false, "leaveA": false }, "note": "Tick 1 enters `Gathering`, `WaitingA` and `WaitingB`." },
+    { "inputs": { "readyA": true }, "note": "Player A is ready: `PlayerA` reaches its final state, `ReadyA`." },
+    { "inputs": { "readyA": false, "leaveA": true, "readyB": true }, "note": "In the same tick player A leaves (`ReadyA` → `WaitingA`) and player B gets ready (`WaitingB` → `ReadyB`). At the end of the tick only `PlayerB` is in a final state, so `Gathering` has not terminated and the game does not start." },
+    { "inputs": { "leaveA": false, "readyA": true }, "note": "Player A is ready again. Now both regions are in final states at the same time: the join fires and `playing` is true." }
+  ],
+  "expect": "ok"
+}

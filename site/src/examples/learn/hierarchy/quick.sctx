@@ -1,0 +1,16 @@
+scchart Quick {
+  input bool start
+  output int steps
+
+  initial state Idle
+    if start do steps = 1 go to Work
+
+  state Work {
+    initial state Begin
+      immediate do steps++ go to Done
+    final state Done
+  }
+  do steps++ join to Finished
+
+  state Finished
+}

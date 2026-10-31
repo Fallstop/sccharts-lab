@@ -1,0 +1,7 @@
+scchart LogicShortCircuit {
+  input int A, Z
+  output bool p, r, s, t
+
+  initial state S
+  do p = A & 3 == 2; r = A == 6 && A != 7; s = A >= 6 || A / Z > 1; t = !A == 0 go to S
+}

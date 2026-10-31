@@ -1,0 +1,208 @@
+{
+  "hash": "f4e2b10c6832b06842a52f8257d8b4eb824e74ba",
+  "chart": "src/examples/patterns/arbiter/three-starter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "done": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "reqA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "reqB": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "reqC": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "user": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "reqA": false,
+        "reqB": false,
+        "reqC": false,
+        "done": false
+      },
+      "values": {
+        "done": false,
+        "reqA": false,
+        "reqB": false,
+        "reqC": false,
+        "user": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "reqC": true
+      },
+      "values": {
+        "done": false,
+        "reqA": false,
+        "reqB": false,
+        "reqC": true,
+        "user": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "reqA": true,
+        "reqB": true
+      },
+      "values": {
+        "done": false,
+        "reqA": true,
+        "reqB": true,
+        "reqC": true,
+        "user": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "reqA": true,
+        "reqB": true,
+        "reqC": true,
+        "user": 1
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "done": false,
+        "reqA": false
+      },
+      "values": {
+        "done": false,
+        "reqA": false,
+        "reqB": true,
+        "reqC": true,
+        "user": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "reqA": false,
+        "reqB": true,
+        "reqC": true,
+        "user": 2
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "done": false,
+        "reqB": false
+      },
+      "values": {
+        "done": false,
+        "reqA": false,
+        "reqB": false,
+        "reqC": true,
+        "user": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "done": true
+      },
+      "values": {
+        "done": true,
+        "reqA": false,
+        "reqB": false,
+        "reqC": true,
+        "user": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

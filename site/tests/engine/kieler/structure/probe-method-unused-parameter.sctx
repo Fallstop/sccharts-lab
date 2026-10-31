@@ -1,0 +1,11 @@
+// A method that does not use its parameter compiles, as long as its body has a statement (probe-empty-method-*).
+scchart G {
+  class Cnt {
+    int v = 0
+    void bump(int k) {
+      v = v + 1
+    }
+  } cnt
+  initial state S
+  do cnt.bump(2) go to S
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "call": false, "hangUp": false }, "note": "Tick 1 enters `Playing`: its local `seconds` starts at 0." },
+    { "note": "One second played: `shown` = 1." },
+    { "note": "`shown` = 2." },
+    { "inputs": { "call": true }, "note": "The call aborts `Playing` weakly, so the inside counts once more (3) before leaving." },
+    { "inputs": { "call": false, "hangUp": true }, "note": "`go to Playing history` resumes `Track`. `Playing` is entered again, so its local `seconds` is initialised again, to 0. The delayed self-loop waits, so `shown` still says 3." },
+    { "inputs": { "hangUp": false }, "note": "`shown` = 1: the count started over. History brings back states, not data." },
+    { "note": "`shown` = 2." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,80 @@
+{
+  "hash": "62460504e449d0d20a934e1b15eea92321edc4d1",
+  "chart": "tests/conformance/concurrency/20-initial-final-only-region-blocks-abort.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "left": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "left": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "left": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "left": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "left": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

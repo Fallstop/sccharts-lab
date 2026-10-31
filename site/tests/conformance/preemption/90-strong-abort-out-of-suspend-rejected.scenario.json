@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": { "S": false, "A": false },
+      "note": "Rejected by the scheduler: \"Can't schedule from … to …\" and \"The SCG is NOT asc-schedulable!\" (the lab server adds \"Circular dependency prevents scheduling this tick.\"), with the warning \"Instantaneous loop detected!\" (lab: \"Potential instantaneous loop.\"). The suspend flag guards M's own `abort to`, the flag is computed by M's during action, and a strong abort is tested before that action runs. A weak abort (`go to`) instead, or the strong abort on an enclosing state, compiles."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

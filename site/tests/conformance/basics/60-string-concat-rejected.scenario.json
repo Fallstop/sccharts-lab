@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Rejected: strings have no operators besides comparison. + reaches the C compiler as pointer arithmetic, which fails: \"invalid operands to binary +\"."}
+  ],
+  "expect": "error",
+  "errorIncludes": "invalid operands to binary +"
+}

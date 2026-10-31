@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: `ring` is `{1, 2, 3}`. The self-loop is delayed."
+    },
+    {
+      "inputs": {},
+      "note": "`first = ring[0]` saves the 1 before the vector assignment overwrites `ring[0]`, so the last element gets it back: `{2, 3, 1}`."
+    },
+    {
+      "inputs": {},
+      "note": "`{3, 1, 2}`."
+    },
+    {
+      "inputs": {},
+      "note": "Back to `{1, 2, 3}` after three rotations."
+    }
+  ],
+  "expect": "ok"
+}

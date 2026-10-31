@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "swap": false }, "note": "Tick 1 enters `Hold`: `a` is 1, `b` is 2." },
+    { "inputs": { "swap": true }, "note": "The code effect declares `t`, keeps `a` in it, and swaps: `a` is 2, `b` is 1. `t` exists only while the block runs, so it is not in the trace." },
+    { "inputs": { "swap": false }, "note": "No swap." },
+    { "inputs": { "swap": true }, "note": "Swapped back." }
+  ],
+  "expect": "ok"
+}

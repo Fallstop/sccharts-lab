@@ -1,0 +1,12 @@
+scchart WeakExitSimple {
+  input bool S
+  output int plainExit = 0, weakExit = 0
+
+  initial state M {
+    exit do plainExit = 1
+    weak exit do weakExit = 1
+  }
+  if S abort to Done
+
+  state Done
+}

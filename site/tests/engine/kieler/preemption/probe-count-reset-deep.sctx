@@ -1,0 +1,12 @@
+scchart CountResetDeep {
+  input bool tap, rst
+  output bool done = false
+  initial state Outer {
+    initial state Middle {
+      initial state Wait
+        if 3 tap do done = true go to Over
+      final state Over
+    }
+  }
+  if rst abort to Outer
+}

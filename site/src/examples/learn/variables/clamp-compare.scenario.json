@@ -1,0 +1,24 @@
+{
+  "ticks": [
+    {
+      "inputs": { "speed": 4 },
+      "note": "Tick 1 enters `Show` in both charts; their self-loops are delayed, so `shown` keeps its initial 0."
+    },
+    {
+      "note": "`speed` is 4. `ClampFixed` shows 4, as intended. `Clamp` reads `speed > 10 ? 10 : speed` as `speed > (10 ? 10 : speed)`, which is `speed > 10`: false, stored as 0."
+    },
+    {
+      "inputs": { "speed": 25 },
+      "note": "`speed` is 25. `ClampFixed` caps it at 10. In `Clamp`, `speed > 10` is true, stored as 1."
+    },
+    {
+      "inputs": { "speed": 10 },
+      "note": "10 is not above 10: `ClampFixed` shows 10, `Clamp` 0."
+    },
+    {
+      "inputs": { "speed": 11 },
+      "note": "`ClampFixed` caps 11 at 10; `Clamp` shows 1. It only ever shows 0 or 1."
+    }
+  ],
+  "expect": "ok"
+}

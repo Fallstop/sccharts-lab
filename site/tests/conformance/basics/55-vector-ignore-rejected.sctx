@@ -1,0 +1,8 @@
+scchart VectorIgnoreRejected {
+  output int arr[4] = {1, 2, 3, 4}
+
+  initial state S
+  do arr = {_, 20, _, 40} go to T
+
+  state T
+}

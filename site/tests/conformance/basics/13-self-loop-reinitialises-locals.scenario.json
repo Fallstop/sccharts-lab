@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Entering A initialises its local c to 10, then runs the entry action: c = 11. x = 0."},
+    {"inputs": {}, "note": "The self-loop copies c into x (x = 11) and re-enters A, which sets c back to 10 and adds 1 again."},
+    {"inputs": {}, "note": "x = 11 again, not 12: a state's local variables are re-initialised every time the state is entered, also by a self-loop."},
+    {"inputs": {}, "note": "Same again: x = 11."}
+  ],
+  "expect": "ok"
+}

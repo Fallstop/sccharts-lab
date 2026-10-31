@@ -1,0 +1,16 @@
+scchart FalseCycle {
+  input bool I
+  output signal S, U
+
+  region R1 {
+    initial state A
+    immediate if I && U do S go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    immediate if !I && S do U go to B
+    state B
+  }
+}

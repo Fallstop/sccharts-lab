@@ -1,0 +1,7 @@
+scchart Alarm {
+  input int temperature
+  output bool alarm = false
+
+  initial state Watch
+    if temperature > 90 do alarm = true go to Watch
+}

@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"I": true}, "note": "A delayed transition without a trigger means \"one tick later, always\". Tick 1 only enters A. KIELER warns that A's second transition is not reachable: the first one, having no trigger, always wins."},
+    {"inputs": {}, "note": "A's untriggered transition fires (x = 1, state B); the second one never gets a chance although I is true."},
+    {"inputs": {}, "note": "B's untriggered delayed transition fires one tick after B was entered: x = 2, state C."},
+    {"inputs": {}, "note": "C has no transitions; x stays 2. A's second transition (taken index 1) never fired."}
+  ],
+  "expect": "ok"
+}

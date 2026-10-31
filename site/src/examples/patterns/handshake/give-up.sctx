@@ -1,0 +1,22 @@
+scchart GiveUp {
+  input bool start, online
+  output int served = 0, failed = 0
+  signal req, ack
+
+  region Client {
+    initial state Idle
+      if start do req go to Waiting
+
+    state Waiting
+      immediate if ack do served++ go to Idle
+      if 3 true do failed++ go to Idle
+  }
+
+  region Server {
+    initial state Ready
+      if req && online go to Working
+
+    state Working
+      if 2 true do ack go to Ready
+  }
+}

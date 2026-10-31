@@ -1,0 +1,12 @@
+scchart TransitionScope {
+  output int c = 1
+  output bool fired
+
+  initial state S {
+    int c = 5
+    initial state A
+  }
+  if c == 5 do fired = true go to B
+
+  state B
+}

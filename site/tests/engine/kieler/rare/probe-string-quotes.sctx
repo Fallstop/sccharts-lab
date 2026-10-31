@@ -1,0 +1,7 @@
+scchart StringQuotes {
+  input bool A
+  output string s
+  initial state S
+    if A do s = "\"x\"" go to T
+  state T
+}

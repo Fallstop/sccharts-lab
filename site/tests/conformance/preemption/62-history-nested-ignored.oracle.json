@@ -1,0 +1,130 @@
+{
+  "hash": "89ba15a2995d95d6a776608c0098330681f053d1",
+  "chart": "tests/conformance/preemption/62-history-nested-ignored.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "P": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "R": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "where": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": false,
+        "where": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "P": false,
+        "R": false,
+        "where": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "P": true
+      },
+      "values": {
+        "A": false,
+        "P": true,
+        "R": false,
+        "where": 9
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": true,
+        "where": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": false,
+        "where": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

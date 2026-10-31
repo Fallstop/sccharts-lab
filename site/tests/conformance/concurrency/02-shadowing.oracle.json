@@ -1,0 +1,75 @@
+{
+  "hash": "5a5512059290b2ac530013bddbc2bc84628d2c5e",
+  "chart": "tests/conformance/concurrency/02-shadowing.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "g": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "g": false
+      },
+      "values": {
+        "g": false,
+        "x": 1,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "g": true
+      },
+      "values": {
+        "g": true,
+        "x": 1,
+        "y": 11
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "g": false
+      },
+      "values": {
+        "g": false,
+        "x": 1,
+        "y": 11
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

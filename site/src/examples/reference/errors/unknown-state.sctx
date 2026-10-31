@@ -1,0 +1,11 @@
+scchart UnknownState {
+  input bool A, B
+
+  initial state Outer {
+    initial state Inner
+      if A go to Done
+  }
+  if B go to Done
+
+  state Done
+}

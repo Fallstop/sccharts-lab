@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "i": 5
+      },
+      "note": "In tick 1 `pre` has no previous tick: `pre(i) = 0`, `pre(pre(i)) = 0` and `pre(x) = 0`, **not** `x`'s initial value 50 (pre starts from the type's default)."
+    },
+    {
+      "inputs": {
+        "i": 6
+      },
+      "note": "`p = pre(i) = 5`, `pp = 0`, `px = pre(x) = 50`; `x = 50 + 6 = 56`."
+    },
+    {
+      "inputs": {
+        "i": 7
+      },
+      "note": "`p = 6`, `pp = 5`, `px = 56`; `x = 63`."
+    },
+    {
+      "inputs": {
+        "i": 8
+      },
+      "note": "`p = 7`, `pp = 6`, `px = 63`; `x = 71`."
+    }
+  ],
+  "expect": "ok"
+}

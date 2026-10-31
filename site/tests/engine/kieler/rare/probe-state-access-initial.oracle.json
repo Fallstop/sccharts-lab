@@ -1,0 +1,156 @@
+{
+  "hash": "e11ea6094a463fe7ad8f79fe3ec9e893cfb9b9ec",
+  "chart": "tests/engine/kieler/rare/probe-state-access-initial.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads a, so the compiler treats it as an update of a (a relative write, as in the deprecated old SC syntax).\nWrite it as a += idle() to say so. In one region it means the same.\nIt only matters when another region also writes a in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 19,
+      "column": 20
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads b, so the compiler treats it as an update of b (a relative write, as in the deprecated old SC syntax).\nWrite it as b += 1 to say so. In one region it means the same.\nIt only matters when another region also writes b in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 19,
+      "column": 36
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads a, so the compiler treats it as an update of a (a relative write, as in the deprecated old SC syntax).\nWrite it as a += idle() to say so. In one region it means the same.\nIt only matters when another region also writes a in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 21,
+      "column": 18
+    }
+  ],
+  "interface": {
+    "step": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "step": false
+      },
+      "values": {
+        "step": false,
+        "a": 1,
+        "b": 1
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "step": false,
+        "a": 2,
+        "b": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "step": true
+      },
+      "values": {
+        "step": true,
+        "a": 2,
+        "b": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "step": false
+      },
+      "values": {
+        "step": false,
+        "a": 2,
+        "b": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "step": true
+      },
+      "values": {
+        "step": true,
+        "a": 3,
+        "b": 1
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "step": false
+      },
+      "values": {
+        "step": false,
+        "a": 4,
+        "b": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

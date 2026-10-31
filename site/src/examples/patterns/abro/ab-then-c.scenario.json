@@ -1,0 +1,96 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false,
+        "C": false,
+        "R": false
+      },
+      "note": "Tick 1 enters everything."
+    },
+    {
+      "inputs": {
+        "C": true
+      },
+      "note": "`C` before `A` and `B`: nothing is waiting for it yet, so it does not count."
+    },
+    {
+      "inputs": {
+        "C": false,
+        "A": true
+      },
+      "note": "`A`: `HandleA` finishes."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "`B`: `WaitAB` terminates, and the join leads to `WaitC`, without emitting anything."
+    },
+    {
+      "inputs": {
+        "B": false
+      },
+      "note": "Waiting for `C`."
+    },
+    {
+      "inputs": {
+        "C": true
+      },
+      "note": "`C`: `O`."
+    },
+    {
+      "inputs": {
+        "C": false,
+        "R": true
+      },
+      "note": "`R` starts again."
+    },
+    {
+      "inputs": {
+        "R": false,
+        "A": true,
+        "B": true
+      },
+      "note": "`A` and `B` together: `WaitC` is entered in this tick."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Waiting for `C`."
+    },
+    {
+      "inputs": {
+        "R": true
+      },
+      "note": "`R` again."
+    },
+    {
+      "inputs": {
+        "R": false,
+        "A": true
+      },
+      "note": "`A`."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true,
+        "C": true
+      },
+      "note": "`B` and `C` in the same tick. The join enters `WaitC`, and its *immediate* transition sees `C` in that same tick: `O`."
+    },
+    {
+      "inputs": {
+        "B": false,
+        "C": false
+      },
+      "note": "Resting in `Done`."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,53 @@
+{
+  "hash": "36093b1f3993e2b86babe0a35a05828419429097",
+  "chart": "tests/conformance/structure/03-reference-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "tick": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "led": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "tick": true
+      },
+      "values": {
+        "tick": true,
+        "led": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "tick": true,
+        "led": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "tick": true,
+        "led": false
+      },
+      "terminated": false
+    }
+  ]
+}

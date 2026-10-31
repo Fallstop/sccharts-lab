@@ -1,0 +1,9 @@
+scchart SuspendNoTrigger {
+  input bool A
+
+  initial state M {
+    suspend
+
+    initial state I
+  }
+}

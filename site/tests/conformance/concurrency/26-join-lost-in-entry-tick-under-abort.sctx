@@ -1,0 +1,15 @@
+scchart JoinLostUnderAbort {
+  input signal A, R
+  output signal O
+
+  initial state ABO {
+    initial state WaitA {
+      initial state W
+      immediate if A go to F
+      final state F
+    }
+    do O join to Done
+    state Done
+  }
+  if R go to ABO
+}

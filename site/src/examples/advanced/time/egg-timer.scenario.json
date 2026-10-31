@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 1000 }, "note": "Tick 1 enters `Boiling`. A clock does not advance in the tick its region starts, so `t` = 0 although `deltaT` says 1000 ms passed." },
+    { "inputs": { "deltaT": 1000 }, "note": "One second later. `Boiling` was already active, so the clock advances first: `t` = 1000. Then the transition is tested: 1000 is not ≥ 3000." },
+    { "inputs": { "deltaT": 1000 }, "note": "`t` = 2000." },
+    { "inputs": { "deltaT": 1000 }, "note": "`t` = 3000, and the transition sees the new value in the same tick: `ring` = true, the chart moves to `Done` and terminates." },
+    { "inputs": { "deltaT": 1000 }, "note": "The chart has terminated: nothing changes any more." }
+  ],
+  "expect": "ok"
+}

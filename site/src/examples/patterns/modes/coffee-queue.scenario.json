@@ -1,0 +1,51 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "note": "Tick 1."
+    },
+    {
+      "inputs": {
+        "clean": true
+      },
+      "note": "`clean`: cleaning starts at once."
+    },
+    {
+      "inputs": {
+        "clean": false,
+        "brew": true
+      },
+      "note": "`brew` during cleaning: `Cleaning`'s during action records it in `brewWanted`."
+    },
+    {
+      "inputs": {
+        "brew": false
+      },
+      "note": "Cleaning ends; `Serving` starts again in `Ready`."
+    },
+    {
+      "inputs": {},
+      "note": "`Ready` finds `brewWanted` and starts the brew, clearing the request: heater on."
+    },
+    {
+      "inputs": {},
+      "note": "Pouring."
+    },
+    {
+      "inputs": {},
+      "note": "Pouring."
+    },
+    {
+      "inputs": {},
+      "note": "The cup is done: `cups` is 1."
+    },
+    {
+      "inputs": {},
+      "note": "Ready."
+    }
+  ],
+  "expect": "ok"
+}

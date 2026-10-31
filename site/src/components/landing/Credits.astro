@@ -1,0 +1,50 @@
+---
+/**
+ * The landing page's credits: where SCCharts comes from, and that this guide is independent.
+ */
+---
+
+<section class="sc-credits not-content" aria-labelledby="sc-credits-title">
+	<h2 id="sc-credits-title" class="sc-landing-h2">Credits</h2>
+	<div class="sc-credits__body">
+		<p>
+			SCCharts was created by the Real-Time and Embedded Systems group at Kiel University as part of the{' '}
+			<a href="https://github.com/kieler">KIELER project</a>. It builds on Harel’s statecharts and on synchronous
+			languages such as Esterel. The{' '}
+			<a href="https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/pldi14.pdf">PLDI 2014 paper</a> introduced
+			it, and the <a href="https://github.com/kieler/semantics/wiki">KIELER wiki</a> is its reference documentation.
+		</p>
+		<p>
+			This guide is an independent project, not part of KIELER or Kiel University. Its examples are checked against
+			KIELER’s own compiler, tick for tick, so they behave here as they do in KIELER; where KIELER has a bug the guide
+			does not copy, the example says so (<a href="/reference/about/">how this guide is checked</a>).
+		</p>
+	</div>
+</section>
+
+<style>
+	.sc-credits {
+		display: grid;
+		gap: 1rem 3rem;
+		padding-block: 3rem 1rem;
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-credits__body {
+		max-width: var(--measure);
+		color: var(--c-muted);
+		font-size: var(--text-sm);
+		line-height: 1.6;
+	}
+	.sc-credits__body p + p {
+		margin-top: 0.75rem;
+	}
+	.sc-credits__body a {
+		color: var(--c-accent);
+		text-underline-offset: 0.2em;
+	}
+	@media (min-width: 72rem) {
+		.sc-credits {
+			grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+		}
+	}
+</style>

@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Both the output `c` (1) and `S`'s local `c` (5) exist. Tick 1 enters `S`; the outgoing transition is delayed."
+    },
+    {
+      "inputs": {},
+      "note": "The trigger `c == 5` on `S`'s own outgoing transition refers to `S`'s local `c` (5), not to the output `c` (1): the transition fires, `fired = true`. The output `c` stays 1."
+    },
+    {
+      "inputs": {},
+      "note": "In `B`: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "M finishes in the tick it is entered and its termination re-enters M: an instantaneous loop. The netlist compiler rejects it with scheduling errors. (The priority-based compiler accepts it but the result is wrong; see the spec.)"
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "asc-schedulable"
+}

@@ -1,0 +1,204 @@
+---
+title: "Getting SCCharts"
+description: "The SCCharts Lab extension for VS Code, the official KIELER tools, and this site’s playground: what each is good for."
+sidebar:
+  order: 3
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components'
+
+You can read this whole guide, and run every example in it, without installing anything. To write
+charts of your own you will want a proper editor: one that shows the diagram as you type, runs
+KIELER's compiler, and lets you simulate tick by tick. There are three ways to get one, and they all
+read and write the same `.sctx` files.
+
+| Tool | What it is | Best for |
+| --- | --- | --- |
+| [SCCharts Lab](#sccharts-lab-for-vs-code) | A VS Code extension, built on KIELER's compiler | Writing and debugging your own charts. Recommended. |
+| [KIELER](#the-official-kieler-tools) | Kiel University's own tools: a VS Code extension and an Eclipse application | The official reference, and KIELER features beyond SCCharts |
+| [The playground](#this-sites-playground) | This site's editor and simulator, in the browser | Trying things out, with nothing to install |
+
+About that recommendation: the author of this guide also makes SCCharts Lab
+([who made this](/reference/about/#who-made-this)). It is recommended because it runs KIELER's own
+compiler and adds a simulation view and messages written for beginners; the `.sctx` files are the
+same in both.
+
+## SCCharts Lab for VS Code
+
+[SCCharts Lab](https://marketplace.visualstudio.com/items?itemName=qinnovate.sccharts-lab) is an
+extension for [Visual Studio Code](https://code.visualstudio.com/) that edits, draws, simulates and
+compiles SCCharts. It is an independent fork of KIELER's VS Code extension: it runs a language server
+built from KIELER's own sources, so it compiles and simulates exactly as KIELER does, and it adds a
+rewritten simulation view and more helpful diagnostics. It is not affiliated with the KIELER project.
+
+### Install it
+
+<Steps>
+
+1. Install [VS Code](https://code.visualstudio.com/) if you don't have it.
+
+2. Open the Extensions view (`Ctrl+Shift+X`, or `Cmd+Shift+X` on a Mac), search for **SCCharts Lab**
+   and install it. Its publisher is listed as Questionable Innovations. You can also install it from
+   its [Marketplace page](https://marketplace.visualstudio.com/items?itemName=qinnovate.sccharts-lab).
+
+3. If you have KIELER's own VS Code extension (*KIELER VS Code*) installed, disable or uninstall it.
+   The two register the same commands and languages, and SCCharts Lab refuses to start while the other
+   is enabled. Reload the window afterwards.
+
+4. Make sure a C compiler is available, because simulation compiles your chart to C. On **Windows**,
+   the first simulation offers to download a portable GCC for you (no installer, no changes to your
+   PATH). On **Linux**, install `gcc` with your package manager, for example
+   `sudo apt install build-essential`. On **macOS**, install the Xcode Command Line Tools from a
+   terminal:
+
+   ```sh
+   xcode-select --install
+   ```
+
+</Steps>
+
+There is no Java to install on Windows (x64), Apple Silicon Macs or Linux (x64): the extension brings
+its own Java runtime. On other platforms it needs Java 21 or newer; the command **SCCharts Lab: Show
+Java runtime and C compiler in use** tells you what it found.
+
+### Use it
+
+- **Write.** Open a folder, create a file ending in `.sctx`, and write a chart. Completion
+  (`Ctrl+Space`) proposes keywords, variables and state names; hovering a name explains it.
+- **See the diagram.** Use the preview button in the editor's title bar, or **Open Diagram Preview**
+  (`Ctrl+Alt+V`). The diagram updates as you edit and follows your cursor: put the cursor in a state or
+  a transition and the diagram selects it; click something in the diagram to select its text.
+- **Simulate.** Press **Simulate…** in the preview's toolbar and choose a simulation system. Pick
+  **Netlist-based Simulation (C)**: it is KIELER's default, and the one every example in this guide is
+  checked against. Then **Step** (`Space`) runs one tick, **Back** (`Backspace`) goes back one, **Run**
+  keeps going, and **Restart** starts again from tick 0. The diagram marks the active states and the
+  transitions just taken.
+- **Set inputs.** The trace under the diagram has a **Next** column: click a boolean input to flip it,
+  or type a number and press `Enter`. The chart reads the value at the next tick, and the input keeps
+  that value until you change it, as everywhere in KIELER.
+- **Read the diagnostics.** Syntax and name errors are underlined as you type. A moment after you stop
+  typing, the extension also runs the first stages of KIELER's compiler and marks what they find
+  (instantaneous loops, causality cycles and the like) with squiggles labelled **KIELER · live**. Every
+  message is also in the Problems panel.
+- **Generate code.** **Code**, at the right end of the preview's toolbar, generates C or Java and opens
+  the files as read-only tabs; save the ones you want to keep.
+
+The simulation can also pause itself at breakpoints (when a state is entered, or when a condition
+holds), evaluate watch expressions after every tick, and save and replay traces. The extension's
+[README](https://github.com/Fallstop/sccharts-lab/blob/main/keith-vscode/README.md) describes everything.
+
+<Aside type="tip">
+Editing a chart while it is being simulated marks the simulation as out of date: **Restart** turns into
+**Rebuild**, which compiles your new version and starts again from tick 0.
+</Aside>
+
+### Check your setup
+
+To make sure everything works, create a file `toggle.sctx` with this chart, the lamp from
+[Thinking in ticks](/learn/ticks/):
+
+```sctx title="toggle.sctx"
+scchart Toggle {
+  input bool button
+  output bool light = false
+
+  initial state Off
+    if button do light = true go to On
+
+  state On
+    if button do light = false go to Off
+}
+```
+
+<Steps>
+
+1. Open the diagram preview. It shows two states, `Off` with a heavy outline (the initial state) and
+   `On`, and an arrow each way.
+
+2. Press **Simulate…** in the preview's toolbar and choose **Netlist-based Simulation (C)**. The
+   first simulation compiles the chart to C, so it takes a few seconds. Then the toolbar shows
+   **Step**, **Back**, **Run** and **Restart**, and the trace opens under the diagram: a table with
+   one row per variable, holding its name, then the **Next** column (what the chart reads in the
+   coming tick), then one column per tick that has run.
+
+3. In the **Next** column, click `button`'s value to make it true. Then press **Step** twice.
+
+</Steps>
+
+After the first step (tick 1) the chart is still in `Off` and `light` is false; after the second
+(tick 2) it is in `On` and `light` is true. The delay is not a fault: tick 1 only starts the chart, as
+[Thinking in ticks](/learn/ticks/#what-happens-in-tick-1) explains. If you see this, your setup works.
+If the simulation does not start, **SCCharts Lab: Show Java runtime and C compiler in use** tells you
+what the extension found, and [Setup problems](/reference/troubleshooting/#setup-problems) goes
+through the usual causes.
+
+## The official KIELER tools
+
+KIELER is the modelling environment from Kiel University in which SCCharts was developed. Its
+documentation is the [KIELER wiki](https://github.com/kieler/semantics/wiki), and its
+[syntax pages](https://github.com/kieler/semantics/wiki/Syntax) are the language's reference. KIELER
+comes in two forms.
+
+### KIELER VS Code
+
+KIELER's extension for VS Code comes in two parts, both from the Marketplace or Open VSX: **KLighD VS
+Code** draws the diagrams and **KIELER VS Code** provides the language support, the compiler and the
+simulator. It needs Java installed on your PATH, and a C compiler for C simulation. Install both and open
+an `.sctx` file; *Open in Diagram* in the editor's context menu shows the diagram, and *Simulation:
+Simulate current model with...* in the Command Palette starts a simulation, which is controlled from a
+KIELER view in the side bar. During a simulation the current state is marked red and the transitions just
+taken blue, as in this guide.
+
+The [VS Code page of the KIELER wiki](https://github.com/kieler/semantics/wiki/VS-Code-Extensions) walks
+through it, and links to both extensions. At the time of writing (October 2026), the latest release is
+0.3.0, from May 2024. Remember that it cannot be enabled at the same time as SCCharts Lab.
+
+One trap in 0.3.0: a chart with certain syntax errors, such as a keyword used as a name
+(`input bool reset`), never finishes compiling, and no message says so. If a simulation does not start,
+fix the errors the editor marks first ([The simulation never starts](/reference/troubleshooting/#the-simulation-never-starts)).
+
+### KIELER SCCharts for Eclipse
+
+The original KIELER is an application built on Eclipse. Besides the SCCharts editor, compiler and
+simulator, it offers model checking, a simulation visualisation, and compilers for Esterel and Lustre.
+Download it from the [KIELER releases on GitHub](https://github.com/kieler/semantics/releases). At the
+time of writing, the latest is 1.5.0, from May 2024, with builds for Windows, Linux and macOS (Intel and
+Apple Silicon). It needs Java
+17 or newer, and GCC on your PATH for the default C simulation. Unpack it and start the KIELER executable;
+*File → New → SCChart* creates a chart, the diagram updates when you save, and the diagram view's toolbar
+starts a simulation. The [quick start guide](https://github.com/kieler/semantics/wiki/Quick-Start-Guide)
+has screenshots of every step, and the [downloads page](https://github.com/kieler/semantics/wiki/Downloads)
+lists known issues (on macOS, for instance, a freshly downloaded copy may need its quarantine flag
+removed before it will start).
+
+The same release also contains command-line compilers (`kico` and the smaller `scc`), for building
+charts in scripts and makefiles.
+
+## This site's playground
+
+The [playground](/playground/) is an editor, a live diagram and a simulator in your browser. It starts
+with one of this guide's examples (pick any of them from its list), shows errors as you type, and runs
+your chart with the same controls as the simulations in the guide. **Copy link** puts your chart into
+the link itself, so you can share it without an account or a server. Every chart and simulation in the
+guide has an **Open in the playground** link that starts you from that chart. Every exercise opens its
+starter chart there, with the task above it and **Compare with the model solution** to check your
+answer.
+
+The playground runs this guide's own engine: a reimplementation of KIELER's compiler checks and
+simulator, written in TypeScript so it can run in a web page. Every example in the guide is checked
+against KIELER tick for tick ([How this guide is checked](/reference/about/) explains how), but a chart
+you write yourself has not been. When it matters (a chart you hand in, or code for a real device),
+confirm the result with SCCharts Lab or KIELER, which run KIELER's own compiler.
+
+## Which one should I use?
+
+- **Learning with this guide:** nothing to install. Run the examples in the page and experiment in the
+  [playground](/playground/). Install SCCharts Lab when you start writing charts of your own.
+- **Coursework and projects:** SCCharts Lab. It compiles and simulates with KIELER's compiler, so what
+  you see is what KIELER does, and its diagnostics explain more of what goes wrong. If your course
+  prescribes the official KIELER tools, use those; your `.sctx` files work in both.
+- **Beyond SCCharts:** KIELER for Eclipse, if you need model checking, the simulation visualisation,
+  or KIELER's Esterel and Lustre support.
+
+Whichever you choose, the language is the same, and so is everything this guide teaches. Next:
+[Thinking in ticks](/learn/ticks/).

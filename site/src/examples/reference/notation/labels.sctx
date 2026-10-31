@@ -1,0 +1,11 @@
+scchart Labels {
+  input bool button
+  output int presses
+
+  region Main "The lamp":
+    initial state Off "Light off"
+      if button do presses++ go to On label "press"
+
+    state On "Light on"
+      if button go to Off label "press again"
+}

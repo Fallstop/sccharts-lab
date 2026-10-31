@@ -1,0 +1,9 @@
+// One enum variable may be assigned another of the same enum (current KIELER; official KIELER 0.3.0 rejects
+// "b = a" with "Cannot assign enum value of an incompatible type.").
+scchart St101EnumCopy {
+  enum Color { RED, GREEN, BLUE }
+  ref Color a = Color.GREEN, b = Color.BLUE
+  output bool same = false
+  initial state A
+  do same = a == b; b = a go to A
+}

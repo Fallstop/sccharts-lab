@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "KIELER only warns \"The variable is declared multiple times in this scope.\", then the generated C fails to compile (`duplicate member 'x'`), so the chart is rejected."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "duplicate member"
+}

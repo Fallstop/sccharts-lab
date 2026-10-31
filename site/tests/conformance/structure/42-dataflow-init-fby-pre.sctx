@@ -1,0 +1,13 @@
+// Delays in equations. a -> b is a in the first tick and b afterwards. a fby b is a in the first tick and the
+// previous tick's b afterwards (a -> pre(b) is rewritten to a fby b). pre(x) is the previous tick's x, and 0
+// (false for bool) in the first tick whatever the declared initial value.
+scchart St42Delays {
+  input int I = 7
+  output int arrow, followed, arrowPre, previous
+  dataflow {
+    arrow = 0 -> I
+    followed = 0 fby I
+    arrowPre = 0 -> pre(I)
+    previous = pre(I)
+  }
+}

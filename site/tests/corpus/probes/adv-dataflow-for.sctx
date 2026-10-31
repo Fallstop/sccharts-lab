@@ -1,0 +1,7 @@
+scchart DfFor {
+  input int in[3]
+  output int out[3]
+  dataflow D for i : 0 to 2 {
+    out[i] = in[i] * 2
+  }
+}

@@ -1,0 +1,13 @@
+// As probe-method-inner-update-conflict without the loop: the block is inlined, its y += 1 commutes with the other region's.
+scchart F3 {
+  input bool a
+  output int y = 0
+  region {
+    initial state A
+      do y += 1 go to A
+  }
+  region {
+    initial state S
+      if a do { y += 1; } go to S
+  }
+}

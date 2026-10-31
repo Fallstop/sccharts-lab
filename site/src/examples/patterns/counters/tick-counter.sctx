@@ -1,0 +1,6 @@
+scchart TickCounter {
+  output int tickNo = 0, later = 0
+
+  immediate during do tickNo++
+  during do later++
+}

@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "sheet": false, "cancel": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start`: `Job`, at `First`." },
+    { "inputs": { "start": false, "sheet": true }, "note": "The first sheet: 1." },
+    { "inputs": { "cancel": true }, "note": "The same tick as in `TwoPages`, but here the join is written first: the job counts as finished, `finished` is emitted and `cancelled` is not." },
+    { "inputs": { "cancel": false, "sheet": false }, "note": "Idle." }
+  ],
+  "expect": "ok"
+}

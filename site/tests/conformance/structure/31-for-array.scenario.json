@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "ACT": [
+          false,
+          false,
+          false
+        ]
+      },
+      "note": "Tick 1 enters three copies of the region, i = 0, 1 and 2; their transitions are delayed: **n = 0**."
+    },
+    {
+      "inputs": {
+        "ACT": [
+          true,
+          false,
+          true
+        ]
+      },
+      "note": "Copies 0 and 2 fire; their n++ are concurrent increments: **n = 2**."
+    },
+    {
+      "inputs": {
+        "ACT": [
+          true,
+          true,
+          true
+        ]
+      },
+      "note": "Only copy 1 is still waiting: **n = 3**, and every region of the root is now final, so the chart terminates."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,21 @@
+scchart InitUpdateRead {
+  output int x, y
+
+  region Reader {
+    initial state A
+    do y = x go to B
+    state B
+  }
+
+  region Update {
+    initial state A
+    do x += 5 go to B
+    state B
+  }
+
+  region Init {
+    initial state A
+    do x = 100 go to B
+    state B
+  }
+}

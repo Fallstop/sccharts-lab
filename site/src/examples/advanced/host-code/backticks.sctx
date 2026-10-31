@@ -1,0 +1,6 @@
+scchart Backticks {
+  output int x = 0, y = 0
+
+  initial state Run
+    do `d->x = 42;`; y = `7 * 6` go to Run
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "level": 0
+      },
+      "note": "KIELER rejects the chart: a number right after `if` is read as a count delay (`if 3 A` means the third time A holds), so `3 == level` does not parse."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "no viable alternative at input '=='"
+}

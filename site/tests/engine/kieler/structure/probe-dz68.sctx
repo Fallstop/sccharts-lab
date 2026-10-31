@@ -1,0 +1,13 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz68 {
+  input int v
+  output int r = 0
+  method int pick(int x) {
+    if (x > 10) {
+      return 10
+    }
+    return x
+  }
+  initial state S
+  do r = pick(v) + pick(v * 2) go to S
+}

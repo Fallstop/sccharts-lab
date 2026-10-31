@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Tick 1 enters both regions."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "`a`: region `RA` reaches `F`. `RB` is still in `W`, so `S` does not terminate: `done = false`."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Nothing new: `RA` stays in `F`, `RB` in `W`."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "note": "`b`: `RB` reaches `F`. Now every region is in a final state, so `join to D` fires in this tick: `done = true`."
+    },
+    {
+      "inputs": {
+        "b": false
+      },
+      "note": "In `D`: `done = true`."
+    }
+  ],
+  "expect": "ok"
+}

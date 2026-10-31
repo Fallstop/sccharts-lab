@@ -1,0 +1,59 @@
+{
+  "hash": "8c2849fc759f5b0dba0eb1c2f9adfa0dd460a39d",
+  "chart": "tests/conformance/concurrency/76-duplicate-declaration-in-superstate.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The variable is declared multiple times in this scope.",
+      "line": 8,
+      "column": 9
+    }
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 11
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 11
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

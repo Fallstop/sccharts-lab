@@ -1,0 +1,9 @@
+scchart SamplerSwapped {
+  input bool sample
+  input int reading
+  output int latest = 0
+  output int previous = 0
+
+  initial state Waiting
+    if sample do latest = reading; previous = latest go to Waiting
+}

@@ -1,0 +1,269 @@
+{
+ "sourceHash": "644292d3e3742882",
+ "states": [
+  {
+   "path": [
+    "concurrencies"
+   ],
+   "rows": [
+    [
+     "concurrencies"
+    ],
+    [
+     "input bool ",
+     "E, F"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    295.8,
+    282.7
+   ]
+  },
+  {
+   "path": [
+    "concurrencies",
+    0,
+    "EF"
+   ],
+   "rows": [
+    [
+     "EF"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    182.3,
+    207.7
+   ]
+  },
+  {
+   "path": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleF",
+    "init"
+   ],
+   "rows": [
+    [
+     "init"
+    ]
+   ],
+   "box": [
+    18.3,
+    20,
+    43.2,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleF",
+    "done"
+   ],
+   "rows": [
+    [
+     "done"
+    ]
+   ],
+   "box": [
+    10,
+    118.1,
+    59.8,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleE",
+    "init"
+   ],
+   "rows": [
+    [
+     "init"
+    ]
+   ],
+   "box": [
+    18.3,
+    20,
+    43.2,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleE",
+    "done"
+   ],
+   "rows": [
+    [
+     "done"
+    ]
+   ],
+   "box": [
+    10,
+    118.1,
+    59.8,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "concurrencies",
+    0,
+    "done"
+   ],
+   "rows": [
+    [
+     "done"
+    ]
+   ],
+   "box": [
+    212.3,
+    93.6,
+    59.8,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "concurrencies",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    49.4,
+    282.2,
+    227.7
+   ]
+  },
+  {
+   "path": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleF"
+   ],
+   "label": [
+    "handleF"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    30.6,
+    79.8,
+    168.7
+   ]
+  },
+  {
+   "path": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleE"
+   ],
+   "label": [
+    "handleE"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    93.8,
+    30.6,
+    79.8,
+    168.7
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$Nconcurrencies$$N0$NEF$NhandleF$Ninit$Edone0",
+   "source": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleF",
+    "init"
+   ],
+   "target": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleF",
+    "done"
+   ],
+   "text": "F",
+   "lines": [
+    "F"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$Nconcurrencies$$N0$NEF$NhandleE$Ninit$Edone0",
+   "source": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleE",
+    "init"
+   ],
+   "target": [
+    "concurrencies",
+    0,
+    "EF",
+    "handleE",
+    "done"
+   ],
+   "text": "E",
+   "lines": [
+    "E"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$Nconcurrencies$$N0$NEF$Edone0",
+   "source": [
+    "concurrencies",
+    0,
+    "EF"
+   ],
+   "target": [
+    "concurrencies",
+    0,
+    "done"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  }
+ ],
+ "comments": []
+}

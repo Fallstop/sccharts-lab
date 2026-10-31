@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Tick 1 enters `Off`." },
+    { "inputs": { "button": true }, "note": "The button goes down: `Off` to `On`, the light is on." },
+    { "note": "The button is still held. In `On` the trigger `button` is true, so the chart goes straight back to `Off`." },
+    { "note": "Still held: back to `On`. The light flickers for as long as the button is held." },
+    { "inputs": { "button": false }, "note": "Released: the light stays in whatever state the flicker left it." },
+    { "inputs": { "button": true }, "note": "A new press: `On` to `Off`." },
+    { "inputs": { "button": false }, "note": "Released." }
+  ],
+  "expect": "ok"
+}

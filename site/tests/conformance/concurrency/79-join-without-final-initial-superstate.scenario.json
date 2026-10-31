@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1 enters S and W: **done = false**."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "W goes to X, which is not final: the join cannot fire."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "S stays in X for ever."
+    }
+  ],
+  "expect": "ok"
+}

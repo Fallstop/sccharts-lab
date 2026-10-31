@@ -1,0 +1,10 @@
+scchart ConnectorNoDefault {
+  input bool A, B
+  output int x
+
+  initial state Idle
+    if A go to Pick
+
+  connector state Pick
+    immediate if B do x = 1 go to Idle
+}

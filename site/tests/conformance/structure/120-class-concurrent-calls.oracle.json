@@ -1,0 +1,74 @@
+{
+  "hash": "870b19e7f836c4e49eb09ad90838819eccd40689",
+  "chart": "tests/conformance/structure/120-class-concurrent-calls.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "seen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "seen": 0,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "seen": 2,
+        "c": {
+          "v": 2
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "seen": 4,
+        "c": {
+          "v": 4
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "full": false
+      },
+      "note": "Tick 1 in Idle: **done = false**."
+    },
+    {
+      "inputs": {
+        "start": true,
+        "full": false
+      },
+      "note": "Idle goes to Programme (Filling)."
+    },
+    {
+      "inputs": {
+        "start": false,
+        "full": true
+      },
+      "note": "Filling goes to Washing; Washing is not final, so the join cannot fire."
+    },
+    {
+      "inputs": {
+        "start": false,
+        "full": false
+      },
+      "note": "Programme stays for ever: the join never fires."
+    }
+  ],
+  "expect": "ok"
+}

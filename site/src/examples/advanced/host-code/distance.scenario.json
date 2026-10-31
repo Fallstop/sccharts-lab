@@ -1,0 +1,9 @@
+{
+  "needs": ["c-hostcode"],
+  "ticks": [
+    { "inputs": { "position": -5 }, "note": "Tick 1 enters `Track`; the delayed self-loop has not called anything yet: `distance` = 0." },
+    { "inputs": { "position": -6 }, "note": "C's `abs(-6)`: `distance` = 6." },
+    { "inputs": { "position": 7 }, "note": "`distance` = 7." }
+  ],
+  "expect": "ok"
+}

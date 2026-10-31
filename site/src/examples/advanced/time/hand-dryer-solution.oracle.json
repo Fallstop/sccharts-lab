@@ -1,0 +1,239 @@
+{
+  "hash": "15f4f87ad9a145658ea41d00f2194fe0de4005ff",
+  "chart": "src/examples/advanced/time/hand-dryer-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on t."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "hands": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fan": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "hands": false,
+        "deltaT": 500
+      },
+      "values": {
+        "deltaT": 500,
+        "hands": false,
+        "fan": false,
+        "sleepT": 1000,
+        "t": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "hands": true
+      },
+      "values": {
+        "deltaT": 500,
+        "hands": true,
+        "fan": true,
+        "sleepT": 1000,
+        "t": 500
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "hands": false
+      },
+      "values": {
+        "deltaT": 500,
+        "hands": false,
+        "fan": true,
+        "sleepT": 1000,
+        "t": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "deltaT": 500,
+        "hands": false,
+        "fan": true,
+        "sleepT": 1000,
+        "t": 500
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "hands": true
+      },
+      "values": {
+        "deltaT": 500,
+        "hands": true,
+        "fan": true,
+        "sleepT": 1000,
+        "t": 1000
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "hands": false
+      },
+      "values": {
+        "deltaT": 500,
+        "hands": false,
+        "fan": true,
+        "sleepT": 1000,
+        "t": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {},
+      "values": {
+        "deltaT": 500,
+        "hands": false,
+        "fan": true,
+        "sleepT": 1000,
+        "t": 500
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "deltaT": 500,
+        "hands": false,
+        "fan": true,
+        "sleepT": 1000,
+        "t": 1000
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {},
+      "values": {
+        "deltaT": 500,
+        "hands": false,
+        "fan": true,
+        "sleepT": 500,
+        "t": 1500
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {},
+      "values": {
+        "deltaT": 500,
+        "hands": false,
+        "fan": false,
+        "sleepT": 1000,
+        "t": 2000
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

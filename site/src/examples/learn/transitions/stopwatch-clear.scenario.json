@@ -1,0 +1,97 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "stop": false,
+        "clear": false
+      },
+      "note": "Tick 1 enters `Stopped`."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Started."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "1."
+    },
+    {
+      "note": "2."
+    },
+    {
+      "inputs": {
+        "clear": true
+      },
+      "note": "`clear` is transition 1 in `Running`: it wins over the count, sets `elapsed` to 0 and stops the watch."
+    },
+    {
+      "inputs": {
+        "clear": false
+      },
+      "note": "In `Stopped`, at 0."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Started again."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "1."
+    },
+    {
+      "inputs": {
+        "stop": true
+      },
+      "note": "In `Stopped`, at 1."
+    },
+    {
+      "inputs": {
+        "stop": false,
+        "clear": true
+      },
+      "note": "`clear` while stopped: the self-loop on `Stopped` sets `elapsed` to 0."
+    },
+    {
+      "inputs": {
+        "clear": false
+      },
+      "note": "In `Stopped`, at 0."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Started again."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "1."
+    },
+    {
+      "inputs": {
+        "stop": true,
+        "clear": true
+      },
+      "note": "`clear` and `stop` in the same tick: `clear` comes first in `Running`, so it wins and `elapsed` is 0."
+    },
+    {
+      "inputs": {
+        "stop": false,
+        "clear": false
+      },
+      "note": "In `Stopped`, at 0."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Tick 1 enters S: **n = 0**, **sleepT = 300**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Period clock at 100: **n = 0**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Period clock at 200: **n = 0**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Period clock at 300: the contents run: **n = 1**, the clock restarts at 0."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "Period clock at 100: **n = 1**."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "350 ≥ 300: **n = 2**, but the clock restarts at 0."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "Only 250: **n = 2** (with the default soft reset this tick would count)."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "250 + 250 = 500 ≥ 300: **n = 3**."
+    }
+  ],
+  "expect": "ok"
+}

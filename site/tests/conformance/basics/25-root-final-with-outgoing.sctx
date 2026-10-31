@@ -1,0 +1,9 @@
+scchart RootFinalWithOutgoing {
+  output int x = 0
+
+  initial state A
+  go to B
+
+  final state B
+  do x += 1 go to A
+}

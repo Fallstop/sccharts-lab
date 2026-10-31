@@ -1,0 +1,5377 @@
+{
+ "lab/audit.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "lab/completion.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 19,
+    "col": 7,
+    "message": "The state is not reachable."
+   },
+   {
+    "line": 22,
+    "col": 3,
+    "message": "Abort transitions should have a trigger."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "lab/debug-counter.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "lab/hover.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 15,
+    "col": 14,
+    "message": "This assignment reads count, so the compiler treats it as an update of count (a relative write, as in the deprecated old SC syntax).\nWrite it as count += 1 to say so. In one region it means the same.\nIt only matters when another region also writes count in the same tick: this assignment then runs after that write instead of conflicting with it."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "lab/inherited-clash.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 14,
+    "message": "This variable name is already used in a base state."
+   },
+   {
+    "line": 3,
+    "col": 10,
+    "message": "There is an inherited region with the same name, you may use the override keyword."
+   }
+  ],
+  "warnings": [
+   {
+    "line": 13,
+    "col": 8,
+    "message": "This assignment reads shared, so the compiler treats it as an update of shared (a relative write, as in the deprecated old SC syntax).\nWrite it as shared += 1 to say so. In one region it means the same.\nIt only matters when another region also writes shared in the same tick: this assignment then runs after that write instead of conflicting with it."
+   }
+  ],
+  "compileErrors": [
+   "Variable shared is declared again along the inheritance hierarchy.",
+   "Region Main exists more than once along the inheritance hierarchy.",
+   "Region Main exists more than once along the inheritance hierarchy.",
+   "The valued object reference points to a valued object (shared) that is not contained in the model!",
+   "The valued object reference points to a valued object (shared) that is not contained in the model!",
+   "References objects are not contained in the resource!"
+  ],
+  "ok": false
+ },
+ "lab/shared-clock.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 7,
+    "col": 24,
+    "message": "This assignment reads a, so the compiler treats it as an update of a (a relative write, as in the deprecated old SC syntax).\nWrite it as a += 1 to say so. In one region it means the same.\nIt only matters when another region also writes a in the same tick: this assignment then runs after that write instead of conflicting with it."
+   },
+   {
+    "line": 11,
+    "col": 17,
+    "message": "This assignment reads b, so the compiler treats it as an update of b (a relative write, as in the deprecated old SC syntax).\nWrite it as b += 1 to say so. In one region it means the same.\nIt only matters when another region also writes b in the same tick: this assignment then runs after that write instead of conflicting with it."
+   }
+  ],
+  "compileErrors": [
+   "Clock t is read by several concurrent regions of SharedClock."
+  ],
+  "ok": false
+ },
+ "lab/timed-loop.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/action-after-state.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 3,
+    "message": "no viable alternative at input 'entry'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/action-all.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 13,
+    "col": 15,
+    "message": "Count Delays on During Actions are not supported yet. The valued will be ignored by the transformation."
+   }
+  ],
+  "compileErrors": [
+   "Can't schedule from _g77 to _cg77",
+   "Can't schedule from _g77 to _g79",
+   "Can't schedule from _g79 to _cg79",
+   "Can't schedule from _g79 to _g80",
+   "Can't schedule from _g47 to _cg47",
+   "Can't schedule from _g47 to _g81"
+  ],
+  "ok": false
+ },
+ "probes/action-entry-count.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 16,
+    "message": "no viable alternative at input 'A'"
+   },
+   {
+    "line": 11,
+    "col": 1,
+    "message": "extraneous input '}' expecting EOF"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/action-entry-delay.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 5,
+    "message": "no viable alternative at input 'entry'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/action-entry-pr.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/action-label-info.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/action-root.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/action-suspend-do.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 18,
+    "message": "no viable alternative at input 'do'"
+   },
+   {
+    "line": 11,
+    "col": 1,
+    "message": "extraneous input '}' expecting EOF"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/action-suspend-no-trigger.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "This suspend has no trigger. KIELER cannot compile a suspend without an if condition."
+  ],
+  "ok": false
+ },
+ "probes/action-weak-during.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 5,
+    "message": "no viable alternative at input 'during'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/adv-calls.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 8,
+    "col": 3,
+    "message": "The state is not reachable."
+   },
+   {
+    "line": 8,
+    "col": 17,
+    "message": "Valued Objects are bound implicitly!\nc, "
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/adv-dataflow-for.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "The valued object reference points to a valued object (i) that is not contained in the model!",
+   "The valued object reference points to a valued object (i) that is not contained in the model!",
+   "References objects are not contained in the resource!"
+  ],
+  "ok": false
+ },
+ "probes/adv-emission-annotations.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/adv-extends-params.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/adv-macro-annotation.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/adv-policy.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "unknown type name ‘Counter’",
+   "request for member ‘increment’ in something not a structure or union",
+   "request for member ‘getValue’ in something not a structure or union",
+   "unknown type name ‘Counter’",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/adv-primitive.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "A root SCChart cannot have unbound generic parameters."
+  ],
+  "ok": false
+ },
+ "probes/adv-ref-bindings.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/adv-region-is-for.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 13,
+    "message": "Couldn't resolve reference to NamedObject 'Worker'."
+   },
+   {
+    "line": 10,
+    "col": 19,
+    "message": "Couldn't resolve reference to NamedObject 'Worker'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/adv-schedule-clauses.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 6,
+    "col": 3,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/adv-state-is-scheduled.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/adv-super-call.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/anno-doc-inner.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/anno-forms.sctx": {
+  "syntax": [
+   {
+    "line": 5,
+    "col": 3,
+    "message": "no viable alternative at input 'json'"
+   },
+   {
+    "line": 5,
+    "col": 45,
+    "message": "mismatched input '}' expecting 'dataflow'"
+   },
+   {
+    "line": 5,
+    "col": 46,
+    "message": "missing EOF at ']'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/anno-json-empty.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 8,
+    "message": "missing 'dataflow' at '{'"
+   },
+   {
+    "line": 3,
+    "col": 3,
+    "message": "mismatched input 'initial' expecting '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/anno-layout-no-type.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "Layout annotations must have the format '@layout[id] value'"
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/anno-region.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/anno-typed-no-value.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "no viable alternative at input 'initial'"
+   },
+   {
+    "line": 2,
+    "col": 10,
+    "message": "mismatched input '[' expecting 'scchart'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "Layout annotations must have the format '@layout[id] value'"
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/chart-empty.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/chart-extended-id.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/chart-extra-brace.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 1,
+    "message": "extraneous input '}' expecting EOF"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/chart-label.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/chart-missing-brace.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 19,
+    "message": "mismatched input '<EOF>' expecting '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/chart-missing-open.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "missing '{' at 'initial'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-after-action.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 3,
+    "message": "no viable alternative at input 'int'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-after-state.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "no viable alternative at input 'int'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-array-scalar-init.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 14,
+    "message": "Initial value of an array can not be a single value."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "assignment to expression with array type",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/decl-array-size-expression.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 9,
+    "message": "Array cardinalities must be an int literal or a reference to a constant int object."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "Cannot initialize array with non integer cardinality: a"
+  ],
+  "ok": false
+ },
+ "probes/decl-array-size-variable.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 3,
+    "col": 9,
+    "message": "Array cardinalities must be an int literal or a reference to a constant int object."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "Cannot initialize array with non integer cardinality: a"
+  ],
+  "ok": false
+ },
+ "probes/decl-arrays.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-class.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-combine-missing.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "no viable alternative at input 'initial'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-combine.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 14,
+    "message": "Min or max combine operators are currently not supported."
+   },
+   {
+    "line": 5,
+    "col": 14,
+    "message": "Min or max combine operators are currently not supported."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-const-no-init.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 13,
+    "message": "A const declaration must have an initialization part!"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-enum-empty.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 16,
+    "message": "missing RULE_ID at '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-enum.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-extern.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘rand’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/decl-host-class.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "expected specifier-qualifier-list before ‘List’",
+   "‘TickData’ has no member named ‘_GO’",
+   "‘TickData’ has no member named ‘l’",
+   "‘TickData’ has no member named ‘_taken_transitions’",
+   "‘TickData’ has no member named ‘_GO’",
+   "‘TickData’ has no member named ‘_TERM’"
+  ],
+  "ok": false
+ },
+ "probes/decl-labels.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-method-return-void.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 21,
+    "message": "Return statement is used but no return type is declared in method signature."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-method-space-parens.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 17,
+    "message": "no viable alternative at input ')'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-method.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-missing-type.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 9,
+    "message": "missing 'primitive' at 'A'"
+   },
+   {
+    "line": 3,
+    "col": 3,
+    "message": "missing RULE_ID at 'initial'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 2,
+    "col": 9,
+    "message": "Couldn't resolve reference to EObject 'A'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-misspelt-type.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 9,
+    "message": "missing 'primitive' at 'boolean'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 2,
+    "col": 9,
+    "message": "Couldn't resolve reference to EObject 'boolean'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-modifiers-input-after-output.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 10,
+    "message": "mismatched input 'input' expecting 'primitive'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-modifiers-wrong-order.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 9,
+    "message": "mismatched input 'output' expecting 'primitive'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-modifiers.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-multiple.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-private-input.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "A private declaration cannot be a public input output interface"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-pure-variable.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "Pure types are only allowed if used in combination with signals."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "Cannot serialize simulation interface. Unsupported type: pure",
+   "Cannot serialize simulation interface. Unsupported type pure for variable p"
+  ],
+  "ok": false
+ },
+ "probes/decl-ref.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 3,
+    "col": 23,
+    "message": "Couldn't resolve reference to NamedObject 'Q'."
+   },
+   {
+    "line": 3,
+    "col": 30,
+    "message": "Couldn't resolve reference to ValuedObject 'a'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-schedule.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-semicolon.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 9,
+    "message": "mismatched input 'bool' expecting 'primitive'"
+   },
+   {
+    "line": 2,
+    "col": 15,
+    "message": "no viable alternative at input ';'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-signal-annotation.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-struct-private.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 3,
+    "col": 5,
+    "message": "All members of a struct must be publicly accessible."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/decl-struct.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/decl-types.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 8,
+    "col": 16,
+    "message": "Min or max combine operators are currently not supported."
+   }
+  ],
+  "compileErrors": [
+   "de.cau.cs.kieler.core.diagnostics.UnsupportedConstructException: Unhandled parameter types: [null]\nde.cau.cs.kieler.core.diagnostics.UnsupportedConstructException: Unhandled parameter types: [null]\n\tde.cau.cs.kieler.sccharts.processors.scg.SCGTransformation.transformSCGGenerateNodes(SCGTransformatio..."
+  ],
+  "ok": false
+ },
+ "probes/effect-annotated.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/effect-assign-const.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 4,
+    "col": 6,
+    "message": "You cannot assign a value to a const object."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "Cannot replace left hand side of assignment by a value. (Trying to replace ValuedObjectImpl@245c0b94 N by de.cau.cs.kieler.kexpressions.impl.IntValueImpl@43f6c581 (value: 1) in AssignmentImpl@2f815703 N = 2)"
+  ],
+  "ok": false
+ },
+ "probes/effect-assign-signal.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Non-variables cannot be used in an assignment."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "Can't schedule from _g2b to _g7",
+   "Can't schedule from _g7 to _g2b",
+   "Can't schedule from _g2b to _g3",
+   "Can't schedule from _g7 to _g11",
+   "Can't schedule from _g11 to _cg11",
+   "Can't schedule from _g11 to _g12"
+  ],
+  "ok": false
+ },
+ "probes/effect-call-method.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 4,
+    "col": 12,
+    "message": "Number of arguments does not match required parameters in definition."
+   },
+   {
+    "line": 4,
+    "col": 21,
+    "message": "Number of arguments does not match required parameters in definition."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘P221_m’; did you mean ‘P221_H’? [-Wimplicit-function-declaration]",
+   "‘TickData’ has no member named ‘a’",
+   "‘TickData’ has no member named ‘a’",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/effect-code-decl-after-stmt.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 15,
+    "message": "mismatched input 'int' expecting '}'"
+   },
+   {
+    "line": 9,
+    "col": 25,
+    "message": "no viable alternative at input '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 27,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/effect-code-else-if.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 30,
+    "message": "missing '{' at 'if'"
+   },
+   {
+    "line": 9,
+    "col": 49,
+    "message": "missing '}' at 'go'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/effect-code-goto-unknown.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 13,
+    "message": "Couldn't resolve reference to Label 'nowhere'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/effect-code-goto.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "Can't schedule from _g3 to _g3",
+   "The SCG is NOT asc-schedulable!",
+   "Circular dependency involving O prevents scheduling this tick.",
+   "Circular dependency involving O prevents scheduling this tick."
+  ],
+  "ok": false
+ },
+ "probes/effect-code-missing-semicolon.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "Missing Semicolon"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/effect-code-return.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "Return statements can only be used in method bodies."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "variable or field ‘_fn0__effect0_return’ declared void",
+   "variable or field ‘_fn0__effect0_return’ declared void",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/effect-code-statements.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/effect-code.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/effect-compare-instead.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input '=='"
+   },
+   {
+    "line": 9,
+    "col": 13,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Non-signals should not be used in an emission."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/effect-emissions.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/effect-emit-variable-unreachable.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 3,
+    "message": "The state is not reachable."
+   },
+   {
+    "line": 5,
+    "col": 6,
+    "message": "Non-signals should not be used in an emission."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/effect-emit-variable.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Non-signals should not be used in an emission."
+   }
+  ],
+  "compileErrors": [
+   "X is an output bool variable, not a signal, so it cannot be emitted."
+  ],
+  "ok": false
+ },
+ "probes/effect-extern-call-emit.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘rand’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/effect-hostcode.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "‘x’ undeclared (first use in this function)",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/effect-kinds.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "expected expression before ‘>=’ token",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/effect-postfix-signal.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Non-variables cannot be used in an assignment."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/effect-print-empty.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 11,
+    "message": "mismatched input '()' expecting '('"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/effect-print.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 34,
+    "message": "You do a calculation inside a print call effect. You should use printf syntax to be safe on different code generators."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/effect-relative-write.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "This assignment reads O, so the compiler treats it as an update of O (a relative write, as in the deprecated old SC syntax).\nWrite it as O += 1 to say so. In one region it means the same.\nIt only matters when another region also writes O in the same tick: this assignment then runs after that write instead of conflicting with it."
+   },
+   {
+    "line": 9,
+    "col": 17,
+    "message": "This assignment looks like old relative write SC syntax and is considered deprecated.\nIf you want to create a relative write in new syntax, please use an infix assignment operator."
+   },
+   {
+    "line": 9,
+    "col": 32,
+    "message": "This assignment reads O, so the compiler treats it as an update of O (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. O += 1.\nIt only matters when another region also writes O in the same tick: this assignment then runs after that write instead of conflicting with it."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/empty-file.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "There is no SCChart to compile. Add a scchart declaration first."
+  ],
+  "ok": false
+ },
+ "probes/expr-annotated-hostcode.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘rand’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/expr-array-index.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 5,
+    "col": 6,
+    "message": "This assignment looks like old relative write SC syntax and is considered deprecated.\nIf you want to create a relative write in new syntax, please use an infix assignment operator."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-bitnot-plus.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 13,
+    "message": "no viable alternative at input '+'"
+   },
+   {
+    "line": 9,
+    "col": 17,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-call-non-method.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'I'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-call-space.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 11,
+    "message": "no viable alternative at input '('"
+   },
+   {
+    "line": 9,
+    "col": 15,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 9,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'f'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-case.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Couldn't resolve reference to ValuedObject 'a'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-compare-chain-paren.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-compare-chain.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input '<'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 16,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-deep-parens.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-emit-in-trigger.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Couldn't resolve reference to ValuedObject 'V'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-extern-call.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘abs’ [-Wimplicit-function-declaration]",
+   "implicit declaration of function ‘srand’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/expr-float-trigger.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 4,
+    "col": 6,
+    "message": "Float tests must have a comparison operator!"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-hostcode.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘rand’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/expr-init-fby.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "Can't schedule from _g3 to _g11",
+   "Can't schedule from _g11 to _g3",
+   "Can't schedule from _g3 to _g15",
+   "The SCG is NOT asc-schedulable!",
+   "Circular dependency prevents scheduling this tick."
+  ],
+  "ok": false
+ },
+ "probes/expr-init-neg.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-method-no-parens.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 5,
+    "col": 10,
+    "message": "Methods must be used with call syntax using parenthesis."
+   }
+  ],
+  "warnings": [
+   {
+    "line": 6,
+    "col": 3,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [
+   "‘TickData’ has no member named ‘m’",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/expr-modulo-float.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 6,
+    "message": "This assignment reads f, so the compiler treats it as an update of f (a relative write, as in the deprecated old SC syntax).\nWrite it as f %= 2.0 to say so. In one region it means the same.\nIt only matters when another region also writes f in the same tick: this assignment then runs after that write instead of conflicting with it."
+   },
+   {
+    "line": 4,
+    "col": 10,
+    "message": "You are using modulo with floats. Most implemented code backend (such as C) will not support this. Use dedicated hostcode functions (such as fmod) to implement the behavior."
+   }
+  ],
+  "compileErrors": [
+   "invalid operands to binary % (have ‘double’ and ‘double’)",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/expr-neg-not.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input '='"
+   },
+   {
+    "line": 9,
+    "col": 14,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Non-signals should not be used in an emission."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-neg.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-not-compare.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-not-plus.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 13,
+    "message": "no viable alternative at input '+'"
+   },
+   {
+    "line": 9,
+    "col": 17,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-null.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-parens-bool-plus.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-pre-call.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 11,
+    "message": "extraneous input '()' expecting ')'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 9,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'f'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-pre-expression.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 12,
+    "message": "mismatched input '+' expecting ')'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-pre.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘val’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/expr-precedence.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "The transition is not reachable."
+   },
+   {
+    "line": 11,
+    "col": 3,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [
+   "expected expression before ‘>’ token",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/expr-random.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-randomize-no-parens.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 16,
+    "message": "no viable alternative at input 'go'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-special-scchart.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-special-state.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 12,
+    "message": "Couldn't resolve reference to NamedObject 'S1'."
+   }
+  ],
+  "errors": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "State access expressions are only permissible in methods bodies."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-strings.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "invalid operands to binary + (have ‘char *’ and ‘char *’)",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/expr-sub-ref-plain.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 12,
+    "message": "Couldn't resolve reference to ValuedObject 'x'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-ternary-compare-cond.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-ternary-nested.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 12,
+    "message": "no viable alternative at input '?'"
+   },
+   {
+    "line": 9,
+    "col": 28,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-ternary.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 33,
+    "message": "no viable alternative at input '?'"
+   },
+   {
+    "line": 9,
+    "col": 53,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-unknown-var.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Couldn't resolve reference to ValuedObject 'Y'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-vector-empty.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 8,
+    "message": "no viable alternative at input '='"
+   },
+   {
+    "line": 4,
+    "col": 11,
+    "message": "mismatched input '}' expecting 'to'"
+   },
+   {
+    "line": 4,
+    "col": 13,
+    "message": "missing EOF at 'go'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 6,
+    "message": "Non-signals should not be used in an emission."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/expr-vector-range-ref.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/expr-vectors.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "Cardinalities do not match. m at dimension 1 is an array of size 2 but only a single value is given."
+  ],
+  "ok": false
+ },
+ "probes/fuzz-duplicate-annotated.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 15,
+    "message": "The variable is declared multiple times in this scope."
+   }
+  ],
+  "compileErrors": [
+   "duplicate member ‘light’",
+   "duplicate member ‘light’",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/fuzz-immediate-unresolved.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 3,
+    "col": 19,
+    "message": "Couldn't resolve reference to State 'C'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 3,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/fuzz-policy-after-states.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "mismatched input 'policy' expecting '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/fuzz-relative-unresolved.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 3,
+    "col": 6,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 3,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 3,
+    "col": 17,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 3,
+    "col": 21,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 3,
+    "col": 29,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 3,
+    "col": 32,
+    "message": "Couldn't resolve reference to ValuedObject 'o'."
+   },
+   {
+    "line": 3,
+    "col": 51,
+    "message": "Couldn't resolve reference to ValuedObject 'V'."
+   },
+   {
+    "line": 3,
+    "col": 54,
+    "message": "Couldn't resolve reference to ValuedObject 'x'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 6,
+    "message": "This assignment reads O, so the compiler treats it as an update of O (a relative write, as in the deprecated old SC syntax).\nWrite it as O += 1 to say so. In one region it means the same.\nIt only matters when another region also writes O in the same tick: this assignment then runs after that write instead of conflicting with it."
+   },
+   {
+    "line": 3,
+    "col": 17,
+    "message": "This assignment looks like old relative write SC syntax and is considered deprecated.\nIf you want to create a relative write in new syntax, please use an infix assignment operator."
+   },
+   {
+    "line": 3,
+    "col": 32,
+    "message": "This assignment looks like old relative write SC syntax and is considered deprecated.\nIf you want to create a relative write in new syntax, please use an infix assignment operator."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/fuzz-super-not-inherited.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 4,
+    "col": 13,
+    "message": "Couldn't resolve reference to ValuedObject 'rnd'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/fuzz-unresolved-array-size.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 3,
+    "col": 9,
+    "message": "Couldn't resolve reference to ValuedObject 'N'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/import-ext-id.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 1,
+    "col": 8,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-any-other.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 20,
+    "message": "no viable alternative at input '$'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-caret-ids.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "expected identifier or ‘(’ before ‘^’ token",
+   "expected identifier before ‘^’ token",
+   "expected identifier or ‘(’ before ‘^’ token",
+   "expected identifier before ‘^’ token",
+   "expected identifier before ‘^’ token",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/lex-clock-minus.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input '='"
+   },
+   {
+    "line": 9,
+    "col": 10,
+    "message": "mismatched character '1' expecting 't'"
+   },
+   {
+    "line": 9,
+    "col": 18,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Non-signals should not be used in an emission."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-comment-at-eof.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 1,
+    "message": "no viable alternative at character '<EOF>'"
+   },
+   {
+    "line": 4,
+    "col": 2,
+    "message": "extraneous input '/' expecting EOF"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-comments.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 6,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-deep-name.sctx": {
+  "syntax": [
+   {
+    "line": 10,
+    "col": 6,
+    "message": "mismatched character '=' expecting 'd'"
+   },
+   {
+    "line": 10,
+    "col": 13,
+    "message": "no viable alternative at input '1'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-doc-comment-at-end.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "no viable alternative at input '}'"
+   },
+   {
+    "line": 4,
+    "col": 1,
+    "message": "mismatched input '}' expecting 'state'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-doc-comment-before-brace.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 5,
+    "message": "no viable alternative at input '}'"
+   },
+   {
+    "line": 4,
+    "col": 3,
+    "message": "mismatched input '}' expecting 'state'"
+   },
+   {
+    "line": 5,
+    "col": 1,
+    "message": "extraneous input '}' expecting EOF"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 5,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-doc-comment-before-state.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-empty-line-comment-crlf.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-empty-line-comment.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 5,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-hostcode-unclosed.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "mismatched character '<EOF>' expecting '`'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-hostcode.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘printf’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/lex-int-max.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-int-too-large.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 10,
+    "message": "For input string: \"2147483648\""
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-keyword-name.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 17,
+    "message": "missing RULE_ID at 'go'"
+   },
+   {
+    "line": 3,
+    "col": 1,
+    "message": "mismatched input '}' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-keyword-var.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 7,
+    "message": "missing RULE_ID at 'region'"
+   },
+   {
+    "line": 3,
+    "col": 3,
+    "message": "no viable alternative at input 'initial'"
+   }
+  ],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 7,
+    "message": "Every region must have an initial state."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-lone-underscore.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "no viable alternative at input '_'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-nbsp.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 10,
+    "message": "extraneous input ' ' expecting 'state'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-number-exp-missing.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input '='"
+   },
+   {
+    "line": 9,
+    "col": 10,
+    "message": "required (...)+ loop did not match anything at character ' '"
+   },
+   {
+    "line": 9,
+    "col": 15,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "Non-signals should not be used in an emission."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-numbers.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-primes.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "missing terminating ' character",
+   "expected ‘:’, ‘,’, ‘;’, ‘}’ or ‘__attribute__’ before ‘int’",
+   "empty character constant",
+   "‘TickData’ has no member named ‘_GO’",
+   "‘TickData’ has no member named ‘x’",
+   "expected ‘;’ before '\\x642d3e78'"
+  ],
+  "ok": false
+ },
+ "probes/lex-shallow-name-nospace.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-sl-comment-annotation-decl.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-sl-comment-annotation-state.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 20,
+    "message": "no viable alternative at input '//* not allowed here\\n'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-sl-comment-separator.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "no viable alternative at input '//***** section *****\\n'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-star-slash-comment.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "no viable alternative at input '}'"
+   },
+   {
+    "line": 4,
+    "col": 1,
+    "message": "mismatched input '}' expecting 'scchart'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-string-bad-escape.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 20,
+    "message": "mismatched character 'd' expecting set null"
+   },
+   {
+    "line": 2,
+    "col": 27,
+    "message": "mismatched character '<EOF>' expecting '\"'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-string-multiline.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-string-unclosed.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 20,
+    "message": "mismatched character '<EOF>' expecting '\"'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-strings.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "missing terminating \" character",
+   "missing terminating \" character",
+   "‘y’ undeclared (first use in this function)",
+   "expected ‘;’ before ‘}’ token",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/lex-tab.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-true-name.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 8,
+    "message": "mismatched input 'true' expecting RULE_ID"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-unclosed-block-comment.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 1,
+    "message": "mismatched character '<EOF>' expecting '*'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/lex-underscore-ids.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/lex-unicode-name.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 24,
+    "message": "no viable alternative at input 'ü'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/only-comment.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "There is no SCChart to compile. Add a scchart declaration first."
+  ],
+  "ok": false
+ },
+ "probes/policy-pol-emit-unknown.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 6,
+    "col": 21,
+    "message": "Couldn't resolve reference to ValuedObject 'nothing'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/policy-pol-no-initial.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 5,
+    "col": 7,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [
+   "java.lang.NullPointerException: Cannot invoke \"de.cau.cs.kieler.sccharts.State.getOutgoingTransitions()\" because \"state\" is null\njava.lang.NullPointerException: Cannot invoke \"de.cau.cs.kieler.sccharts.State.getOutgoingTransitions()\" because \"state\" is null\n\tde.cau.cs.kieler.sccharts.processors.User..."
+  ],
+  "ok": false
+ },
+ "probes/policy-pol-two-initial.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "java.lang.NullPointerException: Cannot invoke \"de.cau.cs.kieler.kexpressions.MethodDeclaration.getSchedule()\" because \"it\" is null\njava.lang.NullPointerException: Cannot invoke \"de.cau.cs.kieler.kexpressions.MethodDeclaration.getSchedule()\" because \"it\" is null\n\tde.cau.cs.kieler.sccharts.processors...."
+  ],
+  "ok": false
+ },
+ "probes/policy-pol-unknown-target.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 6,
+    "col": 13,
+    "message": "Couldn't resolve reference to State 'nowhere'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/policy-pol-unknown-trigger.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 6,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'nothing'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/policy-pol-unreachable-trans.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 7,
+    "col": 7,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [
+   "Referring to scheduling directive in classes without reference to instance (counter)",
+   "Referring to scheduling directive in classes without reference to instance (counter)",
+   "Referring to scheduling directive in classes without reference to instance (counter)"
+  ],
+  "ok": false
+ },
+ "probes/policy-root-policy-region.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "Policies in SCCharts for general scheduling not yet supported. Please instantiate the SCChart as a class using 'ref'"
+  ],
+  "ok": false
+ },
+ "probes/policy-root-policy.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 7,
+    "col": 5,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [
+   "Policies in SCCharts for general scheduling not yet supported. Please instantiate the SCChart as a class using 'ref'"
+  ],
+  "ok": false
+ },
+ "probes/pragma-after-chart.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 1,
+    "message": "missing EOF at '#'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/pragma-import-deprecated.sctx": {
+  "syntax": [
+   {
+    "line": 1,
+    "col": 1,
+    "message": "no viable alternative at input 'import'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 1,
+    "col": 9,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/pragmas.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 1,
+    "message": "no viable alternative at input 'json'"
+   },
+   {
+    "line": 4,
+    "col": 1,
+    "message": "no viable alternative at input 'json'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 6,
+    "col": 8,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   },
+   {
+    "line": 7,
+    "col": 8,
+    "message": "Broken Import: There are no SCCharts models in the given directory."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/region-action.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 3,
+    "message": "Actions in regions are highly experimental and may not produce the expected results."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-brace.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-colon.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-dataflow-brace.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-dataflow-fby.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-dataflow-once.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-dataflow-ref-scalar.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 11,
+    "col": 3,
+    "message": "You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/region-dataflow-ref-vector.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-dataflow-ref.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-dataflow-state.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "no viable alternative at input 'initial'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/region-dataflow.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-duplicate-names.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 10,
+    "message": "There are multiple regions with the same name. 'R'"
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-empty-brace.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "no viable alternative at input '}'"
+   },
+   {
+    "line": 4,
+    "col": 1,
+    "message": "extraneous input '}' expecting EOF"
+   }
+  ],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "Every region must have an initial state."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/region-empty-colon.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "Every region must have an initial state."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/region-final-mismatch.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 5,
+    "col": 15,
+    "message": "All or none concurrent regions should have final states."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-for-const-end.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "The for-region range \"for i : 0 to N\" ends at N, which is not an integer literal."
+  ],
+  "ok": false
+ },
+ "probes/region-for-scalar.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/region-for.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-implicit-state.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/region-is.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 2,
+    "col": 15,
+    "message": "Couldn't resolve reference to NamedObject 'Sub12'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/region-mixed.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "mismatched input 'region' expecting '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/region-modifiers.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 9,
+    "col": 5,
+    "message": "The is no region to override."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "Illegal order of abort and non-abort regions. Abort regions are only allowed as first or last regions and cannot be mixed with regular regions."
+  ],
+  "ok": false
+ },
+ "probes/region-states-after-region.sctx": {
+  "syntax": [
+   {
+    "line": 7,
+    "col": 3,
+    "message": "mismatched input 'region' expecting '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scl-anno-json-restricted.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 18,
+    "message": "mismatched input 'go' expecting 'state'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scl-else-semi.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/scl-emit-if.sctx": {
+  "syntax": [
+   {
+    "line": 5,
+    "col": 21,
+    "message": "no viable alternative at input '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scl-emit.sctx": {
+  "syntax": [
+   {
+    "line": 5,
+    "col": 8,
+    "message": "no viable alternative at input '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scl-if-no-parens.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/scl-label-then.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "Can't schedule from _g4 to _g4",
+   "The SCG is NOT asc-schedulable!",
+   "Circular dependency involving o prevents scheduling this tick.",
+   "Circular dependency involving o prevents scheduling this tick."
+  ],
+  "ok": false
+ },
+ "probes/scl-pragma-json.sctx": {
+  "syntax": [
+   {
+    "line": 1,
+    "col": 1,
+    "message": "no viable alternative at input 'json'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scl-pragma-meta.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/scl-return-not-last.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 3,
+    "col": 20,
+    "message": "Missing Semicolon"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scl-return-semi.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 28,
+    "message": "extraneous input ';' expecting '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scope-duplicate-var.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 13,
+    "message": "The variable is declared multiple times in this scope."
+   }
+  ],
+  "compileErrors": [
+   "duplicate member ‘A’",
+   "duplicate member ‘A’",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/scope-for-counter-outside.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 8,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'i'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scope-for-counter.sctx": {
+  "syntax": [
+   {
+    "line": 7,
+    "col": 3,
+    "message": "mismatched input 'initial' expecting '}'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scope-later-const.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/scope-region-local.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 8,
+    "col": 6,
+    "message": "Couldn't resolve reference to ValuedObject 'r'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/scope-shadowing.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/scope-state-local-in-transition.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-calls.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘_rSub9’ [-Wimplicit-function-declaration]",
+   "‘A’ undeclared (first use in this function)",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "probes/state-connector-delayed.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 5,
+    "col": 3,
+    "message": "Outgoing transitions of connector states should be marked as immediate."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-connector.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-duplicate-names.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 5,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-empty-body.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-extends-cycle.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 1,
+    "col": 21,
+    "message": "Inconsistent inheritance hierarchy! Cycle including base state: Cy1"
+   },
+   {
+    "line": 4,
+    "col": 21,
+    "message": "Inconsistent inheritance hierarchy! Cycle including base state: Cy2"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-extends-missing-override.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 7,
+    "col": 10,
+    "message": "There is an inherited region with the same name, you may use the override keyword."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-extends-unknown.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 1,
+    "col": 26,
+    "message": "Couldn't resolve reference to State 'Nope'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-extends.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-generic.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "A root SCChart cannot have unbound generic parameters."
+  ],
+  "ok": false
+ },
+ "probes/state-is-by-order.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-is-byref.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-is-implicit.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 22,
+    "message": "Valued Objects are bound implicitly!\na, x, "
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-is-literal-to-output.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 22,
+    "message": "The referencing binding is erroneous!\nIt is not possible to bind the literal true \n                    to the output o !"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "There are binding errors in a referenced state!\nIt is not possible to bind the literal true \n                    to the output o !"
+  ],
+  "ok": false
+ },
+ "probes/state-is-this.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "java.lang.IllegalArgumentException: Unhandled parameter types: [de.cau.cs.kieler.kexpressions.impl.ThisExpressionImpl@2c7f06d9]\njava.lang.IllegalArgumentException: Unhandled parameter types: [de.cau.cs.kieler.kexpressions.impl.ThisExpressionImpl@2c7f06d9]\n\tde.cau.cs.kieler.sccharts.extensions.SCChar..."
+  ],
+  "ok": false
+ },
+ "probes/state-is-too-many.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 3,
+    "col": 22,
+    "message": "The referencing binding is erroneous!\nA Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced scope: A"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "There are binding errors in a referenced state!\nA Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced scope: A"
+  ],
+  "ok": false
+ },
+ "probes/state-is-unbound.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 3,
+    "col": 22,
+    "message": "The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: a"
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [
+   "There are binding errors in a referenced state!\nValued object in the referenced scope was not bound properly: a"
+  ],
+  "ok": false
+ },
+ "probes/state-is-unknown.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 3,
+    "col": 22,
+    "message": "Couldn't resolve reference to NamedObject 'Nowhere'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-is-with-body.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 27,
+    "message": "no viable alternative at input '{'"
+   },
+   {
+    "line": 4,
+    "col": 1,
+    "message": "missing EOF at '}'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 2,
+    "col": 22,
+    "message": "Couldn't resolve reference to NamedObject 'Sub8'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-is-wrong-binding.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 3,
+    "col": 32,
+    "message": "Couldn't resolve reference to ValuedObject 'nope'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-is.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-label.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-missing-name.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "extraneous input 'state' expecting RULE_ID"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-misspelt.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 11,
+    "message": "missing 'state' at 'stat'"
+   },
+   {
+    "line": 2,
+    "col": 16,
+    "message": "no viable alternative at input 'S0'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-modifiers-all.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [S0, C]"
+   },
+   {
+    "line": 5,
+    "col": 3,
+    "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [S0, C]"
+   }
+  ],
+  "compileErrors": [
+   "Can't schedule from _g1 to _g1",
+   "The SCG is NOT asc-schedulable!",
+   "Circular dependency prevents scheduling this tick.",
+   "Circular dependency prevents scheduling this tick."
+  ],
+  "ok": false
+ },
+ "probes/state-modifiers-order.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 9,
+    "message": "mismatched input 'initial' expecting 'region'"
+   }
+  ],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "Every region must have an initial state."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-modifiers.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-nested.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/state-no-initial.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "Every region must have an initial state."
+   }
+  ],
+  "warnings": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "The state is not reachable."
+   },
+   {
+    "line": 3,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/state-outside-chart.sctx": {
+  "syntax": [
+   {
+    "line": 1,
+    "col": 1,
+    "message": "missing EOF at 'initial'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "There is no SCChart to compile. Add a scchart declaration first."
+  ],
+  "ok": false
+ },
+ "probes/state-two-initial.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "Every region must not have more than one initial state."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/top-level-garbage.sctx": {
+  "syntax": [
+   {
+    "line": 1,
+    "col": 1,
+    "message": "missing EOF at 'hello'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "There is no SCChart to compile. Add a scchart declaration first."
+  ],
+  "ok": false
+ },
+ "probes/trans-abort-no-trigger.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 5,
+    "col": 3,
+    "message": "Abort transitions should have a trigger."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-after-body-same-line.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-annotations.sctx": {
+  "syntax": [
+   {
+    "line": 12,
+    "col": 27,
+    "message": "mismatched input 'go' expecting 'state'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "The transition is not reachable."
+   },
+   {
+    "line": 11,
+    "col": 3,
+    "message": "The transition is not reachable."
+   },
+   {
+    "line": 12,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-arrow.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 3,
+    "message": "no viable alternative at input '--'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-before-state.sctx": {
+  "syntax": [
+   {
+    "line": 2,
+    "col": 3,
+    "message": "no viable alternative at input 'go'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-count-compare.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input '=='"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 13,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-count-minus.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 3,
+    "message": "A count delay was recognized in front of an unary operation.\nIf this is not intended, use parentheses to surround your expression."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-count-number-only.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input 'go'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-count-zero.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "A count delay of 0 is not allowed on a trigger."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-count.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-deep-deferred-two-spaces.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 12,
+    "message": "mismatched character ' ' expecting 'd'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-delays.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "The transition is not reachable."
+   },
+   {
+    "line": 11,
+    "col": 3,
+    "message": "The transition is not reachable."
+   },
+   {
+    "line": 12,
+    "col": 3,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-do-before-if.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 12,
+    "message": "no viable alternative at input 'if'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 17,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-effect-double-do.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 12,
+    "message": "no viable alternative at input 'do'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 24,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-effect-trailing-semi.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 13,
+    "message": "no viable alternative at input 'go'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-effects.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-goto.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 3,
+    "message": "no viable alternative at input 'goto'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-history.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-if-alone.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "no viable alternative at input 'go'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-immediate-loop-delayed-breaks.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-immediate-loop.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [S0, S1]"
+   },
+   {
+    "line": 5,
+    "col": 3,
+    "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [S0, S1]"
+   }
+  ],
+  "compileErrors": [
+   "Can't schedule from _g1 to _g1",
+   "The SCG is NOT asc-schedulable!",
+   "Circular dependency prevents scheduling this tick.",
+   "Circular dependency prevents scheduling this tick."
+  ],
+  "ok": false
+ },
+ "probes/trans-join-simple.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 9,
+    "col": 3,
+    "message": "A state with a termination transition must have inner behaviour."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-label-no-string.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 18,
+    "message": "mismatched input 'press' expecting RULE_STRING"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-label.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-missing-go.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-missing-to.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "missing 'to' at 'S1'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-no-effect-after-do.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 6,
+    "message": "no viable alternative at input 'go'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-preemptions.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-prob-space.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 8,
+    "message": "no viable alternative at input 'Pr'"
+   },
+   {
+    "line": 9,
+    "col": 17,
+    "message": "extraneous input 'go' expecting 'to'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-prob.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-strong-after-weak.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [
+   {
+    "line": 12,
+    "col": 3,
+    "message": "Causality problem!\nStrong abort transitions must have a higher priority than weak abort or termination transitions."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-target-keyword.sctx": {
+  "syntax": [
+   {
+    "line": 9,
+    "col": 9,
+    "message": "missing RULE_ID at 'state'"
+   },
+   {
+    "line": 10,
+    "col": 3,
+    "message": "extraneous input 'state' expecting RULE_ID"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 9,
+    "col": 9,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-target-other-region.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 4,
+    "col": 9,
+    "message": "Couldn't resolve reference to State 'B'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-target-parent.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 4,
+    "col": 11,
+    "message": "Couldn't resolve reference to State 'Q'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 6,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-target-self.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-target-unknown.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 9,
+    "col": 9,
+    "message": "Couldn't resolve reference to State 'Nowhere'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "probes/trans-trigger-forms.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/trans-unreachable.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "The transition is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "probes/two-charts-same-name.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 4,
+    "col": 9,
+    "message": "There are multiple root states with the same name. 'Same'"
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/lego-mindstorms-lejos-and-sccharts-1.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/quick-start-guide-1.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-1.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-10.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-11.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-12.sctx": {
+  "syntax": [
+   {
+    "line": 22,
+    "col": 10,
+    "message": "no viable alternative at input 'to'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 22,
+    "col": 6,
+    "message": "Couldn't resolve reference to ValuedObject 'Rgo'."
+   }
+  ],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-13.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-14.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-15.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-16.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-17.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-18.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-19.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 23,
+    "col": 22,
+    "message": "Couldn't resolve reference to NamedObject 'Beep'."
+   },
+   {
+    "line": 23,
+    "col": 37,
+    "message": "Couldn't resolve reference to ValuedObject 'second'."
+   },
+   {
+    "line": 23,
+    "col": 56,
+    "message": "Couldn't resolve reference to ValuedObject 'beep'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 1,
+    "col": 8,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-2.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-20.sctx": {
+  "syntax": [
+   {
+    "line": 1,
+    "col": 1,
+    "message": "missing EOF at 'initial'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "There is no SCChart to compile. Add a scchart declaration first."
+  ],
+  "ok": false
+ },
+ "wiki/syntax-21.sctx": {
+  "syntax": [
+   {
+    "line": 1,
+    "col": 1,
+    "message": "missing EOF at 'initial'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "There is no SCChart to compile. Add a scchart declaration first."
+  ],
+  "ok": false
+ },
+ "wiki/syntax-22.sctx": {
+  "syntax": [
+   {
+    "line": 1,
+    "col": 1,
+    "message": "missing EOF at 'initial'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "There is no SCChart to compile. Add a scchart declaration first."
+  ],
+  "ok": false
+ },
+ "wiki/syntax-3.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-4.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-5.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-6.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 6,
+    "col": 8,
+    "message": "This assignment looks like old relative write SC syntax and is considered deprecated.\nIf you want to create a relative write in new syntax, please use an infix assignment operator."
+   }
+  ],
+  "compileErrors": [
+   "Cardinalities do not match. arr at dimension 1 is an array of size 2 but only a single value is given."
+  ],
+  "ok": false
+ },
+ "wiki/syntax-7.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-8.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 23,
+    "col": 5,
+    "message": "Every region should have a final state whenever its parent state has a termination transition."
+   }
+  ],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-9.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-annotations-and-pragmas-1.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 3,
+    "message": "no viable alternative at input '--'"
+   },
+   {
+    "line": 5,
+    "col": 16,
+    "message": "no viable alternative at input ';'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 5,
+    "col": 3,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-annotations-and-pragmas-2.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 5,
+    "message": "mismatched input 'region' expecting 'dataflow'"
+   },
+   {
+    "line": 6,
+    "col": 5,
+    "message": "no viable alternative at input '--'"
+   },
+   {
+    "line": 8,
+    "col": 5,
+    "message": "no viable alternative at input '--'"
+   },
+   {
+    "line": 10,
+    "col": 5,
+    "message": "no viable alternative at input '--'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 7,
+    "col": 5,
+    "message": "The state is not reachable."
+   },
+   {
+    "line": 9,
+    "col": 5,
+    "message": "The state is not reachable."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-annotations-and-pragmas-3.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 5,
+    "message": "mismatched input 'region' expecting 'dataflow'"
+   },
+   {
+    "line": 5,
+    "col": 5,
+    "message": "no viable alternative at input '--'"
+   },
+   {
+    "line": 6,
+    "col": 11,
+    "message": "mismatched input 'state' expecting 'region'"
+   },
+   {
+    "line": 8,
+    "col": 5,
+    "message": "mismatched input 'region' expecting 'dataflow'"
+   },
+   {
+    "line": 10,
+    "col": 5,
+    "message": "no viable alternative at input '--'"
+   },
+   {
+    "line": 11,
+    "col": 11,
+    "message": "mismatched input 'state' expecting 'region'"
+   }
+  ],
+  "linking": [],
+  "errors": [
+   {
+    "line": 6,
+    "col": 5,
+    "message": "Every region must have an initial state."
+   },
+   {
+    "line": 11,
+    "col": 5,
+    "message": "Every region must have an initial state."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-annotations-and-pragmas-4.sctx": {
+  "syntax": [
+   {
+    "line": 4,
+    "col": 12,
+    "message": "no viable alternative at input ';'"
+   },
+   {
+    "line": 5,
+    "col": 16,
+    "message": "no viable alternative at input ';'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-annotations-and-pragmas-5.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "mismatched input 'region' expecting 'dataflow'"
+   },
+   {
+    "line": 5,
+    "col": 14,
+    "message": "no viable alternative at input ';'"
+   },
+   {
+    "line": 6,
+    "col": 18,
+    "message": "no viable alternative at input ';'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-annotations-and-pragmas-6.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 12,
+    "message": "no viable alternative at input ';'"
+   },
+   {
+    "line": 5,
+    "col": 16,
+    "message": "no viable alternative at input ';'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-annotations-and-pragmas-7.sctx": {
+  "syntax": [
+   {
+    "line": 3,
+    "col": 3,
+    "message": "no viable alternative at input '.'"
+   }
+  ],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-dataflow-1.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-dataflow-2.sctx": {
+  "syntax": [
+   {
+    "line": 5,
+    "col": 7,
+    "message": "no viable alternative at input '#'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 8,
+    "col": 7,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 8,
+    "col": 9,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 8,
+    "col": 14,
+    "message": "Couldn't resolve reference to ValuedObject 'A2'."
+   },
+   {
+    "line": 8,
+    "col": 17,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 8,
+    "col": 22,
+    "message": "Couldn't resolve reference to ValuedObject 'A3'."
+   },
+   {
+    "line": 8,
+    "col": 25,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 9,
+    "col": 8,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 9,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 9,
+    "col": 15,
+    "message": "Couldn't resolve reference to ValuedObject 'A2'."
+   },
+   {
+    "line": 9,
+    "col": 18,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 9,
+    "col": 23,
+    "message": "Couldn't resolve reference to ValuedObject 'A3'."
+   },
+   {
+    "line": 9,
+    "col": 26,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 10,
+    "col": 8,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 10,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 10,
+    "col": 15,
+    "message": "Couldn't resolve reference to ValuedObject 'A2'."
+   },
+   {
+    "line": 10,
+    "col": 18,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 10,
+    "col": 23,
+    "message": "Couldn't resolve reference to ValuedObject 'A3'."
+   },
+   {
+    "line": 10,
+    "col": 26,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 11,
+    "col": 8,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 11,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 11,
+    "col": 15,
+    "message": "Couldn't resolve reference to ValuedObject 'A2'."
+   },
+   {
+    "line": 11,
+    "col": 18,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 11,
+    "col": 23,
+    "message": "Couldn't resolve reference to ValuedObject 'A3'."
+   },
+   {
+    "line": 11,
+    "col": 26,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 1,
+    "col": 8,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-dataflow-3.sctx": {
+  "syntax": [
+   {
+    "line": 6,
+    "col": 7,
+    "message": "no viable alternative at input '#'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 9,
+    "col": 3,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 9,
+    "col": 5,
+    "message": "Couldn't resolve reference to ValuedObject 'I'."
+   },
+   {
+    "line": 9,
+    "col": 13,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 9,
+    "col": 15,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 10,
+    "col": 7,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 10,
+    "col": 9,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 1,
+    "col": 8,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-dataflow-4.sctx": {
+  "syntax": [
+   {
+    "line": 6,
+    "col": 7,
+    "message": "no viable alternative at input '#'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 9,
+    "col": 3,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 10,
+    "col": 3,
+    "message": "Couldn't resolve reference to ValuedObject 'A2'."
+   },
+   {
+    "line": 10,
+    "col": 12,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 10,
+    "col": 14,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   },
+   {
+    "line": 11,
+    "col": 3,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 11,
+    "col": 5,
+    "message": "Couldn't resolve reference to ValuedObject 'I3'."
+   },
+   {
+    "line": 12,
+    "col": 7,
+    "message": "Couldn't resolve reference to ValuedObject 'A2'."
+   },
+   {
+    "line": 12,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'O'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 1,
+    "col": 8,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-dataflow-5.sctx": {
+  "syntax": [
+   {
+    "line": 7,
+    "col": 7,
+    "message": "no viable alternative at input '#'"
+   }
+  ],
+  "linking": [
+   {
+    "line": 10,
+    "col": 3,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 11,
+    "col": 3,
+    "message": "Couldn't resolve reference to ValuedObject 'A2'."
+   },
+   {
+    "line": 11,
+    "col": 15,
+    "message": "Couldn't resolve reference to ValuedObject 'A'."
+   },
+   {
+    "line": 11,
+    "col": 17,
+    "message": "Couldn't resolve reference to ValuedObject 'out'."
+   },
+   {
+    "line": 12,
+    "col": 7,
+    "message": "Couldn't resolve reference to ValuedObject 'A2'."
+   },
+   {
+    "line": 12,
+    "col": 10,
+    "message": "Couldn't resolve reference to ValuedObject 'out'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 1,
+    "col": 8,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-hostcode-1.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘rand’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "wiki/syntax-hostcode-2.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "implicit declaration of function ‘srand’ [-Wimplicit-function-declaration]",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "wiki/syntax-hostcode-3.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "unknown type name ‘int64’; did you mean ‘int’?",
+   "unknown type name ‘int64’; did you mean ‘int’?",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "wiki/syntax-object-orientation-1.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 2,
+    "col": 11,
+    "message": "Couldn't resolve reference to State 'ButtonBehavior'."
+   },
+   {
+    "line": 2,
+    "col": 27,
+    "message": "Couldn't resolve reference to State 'MotorBehavior'."
+   },
+   {
+    "line": 5,
+    "col": 17,
+    "message": "Couldn't resolve reference to ValuedObject 'buttonPressed'."
+   },
+   {
+    "line": 7,
+    "col": 21,
+    "message": "Couldn't resolve reference to NamedObject 'HandleMotor'."
+   }
+  ],
+  "errors": [
+   {
+    "line": 4,
+    "col": 3,
+    "message": "The is no region to override."
+   }
+  ],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-object-orientation-10.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "unknown type name ‘Counter’",
+   "request for member ‘increment’ in something not a structure or union",
+   "request for member ‘decrement’ in something not a structure or union",
+   "request for member ‘getValue’ in something not a structure or union",
+   "unknown type name ‘Counter’",
+   "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "ok": false
+ },
+ "wiki/syntax-object-orientation-11.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "Can't schedule from _g3b to _g7b",
+   "Can't schedule from _g7b to _g3b",
+   "Can't schedule from _g3b to _g3c",
+   "Can't schedule from _g3c to _g2",
+   "Can't schedule from _g7b to _g6",
+   "Can't schedule from _g3b to _g11b"
+  ],
+  "ok": false
+ },
+ "wiki/syntax-object-orientation-12.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-13.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-14.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-2.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-3.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-4.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-5.sctx": {
+  "syntax": [],
+  "linking": [
+   {
+    "line": 7,
+    "col": 7,
+    "message": "Couldn't resolve reference to EObject 'ControlledCountingCounter'."
+   },
+   {
+    "line": 9,
+    "col": 37,
+    "message": "Couldn't resolve reference to ValuedObject 'getValue'."
+   },
+   {
+    "line": 10,
+    "col": 37,
+    "message": "Couldn't resolve reference to ValuedObject 'getValue'."
+   },
+   {
+    "line": 14,
+    "col": 25,
+    "message": "Couldn't resolve reference to ValuedObject 'start'."
+   },
+   {
+    "line": 15,
+    "col": 24,
+    "message": "Couldn't resolve reference to ValuedObject 'stop'."
+   },
+   {
+    "line": 20,
+    "col": 25,
+    "message": "Couldn't resolve reference to ValuedObject 'start'."
+   },
+   {
+    "line": 21,
+    "col": 24,
+    "message": "Couldn't resolve reference to ValuedObject 'stop'."
+   }
+  ],
+  "errors": [],
+  "warnings": [
+   {
+    "line": 1,
+    "col": 8,
+    "message": "Broken Import: There is no SCCharts model with the given name."
+   }
+  ],
+  "compileErrors": [],
+  "ok": false
+ },
+ "wiki/syntax-object-orientation-6.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-7.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-8.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-object-orientation-9.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [
+   "unknown type name ‘Counter’",
+   "request for member ‘increment’ in something not a structure or union",
+   "request for member ‘getValue’ in something not a structure or union",
+   "request for member ‘decrement’ in something not a structure or union",
+   "request for member ‘getValue’ in something not a structure or union",
+   "unknown type name ‘Counter’"
+  ],
+  "ok": false
+ },
+ "wiki/syntax-timed-automata-1.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-timed-automata-2.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ },
+ "wiki/syntax-timed-automata-3.sctx": {
+  "syntax": [],
+  "linking": [],
+  "errors": [],
+  "warnings": [],
+  "compileErrors": [],
+  "ok": true
+ }
+}

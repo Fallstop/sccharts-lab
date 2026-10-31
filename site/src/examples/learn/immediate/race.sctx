@@ -1,0 +1,11 @@
+scchart Race {
+  input bool A, B
+  output int path = 0
+
+  initial state Choose
+    if A do path = 1 go to Done
+    immediate if B do path = 2 go to Done
+
+  state Done
+    go to Choose
+}

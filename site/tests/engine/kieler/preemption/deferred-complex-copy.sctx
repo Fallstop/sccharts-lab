@@ -1,0 +1,12 @@
+scchart DeferredComplex {
+  input bool A
+  output int entries = 0, moves = 0
+
+  initial state B {
+    entry do entries += 1
+  }
+  immediate if A do moves += 1 go to C
+
+  state C
+  immediate go to B deferred
+}

@@ -1,0 +1,16 @@
+// Two methods may share a name if they have different numbers of parameters; each call runs the matching one
+// (official KIELER 0.3.0 runs add() for both calls).
+scchart St121Overload {
+  output int O = 0
+  class C {
+    int v
+    void add() {
+      v++
+    }
+    void add(int k) {
+      v += k
+    }
+  } c
+  initial state A
+  do c.add(); c.add(10); O = c.v go to A
+}

@@ -1,0 +1,33 @@
+// Found by the differential fuzzer (tools/fuzz): the dependency analysis stops at C0's C0xs1r0s0 (a region that starts
+// in a state without code, probe-reference-dependency-stop), so the count delay's own regions get no dependencies.
+// KIELER tests whether the count was reached before it records it, and R0s0r0s0's transition fires one tick late
+// (in the tick after the third d).
+scchart F187 {
+  input bool a, b, c, d
+  output int x = 0, y = 0, z = 0
+  region R0 {
+    initial state R0s0 {
+      region {
+        initial state R0s0r0s0
+        if 3 d go to R0s0r0s0
+      }
+      region {
+        initial state R0s0r1s0 is C0(a, b, y)
+      }
+    }
+  }
+}
+
+scchart C0 {
+  input bool p, q
+  output int o = 0
+  initial state C0xs0
+  go to C0xs1
+  state C0xs1 {
+    region {
+      initial state C0xs1r0s0
+      immediate go to C0xs1r0s0
+    }
+  }
+  go to C0xs0
+}

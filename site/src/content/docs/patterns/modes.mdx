@@ -1,0 +1,226 @@
+---
+title: "Mode switching"
+description: "Switching between operating modes safely: request the switch, wait for a safe point, then commit."
+sidebar:
+  order: 6
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Most devices have **modes**: a coffee machine serves coffee or cleans itself, a printer prints or runs
+maintenance, a robot works or charges. In SCCharts a mode is naturally a superstate with its own
+behaviour inside, and switching modes is a transition out of it. The hard part is not the transition. It
+is *when* to take it: a mode is often in the middle of something that must not be cut short, and
+whatever it switched on must be switched off.
+
+This page develops a coffee machine with two modes, `Serving` and `Cleaning`, in three steps: a switch
+that cuts in at any time, the same with exit actions that clean up, and a switch that waits for a safe
+point. At the end it adds an emergency stop, which must not wait. It builds on
+[superstates](/learn/hierarchy/), [aborts](/learn/preemption/), [actions](/learn/actions/) and the
+[latch pattern](/patterns/latch/).
+
+## Two modes and an abrupt switch
+
+`Serving` makes coffee: a brew request switches the heater on, the machine heats for a tick, then pours
+for two ticks, then switches the heater off and counts the cup. `Cleaning` rinses for a tick, flushes
+for a tick, and then hands back to `Serving` with a `join to`. The first attempt switches to cleaning
+whenever `clean` is pressed:
+
+```sctx
+initial state Serving {
+  ...
+}
+if clean go to Cleaning
+```
+
+`if clean go to Cleaning` leaves `Serving` from whatever inner state it is in. In `CoffeeAbrupt`, a press in
+the middle of a brew (tick 3) abandons the cup and leaves the heater on:
+
+<Compare a="patterns/modes/coffee-abrupt" b="patterns/modes/coffee-exit" scenario="b" caption="After tick 3, `heater` stays on in `CoffeeAbrupt` until the next brew happens to switch it off. `CoffeeExitAction` switches it off on the way out." />
+
+**Abrupt** is `heater` in `CoffeeAbrupt`, **Exit** is `heater` in `CoffeeExitAction`, and `cups` is the
+same in both:
+
+| Tick | Inputs | Abrupt | Exit | `cups` |
+| ---: | --- | --- | --- | ---: |
+| 2 | `brew` | true | true | 0 |
+| 3 | `clean` | true | false | 0 |
+| 6 | none | true | false | 0 |
+| 10 | none | false | false | 1 |
+| 12 | `brew`, `clean` | true | false | 1 |
+| 15 | none | true | false | 1 |
+
+Two things went wrong in `CoffeeAbrupt`:
+
+- **Nothing switched the heater off.** The heater was switched on by a transition inside `Serving`, and
+  only another transition inside `Serving` switches it off. When `Serving` is left early, that
+  transition never runs. The pump is fine: it is switched by `Pouring`'s entry and exit actions, and
+  exit actions run however a state is left.
+- **The weak abort grants a last wish.** `go to` is a weak abort, so the inside of `Serving` finishes
+  its tick before the mode is left. In tick 12, `brew` and `clean` arrive together: `Ready` starts the
+  brew (heater on), and only then does the machine switch to cleaning.
+
+### Cleaning up on the way out
+
+The fix for the first problem, in `CoffeeExitAction`, is one line: `exit do heater = false` on `Serving`. An exit
+action is the mode's "finally" block. Use it for every output the mode may have switched on, and the next
+mode starts from a known state, however the old one ended.
+
+That makes the switch *safe* for the hardware. It does not make it *good*: a press of `clean` still
+throws away a half-made cup. To fix that, the switch must wait.
+
+## Request, wait for a safe point, commit
+
+A **safe point** is a moment at which the mode can be left without harm. For the coffee machine it is
+`Ready`: no cup in progress. A safe switch has three parts:
+
+1. **Request.** Remember that a switch was asked for, whenever it was asked for. That is a latch.
+2. **Wait.** Let the current mode carry on until it reaches a safe point.
+3. **Commit.** At the safe point, leave the mode.
+
+<Sim example="patterns/modes/coffee-machine" caption="`clean` in tick 3 is remembered; the cup is finished in tick 5, and cleaning starts in tick 6." />
+
+Each part is one or two lines:
+
+- **Request**: `during if clean do cleanWanted = true` on `Serving` records a request in every tick in
+  which `Serving` is active, except the tick in which it was entered. A `during` action of a superstate
+  runs alongside its inner states, so the brew is not disturbed.
+- **Wait**: only `Ready` looks at the request. `Heating` and `Pouring` do not, so a cup that has been
+  started is finished.
+- **Commit**: in `Ready`, `if cleanWanted go to Stopped` enters a final state, so `Serving` terminates,
+  and its `join to Cleaning` fires in the same tick. The join's effect clears the request.
+
+`CoffeeMachine` has no exit action for the heater, and needs none: it leaves `Serving` only from `Ready`,
+where the heater is already off. Add one anyway as soon as a mode can be left in another way, as the
+emergency stop below shows.
+
+The request and the commit both write `cleanWanted`: the during action sets it, the join clears it.
+KIELER accepts that, because the two are not concurrent. The join is a transition of the region around
+`Serving`, and it is taken only after `Serving` has finished its tick. The during action, on the other
+hand, *is* concurrent with `Serving`'s inner states: KIELER runs a superstate's during action like an
+extra region alongside them. So, as between any concurrent regions, its write of `cleanWanted` comes
+before `Ready`'s read of it in the same tick. In tick 10, when `brew` and `clean` arrive together,
+`Ready` already sees the request.
+
+Here is the switch, tick by tick. **State** is the state after the tick, and **Request** is
+`cleanWanted`:
+
+| Tick | Inputs | State | Request |
+| ---: | --- | --- | --- |
+| 2 | `brew` | Serving, Heating | false |
+| 3 | `clean` | Serving, Pouring | true |
+| 4 | none | Serving, Pouring | true |
+| 5 | none | Serving, Ready (the cup is done) | true |
+| 6 | none | Cleaning, Rinse | false |
+| 8 | none | Serving, Ready | false |
+| 10 | `brew`, `clean` | Cleaning, Rinse | false |
+
+Tick 5 to tick 6 is worth a second look. The cup is finished in tick 5, which enters `Ready`, and the
+switch is committed one tick later: `Ready`'s transitions are delayed, so they are not checked in the
+tick `Ready` is entered. If you want the commit in the very tick the safe point is reached, make the
+transition `immediate if cleanWanted go to Stopped`.
+
+Notice the policy decisions this chart makes, and that you should make on purpose in your own:
+
+- **Who wins at the safe point?** `Ready` tries `if cleanWanted` before `if brew`, so a pending clean
+  beats a new brew request, also when both arrive in the same tick (tick 10).
+- **What happens to requests that arrive in the wrong mode?** A brew request during cleaning is
+  ignored. The exercise below remembers it instead.
+
+## Switches that must not wait
+
+Some switches must happen at once, safe point or not: a fault, a lid opened, an emergency stop. That is a
+**strong abort** from a superstate around all the normal modes:
+
+<Sim example="patterns/modes/coffee-emergency" caption="Tick 4: a fault in the middle of a cup. Everything stops, and the exit actions switch the heater and the pump off." />
+
+`if fault abort to Halted` is checked before anything inside `Operating` reacts, so in tick 4 nothing
+inside it moves: no inner transition fires and no during action runs. Yet the heater and pump do go
+off: exit actions run on strong aborts too, innermost first (`Pouring`'s, then `Serving`'s). This surprises people who have read
+the KIELER wiki, which says that a strong abort suppresses exit actions. KIELER's compiler does run
+them, and that is what makes exit actions useful for safety: whatever ends a mode, its outputs are put
+into a safe state.
+
+If `Operating` also had weak aborts or a `join to`, the strong abort would have to be written first;
+otherwise KIELER rejects the chart with `Causality problem!` and:
+
+```text wrap
+Strong abort transitions must have a higher priority than weak abort or termination transitions.
+```
+
+For more on supervising a chart and forcing a safe state, see [watchdogs](/patterns/watchdog/).
+
+<Aside type="note" title="Coming back where you left off">
+Leaving a superstate and entering it again starts it from its initial states. If a mode should resume
+where it was interrupted, enter it with `go to Serving history` instead of `go to Serving`;
+[History](/advanced/history/) explains history transitions. Mind their limit in KIELER: at present it
+honours them only for states in the chart's top-level regions (and inside states that are themselves
+history targets). Anywhere else, such as `Serving` inside `Operating`, the `history` is silently ignored
+and the state restarts.
+</Aside>
+
+## Try it
+
+<TryIt example="patterns/modes/coffee-queue-starter" solution="patterns/modes/coffee-queue" title="A brew request during cleaning">
+In the starter, a brew request during cleaning is lost: press `clean` in tick 2 and `brew` in tick
+3, while the machine is cleaning, and no cup is ever made. Change it so that the request is remembered
+and the cup is made as soon as `Serving` is back in `Ready`: with these inputs, the heater should go on in
+tick 5 and `cups` should be 1 in tick 8. Use the same request-and-commit idea as for cleaning, in the
+other direction, and clear the request when the brew starts. If KIELER warns
+`Instantaneous loop detected!` about your chart (SCCharts Lab: `Potential instantaneous loop`, followed by
+the variables involved), that is a [false alarm](/reference/errors/#instantaneous-loop-detected) here.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/modes/coffee-predict"
+  ask={[{ tick: 3, value: 'rinsing' }, { tick: 5, value: 'heater' }, { tick: 8, value: 'rinsing' }, { tick: 9, value: 'rinsing' }]}
+  caption="The safe coffee machine, `CoffeeMachine`, with new inputs. What are `rinsing` and `heater` after these ticks?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`rinsing` is true after tick 3, `heater` is true after tick 5, and `rinsing` is false after tick 8 and
+true after tick 9. The `clean` of tick 2 found the machine in `Ready`, so cleaning started at once, and
+the `brew` of tick 3 is ignored: `Cleaning` has no transition for it. Back in `Ready`, the `brew` of
+tick 5 switches the heater on. The `clean` of tick 6 comes during the brew: it is recorded, the cup is
+finished in tick 8, and the switch is committed in tick 9, because `Ready`'s transitions are delayed.
+
+</details>
+
+<Quiz
+  question="`Serving` is left by a strong abort, `if fault abort to Halted` on a superstate around it, while `Pouring` is active. Which actions run in that tick?"
+  options={['None: a strong abort skips all actions', 'The inner transitions of the tick, then the exit actions', "Only `Serving`'s exit action, not that of `Pouring`", 'The exit actions of `Pouring` and `Serving`, innermost first']}
+  answer={3}
+>
+A strong abort prevents the inner behaviour of the tick: no transitions inside fire and no during
+actions run. But KIELER runs the exit actions of every state being left, the innermost first, also on a
+strong abort. That is why an exit action is the right place to switch outputs off.
+</Quiz>
+
+<Quiz
+  question="Why does the safe coffee machine record the clean request with a `during` action on `Serving`, instead of a transition `if clean go to …` from `Heating` and `Pouring`?"
+  options={['A transition cannot set a variable, but an action can', 'During actions always run before the transitions of a tick', 'A transition would leave the state and cut the brew short']}
+  answer={2}
+>
+The point is to let the brew continue. A during action of a superstate runs alongside its inner states
+in every tick after the entry tick, so it can note the request while `Heating` and `Pouring` carry on.
+Only `Ready`, the safe point, acts on it.
+</Quiz>
+
+<KeyIdeas>
+- A mode is a superstate; switching modes is a transition out of it.
+- Give every mode exit actions that switch off what it may have switched on. Exit actions run on every
+  kind of exit, strong aborts included.
+- A weak abort (`go to`) lets the mode finish its tick first; that last wish can start things you did not
+  want started.
+- Safe switching: latch the request, act on it only at a safe point, and commit by terminating the mode
+  (final state and `join to`).
+- Switches that must not wait (faults) are strong aborts on a superstate around all normal modes, written
+  before any weak abort.
+</KeyIdeas>
+
+Next, [Handshakes](/patterns/handshake/): a request and an acknowledgement between two regions.

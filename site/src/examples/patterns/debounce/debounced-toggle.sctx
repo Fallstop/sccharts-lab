@@ -1,0 +1,29 @@
+scchart DebouncedToggle {
+  input bool raw
+  output bool light
+  signal press
+
+  region Debounce {
+    initial state Released
+      if raw go to MaybePressed
+
+    state MaybePressed
+      if !raw go to Released
+      if 2 raw do press go to Pressed
+
+    state Pressed
+      if !raw go to MaybeReleased
+
+    state MaybeReleased
+      if raw go to Pressed
+      if 2 !raw go to Released
+  }
+
+  region Toggle {
+    initial state Off
+      if press do light = true go to On
+
+    state On
+      if press do light = false go to Off
+  }
+}

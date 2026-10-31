@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters `Room`: its entry action counts the visit. `visits` has no initial value, so KIELER warns, but like every variable without an initial value it starts at 0."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`Room` goes to `Hall`."
+    },
+    {
+      "note": "Back in `Room`: a `static` variable keeps its value when its state is left, so this is visit 2."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,11 @@
+// key[i] && armed in a for-region copy: the index is the copy's constant, kept.
+scchart IdxFor {
+  input bool key[2]
+  input bool armed
+  output int y = 0
+  region for i : 0 to 1 {
+    initial state Off
+      if key[i] && armed do y++ go to On
+    state On
+  }
+}

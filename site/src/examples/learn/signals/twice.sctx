@@ -1,0 +1,8 @@
+scchart Twice {
+  input bool a
+  output signal int total combine +
+  output signal int latest
+
+  initial state Run
+    if a do total(1); total(2); latest(1); latest(2) go to Run
+}

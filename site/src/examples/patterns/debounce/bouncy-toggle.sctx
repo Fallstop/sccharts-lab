@@ -1,0 +1,10 @@
+scchart BouncyToggle {
+  input bool raw
+  output bool light
+
+  initial state Off
+    if raw && !pre(raw) do light = true go to On
+
+  state On
+    if raw && !pre(raw) do light = false go to Off
+}

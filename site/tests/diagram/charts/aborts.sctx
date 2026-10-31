@@ -1,0 +1,23 @@
+scchart Aborts {
+  input bool I, S, W, Imm
+  output int F = 0
+
+  initial state A {
+    initial state A0
+      immediate if I && Imm go to A1
+      if I go to A2
+    final state A1
+    final state A2
+  }
+  immediate if S && Imm do F = 1 abort to F1
+  if S do F = 2 abort to F2
+  immediate if W && Imm do F = 3 go to F3
+  if W do F = 5 go to F4
+  do F = 5 join to F5
+
+  final state F1
+  final state F2
+  final state F3
+  final state F4
+  final state F5
+}

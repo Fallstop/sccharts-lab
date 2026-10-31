@@ -1,0 +1,7 @@
+scchart UnsignedShift {
+  input int I
+  output int half
+
+  initial state Idle
+    do half = I >>> 1 go to Idle
+}

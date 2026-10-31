@@ -1,0 +1,48 @@
+{
+ "ticks": [
+  {
+   "inputs": {
+    "a": false,
+    "c": false
+   },
+   "note": "Two delayed strong aborts of a superstate back to itself, the last without trigger (KIELER's netlist drops the default path of the watcher)."
+  },
+  {
+   "inputs": {
+    "c": false
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "c": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "c": false
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "c": false
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "c": true
+   },
+   "note": "Next tick."
+  },
+  {
+   "inputs": {
+    "c": false
+   },
+   "note": "Next tick."
+  }
+ ],
+ "expect": "ok"
+}

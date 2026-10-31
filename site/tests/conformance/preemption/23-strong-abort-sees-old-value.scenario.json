@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "A strong abort's trigger is checked before the inner behaviour, so it reads flag = false. The inner transition then sets flag = true (inner = 1), but M stays: effect = 0."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Now flag is true at the start of the tick: the strong abort fires, effect = 1."
+    }
+  ],
+  "expect": "ok"
+}

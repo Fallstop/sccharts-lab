@@ -1,0 +1,16 @@
+{
+  "ticks": [
+    { "inputs": { "knock": false, "away": false }, "note": "Tick 1 enters `Shut` in both charts. `KnockByHand`'s entry action sets `count = 0`." },
+    { "inputs": { "knock": true }, "note": "First knock. `KnockByHand`'s during action counts it: `count` is 1. Its trigger reads `pre(count)`, 0, so it does not fire; `Knock`'s count delay has one tick too." },
+    { "inputs": { "knock": false }, "note": "A pause: `count` stays 1. The ticks need not be consecutive." },
+    { "inputs": { "knock": true }, "note": "Second knock: `count` is 2, and `pre(count)` was 1." },
+    { "inputs": { "knock": false, "away": true }, "note": "The visitor walks away before the third knock: both charts leave `Shut` for `Away`." },
+    { "inputs": { "away": false }, "note": "Back again: `Shut` is entered anew. `KnockByHand`'s entry action resets `count` to 0, and `Knock`'s count delay starts from zero as well." },
+    { "inputs": { "knock": true }, "note": "First knock of the new visit: `count` is 1." },
+    { "inputs": { "knock": false }, "note": "Pause: `count` stays 1." },
+    { "inputs": { "knock": true }, "note": "Second knock: `count` is 2." },
+    { "inputs": {}, "note": "Third tick with `knock` in this visit. `KnockByHand` sees `pre(count) == 2` and `knock`, and `Knock`'s count delay reaches 3: both doors open in this same tick." },
+    { "inputs": {}, "note": "Both open." }
+  ],
+  "expect": "ok"
+}

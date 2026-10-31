@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Tick 1 enters A; its transition is delayed, so all three outputs are still 0."},
+    {"inputs": {}, "note": "The effects run left to right and each sees the writes before it: x = 1, then y = 1, then x = 5, then z = 5 + 1 = 6."},
+    {"inputs": {}, "note": "B has no transitions: nothing changes."}
+  ],
+  "expect": "ok"
+}

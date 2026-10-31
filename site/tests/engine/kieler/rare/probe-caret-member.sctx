@@ -1,0 +1,9 @@
+scchart CaretMember {
+  input bool A
+  output int o = 0
+  class Box {
+    int ^v = 0
+  } box
+  initial state S
+    if A do box.^v++; o = box.^v go to S
+}

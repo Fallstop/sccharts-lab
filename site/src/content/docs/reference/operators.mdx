@@ -1,0 +1,280 @@
+---
+title: "Operators"
+description: "Expressions in SCTX: operator precedence with KIELER’s quirks, assignment operators, pre and val, and what each type means in C."
+sidebar:
+  order: 3
+---
+
+import { Sim } from '~components/guide'
+import HowKielerReads from '~components/HowKielerReads.astro'
+import { Aside } from '@astrojs/starlight/components'
+
+Expressions appear in triggers (`if count > 3`), in effects (`do total = a + b`), in initial values and
+in dataflow equations. They look like C, and most of the time they behave like C, because KIELER
+turns them into C code. The exceptions are in how expressions are *grouped*: KIELER's grammar has a
+few rules that C does not, and they catch out experienced C programmers. This page lists them all,
+derived from KIELER's expression grammar and checked with KIELER's compiler.
+
+## Precedence
+
+The table runs from the operator that binds loosest, at the top, to the one that binds tightest: in
+`A || B && C` the `&&` binds tighter, so it means `A || (B && C)`.
+
+| Operators | Example |
+| --- | --- |
+| `\|\|` | `A \|\| B && C` is `A \|\| (B && C)` |
+| `&&` | `A && B \| C` is `A && (B \| C)` |
+| `\|` (bitwise or) | `a \| b ^ c` is `a \| (b ^ c)` |
+| `^` (bitwise exclusive or) | `a ^ b & c` is `a ^ (b & c)` |
+| `&` (bitwise and) | `A & 3 == 2` is `A & (3 == 2)`, as in C |
+| `==` `!=` `<` `<=` `>` `>=` | `x + 1 > y` is `(x + 1) > y`; [one at a time](#comparisons-do-not-chain) |
+| `<<` `>>` `>>>` | `a << b + c` is `a << (b + c)` |
+| `+` `-` | `a + b * c` is `a + (b * c)` |
+| `*` `/` `%` | `-a * b` is `(-a) * b` |
+| unary `-` | `-a`, `-(x + 1)` |
+| `c ? a : b` | `x > 2 ? x : 0` is `x > (2 ? x : 0)` ([below](#the-ternary-takes-atoms)) |
+| `->` (the level of `?:`) | `0 -> I + 1` is `(0 -> I) + 1` |
+| `fby` | `0 fby N + 1` is `(0 fby N) + 1` |
+| `sfby` | `5 fby 7 sfby I` is `5 fby (7 sfby I)` |
+| atoms | `x`, `a[i]`, `f(x)`, `pre(x)`, `(…)`: the operands of everything above |
+
+Operators of the same level group from the left: `a - b + c` is `(a - b) + c`, and `a / b * c` is
+`(a / b) * c`. The ternary and `->` share a level and cannot be mixed without parentheses.
+`fby`, `sfby` and `->` are mostly used in [dataflow regions](/advanced/dataflow/#the-precedence-trap):
+put their operands in parentheses, `0 fby (N + 1)`. `!` and `~` are missing from the table because they
+do not fit into it; they have [rules of their own](#-and--apply-only-to-atoms).
+
+*Atoms* are the smallest pieces: literals (`3`, `2.5`, `true`, `"text"`, `null`), names (`x`,
+`a[i]`, `obj.field`), calls (`f(x)`, `extern abs(x)`), `pre(x)`, `val(V)`, `random`, vectors (`{1, 2}`),
+host code in backticks, and any expression in parentheses.
+
+To check a grouping, type the expression below. The widget reads it with the same grammar rules as
+KIELER and shows where the parentheses go; its buttons hold the traps described on the rest of this
+page.
+
+<HowKielerReads caption="Type an expression, an effect or a trigger, or try one of the traps: KIELER's grouping, fully parenthesised and as a tree." />
+
+### The ternary takes atoms
+
+`c ? a : b` binds tighter than every arithmetic, comparison and logical operator, and each of its three
+parts must be an atom. So
+the condition of a ternary is only the atom just before the `?`, not the whole comparison:
+
+<Sim example="reference/operators/grouping" caption="Watch `wrong`: it is 0 whatever `A` is, because KIELER reads its expression as `A > (2 ? A : 0)`." />
+
+| You write | KIELER reads |
+| --- | --- |
+| `A > 2 ? A : 0` | `A > (2 ? A : 0)` |
+| `B ? 10 : 20 + 1` | `(B ? 10 : 20) + 1` |
+| `2 * B ? 3 : 4` | `2 * (B ? 3 : 4)` |
+| `A == 5 ? 1 : 2` | `A == (5 ? 1 : 2)` |
+| `B ? -1 : 2` | a syntax error |
+| `A ? 1 + 2 : 3` | a syntax error |
+| `A ? B ? 1 : 2 : 3` | a syntax error |
+
+The last three fail because `-1`, `1 + 2` and a ternary are not atoms. The rule of thumb: **put
+parentheses around the condition and around every part that is not a single name or number.** For
+C's meaning, write `(A > 2) ? A : 0`, `B ? 10 : (20 + 1)`, `(2 * B) ? 3 : 4`, `B ? (-1) : 2` and
+`A ? (B ? 1 : 2) : 3`.
+
+The `else` part may be left out: `x = c ? e` keeps `x` unchanged when `c` is false. That holds only for
+a plain assignment, though: `x += c ? 1` adds `x` to itself when `c` is false. Write the `else` part
+(the cheat sheet's [Rarely used](/reference/cheatsheet/#rarely-used) has the details).
+
+<Aside type="caution" title="The diagram drops the parentheses you need">
+KIELER's diagrams print expressions with C's precedence, in which `?:` binds loosest. The diagram
+of the chart above therefore shows `right = (A > 2) ? A : 0` as `right = A > 2 ? A : 0`, which the
+parser would read as the wrong version, and it shows the wrong version as `A > (2 ? A : 0)`. The
+same happens with subtraction: `x - (y - z)` is drawn as `x - y - z`. Copy expressions from the
+source, never from a diagram label.
+</Aside>
+
+### Comparisons do not chain
+
+A comparison takes at most one comparison operator: `lo < I < hi` and `A == B == C` are syntax errors
+(`no viable alternative at input '<'` and `no viable alternative at input '=='`), not, as in C,
+comparisons of a 0/1 result. Write two comparisons joined by `&&`, each with the variable first:
+`I > lo && I < hi`, or `I > 1 && I < 3`. With a number first, `if 1 < I && I < 3` fails in a trigger
+for another reason: a number straight after `if` is a [count delay](#count-delays-look-like-numbers).
+
+If you do want to compare a comparison's result, parenthesise it: `(I > 1) == A` is true when both or
+neither hold. SCCharts Lab then passes on the C compiler's `suggest parentheses …` warning, which is
+harmless here: KIELER's C code leaves out parentheses that C does not need.
+
+### `!` and `~` apply only to atoms
+
+`!` (not) and `~` (bitwise not) apply to an atom, and the result can only be a whole operand of a
+comparison or of a logical or bitwise operator:
+
+| You write | KIELER reads |
+| --- | --- |
+| `!A && B` | `(!A) && B` |
+| `!A == B` | `(!A) == B`, which is rarely what you meant (`!(A == B)`) |
+| `!(A > 3)` | the negated comparison |
+| `!pre(A)`, `!a[0]` | fine: `pre(A)` and `a[0]` are atoms |
+| `!A + 1`, `~A + 1` | a syntax error: `no viable alternative at input '+'` |
+| `I + !A` | a syntax error too, with the same message |
+| `-!A` | a syntax error |
+| `!0`, `~5` | a syntax error: a number is not an atom for `!` and `~` |
+
+Write `(!A) + 1` or `(~A) + 1` if you really mean arithmetic on the result.
+
+With a number in front, the message misleads. In an effect, `do x = 1 + !A`, KIELER says
+`no viable alternative at input '='` and adds the warning `Non-signals should not be used in an
+emission.`, which has nothing to do with the mistake: having failed to read the assignment, the parser
+took `x` for an emission. (In a trigger, `if 1 + !A > 1` fails earlier still, because the `1` is a
+count delay.)
+
+### `&`, `|` and `^` bind weaker than `==`
+
+As in C, `A & 3 == 2` means `A & (3 == 2)`, which is `A & 0`, always 0. Write `(A & 3) == 2`. The same
+holds for `|` and `^`. In the example above, `masked` is always 0 while `maskedRight` is 1 exactly
+when the low two bits of `A` are `10`. SCCharts Lab passes on the C compiler's warning for this,
+`suggest parentheses around comparison in operand of ‘&’`.
+
+### Count delays look like numbers
+
+In a trigger, a number straight after `if` is a count delay, not part of the expression:
+`if 3 A go to B` fires the third time `A` holds. So `if 3 == level` and `if 1 < I && I < 3` are
+syntax errors, and
+`if 3 -I > 0` means "the third time `-I > 0`" (KIELER warns
+`A count delay was recognized in front of an unary operation.`). Put the variable first, or wrap the
+expression in parentheses: `if level == 3`, `if (3 - I) > 0`.
+
+## Logical operators
+
+`&&` and `||` evaluate their right operand only when it is needed, as in C: in `B != 0 && A / B > 2`
+the division is never done when `B` is 0. They yield 1 or 0 (`true` or `false`). There is no `and`,
+`or` or `not`: those are ordinary names in SCTX, so `if A and B` is a syntax error.
+
+## Arithmetic
+
+Arithmetic follows C's rules for each type; see [types in C](#what-each-type-means-in-c) for the
+details. The one that surprises most people is integer division:
+
+<Sim example="reference/operators/division" caption="`stillWhole` is a `float`, but `A / B` divides two `int`s, so the result is whole before it is stored." />
+
+- `int / int` is integer division, rounded towards zero: 7 / 2 = 3, −7 / 2 = −3.
+- `%` takes the sign of the left operand: −7 % 2 = −1, 7 % −2 = 1.
+- An `int` divided by a `float` (`A / 2.0`) is a `float` division.
+- Dividing an `int` by zero stops KIELER's simulation silently: the values stop changing and no error
+  appears. The guide's simulations stop too, but with an error that names the tick. Guard divisions:
+  `B != 0 && …`.
+
+## Assignment operators
+
+Effects change variables with an assignment. Besides `=`, KIELER has C's compound assignments, two of
+its own (`min=` and `max=`), and `++` and `--`:
+
+| Effect | Means |
+| --- | --- |
+| `x = e` | set `x` to `e` |
+| `x += e`, `x -= e`, `x *= e`, `x /= e`, `x %= e` | `x = x + e` and so on |
+| `x &= e`, `x \|= e`, `x ^= e`, `x <<= e`, `x >>= e` | bitwise, as in C |
+| `x min= e` | keep the smaller of `x` and `e` |
+| `x max= e` | keep the larger of `x` and `e` |
+| `x++`, `x--` | add or subtract 1 |
+| `a = {1, 2, 3}` | assign the elements of an array in index order |
+
+`x++` and `x--` are effects, not expressions: `y = x++` is a syntax error. `>>>=` is accepted by
+KIELER but fails in the C compiler, like `>>>`. Write `min=` and `max=` without a space.
+
+<Sim example="reference/operators/assignments" caption="The effects run left to right, and `scaled *= 1.5` leaves `scaled` at 7." />
+
+Effects in one list run left to right, each seeing what the ones before it wrote. There is one twist:
+when the target is an `int` and the right-hand side a `float`, KIELER truncates the right-hand side
+*before* a compound operator applies it. `scaled *= 1.5` multiplies by `(int) 1.5`, which is 1, while
+`scaled = scaled * 1.5` would multiply first and then truncate, giving 10.
+
+Prefer `count += 1` (or `count++`) to `count = count + 1`. They do the same in one region, but KIELER
+warns about the second form, and the compound form says plainly that the effect is an update, which
+matters when [several regions](/learn/concurrency/) change the same variable. The KIELER VS Code
+extension's warning is
+
+```text wrap
+This assignment looks like old relative write SC syntax and is considered deprecated.
+```
+
+SCCharts Lab explains it instead:
+
+```text wrap
+This assignment reads count, so the compiler treats it as an update of count (a relative write, as in the deprecated old SC syntax).
+Write it as count += 1 to say so. In one region it means the same.
+```
+
+followed by a line on what happens when another region writes `count` in the same tick.
+[Compiler messages](/reference/errors/#this-assignment-looks-like-old-relative-write-sc-syntax-and-is-considered-deprecated)
+has the whole story.
+
+## pre and val
+
+`pre(x)` is the value `x` had at the end of the previous tick.
+
+<Sim example="reference/operators/previous" caption="In tick 1, `before` is 0, not 50: there is no previous tick yet, so `pre` gives the type's default." />
+
+- In the first tick, `pre(x)` is the default of the type (0, `false`), **not** the initial value of
+  `x`. The same happens each time the state that declares `x` is entered again.
+- `pre(pre(x))` goes two ticks back.
+- `pre` takes a name, not an expression: `pre(I + 1)` is a syntax error. Write `pre(I) + 1`. Array
+  elements are fine: `pre(a[1])`. In a trigger, `if pre(I + 1) > 2`, the message is
+  `mismatched input '+' expecting ')'`; in an effect, `do x = pre(I + 1)`, it is
+  `no viable alternative at input '='`, with the same misleading emission warning as for `1 + !A`.
+- `pre(S)` of a signal is "was `S` present in the previous tick?".
+- `pre(x)` never waits for this tick's writes of `x`, so it is the usual way to break a causality
+  cycle (see [Why the compiler says no](/learn/causality/)).
+
+`val(V)` is the value of the valued signal `V`. It is kept from tick to tick until `V` is emitted
+again, and in the tick of an emission it already sees the new value, in every region. The name of a
+signal on its own, `V`, is its presence (`true` or `false`, or 1 and 0 in arithmetic), so `V + 1` is 1
+or 2 whatever the value: use `val(V) + 1`. `pre(val(V))` is the previous tick's value;
+`val(pre(V))` is not accepted (it fails in the C compiler with
+`implicit declaration of function ‘val’`). The [signals](/learn/signals/) and
+[previous tick](/learn/pre/) chapters teach both.
+
+## What each type means in C
+
+KIELER compiles a chart to C, so each type behaves like its C counterpart.
+
+| Type | In C | Consequences |
+| --- | --- | --- |
+| `int` | 32-bit `int` | wraps round on overflow (2147483647 + 1 = −2147483648); `/` rounds towards zero; no literals above 2147483647; no hex literals |
+| `bool` | `char` | `true` and `false` are 1 and 0, so `true + 1` is 2; there is no type check between `bool` and `int` |
+| `float` | `double` | but every float literal is first rounded to single precision (see below); stored into an `int`, it is truncated towards zero |
+| `string` | `char*` | `==` compares where the strings are stored, not their text; there is no `+` for strings |
+| pure signal | its presence, a `bool` | `S && T` tests presence |
+
+**int as a condition.** An `int` can be a trigger on its own and means "not zero": `if count go to
+B` fires when `count` is not 0. A `float` cannot (`Float tests must have a comparison operator!`).
+
+**bool is a small number.** A `bool` holds whatever `char` value it was given: `b = 5` makes `b` true,
+and `x = b` then gives 5, not 1. Keep `bool`s for conditions and `int`s for counting.
+
+**float literals are rounded.**
+
+<Sim example="reference/operators/floats" caption="`F` is 0.1 and the chart compares it with the literal `0.1`, yet `same` is false." />
+
+The literal `0.1` is stored as 0.10000000149011612, while a value typed into the simulator's input
+field keeps full double precision; so an input of 0.1 does not equal the literal `0.1`. Never compare
+floats with `==`; compare with a tolerance, or use integers (count tenths in an `int`). A float stored
+into an `int` loses its fraction, towards zero: 27.5 becomes 27, −27.5 becomes −27.
+
+**Strings are pointers.** `s == "go"` compares where two strings are stored in memory, not their
+text, and a string that came from the environment never equals a literal, whatever its text. An unset
+`string` is `null`. Use an `int` code or a few `const int`s instead of comparing strings.
+
+## Literals
+
+| Kind | Examples | Not allowed |
+| --- | --- | --- |
+| `int` | `0`, `42`, `007` (leading zeros are ignored: `010` is ten, not C's octal 8) | `0x1F` (no hex), `3000000000` (too large) |
+| `float` | `1.5`, `1.`, `1.5e3`, `2.5E-3`, `1.5f`, `2f` | `.5`, `1e3` (a float needs digits and a `.`, or an `f`) |
+| `bool` | `true`, `false` | `TRUE`, `True` |
+| `string` | `"text"` | escapes such as `\n` and `\"`: the parser accepts them, but they break the generated C code |
+| vector | `{1, 2, 3}`, `{0 to 3}` (0, 1, 2, 3) | `{}` |
+| other | `null`, `random` (a float from 0 to 1), `` `host code` `` | |
+
+Negative numbers are the unary minus applied to a literal, which matters inside a ternary:
+`B ? (-1) : 2`. `random` (or `random()`) gives the same sequence of numbers in every run of a
+simulation, which keeps runs reproducible. The KIELER in the KIELER VS Code extension 0.3.0 compiles
+it only when the chart starts with `#hostcode "#include <stdlib.h>"`; SCCharts Lab does not need the
+line. See [random numbers](/advanced/methods/#random-numbers) for more.

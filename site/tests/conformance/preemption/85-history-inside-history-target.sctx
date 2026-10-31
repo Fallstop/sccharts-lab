@@ -1,0 +1,27 @@
+scchart HistoryInsideHistory {
+  input bool A, P, R, Q
+  output int where = 0
+
+  initial state Top {
+    initial state M {
+      initial state I {
+        entry do where = 1
+      }
+      if A go to J
+
+      state J {
+        entry do where = 2
+      }
+    }
+    if P go to Paused
+
+    state Paused {
+      entry do where = 9
+    }
+    if R go to M history
+  }
+  if Q go to Out
+
+  state Out
+  if Q go to Top shallow history
+}

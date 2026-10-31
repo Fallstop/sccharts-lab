@@ -1,0 +1,77 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "The same chart with `@HardReset` on the period. Tick 1: `samples` = 0."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "200."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "400."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "600: `samples` = 1. The hard reset sets the period clock to 0: the 100 ms excess is lost."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "200."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "400."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "600: `samples` = 2, 600 ms after the first."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "200."
+    },
+    {
+      "inputs": {
+        "deltaT": 200
+      },
+      "note": "400."
+    },
+    {
+      "inputs": {
+        "deltaT": 400
+      },
+      "note": "800: `samples` = 3."
+    },
+    {
+      "inputs": {
+        "deltaT": 400
+      },
+      "note": "400."
+    },
+    {
+      "inputs": {
+        "deltaT": 400
+      },
+      "note": "800: `samples` = 4. One sample fewer than with the soft reset after the same 2800 ms: lateness piles up."
+    }
+  ],
+  "expect": "ok"
+}

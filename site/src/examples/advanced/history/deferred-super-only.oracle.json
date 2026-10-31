@@ -1,0 +1,117 @@
+{
+  "hash": "9bc7551b0b7df42499e06f9b3795ec96b34643c3",
+  "chart": "src/examples/advanced/history/deferred-super-only.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "walk": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "walk": false,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "walk": true
+      },
+      "values": {
+        "walk": true,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "walk": false
+      },
+      "values": {
+        "walk": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "walk": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "walk": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

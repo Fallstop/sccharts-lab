@@ -1,0 +1,11 @@
+{
+  "system": "de.cau.cs.kieler.sccharts.simulation.tts.netlist.java",
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Netlist-based Java simulation: javac rejects the generated Java file, which starts with the line `#include <stdlib.h>` (\"Compiler did not return success\"). The same chart compiles in the C simulations. Use `#hostcode-c` for C-only code and `#hostcode-java` for Java-only code."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Compiler did not return success"
+}

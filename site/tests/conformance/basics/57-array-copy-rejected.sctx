@@ -1,0 +1,9 @@
+scchart ArrayCopyRejected {
+  output int a[3] = {1, 2, 3}
+  output int b[3]
+
+  initial state S
+  do b = a go to T
+
+  state T
+}

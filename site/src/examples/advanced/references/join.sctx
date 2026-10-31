@@ -1,0 +1,23 @@
+scchart Combination {
+  input bool a, b
+  output bool open = false
+
+  initial state First is Await(a to key)
+    join to Second
+
+  state Second is Await(b to key)
+    join to Opened
+
+  state Opened {
+    entry do open = true
+  }
+}
+
+scchart Await {
+  input bool key
+
+  initial state Waiting
+    if key go to Got
+
+  final state Got
+}

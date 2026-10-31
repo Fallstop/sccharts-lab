@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "leave": false,
+        "back": false,
+        "again": false,
+        "quiet": false,
+        "hush": false
+      },
+      "note": "Tick 1 enters `Mode` at `One`."
+    },
+    {
+      "note": "`One` goes to `Two` (its transition has no trigger)."
+    },
+    {
+      "inputs": {
+        "leave": true
+      },
+      "note": "`leave` is true: `Mode` is left for `Away`."
+    },
+    {
+      "inputs": {
+        "leave": false,
+        "back": true
+      },
+      "note": "`back` is true: transition 1, the one with the **H** and the star, enters `Mode` with deep history, so the chart is back in `Two`, not `One`."
+    }
+  ],
+  "expect": "ok"
+}

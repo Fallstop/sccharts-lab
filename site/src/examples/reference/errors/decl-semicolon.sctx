@@ -1,0 +1,9 @@
+scchart DeclSemicolon {
+  input bool A;
+  output bool on
+
+  initial state Off
+    if A do on = true go to On
+
+  state On
+}

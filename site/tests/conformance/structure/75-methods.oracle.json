@@ -1,0 +1,109 @@
+{
+  "hash": "6baef7a18101e99d363f145a13ab72d22335a78d",
+  "chart": "tests/conformance/structure/75-methods.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name sum is contained in the model but not in VariableStore.",
+    "ValuedObject with name limit is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name sumTo is contained in the model but not in VariableStore.",
+    "ValuedObject with name limit is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_sq_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_sq_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn4_isBig_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "big": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "count": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "s": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "big": false,
+        "count": 0,
+        "s": 3,
+        "y": 9
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 4
+      },
+      "values": {
+        "x": 4,
+        "big": false,
+        "count": 1,
+        "s": 3,
+        "y": 17
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 20
+      },
+      "values": {
+        "x": 20,
+        "big": true,
+        "count": 2,
+        "s": 3,
+        "y": 17
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

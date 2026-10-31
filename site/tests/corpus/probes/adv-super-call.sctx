@@ -1,0 +1,12 @@
+scchart Base5 {
+  output int o
+  method void inc() { o++ }
+  initial state S
+}
+scchart Derived5 extends Base5 {
+  override method void inc() { super.inc() }
+  region Main {
+    initial state T
+    do inc() go to T
+  }
+}

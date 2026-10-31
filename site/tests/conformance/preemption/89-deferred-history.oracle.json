@@ -1,0 +1,160 @@
+{
+  "hash": "a2985f7d54111a83cf5984591d92fb1bbc608128",
+  "chart": "tests/conformance/preemption/89-deferred-history.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HM is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "P": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "R": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "where": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": false,
+        "entries": 1,
+        "where": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "P": false,
+        "R": false,
+        "entries": 1,
+        "where": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "P": true
+      },
+      "values": {
+        "A": false,
+        "P": true,
+        "R": false,
+        "entries": 1,
+        "where": 9
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": true,
+        "entries": 1,
+        "where": 9
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": false,
+        "entries": 1,
+        "where": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "A": false,
+        "P": false,
+        "R": false,
+        "entries": 1,
+        "where": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

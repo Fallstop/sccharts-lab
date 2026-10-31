@@ -1,0 +1,8 @@
+scchart DistanceNoInclude {
+  input int position
+  output int distance = 0
+  extern "abs" abs
+
+  initial state Track
+    do distance = abs(position) go to Track
+}

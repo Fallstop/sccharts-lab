@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "coin": false }, "note": "Two connectors that lead to each other form a cycle of immediate transitions. The guard `coins < 3` would end it, but KIELER's netlist compiler rejects every immediate cycle, whatever its guards." }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

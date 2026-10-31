@@ -1,0 +1,9591 @@
+{
+"about": "KIELER's first syntax error for each text written as a trigger (if <text> go to Q) or an effect (do <text> go to Q), in a chart declaring the names the texts use (input int a, b, c, d, e, x, y, o; input bool A, B, C, D; input signal int S; input int arr[3]). Recorded with tools/oracle/oracle.mjs --batch (current KIELER, the lab server). column: 1-based, in the text. kieler: null when KIELER found no syntax error. Checked by tests/engine/expression.test.ts.",
+"cases": [
+{
+"text": "A == B == C",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 8
+},
+{
+"text": "a < b < c",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 7
+},
+{
+"text": "a == b != c",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 8
+},
+{
+"text": "a <= b > c",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 8
+},
+{
+"text": "x > 0 > y",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 7
+},
+{
+"text": "B ? -1 : 2",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "A ? 1 + 2 : 3",
+"as": "expression",
+"kieler": "no viable alternative at input ':'",
+"column": 11
+},
+{
+"text": "A ? B ? 1 : 2 : 3",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "a ? b : c ? d : e",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 11
+},
+{
+"text": "x > 0 ? 1",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "!a + b",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 4
+},
+{
+"text": "!A == B && C",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "~a + b",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 4
+},
+{
+"text": "x + 1 = 3",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "x = 3",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "a += 1",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "a +",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "a * ",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "a + * b",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "a && || b",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "a & & b",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 3
+},
+{
+"text": "(a + b",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 8
+},
+{
+"text": "a + b)",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 6
+},
+{
+"text": "((a)",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 6
+},
+{
+"text": "a b",
+"as": "expression",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "A B",
+"as": "expression",
+"kieler": "no viable alternative at input 'B'",
+"column": 3
+},
+{
+"text": "a +* b",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "a == = b",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "a =< b",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "a => b",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "a <> b",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "a ! b",
+"as": "expression",
+"kieler": "no viable alternative at input '!'",
+"column": 3
+},
+{
+"text": "a !== b",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 3
+},
+{
+"text": "a ** b",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "f(",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "f(a,",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "f(a b)",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "pre(",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 6
+},
+{
+"text": "pre()",
+"as": "expression",
+"kieler": "mismatched input '()' expecting '('",
+"column": 4
+},
+{
+"text": "pre(a",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 7
+},
+{
+"text": "val(",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 6
+},
+{
+"text": "a[",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "a[1",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "a[]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "a[1]]",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 5
+},
+{
+"text": "1e3",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "1.5.2",
+"as": "expression",
+"kieler": "no viable alternative at input '.'",
+"column": 4
+},
+{
+"text": ".5",
+"as": "expression",
+"kieler": "no viable alternative at input '.'",
+"column": 1
+},
+{
+"text": "a ? : b",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "? a : b",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 1
+},
+{
+"text": "a ?",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "a :",
+"as": "expression",
+"kieler": "no viable alternative at input ':'",
+"column": 3
+},
+{
+"text": "- ",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 4
+},
+{
+"text": "a - - ",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "--a",
+"as": "expression",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "a++",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 2
+},
+{
+"text": "true false",
+"as": "expression",
+"kieler": "no viable alternative at input 'false'",
+"column": 6
+},
+{
+"text": "A and B",
+"as": "expression",
+"kieler": "no viable alternative at input 'and'",
+"column": 3
+},
+{
+"text": "A or B",
+"as": "expression",
+"kieler": "no viable alternative at input 'or'",
+"column": 3
+},
+{
+"text": "not A",
+"as": "expression",
+"kieler": "no viable alternative at input 'A'",
+"column": 5
+},
+{
+"text": "A & B |",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 3
+},
+{
+"text": "A |",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 3
+},
+{
+"text": "| A",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 1
+},
+{
+"text": "&& A",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 1
+},
+{
+"text": "x >> > 1",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "a ->",
+"as": "expression",
+"kieler": "no viable alternative at input '->'",
+"column": 3
+},
+{
+"text": "0 fby",
+"as": "expression",
+"kieler": "no viable alternative at input 'fby'",
+"column": 3
+},
+{
+"text": "fby 1",
+"as": "expression",
+"kieler": "no viable alternative at input 'fby'",
+"column": 1
+},
+{
+"text": "a sfby",
+"as": "expression",
+"kieler": "no viable alternative at input 'sfby'",
+"column": 3
+},
+{
+"text": "(",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 3
+},
+{
+"text": ")",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "()",
+"as": "expression",
+"kieler": "no viable alternative at input '()'",
+"column": 1
+},
+{
+"text": "[a]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "{1, 2}",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "a,b",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 2
+},
+{
+"text": "x = ",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = = 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x == 1",
+"as": "effect",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "x =+ 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x += ",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "x + = 1",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "x = 1 +",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = (1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = 1)",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 6
+},
+{
+"text": "x = a ? 1 : 2 + 1",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x = A ? B ? 1 : 2 : 3",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "x = a < b < c",
+"as": "effect",
+"kieler": "no viable alternative at input '<'",
+"column": 11
+},
+{
+"text": "x++ ++",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 5
+},
+{
+"text": "x ++ 1",
+"as": "effect",
+"kieler": "no viable alternative at input '1'",
+"column": 6
+},
+{
+"text": "++x",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "x--1",
+"as": "effect",
+"kieler": "no viable alternative at input '1'",
+"column": 4
+},
+{
+"text": "x = 1, y = 2",
+"as": "effect",
+"kieler": "no viable alternative at input ','",
+"column": 6
+},
+{
+"text": "x = 1; ; y = 2",
+"as": "effect",
+"kieler": "no viable alternative at input ';'",
+"column": 8
+},
+{
+"text": "x = 1;",
+"as": "effect",
+"kieler": "no viable alternative at input 'go'",
+"column": 8
+},
+{
+"text": "; x = 1",
+"as": "effect",
+"kieler": "no viable alternative at input ';'",
+"column": 1
+},
+{
+"text": "x 1",
+"as": "effect",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": "S(",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "S(1",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "S(1,2)",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "S 3",
+"as": "effect",
+"kieler": "no viable alternative at input '3'",
+"column": 3
+},
+{
+"text": "x[1 = 2",
+"as": "effect",
+"kieler": "mismatched input '=' expecting ']'",
+"column": 5
+},
+{
+"text": "x[] = 2",
+"as": "effect",
+"kieler": "no viable alternative at input ']'",
+"column": 3
+},
+{
+"text": "x = 1 y = 2",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 7
+},
+{
+"text": "print(",
+"as": "effect",
+"kieler": "no viable alternative at input 'go'",
+"column": 8
+},
+{
+"text": "print(x",
+"as": "effect",
+"kieler": "missing ')' at 'go'",
+"column": 9
+},
+{
+"text": "print x",
+"as": "effect",
+"kieler": "missing '(' at 'x'",
+"column": 7
+},
+{
+"text": "x min 3",
+"as": "effect",
+"kieler": "no viable alternative at input 'min'",
+"column": 3
+},
+{
+"text": "x min= ",
+"as": "effect",
+"kieler": "no viable alternative at input 'min='",
+"column": 3
+},
+{
+"text": "x max == 3",
+"as": "effect",
+"kieler": "no viable alternative at input 'max'",
+"column": 3
+},
+{
+"text": "x =- 1",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "1 = x",
+"as": "effect",
+"kieler": "no viable alternative at input '1'",
+"column": 1
+},
+{
+"text": "(x) = 1",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 1
+},
+{
+"text": "x.y = 1",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x = 1 = 2",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 7
+},
+{
+"text": "x = {1, 2",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = {}",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = !",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = a b",
+"as": "effect",
+"kieler": "no viable alternative at input 'b'",
+"column": 7
+},
+{
+"text": "go = 1",
+"as": "effect",
+"kieler": "no viable alternative at input 'go'",
+"column": 1
+},
+{
+"text": "x = pre(",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = 1e3",
+"as": "effect",
+"kieler": "no viable alternative at input 'e3'",
+"column": 6
+},
+{
+"text": "x <<= ",
+"as": "effect",
+"kieler": "no viable alternative at input '<<='",
+"column": 3
+},
+{
+"text": "x >>>= 1 +",
+"as": "effect",
+"kieler": "no viable alternative at input '>>>='",
+"column": 3
+},
+{
+"text": "true != && true",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 6
+},
+{
+"text": "! y",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "~ f do ( ( 2.5 - x | false ) ) > A ? ( true ) : f ( x * ( b + a ) - B )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "( f ( b & f ( x - 10 >> true % 2 ) ) ) != )",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 40
+},
+{
+"text": "! 2 ; / c <= false",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 3
+},
+{
+"text": "+ b",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 1
+},
+{
+"text": "( 10 ) a [ 1 ] > a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 8
+},
+{
+"text": "A || a [ x ] b : y",
+"as": "expression",
+"kieler": "no viable alternative at input 'b'",
+"column": 14
+},
+{
+"text": "2.5 << B % true true",
+"as": "expression",
+"kieler": "no viable alternative at input 'true'",
+"column": 17
+},
+{
+"text": "( x 10 : a && c ? 10 : ~ true ) - - a [ x ] - A",
+"as": "expression",
+"kieler": "mismatched input '10' expecting ')'",
+"column": 5
+},
+{
+"text": "f ( b b ) - a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "a ( x ) ? b : a [ 0 ]",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( ( false ) ? b : - 2 | 2.5 ) ? f ( false false ) : x / false",
+"as": "expression",
+"kieler": "mismatched input '?' expecting ')'",
+"column": 13
+},
+{
+"text": "a != +=",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 3
+},
+{
+"text": "<= x 2",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 1
+},
+{
+"text": "a [ & 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "10 - f ( - pre ( a a ) != pre ( x ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "( f ( pre ( A ) - false ) ) && C % x ? pre ( a ) f : f ( pre ( A ) )",
+"as": "expression",
+"kieler": "no viable alternative at input 'f'",
+"column": 50
+},
+{
+"text": "( pre ( a ) ^ B ? B : x && true ) [ == C < B",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 35
+},
+{
+"text": "a << pre ( x & )",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 3
+},
+{
+"text": "2.5 * / 2 > C <= a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 7
+},
+{
+"text": "^ true a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 1
+},
+{
+"text": "] a",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 1
+},
+{
+"text": "true true | - ( ( 10 >> true >> A ) != c ) << 10 >> a",
+"as": "expression",
+"kieler": "no viable alternative at input 'true'",
+"column": 6
+},
+{
+"text": "a >> pre ( A -- ) * ( true || 10 )",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "a [ 0 ] != a a % f ( ! x )",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 14
+},
+{
+"text": "f ( 10 / a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "f ( a [ 1 ] << ( 2.5 2.5 != 2.5 % B && a [ 0 ] ) ) != x % a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "2 2 % A",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "false && true >= * a",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 7
+},
+{
+"text": "( [ 0 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 3
+},
+{
+"text": "c / ( , A ? 2 : true )",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "++",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "! B != ( C )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( false <= b ) == pre ( x ) a [ x ] & f ( B )",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 29
+},
+{
+"text": "|",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 1
+},
+{
+"text": "A || ( 2 != f ( f ( a ) < 2 != ( y >= true ) ) << * ( ~ A ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 3
+},
+{
+"text": "c c == a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'c'",
+"column": 3
+},
+{
+"text": "10 || ( y >> ~ f ( a ) >= )",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 4
+},
+{
+"text": "| ? 2 : B",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 1
+},
+{
+"text": "10 < [",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 4
+},
+{
+"text": "2.5 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '2.5'",
+"column": 5
+},
+{
+"text": "2 ? ++ a [ 0 ] : b",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "y y & B % ~ 10 ? a [ x ] : ( y != ( x ) != a [ 1 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input 'y'",
+"column": 3
+},
+{
+"text": "2 2",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "go",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 1
+},
+{
+"text": "1 1 != 10",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "pre ( x ) != % B A",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 11
+},
+{
+"text": "C == 1 | a [ 1 ] & == A + x )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "( C % && A a [ 0 ] <= C ) < B",
+"as": "expression",
+"kieler": "mismatched input '%' expecting ')'",
+"column": 5
+},
+{
+"text": "2.5 ? ( ( B || 2.5 == C > pre ( a ) ) : true",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 5
+},
+{
+"text": "~ pre f ( x )",
+"as": "expression",
+"kieler": "extraneous input 'f' expecting '('",
+"column": 7
+},
+{
+"text": "b b >= A",
+"as": "expression",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "f ( ( x << 10 ) >= ( true - 2.5 && a [ 0 ] | ~ 1 ) ) ? 2 : a [ 1 ] || ( 2 | <= ! B ) ? ( f ( a ^ a ) == false ) : B",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "y > ( ~ y >= ( f ( 2.5 ) % pre ( x ) >> )",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 3
+},
+{
+"text": "pre ( a ) + a [ 0 ] < f ( ( c << B ) ) >> false + 2.5 ) % y",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 55
+},
+{
+"text": "10 >> a [ 0 ] ? >= x : a [ 1 ] | true",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 4
+},
+{
+"text": "- % 2",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "[ A",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "f ( pre ( a ) || f ( y + a a [ x ] % 2 ) > - ( x ) / y ) >= 2 ? b : A",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "* a",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "1 C",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "]",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 1
+},
+{
+"text": "2 ? : C << 1",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "( 2 ) > do pre ( A ) <= f ( a [ x ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 7
+},
+{
+"text": "f ( ~ ~ [ x != f ( 10 >= 2.5 | a [ 0 ] ) % false ) * ( B / ! 1 ) && pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "c || ( ( f ( 2 << false ) << x ) - ( A ) ^ ( 2 & f ( 10 & b << true + a ) & f ( C * 2.5 ) ) ) << a ! [ 1 ] / x",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 95
+},
+{
+"text": "% ! ~ ~ true == B",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 1
+},
+{
+"text": "+ C",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 1
+},
+{
+"text": "B ? 10 : a | [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "a & c",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "!= 2.5 ^ A >> A",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 1
+},
+{
+"text": "( 2.5 <= a [ x ] ++ )",
+"as": "expression",
+"kieler": "extraneous input '++' expecting ')'",
+"column": 18
+},
+{
+"text": "x !=",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 3
+},
+{
+"text": "y << && a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 3
+},
+{
+"text": "( A ? - b : a ? ( 2 > x <= a ) : c - ( a [ ] x ^ b ) ) && 10 << 2.5",
+"as": "expression",
+"kieler": "mismatched input '?' expecting ')'",
+"column": 5
+},
+{
+"text": "~ ! ( b | y < ) true",
+"as": "expression",
+"kieler": "no viable alternative at input '!'",
+"column": 3
+},
+{
+"text": "x - ( ( a [ 1 ] + ( pre ( A ) + c ) ) >> ( f ( ( 2 ) << pre ( A ) << y ^ ( C & B ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "C % f ( a ) << -- 2",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "! ( f ( false >> a [ 0 ] ) ? y : false",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 40
+},
+{
+"text": "A A",
+"as": "expression",
+"kieler": "no viable alternative at input 'A'",
+"column": 3
+},
+{
+"text": "& 2",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 1
+},
+{
+"text": "x > 10 == a [ % 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 8
+},
+{
+"text": "y B",
+"as": "expression",
+"kieler": "no viable alternative at input 'B'",
+"column": 3
+},
+{
+"text": "( ( b && x ) / 1 | 2 << ( false ] ) ) ? false : x",
+"as": "expression",
+"kieler": "extraneous input ']' expecting ')'",
+"column": 33
+},
+{
+"text": "c <= 10 % a [ 0 ! ]",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 3
+},
+{
+"text": "> false",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "pre ( A ) + pre ( A ) * ( a [ 1 ] && ( - A ? 2 : 10 )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 11
+},
+{
+"text": "|| y",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 1
+},
+{
+"text": "c > < B",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 3
+},
+{
+"text": "y > f ( % 2 ) * a [ 0 ] ? false : B",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "1 > A",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 3
+},
+{
+"text": "/ && B",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "( ) ? 10 : 2",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 3
+},
+{
+"text": "( 10 + + ) < a",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 8
+},
+{
+"text": "10 * ( ( pre ( x ) + B ) ) == ! false ^ > y",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 4
+},
+{
+"text": "( B ) * ! a [ 0 ] ? C : << ( false - 2 )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 7
+},
+{
+"text": "f ( B >= a [ 1 ] % | ( B ) <= pre ( a ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "( - ( & c A ) % B )",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 7
+},
+{
+"text": "B / | a ^ b",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "go false || ( y )",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 1
+},
+{
+"text": "a [ 0 ]",
+"as": "expression",
+"kieler": null
+},
+{
+"text": ">> false",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": ">> a",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": "a [ 0 ] ? 10 : C & >> a",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 9
+},
+{
+"text": "( ( y ) - % a )",
+"as": "expression",
+"kieler": "mismatched input '-' expecting ')'",
+"column": 9
+},
+{
+"text": "a << x ? C C",
+"as": "expression",
+"kieler": "no viable alternative at input 'C'",
+"column": 12
+},
+{
+"text": "y / - + c",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "f ( != | y )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x - f ( A ) != / 1 & 2",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "? true",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 1
+},
+{
+"text": "-- false",
+"as": "expression",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "x == pre pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "a [ 0 ] % f ( ( a [ 1 ] 1 ) | a [ x ] / B ) | 10",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 9
+},
+{
+"text": "false << a [ x > ] | a",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 7
+},
+{
+"text": "1 / 10",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "a 1 [ ] ? A : pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": ": y",
+"as": "expression",
+"kieler": "no viable alternative at input ':'",
+"column": 1
+},
+{
+"text": "C 2",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 3
+},
+{
+"text": "! true ^ a [ 1 ]",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "2.5 * pre ( a ) == a",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "c | a [ 1 ] ? ( 1 ++ >> ( a <= x ) == f ( false <= 1 ) && a ) : ~ B",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 13
+},
+{
+"text": "b pre ( x ) % b & false",
+"as": "expression",
+"kieler": "no viable alternative at input 'pre'",
+"column": 3
+},
+{
+"text": "a [ 0 ] ]",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 9
+},
+{
+"text": "10 & ( b > ( ( A < 1 <= y / b ) * pre ( = a ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 4
+},
+{
+"text": "! ( b << A ) < - x / ! ~ << ! 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '!'",
+"column": 22
+},
+{
+"text": "] C",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 1
+},
+{
+"text": "f ( - 10 )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "2 / go f ( true < b > C ) & x",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": ">",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "~ false / / f ( f ( true / true - y ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 9
+},
+{
+"text": "( 10 ) >> ~ ! y < <= b ^ A",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 8
+},
+{
+"text": "2.5 ? true : 2.5 / f , ( 1 << f ( a / false ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 22
+},
+{
+"text": "~ ~ y",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "/ 10",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "a [ 1 ] & b ( / x )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 13
+},
+{
+"text": "/",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "- - false",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( ( true ) >= ( ! b % 10 ) / B / - ( b > A != / 1 y ) ) & ! ( - C ^ B )",
+"as": "expression",
+"kieler": "mismatched input '%' expecting ')'",
+"column": 21
+},
+{
+"text": "1 1",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( 2 | ? false )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "10 10",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "f ( ( b != false ) ) & a [ [ 0 ] / C",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 22
+},
+{
+"text": "do 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input 'do'",
+"column": 1
+},
+{
+"text": "10 - pre ( a )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "x && C == a [ [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "C <= 1 ? y : ( true * ) y",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 8
+},
+{
+"text": "==",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": ") B",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "C >> >> 10",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "f ( / ~ B * ! ( B ) ) / ! 1",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "~ == a << 2",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "1 <= != a [ 1 ] ^ B",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 3
+},
+{
+"text": "a [ 0 ] <= ~ ! a [ 1 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 9
+},
+{
+"text": "~ ( b - y + c ) ) * b != ! 1 || C",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 17
+},
+{
+"text": "( 1 | ( - c ) ^ 1",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 19
+},
+{
+"text": "true + x ? B : f ( ( ( true ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 6
+},
+{
+"text": ", x",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 1
+},
+{
+"text": "( ] b & pre ( a ) ) != y",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 3
+},
+{
+"text": "! & a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 3
+},
+{
+"text": "|| a [ 1 ] % B",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 1
+},
+{
+"text": "B | B <= pre 2.5 ? 1 : ( 1 )",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 3
+},
+{
+"text": "2.5 ( b ? b : ~ c",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 5
+},
+{
+"text": "false x",
+"as": "expression",
+"kieler": "no viable alternative at input 'x'",
+"column": 7
+},
+{
+"text": "! - false > c",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": ") 2 * c",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "- false ^ -- B && false",
+"as": "expression",
+"kieler": "no viable alternative at input '--'",
+"column": 11
+},
+{
+"text": "10 ^ false",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 4
+},
+{
+"text": "true > f ( - false >= b + true",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 10
+},
+{
+"text": "( ( ( 10 | 1 c ) ) - C )",
+"as": "expression",
+"kieler": "extraneous input 'c' expecting ')'",
+"column": 14
+},
+{
+"text": "-- ( x )",
+"as": "expression",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "> a",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "2.5 >= ~ 2.5 > ! ( pre ( A == 10 ) < C",
+"as": "expression",
+"kieler": "no viable alternative at input '2.5'",
+"column": 10
+},
+{
+"text": "A || ~ a [ [ x ] <= - c",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 3
+},
+{
+"text": "~ ( f ( 2 + 10 ) < 1 == x / ( 1 % == y ) ) / a > false | f ( y )",
+"as": "expression",
+"kieler": "missing ')' at '=='",
+"column": 22
+},
+{
+"text": "2.5 ^ f ( y ) && 1 1",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 20
+},
+{
+"text": "<",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 1
+},
+{
+"text": "10 >> pre ( A ) <= ( a ? a : ( y >= C - 2 ^ y ) - ( 10 % - B < ( != a ) % false ) ) + B",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 4
+},
+{
+"text": "x >= ~ y pre ( A ) : 2 != C",
+"as": "expression",
+"kieler": "no viable alternative at input 'pre'",
+"column": 10
+},
+{
+"text": "1 | x & a [ x ] | f ( ( ( << A || b > false ) | A * B ) || 2 )",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 3
+},
+{
+"text": "||",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 1
+},
+{
+"text": "f ( 10 ? A : false >= f ( B >> a >= true <= 1 ) >= A ^ ( C / 10 ) ) ) | ( - a )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "( pre ( x ) && ( true || y < a ? C : x ) ? false : 2.5",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 56
+},
+{
+"text": "B >= pre ( a )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "10 << ! false % ( - a [ 1 >= )",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 4
+},
+{
+"text": "false >= a [ 1 ] - B * f ( ( ! && a ^ ( b ) == ( c - y + 1 > a ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 18
+},
+{
+"text": "1",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 3
+},
+{
+"text": "* true | ( 2 <= true ) < y",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "( x >> ( 10 ) < a [ x ] ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 27
+},
+{
+"text": "1 2.5 && ! b",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "pre ( A ) | ( - ( a * x != A ) + B != ( y >> A ) ) ) != pre ( A ) == a",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 52
+},
+{
+"text": "x 10 : ( - B ) / ( ! a [ 0 ] <= A ) ^ ( false != ( c > ~ A || - a || y ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '10'",
+"column": 3
+},
+{
+"text": "false || false false",
+"as": "expression",
+"kieler": "no viable alternative at input 'false'",
+"column": 16
+},
+{
+"text": "+= true",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "<= B",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 1
+},
+{
+"text": ">=",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 1
+},
+{
+"text": "f ( f ( 2.5 ) - ) a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "* B",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "( c ) ? : b",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "; pre ( x )",
+"as": "expression",
+"kieler": "no viable alternative at input ';'",
+"column": 1
+},
+{
+"text": "pre >= a ) || y",
+"as": "expression",
+"kieler": "mismatched input '>=' expecting '('",
+"column": 5
+},
+{
+"text": "B / [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "C C",
+"as": "expression",
+"kieler": "no viable alternative at input 'C'",
+"column": 3
+},
+{
+"text": "( a [ 0 ] ? ~ A : false ) <= - ( ! 10 - >= - 10 ) + 1 != y",
+"as": "expression",
+"kieler": "mismatched input '?' expecting ')'",
+"column": 11
+},
+{
+"text": "( f ( B ) <= true * x == f ( a [ x ] >> 1 ) ) | false != - 2.5",
+"as": "expression",
+"kieler": "mismatched input '==' expecting ')'",
+"column": 23
+},
+{
+"text": "A - a <= ( 2.5 - ( x ) ? b : 1",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "f ( a [ 1 ] && a [ x ] ) - ( - y != 10 ^ ( true % 1 ) > ) <= A || ( a [ 1 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 26
+},
+{
+"text": "!= A",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 1
+},
+{
+"text": "( f ( y f != ( c == B ) ) ? ( 10 ) : ( a & b ) >= C - a [ 1 ] ) > a [ 1 ]",
+"as": "expression",
+"kieler": "mismatched input '(' expecting ')'",
+"column": 5
+},
+{
+"text": "1 >= 2",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 3
+},
+{
+"text": "2.5 >> a [ ^ 1 ] << c",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 8
+},
+{
+"text": "2 b < 2.5 ^ 1",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "~ b << ( f ( ( 2 && C ) <= 1 ) % pre ( x ) - 1 ) == - ( ( A * = C < b ) != pre ( x ) ) > f ( A >= a ? C : f ( x ^ a ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 5
+},
+{
+"text": "c c / C",
+"as": "expression",
+"kieler": "no viable alternative at input 'c'",
+"column": 3
+},
+{
+"text": "( b ) * ~ y",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 7
+},
+{
+"text": "C == do 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "( pre x )",
+"as": "expression",
+"kieler": "missing '(' at 'x'",
+"column": 7
+},
+{
+"text": "a [ 0 >= ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "( C >= pre ( a ) || x && )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 26
+},
+{
+"text": "true a / false >> 10",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 6
+},
+{
+"text": "pre ( x ) | C ^ ! ( 2 ) a * [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 25
+},
+{
+"text": "y >> f ( 10 ) && pre ( = A ) >= ~ a",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "~ 2 && 1 / c ? ( ( c ) < ) : pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 3
+},
+{
+"text": "10 ? y : ! a [ x != ]",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 4
+},
+{
+"text": "&",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 1
+},
+{
+"text": "2 ? y : pre ( x ) & : x",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": ": y >> a",
+"as": "expression",
+"kieler": "no viable alternative at input ':'",
+"column": 1
+},
+{
+"text": "pre ( a ) + y )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 15
+},
+{
+"text": "pre pre ( A )",
+"as": "expression",
+"kieler": "extraneous input 'pre' expecting '('",
+"column": 5
+},
+{
+"text": "10 + 2 ( >> 2 % ( true << pre ( a ) >> ( a || false <= C ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 4
+},
+{
+"text": "f ( 2 ) || a [ 0 ]",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "f ( B ? x : b || ! pre ( a ) ) << pre 1",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 32
+},
+{
+"text": "false <<",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 7
+},
+{
+"text": "! ( b ) | ~ ( 1 << ( B <= x / B / >= b ) - a )",
+"as": "expression",
+"kieler": "missing ')' at '/'",
+"column": 29
+},
+{
+"text": "a [ x ] != ( ( ) || x )",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 9
+},
+{
+"text": "| b )",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 1
+},
+{
+"text": "2 % ( 2.5 > ( 1 - pre ( A ) | ( 2.5 + false ) && a ) >= ( ~ a | a [ x ] + ( a >> <= b || b ) ) & a ) != ( 1 ) & a [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "( 2 % a [ x ] ) ? >= : 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 17
+},
+{
+"text": "pre - ( a ) | 1 <= 10",
+"as": "expression",
+"kieler": "extraneous input '-' expecting '('",
+"column": 5
+},
+{
+"text": "? x",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 1
+},
+{
+"text": "pre ( ) A",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 7
+},
+{
+"text": "a a [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 3
+},
+{
+"text": "true << ( pre ( a ) ) ^ a [ 0 ] ? ( true ) : <= ~ - B",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 33
+},
+{
+"text": "|| true > C",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 1
+},
+{
+"text": "a [ 1 ]",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "c c",
+"as": "expression",
+"kieler": "no viable alternative at input 'c'",
+"column": 3
+},
+{
+"text": "- b )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 5
+},
+{
+"text": "[ false >> - x",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "false - c != != c",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 7
+},
+{
+"text": "~ ~ 2.5 != y",
+"as": "expression",
+"kieler": "no viable alternative at input '2.5'",
+"column": 5
+},
+{
+"text": "[ a 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "true ? C : + f ( b )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 6
+},
+{
+"text": "2 | ++ ~ x > b",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 3
+},
+{
+"text": "a [ x",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "a [ 0",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "! ! ^ A",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 5
+},
+{
+"text": "false % ( 2 == ( pre ( x ) ) )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "pre ( ( a ) - 10",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "C <=",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 3
+},
+{
+"text": "a [ x ] >> ( ) ^ pre ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 9
+},
+{
+"text": "do",
+"as": "expression",
+"kieler": "no viable alternative at input 'do'",
+"column": 1
+},
+{
+"text": "( pre ( A ) % b ) % b | ( y 1 >> x / pre ( a ) ) <= x",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 19
+},
+{
+"text": "== x",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": "pre ( x x )",
+"as": "expression",
+"kieler": "extraneous input 'x' expecting ')'",
+"column": 9
+},
+{
+"text": "( * false ) >> C != a [ 0 ] >> ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "b ( )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "a [ 0 | + pre ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "2 ( < - a [ x ] + b ) >> false",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 5
+},
+{
+"text": "( ( ( ( b / y || 10 ) * ( 2.5 ) ) )",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 37
+},
+{
+"text": "^ c | true",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 1
+},
+{
+"text": "( ~ > C ) & B",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 5
+},
+{
+"text": "- 1 | a < pre ( go )",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 17
+},
+{
+"text": "2.5 >> ( f B || 1 ) + a [ 1 ]",
+"as": "expression",
+"kieler": "mismatched input 'B' expecting ')'",
+"column": 12
+},
+{
+"text": "+=",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "x f ? pre ( a ) : a [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'f'",
+"column": 3
+},
+{
+"text": "~ false != ~ ( true < y | 10 ) && ( false == A >= 2 & y y )",
+"as": "expression",
+"kieler": "missing ')' at '>='",
+"column": 48
+},
+{
+"text": "2.5 & ( true - % f ( b ) )",
+"as": "expression",
+"kieler": "mismatched input '-' expecting ')'",
+"column": 14
+},
+{
+"text": "- a ^ pre ( A ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 17
+},
+{
+"text": "b b",
+"as": "expression",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "1 & - >> c",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 3
+},
+{
+"text": "a a",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 3
+},
+{
+"text": "< false",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 1
+},
+{
+"text": "10 10 == B",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "[ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "y % 2.5 true",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "( pre a )",
+"as": "expression",
+"kieler": "missing '(' at 'a'",
+"column": 7
+},
+{
+"text": "a [ 1 ] >> a << & ~ - a",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 9
+},
+{
+"text": "A | >= 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 3
+},
+{
+"text": "f ( 10 % false ) pre + false",
+"as": "expression",
+"kieler": "no viable alternative at input 'pre'",
+"column": 18
+},
+{
+"text": "a pre ( A ) ? y : f ( false && A ) || c % a [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'pre'",
+"column": 3
+},
+{
+"text": "do ( C ? C : C )",
+"as": "expression",
+"kieler": "no viable alternative at input 'do'",
+"column": 1
+},
+{
+"text": "( ) c",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 3
+},
+{
+"text": "false 2.5 ^",
+"as": "expression",
+"kieler": "no viable alternative at input '2.5'",
+"column": 7
+},
+{
+"text": "[ 1 ] << b ? A : ( false < B ) ? 10 : 10",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "f ( pre ( A ) | ( <= y true ) & a ) >> ! b",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "pre ( )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 7
+},
+{
+"text": "A == a [ 1 ] < 2.5 %",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 14
+},
+{
+"text": "( ( ( 2 == B && a >= x ) >> false | true ) <= 2 ? B : f ( c >= 1 >= 2 ) ) * f ( 2 >= x ) || ( C == x ) ^ pre ( x )",
+"as": "expression",
+"kieler": "mismatched input '(' expecting ')'",
+"column": 57
+},
+{
+"text": "( 1 1 && C & B )",
+"as": "expression",
+"kieler": "mismatched input '1' expecting ')'",
+"column": 5
+},
+{
+"text": "- ^ false",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 3
+},
+{
+"text": "y y < B",
+"as": "expression",
+"kieler": "no viable alternative at input 'y'",
+"column": 3
+},
+{
+"text": "pre ( A ) * ( ( x ) / A ) == ( - - c > true << y ? pre ( x ) : b ) << c",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "- ~ y / A >> ; y",
+"as": "expression",
+"kieler": "no viable alternative at input '~'",
+"column": 3
+},
+{
+"text": ":",
+"as": "expression",
+"kieler": "no viable alternative at input ':'",
+"column": 1
+},
+{
+"text": "f ? C : a [ x ]",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "pre ( a ) & 1 != pre / ( x )",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 11
+},
+{
+"text": "f ( f ( ( C << B || 10 ) <= ) a [ x ] * B - ~ pre ( x ) ) ? a [ 0 ] : C - pre ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "[",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "== A",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": "A % ~ ~ B",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "- f ( f ( << b ) - pre ( A ) * ~ b || 2.5 ) < C || f ( C ? 1 : ! 2 ) | b",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 5
+},
+{
+"text": "a [ x 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "a == ( pre ( ) A <= 10 )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "f ( 10 >> ~ f ( A != 1 > 1 1 % b ) | 10 )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "( y ] )",
+"as": "expression",
+"kieler": "extraneous input ']' expecting ')'",
+"column": 5
+},
+{
+"text": "10 <= 2 != ~ f ( pre ( A ) > pre pre ( x ) && ( c ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 4
+},
+{
+"text": "f ( && a || a [ 0 ] ) ? - ( 2.5 ) : a + - false",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "f ( c << y << x == ( ( 2 - b ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "|| false C && 10",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 1
+},
+{
+"text": "A ? ( 2 2 << 1 ) : true",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "! C - false",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 5
+},
+{
+"text": "| A",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 1
+},
+{
+"text": "( false ) >> A",
+"as": "expression",
+"kieler": null
+},
+{
+"text": ") x",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "pre ( a ) >> ( ( ( x - 10 ) ) <= true + 2 > f pre ( x ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 11
+},
+{
+"text": "x != C >= f ( B ) == pre ( )",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 8
+},
+{
+"text": "10 - ( a [ x ] + ( a [ x ] ] | true != false && ( x ) ) )",
+"as": "expression",
+"kieler": "missing ')' at '+'",
+"column": 16
+},
+{
+"text": "B || || ! 10",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 3
+},
+{
+"text": "true true & 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input 'true'",
+"column": 6
+},
+{
+"text": "! 2.5 < ( a [ 1 ] * a + f ( y == ! y ) << f ( ) ) >= a",
+"as": "expression",
+"kieler": "no viable alternative at input '2.5'",
+"column": 3
+},
+{
+"text": ">>",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": "true + ( false % true ? A : ! 10 ? y : ( x ) ) * a [ 1 ] & ~ b",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 6
+},
+{
+"text": "~ < ( ~ 1 ) % ! x ? ( B & a [ 1 ] ) : x",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "f ( f ( false << << a ) << A ) && x",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "+= a",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "( x & y ? y : a ) ? : 2 x",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 19
+},
+{
+"text": "&& x",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 1
+},
+{
+"text": "+ 1",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 1
+},
+{
+"text": "a [ 1 ] == ( ( y < c )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 9
+},
+{
+"text": "false << true ? c : ~ a - a [ x )",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 7
+},
+{
+"text": "( A >> b ) + 2.5 && f ( f ( pre ( A ) ) ^ y > a [ 0 ++ ] % 2.5 )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 23
+},
+{
+"text": "= 2.5 << y",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "pre ( a a )",
+"as": "expression",
+"kieler": "extraneous input 'a' expecting ')'",
+"column": 9
+},
+{
+"text": "pre ( A ) 1 >= * ! f ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 11
+},
+{
+"text": "f ( 10 ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 10
+},
+{
+"text": "1 ? , : y != a [ 0 ] * f ( C )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "= b",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "~ ? ( ( true ) - f ( C * y ) ) : 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "f ( B << 1",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "( a <= pre ( A ) ) / false | f ( ( a [ x ] * ~ A A ) >= false )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 32
+},
+{
+"text": "y ? b : c | ( ( ! y ) + 1 ? y : ( 2.5 >> 2 > 2.5 true ) != f ( true ) ) ? a : pre ( x )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "f true )",
+"as": "expression",
+"kieler": "no viable alternative at input 'true'",
+"column": 3
+},
+{
+"text": "! ( x ) || ~ pre ( x ) ? ( a - false | ( 10 > 2 < 2.5 | 2 ) / 1 ) : ( A - a [ 1 ] || ( 2 ) << C ) << f ( 2.5 + ~ pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 24
+},
+{
+"text": "f ( go c == x + B & a [ 0 ] ) < ! false ? a [ 1 ] : A >= A",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "( x ) ? x : c",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "b / a [ 1 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "C << * false",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 3
+},
+{
+"text": "( ( true || c ) ) || ( 10 == f ( false == a [ 1 ] != pre ( a ) ) ^ y < a x ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 19
+},
+{
+"text": "b | f ( 1 ? B : ( 2 << false ) ? true : false",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "~ ( c ) != f ( a ? true : ! 10 ) % ( ( - true <= ( 1 ) + a [ 0 ] << ( b >= C ) ! & C == f ( a [ 0 ] <= B ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 14
+},
+{
+"text": "- - 2",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "true / y % false && ( ( f ( 2 + a * true % 10 ) ( true ^ B << A ) ) ? 10 : b )",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 6
+},
+{
+"text": "10 % C 10",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 4
+},
+{
+"text": "B ? 1 : 2.5 | pre ( x )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "& y",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 1
+},
+{
+"text": "10 ? ? b : ( ( 10 ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 4
+},
+{
+"text": "2.5 == / 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 8
+},
+{
+"text": "( 2 ]",
+"as": "expression",
+"kieler": "mismatched input ']' expecting ')'",
+"column": 5
+},
+{
+"text": "a [ 1 ] ? false - 2",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "a [ > 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "B / 10 >> < true ? y : - b",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "b ; <= 2 + ~ false",
+"as": "expression",
+"kieler": "no viable alternative at input ';'",
+"column": 3
+},
+{
+"text": "c / 1 1",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "false < a [ x ) ]",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 7
+},
+{
+"text": "( ( B ^ ( a > C == B * B ) != ( 2 ^ B ) ) >= f ( y ) * 2 ? b : a [ 0 ]",
+"as": "expression",
+"kieler": "missing ')' at '=='",
+"column": 17
+},
+{
+"text": "a [ 0 ] ( - 1 <= a [ 0 ] )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "a y > > a >> a",
+"as": "expression",
+"kieler": "no viable alternative at input 'y'",
+"column": 3
+},
+{
+"text": "( / true ) * false",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "a [ 0 ] ] << 2 >> ( C * 2 == pre ( A ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 9
+},
+{
+"text": "f ( C ) % ( f ( f ( true ) ) > ! f ( a >> A % b / 2.5 ) )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( ( x ^ true ) ) == a / [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 23
+},
+{
+"text": "c >= ( 10 % false ) || ( f ( pre / ( A ) > y ) ) != 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 3
+},
+{
+"text": "a [ 1 ] ? pre pre ( x ) : c",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 9
+},
+{
+"text": "f ( ( a x [ ] / C << pre ( x ) <= y ) >> 2 || 10 ? pre ( A ) : - B )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "[ a 0 ] != C >= true == a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "false > f ( a [ 1 ] / ( a [ 1 ] ) + pre [ ( x ) < b )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 11
+},
+{
+"text": "( y",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 5
+},
+{
+"text": "| a",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 1
+},
+{
+"text": "1 ? pre ( A : ) ( 2 )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "( pre ( A ) ? 10 10 : ( a + C ) ) == 1",
+"as": "expression",
+"kieler": "mismatched input '?' expecting ')'",
+"column": 13
+},
+{
+"text": "a x ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'x'",
+"column": 3
+},
+{
+"text": "a [ , ] / ~ false",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "A << B << ~ f ( pre go ( A ) ) || false",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 3
+},
+{
+"text": "pre",
+"as": "expression",
+"kieler": "mismatched input 'go' expecting '('",
+"column": 5
+},
+{
+"text": "b * 1 || 2 c",
+"as": "expression",
+"kieler": "no viable alternative at input 'c'",
+"column": 12
+},
+{
+"text": "( 10 ^ C < ( ! true >> 10 + ( 2.5 << 2 < <= a ) * c ) ? B : 2.5 ) ^ c",
+"as": "expression",
+"kieler": "mismatched input '>>' expecting ')'",
+"column": 21
+},
+{
+"text": "( f ( a [ x ] <= 10 ) || pre ( A ) != x * a ) < A <= ( 1 ^ f ( A < ( B || c ) ) != - false ) ? b : B",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 51
+},
+{
+"text": "y > ( a [ 0 % a [ x ] <= c ) && 2.5 != 1",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 3
+},
+{
+"text": "( ! b & ) ( b <= B ) / a > x",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 9
+},
+{
+"text": "!= a",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 1
+},
+{
+"text": "( C ) == A % - ( - C >> ~ )",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 12
+},
+{
+"text": "- 2 )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 5
+},
+{
+"text": "pre ( a ) <= pre ( x ) == ~ A &",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 24
+},
+{
+"text": "A * f ( - pre ( A ) ) <= f ( true < y << >= 2 + ( ! x ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 28
+},
+{
+"text": "! * x / y",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "^ c x",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 1
+},
+{
+"text": "pre ( x ) * ] ~ A + y",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 11
+},
+{
+"text": "! ! ! ( y + 2 )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "! pre ( A ) >= ( ( ( A A ) >= pre ( x ) + pre ( A ) ) | ! f ( 1 ) ) != ! y <= pre ( a )",
+"as": "expression",
+"kieler": "extraneous input 'A' expecting ')'",
+"column": 24
+},
+{
+"text": "* 10",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "pre ( a ) b",
+"as": "expression",
+"kieler": "no viable alternative at input 'b'",
+"column": 11
+},
+{
+"text": "! c 10",
+"as": "expression",
+"kieler": "no viable alternative at input '10'",
+"column": 5
+},
+{
+"text": ">> x",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": "a [ x ] == C == ( 2.5 < true ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 14
+},
+{
+"text": "*",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "! a [ 0 ] < A",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "a y || A == C + f ( 2.5 == x )",
+"as": "expression",
+"kieler": "no viable alternative at input 'y'",
+"column": 3
+},
+{
+"text": "a ^ ( go ( a ) ) % 10",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 3
+},
+{
+"text": ">> y",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": "; 10",
+"as": "expression",
+"kieler": "no viable alternative at input ';'",
+"column": 1
+},
+{
+"text": "pre ( a ) ^ ^ b",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 11
+},
+{
+"text": "pre ( a ) ^ -- a",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 11
+},
+{
+"text": "~ B > C A",
+"as": "expression",
+"kieler": "no viable alternative at input 'A'",
+"column": 9
+},
+{
+"text": "true + f ( b / a [ < 0 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 6
+},
+{
+"text": "C && ! 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "10 / ( ( A ) || f ( pre ( ) a << ( x ) != y ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 4
+},
+{
+"text": "y ? B C : & a",
+"as": "expression",
+"kieler": "no viable alternative at input 'C'",
+"column": 7
+},
+{
+"text": "% b",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 1
+},
+{
+"text": "( c ^ >> 10 )",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 7
+},
+{
+"text": "! * a",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "x ? C : f f ( ~ B )",
+"as": "expression",
+"kieler": "no viable alternative at input 'f'",
+"column": 11
+},
+{
+"text": "f ( a ) * true",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "10 B",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "f ( a [ 0 ] ^ false )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "A x",
+"as": "expression",
+"kieler": "no viable alternative at input 'x'",
+"column": 3
+},
+{
+"text": "true & >> 1",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 6
+},
+{
+"text": "] a & 2",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 1
+},
+{
+"text": "y || -- + f ( ( B ) + ( 1 || B % A * true ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 3
+},
+{
+"text": "( ( 10 ) ? 10 : 2 && f ( pre ( A ) + 2.5 << < 2.5 ) ) ^ 2",
+"as": "expression",
+"kieler": "mismatched input '(' expecting ')'",
+"column": 24
+},
+{
+"text": "f ( - B ) < + 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 11
+},
+{
+"text": "B ~",
+"as": "expression",
+"kieler": "no viable alternative at input '~'",
+"column": 3
+},
+{
+"text": "2.5 - - y || 2 >= b",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( ( true ) < a [ x ] != f ( 1 ) || ( ( true ) << 1 ) )",
+"as": "expression",
+"kieler": "mismatched input '!=' expecting ')'",
+"column": 22
+},
+{
+"text": ">> ( y )",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": ": true",
+"as": "expression",
+"kieler": "no viable alternative at input ':'",
+"column": 1
+},
+{
+"text": "x x",
+"as": "expression",
+"kieler": "no viable alternative at input 'x'",
+"column": 3
+},
+{
+"text": "a [ 1 ( ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "x go + false",
+"as": "expression",
+"kieler": "mismatched input '+' expecting 'to'",
+"column": 6
+},
+{
+"text": "false >> x * ( pre ( += a ) ) << 10",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 7
+},
+{
+"text": "! ( a [ 0 ] ) ? pre ( a ) : y + ! ( pre ( x ) > A >> C && 2 ) >> ~ pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 15
+},
+{
+"text": "a 1 [ ]",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": "f ( b * x >> % f ( B << 2 ? A : 2.5 )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "a [ 0 ] * false ? ( false <= x ) ) : ~ b",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 34
+},
+{
+"text": "10",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 4
+},
+{
+"text": ") b",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "f ( false | f ( ! ) x )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "pre [ ( a )",
+"as": "expression",
+"kieler": "extraneous input '[' expecting '('",
+"column": 5
+},
+{
+"text": "false || f ( C ^ ( ( 10 ) / 2.5 2.5 ) * A )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 12
+},
+{
+"text": "( <= ( - C >> true < B ? 2.5 : true )",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 3
+},
+{
+"text": "* a [ 1 ] - 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "true > ( false )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "a [ 1",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "<= 2",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 1
+},
+{
+"text": "1 ? pre a ( ) : 2.5 > a [ 0 ] || 2",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "a [ 1 ] ^ b ? : b A",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 13
+},
+{
+"text": "2 || false",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 3
+},
+{
+"text": "pre ( x ) >> pre ( x ) >= f ( 2 != x )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( ( f ( c <= | a ) == A > ( x | 2.5 ) ) < B ) >= false",
+"as": "expression",
+"kieler": "mismatched input '(' expecting ')'",
+"column": 7
+},
+{
+"text": "a [ 1 ] ==",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 9
+},
+{
+"text": "pre ( a == )",
+"as": "expression",
+"kieler": "extraneous input '==' expecting ')'",
+"column": 9
+},
+{
+"text": "f ( f ( f ( 2.5 ) <= a [ 1 ] + 2.5 ) ) * true ) << y",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 47
+},
+{
+"text": "( ( ^ ( c >> x ) << 2.5 < 2 ) > 2 ) | 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 5
+},
+{
+"text": "pre ( x ) ) && a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 11
+},
+{
+"text": "true ? pre ( x ) ( A ^ 1 )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 6
+},
+{
+"text": "a [ ] 1",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "2 * c || c",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "( b ) > 1 / ( - a [ x ] )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "y + A << < ( true )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "2.5 != && ( C & y )",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 8
+},
+{
+"text": "f ( ( 2.5 | a <= [ a 1 ] != true ) ) >> f ( 2 % 1 ) % true",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "a [ 0 ] + && f ( y )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 9
+},
+{
+"text": "( pre a ) && y",
+"as": "expression",
+"kieler": "missing '(' at 'a'",
+"column": 7
+},
+{
+"text": "A != f ( y ) < a % [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 14
+},
+{
+"text": "A >= a ? C c",
+"as": "expression",
+"kieler": "no viable alternative at input 'c'",
+"column": 12
+},
+{
+"text": "2.5 == += false",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 8
+},
+{
+"text": "( == 2 )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "( B & ) x",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 7
+},
+{
+"text": "( a <= ( pre ( x ) <= ) B != ( y % pre ( a ) | false <= 2 ) + ( c == f ( x ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 23
+},
+{
+"text": "- A",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "&&",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 1
+},
+{
+"text": "a [ 1 ] - y - --",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 9
+},
+{
+"text": "- C > ( A ) | 2",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "2 != B >= f ( 1 | ~ c ( % 1 ) != a [ 1 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 3
+},
+{
+"text": "( f ( ! C ) ^ a 0 ] ) >= B",
+"as": "expression",
+"kieler": "mismatched input '0' expecting ')'",
+"column": 17
+},
+{
+"text": "~ 1 / a [ [ 0 ] && a",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": "B <= a [ ? ] + a != 10",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 3
+},
+{
+"text": "b ? ! 1 : f ( ( B << 10 * * C > 10 ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "~ 2 ^ ( 1 != C != true || ( false >> a [ || ] ) ) >> C - false",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 3
+},
+{
+"text": "f ! ( a [ 0 ] + C | ( 1 == a [ 1 ] == x & 1 ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '!'",
+"column": 3
+},
+{
+"text": "C & f ( 10",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "o -=",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "o = 2 ^ f ( pre ( A ) & pre ( A ) - 2 ) / 2.5 <= ( f ( ) B || ( 10 >= 10 ) - a [ x ] >> pre ( A ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '^'",
+"column": 7
+},
+{
+"text": "x -= a ^ 2.5 != <= x | pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input '^'",
+"column": 8
+},
+{
+"text": "x = C | A < ~ x ; y = a < a [ 1 ] / 10 % % 2",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 35
+},
+{
+"text": "--",
+"as": "effect",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "+ S",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 1
+},
+{
+"text": "x -= ( ( f ( true && 2 2 && B ) && ( false - C * true ) >> 1 ) == ~ ( C != b ) ) * 2.5 ? y : a [ 1 ] != 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "% y --",
+"as": "effect",
+"kieler": "no viable alternative at input '%'",
+"column": 1
+},
+{
+"text": "o -= ( a >> false ) || ( f ( ( true - 2 >= 2 ) ) ) > ( ( - C - f ( 2.5 ) < 10 ) != f ( ( false >> C == A ^ 1 ) ) - 2 <= ( A < 2.5 ) ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '||'",
+"column": 21
+},
+{
+"text": ", S",
+"as": "effect",
+"kieler": "no viable alternative at input ','",
+"column": 1
+},
+{
+"text": "S ( ( false ) << pre B >> B * ( b ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x ] B != c ? 1 : a [ 0 ]",
+"as": "effect",
+"kieler": "no viable alternative at input ']'",
+"column": 3
+},
+{
+"text": "x = ++",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o *= A - ( << f ( c ) ) >= B",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 8
+},
+{
+"text": "o -= += A & 10 - pre ( a )",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": ", y = false",
+"as": "effect",
+"kieler": "no viable alternative at input ','",
+"column": 1
+},
+{
+"text": "] = - 1 % A",
+"as": "effect",
+"kieler": "no viable alternative at input ']'",
+"column": 1
+},
+{
+"text": "S 2 | A )",
+"as": "effect",
+"kieler": "no viable alternative at input '2'",
+"column": 3
+},
+{
+"text": "y = pre ( A ) ) * pre ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 15
+},
+{
+"text": "+= -= b > B",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "y -= f ( ( ~ 1 >> ! y / A ) < false & true & ( true ) ) - ( pre ( x ) | pre ( x ) * 2.5 == y )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "x *= c ? ( pre ( a ) : a [ 0 ] >= ( 1 & a [ 1 ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 8
+},
+{
+"text": "print ( pre A ( ) )",
+"as": "effect",
+"kieler": "extraneous input 'A' expecting '('",
+"column": 13
+},
+{
+"text": "o = a & 2 <= pre ( a ) > ( f ( x ^ ( y % x * y ) ) ) ) ; x = ( false )",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 24
+},
+{
+"text": "o ( 2 ) != 10",
+"as": "effect",
+"kieler": "no viable alternative at input '!='",
+"column": 9
+},
+{
+"text": "y = pre ( ( A ) & ! C < x",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "|| o *= 1",
+"as": "effect",
+"kieler": "no viable alternative at input '||'",
+"column": 1
+},
+{
+"text": "x *= 2 && ( - ( 1 != true ^ > b ) || x == c ) / 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 8
+},
+{
+"text": "y = ( B & a [ 0 ] | 10 / b ) <= ( a [ 1 ] ) || 1 != ( false )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "y *= f",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "y *=",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "o = 2 >= a [ 0 0 ] < 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '>='",
+"column": 7
+},
+{
+"text": "x = y || pre ( A ) > > c ; x = 10",
+"as": "effect",
+"kieler": "no viable alternative at input '||'",
+"column": 7
+},
+{
+"text": "-",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 1
+},
+{
+"text": "o += C >> / B >= x",
+"as": "effect",
+"kieler": "no viable alternative at input '>>'",
+"column": 8
+},
+{
+"text": "print ( x / ( f ( 2.5 ) - f ( ( / 10 | B ) ) ) )",
+"as": "effect",
+"kieler": "mismatched input '/' expecting ')'",
+"column": 11
+},
+{
+"text": "y b *=",
+"as": "effect",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "x b << true",
+"as": "effect",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "o *= pre ( x ) ( << f ( ~ f ( C < 10 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 16
+},
+{
+"text": "x = 2.5 | ( C & & 10 * f ( f ( 1 < x <= true ) ) & b )",
+"as": "effect",
+"kieler": "no viable alternative at input '|'",
+"column": 9
+},
+{
+"text": "S ( ( ! ( B || true ) != A ) + ! ! ( C <= 2 false | 1 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o *= 1 || y y == a [ 0 ] & ( y )",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 13
+},
+{
+"text": "|| x ++",
+"as": "effect",
+"kieler": "no viable alternative at input '||'",
+"column": 1
+},
+{
+"text": "o = ~ c ? ~ x : y ; y = true <= B",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 9
+},
+{
+"text": "= ~ a % false",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "y *= pre ( x ) - [ 1 ] + pre ( a ) + 2",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 16
+},
+{
+"text": "S ( x < a [ x ] + ( ( B && a [ x && c ) > a [ x ] ) || - ~ c )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "S S",
+"as": "effect",
+"kieler": "no viable alternative at input 'S'",
+"column": 3
+},
+{
+"text": "S 2.5 < pre ( x ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '2.5'",
+"column": 3
+},
+{
+"text": "print ( f [ ( 10 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '['",
+"column": 9
+},
+{
+"text": "x -= f ( ( false ) ? a [ 1 : ] : false ) % pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "&& ++",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 1
+},
+{
+"text": "print ( a ^ )",
+"as": "effect",
+"kieler": "extraneous input '^' expecting ')'",
+"column": 11
+},
+{
+"text": "o A ; x = 2 == false",
+"as": "effect",
+"kieler": "no viable alternative at input 'A'",
+"column": 3
+},
+{
+"text": "print ( pre ( A / y )",
+"as": "effect",
+"kieler": "missing ')' at '/'",
+"column": 17
+},
+{
+"text": "print ( pre ( x ) == ! a - 2.5 / false ) )",
+"as": "effect",
+"kieler": "mismatched input '-' expecting ')'",
+"column": 26
+},
+{
+"text": "^ ( a [ 1 ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '^'",
+"column": 1
+},
+{
+"text": "x = a << A * a % x",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x -= 10 != 1 != ( c != ) > ( 2 | ! x )",
+"as": "effect",
+"kieler": "no viable alternative at input '!='",
+"column": 14
+},
+{
+"text": "x *= f ( ( C > A ) * true ) | a [ 1 ]",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "print ( f ( ( 1 ) / a [ x ] ) - f ( C % a [ 1 ] ? b : pre ( x ) ] << B << 10 )",
+"as": "effect",
+"kieler": "mismatched input '-' expecting ')'",
+"column": 31
+},
+{
+"text": "x = 10 / ( true ) ; x = 2.5 ? 2.5 : ! ( B | a ) + == ( 1 % ( y ) / ( f ( c <= C >= false == B ) ) && 10 )",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 29
+},
+{
+"text": "print ( ( ( pre ( a ) + ) & true ) ? 1 : 2 * false || f ( 1 ) )",
+"as": "effect",
+"kieler": "extraneous input '+' expecting ')'",
+"column": 23
+},
+{
+"text": "x B",
+"as": "effect",
+"kieler": "no viable alternative at input 'B'",
+"column": 3
+},
+{
+"text": "print ( A 2.5 )",
+"as": "effect",
+"kieler": "extraneous input '2.5' expecting ')'",
+"column": 11
+},
+{
+"text": "print ( x + ( ( f ( A A == 10 < false << A ) < 10 ) >> - B ? c : false / 2.5 ) <= 2.5 )",
+"as": "effect",
+"kieler": "mismatched input '+' expecting ')'",
+"column": 11
+},
+{
+"text": "++ += ~ 10",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "y =",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x *= y <= f ( 2.5 / ( 2 > ( A * 10 ) || ~ != ( 10 ) ) ) != pre ( a ) | x",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 13
+},
+{
+"text": "[ o -= true",
+"as": "effect",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "S ( false / 10 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 18
+},
+{
+"text": "= y + 2 << 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "S a b ? B : false )",
+"as": "effect",
+"kieler": "no viable alternative at input 'a'",
+"column": 3
+},
+{
+"text": "x += 10 ? 1 y",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 13
+},
+{
+"text": "print ( : ( 2.5 ) || A )",
+"as": "effect",
+"kieler": "no viable alternative at input ':'",
+"column": 9
+},
+{
+"text": "S ( 10 && 2 ? + f ( true * f ( 1 != a != y - C ) + a ) : ( ~ A ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x = y ? 2 pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "o -= pre ( a ) << ? b",
+"as": "effect",
+"kieler": "no viable alternative at input '<<'",
+"column": 16
+},
+{
+"text": "S ( ! ( c ) A ? a [ 0 ] : x || x )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o = B == ( b pre ( a ) ) == ~ a [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '=='",
+"column": 7
+},
+{
+"text": "y += a [ 0 ] < f ( x ( 2.5 < x * 2.5 ) : 2.5 ) & C",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 18
+},
+{
+"text": "o = y == C ( B != 2.5 > y ) : true",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 12
+},
+{
+"text": "= true",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "y -= ( ( f 1 ) ) + ( C ) ? ! 10 : ( 2 ) >= b )",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "= 2 < a [ 1 ]",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "-= y C + a [ x ] != pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 1
+},
+{
+"text": "y += a [ ) 1 ] ? f ( 1 ^ ( a ) ) : f ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "y = 2.5 == a ; y = 2.5 ? x : x || b | A",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "o = += x > pre ( x ) ; x = a [ x ] * C / A",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = , 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y *= : A >> c",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "+= false",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "x += 10 > > a [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 9
+},
+{
+"text": "x = 2.5 <= ; x = pre ( x ) / f ( pre ( A ) || false )",
+"as": "effect",
+"kieler": "no viable alternative at input '<='",
+"column": 9
+},
+{
+"text": "y = A >= ( B != f ( C & ( > 10 == x && c ) ) ) ^ b ; y = b / c",
+"as": "effect",
+"kieler": "no viable alternative at input '>='",
+"column": 7
+},
+{
+"text": "o o = 2 * - A",
+"as": "effect",
+"kieler": "no viable alternative at input 'o'",
+"column": 3
+},
+{
+"text": "x",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x = C << f ( a [ 0 ] >> ! false ) ; y = ( a - b ) > + 1 ( ( C / pre ( A ) | ( 1 ) ) | pre ( a ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '<<'",
+"column": 7
+},
+{
+"text": "x = ( x ) == - ( f ( x < 2 << C <= true ) ) ; y = x << y || 2",
+"as": "effect",
+"kieler": "no viable alternative at input '=='",
+"column": 11
+},
+{
+"text": "* S",
+"as": "effect",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "o o --",
+"as": "effect",
+"kieler": "no viable alternative at input 'o'",
+"column": 3
+},
+{
+"text": "x -= f ( 1 ^ ( c & c 1 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "*= x 1",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 1
+},
+{
+"text": "o do --",
+"as": "effect",
+"kieler": "no viable alternative at input 'do'",
+"column": 3
+},
+{
+"text": "y += true true + x <= pre ( a ) != 10",
+"as": "effect",
+"kieler": "no viable alternative at input 'true'",
+"column": 11
+},
+{
+"text": "S ( a [ ] x + - ( ! B % B ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "y = == B ! 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y = a [ x - a ; x = pre ( A ) | x * - 10 == true",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "> y ++",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "y *= 2.5 & y <= ( c % true != )",
+"as": "effect",
+"kieler": "no viable alternative at input '&'",
+"column": 10
+},
+{
+"text": "y += c ? f 2.5 << - c ) : y",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 8
+},
+{
+"text": "y = y += * pre ( a )",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 7
+},
+{
+"text": "y",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "print ( ( a ) & 2 <= pre : ( a ) )",
+"as": "effect",
+"kieler": "mismatched input '&' expecting ')'",
+"column": 15
+},
+{
+"text": "print ( a x [ ] | true )",
+"as": "effect",
+"kieler": "mismatched input 'x' expecting ')'",
+"column": 11
+},
+{
+"text": "o = - - ~ b",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o -= c",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x ~ true",
+"as": "effect",
+"kieler": "no viable alternative at input '~'",
+"column": 3
+},
+{
+"text": "S ( - ! b )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o -= 10 != 10 [ f ( x * - - a & pre ( a ) <= a [ 1 ] ) | 1",
+"as": "effect",
+"kieler": "no viable alternative at input '['",
+"column": 15
+},
+{
+"text": "x = ( a x [ ] ) != 2",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = pre ( x ) ? B : : a [ 0 ] ; x = ! a",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 15
+},
+{
+"text": "x = 2.5 2.5 & ( a [ 1 ] ) ; x = a >> B == A",
+"as": "effect",
+"kieler": "no viable alternative at input '2.5'",
+"column": 9
+},
+{
+"text": "o -= ( a [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "x | = f ( y ) <= b",
+"as": "effect",
+"kieler": "no viable alternative at input '|'",
+"column": 3
+},
+{
+"text": "x = 2.5 > || A",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 9
+},
+{
+"text": "x do B ; x = c",
+"as": "effect",
+"kieler": "no viable alternative at input 'do'",
+"column": 3
+},
+{
+"text": "o = ( a && 10 ) < y = b",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 21
+},
+{
+"text": "y = 2.5 <= x ; y = b < ( 2.5 && ( a [ x ] << & b / pre ( x ) && a ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '<'",
+"column": 22
+},
+{
+"text": "x += ~ f ( b - + 2 & c ) < 10",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 10
+},
+{
+"text": "x = B + - ( C ) >",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 17
+},
+{
+"text": "-- y",
+"as": "effect",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "y = f ( [ x ] || pre ( x ) ? f ( 10 | b ) : pre ( x ) ) && b ; x = ( ( 2.5 ) ) | c",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "S ( && a [ x ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "y c =",
+"as": "effect",
+"kieler": "no viable alternative at input 'c'",
+"column": 3
+},
+{
+"text": "-- S",
+"as": "effect",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "x = f ( x != f ( 2.5 - != 1 ) ) < a",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "print < ( f ( B > ( c * ~ a ) < ~ ( true ^ 1 ^ y % b ) ) ^ ! a [ x ] % - ! - y )",
+"as": "effect",
+"kieler": "extraneous input '<' expecting '('",
+"column": 7
+},
+{
+"text": "x *= ] true == 1",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "o go c",
+"as": "effect",
+"kieler": "missing 'to' at 'c'",
+"column": 6
+},
+{
+"text": "y && = a ? true : - - 1",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "o = ( ! 2 ) != false % [ 0 ]",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '2.5'",
+"column": 3
+},
+{
+"text": "print ( C | A ^ - a )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "/ S",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "x = b >> + 2",
+"as": "effect",
+"kieler": "no viable alternative at input '>>'",
+"column": 7
+},
+{
+"text": "o -= false false % ! - y",
+"as": "effect",
+"kieler": "no viable alternative at input 'false'",
+"column": 12
+},
+{
+"text": "o *= ~ ? a [ 1 ] ? ( ! x & pre ( x ) ) : pre ( a )",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "x = a [ 1 ] > ( f ( A ) ) % B & a [ 0 ] ; x = a [ 0 ] ? C : [ x + B <= b",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 55
+},
+{
+"text": "o = A ; y = A % f ( ( pre ( x ) * > - a < - false ) > C & true / ( pre ( x ) | ~ a * 2 % 2 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '%'",
+"column": 15
+},
+{
+"text": "x b && a [ x ] != a [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "x = a * true << A",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x = ( A )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "y = f ( 1 + 2 << B == - 2 ) && y << / ! c ; x = C",
+"as": "effect",
+"kieler": "no viable alternative at input '<<'",
+"column": 34
+},
+{
+"text": "o -= || / false",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "y && ++",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "x *= y != ( false <= x <= ( c * ( false | 2.5 ) >> B ) ? 2 : A ) / ( ( a [ 0 ] - false & a & f ( true % ) ) ) | ( c ^ f ( 10 ) / f ( c >> ( false + B ) ) ^ x )",
+"as": "effect",
+"kieler": "no viable alternative at input '!='",
+"column": 8
+},
+{
+"text": "y = ! ( C && b + false ) ? y : c",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 26
+},
+{
+"text": "print do ( A || A )",
+"as": "effect",
+"kieler": "extraneous input 'do' expecting '('",
+"column": 7
+},
+{
+"text": "x -= 2.5 ^ a [ 1 ] % ( a [ x x ] % C ) >= b",
+"as": "effect",
+"kieler": "no viable alternative at input '%'",
+"column": 20
+},
+{
+"text": "x = a [ 1 >> a [ x ] > 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o = f ( ( f ( 2 ) == x / 10 / )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "o = a [ x ] * a [ 0 ] ; x = ( = f ( f ( C + y == A || b ) ) ) % 2",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 27
+},
+{
+"text": "y += += B",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "x ++",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "y *= f ( ? x : B )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "x -= ( f ( f f ( 2.5 % x ) - pre ( a ) ) ^ b * ( false && pre ( a ) ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "y -= f ( B ) >> a << ( c ) )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 28
+},
+{
+"text": "o = ( a [ [ 0 ] ) == pre ( x ) != 2 & ! 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "print a ( | x )",
+"as": "effect",
+"kieler": "extraneous input 'a' expecting '('",
+"column": 7
+},
+{
+"text": "o = B == & ~ true >= true",
+"as": "effect",
+"kieler": "no viable alternative at input '=='",
+"column": 7
+},
+{
+"text": "y - ( - y )",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "/ --",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "y y *= ~ 10 || y",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 3
+},
+{
+"text": "S ( ( pre ( a ) ) == ~ <= false >> B <= 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "S ( f ( pre ( a ) ? 2 : A ) + do A && a [ x ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o --",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "S + ( ! A < a >> f ( a [ x ] ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "o o = c",
+"as": "effect",
+"kieler": "no viable alternative at input 'o'",
+"column": 3
+},
+{
+"text": "x = ( ! x % ~ false ? 1 : ( C ) ? a [ 0 ] : f ( true + y ) ) & ~ pre ( A ) & A <= f ( 2.5 - ( ( 1 / B & b ^ x >> ) 1 >> ! 2 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y = a [ x ] ] / pre ( a ) <= f ( 10 ) || A",
+"as": "effect",
+"kieler": "no viable alternative at input ']'",
+"column": 13
+},
+{
+"text": "go S",
+"as": "effect",
+"kieler": "no viable alternative at input 'go'",
+"column": 1
+},
+{
+"text": "S ( 2 || C || : x )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "S ( ( ! 2.5 >= ~ f ( << true 2.5 ) ) >> a [ 1 ] != false )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "+ -= b > 2.5 >> ! - f ( 2.5 >> x ) <= B",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 1
+},
+{
+"text": "y += ( a [ x ] ? ( true * 2 < true < 2 ) : true ) * ( f ( >= C ^ a [ 0 ] ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "y = pre ( x ) ? f ( A * pre ( A ) ) : 10 < true >> 10 ; x 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '2.5'",
+"column": 59
+},
+{
+"text": "S ( f ( y * ( b ? % ( C & b ) - 2.5 ) != B - - false ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x = 2.5 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '2.5'",
+"column": 9
+},
+{
+"text": "( S ( true ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 1
+},
+{
+"text": "S 10 ( <= y )",
+"as": "effect",
+"kieler": "no viable alternative at input '10'",
+"column": 3
+},
+{
+"text": "o = A < f ( ( ( c != 10 > false ) >> ( ( 2.5 % x <= c != a ) < 2 - ( b ) ) | a [ 0 ] != ( 1 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 11
+},
+{
+"text": "o *= f ( 2 | && x <= ( b > ~ a * a % ( b >= b ) ) >= 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "x = ( c ) * ! a [ x ] a [ 1 ] ; y = A",
+"as": "effect",
+"kieler": "no viable alternative at input '*'",
+"column": 11
+},
+{
+"text": "y *= ( x ) +",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 12
+},
+{
+"text": "S ( a [ x ] ) )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 15
+},
+{
+"text": "x = - pre ( A ) >= c",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "print ( ( - f ( C == 1 ) >> c >= ( C ) >= false ) == b < b f",
+"as": "effect",
+"kieler": "mismatched input '>=' expecting ')'",
+"column": 40
+},
+{
+"text": "S ( a [ x ) ]",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "&& o *= false || ( ~ ! x + ~ 2 << b )",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 1
+},
+{
+"text": "S ( f 2.5 ( || pre ( A ) != f ( - 10 ) && ( a == A / x ) ) ? f ( ( false < 1 / B <= B ) || A ) : 1 ? f ( a >= ( false || x ) ) : ! false | y )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "print ( ~ f ( false < a [ x ] & a [ x ] ) >= ( B > 2.5 ) && a [ 1 ] > pre x ( ) )",
+"as": "effect",
+"kieler": "extraneous input 'x' expecting '('",
+"column": 75
+},
+{
+"text": "y -=",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "o = f ( ( A % pre ( a ) 2 | 10 ) ) ; y = pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "print ( a [ & x ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '['",
+"column": 9
+},
+{
+"text": "S ( ( f ( B - c ) + pre ( A ) ) << || c B )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "y = a ^ ( 2.5 | 2 > 2.5 > ~ C",
+"as": "effect",
+"kieler": "no viable alternative at input '^'",
+"column": 7
+},
+{
+"text": "x pre",
+"as": "effect",
+"kieler": "no viable alternative at input 'pre'",
+"column": 3
+},
+{
+"text": "= o b",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "o = ~ false > ! a [ ( x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": ") y --",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "x -= & C 1",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "o =",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y = ( ( ( C || false % true || C ) && ( A ) * ( 1 << b ) || pre ( x ) ^ pre ( a ) ) % C ? f ( 2.5 / c - a [ 0 ] && c ) : true ; y = 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "print ( ( b ) * 1 != ( false >= f ( 1 || x ) == ( x >> x ) ) ) )",
+"as": "effect",
+"kieler": "mismatched input '!=' expecting ')'",
+"column": 19
+},
+{
+"text": "o = a < a [ 0 ] || 2.5 ; x = 2",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "> S",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "x ( --",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o = ~ a [ x ] - f ( f ( true & y != b + false ) != A ) < B / y ; x = c f << ( a <= 2.5 - ( ( false / 2.5 + C * y ) ) ) || C + a [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 15
+},
+{
+"text": "S ( a [ 1 ] * f ( 2.5 >> b b ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "y += f ( ( 2 % 2 ) > y - ! A ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "x -= do C",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "o ^ pre ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input '^'",
+"column": 3
+},
+{
+"text": "y += ( f ( 2 > 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "print ( 1 ? ( pre ( a ) * ( a != C != 2 ) ) : ( pre ( a ) | - A << ( ) a ) )",
+"as": "effect",
+"kieler": "mismatched input '?' expecting ')'",
+"column": 11
+},
+{
+"text": "o = 1 ? f ( a - ( C ) ) : 10",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "o , b",
+"as": "effect",
+"kieler": "no viable alternative at input ','",
+"column": 3
+},
+{
+"text": "x = B ; x = b | ! | ( a [ 1 ] + 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input '|'",
+"column": 15
+},
+{
+"text": "o = ( ! a [ x ] ) ^ 10 != a [ pre 0 ] & ( 2.5 ) ; y = pre ( a ) >> true",
+"as": "effect",
+"kieler": "no viable alternative at input '^'",
+"column": 19
+},
+{
+"text": "y = ! x ; >> x = pre ( x ) << false",
+"as": "effect",
+"kieler": "no viable alternative at input '>>'",
+"column": 11
+},
+{
+"text": "print ( ( x ( & y ) ? false : ( y - y ) < true ) & pre ( x ) )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "S ( ( pre ( x ) <= B B / 10 ? 2 : b ) % ( 2 ) >= false )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x *= x ^ a [ 0 ] != pre pre ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input '^'",
+"column": 8
+},
+{
+"text": "S ( f ( 2 ? A : C ) ? ( ( A ) != a > > false ) : ( pre ( x ) ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "print x )",
+"as": "effect",
+"kieler": "missing '(' at 'x'",
+"column": 7
+},
+{
+"text": "== S",
+"as": "effect",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": "f",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "S ( : C )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "y += a [ 0 ] * - f ( pre ( a ) * f ( a ) - f ( c ) ) ) | f ( 2.5 & 10 >> A < 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 54
+},
+{
+"text": "x pre ( 1 ) || ( B ^ false | A ^ B ) && 10",
+"as": "effect",
+"kieler": "no viable alternative at input 'pre'",
+"column": 3
+},
+{
+"text": "x = false ; x = true < 2.5 >= A * pre ( )",
+"as": "effect",
+"kieler": "no viable alternative at input '>='",
+"column": 28
+},
+{
+"text": "++ y",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "S ( ( ~ pre ( A ) ? f ( a ) : b ) ^ c c | true )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o = 10 ? b : a [ 0",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 8
+},
+{
+"text": "x = x / ++ << c",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 7
+},
+{
+"text": "x = 1 & ; y = A < pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input '&'",
+"column": 7
+},
+{
+"text": "x =",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = = B",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y = ( pre ( x ) && f ( ( 1 * C ) - pre ( A ) >> ( A ) & ~ 1 ) ) ; y = b < ( pre ( x ) / 2.5 ) ? ~ ( c : ) ! 10",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "print ( ( y ) )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "o ; --",
+"as": "effect",
+"kieler": "no viable alternative at input '--'",
+"column": 5
+},
+{
+"text": "do ++",
+"as": "effect",
+"kieler": "no viable alternative at input 'do'",
+"column": 1
+},
+{
+"text": "o *= 2 >> f ( f ( C >= ( true == 10 ) && ( 2 == -- << false ) / true ) + b )",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "y = ~ 10 / B ? f ( 2.5 + 1 & f c ) : true != c",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x += - b",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "-- y ++",
+"as": "effect",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "o += 1 do & pre ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input 'do'",
+"column": 8
+},
+{
+"text": "S ( A ? ( 10 ) : ( 10 1 / 1 << false ) * pre ( x ) - c )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o o += y < a [ x ] && B",
+"as": "effect",
+"kieler": "no viable alternative at input 'o'",
+"column": 3
+},
+{
+"text": "y += 1 && ! B / c >> f ( 10 + c B )",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 15
+},
+{
+"text": "o *= a + ( - true < ( a [ 1 ] ) / b % f ( 2 * x / B == - b ) | )",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 8
+},
+{
+"text": "x += ! c c < A",
+"as": "effect",
+"kieler": "no viable alternative at input 'c'",
+"column": 10
+},
+{
+"text": "o 2",
+"as": "effect",
+"kieler": "no viable alternative at input '2'",
+"column": 3
+},
+{
+"text": "print ( ( - false ) ^ ~ 2 && a [ 0 ] > b )",
+"as": "effect",
+"kieler": "mismatched input '^' expecting ')'",
+"column": 21
+},
+{
+"text": "o = &",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = || * 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = 1 % ( ( false < c == C >= 2 )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = b || a % a [ x ] ; = 1 == ( C || c )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 24
+},
+{
+"text": "y *= - 1 < 1 1 << ( false ) * A",
+"as": "effect",
+"kieler": "no viable alternative at input '1'",
+"column": 14
+},
+{
+"text": "o -= ( y ) &&",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 12
+},
+{
+"text": "x += ( a ) <= f ( ! A )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "y += += pre ( a ) < ! a [ 0 ] >> 2.5 ^ pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "o = C ? a : ( != [ 0 ] - 2 ) ? 2 : false",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "S ( f ( pre ( a ) ) a != 2 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "( S 1 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 1
+},
+{
+"text": "print ( B B )",
+"as": "effect",
+"kieler": "extraneous input 'B' expecting ')'",
+"column": 11
+},
+{
+"text": "o = a ^ x ; x = ( pre ( x ) ^ f ( y % f & ( a <= false != 2.5 ) != pre ( x ) ) % ~ false ? b : A ) ^ - ( ~ x | x * ! 1 ) > f ( f ( ( C & true ) / a <= C ) ? C : ( c ) < ( f ( b == a * false < x ) ) + pre ( A ) ) == y",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 15
+},
+{
+"text": "o = x && a x ]",
+"as": "effect",
+"kieler": "no viable alternative at input 'x'",
+"column": 12
+},
+{
+"text": "S ( - f ( pre ( A ) * ( 2 < B >= x ) ) < ~ B )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o *= f ( x != f ( ! C ^ b ) - ) A",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "S ( c ? B B : 10 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "y = ! b / + ~ b < ( true >= B ) ; y = ( x >= C - 1 ) == y || x",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 9
+},
+{
+"text": "print ( B + 2.5 + pre ( ) != y )",
+"as": "effect",
+"kieler": "mismatched input '+' expecting ')'",
+"column": 11
+},
+{
+"text": "&& S",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 1
+},
+{
+"text": "y * -= f ( 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "x = x 2 *",
+"as": "effect",
+"kieler": "no viable alternative at input '2'",
+"column": 7
+},
+{
+"text": "o -= ! & 10",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "<= y = c - ( x ) ^ 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '<='",
+"column": 1
+},
+{
+"text": "print ( a pre > ( A ) )",
+"as": "effect",
+"kieler": "mismatched input 'pre' expecting ')'",
+"column": 11
+},
+{
+"text": "y *= ( A - x % pre ( 1 x ) ) <= C ? c : a",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "y --",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "= B * 2 | 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "x = true > ( ( f ( != B ) != 2.5 > ( true - 1 ^ A ) == 2 ) ) == a [ 0 ] != ( a [ 1 ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 10
+},
+{
+"text": "x --",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "o += f ( 2 & ( B B / b ) ) ? pre ( x ) : ~ ( 2 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "-= x ( 1 + a [ 0 ] ) << 10 || a",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 1
+},
+{
+"text": "print print ( y << 1 )",
+"as": "effect",
+"kieler": "extraneous input 'print' expecting '('",
+"column": 7
+},
+{
+"text": "x = ( 1 | ( b ) >= y << ( y ) ) > false y = pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 41
+},
+{
+"text": "y b & y",
+"as": "effect",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "S / a [ 1 ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "- a [ ; 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 3
+},
+{
+"text": "c | false + B + / B",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 11
+},
+{
+"text": "a == ( - ( false 2.5 >= ) ^ ( A ) ) == A",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "( 2 ) << <= pre ( x ) ? a [ x ] : C",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 7
+},
+{
+"text": "false false",
+"as": "expression",
+"kieler": "no viable alternative at input 'false'",
+"column": 7
+},
+{
+"text": ";",
+"as": "expression",
+"kieler": "no viable alternative at input ';'",
+"column": 1
+},
+{
+"text": "a a",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 3
+},
+{
+"text": "C C",
+"as": "expression",
+"kieler": "no viable alternative at input 'C'",
+"column": 3
+},
+{
+"text": "pre ( f a ) | f ( C - 10 ) | ! true",
+"as": "expression",
+"kieler": "extraneous input 'a' expecting ')'",
+"column": 9
+},
+{
+"text": "( b + 1 ) == a [ x ] * ( pre ( A ) > y >> ( y ) ? true : f ( c b >> C <= 2 ) ) ? ~ a [ 1 ] : pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 22
+},
+{
+"text": "f ( - ( B == y * a ) + ( ( 1 > 1 ) ) ) ? a [ x ] : true",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "b b <= ! b",
+"as": "expression",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "C ? C : a [ 1 ]",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "do C",
+"as": "expression",
+"kieler": "no viable alternative at input 'do'",
+"column": 1
+},
+{
+"text": ", 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 1
+},
+{
+"text": "b == b == ! ( B > ( 2.5 2.5 ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 8
+},
+{
+"text": "& a",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 1
+},
+{
+"text": "2 < ,",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "x > A % C - 1 1",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 7
+},
+{
+"text": "( 1 2 ) & 1",
+"as": "expression",
+"kieler": "extraneous input '2' expecting ')'",
+"column": 5
+},
+{
+"text": "c ^ ~ a && [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 3
+},
+{
+"text": "a [ 1 ] * a || B ? : ( - c << C * A )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 18
+},
+{
+"text": "a >> ( a [ 0 ] & true ) B",
+"as": "expression",
+"kieler": "no viable alternative at input 'B'",
+"column": 25
+},
+{
+"text": "( a [ 1 ] ) % ( y ? pre ( a ) : pre ( a ) ) - % & ~ x",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 13
+},
+{
+"text": "( 2.5 ) ? ( a - ( ++ ) % a ) : false",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 9
+},
+{
+"text": "* 10",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "pre ( a ) / c",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "~ pre ( A )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( ( ( x ) % / pre ( A ) ) )",
+"as": "expression",
+"kieler": "mismatched input '%' expecting ')'",
+"column": 11
+},
+{
+"text": "true <= / f ( A == ( pre ( x ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 6
+},
+{
+"text": "f ( = - a )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "f ( C * pre ( x ) / A + A",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "!",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 3
+},
+{
+"text": "( ! c >> ~ pre ( ( A ) << B )",
+"as": "expression",
+"kieler": "mismatched input '>>' expecting ')'",
+"column": 7
+},
+{
+"text": "f ( f ( pre ( x ) ^ ) ) * b",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "1 < ( pre ( A != ~ true % 1 & true )",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "pre ( a ) >= ( f ( c ) ) ? 2.5 : c ? ( false != a [ 0 ] > ! C - pre ( A ) : A",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 36
+},
+{
+"text": "1 < c != f ( > ~ a [ 1 ] <= 10 ) & x",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "! a [ * 1 ] == 2.5 < A != c",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 3
+},
+{
+"text": "pre pre ( a )",
+"as": "expression",
+"kieler": "extraneous input 'pre' expecting '('",
+"column": 5
+},
+{
+"text": "a 1 * a [ 1 ] % a",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": "pre ! ( A ) ^ B",
+"as": "expression",
+"kieler": "extraneous input '!' expecting '('",
+"column": 5
+},
+{
+"text": "a [ x ] ] >= false + ( false >= f ( ~ 2.5 == b > pre ( A ) ) > C ) < ( b || ( a [ 1 ] << x / 10 ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 9
+},
+{
+"text": "* 2",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "c - f ( ~ ) c % pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "f ( [ B ? true : false )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "! , ( x ) | f ( b >> 1 ) < a [ 1 ] ) != false > a [ x ] * a",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 3
+},
+{
+"text": "b b : 1 / 1",
+"as": "expression",
+"kieler": "no viable alternative at input 'b'",
+"column": 3
+},
+{
+"text": "! f ( f ( B < B ) <= false || ( C == 10 ) * ( a == 2 ) :",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 5
+},
+{
+"text": "A && f ( 1 ) % ( - b % ( a [ 0 ] << B == f ( y ) + false ) false <= a [ 0 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 14
+},
+{
+"text": ",",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 1
+},
+{
+"text": "% b",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 1
+},
+{
+"text": ">>",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": "~ ( pre ( A ) ) != - false >= x",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 28
+},
+{
+"text": "+= pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "~ a << ( A ) % 2 > ( b - ( b != x ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 5
+},
+{
+"text": "y , - 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 3
+},
+{
+"text": "false && pre ( a ) >> B ? ~ && a : pre ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 20
+},
+{
+"text": "( ( f ( a - ) 1 ) | false )",
+"as": "expression",
+"kieler": "mismatched input '(' expecting ')'",
+"column": 7
+},
+{
+"text": "^",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 1
+},
+{
+"text": "( a [ 0 ] x | )",
+"as": "expression",
+"kieler": "mismatched input 'x' expecting ')'",
+"column": 11
+},
+{
+"text": "( x ) C",
+"as": "expression",
+"kieler": "no viable alternative at input 'C'",
+"column": 7
+},
+{
+"text": "( f ( ( C * 2 ) ) << a [ x ] ) >= x != 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 37
+},
+{
+"text": "a [ 0",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "++ B",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "<< a [ 0 ] ^ C >= true",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 1
+},
+{
+"text": "a [ 0 ] + f ( true <= go )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 9
+},
+{
+"text": "b >",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 3
+},
+{
+"text": "~ a += x ] != 1 >> a / 10",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 5
+},
+{
+"text": "a == ( x ) ) / 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 12
+},
+{
+"text": "pre ( a ) ~ y * ~ c",
+"as": "expression",
+"kieler": "no viable alternative at input '~'",
+"column": 11
+},
+{
+"text": "( false",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 9
+},
+{
+"text": ": 10",
+"as": "expression",
+"kieler": "no viable alternative at input ':'",
+"column": 1
+},
+{
+"text": "a [ 0 ] ( || ( f ( 1 < x ) && a / false ) >> a [ x ] * B )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 9
+},
+{
+"text": "2.5 ? a : 2 + pre ( a ) + ! ( A A < a & 10 )",
+"as": "expression",
+"kieler": "no viable alternative at input '!'",
+"column": 27
+},
+{
+"text": "2 * ( f ( a == ( B >= C >= x ) true % ( false % C ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "( f ( a ) ) - c ? f pre ( x ) ) : pre ( A ) > a",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 13
+},
+{
+"text": "10 x + ^ - 10",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 6
+},
+{
+"text": "2 >> true + pre pre ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "f f ( 2 ) ? 2.5 : a",
+"as": "expression",
+"kieler": "no viable alternative at input 'f'",
+"column": 3
+},
+{
+"text": ">= B",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 1
+},
+{
+"text": "true true",
+"as": "expression",
+"kieler": "no viable alternative at input 'true'",
+"column": 6
+},
+{
+"text": "1 >> x ? a : pre ( x )",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "a || ( true ) ? C : ( 2.5 && f ( false ^ 1 C / x ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 15
+},
+{
+"text": "( ( C )",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 9
+},
+{
+"text": "c << -- y",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 3
+},
+{
+"text": "( pre ( A ) - 2 < 1 1 ) ? 10 : B",
+"as": "expression",
+"kieler": "extraneous input '1' expecting ')'",
+"column": 21
+},
+{
+"text": "a && f ( 10 & ( 10 || y ) ? c : ( B ) ) * ( ~ ( c ) - true : ! 1 + ( C ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 41
+},
+{
+"text": "y <= 2 go << x",
+"as": "expression",
+"kieler": "mismatched input '<<' expecting 'to'",
+"column": 11
+},
+{
+"text": "/ false",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "y < f ( pre ( x >> ) f ( C ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "f ( a [ 0 ] - 2.5 ) >= y ? y : a ? true : true",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 34
+},
+{
+"text": "( false - f ( & ~ x > c ) == 10 >= a [ 0 ] ) & false && y",
+"as": "expression",
+"kieler": "mismatched input '-' expecting ')'",
+"column": 9
+},
+{
+"text": "( b",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 5
+},
+{
+"text": "! ( true | B < C C ) && false",
+"as": "expression",
+"kieler": "extraneous input 'C' expecting ')'",
+"column": 18
+},
+{
+"text": "! b",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "pre ( A",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 9
+},
+{
+"text": "^ 2",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 1
+},
+{
+"text": "2.5 ? A : c & * pre ( x )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 15
+},
+{
+"text": "2.5 >= f ( B << f ( B == <= a [ 1 ] ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 10
+},
+{
+"text": "1 / / 1",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "true == * B",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 6
+},
+{
+"text": ") 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "+ true",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 1
+},
+{
+"text": ">= 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 1
+},
+{
+"text": "1 10",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "true true % c",
+"as": "expression",
+"kieler": "no viable alternative at input 'true'",
+"column": 6
+},
+{
+"text": "A ? 2.5 : pre ( x = )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "2.5 >",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 7
+},
+{
+"text": "c + true + ( ! C && a [ ] | 10 )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "1 ++ >= c - c",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 3
+},
+{
+"text": "^ ( x )",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 1
+},
+{
+"text": "( a [ -- 0 ] % b )",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 3
+},
+{
+"text": "a [ [ x ] == x - true",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "( 2.5 > pre ( a ) ) | 10",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( ( 10 ) & a",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 14
+},
+{
+"text": "1 >= << C",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 3
+},
+{
+"text": "( ( f b ) )",
+"as": "expression",
+"kieler": "extraneous input 'b' expecting ')'",
+"column": 7
+},
+{
+"text": "( a )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "a [ x ] >> c",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "f ( f ( pre ( x ) ) + pre ( x >= == ~ f ( A ) == a [ 0 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "2 * * x",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "( ( c == ( C | false & 1 >= true ) & x ) % ( ! 1 && 2 ) ) + true",
+"as": "expression",
+"kieler": "mismatched input '%' expecting ')'",
+"column": 42
+},
+{
+"text": "f ( y > pre ( x ) ) | A",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( 2 ) ? ( ( c % y && true >= y ) || 1 ) : || 1 ( b ) / f ( f ( f ( true % x <= a ) >= 10 + 10 <= c ) ? c : A )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "( f ( ( c > false == true ) | pre ( x ) ) >= f ( ( C ) * ( 10 2.5 ) * true || ( b << x ) ) ) ^ 10 << B",
+"as": "expression",
+"kieler": "mismatched input '(' expecting ')'",
+"column": 5
+},
+{
+"text": ") a",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "f ( pre ( x ) % A ^ pre ( a ) & ( ~ true c >= - false ) ) == C * a",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "true << ! -",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 6
+},
+{
+"text": "true && b >= >= B",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 6
+},
+{
+"text": "c >> a [ 1 ] ]",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 14
+},
+{
+"text": "y == a 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 8
+},
+{
+"text": "f ( ( || 10 ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x / 10 && pre a )",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "- 2 2 >= ! B",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 5
+},
+{
+"text": "( B ) % pre & ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 7
+},
+{
+"text": "- ? A : 1",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "! ( ( 10 - false << c C ) ) << A",
+"as": "expression",
+"kieler": "extraneous input 'C' expecting ')'",
+"column": 23
+},
+{
+"text": "||",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 1
+},
+{
+"text": "false C ^",
+"as": "expression",
+"kieler": "no viable alternative at input 'C'",
+"column": 7
+},
+{
+"text": "! B",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "c | | f ( y ) ^ a [ x ] - f ( ( 2 - ( 10 / 2.5 / C ) < 2.5 ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '|'",
+"column": 3
+},
+{
+"text": "pre ( x ) + f ( b",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 11
+},
+{
+"text": "- a [ 0 ] b",
+"as": "expression",
+"kieler": "no viable alternative at input 'b'",
+"column": 11
+},
+{
+"text": "<",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 1
+},
+{
+"text": "== c",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": "( ++ )",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 3
+},
+{
+"text": "x x",
+"as": "expression",
+"kieler": "no viable alternative at input 'x'",
+"column": 3
+},
+{
+"text": "do A",
+"as": "expression",
+"kieler": "no viable alternative at input 'do'",
+"column": 1
+},
+{
+"text": "( b ) ? 2 : ( ( y go ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "a [ 1 ] 2 / ^ true",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 9
+},
+{
+"text": "( << c - 2.5 )",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 3
+},
+{
+"text": "/ a",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "pre ( a ) << ( 2.5 2.5 <= a [ 0 ] && A && f ( 10 & false ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 11
+},
+{
+"text": "- - A < 10",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "B > pre ( a ; ) >> 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 3
+},
+{
+"text": "f",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "a ? c : f ( f ( y , - - 2 )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 11
+},
+{
+"text": "C 2 >>",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 3
+},
+{
+"text": "x ^ pre ( A ) & pre ( x ) <= - c",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "10 + pre ( a / ) a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 4
+},
+{
+"text": "B false !=",
+"as": "expression",
+"kieler": "no viable alternative at input 'false'",
+"column": 3
+},
+{
+"text": "a [ x [ ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "C ^ a [ ] | f ( c ) << true",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 3
+},
+{
+"text": "y < pre ( x",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "2 % ( C a",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "x ^ B",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "C > A 2 >",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 7
+},
+{
+"text": "1 false /",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 9
+},
+{
+"text": "a [ 0 ] / f ( B > ~ pre ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 9
+},
+{
+"text": "C - ( ! ( 10 1 ) << 10 - x % - b ) < a + 1",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "C & ( B == ! pre ( ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 3
+},
+{
+"text": "a a [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 3
+},
+{
+"text": "!=",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 1
+},
+{
+"text": "( x",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 5
+},
+{
+"text": ">= x",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 1
+},
+{
+"text": "a [ 1 ] - != ~ ~ b",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 9
+},
+{
+"text": "! 2 / false >= ( f ( 1 / x > pre ( A ) << 2 | ! a [ 0 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '2'",
+"column": 3
+},
+{
+"text": "( ( f ( x >> B ) < x << ( ( c ) ) ) & pre ( x )",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 49
+},
+{
+"text": "f ( 1 & ! )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "c % y | ( pre ( a ) >> f ( f ( y ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "C && && x > 1",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "2 && x | ( false || ( ( true / A + x ) >> b ) == c ^ c / )",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "c >",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 3
+},
+{
+"text": "c * ( - b ) ||",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "B >> -- true",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "pre ( a ) & a x ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'x'",
+"column": 15
+},
+{
+"text": "true !",
+"as": "expression",
+"kieler": "no viable alternative at input '!'",
+"column": 6
+},
+{
+"text": "( 2.5",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 7
+},
+{
+"text": "== true",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": "f ( x < b >= x ^ C [ ) ^ y",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "false ? ! ( ( 10 ) : ~ ! 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "pre % ( a ) < pre ( A )",
+"as": "expression",
+"kieler": "extraneous input '%' expecting '('",
+"column": 5
+},
+{
+"text": "( ( x << A == c - false ) ) > pre ( a ) ) && 1 || true >= f ( 2 <= 10 ? true : a )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 41
+},
+{
+"text": "pre ( x ) C",
+"as": "expression",
+"kieler": "no viable alternative at input 'C'",
+"column": 11
+},
+{
+"text": "b ( < c",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "~ 1 - + 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": "b + 2.5 ( )",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "true >>",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 6
+},
+{
+"text": "do 10",
+"as": "expression",
+"kieler": "no viable alternative at input 'do'",
+"column": 1
+},
+{
+"text": "C * ( f ( y * a [ 1 ] ) == false && - b << y ) % f ( ! ) >= pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "( a [ x ] < true & true | f ( a [ 0 ] || x ) <= ) B",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 49
+},
+{
+"text": "% - true || true",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 1
+},
+{
+"text": "true || ( y - 10 / a [ 1 ] - < false )",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 6
+},
+{
+"text": ", B",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 1
+},
+{
+"text": "f ( ( x || ( B << true % y ) ^ f ( y & ) c < 2 || x ) == x ) ) <= ! a % a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "<<",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 1
+},
+{
+"text": "pre ( x ) / ( A ) || ( pre ( a ) & c == ( ( A < b ) ) ? A : ( y ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 69
+},
+{
+"text": "! ! pre ( A )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "% - x",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 1
+},
+{
+"text": "/",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "10 10",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "f ( f f ( pre ( A ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "a 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '0'",
+"column": 3
+},
+{
+"text": "a [ << ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "f true ) < 2.5 << C",
+"as": "expression",
+"kieler": "no viable alternative at input 'true'",
+"column": 3
+},
+{
+"text": "a a [ 0 ] > b",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 3
+},
+{
+"text": "( pre ( A ) ) >= ( >> x ) * 1 ^ a",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 15
+},
+{
+"text": "a [ 1 >> false ^ pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "x + / >= C",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "B ( && C | c == false )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "- b ? pre ( ; x ) : A + ( B && 2 ) * 2",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 5
+},
+{
+"text": "( f ( false + b || 10 & 1 ) <= 2 ? A : 2.5 ? : 1 )",
+"as": "expression",
+"kieler": "mismatched input '?' expecting ')'",
+"column": 44
+},
+{
+"text": "( A ) ? ( ( true do b ) && c | b == C ) : true + y",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "C >> ! pre ( A ) & 2.5 c",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "2 ? ( f ( ! || y ) ) : ( 10 || B )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "<= 10",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 1
+},
+{
+"text": "B >> += b * false || a [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 3
+},
+{
+"text": "( y != false / 2.5 + true ) ? x : f >= ( y )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "[ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "a [ 1 ] ] || pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 9
+},
+{
+"text": "( false % 2.5 << a [ [ 1 ] % a [ 1 ] )",
+"as": "expression",
+"kieler": "mismatched input '%' expecting ')'",
+"column": 9
+},
+{
+"text": "! - ( y << 2.5 ( && b && c ) < ( 2 + ( ( b | x < C ) ) - pre ( x ) ? ( true ) : b )",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "A / && true",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "f ( pre ( x ) + B ) - f ( C | ( false | ~ y ) ) / pre ( ) x || ! y",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 21
+},
+{
+"text": "( f ( true ) ) ? pre ( x ) : a",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( ( ( A < 10 - y ) / ( B ^ 2 <= true ) ) ) ? ( f ( C >= a ) - 1 a [ x ] / pre ( A ) ) : b | b",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 44
+},
+{
+"text": ") ! C ) < B",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "10 || += ( y ^ ~ ( x ) < false ) ? B : 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 4
+},
+{
+"text": "!= C",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 1
+},
+{
+"text": "/ 1",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "2 == ( false >= >= c )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "[ a",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "10 >> >> 1",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 4
+},
+{
+"text": "( a [ x ] ? c : 2.5 ++ )",
+"as": "expression",
+"kieler": "extraneous input '++' expecting ')'",
+"column": 21
+},
+{
+"text": "( true >> f ( ( x % 10 == false ) >> f ( b == B ) ) || [ a 1 ] ? x : x ) + 2",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 56
+},
+{
+"text": "A A",
+"as": "expression",
+"kieler": "no viable alternative at input 'A'",
+"column": 3
+},
+{
+"text": "C / 2 != C ? f ( ! y / f ( a - false <= x << 2.5 ) : ) ( false )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 12
+},
+{
+"text": "c )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 3
+},
+{
+"text": "+ A a",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 1
+},
+{
+"text": "A == >=",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "B do >= a [ x ] == x",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 6
+},
+{
+"text": "false - ( pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 7
+},
+{
+"text": "++ y",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "pre ( x ) ? ( C * y ) : B <= false | ( f ( ( y ) > ( B != c ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 11
+},
+{
+"text": "--",
+"as": "expression",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "% b > 1",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 1
+},
+{
+"text": "/ x >> y",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "f ( y c < ) && a [ 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "( C >= false % ! 1 && f ( a 1 >> >= ( B < 1 ) ) ) <= 2",
+"as": "expression",
+"kieler": "mismatched input '%' expecting ')'",
+"column": 14
+},
+{
+"text": "pre ( a",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 9
+},
+{
+"text": "1 1 < 2.5",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( 10",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 6
+},
+{
+"text": "== 10",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": "false ? ~ A : a [ x ] >> ( f 10 ( | 2 ) || x )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "( a [ 1 ] ^ 2.5 && b [ )",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 20
+},
+{
+"text": "; x",
+"as": "expression",
+"kieler": "no viable alternative at input ';'",
+"column": 1
+},
+{
+"text": "a * ( 2.5 || a [ x ] == a [ 1 ] >= )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "a [ x a ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "false &",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 7
+},
+{
+"text": "++ A << 1",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "1 << ? C",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 3
+},
+{
+"text": "( 1 && a [ 1 ] >> pre ( A ) < 2 ) >= true ? ( ( false < A - C % true ) % 2.5 * A ) : 2.5 * ( true <= a [ 1 ] << false false <= pre ( a ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 43
+},
+{
+"text": "( 1 < ( 2 >> f ( 10 % a ) << f ( A < 2.5 ) == x ) != y ) != ! ( pre ( A ) == 2.5 ) ^ == b >= 10",
+"as": "expression",
+"kieler": "mismatched input '!=' expecting ')'",
+"column": 51
+},
+{
+"text": "a || pre ( a ) a [ x ] : 10",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 16
+},
+{
+"text": "x <= <= true",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 3
+},
+{
+"text": "( 1 != ( pre ( x x ) >> ( c ) ) ? f ( true * x || C ) : ( b ) ) != false",
+"as": "expression",
+"kieler": "extraneous input 'x' expecting ')'",
+"column": 18
+},
+{
+"text": "= != true",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "f ( false ^ ( c ) ) y > false",
+"as": "expression",
+"kieler": "no viable alternative at input 'y'",
+"column": 21
+},
+{
+"text": "1 ^",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 3
+},
+{
+"text": "x ? ( C == ) : a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "pre ( ) && A",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 7
+},
+{
+"text": "( - a ) & 2 * A ? ( 10 >= ! y ) : || A",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 9
+},
+{
+"text": "f ( ~ pre ( A ) > ! false ) % 10 != ) x != true",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 29
+},
+{
+"text": "x A",
+"as": "expression",
+"kieler": "no viable alternative at input 'A'",
+"column": 3
+},
+{
+"text": "false %",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 7
+},
+{
+"text": "A && false |",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "( a [ x ] false )",
+"as": "expression",
+"kieler": "extraneous input 'false' expecting ')'",
+"column": 11
+},
+{
+"text": "++ true",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "go A",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 1
+},
+{
+"text": "( x ) % x | false ^ ( pre ( x ) + y )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "a pre + 1",
+"as": "expression",
+"kieler": "no viable alternative at input 'pre'",
+"column": 3
+},
+{
+"text": ">> C",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": "a != - 2 : / true",
+"as": "expression",
+"kieler": "no viable alternative at input ':'",
+"column": 10
+},
+{
+"text": "pre ( ) ? y : 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 7
+},
+{
+"text": "( x ) << ( a / [ x ] ) ^ a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 7
+},
+{
+"text": "1",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 3
+},
+{
+"text": "+= 1",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "true ? a [ 0 ] : & a ~ ( 2 ) + ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 6
+},
+{
+"text": "y > a < a [ ^ 0 ] > pre ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 7
+},
+{
+"text": "2 a &&",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 5
+},
+{
+"text": "<< - 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 1
+},
+{
+"text": "a [ ] && 10",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "1 || ( pre [ ( A ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 3
+},
+{
+"text": "y ? a [ 0 ] * a [ 0 ] ^ - 10 ? ( y && ( b && b ^ 2.5 ) ) : ( f ( c ) << f ( a || 1 * 1 ) ^ A & 2 )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "2 ? 2.5 : ( pre ( A ) << f ( c / B ) > 2.5 && false ) ) ? b : ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "( c ]",
+"as": "expression",
+"kieler": "mismatched input ']' expecting ')'",
+"column": 5
+},
+{
+"text": "( A && ( 10 ^ c ) ? ( pre A ) : false & 1 )",
+"as": "expression",
+"kieler": "mismatched input '?' expecting ')'",
+"column": 19
+},
+{
+"text": "! false ? ++ C : false",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 9
+},
+{
+"text": "! ( c ) % f ( y * ( a [ 1 ] | a && ( c >> false ) && f ( f ( A < 2.5 || 1 >> 1 ) ) ) || true << ( ~ a * false )",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 9
+},
+{
+"text": "( a [ 1 ] < B && B - 2.5 ) >= 2",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "( pre pre ( A ) )",
+"as": "expression",
+"kieler": "extraneous input 'pre' expecting '('",
+"column": 7
+},
+{
+"text": "[ ( 2.5 << B != b )",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "& x",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 1
+},
+{
+"text": "( ~ ( y > 2 >= A || C ) ) % true ) + A",
+"as": "expression",
+"kieler": "missing ')' at '>='",
+"column": 13
+},
+{
+"text": "10 || ! x != > C 2",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 4
+},
+{
+"text": "false x",
+"as": "expression",
+"kieler": "no viable alternative at input 'x'",
+"column": 7
+},
+{
+"text": "y y",
+"as": "expression",
+"kieler": "no viable alternative at input 'y'",
+"column": 3
+},
+{
+"text": "a [ 0 ] > a [ 0 ]",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "/ pre ( A )",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 1
+},
+{
+"text": "( < x ^ a [ 0 ] >> a [ 1 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "2 & pre ( x ) ^ C b",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 3
+},
+{
+"text": "true c",
+"as": "expression",
+"kieler": "no viable alternative at input 'c'",
+"column": 6
+},
+{
+"text": ">> 2",
+"as": "expression",
+"kieler": "no viable alternative at input '>>'",
+"column": 1
+},
+{
+"text": "a [ ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "!= C - b",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 1
+},
+{
+"text": "a [ ] << y != C >= C",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "++ a >= a [ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "( b * x + b ) < a [ 0 ] > &&",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 25
+},
+{
+"text": "> 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "10 ^ ( pre ( && A ) ) || b",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 4
+},
+{
+"text": "( )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 3
+},
+{
+"text": "A a",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 3
+},
+{
+"text": "> 2.5 * B",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "=",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "+=",
+"as": "expression",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "f ( false ) - f ( B 2 < ! true )",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 13
+},
+{
+"text": "f ( ! - 1 || : pre ( x ) ) >= a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "f ( pre ( ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "<= x",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 1
+},
+{
+"text": "10 == ++ A ^ pre ( a )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 4
+},
+{
+"text": "( a 1 [ ] / ! y ) || f ( false )",
+"as": "expression",
+"kieler": "mismatched input '1' expecting ')'",
+"column": 5
+},
+{
+"text": "!= false && ( false + a [ 1 ] )",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 1
+},
+{
+"text": "( f ( 2 ) + 2.5 ) *",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 19
+},
+{
+"text": "true << 10 && 1 f / ( ( false != a [ x ] ) )",
+"as": "expression",
+"kieler": "no viable alternative at input 'f'",
+"column": 17
+},
+{
+"text": "( f ( x & C ) != f ( ( y ) )",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 30
+},
+{
+"text": "pre ( ( x )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "c -",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "a - ( ( 10 & 10 / ! true != 2.5 ) ? ( x ^ x < 1 ) : f ( a % y ) ) * ( c < c ) && ( y << y )",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "c 1 > 1",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": "10 == ( ( x * y ^ ( x || 1 ) ) ) ) && false",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 4
+},
+{
+"text": "! ( x )",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "2.5 ? ( A >= b ) : <= b",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 5
+},
+{
+"text": "! x | B",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "f ( <= ) ? ( ( A > y & C << y ) - ( 1 && b ) % ( C + y ) && pre ( a ) ) : 2.5",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "2.5 a [ 1 ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'a'",
+"column": 5
+},
+{
+"text": "a x [ ]",
+"as": "expression",
+"kieler": "no viable alternative at input 'x'",
+"column": 3
+},
+{
+"text": "[ x ]",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "x - ! a [ 0 0 ]",
+"as": "expression",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "f ( a ||",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "] / B",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 1
+},
+{
+"text": "true 1 + a | ~ C",
+"as": "expression",
+"kieler": "no viable alternative at input '1'",
+"column": 6
+},
+{
+"text": "2 == 1 / ( 2.5 ) ? false : ( 10 += <= C )",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "-- a",
+"as": "expression",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "? 1",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 1
+},
+{
+"text": "2.5 && && - false ? ( a [ x ] * ( C ) < ( B || false ^ A < 2.5 ) ) : A",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 8
+},
+{
+"text": "f ( - y < ( a [ x ] ) << y - a [ 0 ] ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 40
+},
+{
+"text": "pre ( x || false",
+"as": "expression",
+"kieler": "mismatched input '||' expecting ')'",
+"column": 9
+},
+{
+"text": "a 0 ] != ~ f ( B )",
+"as": "expression",
+"kieler": "no viable alternative at input '0'",
+"column": 3
+},
+{
+"text": "( 10 / a [ 0 ] == ( c - f 2.5 % 10 ) ) ? a [ x ] : pre ( a ) ) == ~ 2.5",
+"as": "expression",
+"kieler": "mismatched input '-' expecting ')'",
+"column": 23
+},
+{
+"text": "> y",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "x + ( pre ( x ) << x / true ) <= true << ( a [ 0 ) ]",
+"as": "expression",
+"kieler": "no viable alternative at input '<<'",
+"column": 39
+},
+{
+"text": "a",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "&",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 1
+},
+{
+"text": "pre true",
+"as": "expression",
+"kieler": "missing '(' at 'true'",
+"column": 5
+},
+{
+"text": "f ( f ( f ( c % 1 > ) false < false ) + ( f ( 2 & A ) ) + B - ( 2 == - A ^ a / ~ false ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "* C",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "( C f % ~ true <= 1 ) && pre ( a ) / a [ x ]",
+"as": "expression",
+"kieler": "mismatched input 'f' expecting ')'",
+"column": 5
+},
+{
+"text": "pre ( a ) == f ( true pre < ( a ) * C )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 16
+},
+{
+"text": "C % 2 - ^ pre ( x ) * ( pre ( A ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "a + y > ( A ) >= ( - 10 > f ( B ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '>='",
+"column": 15
+},
+{
+"text": "( ( true + x > B ) & a <= )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 27
+},
+{
+"text": "2.5 ( )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 5
+},
+{
+"text": "( f ( a [ 1 ] + A ) || ( f a [ 0 ] || ( c - true ) - 2.5 ^ 2.5 ) ^ 2 ) && y + pre ( x )",
+"as": "expression",
+"kieler": "mismatched input 'a' expecting ')'",
+"column": 28
+},
+{
+"text": "C && a",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "go C",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 1
+},
+{
+"text": "f ( 1 ? true : A ) / c && f ( ( f ( a ) & y y ) > f ( a <= true ) <= a [ 1 ] && ( 1 | ( true % 2.5 ) ^ ( a == b ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 29
+},
+{
+"text": "* false",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 1
+},
+{
+"text": "( a",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 5
+},
+{
+"text": "go a",
+"as": "expression",
+"kieler": "no viable alternative at input 'go'",
+"column": 1
+},
+{
+"text": "a * ! ( f ( a ) ) ? a [ 1 ] : false > ( ( c ( + a + B ) ) )",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "( a [ x ] > ( a [ x ] > f ( c - C <= B - false ) ) * )",
+"as": "expression",
+"kieler": "extraneous input '*' expecting ')'",
+"column": 52
+},
+{
+"text": "-- ( y )",
+"as": "expression",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "pre ( A ) / false << pre ( a ) >> a [ 0",
+"as": "expression",
+"kieler": "no viable alternative at input '/'",
+"column": 11
+},
+{
+"text": "<= false",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 1
+},
+{
+"text": "! ( ( A <= x ) != ) 1 || f ( C | ! 10 )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 19
+},
+{
+"text": "2 % true * ~ f x >= ( 1 )",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "pre ( A ) )",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 11
+},
+{
+"text": "a [ 1",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "] x",
+"as": "expression",
+"kieler": "no viable alternative at input ']'",
+"column": 1
+},
+{
+"text": "| x = B",
+"as": "effect",
+"kieler": "no viable alternative at input '|'",
+"column": 1
+},
+{
+"text": "x |",
+"as": "effect",
+"kieler": "no viable alternative at input '|'",
+"column": 3
+},
+{
+"text": "o = a [ ]",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y = f ( C ) << ( a ? f >> ( a ) : ( false ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '<<'",
+"column": 13
+},
+{
+"text": "y = b ? a [ x ] : true & 1 > - pre A ( )",
+"as": "effect",
+"kieler": "no viable alternative at input '&'",
+"column": 24
+},
+{
+"text": "x -= c | a | ( f ( C ) == b > 2.5 & f ( 1 / ( b ) ) ) ) ? b : false",
+"as": "effect",
+"kieler": "no viable alternative at input '|'",
+"column": 8
+},
+{
+"text": "print ( pre ( a ) || true true / - 2.5 )",
+"as": "effect",
+"kieler": "mismatched input 'true' expecting ')'",
+"column": 27
+},
+{
+"text": "y = y || pre ( A ) >> 2.5 - ( ( 2.5 == 1 ) | 2.5 / 10 10 - false ) ; y = true",
+"as": "effect",
+"kieler": "no viable alternative at input '>>'",
+"column": 20
+},
+{
+"text": "o ~ *= f ( f ( c ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '~'",
+"column": 3
+},
+{
+"text": "o += ( f ( ( x ) ) ^ pre ( a ) 10 )",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "x = c",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x *= / x | ( true )",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "S ( - false | y % ( B % pre ( A ) ) && a [ ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "( y += false",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 1
+},
+{
+"text": "S ( b > ( true != ( a - ( 2.5 >> 2.5 ) % true ) * ( a [ 0 ] | ( 2 & b ) ) ? false : 2.5 ) do % ~ ( 1 * c ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x = 2 ? B : A A - x ; x = ( B >> ( f ( 1 > true ) >> c || 10 * y ) << a [ 1 ] )",
+"as": "effect",
+"kieler": "no viable alternative at input 'A'",
+"column": 15
+},
+{
+"text": ") S",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 1
+},
+{
+"text": "x *= a + f ( ! ! | true )",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 8
+},
+{
+"text": "x = 1 ? x : ~ ( >= true y <= 1 >= A ) < - b",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "x -= true >> <",
+"as": "effect",
+"kieler": "no viable alternative at input '>>'",
+"column": 11
+},
+{
+"text": "x -= 10 % x << 2 ^ a [ 1 ] ) + A",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 28
+},
+{
+"text": "x x ++",
+"as": "effect",
+"kieler": "no viable alternative at input 'x'",
+"column": 3
+},
+{
+"text": "S ( 1 ( true ? ( C != 1 ) : false + false ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x = c A ; y = A",
+"as": "effect",
+"kieler": "no viable alternative at input 'A'",
+"column": 7
+},
+{
+"text": "x += - a",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "do S",
+"as": "effect",
+"kieler": "no viable alternative at input 'do'",
+"column": 1
+},
+{
+"text": "S ( 2 )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "o = c ? false : c < B | f ( x ? 2.5 : a & f ( ( true ) >> ~ C < ! ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 27
+},
+{
+"text": "y 1 +=",
+"as": "effect",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": "x = f c ( ) ; x = 1",
+"as": "effect",
+"kieler": "no viable alternative at input 'c'",
+"column": 7
+},
+{
+"text": "x -= pre ( A ) ? b : ( 2.5 <= C ) & [ a 1 ] | A",
+"as": "effect",
+"kieler": "no viable alternative at input '&'",
+"column": 35
+},
+{
+"text": "- y *= false",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 1
+},
+{
+"text": "o = B || < a [ 0 ] | a",
+"as": "effect",
+"kieler": "no viable alternative at input '||'",
+"column": 7
+},
+{
+"text": "y = ( ! x 2.5 ^ )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x < *= true",
+"as": "effect",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "print a [ 1 ] )",
+"as": "effect",
+"kieler": "missing '(' at 'a'",
+"column": 7
+},
+{
+"text": "S ) ( A | pre ( a ) < b )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 3
+},
+{
+"text": "o A -= || 2",
+"as": "effect",
+"kieler": "no viable alternative at input 'A'",
+"column": 3
+},
+{
+"text": "x : = 2.5 && x ; x = a [ x ] ? 1 : 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input ':'",
+"column": 3
+},
+{
+"text": "++",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "! --",
+"as": "effect",
+"kieler": "no viable alternative at input '!'",
+"column": 1
+},
+{
+"text": "o *= B << ( ! ( true == A * 10 & A ) << ( true < f ( B ) ) ) ? ( y % - ( a ) ) : x ^ false",
+"as": "effect",
+"kieler": "no viable alternative at input '<<'",
+"column": 8
+},
+{
+"text": "y = f ( 2.5 >= ( false % A | b | A ) ) == true || 2 == ( - pre ( x ) ? 2.5 : pre ( A ) ) ; y = f ( f ( 10 && 1 ) ) - ( 10 ? x : c << ( ~ y >> y < a [ 0 ] ) ) - ( ( << * f ( A >> false * true > 2.5 ) ) <= ~ pre ( A ) ) && B",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 116
+},
+{
+"text": "y *= ? 2",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "y",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "y = f ( ( x ) ) / ? 2.5 : a [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 17
+},
+{
+"text": "o = ~ y | 2 == ( 2.5 ? 2.5 pre ( A ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "S ( x > f ( ( c ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o = 2.5 ; x = ( pre x ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 13
+},
+{
+"text": "o = f ( 1 ) << pre ( a ) ) % A ; x = true ? a [ 0 ] : A ? 2 : ~ - a < C",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 26
+},
+{
+"text": "o ; *= true & pre ( a ) >= ( y != a ) != pre ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 5
+},
+{
+"text": "S ( A )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x += ( 2.5 <= ( b != a == true ) > a [ [ x ] ) | false + b",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "S ( - y | x )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x -= f ( pre ( A ) ^ y < ( false )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "o *= != y",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "o -= 1 > ~ ( ( 2 -- x == C << 1 ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 8
+},
+{
+"text": "x = 1 && false ; x = ( ( f ( 2 << B >= B ) >> ( false ^ B ) ) - true < x > ( ( b > c ^ false >> b ) ) ) && ~ 1 / ( b ) / ~ f ( y & c ) >= a )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 20
+},
+{
+"text": "o = f ( b >> ( 2 ) ) ? 1 : B ; y = ( ! a ) / a = [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 44
+},
+{
+"text": "S ( pre ( x ) - x ? C : ( pre ( x ) ) % 2.5 > )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "f print ( 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input 'print'",
+"column": 3
+},
+{
+"text": "o pre ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input 'pre'",
+"column": 3
+},
+{
+"text": "x += true true ? ( c == true + f ( c + a > 2 && A ) ) : true",
+"as": "effect",
+"kieler": "no viable alternative at input 'true'",
+"column": 11
+},
+{
+"text": "y *= f ( a [ x ] <= ! 2 == false || a [ 1 ) ]",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "y * = 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "x *= f = ( x | ( C << true ) ) ^ ! a ? ! - 2 : false",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 8
+},
+{
+"text": "o = c ; y = ? ~ A",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 11
+},
+{
+"text": "x % *= ~ 2",
+"as": "effect",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "y -=",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "o = ! c - true * ( ( ( 2 != y ) != 1 <= 2.5 ^ 10 ) << x )",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 9
+},
+{
+"text": "o += ( a )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "y = B ? C : a ; y = f ( >> ~ 2 ? b : ( A ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 23
+},
+{
+"text": "[ S",
+"as": "effect",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "> S",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 1
+},
+{
+"text": "o = - a [ 1 ] << C | 2.5 ? 1 : | ( a ) ; y = b % ( 2 & f ( f ( 2.5 ) ) ^ C )",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 26
+},
+{
+"text": "y -= 10 ++ % false",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 9
+},
+{
+"text": "x = f",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "y *= f ( ! 1 ( x && 1 ) ? a : b ) + a [ 1 ] < A",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": ": = true * ( y ) * 2",
+"as": "effect",
+"kieler": "no viable alternative at input ':'",
+"column": 1
+},
+{
+"text": "o = ! go ( a ) || a [ 0 ] ; x = c",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x *= pre ( A ) <= f ( ! b * - ; ~ A % C )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 21
+},
+{
+"text": "x = = a",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o += false ^ f ( [ 1 ] << pre ( x ) / a ) ? f ( a || true ) : ( 2.5 % a >= ( A ) ^ a [ 0 ] ) % ~ x",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 16
+},
+{
+"text": "x = a [ 0 0 ]",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "? S",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 1
+},
+{
+"text": "o =",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "print ( ( a ) & || x ~ b ? y : C )",
+"as": "effect",
+"kieler": "mismatched input '&' expecting ')'",
+"column": 15
+},
+{
+"text": "y -= false 2 : true",
+"as": "effect",
+"kieler": "no viable alternative at input '2'",
+"column": 12
+},
+{
+"text": "y = 10 10 << y",
+"as": "effect",
+"kieler": "no viable alternative at input '10'",
+"column": 8
+},
+{
+"text": "x = a < a a",
+"as": "effect",
+"kieler": "no viable alternative at input 'a'",
+"column": 11
+},
+{
+"text": "o = ~ ( >= true < ( B || y ) % ( 10 ) << ( y ^ C ) ) ? f ( ( B < y ) - ( 10 ) ) : 2",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y y ? true : A << true << 1",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 3
+},
+{
+"text": "y - -= 1 <= x",
+"as": "effect",
+"kieler": "no viable alternative at input '-'",
+"column": 3
+},
+{
+"text": "y y --",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 3
+},
+{
+"text": "S S",
+"as": "effect",
+"kieler": "no viable alternative at input 'S'",
+"column": 3
+},
+{
+"text": "x = 2 > << ! y / true",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 7
+},
+{
+"text": "x *= f ( 2 ? ( 2 | 10 & 1 <= 2.5 ) : x ) ) * f ( true ) && a [ 0 ] && f ( ~ ~ y >= ! a [ 0 ] )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 42
+},
+{
+"text": "y *= ! ( pre x ) ^ y && C < 2 )",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "-- x",
+"as": "effect",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "x *= b + ( c ) ? ( a [ 1 ] > x ) ) : 2 == x",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 34
+},
+{
+"text": "y = pre A ) ^ C",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o -=",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "y = a [ 0 ] <= pre ( a / ) c ^ A",
+"as": "effect",
+"kieler": "no viable alternative at input '<='",
+"column": 13
+},
+{
+"text": "x %",
+"as": "effect",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "y -= -= C ? pre ( x ) : 10 ^ 10",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "S ( ( x | ( B ^ 1 ) ) << ! c ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "print ( ( f ( ( true + ; A & x ) ) || pre ( a ) ) >> ~ c )",
+"as": "effect",
+"kieler": "mismatched input '(' expecting ')'",
+"column": 13
+},
+{
+"text": "x = ( ( x > a [ 1 ] ) ) || B * f ( f ( ( 2 ) < > 2 < f ( c ) || a ) != ( a < - c ) ) / b",
+"as": "effect",
+"kieler": "no viable alternative at input '*'",
+"column": 30
+},
+{
+"text": "y += ( ( c ) % a [ 0 )",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "o f ( c >= 2 ) + b",
+"as": "effect",
+"kieler": "no viable alternative at input 'f'",
+"column": 3
+},
+{
+"text": "o = += 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o -= y",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "S ( A ^ ( c || ( 1 ) ) ) )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 26
+},
+{
+"text": "x = ( 2 ) ; y = ~ pre false",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 15
+},
+{
+"text": "print ( ( C ) ) / 1 )",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 17
+},
+{
+"text": "o = true ( ) >> A >= pre ( a )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 10
+},
+{
+"text": "y = >= a == x",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o ++",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x += c",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "o = && b",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "print ( ? x false : pre ( A ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 9
+},
+{
+"text": "y += f ( ! A ^ a [ 1 ] << pre ( x ) ) ) != ( a [ 1 ] | ( ( 1 ) ) ^ 2 <= f ( - x / x ) ) < A ^ c",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 39
+},
+{
+"text": "print ( ( C != B )",
+"as": "effect",
+"kieler": "missing ')' at 'go'",
+"column": 20
+},
+{
+"text": "S ( ^ true )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x /",
+"as": "effect",
+"kieler": "no viable alternative at input '/'",
+"column": 3
+},
+{
+"text": "S ( A =",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x +=",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "x += ( f ( ( A / A >= x / x ) % a [ 0 ] >> a 0 ] >> c ) ) / 1 * 2",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "o = * ( C + pre ( A ) && a + ( y != 2.5 > a [ 0 ] ) ) - false",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o o += y",
+"as": "effect",
+"kieler": "no viable alternative at input 'o'",
+"column": 3
+},
+{
+"text": "o = B >= y > + a [ 1 ] ; y = false - ( b )",
+"as": "effect",
+"kieler": "no viable alternative at input '>'",
+"column": 12
+},
+{
+"text": "o = ( ( f ( C | b ) != ) ) / x - 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "pre S",
+"as": "effect",
+"kieler": "no viable alternative at input 'pre'",
+"column": 1
+},
+{
+"text": "&&",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 1
+},
+{
+"text": "o -= ( f true ( ) ^ ( b + x ) - f ( b ) - a [ x ] ) ? 2.5 : x",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "x += f ( ! a << y ) == y ? y : pre || ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "print ( ( a [ x x ] == C ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '['",
+"column": 11
+},
+{
+"text": "y += f ( ( ! 2 ) && ( f ( a && c % false >= ) ) ? f ( a == C ) : a [ 1 ] )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 8
+},
+{
+"text": "x 10 = < ~ ( ( a == 2.5 ) != x ) | true ; y = C / f ( pre ( a ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '10'",
+"column": 3
+},
+{
+"text": "f o -= 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input 'o'",
+"column": 3
+},
+{
+"text": "S ( 1 || 10 | ( pre ( x ) ) a [ 1 ] : c )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x *= x < a [ 0 & ] * ! a [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '<'",
+"column": 8
+},
+{
+"text": "++ o",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "x = a && ( pre A ) * ( x ) < a",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 7
+},
+{
+"text": "x = C >> ( 2.5 || f ( pre ( a ) != ! C + pre A ) - c ) != false )",
+"as": "effect",
+"kieler": "no viable alternative at input '>>'",
+"column": 7
+},
+{
+"text": "x = f ( b <= f ( C == a a [ 0 ] - ( 2.5 ^ 1 || c ) ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 7
+},
+{
+"text": "= pre ( a )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "print ( A ? f ( ( true || C ? ) : ( 10 != y ) )",
+"as": "effect",
+"kieler": "mismatched input '?' expecting ')'",
+"column": 11
+},
+{
+"text": "x -= ! true",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x = ( a [ 1 ] * c >> 2 > c ) 2 >> x != 2",
+"as": "effect",
+"kieler": "no viable alternative at input '2'",
+"column": 30
+},
+{
+"text": "x -= - pre ( a ) * ( ( a x ] ) ) ^ C",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "o + -= b",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "o = A ; : x = 10 | C",
+"as": "effect",
+"kieler": "no viable alternative at input ':'",
+"column": 9
+},
+{
+"text": "o = 2.5 > b y ; = C",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 13
+},
+{
+"text": "<= o ++",
+"as": "effect",
+"kieler": "no viable alternative at input '<='",
+"column": 1
+},
+{
+"text": "print b ( >= A )",
+"as": "effect",
+"kieler": "extraneous input 'b' expecting '('",
+"column": 7
+},
+{
+"text": "print ( f ( f ( y % b + ( 2.5 > 10 ) | y ) - ( C << C ^ c << ! B ) - ) B )",
+"as": "effect",
+"kieler": "mismatched input '(' expecting ')'",
+"column": 11
+},
+{
+"text": "y = ( ( ( false C ) << 2 ) << 2 >= ( ( b ) == f ( x >= 1 << 1 > 2.5 ) ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "o = C x = f ( ( x < 1 ) << a [ x ] ) ? c : x",
+"as": "effect",
+"kieler": "no viable alternative at input 'x'",
+"column": 7
+},
+{
+"text": "o ! += c + true",
+"as": "effect",
+"kieler": "no viable alternative at input '!'",
+"column": 3
+},
+{
+"text": "y = ( a ) * A * ( ( ~ A >> f & ( C ^ 2.5 ) ) << C << C ) - false ; x = true || ( y / C )",
+"as": "effect",
+"kieler": "no viable alternative at input '*'",
+"column": 11
+},
+{
+"text": "x 2.5 +=",
+"as": "effect",
+"kieler": "no viable alternative at input '2.5'",
+"column": 3
+},
+{
+"text": "? = A",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 1
+},
+{
+"text": "x += /",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "y a = x",
+"as": "effect",
+"kieler": "no viable alternative at input 'a'",
+"column": 3
+},
+{
+"text": "y = 10 % ! ( ( c >> x ) ) ) % y",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y = 2 ? B ? : pre ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = 2 >= a [ 0 ] do & c * x ; x = y",
+"as": "effect",
+"kieler": "no viable alternative at input 'do'",
+"column": 18
+},
+{
+"text": "S ( x / / ( x ) < 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "print ( A >> y >= false x / )",
+"as": "effect",
+"kieler": "mismatched input 'x' expecting ')'",
+"column": 25
+},
+{
+"text": "== = pre ( x ) && 2 ^ ~ a",
+"as": "effect",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": "y = 10 ? 2.5 : ! 2.5 < 2 || a ; x = y == ( x != ) <= 10",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 8
+},
+{
+"text": "print ( ( a [ x ] >> a )",
+"as": "effect",
+"kieler": "missing ')' at 'go'",
+"column": 26
+},
+{
+"text": "y *= c",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "+= pre ( x )",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 1
+},
+{
+"text": "y = 1 ? pre ( x ) : a ; x = f ( true >> 2.5 ^ ( b && C << ( ( x ) >= false ) )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 31
+},
+{
+"text": "S ( y ? 2.5 : c && a [ 0 ] )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "o = B + ( ( 10 ) ) + y % A ; x = false <= false <= ( 1 ? 2.5 : y |",
+"as": "effect",
+"kieler": "no viable alternative at input '<='",
+"column": 49
+},
+{
+"text": "= ~ c",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 1
+},
+{
+"text": "S ( a [ 0 ] == false << ( false ) ? ( 2 << true || B - ~ a ) ; : 2.5 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "o *= - x false",
+"as": "effect",
+"kieler": "no viable alternative at input 'false'",
+"column": 10
+},
+{
+"text": "print ( b ( B < false ) )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "print * true % 2.5 )",
+"as": "effect",
+"kieler": "mismatched input '*' expecting '('",
+"column": 7
+},
+{
+"text": "y += ( f ( C == A ) )",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "S ( ( a [ x ] && f ( A >> B & false ) * a >= 2.5 ) ) )",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 54
+},
+{
+"text": "x = 2.5 ] | pre ( A )",
+"as": "effect",
+"kieler": "no viable alternative at input ']'",
+"column": 9
+},
+{
+"text": "print ( a [ 1 ] >= 2.5 != A A )",
+"as": "effect",
+"kieler": "mismatched input '!=' expecting ')'",
+"column": 24
+},
+{
+"text": "print ( 2.5 - y",
+"as": "effect",
+"kieler": "missing ')' at 'go'",
+"column": 17
+},
+{
+"text": "o = y >> y && pre ( )",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 12
+},
+{
+"text": "print ( pre ( a ) 2 / )",
+"as": "effect",
+"kieler": "mismatched input '2' expecting ')'",
+"column": 19
+},
+{
+"text": "x = B < < 10 x + y ; y = ( b | false >= 10 % pre ( a ) ) & pre ( A ) + a [ x ]",
+"as": "effect",
+"kieler": "no viable alternative at input '<'",
+"column": 7
+},
+{
+"text": "[ --",
+"as": "effect",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "o = pre ( A ) x && true",
+"as": "effect",
+"kieler": "no viable alternative at input 'x'",
+"column": 15
+},
+{
+"text": "== x -= C & x",
+"as": "effect",
+"kieler": "no viable alternative at input '=='",
+"column": 1
+},
+{
+"text": "x x = a [ 0 ] < ! y",
+"as": "effect",
+"kieler": "no viable alternative at input 'x'",
+"column": 3
+},
+{
+"text": "S ( C 1 )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 3
+},
+{
+"text": "x = true ? f ( f ( 1 || 2 / 2 ) <= C << ) : 2.5",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 10
+},
+{
+"text": "y = a [ x ] ^ ( B >> A < 2 == y",
+"as": "effect",
+"kieler": "no viable alternative at input '^'",
+"column": 13
+},
+{
+"text": "print ( false do > a ? false : true )",
+"as": "effect",
+"kieler": "missing ')' at 'do'",
+"column": 15
+},
+{
+"text": "x += ( a [ 1 ] <= pre ( a ) % C ) != f ( a [ x ] != pre ( x ) , )",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 40
+},
+{
+"text": "x > 2 > 1",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 7
+},
+{
+"text": "A == true == B",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 11
+},
+{
+"text": "count > 3 && < 5",
+"as": "expression",
+"kieler": "no viable alternative at input '>'",
+"column": 7
+},
+{
+"text": "a = = b",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x => 2",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x =< 2",
+"as": "expression",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "A AND B",
+"as": "expression",
+"kieler": "no viable alternative at input 'AND'",
+"column": 3
+},
+{
+"text": "A && B ||",
+"as": "expression",
+"kieler": "no viable alternative at input '&&'",
+"column": 3
+},
+{
+"text": "(A || B",
+"as": "expression",
+"kieler": "missing ')' at 'go'",
+"column": 9
+},
+{
+"text": "A || B)",
+"as": "expression",
+"kieler": "no viable alternative at input ')'",
+"column": 7
+},
+{
+"text": "x > 0 ? 1 : 0",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "(x > 0) ? x : -x",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 9
+},
+{
+"text": "x ? -1 : 1",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "a + b * ",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "pre(x) + ",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 8
+},
+{
+"text": "pre x",
+"as": "expression",
+"kieler": "missing '(' at 'x'",
+"column": 5
+},
+{
+"text": "val S",
+"as": "expression",
+"kieler": "missing '(' at 'S'",
+"column": 5
+},
+{
+"text": "val(S) > 3 3",
+"as": "expression",
+"kieler": "no viable alternative at input '3'",
+"column": 12
+},
+{
+"text": "A & & B",
+"as": "expression",
+"kieler": "no viable alternative at input '&'",
+"column": 3
+},
+{
+"text": "!A + 1",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 4
+},
+{
+"text": "!(A) + 1",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 6
+},
+{
+"text": "a % ",
+"as": "expression",
+"kieler": "no viable alternative at input '%'",
+"column": 3
+},
+{
+"text": "x ** 2",
+"as": "expression",
+"kieler": "no viable alternative at input '*'",
+"column": 3
+},
+{
+"text": "x ^^ y",
+"as": "expression",
+"kieler": "no viable alternative at input '^'",
+"column": 3
+},
+{
+"text": "2x",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "x2 y2",
+"as": "expression",
+"kieler": "no viable alternative at input 'y2'",
+"column": 4
+},
+{
+"text": "a == b c",
+"as": "expression",
+"kieler": "no viable alternative at input 'c'",
+"column": 8
+},
+{
+"text": "not A",
+"as": "expression",
+"kieler": "no viable alternative at input 'A'",
+"column": 5
+},
+{
+"text": "A not B",
+"as": "expression",
+"kieler": "no viable alternative at input 'not'",
+"column": 3
+},
+{
+"text": "x != = 3",
+"as": "expression",
+"kieler": "no viable alternative at input '!='",
+"column": 3
+},
+{
+"text": "x <> 3",
+"as": "expression",
+"kieler": "no viable alternative at input '<'",
+"column": 3
+},
+{
+"text": "a ++ b",
+"as": "expression",
+"kieler": "no viable alternative at input '++'",
+"column": 3
+},
+{
+"text": "(a)(b)",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 4
+},
+{
+"text": "a[2][",
+"as": "expression",
+"kieler": "no viable alternative at input '['",
+"column": 1
+},
+{
+"text": "a[0] == a[1] == a[2]",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 14
+},
+{
+"text": "x >= 1 <= 5",
+"as": "expression",
+"kieler": "no viable alternative at input '<='",
+"column": 8
+},
+{
+"text": "f(x,)",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "f(,x)",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "A ? B",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "A ? : B",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "A ?? B",
+"as": "expression",
+"kieler": "no viable alternative at input '?'",
+"column": 3
+},
+{
+"text": "true == false == true",
+"as": "expression",
+"kieler": "no viable alternative at input '=='",
+"column": 15
+},
+{
+"text": "a - - - b",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "x+ +y",
+"as": "expression",
+"kieler": "no viable alternative at input '+'",
+"column": 2
+},
+{
+"text": "- - x",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "!!A",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "~~a",
+"as": "expression",
+"kieler": null
+},
+{
+"text": "A || || B",
+"as": "expression",
+"kieler": "no viable alternative at input '||'",
+"column": 3
+},
+{
+"text": "(A) (B)",
+"as": "expression",
+"kieler": "no viable alternative at input '('",
+"column": 5
+},
+{
+"text": "A, B",
+"as": "expression",
+"kieler": "no viable alternative at input ','",
+"column": 2
+},
+{
+"text": "x = 1 +",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = (1 + 2",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = 1 + 2)",
+"as": "effect",
+"kieler": "no viable alternative at input ')'",
+"column": 10
+},
+{
+"text": "x == 1",
+"as": "effect",
+"kieler": "no viable alternative at input '=='",
+"column": 3
+},
+{
+"text": "x := 1",
+"as": "effect",
+"kieler": "no viable alternative at input ':'",
+"column": 3
+},
+{
+"text": "x = = 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x =+ 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x + = 1",
+"as": "effect",
+"kieler": "no viable alternative at input '+'",
+"column": 3
+},
+{
+"text": "x++;",
+"as": "effect",
+"kieler": "no viable alternative at input 'go'",
+"column": 6
+},
+{
+"text": "x++ ;y++",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "x = 1;;",
+"as": "effect",
+"kieler": "no viable alternative at input ';'",
+"column": 7
+},
+{
+"text": "x = y = 1",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 7
+},
+{
+"text": "x = 1 y = 2",
+"as": "effect",
+"kieler": "no viable alternative at input 'y'",
+"column": 7
+},
+{
+"text": "x = 1,y = 2",
+"as": "effect",
+"kieler": "no viable alternative at input ','",
+"column": 6
+},
+{
+"text": "x =",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "y += ",
+"as": "effect",
+"kieler": "no viable alternative at input '+='",
+"column": 3
+},
+{
+"text": "x -= -",
+"as": "effect",
+"kieler": "no viable alternative at input '-='",
+"column": 3
+},
+{
+"text": "x *= 2 *",
+"as": "effect",
+"kieler": "no viable alternative at input '*='",
+"column": 3
+},
+{
+"text": "S(",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "S()",
+"as": "effect",
+"kieler": null
+},
+{
+"text": "S(1,",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 2
+},
+{
+"text": "S 1",
+"as": "effect",
+"kieler": "no viable alternative at input '1'",
+"column": 3
+},
+{
+"text": "print \"hi\"",
+"as": "effect",
+"kieler": "missing '(' at '\"hi\"'",
+"column": 7
+},
+{
+"text": "print(\"hi\" x)",
+"as": "effect",
+"kieler": "extraneous input 'x' expecting ')'",
+"column": 12
+},
+{
+"text": "x[0 = 1",
+"as": "effect",
+"kieler": "mismatched input '=' expecting ']'",
+"column": 5
+},
+{
+"text": "x[0]] = 1",
+"as": "effect",
+"kieler": "no viable alternative at input ']'",
+"column": 5
+},
+{
+"text": "x = a ? 1 : 2 : 3",
+"as": "effect",
+"kieler": "no viable alternative at input ':'",
+"column": 15
+},
+{
+"text": "x = a ? b ? 1 : 2 : 3",
+"as": "effect",
+"kieler": "no viable alternative at input '?'",
+"column": 7
+},
+{
+"text": "x = a < b < c",
+"as": "effect",
+"kieler": "no viable alternative at input '<'",
+"column": 11
+},
+{
+"text": "x = A && || B",
+"as": "effect",
+"kieler": "no viable alternative at input '&&'",
+"column": 7
+},
+{
+"text": "x = pre(",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = pre(a",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x++ ++",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 5
+},
+{
+"text": "++x",
+"as": "effect",
+"kieler": "no viable alternative at input '++'",
+"column": 1
+},
+{
+"text": "--x",
+"as": "effect",
+"kieler": "no viable alternative at input '--'",
+"column": 1
+},
+{
+"text": "x--1",
+"as": "effect",
+"kieler": "no viable alternative at input '1'",
+"column": 4
+},
+{
+"text": "x = 1 x",
+"as": "effect",
+"kieler": "no viable alternative at input 'x'",
+"column": 7
+},
+{
+"text": "x = !",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = -",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = (",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = )",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = a[",
+"as": "effect",
+"kieler": "no viable alternative at input '='",
+"column": 3
+},
+{
+"text": "x = f(",
+"as": "effect",
+"kieler": "no viable alternative at input '('",
+"column": 6
+},
+{
+"text": "x = true false",
+"as": "effect",
+"kieler": "no viable alternative at input 'false'",
+"column": 10
+},
+{
+"text": "x max = 3",
+"as": "effect",
+"kieler": "no viable alternative at input 'max'",
+"column": 3
+},
+{
+"text": "x min== 3",
+"as": "effect",
+"kieler": "no viable alternative at input 'min='",
+"column": 3
+}
+]
+}

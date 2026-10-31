@@ -1,0 +1,9 @@
+// "return" takes no ";": "return 3;" is a syntax error.
+scchart St142ReturnSemi {
+  output int O = 0
+  method int f() {
+    return 3;
+  }
+  initial state S
+  do O = f() go to S
+}

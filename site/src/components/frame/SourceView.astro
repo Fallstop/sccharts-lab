@@ -1,0 +1,117 @@
+---
+/**
+ * An example's SCTX source, highlighted by Expressive Code with the guide's sctx grammar (ec.config.mjs).
+ * Used inside widget frames; it has no frame of its own.
+ *
+ * A long source is shown 32rem high and scrolls inside. Then the bottom of the code fades out (until it is
+ * scrolled to the end) and a bar under it offers the whole chart ("Show all 48 lines", and "Show fewer lines"
+ * again): a cue that there is more, and a way to read it without scrolling inside a box. The script decides whether
+ * the code is cut off (it measures, also when a hidden view is shown); without JavaScript the code just scrolls,
+ * and in print it is shown in full.
+ */
+import { Code } from '@astrojs/starlight/components'
+
+interface Props {
+	source: string
+	/** Expressive Code marker syntax, e.g. "{3-4}" to mark lines 3 and 4. */
+	meta?: string
+}
+const { source, meta = '' } = Astro.props
+const code = source.replace(/\s+$/, '')
+const lines = code.split('\n').length
+---
+
+<div class="sc-source" data-sc-source>
+	<div class="sc-source__scroll">
+		<Code code={code} lang="sctx" meta={meta} />
+	</div>
+	<div class="sc-source__more" hidden>
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-source__toggle" aria-expanded="false" data-lines={lines}>
+			<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m4 6 4 4 4-4"></path></svg>
+			<span>Show all {lines} lines</span>
+		</button>
+	</div>
+</div>
+
+<script>
+	// Shows the bar under a source that is cut off at its 32rem, and switches between the cut-off and the full view.
+	// Measured again whenever the code's box changes size (a view switch shows a hidden panel; the page is resized).
+	function setup(view: HTMLElement) {
+		const scroll = view.querySelector<HTMLElement>('.sc-source__scroll')
+		const more = view.querySelector<HTMLElement>('.sc-source__more')
+		const toggle = view.querySelector<HTMLButtonElement>('.sc-source__toggle')
+		if (!scroll || !more || !toggle) return
+		const label = toggle.querySelector('span')!
+		const lines = toggle.dataset.lines ?? ''
+		const atEnd = () => view.classList.toggle('is-at-end', scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 2)
+		const measure = () => {
+			if (!scroll.clientHeight) return // in a hidden view
+			const clipped = view.classList.contains('is-expanded') || scroll.scrollHeight > scroll.clientHeight + 2
+			view.classList.toggle('is-clipped', clipped)
+			more.hidden = !clipped
+			atEnd()
+		}
+		toggle.addEventListener('click', () => {
+			const expanded = view.classList.toggle('is-expanded')
+			toggle.setAttribute('aria-expanded', String(expanded))
+			label.textContent = expanded ? 'Show fewer lines' : `Show all ${lines} lines`
+			if (!expanded) {
+				// Back to the top of the code, with the button still in view.
+				scroll.scrollTop = 0
+				toggle.scrollIntoView({ block: 'nearest' })
+			}
+			measure()
+		})
+		scroll.addEventListener('scroll', atEnd, { passive: true })
+		new ResizeObserver(measure).observe(scroll)
+		measure()
+	}
+	for (const view of document.querySelectorAll<HTMLElement>('[data-sc-source]')) setup(view)
+</script>
+
+<style>
+	.sc-source__scroll {
+		max-height: 32rem;
+		overflow: auto;
+	}
+	.sc-source.is-expanded .sc-source__scroll {
+		max-height: none;
+	}
+	/* The cue: the code fades out at the bottom while there is more below it. The mask belongs to the box, not to
+	 * the text, so it stays at the bottom edge while the code scrolls; it goes once the end is in view. */
+	.sc-source.is-clipped:not(.is-expanded, .is-at-end) .sc-source__scroll {
+		-webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 4rem), rgb(0 0 0 / 0.12) 100%);
+		mask-image: linear-gradient(to bottom, #000 calc(100% - 4rem), rgb(0 0 0 / 0.12) 100%);
+	}
+	.sc-source__more {
+		display: flex;
+		justify-content: center;
+		padding: 0.375rem var(--frame-pad, 1rem) 0.5rem;
+		border-top: 1px dashed var(--c-rule-strong);
+	}
+	.sc-source__more[hidden] {
+		display: none;
+	}
+	.sc-source__toggle svg {
+		transition: transform 160ms ease-out;
+	}
+	.sc-source.is-expanded .sc-source__toggle svg {
+		transform: rotate(180deg);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.sc-source__toggle svg {
+			transition: none;
+		}
+	}
+	@media print {
+		.sc-source__scroll {
+			max-height: none;
+			overflow: visible;
+			-webkit-mask-image: none !important;
+			mask-image: none !important;
+		}
+		.sc-source__more {
+			display: none !important;
+		}
+	}
+</style>

@@ -1,0 +1,9 @@
+// Different label names: fine.
+scchart LabelDiffTwo {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S
+    if a do { if (b) { goto skip1 } x += 1; skip1: y += 1 } go to T
+  state T
+    if a do { if (b) { goto skip2 } z += 1; skip2: y += 10 } go to S
+}

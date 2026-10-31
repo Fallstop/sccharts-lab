@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1: `S` absent; nothing fires."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `Emit` emits `S`. Both testers see `S` present in the same tick, the one written before the emitter as well as the one after it: `before = 1`, `after = 1`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`S` absent: no counting."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a` again: `before = 2`, `after = 2`."
+    }
+  ],
+  "expect": "ok"
+}

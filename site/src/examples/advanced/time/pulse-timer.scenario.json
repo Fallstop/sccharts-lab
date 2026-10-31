@@ -1,0 +1,89 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "second": false
+      },
+      "note": "The environment ticks the chart every 500 ms, and the hardware timer makes `second` true in every other tick (ticks 2, 4, 6, ...): one pulse per second."
+    },
+    {
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "note": "A pulse, but nobody is waiting yet."
+    },
+    {
+      "inputs": {
+        "second": false,
+        "start": true
+      },
+      "note": "`start`: `Idle` → `Waiting`. This happens just before a pulse: the next one comes in the very next tick."
+    },
+    {
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "note": "The first counted pulse, only 500 ms after the start."
+    },
+    {
+      "inputs": {
+        "second": false,
+        "start": false
+      },
+      "note": "No pulse."
+    },
+    {
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "note": "The second pulse: `if 2 second` fires and `done` is true, 1.5 s after the start."
+    },
+    {
+      "inputs": {
+        "second": false,
+        "start": false
+      },
+      "note": "Back in `Idle`."
+    },
+    {
+      "inputs": {
+        "second": true,
+        "start": true
+      },
+      "note": "`start` again, this time in a tick that has a pulse. A delayed transition does not count the tick its state was entered in, so this pulse does not count."
+    },
+    {
+      "inputs": {
+        "second": false,
+        "start": false
+      },
+      "note": "No pulse."
+    },
+    {
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "note": "First counted pulse."
+    },
+    {
+      "inputs": {
+        "second": false,
+        "start": false
+      },
+      "note": "No pulse."
+    },
+    {
+      "inputs": {
+        "second": true,
+        "start": false
+      },
+      "note": "Second pulse: `done`, now 2 s after the start. The same chart waited 1.5 s once and 2 s once."
+    }
+  ],
+  "expect": "ok"
+}

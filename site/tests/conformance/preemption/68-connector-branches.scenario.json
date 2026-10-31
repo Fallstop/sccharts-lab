@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Tick 1 enters S."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "S → C → X in one tick. A connector is not a resting place: its outgoing transitions are taken immediately, in priority order, and they see the effects of the transition that led in (first = 1, second = 2)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In X."
+    }
+  ],
+  "expect": "ok"
+}

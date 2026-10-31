@@ -1,0 +1,17 @@
+// @UnpackClass: KIELER's Unpack Classes processor makes the members variables <instance>_<member> (acc_sum).
+scchart Unpacked {
+  input bool up
+  output int O = 0
+
+  @UnpackClass
+  class Acc {
+    int sum = 1
+    void add(int k) {
+      sum = sum + k
+    }
+  } acc
+
+  initial state A
+  if up do acc.add(2); O = acc.sum go to A
+  if !up do acc.sum = 0 go to A
+}

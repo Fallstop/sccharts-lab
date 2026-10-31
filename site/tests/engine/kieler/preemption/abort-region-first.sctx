@@ -1,0 +1,24 @@
+// An abort region written first (P-62): in the tick it finishes, the other region still reacts (KIELER's
+// depth guard leaves out the thread just before), then M is done.
+scchart AbortRegionFirst {
+  input bool A
+  output int work = 0, done = 0
+
+  initial state M {
+    abort region Watch {
+      initial state W
+      if A go to F
+      final state F
+    }
+    region Main {
+      initial state I
+      if true do work += 1 go to I
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done += 1
+  }
+  go to M
+}

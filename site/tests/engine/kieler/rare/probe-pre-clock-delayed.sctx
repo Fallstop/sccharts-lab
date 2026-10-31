@@ -1,0 +1,8 @@
+// pre(v, c) alone: in a tick in which c holds, v of the previous such tick; in between it keeps that value.
+scchart PreClockDelayed {
+  input int v
+  input bool c
+  output int p = 0
+  initial state S
+    if true do p = pre(v, c) go to S
+}

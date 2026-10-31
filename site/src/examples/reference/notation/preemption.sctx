@@ -1,0 +1,16 @@
+scchart Preemption {
+  input bool stop, pause, A
+
+  initial state Run {
+    initial state Work
+      if A go to Finished
+    final state Finished
+  }
+  if stop abort to Stopped
+  if pause go to Paused
+  join to Complete
+
+  state Stopped
+  state Paused
+  state Complete
+}

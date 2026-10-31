@@ -1,0 +1,21 @@
+scchart DeepDeferred {
+  input bool G
+  output int outerEntry = 0, innerEntry = 0, chained = 0, step = 0
+
+  initial state A
+  if G go to B deep deferred
+
+  state B {
+    entry do outerEntry = 1
+
+    initial state I {
+      entry do innerEntry = 1
+    }
+    immediate do chained = 1 go to J
+
+    state J
+    if true do step = 1 go to K
+
+    state K
+  }
+}

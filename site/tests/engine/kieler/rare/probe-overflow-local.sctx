@@ -1,0 +1,8 @@
+// A top-level local is in the struct in the order written.
+scchart OverflowLocal {
+  output int a[2] = {0, 0}
+  int hidden = 5
+  output int z = 0
+  initial state Run
+    do a[2] = 9; z = hidden go to Run
+}

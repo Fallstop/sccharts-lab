@@ -1,0 +1,8 @@
+{
+  "kielerBug": "FollowedBy.xtend creates its helper region without final = true (InitOperator.xtend sets it for ->), so a superstate that contains fby can never terminate.",
+  "ticks": [
+    { "inputs": { "level": 5 }, "note": "`CopyA` and `CopyB` both reach their final state `End` in tick 1. `CopyB`, which uses `->`, terminates and its `join to` fires: `doneB` = true. `CopyA`, which uses `fby`, does not: `doneA` = false." },
+    { "inputs": { "level": 6 }, "note": "Nothing changes: KIELER's helper region for `fby` never finishes, so `CopyA`'s `join to` can never fire." }
+  ],
+  "expect": "ok"
+}

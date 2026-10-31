@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "tick": false
+      },
+      "note": "Tick 1 enters `Blinking`, a copy of the chart `Pulse`. Its `tick` and `light` are connected to the variables with the same names in `ImplicitBinding`, which is what the warning reports."
+    },
+    {
+      "inputs": {
+        "tick": true
+      },
+      "note": "`tick` is true: inside the copy, `Dark` goes to `Lit` and `light` becomes true."
+    },
+    {
+      "inputs": {
+        "tick": false
+      },
+      "note": "Nothing happens; `light` stays true."
+    }
+  ],
+  "expect": "ok"
+}

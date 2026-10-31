@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "next": false, "call": false, "hangUp": false }, "note": "Tick 1 enters `Playing` and `Track1` (`track` = 1)." },
+    { "inputs": { "next": true }, "note": "`Track1` to `Track2` (`track` = 2)." },
+    { "inputs": { "next": false }, "note": "Listening to track 2." },
+    { "inputs": { "call": true }, "note": "A call comes in: `Playing` is left for `OnCall` (`track` = 0)." },
+    { "inputs": { "call": false, "hangUp": true }, "note": "Hang up: `go to Playing` enters `Playing` afresh, so it starts again in its initial state, `Track1` (`track` = 1)." },
+    { "inputs": { "hangUp": false }, "note": "Back at track 1. Where you were is lost." },
+    { "inputs": { "next": true, "call": true }, "note": "`next` and `call` in the same tick: `Playing` is left by a weak abort, so the inside first takes its last step to `Track2`. Then `OnCall` (`track` = 0)." },
+    { "inputs": { "next": false, "call": false, "hangUp": true }, "note": "Hang up: track 1 again." },
+    { "inputs": { "hangUp": false }, "note": "Playing track 1." }
+  ],
+  "expect": "ok"
+}

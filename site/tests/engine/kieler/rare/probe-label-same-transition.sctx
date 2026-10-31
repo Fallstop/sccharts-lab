@@ -1,0 +1,7 @@
+// Two code blocks on one transition with the same label: KIELER crashes.
+scchart LabelSameOneTrans {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S
+    if a do { if (b) { goto skip } x += 1; skip: y += 1 }; { if (b) { goto skip } z += 1; skip: y += 10 } go to S
+}

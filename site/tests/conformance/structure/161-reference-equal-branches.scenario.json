@@ -1,0 +1,54 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": true,
+        "c": false
+      },
+      "note": "Tick 1 enters R0s0: **x = 0**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "note": "R0s0 goes to R0s2, entering the instance in A: **x = 0**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "c": true
+      },
+      "note": "q (bound to a) is false: in the copy, A's two transitions to B are one conditional with equal branches, whose else branch passes no control in KIELER: the instance stops: **x = 0**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "note": "The instance never reacts again: **x = 0**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "c": false
+      },
+      "note": "Still nothing: **x = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "c": false
+      },
+      "note": "a is true now, but the instance is dead: **x = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "c": false
+      },
+      "note": "Still **x = 0**: B is never reached."
+    }
+  ],
+  "expect": "ok"
+}

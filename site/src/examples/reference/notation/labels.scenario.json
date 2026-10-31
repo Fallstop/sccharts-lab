@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1 enters `Off`, drawn with its label *Light off*. The region shows its label too."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "The transition labelled *press* fires: `presses` = 1. The label replaces the trigger and the effect in the diagram, but they still run."
+    },
+    {
+      "note": "`button` is still true: *press again* takes the chart back to `Off`."
+    },
+    {
+      "note": "And to `On` again: `presses` = 2."
+    }
+  ],
+  "expect": "ok"
+}

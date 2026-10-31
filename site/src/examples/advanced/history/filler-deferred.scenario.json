@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "cup": true, "full": false }, "note": "A cup is under the spout in tick 1: `Ready`'s immediate transition starts filling it at once (`fills` = 1). The initial entry is a normal one." },
+    { "inputs": {}, "note": "`Filling`." },
+    { "inputs": { "full": true }, "note": "The cup is full but still under the spout. `go to Ready deferred` enters `Ready` without its immediate behaviour, so nothing is filled in this tick (1)." },
+    { "inputs": { "full": false, "cup": false }, "note": "One tick later `Ready` behaves normally: the cup has gone, so it waits." },
+    { "inputs": { "cup": true }, "note": "A new cup: filling (2)." },
+    { "inputs": { "full": true }, "note": "Full, and back to `Ready` quietly (2)." },
+    { "inputs": { "full": false, "cup": false }, "note": "Two cups, two fills." }
+  ],
+  "expect": "ok"
+}

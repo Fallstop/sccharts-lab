@@ -1,0 +1,8 @@
+// An emission's value: the signal's value is kept.
+scchart CondNoElseEmit {
+  input bool c
+  output signal int V
+  output int seen = 0
+  initial state S
+    if true do V((c) ? 3); seen = val(V) go to S
+}

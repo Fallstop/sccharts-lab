@@ -1,0 +1,25 @@
+{
+  "hash": "1cdeef6c06aa9d8158b1e8636d0ceeaadb56d1b6",
+  "chart": "tests/conformance/concurrency/55-combine-none-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3b to _g8b",
+    "Can't schedule from _g8b to _g3b",
+    "Can't schedule from _g3b to _g3c",
+    "Can't schedule from _g3c to _g4",
+    "Can't schedule from _g8b to _g8c",
+    "Can't schedule from _g8c to _g9",
+    "Can't schedule from _g3c to _g17",
+    "Can't schedule from _g17 to _cg17",
+    "Can't schedule from _g3b to _g18",
+    "Can't schedule from _g17 to _g20",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "ticks": []
+}

@@ -1,0 +1,38 @@
+scchart PrintRoom {
+  input bool jobA, jobB   // someone sends a job to computer A or B
+  input bool done         // the printer has finished its job
+  output int user = 0     // who is printing: 0 nobody, 1 A, 2 B
+  signal reqA, reqB, startA, startB
+
+  region ComputerA {
+    initial state Idle
+      if jobA go to Waiting
+
+    state Waiting {
+      immediate during do reqA
+    }
+    immediate if startA go to Idle
+  }
+
+  region ComputerB {
+    initial state Idle
+      if jobB go to Waiting
+
+    state Waiting {
+      immediate during do reqB
+    }
+    immediate if startB go to Idle
+  }
+
+  region Arbiter {
+    initial state Free
+      immediate if reqA do user = 1; startA go to PrintingA
+      immediate if reqB do user = 2; startB go to PrintingB
+
+    state PrintingA
+      if done do user = 0 go to Free
+
+    state PrintingB
+      if done do user = 0 go to Free
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "hash": "32ac78dd7dec97fc07f2c871cd03c0415f04bea6",
+  "chart": "tests/conformance/structure/103-enum-from-other-chart.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "int",
+      "properties": [
+        "enum"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "b": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "b": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "b": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": true
+    }
+  ]
+}

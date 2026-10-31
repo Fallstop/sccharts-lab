@@ -1,0 +1,12 @@
+scchart Shadowing {
+  input bool press
+  output int count = 1
+  output int seen
+
+  initial state Outer {
+    int count = 10
+    initial state Waiting
+      if press do count++; seen = count go to Done
+    state Done
+  }
+}

@@ -1,0 +1,9 @@
+scchart Blinker {
+  output bool light = false
+
+  initial state Off
+    do light = true go to On
+
+  state On
+    do light = false go to Off
+}

@@ -1,0 +1,11 @@
+scchart PreBasics {
+  input int i
+  output int x = 50
+  output int p, pp, px
+
+  initial state A
+  immediate do p = pre(i); pp = pre(pre(i)); px = pre(x) go to B
+
+  state B
+  do x = x + i; p = pre(i); pp = pre(pre(i)); px = pre(x) go to B
+}

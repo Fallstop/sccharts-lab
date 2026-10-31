@@ -1,0 +1,100 @@
+{
+  "hash": "e76cca3b4cbe6638fb746cd68d9ebbebea2064c2",
+  "chart": "src/examples/reference/notation/labels.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 7,
+      "column": 10
+    },
+    {
+      "severity": 3,
+      "message": "The effects of this action are hidden by the label.",
+      "line": 7,
+      "column": 20
+    },
+    {
+      "severity": 3,
+      "message": "The trigger of this action is hidden by the label.",
+      "line": 10,
+      "column": 10
+    }
+  ],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "presses": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "presses": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "presses": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "presses": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "button": true,
+        "presses": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

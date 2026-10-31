@@ -1,0 +1,117 @@
+{
+  "hash": "96f2ebc060a93f7e4b81de226ac51a890e5ee287",
+  "chart": "src/examples/learn/concurrency/lobby.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "leaveA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "readyA": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "readyB": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "playing": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "readyA": false,
+        "readyB": false,
+        "leaveA": false
+      },
+      "values": {
+        "leaveA": false,
+        "readyA": false,
+        "readyB": false,
+        "playing": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "readyA": true
+      },
+      "values": {
+        "leaveA": false,
+        "readyA": true,
+        "readyB": false,
+        "playing": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "readyA": false,
+        "leaveA": true,
+        "readyB": true
+      },
+      "values": {
+        "leaveA": true,
+        "readyA": false,
+        "readyB": true,
+        "playing": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leaveA": false,
+        "readyA": true
+      },
+      "values": {
+        "leaveA": false,
+        "readyA": true,
+        "readyB": true,
+        "playing": true
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

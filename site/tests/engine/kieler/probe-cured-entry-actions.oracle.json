@@ -1,0 +1,153 @@
+{
+  "hash": "980135ab59711879d260c1d3fae445f093117ecd",
+  "chart": "tests/engine/kieler/probe-cured-entry-actions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "interface": {
+    "clear": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "run": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "total": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "run": false,
+        "clear": false
+      },
+      "values": {
+        "clear": false,
+        "run": false,
+        "total": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "run": true
+      },
+      "values": {
+        "clear": false,
+        "run": true,
+        "total": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "run": true
+      },
+      "values": {
+        "clear": false,
+        "run": true,
+        "total": 0
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "run": false
+      },
+      "values": {
+        "clear": false,
+        "run": false,
+        "total": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "clear": true
+      },
+      "values": {
+        "clear": true,
+        "run": false,
+        "total": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "clear": false,
+        "run": true
+      },
+      "values": {
+        "clear": false,
+        "run": true,
+        "total": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "run": true
+      },
+      "values": {
+        "clear": false,
+        "run": true,
+        "total": 0
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

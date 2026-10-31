@@ -1,0 +1,13 @@
+// A backward goto in a code block KIELER inlines (no loop, no call, few statements) is a loop within the tick: rejected, even with a condition that ends it.
+scchart GotoBackGuarded {
+  input bool start
+  output int n = 0
+  initial state S
+    if start do {
+      again:
+      n++;
+      if (n < 3) {
+        goto again
+      }
+    } go to S
+}

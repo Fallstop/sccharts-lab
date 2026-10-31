@@ -1,0 +1,12 @@
+// A declaration at the top of a for-region whose initial value does not use the counter compiles: it is one
+// variable of the enclosing state, shared by all copies (H-4). Reading it from every copy is fine; writing it
+// from several copies is a write-write conflict (see src/examples/advanced/for-regions/shared-local).
+scchart St95ForShared {
+  output int sum = 0
+  region for i : 1 to 3 {
+    int k = 5
+    initial state W
+    immediate do sum += k go to D
+    final state D
+  }
+}

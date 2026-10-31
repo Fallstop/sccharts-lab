@@ -1,0 +1,140 @@
+{
+  "hash": "5895c9feb9bf2a86397eeb6b8a881d71503688e7",
+  "chart": "tests/conformance/structure/106-struct-members.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads p.x, so the compiler treats it as an update of p.x (a relative write, as in the deprecated old SC syntax).\nWrite it as p.x += 1 to say so. In one region it means the same.\nIt only matters when another region also writes p.x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 11,
+      "column": 6
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads p.hist[p.x], so the compiler treats it as an update of p.hist[p.x] (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. p.hist[p.x] += 1.\nIt only matters when another region also writes p.hist[p.x] in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 11,
+      "column": 51
+    }
+  ],
+  "interface": {
+    "Point.hist": {
+      "type": "int",
+      "properties": []
+    },
+    "Point.seen": {
+      "type": "bool",
+      "properties": []
+    },
+    "Point.x": {
+      "type": "int",
+      "properties": []
+    },
+    "Point.y": {
+      "type": "int",
+      "properties": []
+    },
+    "p": {
+      "type": "struct",
+      "properties": []
+    },
+    "q": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": {
+          "hist": [
+            0,
+            0,
+            0
+          ],
+          "seen": false,
+          "x": 0,
+          "y": 5
+        },
+        "q": {
+          "hist": [
+            0,
+            0,
+            0
+          ],
+          "seen": false,
+          "x": 0,
+          "y": 5
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": {
+          "hist": [
+            0,
+            10,
+            0
+          ],
+          "seen": false,
+          "x": 1,
+          "y": 5
+        },
+        "q": {
+          "hist": [
+            0,
+            0,
+            0
+          ],
+          "seen": true,
+          "x": 0,
+          "y": 10
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": {
+          "hist": [
+            0,
+            10,
+            20
+          ],
+          "seen": false,
+          "x": 2,
+          "y": 5
+        },
+        "q": {
+          "hist": [
+            0,
+            0,
+            0
+          ],
+          "seen": true,
+          "x": 0,
+          "y": 10
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

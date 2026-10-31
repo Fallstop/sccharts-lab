@@ -1,0 +1,76 @@
+{
+  "hash": "6b272ebb32a9334c642b55689bd0ae1a0bff999c",
+  "chart": "tests/conformance/concurrency/74-old-style-updates-textual-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nWrite it as x *= 2 to say so. In one region it means the same.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 9,
+      "column": 8
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads y, so the compiler treats it as an update of y (a relative write, as in the deprecated old SC syntax).\nWrite it as y += 3 to say so. In one region it means the same.\nIt only matters when another region also writes y in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 9,
+      "column": 19
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nWrite it as x += 3 to say so. In one region it means the same.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 15,
+      "column": 8
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads y, so the compiler treats it as an update of y (a relative write, as in the deprecated old SC syntax).\nWrite it as y *= 2 to say so. In one region it means the same.\nIt only matters when another region also writes y in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 15,
+      "column": 19
+    }
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 1,
+        "y": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 5,
+        "y": 8
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

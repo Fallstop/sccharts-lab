@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Ready` and runs its entry action: `entries` is 1." },
+    { "inputs": { "press": true }, "note": "The self-loop fires: `Ready` is left and entered again, so the entry action runs again (`entries` is 2) and the effect counts the press." },
+    { "inputs": { "press": false }, "note": "No press, no transition." },
+    { "inputs": { "press": true }, "note": "Another press, another exit and entry: `entries` is 3." },
+    { "note": "`press` is held, so the self-loop fires again in this tick: one more entry." }
+  ],
+  "expect": "ok"
+}

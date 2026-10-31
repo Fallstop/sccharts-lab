@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": 5, "B": true}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "bool and int mix freely, with C rules: true + 1 = 2, 5 && 3 = 1, a non-zero int stored in a bool reads as true, !5 = false. A bool is a C char underneath: big = 5 is shown as true but keeps the number 5, so fromBool = 5 and twice = 10. 256 does not fit in a char and becomes 0 (wrapped = false; gcc warns), and 0.5 is truncated to 0 (half = false)."},
+    {"inputs": {"I": 0, "B": false}, "note": "plus = 1, logical = 0, nonZero = false, negation = true."}
+  ],
+  "expect": "ok"
+}

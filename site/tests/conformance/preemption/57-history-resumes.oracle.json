@@ -1,0 +1,132 @@
+{
+  "hash": "09bf56aeb9a239a6cd04858a3b10922118de7ec3",
+  "chart": "tests/conformance/preemption/57-history-resumes.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HM is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "P": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "R": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "where": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": false,
+        "where": 1
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "P": false,
+        "R": false,
+        "where": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "P": true
+      },
+      "values": {
+        "A": false,
+        "P": true,
+        "R": false,
+        "where": 9
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": true,
+        "where": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "R": false
+      },
+      "values": {
+        "A": false,
+        "P": false,
+        "R": false,
+        "where": 2
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

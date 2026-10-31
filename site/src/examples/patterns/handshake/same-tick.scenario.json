@@ -1,0 +1,65 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Tick 1: the client is `Idle`, the server `Listening`."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start`: the client emits `req` and moves to `Waiting`. In the same tick the server sees `req` and emits `ack`, and the client's immediate transition sees `ack`: `served` is 1. A whole round trip in one tick."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle again."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Another request, another round trip in one tick: 2."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    }
+  ],
+  "expect": "ok"
+}

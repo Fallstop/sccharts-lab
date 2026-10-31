@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Idle` in both charts." },
+    { "inputs": { "press": true }, "note": "`press`: both charts go to `Pressed`. In `ChimeNow` the immediate transition out of `Pressed` fires at once, so it chimes in this tick and is back in `Idle`. In `ChimeLate` that transition is delayed: it is not checked in the tick `Pressed` is entered." },
+    { "inputs": { "press": false }, "note": "`ChimeLate` chimes now, one tick late." },
+    { "inputs": {}, "note": "Both charts wait in `Idle`." }
+  ],
+  "expect": "ok"
+}

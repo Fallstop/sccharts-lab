@@ -1,0 +1,18 @@
+{
+  "kielerBug": "The netlist goInit optimisation moves first-tick assignments that do not read inputs into reset(); the simulator then overwrites the input before tick 1. Priority-based compilation keeps them (93).",
+  "ticks": [
+    {
+      "inputs": {
+        "x": 1
+      },
+      "note": "Netlist: the write x = 7 was lost: **y = 1**, x = 1."
+    },
+    {
+      "inputs": {
+        "x": 2
+      },
+      "note": "From tick 2 on y = x simply copies the input: **y = 2**."
+    }
+  ],
+  "expect": "ok"
+}

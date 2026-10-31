@@ -1,0 +1,10 @@
+scchart P59 {
+  output int O
+  class C {
+    int v = 0
+    void inc() { v++ }
+    int get() { return v }
+  } c
+  initial state S0
+  do O = c.get(); c.inc() go to S0
+}

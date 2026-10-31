@@ -1,0 +1,288 @@
+---
+title: "Dataflow regions"
+description: "Equations that are worked out again in every tick, for the parts of a controller that are wiring rather than modes."
+sidebar:
+  order: 6
+---
+
+import { Chart, Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Some parts of a controller have no modes at all. A siren that sounds whenever the alarm is armed and a
+door is open; a reading converted from one unit to another; a value that follows another one tick
+late. You could write each of these as a state with a self-loop, but the state adds nothing: the output
+is a formula over the inputs, in every tick. A **dataflow region** says exactly that. Instead of states
+and transitions it holds equations, and every equation is worked out again in every tick.
+
+## Equations instead of states
+
+Write `dataflow` where you would write `region`, and put equations inside:
+
+<Sim example="advanced/dataflow/alarm" caption="Change an input and watch both outputs follow in the same tick: there are no states to move between." />
+
+Each line such as `siren = armed && (door || window)` is an **equation**: a variable on the left, any
+expression on the right. In every tick in which the region is active, the first tick included, KIELER
+evaluates every equation and assigns the result. Nothing triggers it and nothing delays it: `siren` is
+true in exactly the ticks in which the right-hand side is true.
+
+If you know [during actions](/learn/actions/), an equation behaves like
+`immediate during do siren = armed && (door || window)`: it runs in every tick, the entry tick included.
+The dataflow form is shorter, and it reads as a description of wiring rather than as an action.
+
+A few details:
+
+- The braces can be left out: `dataflow:` followed by the equations, up to the next region or the end
+  of the chart. (Ordinary regions have the same short form, `region:` followed by their states.)
+- A dataflow region may start with declarations of its own (`bool over`, say, before the equations).
+  They are locals of that region.
+- The left-hand side must be a variable. A [signal](/learn/signals/) there is rejected with
+  `Non-variables cannot be used in an assignment.`; use a `bool` output instead.
+- KIELER draws a dataflow region as a circuit: inputs on the left, operators as boxes, outputs on the
+  right, wires in between. The diagrams on this site use a simplified version of that drawing.
+
+## The order of the equations does not matter
+
+Equations are not statements run from top to bottom. Here the first equation reads `celsius`, which the
+second one computes:
+
+<Sim example="advanced/dataflow/celsius" caption="`freezing` is written first but still sees this tick's `celsius`." />
+
+KIELER turns every equation into a small region of its own, so the equations of a dataflow region run
+concurrently, like the regions of [chapter 8](/learn/concurrency/), and the same rule decides their
+order: within a tick, a variable is written before anything reads it. So `celsius` is computed before
+`freezing` in every tick, and a chain of equations settles within one tick however you arrange the
+lines. (Tick 4 also shows that `int` arithmetic is C's: `340 / 9` is 37, rounded towards zero.)
+
+## One equation per variable, and no instant feedback
+
+Because equations are concurrent, the rules of [chapter 12](/learn/causality/) apply to them. Two
+equations that both set the same variable, say `open = door` and `open = window`, are two concurrent
+writes that disagree, and KIELER rejects the chart. So does a set of equations that needs its own
+result in the same tick:
+
+<Chart example="advanced/dataflow/feedback" caption="`X` needs this tick's `Y`, and `Y` needs this tick's `X`: neither can go first." />
+
+Break the loop with a delay, so that one side uses the value from the previous tick
+([`pre`](/learn/pre/), more on it below). KIELER accepts this version:
+
+<Sim example="advanced/dataflow/feedback-fixed" caption="`X = pre(Y) + I` adds `I` to last tick's `Y`: with `I` = 1, 1, 2 it gives `X` = 1, 2, 4." />
+
+## Looking back: `->`, `fby` and `pre`
+
+Dataflow needs a way to talk about earlier ticks. Three operators provide it:
+
+<Sim example="advanced/dataflow/delays" caption="`start` and `late` begin at 100, `before` at 0. From tick 2, `now` and `start` show this tick's `level`; `late` and `before` show last tick's." />
+
+The chart's equations are `now = level`, `start = 100 -> level`, `late = 100 fby level` and
+`before = pre(level)`. Tick by tick:
+
+| Tick | `level` | `now` | `start` | `late` | `before` |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 5 | 5 | 100 | 100 | 0 |
+| 2 | 6 | 6 | 6 | 5 | 5 |
+| 3 | 9 | 9 | 9 | 6 | 6 |
+| 4 | 9 | 9 | 9 | 9 | 9 |
+
+- `a -> b` (read it "a, then b") is `a` in the first tick and `b` in every later tick. It
+  **initialises**.
+- `a fby b` ("a, followed by b") is `a` in the first tick and, in every later tick, the value `b` had in
+  the previous tick. It **delays by one tick** and says what to show before there is a previous tick.
+  `a -> pre(b)` means the same thing, and KIELER rewrites it to `a fby b`.
+- `pre(x)` is the value `x` had at the end of the previous tick, as in [chapter 11](/learn/pre/). In the
+  first tick it is 0 (or `false`), whatever initial value `x` was declared with.
+
+"The first tick" means the first tick of the state that contains the dataflow region. If that state is
+left and entered again, `->` and `fby` start over and give their first operand once more.
+
+With a delay in between, an equation may use its own earlier value. That is how counters and running
+totals are written:
+
+```sctx
+// 0, 1, 2, 3, ...
+ticks = 0 fby (ticks + 1)
+// all coins so far
+total = pre(total) + coin
+```
+
+KIELER also accepts an equation that reads its own variable with no delay at all, such as `n = n + 1`
+(or `n += 1`). It treats it as an update of the old value, so `n` counts 1, 2, 3, ... from tick 1. If
+you know Lustre or SCADE, where this would be a cycle, prefer the `fby` and `pre` forms: they say what
+you mean.
+
+### The precedence trap
+
+These two equations look alike:
+
+<Predict example="advanced/dataflow/count" ask={[{ tick: 3, value: 'wrong' }, { tick: 3, value: 'right' }]} caption="Work out both counters after tick 3, run the chart, then open the explanation." />
+
+<details>
+<summary>Explanation</summary>
+
+After tick 3, `wrong` is 3 and `right` is 2: `wrong` counts 1, 2, 3, ... and `right` counts 0, 1, 2, ...
+KIELER reads `0 fby wrong + 1` as `(0 fby wrong) + 1`, so the `+ 1` is added outside the delay, already
+in the first tick.
+
+</details>
+
+The difference is in how KIELER's grammar reads the delay operators. The operands of `->`, `fby` and
+`sfby`, and the three parts of the conditional `c ? a : b`, must each be an *atom*: a literal, a name, a
+call such as `pre(x)`, or an expression in parentheses. So these operators bind more tightly than any
+arithmetic or comparison around them:
+
+| You write | KIELER reads |
+| --- | --- |
+| `0 fby wrong + 1` | `(0 fby wrong) + 1` |
+| `0 -> I + 100` | `(0 -> I) + 100`: 100 in the first tick, `I + 100` later |
+| `A > B ? A : B` | `A > (B ? A : B)`, which is 0 (`false`) whenever `B` is not 0 |
+
+Put parentheses around every operand that is more than a single name or number:
+`0 fby (right + 1)`, `0 -> (I + 100)`, `(A > B) ? A : B`.
+
+### A delay whose type KIELER cannot work out
+
+KIELER keeps the value of every `->` and `fby` in a helper variable, and works out the helper's type
+from the names and literals in the whole expression. If they mix `bool` and `int`, it gives up, and the
+generated C declares the helper with the type `UNKNOWN`:
+
+<Chart example="advanced/dataflow/mixed-types" caption="`false` is a `bool`, `level` an `int`: KIELER cannot type the helper of `->`, and the simulation fails." />
+
+Compute the comparison into a `bool` variable of its own first (`over = level > 3`), then write
+`high = false -> over`.
+
+## Equations in sequence: `;` and `seq`
+
+Sometimes a value is easiest to compute in steps, each refining the last. End an equation with a
+semicolon, or with the keyword `seq`, and it runs before the equation that follows it, like a statement:
+
+<Sim example="advanced/dataflow/clamp" caption="The three equations form one sequence: copy the reading, cap it at 100, raise it to 0." />
+
+In a sequence a variable may be written several times and read in between. Without the semicolons the
+three lines would be three concurrent writes of `level`, and KIELER rejects that chart with the
+scheduling errors from above.
+
+<Aside type="caution" title="A semicolon is not a separator">
+In C a `;` ends every statement. In a dataflow region it means "do this one first". Between equations
+that share no variables it changes nothing, but every sequence adds a harmless warning such as
+
+```text wrap
+ValuedObject with name _Clamp_local_seq0 is contained in the model but not in VariableStore.
+```
+
+Leave the semicolons out unless you want the order.
+</Aside>
+
+## Wiring up instances of other charts
+
+A dataflow region can also connect copies of other charts, like chips on a circuit board. Here two half
+adders make a full adder, which adds three bits:
+
+<Sim example="advanced/dataflow/full-adder" caption="`h1` adds `a` and `b`, `h2` adds the carry-in to `h1`'s sum, and either carry makes `carryOut`." />
+
+- `ref HalfAdderCell h1, h2` declares two **instances** of the chart `HalfAdderCell`. Each runs its own
+  copy of that chart, concurrently with everything else.
+- `h1.x = a` sets one input of an instance. `h1 = {a, b}` sets its inputs in the order they are declared
+  (`x`, then `y`); an `_` in the list skips one. Inputs you never set stay at 0 or `false`.
+- `h1.s` reads an output.
+
+The chart to simulate must come first in the file, since KIELER simulates the first `scchart`, and the
+instance's chart must be in the same file or imported (see [Reusing charts](/advanced/references/)). If
+an instance's chart terminates, KIELER starts it again from its initial state one tick later.
+
+## Dataflow next to states
+
+A state can contain dataflow regions and ordinary regions side by side. They are concurrent, so they
+communicate within the tick:
+
+<Sim example="advanced/dataflow/fridge-monitor" caption="In tick 2 the equation sets `warm` and the region reacts to it in the same tick." />
+
+This split is often the clearest design: equations for the values that are always a formula of the
+inputs, states for the behaviour that has modes.
+
+"Every tick, for ever" has a consequence: a dataflow region never finishes, so a superstate that
+contains one never takes its `join to` transition. The exception is `dataflow once { ... }`, whose
+equations run only in the tick its state is entered, after which the region terminates at once.
+
+## Three KIELER bugs to steer around
+
+The delay operators have three bugs in KIELER. The first two give wrong results without any message,
+so it pays to know them.
+
+**`sfby` chains stop early.** `sfby` ("sequential followed by") with two operands behaves like `->`. A
+chain `a sfby b sfby c` should give `a`, then `b`, then `c`, but KIELER never gets to `c`. With the
+equations `two = 1 sfby level` and `chain = 1 sfby 2 sfby 3`:
+
+| Tick | `level` | `two` | `chain` |
+| ---: | ---: | ---: | ---: |
+| 1 | 10 | 1 | 1 |
+| 2 | 20 | 20 | 2 |
+| 3 | 30 | 30 | 2 |
+| 4 | 40 | 40 | 2 |
+
+Use `->` instead of `sfby`, with two operands: in a chain `a -> b -> c` the middle operand is never used.
+
+**`fby` outside a dataflow region blocks termination.** `->` and `fby` also work in ordinary effects,
+such as `immediate do a = 0 fby level go to End`. But KIELER implements `fby` with a hidden helper region
+that never finishes, so a superstate that uses `fby` anywhere inside can never terminate. In this
+experiment two superstates are identical except for the operator:
+
+<Sim example="advanced/dataflow/fby-termination" caption="`CopyA` and `CopyB` both reach their final state in tick 1. Only `CopyB`, which uses `->`, terminates: `doneB` becomes true, `doneA` never does." />
+
+This site's simulator reproduces the bug, so that it behaves like KIELER. Keep `fby` inside dataflow
+regions.
+
+**Mixed types in a delay** fail, as [shown above](#a-delay-whose-type-kieler-cannot-work-out), with
+
+```text wrap
+Cannot serialize simulation interface. Unsupported type: UNKNOWN
+```
+
+[Compiler messages](/reference/errors/#cannot-serialize-simulation-interface-unsupported-type-unknown)
+explains it.
+
+## Try it
+
+<TryIt example="advanced/dataflow/changed-start" solution="advanced/dataflow/changed-solution" title="Did it change?">
+Make `changed` true in every tick in which `level` differs from its value in the previous tick, and
+`false` in the first tick, when there is no previous tick to compare with. Mind both the precedence trap
+and the type trap.
+</TryIt>
+
+<TryIt example="advanced/dataflow/highest-start" solution="advanced/dataflow/highest-solution" title="Running maximum">
+Make `highest` the largest `level` seen so far, this tick's included. It must work for negative readings
+too, so it cannot start from 0. One equation is enough.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="A chart declares `input int I = 7` and the equation `p = pre(I)`. In tick 1 the environment sets `I` to 5. What is `p` after tick 1?"
+  options={['0', '5', '7', 'Nothing: the chart is rejected because `p` has no value yet']}
+  answer={0}
+>
+In the first tick `pre(I)` is the default of the type, 0, whatever initial value `I` was declared with.
+From tick 2 it is the value `I` had at the end of the previous tick (here 5).
+</Quiz>
+
+<Quiz
+  question="Which pair of equations does KIELER reject?"
+  options={['`X = Y + 1` and `Y = pre(X)`', '`X = I;` followed by `X = X * 2`', '`n = n + 1` on its own', '`X = Y + 1` and `Y = X`']}
+  answer={3}
+>
+`X = Y + 1` and `Y = X` need each other's value in the same tick: a causality cycle. With `Y = pre(X)`
+the delay breaks the cycle. The semicolon after `X = I` makes a sequence, so `X` is written twice, in
+order. `n = n + 1` reads the value from before its own write and counts up.
+</Quiz>
+
+<KeyIdeas>
+- A `dataflow` region holds equations. Every equation is evaluated again in every tick the region is
+  active, the first tick included.
+- Equations run concurrently: their order does not matter, but each variable gets one equation, and
+  equations may not need each other's results in a loop within one tick (break it with `pre` or `fby`).
+- `a -> b` initialises, `a fby b` delays by one tick with a start value, `pre(x)` delays and starts at 0
+  or `false`. Parenthesise their operands: they bind more tightly than arithmetic.
+- An equation ending in `;` or `seq` becomes a step of a sequence.
+- `ref Chart h` declares an instance; set its inputs with `h.x = ...` or `h = {...}` and read `h.y`.
+- Avoid `sfby`, and keep `fby` inside dataflow regions: KIELER gets both wrong.
+</KeyIdeas>
+
+Next, [Time](/advanced/time/): clocks, timeouts and periods measured in real time.

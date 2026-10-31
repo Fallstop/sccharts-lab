@@ -1,0 +1,12 @@
+scchart Superstate {
+  input bool A, R
+  output int count
+
+  initial state Counter {
+    int step = 1
+    entry do count = 0
+    initial state Counting
+      if A do count += step go to Counting
+  }
+  if R go to Counter
+}

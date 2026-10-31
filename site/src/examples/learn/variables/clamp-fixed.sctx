@@ -1,0 +1,7 @@
+scchart ClampFixed {
+  input int speed
+  output int shown = 0
+
+  initial state Show
+    do shown = (speed > 10) ? 10 : speed go to Show
+}

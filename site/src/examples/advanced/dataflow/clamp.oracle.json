@@ -1,0 +1,70 @@
+{
+  "hash": "3a1abcd5a1665b3ff6d19c00b6d4a18f308be56c",
+  "chart": "src/examples/advanced/dataflow/clamp.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _Clamp_local_seq0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "raw": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "level": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "raw": 42
+      },
+      "values": {
+        "raw": 42,
+        "level": 42
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "raw": 250
+      },
+      "values": {
+        "raw": 250,
+        "level": 100
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "raw": -7
+      },
+      "values": {
+        "raw": -7,
+        "level": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "raw": 100
+      },
+      "values": {
+        "raw": 100,
+        "level": 100
+      },
+      "terminated": false
+    }
+  ]
+}

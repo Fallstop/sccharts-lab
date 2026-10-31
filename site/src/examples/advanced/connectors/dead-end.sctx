@@ -1,0 +1,9 @@
+scchart ConnectorDeadEnd {
+  input bool coin
+  output int coins = 0
+
+  initial state Waiting
+    if coin do coins++ go to Check
+
+  connector state Check
+}

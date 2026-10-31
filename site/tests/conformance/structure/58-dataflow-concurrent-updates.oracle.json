@@ -1,0 +1,70 @@
+{
+  "hash": "4e812ab39f8effbc859b663ca4179b5efac960b4",
+  "chart": "tests/conformance/structure/58-dataflow-concurrent-updates.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "W": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "X": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "W": 10,
+        "X": 5,
+        "Y": 8,
+        "Z": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "W": 20,
+        "X": 13,
+        "Y": 22,
+        "Z": 7
+      },
+      "terminated": false
+    }
+  ]
+}

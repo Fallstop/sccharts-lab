@@ -1,0 +1,11 @@
+// A protected field is visible in extending charts only, not from outside.
+scchart St135Main {
+  output int O = 0
+  ref St135Base s
+  initial state A
+  do O = s.secret go to A
+}
+
+scchart St135Base {
+  protected int secret = 21
+}

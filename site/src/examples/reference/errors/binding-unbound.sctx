@@ -1,0 +1,17 @@
+scchart BindingUnbound {
+  input bool tick
+  output bool lamp
+
+  initial state Blinking is Flasher(tick to tick)
+}
+
+scchart Flasher {
+  input bool tick
+  output bool light
+
+  initial state Dark
+    if tick do light = true go to Lit
+
+  state Lit
+    if tick do light = false go to Dark
+}

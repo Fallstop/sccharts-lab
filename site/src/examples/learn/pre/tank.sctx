@@ -1,0 +1,9 @@
+scchart Tank {
+  output int level = 50
+  output int before
+
+  initial state Fill {
+    immediate during do before = pre(level)
+    during do level += 10
+  }
+}

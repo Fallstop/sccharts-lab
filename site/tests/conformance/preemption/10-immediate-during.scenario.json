@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "next": false
+      },
+      "note": "`immediate during` also runs in the tick its state is entered: countA = 1."
+    },
+    {
+      "inputs": {},
+      "note": "countA = 2."
+    },
+    {
+      "inputs": {
+        "next": true
+      },
+      "note": "A is left by a weak abort, so its during action still runs (countA = 3). B is entered and left again in this tick by its immediate transition, but its immediate during action runs first (countB = 1). C's during is delayed: countC = 0."
+    },
+    {
+      "inputs": {
+        "next": false
+      },
+      "note": "C's delayed during action runs from the tick after C was entered: countC = 1."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "Tick 1 enters A."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "Deferred entry into superstate B: nothing inside B happens in this tick."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "Surprise: when **all** transitions into B are deferred, KIELER enters B for real only now. The inner initial state's entry action runs now (innerEntry = 1); B's own entry action never runs (outerEntry = 0)."
+    },
+    {
+      "inputs": {},
+      "note": "I's delayed transition fires (step1 = 1): one tick later than after a normal entry."
+    },
+    {
+      "inputs": {},
+      "note": "step2 = 1."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "Rejected: inside A the path to the final state is immediate (A1 -> A2), so A can terminate in the tick it is entered and A -> B -> A becomes an instantaneous loop. The guard if I does not help. KIELER's validator does not see it (it ignores join transitions), but the netlist scheduler fails: \"The SCG is NOT asc-schedulable!\"."}
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

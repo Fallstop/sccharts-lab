@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "sample": false,
+        "level": 0
+      },
+      "note": "Tick 1 enters `Idle`."
+    },
+    {
+      "inputs": {
+        "sample": true,
+        "level": 7
+      },
+      "note": "`sample` is true: control passes through the connector (the black dot) and takes the first of its transitions whose trigger holds. `level` is 7, so `band` = 1, and the chart is back in `Idle` in the same tick."
+    },
+    {
+      "inputs": {
+        "level": 12
+      },
+      "note": "`level` is 12: `band` = 2."
+    },
+    {
+      "inputs": {
+        "level": 3
+      },
+      "note": "Neither trigger holds, so the last transition, which has none, is taken: `band` = 0."
+    }
+  ],
+  "expect": "ok"
+}

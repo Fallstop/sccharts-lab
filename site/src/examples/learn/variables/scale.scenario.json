@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "n": 10
+      },
+      "note": "Tick 1 enters `Calc`; the self-loop is delayed."
+    },
+    {
+      "note": "`compound = n; compound *= 1.5` gives 10, not 15: with an int target, KIELER converts the float `1.5` to an int (1) before multiplying. `plain = n * 1.5` computes 15.0 and then stores 15."
+    },
+    {
+      "inputs": {
+        "n": 3
+      },
+      "note": "`compound` is 3 × 1 = 3. `plain` is 4.5 truncated: 4."
+    },
+    {
+      "inputs": {
+        "n": -3
+      },
+      "note": "`compound` is −3; `plain` is −4.5 truncated towards zero: −4."
+    }
+  ],
+  "expect": "ok"
+}

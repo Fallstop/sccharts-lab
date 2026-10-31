@@ -1,0 +1,26 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "S": false
+      },
+      "note": "Tick 1 enters M and I1."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "S": true
+      },
+      "note": "Strong abort (`abort to`): M is left before any inner behaviour of this tick runs, so I1's transition does not fire (inner = 0, chained = 0); effect = 1."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "S": false
+      },
+      "note": "In Done: nothing changes."
+    }
+  ],
+  "expect": "ok"
+}

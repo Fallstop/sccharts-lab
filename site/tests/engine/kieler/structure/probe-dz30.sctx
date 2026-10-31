@@ -1,0 +1,14 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz30 {
+  input bool t
+  output int a[3] = {0, 0, 0}
+  region for i : 0 to 2 {
+    initial state R is Dz30One(t, a[i])
+  }
+}
+scchart Dz30One {
+  input bool tick
+  output int v
+  initial state S
+  if tick do v++ go to S
+}

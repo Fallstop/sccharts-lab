@@ -1,0 +1,68 @@
+{
+  "hash": "c59b537d383ce050a35ddb0a7caac946606e0ab6",
+  "chart": "src/examples/reference/notation/preemption.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "pause": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "stop": false,
+        "pause": false,
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "pause": false,
+        "stop": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "pause": false,
+        "stop": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

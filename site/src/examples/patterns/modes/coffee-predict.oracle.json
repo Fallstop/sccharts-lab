@@ -1,0 +1,309 @@
+{
+  "hash": "78ac6bea61271c602bb57c4c89f9edeebf26c622",
+  "chart": "src/examples/patterns/modes/coffee-predict.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "brew": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "clean": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "cups": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "heater": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "pump": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "rinsing": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "cleanWanted": {
+      "type": "bool",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "brew": false,
+        "clean": false
+      },
+      "values": {
+        "brew": false,
+        "clean": false,
+        "cups": 0,
+        "heater": false,
+        "pump": false,
+        "rinsing": false,
+        "cleanWanted": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "clean": true
+      },
+      "values": {
+        "brew": false,
+        "clean": true,
+        "cups": 0,
+        "heater": false,
+        "pump": false,
+        "rinsing": true,
+        "cleanWanted": false
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "clean": false,
+        "brew": true
+      },
+      "values": {
+        "brew": true,
+        "clean": false,
+        "cups": 0,
+        "heater": false,
+        "pump": false,
+        "rinsing": true,
+        "cleanWanted": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "brew": false
+      },
+      "values": {
+        "brew": false,
+        "clean": false,
+        "cups": 0,
+        "heater": false,
+        "pump": false,
+        "rinsing": false,
+        "cleanWanted": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "brew": true
+      },
+      "values": {
+        "brew": true,
+        "clean": false,
+        "cups": 0,
+        "heater": true,
+        "pump": false,
+        "rinsing": false,
+        "cleanWanted": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "brew": false,
+        "clean": true
+      },
+      "values": {
+        "brew": false,
+        "clean": true,
+        "cups": 0,
+        "heater": true,
+        "pump": true,
+        "rinsing": false,
+        "cleanWanted": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "clean": false
+      },
+      "values": {
+        "brew": false,
+        "clean": false,
+        "cups": 0,
+        "heater": true,
+        "pump": true,
+        "rinsing": false,
+        "cleanWanted": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {},
+      "values": {
+        "brew": false,
+        "clean": false,
+        "cups": 1,
+        "heater": false,
+        "pump": false,
+        "rinsing": false,
+        "cleanWanted": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {},
+      "values": {
+        "brew": false,
+        "clean": false,
+        "cups": 1,
+        "heater": false,
+        "pump": false,
+        "rinsing": true,
+        "cleanWanted": false
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {},
+      "values": {
+        "brew": false,
+        "clean": false,
+        "cups": 1,
+        "heater": false,
+        "pump": false,
+        "rinsing": true,
+        "cleanWanted": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

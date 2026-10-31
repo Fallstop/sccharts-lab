@@ -1,0 +1,16 @@
+scchart CountResetSignal {
+  input signal tap
+  input bool rst
+  output signal done
+  initial state Outer {
+    region Count {
+      initial state Wait
+        if 2 tap do done go to Over
+      final state Over
+    }
+    region Other {
+      initial state Idle
+    }
+  }
+  if rst abort to Outer
+}

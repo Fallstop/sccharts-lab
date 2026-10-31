@@ -1,0 +1,45 @@
+scchart CrossingLights {
+  input bool occupied        // track circuit: a train is near or on the crossing
+  input bool isDown, isUp    // the barrier's limit switches
+  output bool lower          // barrier motor: true lowers, false raises
+  output bool lampL, lampR   // the two red lamps
+  output signal bell         // one stroke of the bell
+  bool flashing = false      // Control asks Lights to flash
+
+  region Lights {
+    initial state Dark
+      if flashing go to Left
+
+    state Left {
+      entry do lampL = true; bell
+      exit do lampL = false
+    }
+    if !flashing go to Dark
+    go to Right
+
+    state Right {
+      entry do lampR = true
+      exit do lampR = false
+    }
+    if !flashing go to Dark
+    go to Left
+  }
+
+  region Control {
+    initial state Open
+      if occupied do flashing = true go to Warning
+
+    state Warning
+      if 3 true do lower = true go to Lowering
+
+    state Lowering
+      if isDown go to Closed
+
+    state Closed
+      if !occupied do lower = false go to Raising
+
+    state Raising
+      if occupied do lower = true go to Lowering
+      if isUp do flashing = false go to Open
+  }
+}

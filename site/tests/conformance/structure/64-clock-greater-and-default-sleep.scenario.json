@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "The next timeout is 101 away, but @DefaultSleep caps the request: min(50, 101 - 0): **sleepT = 50**."
+    },
+    {
+      "inputs": {
+        "deltaT": 50
+      },
+      "note": "The clock advances by deltaT: **t = 50**, sleepT = min(50, 51) = **50**."
+    },
+    {
+      "inputs": {
+        "deltaT": 50
+      },
+      "note": "**t = 100** is not > 100: **a = false, sleepT = 1**."
+    },
+    {
+      "inputs": {
+        "deltaT": 1
+      },
+      "note": "**t = 101**: **a = true**; no timeout left, so the default **sleepT = 50**."
+    }
+  ],
+  "expect": "ok"
+}

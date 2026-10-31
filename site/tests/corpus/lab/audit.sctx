@@ -1,0 +1,12 @@
+scchart Audit {
+  input bool trigger
+  input string timeout_update_vals
+  output bool result = false
+  output string echoed
+
+  initial state Idle
+  if trigger do result = true; echoed = timeout_update_vals go to Active
+
+  state Active
+  if !trigger do result = false go to Idle
+}

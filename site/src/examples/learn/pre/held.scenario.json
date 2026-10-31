@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Not pressed." },
+    { "inputs": { "button": true }, "note": "Pressed in this tick only so far." },
+    { "note": "Pressed now and one tick ago." },
+    { "note": "Pressed now, one tick ago and two ticks ago (`pre(pre(button))`): a long press." },
+    { "note": "Still a long press." },
+    { "inputs": { "button": false }, "note": "Released." },
+    { "inputs": { "button": true }, "note": "Pressed again." },
+    { "note": "Only two ticks so far: `pre(pre(button))` is false, so this is not a long press yet." }
+  ],
+  "expect": "ok"
+}

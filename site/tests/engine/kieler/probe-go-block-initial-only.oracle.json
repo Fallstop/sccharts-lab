@@ -1,0 +1,94 @@
+{
+  "hash": "63e006fe28405443555b4c4b5e47a6e9b76ba324",
+  "chart": "tests/engine/kieler/probe-go-block-initial-only.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "i": 1,
+        "o": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 2,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "i": 2,
+        "o": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 3,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "i": 3,
+        "o": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": 4,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "i": 4,
+        "o": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

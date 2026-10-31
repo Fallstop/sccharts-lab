@@ -1,0 +1,19 @@
+scchart CopyOrder {
+  output int log = 0
+
+  region First {
+    initial state W
+      immediate do log = log * 10 + 9 go to D
+    final state D
+  }
+  region R for i : 3 to 1 {
+    initial state W
+      immediate do log = log * 10 + i go to D
+    final state D
+  }
+  region Last {
+    initial state W
+      immediate do log = log * 10 + 7 go to D
+    final state D
+  }
+}

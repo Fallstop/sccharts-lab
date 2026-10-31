@@ -1,0 +1,15 @@
+scchart SignalCycle {
+  output signal S, U
+
+  region R1 {
+    initial state A
+    immediate if S do U go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    immediate if U do S go to B
+    state B
+  }
+}

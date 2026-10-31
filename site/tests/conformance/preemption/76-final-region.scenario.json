@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "A `final region` never blocks its parent's termination: KIELER makes all of its states final. (The validator still warns that Background has no final state.)"
+    },
+    {
+      "inputs": {},
+      "note": "background = 1."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Main reaches F, so M terminates in this tick; Background still runs once more first (background = 2, done = 1)."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In Done: background stays 2."
+    }
+  ],
+  "expect": "ok"
+}

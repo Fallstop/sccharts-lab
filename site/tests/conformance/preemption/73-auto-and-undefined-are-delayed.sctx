@@ -1,0 +1,12 @@
+scchart AutoDelay {
+  input bool unused
+  output int x = 0, y = 0
+
+  initial state S
+  auto do x = 1 go to T
+
+  state T
+  undefined do y = 1 go to U
+
+  state U
+}

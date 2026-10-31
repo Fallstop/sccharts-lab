@@ -1,0 +1,14 @@
+scchart P101 {
+  input int I
+  input bool ARR[4]
+  region R for i : 0 to 2 {
+    initial state A
+    if I == i go to B
+    final state B
+  }
+  region Q for j : ARR {
+    initial state C
+    if ARR[j] go to D
+    final state D
+  }
+}

@@ -1,0 +1,8 @@
+scchart LongPress {
+  input bool button
+  output bool longPress
+
+  initial state Watch {
+    immediate during do longPress = button && pre(button) && pre(pre(button))
+  }
+}

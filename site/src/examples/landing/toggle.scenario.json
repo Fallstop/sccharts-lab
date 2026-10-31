@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Tick 1 enters the initial state, `Off`. Its transition is delayed, so it cannot fire in the tick `Off` was entered, whatever `button` is." },
+    { "inputs": { "button": true }, "note": "`button` is true, so the transition from `Off` to `On` fires and sets `light` to true." },
+    { "inputs": { "button": false }, "note": "`button` is false, so nothing fires. The chart stays in `On` and `light` keeps its value, true." },
+    { "note": "`button` is still false (an input keeps its value until you change it), so nothing fires." },
+    { "inputs": { "button": true }, "note": "`button` is true, so the transition from `On` to `Off` fires and sets `light` to false." },
+    { "inputs": { "button": false }, "note": "`button` is false, so nothing fires. The chart stays in `Off` and `light` keeps its value, false." },
+    { "inputs": { "button": true }, "note": "`button` is true again: `Off` to `On` fires and `light` is true." }
+  ],
+  "expect": "ok"
+}

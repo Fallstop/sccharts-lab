@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "temperature": 20 }, "note": "Tick 1 enters `Control`; the self-loop is delayed, so the code effect has not run yet: `heater` is false." },
+    { "inputs": { "temperature": 17 }, "note": "17 is below 18: the `if` branch switches `heater` on." },
+    { "inputs": { "temperature": 20 }, "note": "20 is neither below 18 nor above 22: the `else` branch runs, its inner `if` does not, and `heater` keeps its value, true." },
+    { "inputs": { "temperature": 23 }, "note": "Above 22: `heater` goes off." },
+    { "inputs": { "temperature": 20 }, "note": "20 again, and `heater` stays off: between 18 and 22 the thermostat keeps what it last did." },
+    { "inputs": { "temperature": 15 }, "note": "On again." }
+  ],
+  "expect": "ok"
+}

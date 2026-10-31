@@ -1,0 +1,14 @@
+scchart MotorBehavior {
+  output int motorRotation
+  
+  const int motorRotationMax = 16
+  entry do motorRotation = 0
+  
+  region HandleMotor {
+    initial state Increment {
+      during do motorRotation++
+    } if motorRotation == motorRotationMax
+      do motorRotation = 0
+      abort to Increment
+  }
+}

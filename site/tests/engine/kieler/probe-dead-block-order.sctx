@@ -1,0 +1,37 @@
+scchart P51 {
+  input bool a, b, c, d
+  input int n
+  output int x = 0, y = 0, z = 0
+  output signal S, T
+  output signal int V combine *
+  region R0 {
+    initial state R0s0 {
+      signal L1
+      region {
+        initial state R0s0r1s0 {
+          region {
+            initial state R0s0r1s0r0s0 {
+              signal L2
+            }
+          }
+          region {
+            initial state R0s0r1s0r1s0 {
+              immediate during do S
+            }
+          }
+        }
+          do V(n) go to R0s0r1s0
+      }
+    }
+      immediate do V(n); z++ abort to R0s1
+    state R0s1 {
+      region {
+        initial state R0s1r1s0
+          immediate go to R0s1r1s2
+        state R0s1r1s2
+          immediate if d go to R0s1r1s0
+      }
+    }
+      go to R0s0
+  }
+}

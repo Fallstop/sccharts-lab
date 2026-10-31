@@ -1,0 +1,23 @@
+// The regions of a chart class run as part of the instance: they start when the declaring state is entered,
+// run concurrently with it, and restart when it is entered again (the instance is hidden from the pool because
+// it is declared in a nested state).
+scchart St127Regions {
+  input bool leave
+  output int O = 0
+  initial state S {
+    ref St127Ticker t
+    initial state A
+    do O = t.count go to A
+  }
+  if leave go to T
+  state T
+  go to S
+}
+
+scchart St127Ticker {
+  int count = 0
+  region {
+    initial state X
+    do count++ go to X
+  }
+}

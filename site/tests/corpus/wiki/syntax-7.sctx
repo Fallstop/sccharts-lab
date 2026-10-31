@@ -1,0 +1,17 @@
+scchart Singals {
+    signal x
+    signal int y = 0 combine +
+
+    region {
+        initial state A
+        do x; y(3) go to B
+
+        final state B
+    }
+    region {
+        initial state A
+        if x do y(4) go to B
+
+        final state B
+    }
+}

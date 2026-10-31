@@ -1,0 +1,13 @@
+scchart CycleWithOneDelay {
+  input bool I
+  output int x = 0
+
+  initial state A
+  immediate go to B
+
+  state B
+  if I do x += 1 go to C
+
+  state C
+  immediate go to A
+}

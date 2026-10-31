@@ -1,0 +1,399 @@
+---
+title: "Entry, during and exit actions"
+description: "Effects that belong to a state rather than a transition: they run when the state is entered, while it stays active, and when it is left, however that happens."
+sidebar:
+  order: 10
+---
+
+import { Chart, Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Open a fridge and the light comes on; close it and the light goes off. Why the door opened, or how
+long it stays open, makes no difference: the light belongs to *being open*. Until now every effect
+in your charts has belonged to a transition. This chapter attaches effects to states instead, with
+entry, during and exit actions, and shows exactly when each one runs.
+
+## A fridge light
+
+<Sim
+  example="learn/actions/fridge"
+  caption="Neither transition has an effect. Watch `lamp` in ticks 2 and 4: the state `Open` switches it."
+/>
+
+The two lines inside `Open` are its actions:
+
+```sctx
+state Open {
+  entry do lamp = true
+  exit do lamp = false
+}
+```
+
+An **entry action** runs every time its state is entered. An **exit action** runs every time its
+state is left. They are written inside the state's braces, after any declarations and before any
+inner states, and the diagram lists them under the state's name as `entry / lamp = true` and
+`exit / lamp = false`.
+
+With one way into `Open` and one way out, you could have written `do lamp = true` on the transition
+in and `do lamp = false` on the transition out. The difference shows as a chart grows. Every new way
+into `Open` would need its own copy of `lamp = true`, and a forgotten copy is a bug that no compiler
+will point out. An entry action says "whenever I am entered" once, in the one place where it belongs.
+
+## During actions
+
+A fridge that beeps when its door has been left open needs to count ticks while the door is open.
+That is the job of a **during action**: it runs in every tick in which its state is already active.
+
+<Sim
+  example="learn/actions/fridge-alarm"
+  caption="`openFor` counts the ticks after the door opened. Look at tick 2, when it stays 0, and at tick 7, when the door closes and it still goes up."
+/>
+
+`Open` is now a superstate with three actions and two inner states. Here is what KIELER's
+simulation shows:
+
+| Tick | `doorOpen` | State after | `openFor` | `lamp` | `beep` |
+| ---: | --- | --- | ---: | --- | --- |
+| 1 | false | Closed | 0 | false | false |
+| 2 | true | Open, Quiet | 0 | true | false |
+| 3 | true (held) | Open, Quiet | 1 | true | false |
+| 4 | true (held) | Open, Quiet | 2 | true | false |
+| 5 | true (held) | Open, Beeping | 3 | true | true |
+| 6 | true (held) | Open, Beeping | 4 | true | true |
+| 7 | false | Closed | 5 | false | false |
+
+Three things are worth a closer look.
+
+**The entry tick doesn't count.** In tick 2 the door opens and `Open` is entered: its entry action
+sets `openFor = 0`, and the during action does nothing. A plain `during` action is *delayed*, like a
+transition without `immediate`: it starts in the tick after its state was entered.
+
+**A superstate's during action runs alongside its inner states.** In tick 5, `openFor++` and the
+trigger `openFor == 3` of `Quiet` happen in the same tick, and the trigger sees 3. KIELER treats a
+superstate's during action like one more concurrent region: as with any two regions, the update of
+`openFor` is scheduled before the read of it, whichever comes first in the source. This is the
+initialise–update–read order from [Concurrent regions](/learn/concurrency/).
+
+**The tick of leaving does count.** In tick 7 the door closes and `openFor` still goes from 4 to 5.
+`if !doorOpen go to Closed` is a weak abort, and as you saw in [Aborts](/learn/preemption/) a weak
+abort lets the state finish its tick before it is left. The during action is part of that tick.
+Then the exit actions run from the inside out: `Beeping`'s switches the beep off, then `Open`'s
+switches the lamp off.
+
+### Including the entry tick
+
+To run a during action in the entry tick too, write `immediate during`:
+
+<Compare
+  a="learn/actions/during"
+  b="learn/actions/immediate-during"
+  scenario="learn/actions/during-compare"
+  caption="The same chart with `during` (`DuringCount`) and `immediate during` (`ImmediateDuringCount`). `Busy` is entered in tick 2."
+/>
+
+| Tick | `start` | `n` with `during` | `n` with `immediate during` |
+| ---: | --- | ---: | ---: |
+| 1 | false | 0 | 0 |
+| 2 | true | 0 | 1 |
+| 3 | true (held) | 1 | 2 |
+| 4 | true (held) | 2 | 3 |
+
+An `immediate during` action runs in the entry tick even if the state is left again in that same
+tick by an immediate `go to`. An immediate `abort to` skips it, as a strong abort skips every during
+action in the tick it leaves (more on that below).
+
+## What runs, and in what order
+
+When a transition is taken, several actions can run in one tick. KIELER always runs them in the same
+order. In this chart every action adds 1 to `step` and records the number it got, so the outputs
+show the order:
+
+<Sim
+  example="learn/actions/order"
+  caption="Each action records when it ran. Step to tick 3, when `leave` is true."
+/>
+
+In tick 3, `duringAt` is 2, `exitAt` 3, `effectAt` 4 and `entryAt` 5 (`step` was already 1, from
+`A`'s during action in tick 2). So: `A`'s during action, then `A`'s exit action, then the transition's
+effect, then `B`'s entry action. With superstates, the full rule is:
+
+1. If the transition is a weak abort (`go to`) or a termination (`join to`): the source state's
+   behaviour for this tick, including its during actions. A strong abort (`abort to`) skips this
+   step.
+2. The exit actions of every state being left, innermost first.
+3. The transition's effects, left to right.
+4. The entry actions of every state being entered, outermost first.
+5. The immediate behaviour of the target: its immediate transitions and `immediate during` actions.
+
+Each step sees the values that the steps before it wrote. A short way to remember it: *leave inside
+out, enter outside in, and the transition's effect sits in the middle*.
+
+Test yourself on a chart with superstates on both sides. Every action again records the value of
+`step` it produced.
+
+<Predict
+  example="learn/actions/nested-order"
+  ask={[
+    { tick: 2, value: 'innerExitAt' },
+    { tick: 2, value: 'outerEntryAt' },
+    { tick: 2, value: 'innerEntryAt' },
+    { tick: 2, value: 'immediateAt' },
+  ]}
+  caption="In tick 2, `leave` takes the chart from `Outer` to `Target`. Predict the order, then run it."
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`innerExitAt` is 1, `outerEntryAt` 4, `innerEntryAt` 5 and `immediateAt` 6. Leaving runs the exit
+actions from the inside out (`Inner` 1, `Outer` 2), then the transition's effect (3). Entering runs the
+entry actions from the outside in (`Target` 4, `First` 5). Last comes the immediate behaviour of the
+target: `First`'s immediate transition (6).
+
+</details>
+
+Two more details about order. Several entry actions of one state run in the order they are written,
+and so do several exit actions. A variable declared inside a state gets its initial value each time
+the state is entered, just before the state's entry actions (see [Superstates](/learn/hierarchy/)).
+
+## Self-loops leave and come back
+
+A transition from a state to itself is a real exit and a real entry: the exit actions run, then the
+effect, then the entry actions. For a superstate, the inside starts again from its initial states.
+That is sometimes what you want, and often not:
+
+<Compare
+  a="learn/actions/self-loop"
+  b="learn/actions/stay"
+  scenario="learn/actions/self-loop-compare"
+  caption="Both charts count presses. In `SelfLoop` a self-loop does it, in `Stay` a `during if press` action. Watch `entries`."
+/>
+
+| Tick | `press` | `presses` | `entries` in `SelfLoop` | `entries` in `Stay` |
+| ---: | --- | ---: | ---: | ---: |
+| 1 | false | 0 | 1 | 1 |
+| 2 | true | 1 | 2 | 1 |
+| 3 | false | 1 | 2 | 1 |
+| 4 | true | 2 | 3 | 1 |
+| 5 | true (held) | 3 | 4 | 1 |
+
+Both charts count the same presses, but only the self-loop leaves `Ready` and enters it again each
+time. If you mean "do this while staying here", write a during action with a trigger. If you mean
+"start this state over", a self-loop is right, and its entry actions are part of starting over.
+
+## Actions and aborts
+
+Aborts and actions meet in one question: when a state is cut short, which of its actions still run?
+
+<Sim
+  example="learn/actions/emergency"
+  caption="`stop` in tick 3 is a weak abort, `emergency` in tick 6 a strong one. Compare `ticks` and `motor` in those two ticks."
+/>
+
+In tick 3, `stop` leaves `Running` with `go to`: the during action still counts the tick (`ticks` is
+2) and the exit action switches the motor off. In tick 6, `emergency` leaves with `abort to`: the
+during action is skipped (`ticks` stays 3), but **the exit action still runs** and the motor is off.
+`Running` is a simple state, and this is the one difference between `go to` and `abort to` on a simple
+state that [Aborts](/learn/preemption/#aborts-on-simple-states) promised.
+
+For a superstate the same holds at every level. Here is the full picture of the tick in which a
+state is left by a weak abort, a strong abort or a termination:
+
+| In the leaving tick | `go to` | `abort to` | `join to` |
+| --- | --- | --- | --- |
+| inner transitions | run | skipped | run |
+| `during` actions | run | skipped | run |
+| `exit` actions | run | run | run |
+| effect, then entry actions | run | run | run |
+
+The `during` row means the state's own during actions and those of every active state inside it,
+and so does the `exit` row: exit actions run innermost first and the left state's own last. The first
+row and the last column only apply to superstates, which have an inside and can terminate.
+
+So exit actions run however a state is left: by a weak abort, a strong abort, a termination, a
+self-loop, or because an enclosing state is left. Think of an exit action as the `finally` block of
+a state; [Mode switching](/patterns/modes/#cleaning-up-on-the-way-out) relies on exactly that. Entry actions are just as dependable: they run on every entry, even when the state is left
+again in the same tick, and even when an immediate `abort to` fires in the very tick the state is
+entered. (Two constructs of Going further are the exceptions: [`suspend`](/advanced/suspend/) and
+[`deferred`](/advanced/history/) entries.) Of the three plain kinds, only during actions depend on how
+a state is left.
+
+<Aside type="caution" title="The KIELER wiki is out of date here">
+The [wiki's syntax page](https://github.com/kieler/semantics/wiki/Syntax) says that exit actions
+count as inner behaviour and are suppressed when a state is strongly aborted. The current KIELER
+compiler does not do that: as `Machine` shows in tick 6, an `exit` action runs on `abort to` as well,
+and on a superstate so do the exit actions of every active state inside it. Write exit actions as
+clean-up that always happens.
+</Aside>
+
+<Aside type="danger" title="Exit actions that change a trigger">
+When a superstate is left by a strong or an immediate abort, KIELER runs its exit actions first and
+only then reads the triggers again to choose the transition. An exit action can change the target:
+
+```sctx
+initial state M {
+  exit do y = true
+  initial state I
+}
+if A && !y abort to B
+if X abort to C
+```
+
+With `A` true and `X` false, the first abort fires and the exit action sets `y`. Read again,
+`A && !y` is false, and when no trigger holds any more KIELER takes the last transition without
+checking it: the chart ends up in `C`, although `X` is false. Keep exit actions away from the
+variables that the state's own outgoing triggers read.
+</Aside>
+
+## Conditions on actions
+
+Every kind of action can have a trigger: `entry if c do …`, `during if c do …` and
+`exit if c do …`. What matters is *when* the trigger is checked. A car's courtesy light shows it:
+
+<Sim
+  example="learn/actions/courtesy-light"
+  caption="The light comes on only if it is dark at the moment the door opens. Watch ticks 3 and 6, when `dark` changes while the door is open."
+/>
+
+- An entry trigger is checked once, at the moment the state is entered, after the effect of the
+  transition that led in. In tick 3 it gets dark while the door is open, and nothing switches the
+  light on: the entry action has had its chance. In tick 6, the other way round, daylight returns
+  while the light is on, and nothing checks `dark` either: the light stays on until the door closes.
+- An exit trigger is checked at the moment the state is left, before the effect of the transition
+  that leaves.
+- A during trigger is checked in every tick in which the during action would run.
+
+To switch the light on as soon as it gets dark while the door is open, you would need a during
+action, `during if dark do light = true`, whose trigger is checked in every tick.
+
+## Labels
+
+A transition or an action can end with `label "…"`. The diagram then shows the label instead of the
+trigger and effects:
+
+<Chart
+  example="learn/actions/labels"
+  caption="`FridgeAlarm` with labels. Switch to the code to see the `label` clauses; the chart behaves exactly as before."
+/>
+
+Labels change only the picture, which makes them useful for diagrams that people other than
+programmers will read. KIELER notes each hidden part with an information message, on actions and
+transitions alike:
+
+```text wrap
+The trigger of this action is hidden by the label.
+The effects of this action are hidden by the label.
+```
+
+A state can have a display name as well, written after its name: `state Open "Door open"`. More on
+comments and annotations in [Comments and annotations](/advanced/annotations/).
+
+## Weak and strong actions
+
+You may meet four more keywords in other people's charts. `strong entry` and `strong exit` mean the
+same as `entry` and `exit`. The `weak` forms are cut short by aborts:
+
+| Written | Runs |
+| --- | --- |
+| `entry`, `strong entry` | on every entry |
+| `weak entry` | on every entry, except when the state is strongly aborted in its entry tick |
+| `exit`, `strong exit` | on every exit |
+| `weak exit` on a superstate | only when the superstate terminates through `join to`; skipped by `go to` as well as by `abort to` |
+| `weak exit` on a simple state | on every exit, like `exit` |
+
+The names suggest "skipped only by strong aborts", which is not what KIELER does for `weak exit`. Here
+is the same superstate twice, with `exit` and with `weak exit`, left once by its join and once by a
+plain `go to`:
+
+<Compare
+  a="learn/actions/exit-plain"
+  b="learn/actions/exit-weak"
+  scenario="b"
+  caption="Tick 2 leaves `Task` with `join to`, tick 4 with `go to`. Watch `exits` in tick 4."
+/>
+
+Both exit actions run when `Task` terminates (tick 2). In tick 4 `go to` leaves `Task`: a weak abort,
+which lets the during actions and the inner transitions run, but the `weak exit` is skipped all the
+same, and only `PlainExit` counts. Read `weak exit` as "on normal completion only". You will rarely
+need either weak form; plain `entry` and `exit` are what you want almost always.
+
+## Actions of the chart itself
+
+You can also write actions directly inside the `scchart` braces, after the declarations and before
+the first state. They belong to the chart's invisible outermost state: its entry actions run first in
+tick 1, its during actions run in every tick from tick 2 (from tick 1 with `immediate`), and its exit
+actions run when the whole chart terminates.
+
+<Aside title="What KIELER does with actions">
+Actions don't exist in the compiled program. KIELER's compiler rewrites each entry and exit action
+into immediate transitions inside the state, and each during action into an extra region of the
+state with one state and a delayed self-loop that carries the effects. That rewriting explains the
+rules above: a during action skips the entry tick because its self-loop is delayed, and it runs
+alongside the inner states because it is a region. SCCharts Lab's **Stages** button shows the
+rewritten chart after each step of the compiler.
+</Aside>
+
+## Try it
+
+<TryIt example="learn/actions/alarm-start" solution="learn/actions/alarm-solution" title="One place for the siren">
+This alarm sets `siren = true` on two transitions and `siren = false` on a third. Move the siren
+into an entry and an exit action of `Ringing`, so that no transition mentions it. Then add a
+`panic` input that also starts the alarm from `Armed`. With the actions in place, the new transition
+needs no effect at all.
+</TryIt>
+
+<TryIt example="learn/actions/stopwatch-start" solution="learn/actions/stopwatch-solution" title="A stopwatch stuck at zero">
+`elapsed` should count the ticks since `start`, but it never leaves 0. Simulate it and work out why
+from what you know about self-loops. Then fix it so that `elapsed` counts while `Running` is active
+and `stop` still leaves.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="A heater's state `On` has `during do onTicks++` and `exit do power = false`. At the start of a tick `onTicks` is 3 and `power` is true, and in that tick `if off abort to Off` leaves `On`. What are `onTicks` and `power` after the tick?"
+  options={['3 and false', '4 and false', '3 and true', '4 and true']}
+  answer={0}
+>
+A strong abort skips the state's during actions in the leaving tick, so `onTicks` stays 3, but exit
+actions run however a state is left, so `power` is false. With `go to Off` it would be 4 and false.
+`Machine` above shows both, in ticks 3 and 6.
+</Quiz>
+
+<Quiz
+  question="In `FridgeAlarm`, the door opens in tick 2 and closes in tick 7. `during do openFor++` is the only action that changes `openFor` after the entry. What is `openFor` after tick 7?"
+  options={['4', '5', '6']}
+  answer={1}
+>
+The during action skips tick 2, the entry tick, and runs in ticks 3, 4, 5 and 6. In tick 7 the state
+is left by `go to`, a weak abort, so the during action runs once more before the exit actions: 5.
+</Quiz>
+
+<Quiz
+  question="A state has `entry do elapsed = 0` and a self-loop `do elapsed++ go to Running` that fires every tick. What is `elapsed` after the self-loop has fired?"
+  options={[
+    '0: the effect adds 1, then re-entering runs the entry action',
+    '1: the effect runs after the entry action',
+    'It grows by 1 every tick',
+  ]}
+  answer={0}
+>
+Order on a transition: exit actions, then effects, then entry actions. The effect makes `elapsed` 1,
+and the entry action of the re-entered state sets it back to 0. That is the stopwatch bug above.
+</Quiz>
+
+<KeyIdeas>
+- An entry action runs every time its state is entered and an exit action every time it is left,
+  whichever transition did it. Put an effect in a state when it belongs to being in that state.
+- A `during` action runs in every tick in which its state is already active: not in the entry tick,
+  but in the tick the state is left by `go to`. `immediate during` adds the entry tick.
+- When a transition is taken: the source's during actions (not for `abort to`), exit actions innermost
+  first, the transition's effects, entry actions outermost first, then the target's immediate
+  behaviour.
+- Exit actions run on strong aborts too. Only during actions depend on the kind of abort.
+- A self-loop leaves and re-enters its state, so its exit and entry actions run.
+- A trigger on an action is checked at that moment; a label changes only the diagram.
+</KeyIdeas>
+
+Next, [The previous tick](/learn/pre/): comparing a value with its value one tick ago, to react to
+changes instead of levels.

@@ -1,0 +1,14 @@
+scchart SuperstateReinitialisesLocals {
+  input bool I
+  output int seen = 0
+
+  initial state S {
+    int c
+    initial state A
+    do c += 1; seen = c go to A
+  }
+  if I go to T
+
+  state T
+  if I go to S
+}

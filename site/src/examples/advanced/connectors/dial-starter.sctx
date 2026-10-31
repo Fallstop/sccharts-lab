@@ -1,0 +1,8 @@
+scchart Dial {
+  input bool up, down
+  output int digit = 0
+
+  initial state Idle
+    if up do digit++ go to Idle
+    if down do digit-- go to Idle
+}

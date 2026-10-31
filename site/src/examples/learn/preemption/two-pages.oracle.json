@@ -1,0 +1,164 @@
+{
+  "hash": "013d770452bd7b8b72cc180c3e6a493db7694505",
+  "chart": "src/examples/learn/preemption/two-pages.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "cancel": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "sheet": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "cancelled": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "finished": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "printed": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "sheet": false,
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "sheet": false,
+        "start": false,
+        "cancelled": false,
+        "finished": false,
+        "printed": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "cancel": false,
+        "sheet": false,
+        "start": true,
+        "cancelled": false,
+        "finished": false,
+        "printed": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false,
+        "sheet": true
+      },
+      "values": {
+        "cancel": false,
+        "sheet": true,
+        "start": false,
+        "cancelled": false,
+        "finished": false,
+        "printed": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "cancel": true
+      },
+      "values": {
+        "cancel": true,
+        "sheet": true,
+        "start": false,
+        "cancelled": true,
+        "finished": false,
+        "printed": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "cancel": false,
+        "sheet": false
+      },
+      "values": {
+        "cancel": false,
+        "sheet": false,
+        "start": false,
+        "cancelled": false,
+        "finished": false,
+        "printed": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

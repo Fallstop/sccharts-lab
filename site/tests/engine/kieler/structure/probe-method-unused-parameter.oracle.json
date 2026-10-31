@@ -1,0 +1,61 @@
+{
+  "hash": "c7d80a14f1709882e7c460ebae40ab66631638a2",
+  "chart": "tests/engine/kieler/structure/probe-method-unused-parameter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn1_cnt_bump_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "Cnt.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cnt": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "cnt": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "cnt": {
+          "v": 1
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "cnt": {
+          "v": 2
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

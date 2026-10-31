@@ -1,0 +1,77 @@
+{
+  "hash": "bb9fa5419d108ca64949f23590ff5afa2807f44b",
+  "chart": "tests/conformance/basics/52-compound-assign-float-to-int.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads y, so the compiler treats it as an update of y (a relative write, as in the deprecated old SC syntax).\nWrite it as y *= 1.5 to say so. In one region it means the same.\nIt only matters when another region also writes y in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 6,
+      "column": 16
+    }
+  ],
+  "interface": {
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "f": 1.5,
+        "x": 7,
+        "y": 7
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "f": 2.5,
+        "x": 7,
+        "y": 10
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "f": 3.5,
+        "x": 7,
+        "y": 15
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

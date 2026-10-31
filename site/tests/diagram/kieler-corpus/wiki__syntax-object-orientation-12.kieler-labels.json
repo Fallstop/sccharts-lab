@@ -1,0 +1,152 @@
+{
+ "sourceHash": "0b13164979e44cee",
+ "states": [
+  {
+   "path": [
+    "SimpleEnum"
+   ],
+   "rows": [
+    [
+     "SimpleEnum"
+    ],
+    [
+     "enum ",
+     "Bit {"
+    ],
+    [
+     "ZERO, ONE"
+    ],
+    [
+     "}"
+    ],
+    [
+     "ref ",
+     "Bit ",
+     "b = Bit.ZERO"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    416,
+    166.6
+   ]
+  },
+  {
+   "path": [
+    "SimpleEnum",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ]
+   ],
+   "box": [
+    10,
+    13,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "SimpleEnum",
+    0,
+    "B"
+   ],
+   "rows": [
+    [
+     "B"
+    ]
+   ],
+   "box": [
+    180.6,
+    13,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "SimpleEnum",
+    0,
+    "C"
+   ],
+   "rows": [
+    [
+     "C"
+    ]
+   ],
+   "box": [
+    353,
+    10,
+    40,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "SimpleEnum",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    100.1,
+    403,
+    60.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NSimpleEnum$$N0$NA$EB0",
+   "source": [
+    "SimpleEnum",
+    0,
+    "A"
+   ],
+   "target": [
+    "SimpleEnum",
+    0,
+    "B"
+   ],
+   "text": "/ b = Bit.ONE",
+   "lines": [
+    "/ b = Bit.ONE"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NSimpleEnum$$N0$NB$EC0",
+   "source": [
+    "SimpleEnum",
+    0,
+    "B"
+   ],
+   "target": [
+    "SimpleEnum",
+    0,
+    "C"
+   ],
+   "text": "b != Bit.ZERO",
+   "lines": [
+    "b != Bit.ZERO"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

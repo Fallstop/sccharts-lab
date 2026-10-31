@@ -1,0 +1,139 @@
+{
+ "sourceHash": "51e5d9efba268611",
+ "states": [
+  {
+   "path": [
+    "Audit"
+   ],
+   "rows": [
+    [
+     "Audit"
+    ],
+    [
+     "input bool ",
+     "trigger"
+    ],
+    [
+     "input string ",
+     "timeout_update_vals"
+    ],
+    [
+     "output bool ",
+     "result = false"
+    ],
+    [
+     "output string ",
+     "echoed"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    336,
+    257.4
+   ]
+  },
+  {
+   "path": [
+    "Audit",
+    0,
+    "Idle"
+   ],
+   "rows": [
+    [
+     "Idle"
+    ]
+   ],
+   "box": [
+    10,
+    68.1,
+    45.8,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Audit",
+    0,
+    "Active"
+   ],
+   "rows": [
+    [
+     "Active"
+    ]
+   ],
+   "box": [
+    247.2,
+    68.1,
+    65.4,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Audit",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    100.1,
+    322.6,
+    151.4
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NAudit$$N0$NIdle$EActive0",
+   "source": [
+    "Audit",
+    0,
+    "Idle"
+   ],
+   "target": [
+    "Audit",
+    0,
+    "Active"
+   ],
+   "text": "trigger / result = true; echoed = timeout_update_vals",
+   "lines": [
+    "trigger",
+    "/ result = true;",
+    "  echoed =",
+    "timeout_update_vals"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NAudit$$N0$NActive$EIdle0",
+   "source": [
+    "Audit",
+    0,
+    "Active"
+   ],
+   "target": [
+    "Audit",
+    0,
+    "Idle"
+   ],
+   "text": "!trigger / result = false",
+   "lines": [
+    "!trigger",
+    "/ result = false"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

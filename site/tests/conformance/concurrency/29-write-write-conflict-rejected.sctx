@@ -1,0 +1,15 @@
+scchart WriteWriteConflict {
+  output int x
+
+  region R1 {
+    initial state A
+    do x = 3 go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    do x = 4 go to B
+    state B
+  }
+}

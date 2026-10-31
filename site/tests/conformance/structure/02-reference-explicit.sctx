@@ -1,0 +1,16 @@
+// A referenced chart: state R is an instance of St02Beep. The interface of St02Beep is bound explicitly:
+// "local to remote". Only the first root (St02Main) is simulated; St02Beep is expanded inside it.
+scchart St02Main {
+  input bool second
+  output bool speaker
+  initial state R is St02Beep(second to second, speaker to beep)
+}
+
+scchart St02Beep {
+  input bool second
+  output bool beep = false
+  initial state A
+  if second do beep = true go to B
+  state B
+  if second do beep = false go to A
+}

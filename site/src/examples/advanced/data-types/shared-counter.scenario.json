@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "left": false, "right": false }, "note": "Tick 1 enters the three regions; their transitions are delayed." },
+    { "inputs": { "left": true, "right": true }, "note": "Both regions call `c.add()`. The calls are inlined, so they are two `count++` updates of the same variable, and `c.get()` in `Show` reads `count` after both: `total` is 2." },
+    { "note": "Both inputs are still true: two more updates, `total` is 4." }
+  ],
+  "expect": "ok"
+}

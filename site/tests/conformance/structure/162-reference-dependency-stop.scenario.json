@@ -1,0 +1,61 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Tick 1: all regions start: **S absent, y = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "Write emits S, but Read was not ordered after it (the dependency analysis stopped at the instance) and tested S before; S is also reset after the emission: **S absent, y = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "note": "The same with b true: **S absent, y = 0**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "a is false: no emission: **y = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "Write emits again, Read never sees it: **y = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": true
+      },
+      "note": "Write emits, Read misses it: **y = 0**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "note": "a is false: **y = 0**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "Count never counts: **y = 0**."
+    }
+  ],
+  "expect": "ok"
+}

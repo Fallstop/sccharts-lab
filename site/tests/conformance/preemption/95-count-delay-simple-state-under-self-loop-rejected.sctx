@@ -1,0 +1,12 @@
+// The rule of 93 does not need a superstate or a join: a count delay on any transition inside a self-looping
+// state is rejected.
+scchart P95CountSimpleUnderReset {
+  input signal R
+  output signal late
+  initial state ABO {
+    initial state Wait
+    if 4 true do late go to Done
+    state Done
+  }
+  if R abort to ABO
+}

@@ -1,0 +1,18 @@
+scchart PreheatSuspend {
+  input bool doorOpen
+  output bool heater = false
+
+  initial state Prepare {
+    suspend if doorOpen
+
+    initial state Check
+      immediate go to Ready
+
+    final state Ready
+  }
+  join to Heating
+
+  state Heating {
+    entry do heater = true
+  }
+}

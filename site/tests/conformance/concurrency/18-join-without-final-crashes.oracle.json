@@ -1,0 +1,19 @@
+{
+  "hash": "a5e909388e9c39434d966364fba2f15da5de3d74",
+  "chart": "tests/conformance/concurrency/18-join-without-final-crashes.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "The compiler failed during compilation setup."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 6,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

@@ -1,0 +1,70 @@
+{
+  "hash": "8daa767d39953acbf882922b28096f4a8374802b",
+  "chart": "tests/conformance/structure/15-reference-arrays.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "s": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": [
+          1,
+          2,
+          3
+        ]
+      },
+      "values": {
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "m": 0,
+        "s": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": [
+          4,
+          5,
+          6
+        ]
+      },
+      "values": {
+        "a": [
+          4,
+          5,
+          6
+        ],
+        "m": 50,
+        "s": 15
+      },
+      "terminated": false
+    }
+  ]
+}

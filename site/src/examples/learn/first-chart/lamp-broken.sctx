@@ -1,0 +1,11 @@
+scchart Lamp {
+  input bool onButton, offButton;
+
+  initial state Dark
+    if onButton do lit = true go to Lit
+
+  state Lit
+    if offButton do lit = false go to dark
+
+  output bool lit = false
+}

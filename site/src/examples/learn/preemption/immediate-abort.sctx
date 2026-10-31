@@ -1,0 +1,12 @@
+scchart ImmediateAbort {
+  input bool start, cancel
+  output bool busy
+
+  initial state Idle
+    if start do busy = true go to Job
+
+  state Job {
+    initial state Printing
+  }
+  immediate if cancel do busy = false abort to Idle
+}

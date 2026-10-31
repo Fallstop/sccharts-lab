@@ -1,0 +1,28 @@
+// Campaign 6 (abortObjects-61-52, reduced): R0s1 is entered only by a join from R0s0, whose region never finishes, so the state with the abort region has no live code; with a second thread in its fork (here the region KIELER adds for R0s1's weak abort) SimpleGuardTransformation throws a NullPointerException.
+scchart F52 {
+  output int x = 0, y = 0, z = 0
+  enum Mode { IDLE, RUN, HALT }
+  region R0 {
+    initial state R0s0 {
+      during do y++
+      region {
+        initial state R0s0r2s0
+      }
+    }
+    join to R0s1
+    state R0s1 {
+      region {
+        initial state R0s1r0s0
+        go to R0s1r0s1
+        state R0s1r0s1 {
+          abort region R0s1r0s1a {
+            initial state R0s1r0s1aW
+            final state R0s1r0s1aF
+          }
+        }
+      }
+    }
+    go to R0s2
+    state R0s2
+  }
+}

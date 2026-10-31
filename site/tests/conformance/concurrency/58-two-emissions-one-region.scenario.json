@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1: nothing emitted."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "One region emits twice in the same tick: with `combine +` the values add (`P_val = 3`); without a combine function the later emission wins (`N_val = 2`). A single region may emit a non-combined signal twice."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Absent; values kept."
+    }
+  ],
+  "expect": "ok"
+}

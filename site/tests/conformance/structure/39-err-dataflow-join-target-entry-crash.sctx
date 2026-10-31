@@ -1,0 +1,16 @@
+// A dataflow region never terminates, so a `join to` on its state never fires. If the join's target is a simple
+// state with an entry action, KIELER's compiler crashes, as for any single region without a final state
+// (concurrency.md T-6, test concurrency/18).
+scchart St39DataflowJoin {
+  input int I
+  output int X, n
+  initial state S {
+    dataflow {
+      X = I * 2
+    }
+  }
+  join to T
+  state T {
+    entry do n += 1
+  }
+}

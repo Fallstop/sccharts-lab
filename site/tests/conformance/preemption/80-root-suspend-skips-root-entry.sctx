@@ -1,0 +1,10 @@
+scchart RootSuspend {
+  input bool S
+  output int started = 0, moves = 0
+
+  entry do started = 1
+  suspend if S
+
+  initial state A
+  if true do moves += 1 go to A
+}

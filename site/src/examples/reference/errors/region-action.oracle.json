@@ -1,0 +1,60 @@
+{
+  "hash": "f86e70a48b0bbfe5bd015b2b5dbfe9e56659a7c5",
+  "chart": "src/examples/reference/errors/region-action.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Actions in regions are highly experimental and may not produce the expected results.",
+      "line": 6,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "x": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    }
+  ]
+}

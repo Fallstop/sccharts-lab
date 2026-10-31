@@ -1,0 +1,135 @@
+{
+ "sourceHash": "c2c8f72888c8c13d",
+ "states": [
+  {
+   "path": [
+    "ButtonBehavior"
+   ],
+   "rows": [
+    [
+     "ButtonBehavior"
+    ],
+    [
+     "input float ",
+     "buttonPosition"
+    ],
+    [
+     "bool ",
+     "buttonPressed = false"
+    ],
+    [
+     "private const float ",
+     "threshold = 0.5"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    431.9,
+    213.3
+   ]
+  },
+  {
+   "path": [
+    "ButtonBehavior",
+    "HandleButton",
+    "Released"
+   ],
+   "rows": [
+    [
+     "Released"
+    ]
+   ],
+   "box": [
+    10,
+    50.3,
+    83.7,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "ButtonBehavior",
+    "HandleButton",
+    "Pressed"
+   ],
+   "rows": [
+    [
+     "Pressed"
+    ]
+   ],
+   "box": [
+    333.1,
+    50.3,
+    75.2,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "ButtonBehavior",
+    "HandleButton"
+   ],
+   "label": [
+    "HandleButton"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    83.2,
+    418.3,
+    124.3
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NButtonBehavior$NHandleButton$NReleased$EPressed0",
+   "source": [
+    "ButtonBehavior",
+    "HandleButton",
+    "Released"
+   ],
+   "target": [
+    "ButtonBehavior",
+    "HandleButton",
+    "Pressed"
+   ],
+   "text": "buttonPosition < threshold / buttonPressed = true",
+   "lines": [
+    "buttonPosition < threshold",
+    "/ buttonPressed = true"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NButtonBehavior$NHandleButton$NPressed$EReleased0",
+   "source": [
+    "ButtonBehavior",
+    "HandleButton",
+    "Pressed"
+   ],
+   "target": [
+    "ButtonBehavior",
+    "HandleButton",
+    "Released"
+   ],
+   "text": "buttonPosition >= threshold / buttonPressed = false",
+   "lines": [
+    "buttonPosition >= threshold",
+    "/ buttonPressed = false"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

@@ -1,0 +1,41 @@
+scchart States {
+  input bool a
+  output bool b
+
+  initial state Init "Labelled state"
+  if a go to Conn
+
+  connector state Conn
+  immediate if a go to Final
+  immediate go to Super
+
+  final state Final
+
+  state Super {
+    region R1 "First":
+    initial state X
+    if a go to Y
+    final state Y
+
+    region:
+    initial state P
+    if a go to Q
+    final state Q
+
+    region R3:
+    initial state U
+  }
+  join to Ref
+
+  state Ref is Other(a, b)
+
+  initial final state Both
+}
+
+scchart Other {
+  input bool i
+  output bool o
+  initial state S
+  if i do o = true go to T
+  final state T
+}

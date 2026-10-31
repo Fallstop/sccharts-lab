@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "walk": false, "rush": false }, "note": "Tick 1 enters `Outside`. `rush` is never used, but its transition is there." },
+    { "inputs": { "walk": true }, "note": "Deferred entry into `Inside`. Because `Inside` also has a normal incoming transition (from `rush`), KIELER implements `deferred` differently: `Inside` is entered now, only its own entry action is suppressed, and `First`'s entry action runs (`innerEntry` = 1)." },
+    { "inputs": { "walk": false }, "note": "`First`'s delayed transition fires (`step` = 1), at the normal time." },
+    { "note": "In `Second`." },
+    { "note": "In `Second`." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "door": false, "window": false, "code": false }, "note": "Tick 1 enters `Armed`." },
+    { "inputs": { "window": true }, "note": "A window opens: the siren sounds." },
+    { "inputs": { "window": false, "code": true }, "note": "The code is entered: the siren stops and the alarm is disarmed." },
+    { "inputs": { "code": false }, "note": "Disarmed." },
+    { "inputs": { "code": true }, "note": "The code again: armed." },
+    { "inputs": { "code": false }, "note": "Armed." },
+    { "inputs": { "door": true }, "note": "The door opens: the siren sounds." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,129 @@
+---
+/**
+ * <Predict example="…" ask={[{ tick: 3, value: "O" }, { tick: 3, state: "Done" }]} />: the reader
+ * predicts values and states after given ticks; then the simulation runs the scenario and checks.
+ *
+ * Props: example (required), ask (required), scenario (another scenario file), caption (inline Markdown: the
+ * question's setting, shown above the inputs and the questions, where it is read before answering), view
+ * ('code', the default, 'diagram' or 'both': the view shown first, for a caption that talks about the diagram).
+ * `value` asks for a variable's value after that tick (a pure signal: whether it is present; a valued
+ * signal: its value); `state` asks whether that state is active after that tick (a state id, an id without
+ * the chart's name, or a unique state name). Mistakes in `ask` are build errors.
+ *
+ * The inputs table and the questions are rendered on the server. "Run and check" (the island
+ * src/components/sim/PredictSim.svelte) plays the scenario on the diagram, marks each answer with the
+ * real value, and shows the timing diagram; a click on a tick shows that tick on the diagram.
+ *
+ * A chart KIELER rejects (its oracle recording says so) is a build error: there is nothing to predict. A chart
+ * KIELER accepts that the guide's engine cannot run is not: the answers about values are checked against
+ * KIELER's own run (the scenario's oracle recording), and a notice says so.
+ */
+import WidgetFrame from './frame/WidgetFrame.astro'
+import SourceView from './frame/SourceView.astro'
+import DiagramView from './frame/DiagramView.astro'
+import PredictSim from './sim/PredictSim.svelte'
+import { nextId } from './frame/ids'
+import { loadExample, loadRecording, loadScenario } from './frame/examples'
+import { diagramSvg, prepareChart, resolveIds } from './frame/prepare'
+import { inlineMd } from './frame/inline-md'
+
+type Ask = { tick: number; value: string } | { tick: number; state: string }
+interface Props {
+	example: string
+	ask: Ask[]
+	scenario?: string
+	caption?: string
+	view?: 'diagram' | 'code' | 'both'
+}
+const { caption, ask = [], view = 'code' } = Astro.props
+const usedBy = `<Predict example="${Astro.props.example}">`
+const ex = loadExample(Astro.props.example, usedBy)
+const scenario = Astro.props.scenario ? loadScenario(Astro.props.scenario, usedBy) : ex.scenario
+if (!scenario) throw new Error(`${usedBy}: a prediction needs a scenario. Create src/examples/${ex.id}.scenario.json or pass scenario="…".`)
+if (!ask.length) throw new Error(`${usedBy}: the "ask" prop is empty.`)
+// KIELER's run of this scenario on this chart (pnpm oracle:record), for charts the engine cannot run. Another
+// scenario file's recording is of the chart next to it: it counts only if that is this chart.
+const other = Astro.props.scenario ? loadRecording(Astro.props.scenario) : undefined
+const recording = Astro.props.scenario ? (other?.chart === ex.file ? other : undefined) : ex.oracle
+const p = await prepareChart({ ...ex, scenario })
+if (ex.oracle && !ex.oracle.ok) throw new Error(`${usedBy}: KIELER rejects this chart (its oracle recording says so), so there is nothing to predict.`)
+// The guide's engine cannot run it (or rejects it without a recording to say otherwise): check against KIELER.
+const engineRuns = !p.rejected && !p.cannotRun
+const recorded = !engineRuns && recording?.ok ? (recording.ticks ?? []).map((t) => ({ values: t.values })) : undefined
+const notice = engineRuns ? undefined : p.cannotRun ?? (p.rejected ? 'The guide\'s simulator rejects this chart' : 'The guide\'s simulator cannot run this chart')
+if (!engineRuns && !p.cannotRun) console.warn(`[widgets] ${usedBy}: the guide's engine rejects this chart and there is no oracle recording to check the answers against.`)
+const known = new Set([...p.compiled.interface.map((v) => v.name), ...Object.keys(recording?.interface ?? {})])
+const resolved = ask.map((a) => {
+	if ('state' in a) return { tick: a.tick, state: resolveIds(p, [a.state], usedBy)[0] }
+	if (!known.has(a.value)) throw new Error(`${usedBy}: asks about "${a.value}", which is not declared at the top of ${p.name}. Declared: ${[...known].join(', ')}.`)
+	return a
+})
+const key = nextId('scp-')
+const lastTick = Math.max(...ask.map((a) => a.tick))
+if (lastTick > scenario.ticks.length) {
+	throw new Error(`${usedBy}: asks about tick ${lastTick}, but the scenario has ${scenario.ticks.length} ticks.`)
+}
+
+// Inputs per tick, with persistence made explicit (an input keeps its value until changed).
+const inputNames = [...new Set(scenario.ticks.flatMap((t) => Object.keys(t.inputs ?? {})))]
+const held: Record<string, unknown> = {}
+const rows = scenario.ticks.slice(0, lastTick).map((t, i) => {
+	const changed = new Set(Object.keys(t.inputs ?? {}))
+	Object.assign(held, t.inputs ?? {})
+	return { tick: i + 1, cells: inputNames.map((n) => ({ name: n, value: held[n], changed: changed.has(n) })) }
+})
+// A pure signal is present or absent, as everywhere else in the guide; other booleans are true or false.
+const pureSignals = new Set(p.compiled.interface.filter((v) => v.signal && !v.valued).map((v) => v.name))
+const show = (v: unknown, name: string) =>
+	v === undefined ? '' : typeof v === 'boolean' ? (pureSignals.has(name) ? (v ? 'present' : 'absent') : v ? 'true' : 'false') : String(v)
+const uid = nextId('scp-')
+---
+
+<WidgetFrame
+	kind="predict"
+	name={p.name}
+	views={[
+		{ id: 'diagram', label: 'Diagram' },
+		{ id: 'code', label: 'Code' },
+		{ id: 'both', label: 'Both', show: ['diagram', 'code'] },
+	]}
+	defaultView={view}
+>
+	<div slot="view-diagram"><DiagramView svg={diagramSvg(p)} key={key} map={p.map} root={p.compiled.chart?.id} /></div>
+	<div slot="view-code" data-sc-code={key}><SourceView source={ex.source} /></div>
+	<div slot="foot" class="sc-predict">
+		{caption && <p class="sc-predict__caption" set:html={inlineMd(caption)} />}
+		{
+			inputNames.length > 0 && (
+				<div class="sc-predict__inputs">
+					<p class="sc-predict__label" id={`${uid}-inputs`}>
+						Inputs per tick. A value in grey was not set in that tick: it holds from an earlier one.
+					</p>
+					<table aria-labelledby={`${uid}-inputs`}>
+						<thead>
+							<tr>
+								<th scope="col">Tick</th>
+								{inputNames.map((n) => (
+									<th scope="col"><code>{n}</code></th>
+								))}
+							</tr>
+						</thead>
+						<tbody>
+							{rows.map((r) => (
+								<tr>
+									<th scope="row">{r.tick}</th>
+									{r.cells.map((c) => (
+										<td class:list={{ 'is-held': !c.changed }} title={c.changed ? undefined : 'Held from an earlier tick'}>
+											<code>{show(c.value, c.name)}</code>
+										</td>
+									))}
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			)
+		}
+		<PredictSim client:engage source={ex.source} files={p.files} link={key} scenario={scenario} ask={resolved} id={uid} recorded={recorded} notice={notice} />
+	</div>
+</WidgetFrame>

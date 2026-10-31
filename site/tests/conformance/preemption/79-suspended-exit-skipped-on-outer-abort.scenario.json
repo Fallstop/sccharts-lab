@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "X": false
+      },
+      "note": "Tick 1 enters Outer and M."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "M is suspended (moves = 0)."
+    },
+    {
+      "inputs": {
+        "X": true
+      },
+      "note": "Outer is strongly aborted while M is suspended. Surprise: M's exit action does not run (exits = 0): KIELER guards it with M's suspend flag, which is off in a suspended tick. left = 1."
+    },
+    {
+      "inputs": {
+        "S": false,
+        "X": false
+      },
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

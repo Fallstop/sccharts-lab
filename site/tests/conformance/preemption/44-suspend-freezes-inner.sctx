@@ -1,0 +1,12 @@
+scchart SuspendFreezes {
+  input bool S
+  output int ticks = 0, moves = 0
+
+  initial state M {
+    suspend if S
+    during do ticks += 1
+
+    initial state I
+    if true do moves += 1 go to I
+  }
+}

@@ -1,0 +1,15 @@
+scchart OldStyleRelative {
+  output int x = 1
+
+  region R1 {
+    initial state A
+    do x = x + 2 go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    do x = x + 3 go to B
+    state B
+  }
+}

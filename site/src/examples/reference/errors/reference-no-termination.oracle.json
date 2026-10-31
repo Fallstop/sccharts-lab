@@ -1,0 +1,84 @@
+{
+  "hash": "a0523e6348034fab86af9fcfee3dd5f4fea57c9c",
+  "chart": "src/examples/reference/errors/reference-no-termination.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The referenced SCChart does not terminate, but you are using a termination to proceed.",
+      "line": 5,
+      "column": 29
+    }
+  ],
+  "interface": {
+    "tick": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "finished": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "light": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "tick": false
+      },
+      "values": {
+        "tick": false,
+        "finished": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "tick": true
+      },
+      "values": {
+        "tick": true,
+        "finished": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "tick": true,
+        "finished": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

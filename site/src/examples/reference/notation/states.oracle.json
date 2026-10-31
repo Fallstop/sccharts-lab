@@ -1,0 +1,58 @@
+{
+  "hash": "8410c0bce5c64aa47f97556a8b22ff7c592fde26",
+  "chart": "src/examples/reference/notation/states.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "next": false
+      },
+      "values": {
+        "next": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "next": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "next": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": true
+    }
+  ]
+}

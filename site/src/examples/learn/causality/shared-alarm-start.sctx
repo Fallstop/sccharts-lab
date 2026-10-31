@@ -1,0 +1,19 @@
+scchart SharedAlarm {
+  input bool smoke, heat, ack
+  output bool alarm = false
+
+  region Smoke {
+    initial state Watch
+      if smoke do alarm = true go to Watch
+  }
+
+  region Heat {
+    initial state Watch
+      if heat do alarm = true go to Watch
+  }
+
+  region Ack {
+    initial state Watch
+      if ack do alarm = false go to Watch
+  }
+}

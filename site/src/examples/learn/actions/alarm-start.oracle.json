@@ -1,0 +1,172 @@
+{
+  "hash": "404870a998404580ed98ba0643bed9c333783d0d",
+  "chart": "src/examples/learn/actions/alarm-start.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "code": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "door": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "window": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "siren": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "door": false,
+        "window": false,
+        "code": false
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "window": true
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "window": true,
+        "siren": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "window": false,
+        "code": true
+      },
+      "values": {
+        "code": true,
+        "door": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "code": false
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "code": true
+      },
+      "values": {
+        "code": true,
+        "door": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "code": false
+      },
+      "values": {
+        "code": false,
+        "door": false,
+        "window": false,
+        "siren": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "door": true
+      },
+      "values": {
+        "code": false,
+        "door": true,
+        "window": false,
+        "siren": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

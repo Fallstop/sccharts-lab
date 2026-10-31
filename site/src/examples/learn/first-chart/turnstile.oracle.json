@@ -1,0 +1,113 @@
+{
+  "hash": "83fad051b465f42cc6dff152a169eecf95f38866",
+  "chart": "src/examples/learn/first-chart/turnstile.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "coin": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "push": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "unlocked": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "coin": false,
+        "push": false
+      },
+      "values": {
+        "coin": false,
+        "push": false,
+        "unlocked": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "push": true
+      },
+      "values": {
+        "coin": false,
+        "push": true,
+        "unlocked": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "push": false,
+        "coin": true
+      },
+      "values": {
+        "coin": true,
+        "push": false,
+        "unlocked": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "coin": false,
+        "push": true
+      },
+      "values": {
+        "coin": false,
+        "push": true,
+        "unlocked": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "push": false
+      },
+      "values": {
+        "coin": false,
+        "push": false,
+        "unlocked": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

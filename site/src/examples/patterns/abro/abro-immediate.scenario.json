@@ -1,0 +1,18 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters everything. With `immediate`, `A` or `B` would already count in this tick, but neither is present." },
+    { "inputs": { "A": true }, "note": "`A`: `HandleA` finishes. Immediate transitions are checked in later ticks as well." },
+    { "inputs": { "A": false, "B": true }, "note": "`B`: both regions are final, the join fires, `O` is present. So far exactly like the delayed ABRO." },
+    { "inputs": { "B": false }, "note": "Resting in `Done`." },
+    { "inputs": { "R": true }, "note": "`R` re-enters `ABO`. `A` and `B` are absent, so the regions wait." },
+    { "inputs": { "R": false, "A": true, "B": true }, "note": "`A` and `B` in a later tick: `O`, as expected." },
+    { "inputs": { "A": false, "B": false }, "note": "Resting in `Done`." },
+    { "inputs": { "R": true, "A": true, "B": true }, "note": "`R`, `A` and `B` together. `R` re-enters `ABO`, and in this entry tick the immediate transitions see `A` and `B`: both regions reach their final states. The join should fire and emit `O`, but KIELER's netlist compiler loses it: `O` is absent." },
+    { "inputs": { "R": false, "A": false, "B": false }, "note": "Nothing happens." },
+    { "inputs": { "R": true }, "note": "`R` alone, and still no reaction: `ABO` is not re-entered." },
+    { "inputs": { "R": false, "A": true, "B": true }, "note": "`A` and `B`: nothing. The chart is stuck for good." },
+    { "inputs": { "A": false, "B": false }, "note": "Nothing, for ever." }
+  ],
+  "kielerBug": "K-3 (docs-internal/semantics/concurrency.md): a superstate that terminates in its entry tick inside a reset loop loses its join in KIELER's netlist code, and the chart never reacts again. Intended result: O present in tick 8, and the chart keeps reacting to R.",
+  "expect": "ok"
+}

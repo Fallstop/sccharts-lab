@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "I": 5
+      },
+      "note": "Tick 1 enters `Update`; its self-loop is delayed, so nothing has run yet."
+    },
+    {
+      "note": "The effects run left to right: `x` = 5, then + 3, then * 2 = 16. `lo` = 100, then `lo min= 5` keeps the smaller: 5. `hi max= 5` keeps the larger of 0 and 5. `n++` counts. `scaled *= 1.5` multiplies by `(int) 1.5`, which is 1: `scaled` stays 7."
+    },
+    {
+      "inputs": {
+        "I": -4
+      },
+      "note": "`x` = (−4 + 3) * 2 = −2; `lo` = −4. `hi` keeps 5, the larger of 5 and −4: `max=` compares with the current value."
+    }
+  ],
+  "expect": "ok"
+}

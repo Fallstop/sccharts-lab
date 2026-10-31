@@ -1,0 +1,13 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz25 {
+  input int I
+  output int X
+  dataflow {
+    X = I;
+    X = X + 1
+  }
+  region {
+    initial state S
+    do I = I + 0 go to S
+  }
+}

@@ -1,0 +1,35 @@
+/**
+ * Getting there!
+ */
+scchart Root {
+  /** Test */
+  input bool second
+  output bool speaker
+
+  /**
+    * Main region!
+    */
+  region main:
+
+  /** 
+    * The initial state
+    * This is entered as soon as the program starts.
+    */
+  @foreground f0f024
+  @background ffffcc
+  @backgroundTarget fff9ba
+  initial state Superstate {
+
+    initial state R1
+  }
+  /** Transition */
+  /** Transition 2 */
+  join to S
+
+  /**
+    * The final state!
+    * @@foreground f00
+    * @@background a00
+    */
+  final state S
+}

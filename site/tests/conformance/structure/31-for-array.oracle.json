@@ -1,0 +1,90 @@
+{
+  "hash": "63130092a0904c4d6244d1f7c331e29b38ad7f9e",
+  "chart": "tests/conformance/structure/31-for-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "ACT": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "ACT": [
+          false,
+          false,
+          false
+        ]
+      },
+      "values": {
+        "ACT": [
+          false,
+          false,
+          false
+        ],
+        "n": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "ACT": [
+          true,
+          false,
+          true
+        ]
+      },
+      "values": {
+        "ACT": [
+          true,
+          false,
+          true
+        ],
+        "n": 2
+      },
+      "taken": [
+        2
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "ACT": [
+          true,
+          true,
+          true
+        ]
+      },
+      "values": {
+        "ACT": [
+          true,
+          true,
+          true
+        ],
+        "n": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    }
+  ]
+}

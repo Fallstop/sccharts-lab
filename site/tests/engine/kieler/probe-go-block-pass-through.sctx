@@ -1,0 +1,13 @@
+scchart G {
+  input int i
+  input bool c
+  output int o = 0
+  initial state Z
+    immediate go to A
+  state A {
+    entry do i = 5; o = i
+  }
+    if c go to B
+  state B
+    if c go to A
+}

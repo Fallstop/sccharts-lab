@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {"I": false}, "note": "Rejected although the two guards can never both hold in one tick: KIELER's check is structural. Any cycle made only of immediate transitions is refused, whatever the triggers say."}
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

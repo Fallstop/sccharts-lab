@@ -1,0 +1,11 @@
+// for i : ACT iterates over the indices of the array ACT: i = 0 .. (size - 1). The size must be an int literal
+// or a const int with a literal value.
+scchart St31Each {
+  input bool ACT[3]
+  output int n = 0
+  region for i : ACT {
+    initial state W
+    if ACT[i] do n++ go to D
+    final state D
+  }
+}

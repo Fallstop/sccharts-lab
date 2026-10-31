@@ -1,0 +1,78 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beat": false,
+        "demand": false,
+        "restart": false
+      },
+      "note": "Tick 1: both charts watch and run; the motors are stopped."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat."
+    },
+    {
+      "inputs": {
+        "beat": false,
+        "demand": true
+      },
+      "note": "Demand: both motors start, and `starts` is 1."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat."
+    },
+    {
+      "inputs": {
+        "beat": false,
+        "demand": false
+      },
+      "note": "No demand: the motors stop. From now on no more beats arrive."
+    },
+    {
+      "inputs": {},
+      "note": "The second tick without a beat."
+    },
+    {
+      "inputs": {
+        "demand": true
+      },
+      "note": "The third quiet tick: both watchdogs emit `expired`, in the very tick in which demand rises again. `Supervisor`'s strong abort is decided before `Running` reacts: no start, `starts` stays 1. `SupervisorWeak`'s weak abort lets `Running` finish its tick first: the motor is started and counted (`starts` is 2), and only then is `Running` left, its exit action switching the motor off again. Both end the tick in `Safe`, alarm on."
+    },
+    {
+      "inputs": {
+        "demand": false
+      },
+      "note": "`Safe`: both alarms stay on."
+    },
+    {
+      "inputs": {
+        "restart": true,
+        "beat": true
+      },
+      "note": "`restart`, with the beats back: both watch again and return to `Running`."
+    },
+    {
+      "inputs": {
+        "restart": false
+      },
+      "note": "Running."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Quiet."
+    },
+    {
+      "inputs": {},
+      "note": "Quiet."
+    }
+  ],
+  "expect": "ok"
+}

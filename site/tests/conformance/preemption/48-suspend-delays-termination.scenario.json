@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Surprise: the inner region reaches F in tick 1, but M does not terminate in this tick (done = 0). Without the `suspend` line it would. The suspend adds a condition to M's termination, and a termination with a condition is delayed."
+    },
+    {
+      "inputs": {},
+      "note": "M terminates now: done = 1."
+    },
+    {
+      "inputs": {},
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

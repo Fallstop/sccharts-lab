@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "level": 3 }, "note": "Tick 1 enters `Watch`. The self-loop is delayed: nothing is printed yet, `reports` = 0." },
+    { "inputs": { "level": 4 }, "note": "The self-loop prints `level is 4` and counts: `reports` = 1. The printed text is not a variable, so it is not in the trace." },
+    { "inputs": { "level": 9 }, "note": "Prints `level is 9`; `reports` = 2." }
+  ],
+  "expect": "ok"
+}

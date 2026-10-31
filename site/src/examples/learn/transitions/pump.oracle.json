@@ -1,0 +1,99 @@
+{
+  "hash": "af56c94325eaf1a4db48002f669894c7a256c734",
+  "chart": "src/examples/learn/transitions/pump.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "fault": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "pumping": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "fault": false
+      },
+      "values": {
+        "fault": false,
+        "start": false,
+        "pumping": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true,
+        "fault": true
+      },
+      "values": {
+        "fault": true,
+        "start": true,
+        "pumping": false
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "fault": true,
+        "start": true,
+        "pumping": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "start": false,
+        "fault": false
+      },
+      "values": {
+        "fault": false,
+        "start": false,
+        "pumping": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

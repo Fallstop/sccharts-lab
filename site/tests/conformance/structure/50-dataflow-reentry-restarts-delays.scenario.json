@@ -1,0 +1,32 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "again": false,
+        "I": 5
+      },
+      "note": "First tick of S: **A = 0, B = 0**. (KIELER warns \"Potential instantaneous loop through A, B.\"; the chart runs fine.)"
+    },
+    {
+      "inputs": {
+        "I": 6
+      },
+      "note": "A follows the current I, B the previous one: **A = 6, B = 5**."
+    },
+    {
+      "inputs": {
+        "again": true,
+        "I": 7
+      },
+      "note": "The self-loop re-enters S (a weak abort, so the old equations ran first) and the new instance of the region starts its first tick: **A = 0, B = 0**."
+    },
+    {
+      "inputs": {
+        "again": false,
+        "I": 8
+      },
+      "note": "Second tick of the new S: **A = 8** (current I), **B = 7** (previous I)."
+    }
+  ],
+  "expect": "ok"
+}

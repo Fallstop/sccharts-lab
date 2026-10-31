@@ -1,0 +1,314 @@
+---
+title: "Signals"
+description: "Pure and valued signals: present or absent in each tick, emitting and testing them, and combining values."
+sidebar:
+  order: 6
+---
+
+import { Chart, Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A variable remembers. But much of what a controller deals with is not memory, it is events: a
+button was pressed, a sensor pulsed, a coin dropped, an alarm must sound now. You can model an
+event with a bool variable, and then you have to remember to set it back to false afterwards.
+SCCharts has a better tool, borrowed from the synchronous language Esterel: the **signal**. A
+signal is **present** or **absent** in each tick, and it is absent unless something emits it in that
+very tick.
+
+This chapter covers pure signals, which have nothing but their presence, and valued signals, which
+also carry a value from tick to tick.
+
+## Present for one tick
+
+`Flash` emits the output signal `flash` and sets the bool variable `pressed` on the same transition.
+Watch what each does in the tick after.
+
+<Sim example="learn/signals/flash" caption="`flash` is present only in the ticks that emit it; `pressed` stays true." />
+
+| Tick | `press` | `flash` after | `pressed` after |
+| ---: | --- | --- | --- |
+| 1 | false | absent | false |
+| 2 | true | present | true |
+| 3 | false | absent | true |
+| 4 | false (held) | absent | true |
+| 5 | true | present | true |
+
+That is the whole idea. At the start of every tick an output or local signal is absent again; it
+is present in a tick if and only if the chart emits it in that tick. A variable, by contrast, keeps
+its value until something assigns it. Nobody has to switch `flash` off.
+
+## Declaring, emitting and testing
+
+A pure signal is declared with `signal` and no type: `output signal flash` for an output,
+`input signal ring` for an input, plain `signal found` for a local signal that only the chart
+itself sees. Several at once work as for variables: `input signal A, B`.
+
+To **emit** a signal, write its name as an effect: `do flash`, or `do flash; beep` for two. There
+is no `emit` keyword in SCTX. Emitting a signal twice in a tick is the same as emitting it once: it
+is present.
+
+To **test** a signal, use its name as a condition: it is true when the signal is present. `!A`
+tests for absence, and `&&` and `||` combine tests as for bools.
+
+<Sim example="learn/signals/both" caption="`both` needs `A` and `B` in the same tick; `onlyA` needs `A` without `B`." />
+
+A signal declaration can't give a pure signal a starting presence: `output signal S = true`
+compiles, but the `= true` is ignored and `S` is absent until emitted.
+
+## Input signals in the simulator
+
+In a running system the environment decides afresh in every tick whether an input signal is
+present. In KIELER's simulator and in SCCharts Lab an input signal is an input like any other: it
+**keeps the presence you gave it** until you change it. `Doorbell` chimes once for every tick in
+which `ring` is present, and the tour shows what happens when you leave `ring` switched on.
+
+<Sim example="learn/signals/doorbell" caption="Tick 3: nobody touched `ring`, so it is still present, and the bell chimes again." />
+
+| Tick | `ring` | `chime` after | `rings` after |
+| ---: | --- | --- | --- |
+| 1 | absent | absent | 0 |
+| 2 | present | present | 1 |
+| 3 | present (held) | present | 2 |
+| 4 | absent | absent | 2 |
+| 5 | present | present | 3 |
+| 6 | absent | absent | 3 |
+
+So to make a "press" that lasts exactly one tick, set the input present, step, and set it absent
+again before the next step. The same holds if the chart emits one of its own input signals: the
+signal then stays present until the environment sets it absent. Leave inputs to the environment.
+
+## Signals or variables?
+
+| What differs | Pure signal | Bool variable |
+| --- | --- | --- |
+| Declaration | `signal done` | `bool done` |
+| Setting it | `do done` (emit) | `do done = true` (assign) |
+| In the next tick | absent, unless emitted again | keeps its value |
+| Good for | events: "this happened now" | state: "this is how things are" |
+
+Signals have one more advantage that will matter in [Concurrent regions](/learn/concurrency/): any
+number of parts of a chart may emit the same signal in the same tick, and every part that tests it
+in that tick sees it present.
+
+The two can't be mixed up in the code. KIELER rejects an emission of a variable and an assignment to
+a signal:
+
+<Aside type="caution" title="Emitting a variable, assigning a signal">
+`do b` with a bool variable `b` makes official KIELER warn
+`Non-signals should not be used in an emission.` and then fail with an internal error:
+
+```text wrap
+java.lang.NullPointerException: Assigned valued object is null or not supported
+```
+
+SCCharts Lab says what is wrong:
+
+```text wrap
+b is an output bool variable, not a signal, so it cannot be emitted.
+```
+
+The other way round, `do S = true` for a signal `S` is rejected with
+`Non-variables cannot be used in an assignment.` Write `do S` to emit and `do b = true` to assign.
+</Aside>
+
+In an expression, a signal's name stands for its presence, so in arithmetic it counts as 1 when
+present and 0 when absent.
+
+### Local signals
+
+A signal declared without `input` or `output` is local. It is reset to absent in every tick, like an
+output, but it is not part of the chart's interface (KIELER's simulator still lists it, as it lists
+local variables). Even in the charts you know so far, a local signal can pass a fact along a chain of
+immediate transitions within a tick: a transition that emits `high` lets a later transition of the
+chain test `high`.
+
+<Sim
+  example="learn/signals/gauge"
+  show={['reading', 'high', 'alarm']}
+  caption="From tick 2 the chain `Idle` → `Measure` → `Report` → `Idle` runs in every tick. Watch the local signal `high` in ticks 3 to 5."
+/>
+
+`Measure` decides whether the reading is high, and `Report`, later in the same tick, acts on the
+decision without looking at `reading` again. In a chart this small you could test `reading` twice; the
+point is that the fact travels along the chain within the tick, and that nothing carries it into the
+next one: in tick 5 nobody emits `high`, so it is absent.
+
+Local signals really come into their own when several regions run side by side and need to tell
+each other what happened in this tick; that is [Concurrent regions](/learn/concurrency/).
+
+## Valued signals
+
+A **valued signal** is a signal that also carries a value. Declare it with a type, and optionally
+an initial value: `output signal int level = 0`. Emit it with a value in parentheses, `level(7)` or
+`level(reading)`, and read the value with `val(level)`. Its presence works exactly as for a pure
+signal; its value persists until the next emission.
+
+<Sim example="learn/signals/sensor" caption="`level` is present only when sampled, but `val(level)`, copied into `last`, keeps the last emitted value." />
+
+The last two columns are the signal's presence and its value after each tick:
+
+| Tick | `sample` | `reading` | `level` | `val(level)` |
+| ---: | --- | --- | --- | --- |
+| 1 | false | 7 | absent | 0 |
+| 2 | true | 7 (held) | present | 7 |
+| 3 | false | 9 | absent | 7 |
+| 4 | true | 9 (held) | present | 9 |
+| 5 | false | 9 (held) | absent | 9 |
+
+`last` copies `val(level)` in every tick, so it shows the same values. `val(level)` already sees an emission made earlier in the same tick: in tick 2, `last = val(level)`
+right after `level(reading)` gives 7.
+
+In this guide's timing diagram a valued signal has one row, its value. The value is shaded and bold in
+the ticks in which the signal is present, and grey in the ticks in which it is absent. KIELER and
+SCCharts Lab list the same information as three entries: `level` (the presence), `level_val` (the
+value, what `val(level)` reads) and `level_curval` (the value being built up in the current tick; see
+combine functions below).
+
+<Aside type="caution" title="Forgetting val()">
+Without `val`, a valued signal's name is its presence. `level + 1` is 2 or 1 depending on whether
+`level` is present, whatever value it carries; KIELER does not warn. Write `val(level) + 1`.
+</Aside>
+
+## Emitting more than once in a tick
+
+A transition may emit the same valued signal more than once, and in [Concurrent
+regions](/learn/concurrency/) several regions may emit it in the same tick. Which value counts?
+That is what a **combine function** decides. `Twice` emits two signals twice each; `total` is
+declared with `combine +`, `latest` without a combine function.
+
+<Sim example="learn/signals/twice" caption="With `combine +`, `total` is 1 + 2 = 3; without one, `latest` keeps the last emission, 2." />
+
+- **Without a combine function**, the last emission wins: `latest(1); latest(2)` gives 2. The KIELER
+  wiki says that a valued signal emitted several times in a tick needs a combine function; KIELER
+  itself only insists on it when [concurrent regions](/learn/concurrency/), which come in chapter 8,
+  emit the signal in different ways in the same tick.
+- **With `combine op`**, every emission of the tick is combined with `op`, starting afresh in each
+  tick from a start value, the operator's *neutral element*. That is why `total` is 3 again in tick
+  4, not 6.
+
+| Combine | Start value | 5 and 6 give |
+| --- | --- | --- |
+| `+` | 0 | 11 |
+| `*` | 1 | 30 |
+| `max` | −2147483648 | 6 |
+| `min` | 2147483647 | 5 |
+| `\|` | 0 | 7 |
+| `&` | 0 | 0 |
+
+These are the start values for `int` signals. A `bool` signal can be combined with `|` or `&`, which
+start from `false` and `true`. `combine none` is the same as no combine function.
+
+KIELER has some rough edges here. `max` and `min` work, but KIELER warns:
+
+```text wrap
+Min or max combine operators are currently not supported.
+```
+
+For `int` signals, `&` starts from 0, so the result is always 0 (a KIELER bug). And a `float` signal
+with any combine function crashes KIELER's compiler.
+
+<Aside type="caution" title="Emitting a combined signal without a value">
+With a combine function, a valued signal emitted without a value (`do total`) is present, and its
+value becomes the start value, 0 for `+`: the bare emission erases the old value. Without a combine
+function, a bare emission leaves the value unchanged. Emit valued signals with a value.
+</Aside>
+
+## Building on the last value
+
+A natural first counter emits the signal's value plus one:
+
+<Chart example="learn/signals/counter" caption="KIELER rejects this counter: the emission reads the value it is about to set." />
+
+KIELER rejects it with `Can't schedule from …` errors and `The SCG is NOT asc-schedulable!`, and
+warns `Instantaneous loop detected!` (SCCharts Lab: `Circular dependency prevents scheduling this
+tick.` and `Potential instantaneous loop.`). The reason: `val(count)` in a tick has to wait until
+every emission of `count` in that tick has happened, so that it sees the final value, and this
+emission needs `val(count)` before it can happen. Neither can go first.
+
+What the counter means is "one more than *last tick's* value". `pre(val(count))` says exactly that:
+the value `count` had at the end of the previous tick. [The previous tick](/learn/pre/) covers
+`pre` in full; here is a preview.
+
+<Sim example="learn/signals/counter-pre" caption="`count` goes up by one in every tick in which `press` is true." />
+
+## Signals and termination
+
+Here is a KIELER quirk that has nothing to do with the language: **a chart that declares a signal
+never terminates in KIELER's simulator**, even when it reaches a final state. Any signal will do,
+input, output or local. `Once` and `OnceBool` differ only in the type of `start`. Both have a final
+state with a transition back, like `Finish` in
+[Delayed and immediate transitions](/learn/immediate/#final-states-and-termination), and the tour
+holds `start` on from tick 2:
+
+<Compare a="learn/signals/once" b="learn/signals/once-bool" scenario="learn/signals/once-compare" caption="Both reach their final state in tick 2. `OnceBool` terminates there; `Once`, which declares a signal, carries on and counts again." />
+
+`OnceBool` behaves as a chart without signals should: it terminates in tick 2, and from then on it
+checks nothing, so `runs` stays 1. `Once` never terminates, so `Done`'s transition fires in tick 3,
+and `runs` reaches 2 in tick 4.
+
+The cause is the bookkeeping KIELER's simulation adds to every chart, combined with the way it
+translates signals: together they wrap the chart in an extra state that is never final. Official
+KIELER and SCCharts Lab behave the same. Most controllers never terminate anyway; if yours must, use
+bool variables at its top level instead of signals.
+
+## Try it
+
+<TryIt example="learn/signals/alarm" solution="learn/signals/alarm-solution" title="An alarm that switches itself off">
+`Alarm` should raise `alarm` in every tick from tick 2 on in which `temperature` is above 90, and
+not otherwise (its transition is delayed, so tick 1 cannot raise it). As written, `alarm` is a bool variable and stays true for ever once it has been set. Make `alarm` a
+signal, so that it is present exactly in the hot ticks.
+</TryIt>
+
+<TryIt example="learn/signals/bonus" solution="learn/signals/bonus-solution" title="Add up the bonuses">
+`Bonus` emits `points(10)` for `gold` and `points(5)` for `silver`. When both arrive in the same
+tick, `points` should be 15, but it is 5. Fix it by adding two words to a declaration.
+</TryIt>
+
+## Check your understanding
+
+<Predict example="learn/signals/tip-jar" ask={[{ tick: 3, value: 'received' }, { tick: 4, value: 'thanks' }, { tick: 4, value: 'received' }]} caption="`tip` is switched on in tick 2 and only switched off in tick 4, and `amount` changes in every tick." />
+
+<details>
+<summary>Explanation</summary>
+
+In tick 3 nobody switched `tip` off, so it is still present and the transition fires again, emitting
+`received` with the new `amount`, 5. In tick 4 nothing is emitted, so `thanks` is absent, and
+`received` is absent too but keeps its value, 5.
+
+</details>
+
+<Quiz
+  question="`output signal int total combine +` is emitted as `total(2); total(3)` in tick 2, and not at all in tick 3. After tick 3, is `total` present, and what is `val(total)`?"
+  options={['Present, 5', 'Absent, 5', 'Absent, 0', 'Absent, 3']}
+  answer={1}
+>
+Presence lasts one tick, so `total` is absent in tick 3. The value persists until the next
+emission: the combined value of tick 2, 2 + 3 = 5.
+</Quiz>
+
+<Quiz
+  question="Which effect counts presses of `press` in a valued signal `count`?"
+  options={['`count(val(count) + 1)`', '`count(pre(val(count)) + 1)`', '`count(count + 1)`']}
+  answer={1}
+>
+`count(val(count) + 1)` is rejected: the emission would have to wait for its own result.
+`count(count + 1)` compiles, but there `count` is the signal's presence, not its value; it is
+still absent when the value is computed, so the chart emits 1 every time.
+`pre(val(count))`, last tick's value, is what a counter needs.
+</Quiz>
+
+<KeyIdeas>
+- A signal is present in a tick if and only if something emits it in that tick; output and local
+  signals start every tick absent.
+- Emit with the signal's name as an effect (`do S`), test with its name as a condition (`if S`,
+  `!S`). Emitting a variable or assigning a signal is an error.
+- In the simulator, an input signal stays present until you set it absent.
+- A valued signal adds a value: emit with `V(e)`, read with `val(V)`. The value persists while the
+  signal is absent.
+- Several emissions in one tick: without a combine function the last one wins; with `combine op`
+  they are combined from the operator's start value.
+- To build on a signal's value, use last tick's: `pre(val(V))`.
+- In KIELER's simulator, a chart that declares a signal never terminates.
+</KeyIdeas>
+
+Next, [Superstates](/learn/hierarchy/): states that contain a whole state machine of their own.

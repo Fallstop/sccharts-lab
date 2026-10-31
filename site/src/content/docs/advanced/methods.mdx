@@ -1,0 +1,293 @@
+---
+title: "Methods and code effects"
+description: "Methods and code effects in SCCharts' own statement language: if, loops, local variables and its rule for semicolons, then print and random numbers."
+sidebar:
+  order: 8
+---
+
+import { Chart, Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+
+Transitions and actions say *when* something happens. Some computations are easier to write as a few
+lines of code: a formula with several cases, a loop over an array. For these SCCharts has **methods**
+and **code effects**. Both are written in SCL, the *Sequentially Constructive Language*, SCCharts' own
+small imperative language. It looks like C, KIELER compiles it together with the chart, and it runs
+wherever the chart runs, this site included.
+
+This chapter covers methods and code effects, the statements they are made of and what KIELER
+compiles them into, then `print` and random numbers, which belong to SCCharts too. Code written in C
+or Java itself, *host code*, has a chapter of its own: [Host code](/advanced/host-code/).
+
+## Methods
+
+A **method** is a small function that belongs to the chart. It can return a value, take parameters,
+and read and write the chart's variables:
+
+<Sim example="advanced/methods/methods" caption="`percent` and `tooHot` run within the tick, as if their bodies were written into the transition." />
+
+- `method int percent(int v) { ... }` declares a method that takes an `int` and returns one. A method
+  can take several parameters (`method int clampTo(int v, int lo, int hi)`); leave the return type out
+  (or write `void`) for a method that returns nothing. Declare methods with the chart's variables,
+  before its states.
+- A body holds local declarations, assignments, calls, `if` / `else`, `for` and `while` loops and
+  `return`; [Statements](#statements) below shows each of them. A call runs the whole body within
+  the tick.
+- Every path through a method with a return type must end in a `return`. Without any, KIELER reports
+  `The method does not return any value!`; a method that returns on some paths only compiles, but
+  breaks KIELER's simulation when it ends without one. A `return` in a method without a return type
+  gives
+
+  ```text wrap
+  Return statement is used but no return type is declared in method signature.
+  ```
+
+- Call methods in triggers (`if tooHot(reading) ...`), in effects, in actions and in dataflow equations.
+- Treat parameters as read-only. When a method needs to change a value it was given, copy the
+  parameter into a local variable and change that; [Don't assign to a
+  parameter](#dont-assign-to-a-parameter) below shows why.
+- Methods inside a [class](/advanced/data-types/#classes-data-with-its-own-methods) are written
+  without the keyword `method`.
+
+## Code effects
+
+For a few statements that are used only once, a **code effect** saves declaring a method: a block in
+braces in place of an effect, `do { a++; b = a * 2 } go to S`, or in an action, `entry do { ... }`. Its
+statements run one after another, in the same tick, like the body of a method without parameters (only
+`return` is not allowed: `Return statements can only be used in method bodies.`):
+
+<Sim example="advanced/methods/thermostat" caption="Between 18 and 22 degrees neither branch changes `heater`, so the thermostat keeps what it did last (ticks 3 and 5)." />
+
+An `if` takes braces on both branches, and the condition is usually written in parentheses, as in C.
+There is no `else if`: `} else if (...) {` gives `missing '{' at 'if'`. Nest the second `if` inside
+`else { ... }`, as `Thermostat` does.
+
+## Statements
+
+Method bodies and code effects use the same statements. Besides assignments, calls and `if`, they
+have `for` and `while` loops and local variables, and a rule for semicolons that is not C's.
+
+### `for` loops
+
+<Sim example="advanced/methods/average" view="code" caption="`sum()` adds up the four elements of `samples` in one call: four passes of the loop, all within the tick." />
+
+`for (int i = 0; i < 4; i++) { ... }` is C's `for` loop: a counter declared in the loop's head, a
+condition tested before each pass, and a step. The braces are required, even for a single statement:
+`for (...) a++` gives `missing '{' at 'a'`. Declare the counter in the loop's head:
+`for (i = 0; ...)` with a variable `i` of the chart passes KIELER's checks, but its C code does not
+compile (`‘i’ undeclared (first use in this function)`). A loop is a way of computing a value within
+one tick, not a way of waiting: all its passes happen in the tick the method is called. To spread work
+over ticks, use states.
+
+### `while` loops
+
+<Sim example="advanced/methods/digits" view="code" caption="`countDigits` divides by 10 until one digit is left. 12345 takes four passes in tick 3." />
+
+A `while` loop runs as long as its condition holds, again within the one tick, so make sure it ends:
+the tick cannot finish before the loop does. `countDigits` copies its parameter `v` into the local
+variable `rest` and divides that, since a method should not change its parameters (see [Don't assign
+to a parameter](#dont-assign-to-a-parameter) below).
+
+### Local variables
+
+A declaration at the start of a block declares a variable that exists only in that block. A block is
+a method body, a code effect, a branch of an `if`, or the body of a loop:
+
+<Sim example="advanced/methods/swap" caption="The code effect keeps `a` in its own variable `t` while it swaps `a` and `b`." />
+
+The diagram's label reads `int t = aa = b`: KIELER's diagrams print a declaration in a code effect
+without anything between it and the next statement. The code is `int t = a`, then `a = b;`.
+
+- Declarations come first. A declaration after a statement of the same block is a syntax error:
+  `a = b; int t = a` gives `mismatched input 'int' expecting '}'` in a code effect and
+  `missing '}' at 'int'` in a method body. If you need a variable halfway
+  through, open a new block there: a block in braces is a statement too, with its own declarations
+  at its top.
+- A local variable is not visible after its block: a `tmp` declared in a branch of an `if` is unknown
+  after the branch (`Couldn't resolve reference to ValuedObject 'tmp'.`).
+- A local may have the name of one of the chart's variables. Inside the block it hides that
+  variable: the chart's variable keeps its value.
+- Local variables are not part of the data pool, so they never appear in a trace.
+
+### Semicolons
+
+KIELER's rule is short: **an assignment that is followed by another statement in the same block ends
+with `;`**. That includes `x++` and `x += 2`, and an assignment just before `return`. A line break is
+not enough:
+
+<Chart example="advanced/methods/missing-semicolon" view="code" caption="`a = b` on line 8 is followed by another statement, so it needs a semicolon." />
+
+Nothing else needs one:
+
+- declarations (`int t = a`), calls (`inc()`, `print("a")`) and `if`, `for` and `while` blocks may be
+  followed by another statement without `;`;
+- the last statement of a block needs none, though a `;` there is allowed;
+- `return` takes none at all: `return v;` gives `extraneous input ';' expecting '}'`.
+
+`Swap` above follows the rule exactly: none after the declaration, one after each assignment but the
+last. If in doubt, end every assignment with `;`; that is always accepted. Effects on a transition
+follow their own rule: they are separated by `;`, with none after the last one
+(see [`Missing Semicolon`](/reference/errors/#missing-semicolon)).
+
+## What KIELER makes of a method
+
+KIELER's netlist compiler inlines a method that is short, has no loop and calls no other method:
+`shown = percent(reading)` becomes the statements of `percent`, with `reading` in place of `v`, as if
+you had written them into the transition. Any other method, and a code effect with a loop, it keeps as
+a C function. For `sum()` in [`for` loops](#for-loops) above, the generated C code has
+
+```c
+int Average_sum(TickData* d) {
+  int s;
+  s = 0;
+  for (int i = 0; i < 4; i++) {
+    s += d->samples[i];
+  }
+  return s;
+}
+```
+
+and the transition calls `d->total = Average_sum(d);`. Mostly you see the difference only in the
+generated code, and in warnings such as
+
+```text wrap
+ValuedObject with name _fn0_percent_v is contained in the model but not in VariableStore.
+```
+
+which KIELER lists for the parameters and local variables of methods, and for the names of `extern`
+functions. They are harmless. Two things, though, depend on how a method is compiled.
+
+### No variable called `d`
+
+Inside such a C function, `d` is the pointer to the chart's `TickData`, through which the generated
+code reaches the chart's variables (see [From chart to C](/advanced/code-generation/)). So in a method
+or code effect that becomes a C function, no parameter or local variable may be called `d`. gcc
+rejects the generated code: a parameter gives `conflicting types for ‘d’`, a local variable
+`‘d’ redeclared as different kind of symbol` (the KIELER VS Code extension shows only
+`Compiler did not return success (exit value != 0)`). An inlined method is not affected, but a method
+stops being inlined as soon as it gets a loop, so it is simplest never to call a variable `d`.
+
+### Don't assign to a parameter
+
+The second concerns the parameters of inlined methods. `Zap` passes its output `o` to a method that
+sets its parameter to 0 before it returns. Predict `o` and `r` after tick 2, check, then open the
+explanation.
+
+<Predict
+  example="advanced/methods/zap"
+  ask={[{ tick: 2, value: 'o' }, { tick: 2, value: 'r' }]}
+  caption="In tick 2 the self-loop calls `zap(o)`, and `zap` sets its parameter `v` to 0 before it returns."
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`r` is 1, and `o` is 0, not 5. KIELER inlines `zap`: the call becomes the method's statements, with the
+argument in place of the parameter. So `v = 0` is carried out as `o = 0`, and the method has changed the
+variable it was given. KIELER says nothing about it beyond the harmless VariableStore warning.
+
+</details>
+
+With a number or an expression as the argument, `zap(3)` or `zap(o + 1)`, there is no variable to put
+in place of `v`, and the compiler fails: SCCharts Lab reports
+[`The compiler failed during compilation setup.`](/reference/errors/#the-compiler-failed-during-compilation-setup),
+and in the KIELER VS Code extension the compilation never finishes. A method with a loop is a C
+function and gets a copy of its argument, so there the same assignment changes nothing outside.
+
+So whether an assignment to a parameter changes the caller's variable, breaks the compiler or does
+nothing depends on how KIELER compiles the method. Don't depend on any of it: when a method needs to
+change a value it was given, copy the parameter into a local variable first, as `countDigits` does.
+
+## `print`
+
+`print` writes text to the simulation's console. It is part of SCCharts, not host code, so it works in
+every simulation:
+
+<Sim example="advanced/methods/report" caption="Each tick from tick 2 prints `level is` and the current level; the printed text is not in the trace." />
+
+KIELER turns `print("level is", level)` into a C `printf` with one conversion per argument:
+
+- the arguments are joined with **single spaces**, and **no newline** is added, so two prints in one
+  tick run together: `print("a", 1); print("b")` prints `a 1b`;
+- an `int` prints in decimal, a `bool` as `1` or `0`, a `float` with six decimals (`1.500000`), a string
+  as it is;
+- a `\n` inside a print string breaks the generated C (`missing terminating " character`).
+
+`print` changes no variable, so its text never appears in the trace. This site's simulator lists it in
+its description of each tick. KIELER prints it to the console of the simulation process; the
+language-server tools, KIELER's VS Code extension and SCCharts Lab among them, do not show it.
+
+## Random numbers
+
+`random()` returns a `float` between 0 and 1:
+
+<Sim example="advanced/methods/dice" caption="`face = r * 6 + 1` turns the number into a die roll; assigning a float to an `int` cuts off the fraction." />
+
+KIELER's C simulation computes `random()` with C's `rand()`, which it never seeds. So every run produces
+the same numbers, one for each call, in the order the calls happen. (A `random()` in a trigger is called
+in every tick, even while its state is not active: KIELER's C code computes every trigger in every
+tick.) With the GNU C library, which Linux
+uses, they are 0.840, 0.394, 0.783, ..., and this site's simulator produces the same sequence. Other
+systems' C libraries have their own `rand()`, so in SCCharts Lab on Windows or a Mac the numbers may
+well differ ([How this guide is checked](/reference/about/#random-numbers)). Either way, the sequence
+makes simulations reproducible, which is useful for testing, but it is not randomness. In the KIELER VS Code extension (0.3.0) the chart above also needs
+`#hostcode "#include <stdlib.h>"`, or gcc fails; current KIELER and SCCharts Lab add that include
+themselves when a chart calls `random()`.
+
+`randomize()` is meant to seed the generator from the time of day, so that runs differ. In what KIELER
+runs unconditionally in tick 1 (an entry action of the chart or of an initial state, or an immediate
+transition without a trigger taken then) it does not even compile: KIELER's netlist compiler moves it
+into the reset code and writes it out as `null`, and gcc reports
+`‘null’ undeclared (first use in this function)`. Anywhere else, even on a triggered transition in
+tick 1 (`immediate if start do randomize()`), it seeds the generator, and the runs are no longer
+reproducible, provided gcc knows `srand`: the automatic `<stdlib.h>` comes only with `random()`, and not
+at all in the KIELER VS Code extension. Without it, gcc 14 and later reject the generated code with
+`implicit declaration of function ‘srand’`; older versions only warn, and the chart runs.
+Either way, `#hostcode "#include <stdlib.h>"` fixes it.
+
+## Try it
+
+<TryIt example="advanced/methods/sign-start" solution="advanced/methods/sign-solution" title="A sign method">
+Write a method `int sign(int v)` that returns −1 for a negative `v`, 1 for a positive one and 0 for
+zero, and use it to set `s` from `value` in every tick after the first. Remember KIELER's rules for
+`return` and `else`.
+</TryIt>
+
+<TryIt example="advanced/methods/above-start" solution="advanced/methods/above-solution" title="Count the high samples">
+Write a method `int countAbove(int t)` that counts how many of the four `samples` are greater than `t`,
+with a `for` loop, and use it to set `high` from `threshold` in every tick after the first.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question='A transition has the effect `print("ready", ready, n)`, with `ready` true and `n` equal to 3. What does it print?'
+  options={['`ready 1 3`', '`ready true 3`', '`ready, true, 3`', '`readytrue3` and a newline']}
+  answer={0}
+>
+`print` joins its arguments with single spaces and adds no newline. A `bool` is printed as a number,
+`1` for true, so the text is `ready 1 3`.
+</Quiz>
+
+<Quiz
+  question="Which of these code effects does KIELER accept?"
+  options={['`{ a = 1 b = 2 }`', '`{ a = 1; b = 2 }`', '`{ a = b; int t = a; b = t }`', '`{ if (x > 0) { a = 1 } else if (x < 0) { a = 2 } }`']}
+  answer={1}
+>
+An assignment followed by another statement needs a semicolon, so the first is rejected with
+`Missing Semicolon`. The third declares `t` after a statement; declarations must come first in a
+block. The fourth uses `else if`, which SCL does not have: nest the second `if` inside `else { ... }`.
+</Quiz>
+
+<KeyIdeas>
+- Methods and code effects are written in SCL, SCCharts' own statement language. They run within the
+  tick, wherever the chart runs, this site included.
+- SCL is close to C, but an assignment followed by another statement needs `;`, `return` takes none,
+  there is no `else if`, and declarations come first in each block.
+- `for` and `while` loops run all their passes within one tick: they compute, they never wait.
+- KIELER inlines short methods into the transitions that call them, so don't assign to a parameter:
+  copy it into a local variable.
+- `print` joins its arguments with spaces and adds no newline; `random()` gives the same sequence in
+  every run.
+</KeyIdeas>
+
+Next, [Enums, structs and classes](/advanced/data-types/): names for the values of a mode, records of
+related variables, and data that comes with its own methods.

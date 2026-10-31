@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "note": "Tick 1 enters `Run`. Its self-loop is delayed, so `zap` has not been called yet: `o` is 5, `r` is 0." },
+    { "note": "The self-loop calls `zap(o)`. KIELER inlines the method with `o` in place of `v`, so `v = 0` sets `o` to 0, and `r` gets `o + 1`, which is 1." },
+    { "note": "Again: `o` is 0 and `r` is 1." }
+  ],
+  "expect": "ok"
+}

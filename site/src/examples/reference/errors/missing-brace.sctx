@@ -1,0 +1,12 @@
+scchart MissingBrace {
+  input bool A
+
+  initial state Idle {
+    initial state Inner
+      if A go to Done
+    final state Done
+
+  join to Finished
+
+  state Finished
+}

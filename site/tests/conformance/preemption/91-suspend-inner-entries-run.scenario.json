@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": { "G": false },
+      "note": "First entry of M: M's own entry action is skipped (outer = 0, P-42), but the entry actions of the inner initial states I and J run (inner = 1, deeper = 1). They sit inside M's fork and read the suspend flag after M's immediate during action has set it; M's own entry action runs before the fork."
+    },
+    {
+      "inputs": { "G": true },
+      "note": "M is left for N; nothing else changes."
+    },
+    {
+      "inputs": { "G": true },
+      "note": "Back to M: now M's entry action runs as well (outer = 1, inner = 2, deeper = 2), because the flag kept `true` from M's last activation."
+    },
+    {
+      "inputs": { "G": false },
+      "note": "In M; no entry actions."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`V(val(V) + 1)` reads `V`'s value and emits `V` in the same tick: the read must wait for every emission, including this one, so KIELER rejects it as \"NOT asc-schedulable\". Use `pre(val(V))` instead (see `60-pre-val-counter`)."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

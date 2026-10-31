@@ -1,0 +1,60 @@
+{
+  "hash": "cc5c65202891c28bfc0e79991cbb539d76c7ba79",
+  "chart": "src/examples/learn/first-chart/dimmer-states.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 6,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 7,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "button": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "level": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "button": false
+      },
+      "values": {
+        "button": false,
+        "level": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "button": true
+      },
+      "values": {
+        "button": true,
+        "level": 0
+      },
+      "terminated": false
+    }
+  ]
+}

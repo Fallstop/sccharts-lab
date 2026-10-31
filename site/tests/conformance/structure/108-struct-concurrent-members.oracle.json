@@ -1,0 +1,81 @@
+{
+  "hash": "36cbcc7a7f8b1197d5e4d6b8be0110b6831560a6",
+  "chart": "tests/conformance/structure/108-struct-concurrent-members.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "sum": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Point.x": {
+      "type": "int",
+      "properties": []
+    },
+    "Point.y": {
+      "type": "int",
+      "properties": []
+    },
+    "p": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "sum": 0,
+        "p": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "sum": 3,
+        "p": {
+          "x": 1,
+          "y": 2
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "sum": 3,
+        "p": {
+          "x": 1,
+          "y": 2
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

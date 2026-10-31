@@ -1,0 +1,15 @@
+// A chart with inputs or outputs cannot be used as a class: its formals stay unbound.
+scchart St129WithInput {
+  output int O = 0
+  ref St129C c
+  initial state A
+  do O = c.get() go to A
+}
+
+scchart St129C {
+  input bool I
+  int v = 3
+  method int get() {
+    return v
+  }
+}

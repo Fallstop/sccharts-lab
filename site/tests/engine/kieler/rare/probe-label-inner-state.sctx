@@ -1,0 +1,10 @@
+// A state and a state inside it: no clash.
+scchart LabelInnerState {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S {
+    initial state S1
+      if a do { if (b) { goto skip } x += 1; skip: y += 1 } go to S1
+  }
+  if b && a do { if (b) { goto skip } z += 1; skip: y += 10 } go to S
+}

@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "G": false
+      },
+      "note": "Tick 1 enters M."
+    },
+    {
+      "inputs": {},
+      "note": "Not suspended: moves = 1."
+    },
+    {
+      "inputs": {
+        "S": true,
+        "G": true
+      },
+      "note": "Surprise: while M is suspended, M's own outgoing transitions are frozen too. G holds but M is not left (left = 0, moves = 1)."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Resumed: the weak abort fires, after one more round of inner behaviour (moves = 2, left = 1)."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "In Done."
+    }
+  ],
+  "expect": "ok"
+}

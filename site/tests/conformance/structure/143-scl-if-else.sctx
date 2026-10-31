@@ -1,0 +1,22 @@
+// if/else in SCL: the condition may be written with or without parentheses; there is no "else if", so a second
+// test goes inside the else block; a block may start with declarations.
+scchart St143IfElse {
+  input int x
+  output int grade = 0, tripled = 0
+  initial state S
+  do {
+    if (x > 10) {
+      grade = 2
+    } else {
+      if x > 5 {
+        grade = 1
+      } else {
+        grade = 0
+      }
+    }
+    if (x > 0) {
+      int t = x * 3
+      tripled = t
+    }
+  } go to S
+}

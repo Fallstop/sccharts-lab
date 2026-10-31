@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Tick 1 enters `Quiet`; the transition is delayed. Both output signals are absent." },
+    { "inputs": { "button": true }, "note": "`button` is present: the chart emits `chime` and `rings` with the value 1." },
+    { "inputs": { "button": false }, "note": "`button` is absent, so nothing is emitted: `chime` and `rings` are absent again, but `rings` keeps its value, 1." },
+    { "inputs": { "button": true }, "note": "Present again: `rings` is emitted with 2." },
+    { "note": "`button` is still present (the environment did not clear it): a third ring." },
+    { "inputs": { "button": false }, "note": "Absent: no ring." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,31 @@
+{
+  "hash": "f171d1f4062d8887f91ec5eedd30fee822cf60bc",
+  "chart": "tests/engine/kieler/preemption/probe-abort-region-dead-content.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "java.lang.NullPointerException: Cannot invoke \"de.cau.cs.kieler.kexpressions.keffects.Linkable.getOutgoingLinks()\" because \"linkable\" is null\njava.lang.NullPointerException: Cannot invoke \"de.cau.cs.kieler.kexpressions.keffects.Linkable.getOutgoingLinks()\" because \"linkable\" is null\n\tde.cau.cs.kieler.scg.extensions.SCGDependencyExtensions.getDependencies(SCGDependencyExtensions.java:92)\n\tde.cau.cs.kieler.scg.extensions.SCGDependencyExtensions.lambda$createControlDependency$3(SCGDependencyExtensions.java:137)\n\torg.eclipse.xtext.xbase.lib.ObjectExtensions.operator_doubleArrow(ObjectExtensions.java:141)\n\tde.cau.cs.kieler.scg.extensions.SCGDependencyExtensions.createControlDependency(SCGDependencyExtensions.java:141)\n\tde.cau.cs.kieler.scg.processors.SimpleGuardTransformation.createGuards(SimpleGuardTransformation.java:549)\n\tde.cau.cs.kieler.scg.processors.SimpleGuardTransformation.process(SimpleGuardTransformation.java:193)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:304)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:777)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:256)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:210)\n\tde.cau.cs.kieler.language.server.kicool.CompilationThread.run(CompilationThread.java:46)"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 28,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 20,
+      "column": 25
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 20,
+      "column": 13
+    }
+  ],
+  "ticks": []
+}

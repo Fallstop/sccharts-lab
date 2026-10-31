@@ -1,0 +1,16 @@
+scchart PlainJoin {
+  input bool start, ready
+  output bool left
+
+  initial state Idle
+    if start go to Work
+
+  state Work {
+    initial state Begin
+      immediate go to Done
+    final state Done
+  }
+  do left = true join to After
+
+  state After
+}

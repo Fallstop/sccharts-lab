@@ -1,0 +1,15 @@
+scchart ImmediateWeakSuspend {
+  input bool S, A
+  output int moves = 0, entersJ = 0
+
+  initial state M {
+    immediate weak suspend if S
+
+    initial state I
+    immediate if A do moves += 1 go to J
+
+    state J {
+      entry do entersJ += 1
+    }
+  }
+}

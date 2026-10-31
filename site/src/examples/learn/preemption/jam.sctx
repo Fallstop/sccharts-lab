@@ -1,0 +1,14 @@
+scchart Jam {
+  input bool start, sheet, cancel, jam
+  output int printed
+
+  initial state Idle
+    if start go to Job
+
+  state Job {
+    initial state Printing
+      if sheet do printed++ go to Printing
+  }
+  if jam abort to Idle
+  if cancel go to Idle
+}

@@ -1,0 +1,12 @@
+scchart KielerBugTick1ReorderPriority {
+  input int I
+  output int y, z
+
+  initial state A
+  immediate do y = I; y += 10; z = y go to B
+
+  state B
+  immediate do z += 1 go to C
+
+  state C
+}

@@ -1,0 +1,7 @@
+#hostcode "import java.util.Random;"
+// Java code in `#hostcode` is fine for the Java simulations (it would break the C ones).
+scchart St98HostJavaOk {
+  output int x = 0
+  initial state A
+  do x = 1 go to A
+}

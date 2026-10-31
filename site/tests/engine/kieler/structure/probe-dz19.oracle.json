@@ -1,0 +1,113 @@
+{
+  "hash": "db367c420c9986e2376d825280ada0c1d3fa0516",
+  "chart": "tests/engine/kieler/structure/probe-dz19.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_sign_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_sign_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": -2
+      },
+      "values": {
+        "x": -2,
+        "y": 0,
+        "z": 0
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "x": 7,
+        "y": 1,
+        "z": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 0
+      },
+      "values": {
+        "x": 0,
+        "y": 0,
+        "z": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "x": 10
+      },
+      "values": {
+        "x": 10,
+        "y": 1,
+        "z": 4
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

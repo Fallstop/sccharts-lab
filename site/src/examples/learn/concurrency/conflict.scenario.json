@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "on": false, "off": false }, "note": "KIELER rejects this chart: two concurrent regions write different values to `light`, so no order within a tick would be the right one." }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

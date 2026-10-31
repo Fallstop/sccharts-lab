@@ -1,0 +1,88 @@
+{
+  "hash": "679557f9867c79631a78d129c20a64fba665c157",
+  "chart": "src/examples/learn/pre/change.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "temp": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "delta": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "previous": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "temp": 20
+      },
+      "values": {
+        "temp": 20,
+        "delta": 20,
+        "previous": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "temp": 21
+      },
+      "values": {
+        "temp": 21,
+        "delta": 1,
+        "previous": 20
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "temp": 21,
+        "delta": 0,
+        "previous": 21
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "temp": 19
+      },
+      "values": {
+        "temp": 19,
+        "delta": -2,
+        "previous": 21
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "temp": 22
+      },
+      "values": {
+        "temp": 22,
+        "delta": 3,
+        "previous": 19
+      },
+      "terminated": false
+    }
+  ]
+}

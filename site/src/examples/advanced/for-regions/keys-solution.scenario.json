@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "key": [false, false, false] }, "note": "Tick 1 enters `Arming` and three copies of `Key`, one per element of `key`." },
+    { "inputs": { "key": [false, true, false] }, "note": "Key 1 is turned." },
+    { "inputs": { "key": [true, false, false] }, "note": "Key 0 is turned. The keys need not be held: each copy remembers its key." },
+    { "inputs": { "key": [false, false, true] }, "note": "Key 2: every copy is final, `Arming` terminates and `launch` is set, exactly as with three hand-written regions." },
+    { "note": "In `Launch`." }
+  ],
+  "expect": "ok"
+}

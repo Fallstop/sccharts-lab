@@ -1,0 +1,65 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Tick 1: both clients are `Idle`."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start`: both clients emit `req` and enter `Waiting`. `SameTick`'s server acknowledges in the same tick, and its client's `immediate if ack` sees `ack` at once: `served` is 1. `SlowServer`'s server moves to `Working` instead, and its client waits."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "`SlowServer`'s server is working; `SameTick` is idle again."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "`SlowServer`'s server finishes and emits `ack`. Its client is still in `Waiting`, and `immediate if ack` is checked in every tick it waits, so it catches `ack` at once: `served` is 1 in both charts now."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start` again: `SameTick` does the whole round trip in this tick (`served` is 2); `SlowServer`'s server starts working."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Working."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "`ack` from the slow server: `served` is 2 in both."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle. The client is the same in both charts: `immediate if ack` works with either server."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "full": false, "timeUp": false, "stop": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start` is true: the machine enters `Programme` and, in the same tick, `Filling`." },
+    { "inputs": { "start": false, "full": true }, "note": "`full` is true: `Filling` → `Washing`, and the motor runs." },
+    { "inputs": { "full": false, "stop": true }, "note": "`stop` is true. `Programme`'s own transition fires although the machine is in `Washing`: a superstate's transition can leave it whichever inner state is active. `Washing` and `Programme` are both left, and the effect switches the motor off." },
+    { "inputs": { "stop": false, "start": true }, "note": "`start` again. The machine enters `Programme` and starts in `Filling`, not in `Washing` where it was stopped: entering a superstate always starts at its initial state." },
+    { "inputs": { "start": false }, "note": "`Filling` waits for `full` as before." }
+  ],
+  "expect": "ok"
+}

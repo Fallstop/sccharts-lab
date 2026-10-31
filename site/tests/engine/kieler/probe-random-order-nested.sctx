@@ -1,0 +1,20 @@
+// The order of random() calls is the netlist's schedule: concurrent random() calls inside a superstate and next to it run in KIELER's block order.
+scchart RandomNested {
+  output float ra = 0, rb = 0, rc = 0
+  region A {
+    initial state M {
+      region {
+        initial state S
+        do ra = random() go to S
+      }
+      region {
+        initial state S
+        do rb = random() go to S
+      }
+    }
+  }
+  region B {
+    initial state S
+    do rc = random() go to S
+  }
+}

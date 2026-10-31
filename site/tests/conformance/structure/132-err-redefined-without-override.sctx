@@ -1,0 +1,19 @@
+// Redefining an inherited method needs the override keyword.
+scchart St132Main {
+  output int O = 0
+  ref St132Loud a
+  initial state A
+  do O = a.value() go to A
+}
+
+scchart St132Loud extends St132Base {
+  method int value() {
+    return 2
+  }
+}
+
+scchart St132Base {
+  method int value() {
+    return 1
+  }
+}

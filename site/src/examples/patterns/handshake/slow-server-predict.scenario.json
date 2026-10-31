@@ -1,0 +1,71 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Tick 1: idle."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start` (held from now on): `req`, the server starts working."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Working."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`ack`: 1, and the client is `Idle` again."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start` is still true, so `Idle`, entered in the last tick, requests again."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Working."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`ack`: 2."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Request."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "Working."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`ack`: 3. One handshake every three ticks."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Released."
+    }
+  ],
+  "expect": "ok"
+}

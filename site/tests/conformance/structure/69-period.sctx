@@ -1,0 +1,10 @@
+// period 300 in a state: its contents (transitions and actions) only run in ticks in which the period has
+// elapsed. Without an annotation the period is reset softly (the excess time is kept: c -= 300).
+scchart St69Every {
+  output int n = 0
+  initial state S {
+    period 300
+    initial state A
+    do n++ go to A
+  }
+}

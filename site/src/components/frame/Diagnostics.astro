@@ -1,0 +1,161 @@
+---
+/**
+ * Compiler messages for a widget's foot (src/components/frame/prepare.ts works them out):
+ *
+ * - notices, shown prominently: official KIELER fails on a chart SCCharts Lab and the guide compile
+ *   (`kieler-divergence`), or KIELER's verdict changes from run to run (`kieler-nondeterministic`);
+ * - when KIELER rejects the chart, why: the errors that make it fail first, each with its line, the guide's
+ *   message for beginners, KIELER's exact wording and a hint;
+ * - KIELER's warnings and the guide's notes about KIELER, collapsed (unobtrusive), for accepted and rejected
+ *   charts alike. When they all say the same, the summary says it once and counts them ("2 warnings: …").
+ *
+ * Each error and warning that reference/errors.mdx explains links there ("About this message", error-links.ts),
+ * except on that page itself.
+ *
+ * Pass `prepared` (a PreparedChart), or the lists. `name` labels the messages with the chart's name. `charts`
+ * (Compare, two accepted charts) lists the notices of each and merges their warnings into one box, each labelled
+ * with its chart, so a warning both charts get is one line ("Warning: … (Blink and BlinkForgetful)").
+ */
+import type { PreparedChart, ShownDiagnostic } from './prepare'
+import { inlineCode as inlineMd, withoutLinkTo } from './inline-md'
+import { ERRORS_PAGE, errorLink, whoSays } from './error-links'
+import { allSame, groupWarnings, itemHead, warningSummary, type ListedDiagnostic } from './diagnostics'
+
+type Prepared = Pick<PreparedChart, 'errors' | 'warnings' | 'notices' | 'rejected'>
+interface Props {
+	prepared?: Prepared
+	errors?: ShownDiagnostic[]
+	warnings?: ShownDiagnostic[]
+	notices?: ShownDiagnostic[]
+	rejected?: boolean
+	/** The old shape: errors when rejected, else warnings. */
+	diagnostics?: ShownDiagnostic[]
+	name?: string
+	/** Two accepted charts (Compare): their notices, and their warnings in one box. */
+	charts?: { name: string; prepared: Prepared }[]
+	/** Leave out the warnings (a widget that shows them elsewhere). */
+	quiet?: boolean
+}
+type Item = ListedDiagnostic
+const { name, charts } = Astro.props
+const p = Astro.props.prepared
+const rejected = charts ? false : (p?.rejected ?? Astro.props.rejected ?? false)
+const legacy = Astro.props.diagnostics ?? []
+const errors = charts ? [] : (p?.errors ?? Astro.props.errors ?? (rejected ? legacy.filter((d) => d.severity === 'error') : []))
+const warnings: Item[] = Astro.props.quiet
+	? []
+	: charts
+		? charts.flatMap((c) => c.prepared.warnings.map((d) => ({ ...d, chart: c.name })))
+		: (p?.warnings ?? Astro.props.warnings ?? (rejected ? [] : legacy.filter((d) => d.severity !== 'error')))
+const notices: Item[] = charts ? charts.flatMap((c) => c.prepared.notices.map((d) => ({ ...d, chart: c.name }))) : (p?.notices ?? Astro.props.notices ?? [])
+const Where = (d: ShownDiagnostic) => (d.line ? `Line ${d.line}${d.col ? `, column ${d.col}` : ''}` : '')
+const same = allSame(warnings)
+const summary = warningSummary(warnings, { rejected, name })
+const of = name ? ` (\`${name}\`)` : ''
+// "About this message": the section of the compiler messages page that explains it (none on that page itself:
+// its examples sit under their own section).
+const onErrorsPage = Astro.url.pathname.replace(/\/?$/, '/') === ERRORS_PAGE
+const about = (d: ShownDiagnostic) => (onErrorsPage ? undefined : errorLink(d))
+const listed = groupWarnings(warnings)
+// A hint's own "See [the section](…)." is left out where *About this message* links the same section.
+const hint = (d: ShownDiagnostic) => (d.hint ? withoutLinkTo(d.hint, about(d)) : '')
+const noticeHead = (d: ShownDiagnostic) =>
+	d.code === 'kieler-nondeterministic' ? 'KIELER may reject this chart' : 'Official KIELER differs here'
+---
+
+
+{
+	notices.length > 0 && (
+		<div class="sc-diag sc-diag--notice" role="note">
+			{notices.map((d) => (
+				<div class="sc-diag__notice">
+					<p class="sc-diag__head">
+						<span class="sc-diag__mark sc-diag__mark--caution" aria-hidden="true" />
+						<span set:html={inlineMd(noticeHead(d) + (d.chart ? ` (\`${d.chart}\`)` : of))} />
+					</p>
+					<p class="sc-diag__msg" set:html={inlineMd(d.message.endsWith('.') ? d.message : `${d.message}.`)} />
+					{hint(d) && <p class="sc-diag__hint" set:html={inlineMd(hint(d))} />}
+					{d.kieler && (
+						<p class="sc-diag__kieler">
+							KIELER says: <q>{d.kieler}</q>
+						</p>
+					)}
+				</div>
+			))}
+		</div>
+	)
+}
+{
+	rejected && (
+		<div class="sc-diag sc-diag--error" role="note">
+			<p class="sc-diag__head">
+				<span class="sc-diag__mark" aria-hidden="true" />
+				KIELER rejects {name ? <code>{name}</code> : 'this chart'}
+				{errors.length > 1 ? ` (${errors.length} problems)` : ''}
+			</p>
+			<ul class="sc-diag__list">
+				{errors.map((d) => (
+					<li>
+						{Where(d) && <span class="sc-diag__where">{Where(d)}</span>}
+						{d.kielerOnly ? (
+							<span class="sc-diag__kieler sc-diag__kieler--only">
+								KIELER says: <q>{d.message}</q>
+							</span>
+						) : (
+							<>
+								<span class="sc-diag__msg" set:html={inlineMd(d.message)} />
+								{d.kieler && (
+									<span class="sc-diag__kieler">
+										KIELER says: <q>{d.kieler}</q>
+									</span>
+								)}
+							</>
+						)}
+						{hint(d) && <span class="sc-diag__hint" set:html={inlineMd(hint(d))} />}
+						{about(d) && (
+							<a class="sc-diag__about" href={about(d)}>
+								About this message
+							</a>
+						)}
+					</li>
+				))}
+			</ul>
+		</div>
+	)
+}
+{
+	warnings.length > 0 && (
+		<details class="sc-diag sc-diag--warning">
+			<summary>
+				<span set:html={inlineMd(summary)} />
+			</summary>
+			<ul class="sc-diag__list">
+				{listed.map(({ d, charts: in_ }) => (
+					<li>
+						<span class="sc-diag__where" set:html={inlineMd(itemHead(d, in_))} />
+						{d.kielerOnly ? (
+							<span class="sc-diag__kieler sc-diag__kieler--only">
+								{whoSays(d.message)}: <q>{d.message}</q>
+							</span>
+						) : (
+							<>
+								{(!same || d.message.includes('\n')) && <span class="sc-diag__msg" set:html={inlineMd(d.message)} />}
+								{d.kieler && (
+									<span class="sc-diag__kieler">
+										KIELER says: <q>{d.kieler}</q>
+									</span>
+								)}
+							</>
+						)}
+						{hint(d) && <span class="sc-diag__hint" set:html={inlineMd(hint(d))} />}
+						{about(d) && (
+							<a class="sc-diag__about" href={about(d)}>
+								About this message
+							</a>
+						)}
+					</li>
+				))}
+			</ul>
+		</details>
+	)
+}

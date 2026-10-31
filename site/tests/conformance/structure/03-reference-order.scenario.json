@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "tick": true
+      },
+      "note": "tick is bound to second, led to beep. Tick 1 only enters the instance: **led = false**."
+    },
+    {
+      "inputs": {},
+      "note": "tick is bound to second and is still true, so the instance's delayed transition A → B fires and sets beep, which is led: **led = true**."
+    },
+    {
+      "inputs": {},
+      "note": "**led = false** again: the instance toggles every tick while tick is true."
+    }
+  ],
+  "expect": "ok"
+}

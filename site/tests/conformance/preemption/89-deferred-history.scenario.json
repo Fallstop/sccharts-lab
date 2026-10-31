@@ -1,0 +1,43 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false
+      },
+      "note": "Tick 1 enters M (entries = 1) and I (where = 1)."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "I → J (where = 2)."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "P": true
+      },
+      "note": "M is left (where = 9)."
+    },
+    {
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "note": "`deep deferred history`: the deferred part makes this a quiet tick, nothing of M happens yet (where stays 9). The wiki warns that history and deferred may not combine well; this is what KIELER does."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "One tick later M resumes in J and J's entry action runs (where = 2), although the transition was `deep deferred`. M's own entry action never runs again (entries = 1)."
+    },
+    {
+      "inputs": {},
+      "note": "In J."
+    }
+  ],
+  "expect": "ok"
+}

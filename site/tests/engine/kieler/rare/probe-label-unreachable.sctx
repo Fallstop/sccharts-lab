@@ -1,0 +1,11 @@
+// The clashing code blocks belong to a state that is never entered: KIELER's thread analysis never walks their
+// code, so it does not crash (fuzz campaign 10, polish-101-19).
+scchart LabelUnreachable {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S
+    if a do x += 1 go to S
+  state Never
+    if a do { if (b) { goto skip } x += 1; skip: y += 1 } go to S
+    if b do { if (a) { goto skip } z += 1; skip: y += 10 } go to S
+}

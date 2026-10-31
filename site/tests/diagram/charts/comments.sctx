@@ -1,0 +1,31 @@
+/** Doc comments, drawn as KIELER draws them by default ("Comment Nodes"). */
+scchart Comments {
+  /** The push button. */
+  input bool button
+  output bool light = false
+
+  /** Waiting for a press. */
+  initial state Off
+  /** Press: switch on. */
+  if button do light = true go to On
+
+  /** The lamp is lit. */
+  /** A second comment on the same state. */
+  state On {
+    /** The inner region. */
+    region Inner:
+    /** Inner start. */
+    initial state I1
+    /** This transition comment is rather long, much longer than two hundred pixels, so it wraps. */
+    go to I2
+    /**
+     * Two lines
+     *
+     * with a blank line between.
+     */
+    state I2
+  }
+  /** Press again:
+   * switch off. */
+  if button do light = false go to Off
+}

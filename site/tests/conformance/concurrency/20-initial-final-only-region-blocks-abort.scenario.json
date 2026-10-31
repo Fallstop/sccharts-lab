@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "b": false
+      },
+      "note": "`S` contains only `initial final state F`. Tick 1: nothing happens."
+    },
+    {
+      "inputs": {
+        "b": false
+      },
+      "note": "Nothing happens."
+    },
+    {
+      "inputs": {
+        "b": true
+      },
+      "note": "`b` holds, but the weak abort `if b do left = true go to X` does **not** fire (`left = false`): KIELER's abort transformation deletes the region's only state (it reuses `F` as the region's `_aborted` state and removes it because nothing enters it), and the superstate can then never be aborted."
+    },
+    {
+      "inputs": {
+        "b": false
+      },
+      "note": "Still in `S`, `left = false`."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "P": false,
+        "R": false
+      },
+      "note": "Tick 1 enters M (entries = 1, n = 0)."
+    },
+    {
+      "inputs": {},
+      "note": "n = 1 (seen = 1)."
+    },
+    {
+      "inputs": {
+        "P": true
+      },
+      "note": "One more inner step (seen = 2), then M is left."
+    },
+    {
+      "inputs": {
+        "P": false,
+        "R": true
+      },
+      "note": "Resumed with history: M is entered again (entries = 2), and its local variable n is initialised again to 0. History restores states, not data."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "seen = 1: n started again from 0."
+    },
+    {
+      "inputs": {},
+      "note": "seen = 2."
+    }
+  ],
+  "expect": "ok"
+}

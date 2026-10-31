@@ -1,0 +1,10 @@
+scchart Effects {
+  input bool press
+  output int x = 0
+  output int y = 0
+
+  initial state A
+    if press do x = 1; y = x + 1; x = 5 go to B
+
+  state B
+}

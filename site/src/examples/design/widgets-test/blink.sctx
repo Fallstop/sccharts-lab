@@ -1,0 +1,9 @@
+scchart Blink {
+  output bool light = false
+
+  initial state Off
+    immediate do light = true go to On
+
+  state On
+    immediate do light = false go to Off
+}

@@ -1,0 +1,25 @@
+scchart ABCO {
+  input signal A, B, C
+  output signal O
+
+  initial state WaitABC {
+    region HandleA {
+      initial state WaitA
+        if A go to DoneA
+      final state DoneA
+    }
+    region HandleB {
+      initial state WaitB
+        if B go to DoneB
+      final state DoneB
+    }
+    region HandleC {
+      initial state WaitC
+        if C go to DoneC
+      final state DoneC
+    }
+  }
+  do O join to Done
+
+  state Done
+}

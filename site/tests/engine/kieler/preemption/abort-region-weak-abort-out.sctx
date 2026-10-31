@@ -1,0 +1,22 @@
+// A leading abort region next to an outgoing weak abort: when Watch finishes, M terminates and takes its only
+// transition (the Abort transformation made it the termination) without checking B.
+scchart NoJoin {
+  input bool A, B
+  output int work = 0, out = 0
+
+  initial state M {
+    abort region Watch {
+      initial state W
+      if A go to F
+      final state F
+    }
+    region Main {
+      initial state I
+      if true do work += 1 go to I
+    }
+  }
+  if B do out += 1 go to X
+
+  state X
+  go to M
+}

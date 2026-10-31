@@ -1,0 +1,460 @@
+{
+ "sourceHash": "7fe920895126ac0a",
+ "states": [
+  {
+   "path": [
+    "States"
+   ],
+   "rows": [
+    [
+     "States"
+    ],
+    [
+     "input bool ",
+     "a"
+    ],
+    [
+     "output bool ",
+     "b"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    636.1,
+    358.3
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Init"
+   ],
+   "rows": [
+    [
+     "Labelled state"
+    ]
+   ],
+   "box": [
+    10,
+    84.6,
+    119.3,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Conn"
+   ],
+   "rows": [],
+   "box": [
+    181.8,
+    96.9,
+    10,
+    10
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Final"
+   ],
+   "rows": [
+    [
+     "Final"
+    ]
+   ],
+   "box": [
+    257.1,
+    10,
+    60.3,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super"
+   ],
+   "rows": [
+    [
+     "Super"
+    ]
+   ],
+   "box": [
+    257.1,
+    70.6,
+    197.3,
+    205.7
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super",
+    "R1",
+    "X"
+   ],
+   "rows": [
+    [
+     "X"
+    ]
+   ],
+   "box": [
+    13,
+    20,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super",
+    "R1",
+    "Y"
+   ],
+   "rows": [
+    [
+     "Y"
+    ]
+   ],
+   "box": [
+    10,
+    118.1,
+    40,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super",
+    1,
+    "P"
+   ],
+   "rows": [
+    [
+     "P"
+    ]
+   ],
+   "box": [
+    13,
+    10,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super",
+    1,
+    "Q"
+   ],
+   "rows": [
+    [
+     "Q"
+    ]
+   ],
+   "box": [
+    10,
+    108.1,
+    40,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super",
+    "R3",
+    "U"
+   ],
+   "rows": [
+    [
+     "U"
+    ]
+   ],
+   "box": [
+    10,
+    20,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Ref"
+   ],
+   "rows": [
+    [
+     "Ref ",
+     "@ ",
+     "Other (a, b)"
+    ]
+   ],
+   "box": [
+    474.5,
+    144.9,
+    137.8,
+    57
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Both"
+   ],
+   "rows": [
+    [
+     "Both"
+    ]
+   ],
+   "box": [
+    39.4,
+    139.1,
+    60.5,
+    42.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "States",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    622.3,
+    286.3
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super",
+    "R1"
+   ],
+   "label": [
+    "First"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    7,
+    30.6,
+    60,
+    168.7
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super",
+    1
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    72,
+    30.6,
+    60,
+    168.7
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Super",
+    "R3"
+   ],
+   "label": [
+    "R3"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    137,
+    30.6,
+    54,
+    168.7
+   ]
+  },
+  {
+   "path": [
+    "States",
+    0,
+    "Ref",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "UNDEFINED",
+   "box": [
+    7,
+    30.6,
+    124.6,
+    20
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NStates$$N0$NSuper$NR1$NX$EY0",
+   "source": [
+    "States",
+    0,
+    "Super",
+    "R1",
+    "X"
+   ],
+   "target": [
+    "States",
+    0,
+    "Super",
+    "R1",
+    "Y"
+   ],
+   "text": "a",
+   "lines": [
+    "a"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NStates$$N0$NSuper$$N1$NP$EQ0",
+   "source": [
+    "States",
+    0,
+    "Super",
+    1,
+    "P"
+   ],
+   "target": [
+    "States",
+    0,
+    "Super",
+    1,
+    "Q"
+   ],
+   "text": "a",
+   "lines": [
+    "a"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NStates$$N0$NInit$EConn0",
+   "source": [
+    "States",
+    0,
+    "Init"
+   ],
+   "target": [
+    "States",
+    0,
+    "Conn"
+   ],
+   "text": "a",
+   "lines": [
+    "a"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NStates$$N0$NConn$EFinal0",
+   "source": [
+    "States",
+    0,
+    "Conn"
+   ],
+   "target": [
+    "States",
+    0,
+    "Final"
+   ],
+   "text": "1: a",
+   "lines": [
+    "1: a"
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NStates$$N0$NConn$ESuper0",
+   "source": [
+    "States",
+    0,
+    "Conn"
+   ],
+   "target": [
+    "States",
+    0,
+    "Super"
+   ],
+   "text": "2:",
+   "lines": [
+    "2: "
+   ],
+   "dashed": true,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NStates$$N0$NSuper$ERef0",
+   "source": [
+    "States",
+    0,
+    "Super"
+   ],
+   "target": [
+    "States",
+    0,
+    "Ref"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  }
+ ],
+ "comments": []
+}

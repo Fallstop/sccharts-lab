@@ -1,0 +1,28 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Tick 1 enters `Both` and its two regions."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Region `One` reaches its final state `DoneA`."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "Region `Two` has no final state, so `Both` can never terminate: the `join to End` never fires. That is what the two warnings are about."
+    },
+    {
+      "note": "Still in `Both`, for ever."
+    }
+  ],
+  "expect": "ok"
+}

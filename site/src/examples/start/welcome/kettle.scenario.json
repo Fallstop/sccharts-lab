@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "switchedOn": false,
+        "temperature": 20
+      },
+      "note": "Tick 1 enters `Off`."
+    },
+    {
+      "inputs": {
+        "switchedOn": true
+      },
+      "note": "Switched on: `Off` to `Heating`, `heating` is true."
+    },
+    {
+      "inputs": {
+        "temperature": 60
+      },
+      "note": "Neither of `Heating`'s triggers holds, so it keeps heating."
+    },
+    {
+      "inputs": {
+        "temperature": 100
+      },
+      "note": "`temperature >= 100` holds: `Heating` to `Boiled`, `heating` is false. `Boiled` is a final state, so the chart terminates."
+    },
+    {
+      "note": "The chart has terminated: nothing happens any more."
+    }
+  ],
+  "expect": "ok"
+}

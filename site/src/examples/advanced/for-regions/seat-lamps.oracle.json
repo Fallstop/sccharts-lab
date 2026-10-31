@@ -1,0 +1,173 @@
+{
+  "hash": "f3caec153b6077054ab922d7db218a094bd2b46d",
+  "chart": "src/examples/advanced/for-regions/seat-lamps.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "buckled": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "fastened": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "buckled": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "values": {
+        "buckled": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "fastened": 0,
+        "lamp": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "buckled": [
+          true,
+          false,
+          true,
+          false
+        ]
+      },
+      "values": {
+        "buckled": [
+          true,
+          false,
+          true,
+          false
+        ],
+        "fastened": 2,
+        "lamp": [
+          false,
+          true,
+          false,
+          true
+        ]
+      },
+      "taken": [
+        2
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "buckled": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "values": {
+        "buckled": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "fastened": 2,
+        "lamp": [
+          false,
+          true,
+          false,
+          true
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "buckled": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "values": {
+        "buckled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "fastened": 4,
+        "lamp": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "taken": [
+        2
+      ],
+      "terminated": true
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "buckled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "fastened": 4,
+        "lamp": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

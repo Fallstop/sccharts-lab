@@ -1,0 +1,21 @@
+// A leading abort region next to an outgoing weak abort is accepted (only a trailing one clashes with the region
+// KIELER adds for the abort). When Watch finishes, M terminates and takes its only transition without checking B:
+// the Abort transformation made it the termination.
+scchart P103LeadingWeakAbort {
+  input bool A, B
+  output int work = 0, out = 0
+  initial state M {
+    abort region Watch {
+      initial state W
+      if A go to F
+      final state F
+    }
+    region Main {
+      initial state I
+      if true do work += 1 go to I
+    }
+  }
+  if B do out += 1 go to X
+  state X
+  go to M
+}

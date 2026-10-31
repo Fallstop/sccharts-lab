@@ -1,0 +1,57 @@
+{
+  "hash": "992392e8654a61d09b8772eb9587483897134e04",
+  "chart": "tests/engine/kieler/structure/probe-dz60.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "O": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "O": 8
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "O": 15
+      },
+      "terminated": false
+    }
+  ]
+}

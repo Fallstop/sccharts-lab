@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "lever": false, "boiling": false }, "note": "Labels only change how the diagram looks. Tick 1 enters `Idle`." },
+    { "inputs": { "lever": true }, "note": "\"lever down\": `heater` = true." },
+    { "inputs": { "boiling": true }, "note": "\"water boils\" leaves `Heating`; its exit action switches the `heater` off." },
+    { "inputs": { "boiling": false, "lever": false }, "note": "Back in `Idle`." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,13 @@
+scchart Kettle "Kettle controller" {
+  input bool lever, boiling
+  output bool heater = false
+
+  initial state Idle "Waiting"
+    if lever do heater = true go to Heating label "lever down"
+
+  state Heating {
+    exit do heater = false label "heater off"
+  }
+  if boiling go to Idle label "water boils"
+  if !lever go to Idle label "lever up"
+}

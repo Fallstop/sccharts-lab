@@ -1,0 +1,12 @@
+scchart P201 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0
+  do O = 1; O += 1; O -= 1; O *= 2; O /= 2; O %= 3; O &= 1; O |= 1; O ^= 1; O <<= 1; O >>= 1; O >>>= 1; O min= 1; O max= 2; O++; O-- go to S1
+  state S1
+
+}

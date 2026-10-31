@@ -1,0 +1,18 @@
+scchart WeakExit {
+  input bool finish, cancel
+  output int exits = 0
+
+  initial state Task {
+    weak exit do exits++
+
+    initial state Working
+      if finish go to Finished
+
+    final state Finished
+  }
+  if cancel go to Idle
+  join to Idle
+
+  state Idle
+    go to Task
+}

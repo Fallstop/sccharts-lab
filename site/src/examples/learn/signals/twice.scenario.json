@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1 enters `Run`. Nothing is emitted."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "Both signals are emitted twice in one transition. `total` has `combine +`, so its emissions add up: 1 + 2 = 3. `latest` has no combine function, and within one transition the last emission wins: 2."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Both absent; both keep their values, 3 and 2."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`total` starts from 0 again in every tick, so it is 3 again, not 6."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,88 @@
+{
+  "hash": "fef518a7aca73a2ef4ccfe2f7318c0b06aa8ba88",
+  "chart": "src/examples/learn/variables/scale.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "compound": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "plain": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 10
+      },
+      "values": {
+        "n": 10,
+        "compound": 0,
+        "plain": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "n": 10,
+        "compound": 10,
+        "plain": 15
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "compound": 3,
+        "plain": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": -3
+      },
+      "values": {
+        "n": -3,
+        "compound": -3,
+        "plain": -4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

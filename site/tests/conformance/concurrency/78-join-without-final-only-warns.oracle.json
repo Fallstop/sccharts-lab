@@ -1,0 +1,110 @@
+{
+  "hash": "f2e3666b098698a0e7e05e415b46f81028c159ec",
+  "chart": "tests/conformance/concurrency/78-join-without-final-only-warns.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 9,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "full": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "done": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "full": false
+      },
+      "values": {
+        "full": false,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true,
+        "full": false
+      },
+      "values": {
+        "full": false,
+        "start": true,
+        "done": false
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false,
+        "full": true
+      },
+      "values": {
+        "full": true,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "start": false,
+        "full": false
+      },
+      "values": {
+        "full": false,
+        "start": false,
+        "done": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

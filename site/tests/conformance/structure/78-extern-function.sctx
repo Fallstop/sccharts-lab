@@ -1,0 +1,13 @@
+// extern "name" f declares a host function; f(args) calls it. #hostcode lines are pasted at the top of the
+// generated C (header and C file), so they are the place for #include. #hostcode-c goes into the C file only:
+// use it for function definitions. extern abs(a) calls a host function without a declaration.
+#hostcode "#include <stdlib.h>"
+#hostcode-c "static int twice(int v) { return 2 * v; }"
+scchart St78Extern {
+  input int a
+  output int x = 0, y = 0, z = 0
+  extern "abs" absf
+  extern @C "twice", @Java "twice" tw
+  initial state S
+  do x = absf(a); y = tw(a); z = extern abs(a - 1) go to S
+}

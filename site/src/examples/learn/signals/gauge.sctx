@@ -1,0 +1,16 @@
+scchart Gauge {
+  input int reading
+  output signal alarm
+  signal high
+
+  initial state Idle
+    go to Measure
+
+  state Measure
+    immediate if reading > 100 do high go to Report
+    immediate go to Report
+
+  state Report
+    immediate if high do alarm go to Idle
+    immediate go to Idle
+}

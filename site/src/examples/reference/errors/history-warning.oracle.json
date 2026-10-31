@@ -1,0 +1,104 @@
+{
+  "hash": "b19cde085f8e2a978bfe7a128b00cd36fccf1fbb",
+  "chart": "src/examples/reference/errors/history-warning.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HSteps is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "at": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "next": false,
+        "leave": false
+      },
+      "values": {
+        "leave": false,
+        "next": false,
+        "at": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "leave": false,
+        "next": true,
+        "at": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "next": false,
+        "leave": true
+      },
+      "values": {
+        "leave": true,
+        "next": false,
+        "at": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "leave": true,
+        "next": false,
+        "at": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

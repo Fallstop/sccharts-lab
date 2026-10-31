@@ -1,0 +1,106 @@
+{
+  "hash": "da9ec1466f189a9894f5e330b3ac9248618adca7",
+  "chart": "tests/conformance/concurrency/05-region-declaration.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through c, seen."
+  ],
+  "interface": {
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "seen": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seen": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seen": 6
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seen": 6
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "seen": 7
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "r": false
+      },
+      "values": {
+        "r": false,
+        "seen": 6
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

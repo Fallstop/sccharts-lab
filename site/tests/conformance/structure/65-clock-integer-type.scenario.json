@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "The interface lists deltaT and sleepT as int. **sleepT = 300**."
+    },
+    {
+      "inputs": {
+        "deltaT": 150
+      },
+      "note": "The int clock advances by the int deltaT: **t = 150, sleepT = 150**."
+    },
+    {
+      "inputs": {
+        "deltaT": 150
+      },
+      "note": "**t = 300** reaches the bound: **done = true**, the chart terminates."
+    }
+  ],
+  "expect": "ok"
+}

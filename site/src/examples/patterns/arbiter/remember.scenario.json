@@ -1,0 +1,49 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "reqA": false,
+        "reqB": false,
+        "done": false
+      },
+      "note": "Tick 1 enters `Free`."
+    },
+    {
+      "inputs": {
+        "reqA": true
+      },
+      "note": "A's job starts at once, and `last` becomes 1."
+    },
+    {
+      "inputs": {
+        "reqA": false
+      },
+      "note": "A's job prints."
+    },
+    {
+      "inputs": {
+        "done": true
+      },
+      "note": "Finished, and nobody is waiting: `user` is 0, but `last` is still 1."
+    },
+    {
+      "inputs": {
+        "done": false,
+        "reqA": true,
+        "reqB": true
+      },
+      "note": "Both send a job. `last` is 1, so A's trigger is false and B wins the tie."
+    },
+    {
+      "inputs": {},
+      "note": "Both keep sending jobs."
+    },
+    {
+      "inputs": {
+        "done": true
+      },
+      "note": "Finished, both waiting: `last` is 2 now, so it is A's turn."
+    }
+  ],
+  "expect": "ok"
+}

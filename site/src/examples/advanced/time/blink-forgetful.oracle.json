@@ -1,0 +1,178 @@
+{
+  "hash": "cedce88d03483fec49f417489b19006d7a260113",
+  "chart": "src/examples/advanced/time/blink-forgetful.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on t."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "led": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "led": false,
+        "sleepT": 500,
+        "t": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "led": false,
+        "sleepT": 250,
+        "t": 250
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "led": true,
+        "sleepT": 1000,
+        "t": 500
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "led": false,
+        "sleepT": 1000,
+        "t": 750
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "led": true,
+        "sleepT": 1000,
+        "t": 1000
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "led": false,
+        "sleepT": 1000,
+        "t": 1250
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "led": true,
+        "sleepT": 1000,
+        "t": 1500
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "deltaT": 250
+      },
+      "values": {
+        "deltaT": 250,
+        "led": false,
+        "sleepT": 1000,
+        "t": 1750
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+// Two code blocks on transitions of one state with a label of the same name: the second block's goto finds the first block's label, and KIELER's compiler crashes.
+scchart LabelSameSuperstate {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S {
+    region {
+      initial state S1
+        if a do { if (b) { goto skip } x += 1; skip: y += 1 } go to S2
+        immediate if b do { if (a) { goto skip } z += 1; skip: x += 1 } go to S2
+      state S2
+    }
+  }
+}

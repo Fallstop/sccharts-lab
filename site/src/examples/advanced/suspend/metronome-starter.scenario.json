@@ -1,0 +1,36 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "pause": false,
+        "stop": false
+      },
+      "note": "Tick 1 enters `Running` and `Low`."
+    },
+    {
+      "note": "`Low` to `High`: `click` is true."
+    },
+    {
+      "note": "`High` to `Low`: `click` is false."
+    },
+    {
+      "inputs": {
+        "pause": true
+      },
+      "note": "`pause` does nothing yet: the starter has no suspend."
+    },
+    {
+      "note": "Still ticking."
+    },
+    {
+      "inputs": {
+        "stop": true
+      },
+      "note": "`stop` leaves `Running`. It is a weak abort, so the inside takes one last step first (`click` = true)."
+    },
+    {
+      "note": "In `Stopped`."
+    }
+  ],
+  "expect": "ok"
+}

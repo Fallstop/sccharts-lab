@@ -1,0 +1,96 @@
+{
+  "hash": "2bd74f29adf2f4c9f870b0c4d69fb4b9601fd18b",
+  "chart": "src/examples/learn/preemption/delayed-abort.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "cancel": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "busy": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "start": false,
+        "busy": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true,
+        "cancel": true
+      },
+      "values": {
+        "cancel": true,
+        "start": true,
+        "busy": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "cancel": true,
+        "start": false,
+        "busy": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "cancel": false
+      },
+      "values": {
+        "cancel": false,
+        "start": false,
+        "busy": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

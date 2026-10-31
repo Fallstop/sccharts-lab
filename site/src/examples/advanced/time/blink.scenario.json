@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    { "inputs": { "deltaT": 250 }, "note": "Ticks every 250 ms. Tick 1: `t` = 0, the LED is off." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 250." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 500: on, and the reset makes `t` = 0." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 250." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 500: off again, after 500 ms on. `t` = 0." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 250." },
+    { "inputs": { "deltaT": 250 }, "note": "On." },
+    { "inputs": { "deltaT": 250 }, "note": "`t` = 250." }
+  ],
+  "expect": "ok"
+}

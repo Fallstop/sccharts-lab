@@ -1,0 +1,385 @@
+{
+ "sourceHash": "879968adee70cb41",
+ "states": [
+  {
+   "path": [
+    "P4"
+   ],
+   "rows": [
+    [
+     "P4"
+    ],
+    [
+     "input bool ",
+     "g"
+    ],
+    [
+     "output int ",
+     "count = 0"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    397.9,
+    319.1
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Idle"
+   ],
+   "rows": [
+    [
+     "Idle"
+    ]
+   ],
+   "box": [
+    10,
+    106.3,
+    45.8,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy"
+   ],
+   "rows": [
+    [
+     "Busy"
+    ]
+   ],
+   "box": [
+    108.3,
+    10,
+    266,
+    227.1
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R1",
+    "W1"
+   ],
+   "rows": [
+    [
+     "W1"
+    ]
+   ],
+   "box": [
+    12.3,
+    20,
+    38.3,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R1",
+    "D1"
+   ],
+   "rows": [
+    [
+     "D1"
+    ]
+   ],
+   "box": [
+    10,
+    118.1,
+    42.9,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "W2"
+   ],
+   "rows": [
+    [
+     "W2"
+    ]
+   ],
+   "box": [
+    10,
+    20,
+    164.1,
+    99.6
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "W2",
+    0,
+    "X"
+   ],
+   "rows": [
+    [
+     "X"
+    ]
+   ],
+   "box": [
+    10,
+    13,
+    34,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "W2",
+    0,
+    "Y"
+   ],
+   "rows": [
+    [
+     "Y"
+    ]
+   ],
+   "box": [
+    96.5,
+    10,
+    40,
+    40.6
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "D2"
+   ],
+   "rows": [
+    [
+     "D2"
+    ]
+   ],
+   "box": [
+    68.6,
+    139.6,
+    46.9,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P4",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    384.3,
+    247.1
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R1"
+   ],
+   "label": [
+    "R1"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    7,
+    30.6,
+    62.9,
+    190.1
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R2"
+   ],
+   "label": [
+    "R2"
+   ],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    74.9,
+    30.6,
+    184.1,
+    190.1
+   ]
+  },
+  {
+   "path": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "W2",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    9,
+    30.6,
+    146.5,
+    60.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP4$$N0$NBusy$NR1$NW1$ED10",
+   "source": [
+    "P4",
+    0,
+    "Busy",
+    "R1",
+    "W1"
+   ],
+   "target": [
+    "P4",
+    0,
+    "Busy",
+    "R1",
+    "D1"
+   ],
+   "text": "g",
+   "lines": [
+    "g"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP4$$N0$NBusy$NR2$NW2$$N0$NX$EY0",
+   "source": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "W2",
+    0,
+    "X"
+   ],
+   "target": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "W2",
+    0,
+    "Y"
+   ],
+   "text": "g",
+   "lines": [
+    "g"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP4$$N0$NBusy$NR2$NW2$ED20",
+   "source": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "W2"
+   ],
+   "target": [
+    "P4",
+    0,
+    "Busy",
+    "R2",
+    "D2"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  },
+  {
+   "id": "$root$NP4$$N0$NIdle$EBusy0",
+   "source": [
+    "P4",
+    0,
+    "Idle"
+   ],
+   "target": [
+    "P4",
+    0,
+    "Busy"
+   ],
+   "text": "g",
+   "lines": [
+    "g"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP4$$N0$NBusy$EIdle0",
+   "source": [
+    "P4",
+    0,
+    "Busy"
+   ],
+   "target": [
+    "P4",
+    0,
+    "Idle"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ]
+  }
+ ],
+ "comments": []
+}

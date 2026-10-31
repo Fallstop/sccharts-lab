@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": {}, "note": "`0 fby wrong + 1` means `(0 fby wrong) + 1`: the first tick gives 0 + 1, so `wrong` = 1. `0 fby (right + 1)` gives its first operand: `right` = 0." },
+    { "inputs": {}, "note": "`wrong` = last tick's `wrong` + 1 = 2. `right` = last tick's `right + 1` = 1." },
+    { "inputs": {}, "note": "`wrong` = 3, `right` = 2. Both count, but `wrong` is always one ahead, because its `+ 1` sits outside the `fby`." },
+    { "inputs": {}, "note": "`wrong` = 4, `right` = 3." }
+  ],
+  "expect": "ok"
+}

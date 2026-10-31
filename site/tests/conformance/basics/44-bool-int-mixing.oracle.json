@@ -1,0 +1,149 @@
+{
+  "hash": "6ed0ef43172273ec1b9b4c34a020b72587180530",
+  "chart": "tests/conformance/basics/44-bool-int-mixing.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "overflow in conversion from ‘int’ to ‘char’ changes value from ‘256’ to ‘0’ [-Woverflow]"
+  ],
+  "interface": {
+    "B": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "big": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "fromBool": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "half": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "logical": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "negation": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "nonZero": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "plus": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "twice": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "wrapped": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 5,
+        "B": true
+      },
+      "values": {
+        "B": true,
+        "I": 5,
+        "big": false,
+        "fromBool": 0,
+        "half": false,
+        "logical": 0,
+        "negation": false,
+        "nonZero": false,
+        "plus": 0,
+        "twice": 0,
+        "wrapped": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "B": true,
+        "I": 5,
+        "big": true,
+        "fromBool": 5,
+        "half": false,
+        "logical": 1,
+        "negation": false,
+        "nonZero": true,
+        "plus": 2,
+        "twice": 10,
+        "wrapped": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 0,
+        "B": false
+      },
+      "values": {
+        "B": false,
+        "I": 0,
+        "big": true,
+        "fromBool": 5,
+        "half": false,
+        "logical": 0,
+        "negation": true,
+        "nonZero": false,
+        "plus": 1,
+        "twice": 10,
+        "wrapped": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

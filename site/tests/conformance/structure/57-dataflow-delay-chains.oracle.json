@@ -1,0 +1,78 @@
+{
+  "hash": "d4b47a90866d1f7624d4e12c75b7ece72df2b090",
+  "chart": "tests/conformance/structure/57-dataflow-delay-chains.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "arrows": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "fbys": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 10
+      },
+      "values": {
+        "I": 10,
+        "arrows": 1,
+        "fbys": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 20
+      },
+      "values": {
+        "I": 20,
+        "arrows": 20,
+        "fbys": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 30
+      },
+      "values": {
+        "I": 30,
+        "arrows": 30,
+        "fbys": 10
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 40
+      },
+      "values": {
+        "I": 40,
+        "arrows": 40,
+        "fbys": 20
+      },
+      "terminated": false
+    }
+  ]
+}

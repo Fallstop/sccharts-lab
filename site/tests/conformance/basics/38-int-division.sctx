@@ -1,0 +1,8 @@
+scchart IntDivision {
+  input int A, B
+  output int q, r
+  output float f
+
+  initial state S
+  do q = A / B; r = A % B; f = A / B go to S
+}

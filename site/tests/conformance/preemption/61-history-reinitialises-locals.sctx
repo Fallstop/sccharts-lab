@@ -1,0 +1,16 @@
+scchart HistoryLocals {
+  input bool P, R
+  output int seen = 0, entries = 0
+
+  initial state M {
+    int n = 0
+    entry do entries += 1
+
+    initial state I
+    if true do n += 1; seen = n go to I
+  }
+  if P go to Paused
+
+  state Paused
+  if R go to M history
+}

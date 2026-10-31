@@ -1,0 +1,11 @@
+// Two triggers, two guard variables.
+scchart CondNoElseTwo {
+  input bool c, a, d
+  output int n = 0, m = 0
+  region R1:
+    initial state S
+      if (c) ? a do n++ go to S
+  region R2:
+    initial state T
+      if (d) ? a do m++ go to T
+}

@@ -1,0 +1,13 @@
+scchart CaretMethodLocal {
+  input bool A
+  output int o = 0
+  method int count(int n) {
+    int ^r = 0
+    while (^r < n) {
+      ^r++
+    }
+    return ^r
+  }
+  initial state S
+    if A do o = count(3) go to S
+}

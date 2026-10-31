@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": {}, "note": "Rejected by the C compiler: KIELER's netlist compiler moves the tick-1 call of `randomize()` into `reset()` and writes it out as `null`." }
+  ],
+  "expect": "error",
+  "errorIncludes": "undeclared"
+}

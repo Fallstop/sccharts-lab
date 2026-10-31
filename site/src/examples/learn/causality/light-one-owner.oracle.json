@@ -1,0 +1,127 @@
+{
+  "hash": "9245789d71fb62d526329f168681a8ead7bb50e0",
+  "chart": "src/examples/learn/causality/light-one-owner.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "off": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "on": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "light": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "on": false,
+        "off": false
+      },
+      "values": {
+        "off": false,
+        "on": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "on": true
+      },
+      "values": {
+        "off": false,
+        "on": true,
+        "light": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "on": false
+      },
+      "values": {
+        "off": false,
+        "on": false,
+        "light": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "off": true
+      },
+      "values": {
+        "off": true,
+        "on": false,
+        "light": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "on": true
+      },
+      "values": {
+        "off": true,
+        "on": true,
+        "light": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "off": false
+      },
+      "values": {
+        "off": false,
+        "on": true,
+        "light": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

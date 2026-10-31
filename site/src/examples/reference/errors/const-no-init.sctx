@@ -1,0 +1,7 @@
+scchart ConstNoInit {
+  const int LIMIT
+  output int x
+
+  initial state Idle
+    do x = LIMIT go to Idle
+}

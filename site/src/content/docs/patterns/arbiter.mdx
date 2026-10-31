@@ -1,0 +1,227 @@
+---
+title: "Sharing a resource"
+description: "Two clients, one device: an arbiter that gives it to one at a time, with a fixed priority or in turns, and why the arbiter must be the only writer."
+sidebar:
+  order: 9
+---
+
+import { Chart, Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+
+Two computers share one printer. Either may send a job at any moment, and sometimes both do in the
+same tick, but the printer can only print one job at a time. Something has to decide who goes first,
+make sure the printer is never given to both, and pass it on when a job is finished. That something is
+an **arbiter**. The same problem turns up wherever a device is shared: two machines and one robot arm,
+two tasks and one serial port, two sensors and one radio.
+
+This page builds an arbiter for the printer. It starts with the chart that does not work, then gives
+the printer away with a fixed priority, then lets the computers take turns with `pre`. Every arbiter
+has to say what happens when both clients ask in the same tick, and that is the tick the questions on
+this page are about.
+
+## Two computers, one printer
+
+The obvious chart gives each computer a region of its own. A computer that wants to print writes its
+number into `user`, the variable that says whose job the printer is printing:
+
+<Chart example="patterns/arbiter/clash" caption="Each computer's region writes `user`. KIELER rejects the chart." />
+
+This is the write–write conflict from [Why the compiler says no](/learn/causality/#writewrite-conflicts):
+two concurrent regions assign different values to the same variable, `user = 1` and `user = 2`.
+Official KIELER reports `Can't schedule from …` (several times) and `The SCG is NOT asc-schedulable!`;
+SCCharts Lab adds the readable version:
+
+```text wrap
+Circular dependency involving user prevents scheduling this tick.
+```
+
+The compiler is right to refuse, and not only for its own reasons. Nothing in this chart stops both
+computers from printing at once: if both ask in the same tick, both regions move to `Printing`, and
+`user` can only name one of them.
+
+The cure is the one from [Latches](/patterns/latch/#one-writer-per-variable): give `user` one writer.
+That writer is the arbiter. The computers no longer take the printer; they ask for it, and the arbiter
+decides. (The other usual cure for a write–write conflict, updates such as `user += 1` in both regions,
+does not fit here. It suits a variable that adds up what several regions contribute, such as a count of
+jobs; `user` names one computer, and adding numbers cannot choose between them.)
+
+## A fixed-priority arbiter
+
+For now the computers are outside the chart. `reqA` is true while computer A has a job waiting, `reqB`
+the same for B, and the printer reports `done` when it has finished a job. The arbiter has one state
+for each answer to "who has the printer?", and `user` gives the same answer as a code: 0 for nobody, 1
+for A, 2 for B (an [enum](/advanced/data-types/#enums-names-instead-of-codes) could give the codes
+names):
+
+<Sim example="patterns/arbiter/fixed-priority" caption="Ticks 2 to 6: one job each, handed over in the tick the first one finishes. From tick 7 both computers keep sending jobs: watch who gets the printer in ticks 9, 11 and 13." />
+
+Three things make this chart an arbiter:
+
+- **One state, one user.** The arbiter is in exactly one of `Free`, `PrintingA` and `PrintingB`, so it
+  cannot give the printer to both computers. You don't have to check that; it follows from the shape
+  of the chart. And `user` has one writer, so KIELER accepts the chart.
+- **No idle ticks.** `Free`'s transitions are immediate. A job that arrives while the printer is free
+  starts in the same tick (tick 2). When a job finishes, `PrintingA` goes back to `Free` and `Free`
+  passes the printer on, all in the tick of `done` (tick 4).
+- **A rule for the tie.** When both computers have a job waiting (tick 7), both of `Free`'s transitions
+  are enabled, and the one written first wins. The diagram numbers them `1` and `2`: they are
+  [priorities](/learn/transitions/#several-transitions-out-of-one-state-priority). A has the higher one,
+  always, so this is a **fixed-priority** arbiter.
+
+Fixed priority is simple, and sometimes it is exactly what you want: an emergency stop should always
+beat a normal command. But look at ticks 9, 11 and 13. Every time A's job finishes, A has
+another one waiting, and A wins again. B has been waiting since tick 7, and will go on waiting for as
+long as A keeps sending jobs. A client that never gets its turn **starves**.
+
+## Taking turns: round robin
+
+A fair arbiter lets the computers take turns when both are waiting. This is a **round-robin** arbiter,
+and it needs to know who had the printer last. In the tick in which a job finishes, `pre(user)` says
+exactly that: it is the value of `user` at the end of the previous tick, while the job was still
+printing (see [The previous tick](/learn/pre/)). Only A's trigger changes:
+
+```sctx {2}
+initial state Free
+  immediate if reqA && (!reqB || pre(user) != 1) do user = 1 go to PrintingA
+  immediate if reqB do user = 2 go to PrintingB
+```
+
+A gets the printer if it is asking and either B is not asking, or A did not have the printer a moment
+ago. Otherwise B's transition gets its chance. Here are both arbiters with the same inputs:
+
+<Compare a="patterns/arbiter/fixed-priority" b="patterns/arbiter/round-robin" scenario="b" caption="Ticks 9, 11 and 13: `FixedPriority` gives the printer to A every time, `RoundRobin` gives it to each computer in turn." />
+
+**Fixed** and **Round robin** are `user` in `FixedPriority` and in `RoundRobin`:
+
+| Tick | `reqA` | `reqB` | `done` | Fixed | Round robin |
+| ---: | --- | --- | --- | --- | --- |
+| 7 | true | true | false | 1 | 1 |
+| 9 | true (held) | true (held) | true | 1 | 2 |
+| 11 | true (held) | true (held) | true | 1 | 1 |
+| 13 | true (held) | true (held) | true | 1 | 2 |
+
+`RoundRobin` never lets a computer starve: a computer that is waiting when the other's job finishes
+always goes next. The trigger has to read `pre(user)`, not `user`. In the tick of `done`, the
+transition back to `Free` has just set `user = 0`, so when `Free`'s triggers are checked, `user` no
+longer says who was printing.
+
+### One tick of memory
+
+`pre` looks back exactly one tick. What happens when a job finishes with nobody waiting, and a tick
+later both computers send a job at once? Predict, check, then open the explanation:
+
+<Predict
+  example="patterns/arbiter/round-robin-predict"
+  ask={[{ tick: 5, value: 'user' }, { tick: 7, value: 'user' }]}
+  caption="`RoundRobin`. A's job prints from tick 2 and finishes in tick 4, with nobody waiting. In tick 5 both computers send a job, and in tick 7 that job finishes while both are still waiting. Who prints after ticks 5 and 7?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+After tick 5 A prints (`user` is 1), after tick 7 B (`user` is 2). In tick 4 A's job finished with
+nobody waiting, so `user` went back to 0 and was still 0 at the end of the tick. In tick 5 `pre(user)`
+is that 0, not A's 1. The arbiter has forgotten that A printed last, A's trigger holds, and A wins the
+tie although it was B's turn. In tick 7 `pre(user)` is 1, and B gets the printer.
+
+</details>
+
+No computer starves because of this, but a tie after an idle tick always goes to A. To remember the last
+user for longer, keep it in a variable of its own; that is the second exercise below.
+
+## Clients inside the chart
+
+The computers need not be outside the chart. In `PrintRoom` each computer is a region that remembers
+its job, as the call button in [Latches](/patterns/latch/) remembers a call, and asks for the printer
+with a local signal until its job starts. The arbiter is the third region, and the only one that writes
+`user`:
+
+<Sim
+  example="patterns/arbiter/print-room"
+  show={['jobA', 'jobB', 'done', 'user', 'reqA', 'startA', 'reqB', 'startB']}
+  caption="Tick 2: the request, the decision and the start of the job happen in one tick, across three regions."
+/>
+
+The regions talk in both directions within one tick. `ComputerA` emits `reqA` in `Waiting`'s immediate
+during action; `Arbiter` tests `reqA`, writes `user` and emits `startA`; `ComputerA`'s immediate
+transition tests `startA` and goes back to `Idle`. KIELER finds an order for that, every emission of a
+signal before every test of it, as in [Handshakes](/patterns/handshake/#a-handshake-within-one-tick),
+and accepts the chart.
+
+Both uses of `immediate` matter. Without the one on the during action, a computer starts asking only in the
+tick after its job arrives, and every job starts a tick late. Without the one on the transition out of
+`Waiting`, a computer misses `startA`, which is present only in the tick it is emitted: it keeps
+asking, and when the printer is next free its job is printed a second time. (Each computer holds one
+job at a time here; a real print queue would count them.)
+
+## Try it
+
+<TryIt example="patterns/arbiter/three-starter" solution="patterns/arbiter/three" title="A third computer">
+The starter declares a third computer, C (`reqC`, and `user` 3 while C prints), but never gives it the
+printer. Give C the lowest priority. To test it: C's job alone in tick 2 starts at once; with all
+three waiting from tick 3, the printer goes to A in tick 4, to B in tick 6 (A has stopped sending), and
+to C in tick 8.
+</TryIt>
+
+<TryIt example="patterns/arbiter/remember-starter" solution="patterns/arbiter/remember" title="Remember who went last">
+`RoundRobin` forgets who printed last once the printer has been free for a tick. Give the arbiter a
+local variable `last` that keeps the last user until the next job starts, and use it instead of
+`pre(user)`, so that a tie after an idle tick goes to the computer that did not print last. To test it:
+A's job prints from tick 2 and finishes in tick 4 with nobody waiting; both computers send a job in
+tick 5 (B should win) and keep sending; when that job finishes in tick 7, A should get the printer.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/arbiter/fixed-priority-predict"
+  ask={[{ tick: 1, value: 'user' }, { tick: 3, value: 'user' }, { tick: 5, value: 'user' }]}
+  caption="`FixedPriority`. Both computers have a job in tick 1. In tick 3 A's job finishes, and A sends another one in the same tick; in tick 5 that one finishes, with only B waiting. Who prints after ticks 1, 3 and 5?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+A prints after ticks 1 and 3 (`user` is 1), B after tick 5 (`user` is 2). `Free`'s transitions are
+immediate, so they are checked in tick 1 already, and A's comes first. In tick 3 both requests are
+there when `Free` decides: that B has been waiting since tick 1 makes no difference to a fixed
+priority. In tick 5 only B is waiting, and B prints at last.
+
+</details>
+
+<Quiz
+  question="How do you give computer B the higher priority in `FixedPriority`?"
+  options={["Make B's transition delayed instead of immediate", "Swap the order of `Free`'s two transitions", "Add `&& !reqA` to the end of B's trigger"]}
+  answer={1}
+>
+The transition written first has priority 1, so swapping the two makes B win every tie. A delayed B
+transition still comes second, and it is not checked in the tick `Free` is entered: B would still lose
+every tie, and wait a tick longer each time the printer is handed over to it. `&& !reqA` changes
+nothing: B's trigger is only checked when A's transition has not fired, and then `reqA` is false
+anyway.
+</Quiz>
+
+<Quiz
+  question="What happens if `RoundRobin`'s first trigger reads `user != 1` instead of `pre(user) != 1`?"
+  options={['It behaves like `FixedPriority`: A wins every tie', 'Nothing changes: in `Free`, `user` and `pre(user)` are the same', 'KIELER rejects the chart: the transition reads and writes `user`']}
+  answer={0}
+>
+Whenever `Free`'s triggers are checked, `user` is 0: it starts at 0, and every transition back to
+`Free` sets it to 0. So `user != 1` always holds, and A's trigger comes down to `reqA`, as in
+`FixedPriority`. KIELER accepts the chart: a region may read a variable and then write it, in its own
+order.
+</Quiz>
+
+<KeyIdeas>
+- An arbiter is the one writer of the variable that says who has the device; the clients send it
+  requests. Concurrent clients that write that variable themselves are rejected.
+- One state per user makes "never two at once" a property of the chart's shape.
+- Decide the tie. The first of a state's transitions wins, which gives a fixed priority, and a fixed
+  priority can starve the client with the lower one.
+- Round robin: when both ask, the one that did not have the device last goes first. `pre(user)` says
+  who had it a tick ago; a variable remembers for longer.
+- Immediate transitions out of `Free` start a job in the tick it arrives and hand the device over in the
+  tick it is released.
+</KeyIdeas>
+
+Next, [Level crossing](/patterns/level-crossing/): a complete controller that puts most of these
+patterns together.

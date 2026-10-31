@@ -1,0 +1,34 @@
+scchart P1 {
+  input signal A, B
+  input int x
+  output signal int V combine +
+  output float f = 1.5
+  output int arr[3] = {1, 2, 3}
+  const int K = 10
+  int c = 0
+
+  initial state Init "Waiting here" {
+    entry do c = 0
+    entry if A do c++
+  }
+  if 3 A do V(x + 1); c += 2 go to Mid
+  if pre(B) && !(A || B) do V(c * (x - 1)) go to C
+  immediate if A go to Conn
+  if c > 1 do f = f * 2.0 abort to Mid deferred
+  go to Init history
+
+  connector state Conn
+  immediate if B do c = -c go to Mid
+  immediate go to C shallow history
+
+  state Mid {
+    during if A do c--
+    exit do c = 0
+    suspend if B
+    initial state M1
+    if A go to M1
+  }
+  if c == 2 && x != 3 || x >= 4 && !A go to C
+
+  final state C
+}

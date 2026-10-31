@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": 6,
+        "B": false
+      },
+      "note": "`A > 2 ? A : 0` groups as `A > (2 ? A : 0)`: the condition `2` is not zero, so the inner part is `A`, and `A > A` is false, 0. With parentheses, `right` is 6. `B ? 10 : 20 + 1` is `(B ? 10 : 20) + 1` = 21. `A & 3 == 2` is `A & (3 == 2)` = `6 & 0` = 0, while `(A & 3) == 2` is 1."
+    },
+    {
+      "inputs": {
+        "A": 1,
+        "B": true
+      },
+      "note": "`A` is 1, so `right` is 0; `wrong` is 0 as always. `B` is true: `plus` = 10 + 1 = 11."
+    },
+    {
+      "inputs": {
+        "A": 7
+      },
+      "note": "`7 & 3` is 3, not 2, so `maskedRight` is 0. `wrong` is still 0 although `A > 2`."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,10 @@
+scchart OneOwner {
+  input bool on, off
+  output bool light
+
+  initial state Dark
+    if on && !off do light = true go to Lit
+
+  state Lit
+    if off do light = false go to Dark
+}

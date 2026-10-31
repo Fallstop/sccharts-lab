@@ -1,0 +1,11 @@
+scchart ConnectorNotImmediate {
+  input bool A, B
+  output int choice
+
+  initial state Idle
+    if A go to Pick
+
+  connector state Pick
+    if B do choice = 1 go to Idle
+    do choice = 2 go to Idle
+}

@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "a": false, "b": false }, "note": "Tick 1 enters `First`, a copy of `Await` waiting for `a`." },
+    { "inputs": { "b": true }, "note": "`b` is the wrong button now: `First` waits for `a`." },
+    { "inputs": { "b": false, "a": true }, "note": "`a`: the copy reaches its final state `Got`, so `First` terminates and `join to Second` fires in the same tick." },
+    { "inputs": { "a": false }, "note": "`Second`, a new copy of `Await`, waits for `b`." },
+    { "inputs": { "b": true }, "note": "`b`: `Second` terminates and the lock opens." },
+    { "inputs": { "b": false }, "note": "Open." }
+  ],
+  "expect": "ok"
+}

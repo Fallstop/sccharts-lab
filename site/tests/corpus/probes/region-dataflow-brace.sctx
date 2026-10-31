@@ -1,0 +1,14 @@
+scchart P107 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  dataflow D {
+    int t
+    t = I * 2
+    O = t + 1;
+    X = A seq
+  }
+}

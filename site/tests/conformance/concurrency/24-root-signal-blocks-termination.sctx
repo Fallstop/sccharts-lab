@@ -1,0 +1,16 @@
+scchart RootSignalNoTermination {
+  input bool a
+  output signal S
+
+  region R1 {
+    initial state W
+    if a do S go to F
+    final state F
+  }
+
+  region R2 {
+    initial state W
+    go to F
+    final state F
+  }
+}

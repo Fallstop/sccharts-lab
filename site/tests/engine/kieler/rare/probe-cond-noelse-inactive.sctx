@@ -1,0 +1,9 @@
+// The guard is computed in every tick, also while B is not active: the result of tick 2 fires B's transition in tick 4.
+scchart CondNoElseInactive {
+  input bool c, a, start
+  output int n = 0
+  initial state A
+    if start go to B
+  state B
+    if (c) ? a do n++ go to A
+}

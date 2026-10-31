@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Tick 1 enters everything." },
+    { "inputs": { "A": true, "R": true }, "note": "`A` and `R` together: the strong abort wins, `ABO` is re-entered, and the new `WaitA` cannot react to `A` in its entry tick. `A` is lost." },
+    { "inputs": { "A": false, "R": false, "B": true }, "note": "`B` alone: `HandleB` finishes, but `HandleA` is still waiting, so `O` is absent." },
+    { "inputs": { "B": false, "A": true }, "note": "`A`: both regions are final now, so `O` is present." },
+    { "inputs": { "A": true, "B": true, "R": true }, "note": "All three: `R` wins, `O` is absent." },
+    { "inputs": { "A": false, "B": false, "R": false }, "note": "Quiet." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,9 @@
+scchart Floats {
+  input float f
+  output float tenth = 0.1
+  output bool equal = false
+  output int whole = 0
+
+  initial state Calc
+    do equal = f == tenth; whole = f * 10 go to Calc
+}

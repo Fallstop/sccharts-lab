@@ -1,0 +1,8 @@
+scchart SelfLoopReenters {
+  output int x = 0, entries = 0
+
+  initial state A {
+    entry do entries += 1
+  }
+  do x += 1 go to A
+}

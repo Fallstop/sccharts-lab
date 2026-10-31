@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: every transition ends with `go to`, `abort to` or `join to` and a target state."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "missing 'to' at 'Done'"
+}

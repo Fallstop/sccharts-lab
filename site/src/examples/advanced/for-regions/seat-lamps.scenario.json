@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "buckled": [false, false, false, false] }, "note": "`for i : buckled` makes one copy per element of `buckled`: `SEATS` is 4, so `i` = 0 to 3. All four lamps are on." },
+    { "inputs": { "buckled": [true, false, true, false] }, "note": "Seats 0 and 2: their copies switch off their own lamp and both add 1 to `fastened`. Concurrent `++` on one variable is fine; the copies write different elements of `lamp`, so they do not conflict." },
+    { "inputs": { "buckled": [false, false, false, false] }, "note": "Nothing new." },
+    { "inputs": { "buckled": [true, true, true, true] }, "note": "Seats 1 and 3 finish (`fastened` = 4). Every region of the chart is now final, so the chart itself terminates." },
+    { "note": "A terminated chart does nothing more." }
+  ],
+  "expect": "ok"
+}

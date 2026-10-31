@@ -1,0 +1,16 @@
+scchart DeferredSimple {
+  input bool G
+  output int entered = 0, chained = 0, iticks = 0, ticks = 0
+
+  initial state A
+  if G go to B deferred
+
+  state B {
+    entry do entered = 1
+    immediate during do iticks += 1
+    during do ticks += 1
+  }
+  immediate do chained = 1 go to C
+
+  state C
+}

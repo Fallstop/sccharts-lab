@@ -1,0 +1,7 @@
+// `const` before `output` is the order of official KIELER 0.3.0; current KIELER rejects it.
+scchart ConstBeforeOutput {
+  const output int M = 4
+  output int o
+  initial state A
+  do o = M go to A
+}

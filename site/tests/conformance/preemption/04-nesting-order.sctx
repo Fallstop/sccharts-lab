@@ -1,0 +1,18 @@
+scchart NestingOrder {
+  input bool leave
+  output int step = 0
+  output int outerEntryAt = 0, innerEntryAt = 0, innerExitAt = 0, outerExitAt = 0, effectAt = 0
+
+  initial state Outer {
+    entry do step += 1; outerEntryAt = step
+    exit do step += 1; outerExitAt = step
+
+    initial state Inner {
+      entry do step += 1; innerEntryAt = step
+      exit do step += 1; innerExitAt = step
+    }
+  }
+  if leave do step += 1; effectAt = step go to Done
+
+  state Done
+}

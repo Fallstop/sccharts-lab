@@ -1,0 +1,24 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "W": false
+      },
+      "note": "Tick 1 enters M. Compare chart 32: here M also has an immediate abort, the mixed case in which KIELER passes the delayed strong abort's trigger through a flag."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "The strong abort fires and the exit action sets y = true, but the flag remembers that the first transition was chosen: M goes to B (target = 1), unlike in chart 32."
+    },
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "In B."
+    }
+  ],
+  "expect": "ok"
+}

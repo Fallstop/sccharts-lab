@@ -1,0 +1,16 @@
+{
+  "ticks": [
+    { "inputs": { "A": true, "B": true, "R": false }, "note": "`A` and `B` in tick 1. Entering `ABO` sets `gotA` and `gotB` to false; then the immediate transitions see `A` and `B` and set both flags, and `Emit`, which reads the flags after they are written, emits `O` in this same tick." },
+    { "inputs": { "A": false, "B": false }, "note": "All three regions rest. No region has a final state and nothing terminates, so there is no join to lose." },
+    { "inputs": { "R": true }, "note": "`R` re-enters `ABO`: the flags start again at false." },
+    { "inputs": { "R": false, "A": true }, "note": "`A`: `gotA` is set." },
+    { "inputs": { "A": false, "B": true }, "note": "`B`: `gotB` is set, and `Emit` sees both flags: `O`." },
+    { "inputs": { "B": false }, "note": "Resting." },
+    { "inputs": { "R": true, "A": true, "B": true }, "note": "`R`, `A` and `B` together: `ABO` is re-entered and, in its entry tick, all three immediate transitions fire. `O` is present, as the immediate ABRO intends." },
+    { "inputs": { "R": false, "A": false, "B": false }, "note": "Resting." },
+    { "inputs": { "R": true }, "note": "`R` still works: the chart did not get stuck." },
+    { "inputs": { "R": false, "A": true, "B": true }, "note": "`A` and `B`: `O`." },
+    { "inputs": { "A": false, "B": false }, "note": "Resting." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,12 @@
+scchart ParamD {
+  output int r = 0
+  method int f(int d) {
+    int s = 0
+    for (int i = 0; i < 2; i++) {
+      s += d
+    }
+    return s
+  }
+  initial state S
+    do r = f(3) go to S
+}

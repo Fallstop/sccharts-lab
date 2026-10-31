@@ -1,0 +1,8 @@
+// x[i] = (c) ? 9 keeps x[i].
+scchart CondNoElseArray {
+  input bool c
+  input int i
+  output int x[3] = {1, 2, 3}
+  initial state S
+    if true do x[i] = (c) ? 9 go to S
+}

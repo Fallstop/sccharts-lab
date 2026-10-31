@@ -1,0 +1,18 @@
+scchart DuringOnTermination {
+  input bool A
+  output int ticks = 0, done = 0
+
+  initial state M {
+    during do ticks += 1
+
+    initial state I
+    if A go to F
+
+    final state F
+  }
+  join to Done
+
+  state Done {
+    entry do done = 1
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1 enters `Off`; `level` is 0."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `Off` to `Dim`, `level` 30."
+    },
+    {
+      "note": "`button` is still true, and `Dim` reacts to it: `Bright`, `level` 100."
+    },
+    {
+      "note": "Still true: `Bright` reacts too, back to `Off` and 0."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released at last; the lamp stays `Off`."
+    }
+  ],
+  "expect": "ok"
+}

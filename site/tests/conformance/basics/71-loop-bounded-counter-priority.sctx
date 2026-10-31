@@ -1,0 +1,6 @@
+scchart LoopBoundedCounterPriority {
+  output int x = 0
+
+  initial state A
+  immediate if x < 3 do x++ go to A
+}

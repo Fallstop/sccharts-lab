@@ -1,0 +1,15 @@
+// Test 18 without the target's entry action: the single region has no final state, but KIELER compiles the
+// chart (with the warning), and the join never fires.
+scchart JoinWithoutFinalPlain {
+  input bool a
+  output bool done
+
+  initial state S {
+    initial state W
+    if a go to X
+    state X
+  }
+  join to D
+
+  state D
+}

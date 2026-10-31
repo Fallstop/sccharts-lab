@@ -1,0 +1,15 @@
+scchart ReadWriteCycle {
+  output bool x, y
+
+  region R1 {
+    initial state A
+    if !y do x = true go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    if !x do y = true go to B
+    state B
+  }
+}

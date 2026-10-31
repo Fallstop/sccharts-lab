@@ -1,0 +1,9 @@
+// for i : 3 (a number without "to") cannot be compiled. Only "for i : ARRAY" may omit the end.
+scchart St33Bad {
+  output int s = 0
+  region for i : 3 {
+    initial state W
+    immediate do s += i go to D
+    final state D
+  }
+}

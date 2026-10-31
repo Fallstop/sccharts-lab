@@ -1,0 +1,17 @@
+// An old-style update (operator `=`) and a compound assignment (`+=`) of the same variable do not commute in
+// KIELER's analysis, although both are relative writes: the chart is rejected.
+scchart OldStyleVsCompound {
+  output int x = 1
+
+  region R1 {
+    initial state A
+    do x = x + 1 go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    do x += 3 go to B
+    state B
+  }
+}

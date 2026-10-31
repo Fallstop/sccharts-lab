@@ -1,0 +1,7 @@
+scchart RelativeWrite {
+  input bool A
+  output int count
+
+  initial state Counting
+    if A do count = count + 1 go to Counting
+}

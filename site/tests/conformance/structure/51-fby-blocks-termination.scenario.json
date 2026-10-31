@@ -1,0 +1,18 @@
+{
+  "kielerBug": "FollowedBy.xtend creates its helper region without final = true (InitOperator.xtend sets it), so a superstate containing fby can never terminate.",
+  "ticks": [
+    {
+      "inputs": {
+        "I": 5
+      },
+      "note": "Both inner regions reach B in tick 1. The -> superstate terminates: **doneY = true**. The fby superstate does not: **doneX = false**."
+    },
+    {
+      "inputs": {
+        "I": 6
+      },
+      "note": "Still no termination of the fby superstate: **doneX = false** for ever, **doneY = true**."
+    }
+  ],
+  "expect": "ok"
+}

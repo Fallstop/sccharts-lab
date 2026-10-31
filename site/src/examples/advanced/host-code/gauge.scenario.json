@@ -1,0 +1,10 @@
+{
+  "needs": ["c-hostcode"],
+  "ticks": [
+    { "inputs": { "reading": 42 }, "note": "Tick 1: the delayed self-loop waits: `needle` = 0." },
+    { "inputs": { "reading": 250 }, "note": "The C function defined in `#hostcode-c` caps the reading: `needle` = 100." },
+    { "inputs": { "reading": -7 }, "note": "`needle` = 0." },
+    { "inputs": { "reading": 42 }, "note": "`needle` = 42." }
+  ],
+  "expect": "ok"
+}

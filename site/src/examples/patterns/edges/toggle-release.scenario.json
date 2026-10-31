@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1: the button is up."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: nothing yet."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Held: nothing."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released: `!button && pre(button)` is true, the light goes on."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Up."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: nothing."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released: off."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Up."
+    }
+  ],
+  "expect": "ok"
+}

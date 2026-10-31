@@ -1,0 +1,8 @@
+// ->, fby and sfby bind more tightly than any other operator: 0 fby N + 1 means (0 fby N) + 1.
+scchart St43Prec {
+  output int N1, N2
+  dataflow {
+    N1 = 0 fby N1 + 1
+    N2 = 0 fby (N2 + 1)
+  }
+}

@@ -1,0 +1,12 @@
+scchart RegionLocalInitialisedOnce {
+  output int seen
+
+  region R {
+    int c = 0
+    initial state A
+    do c += 1; seen = c go to B
+
+    state B
+    do c += 10; seen = c go to A
+  }
+}

@@ -1,0 +1,6 @@
+scchart CaretInput {
+  input bool ^reset
+  output int o = 0
+  initial state S
+    if ^reset do o++ go to S
+}

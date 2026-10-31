@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "start": false }, "note": "Tick 1 enters `Idle`." },
+    { "inputs": { "start": true }, "note": "`start` is true: `Idle` → `Running`." },
+    { "note": "`start` is still true (inputs keep their value): `n` counts down to 2." },
+    { "note": "`n` counts down to 1." },
+    { "note": "`n == 1` is true, and that transition has priority 1: `n = 0` and the chart goes to `Finished`, a final state. The chart terminates." },
+    { "note": "After termination nothing happens any more." }
+  ],
+  "expect": "ok"
+}

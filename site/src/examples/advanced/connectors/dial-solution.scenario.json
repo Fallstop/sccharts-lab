@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "up": false, "down": false }, "note": "Tick 1: the dial shows 0." },
+    { "inputs": { "down": true }, "note": "`down`: `digit--` gives −1, and the connector `Wrap` sees it in the same tick and sets 9." },
+    { "inputs": { "down": false }, "note": "9." },
+    { "inputs": { "up": true }, "note": "`up`: `digit++` gives 10, and `Wrap` turns it into 0." },
+    { "inputs": { "up": false }, "note": "0." }
+  ],
+  "expect": "ok"
+}

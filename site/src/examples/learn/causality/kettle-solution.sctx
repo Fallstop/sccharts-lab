@@ -1,0 +1,19 @@
+scchart Kettle {
+  input int temp
+  output bool heating = false, cutOut = false
+
+  region Heater {
+    initial state Off
+      if !pre(cutOut) do heating = true go to On
+
+    state On
+      if pre(cutOut) do heating = false go to Off
+  }
+
+  region Sensor {
+    initial state Ok
+      if heating && temp > 95 do cutOut = true go to Tripped
+
+    state Tripped
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "button": false }, "note": "Tick 1 enters `Off`." },
+    { "inputs": { "button": true }, "note": "`button` rises: `Off` → `On`." },
+    { "note": "`button` is still true, but it did not rise: `pre(button)` is true. The chart stays in `On`." },
+    { "inputs": { "button": false }, "note": "`button` falls: nothing fires." },
+    { "inputs": { "button": true }, "note": "`button` rises again: `On` → `Off`." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,47 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "**t = 0, sleepT = 500**. (KIELER warns \"Potential instantaneous loop through the timed transitions on t.\", an advisory here.)"
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "The clock advances by deltaT: **t = 250**, **sleepT = 250**."
+    },
+    {
+      "inputs": {
+        "deltaT": 250
+      },
+      "note": "t = 500: Off → On, **on = true**, the reset makes **t = 0**; in the entry tick of On the clock does not advance: **sleepT = 200**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "The clock advances again: **t = 100**, **sleepT = 100**."
+    },
+    {
+      "inputs": {
+        "deltaT": 100
+      },
+      "note": "t = 200: On → Off, **on = false, t = 0, sleepT = 500**."
+    },
+    {
+      "inputs": {
+        "deltaT": 300
+      },
+      "note": "In Off again: **t = 300**, still below 500."
+    },
+    {
+      "inputs": {
+        "deltaT": 300
+      },
+      "note": "t = 600 ≥ 500 (the clock overshoots by 100): **on = true**, and the reset makes **t = 0**."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,7 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz44 {
+  input int I
+  output int X = 0, Y = 0
+  initial state S
+  do X = 0 fby I; Y = 0 fby (0 fby I) go to S
+}

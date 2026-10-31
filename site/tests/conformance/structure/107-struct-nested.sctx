@@ -1,0 +1,13 @@
+// A struct may contain other structs: l.a.x is the member x of the member a of l. In the pool the instance is a
+// nested object.
+scchart St107Nested {
+  struct Line {
+    struct Point {
+      int x
+      int y
+    } a, b
+    int width = 1
+  } l
+  initial state A
+  do l.a.x = 3; l.b.y = l.a.x + 1 go to A
+}

@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "The button is already held when the charts start. `Edges` reports a rising edge: in tick 1, `pre(button)` is `false`. `PressEvents` passes through `Start`, whose transitions are immediate, straight to `Down`, and emits nothing: a button that is already down is not a new press."
+    },
+    {
+      "inputs": {},
+      "note": "Held: no edge in either chart."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released. `Edges` computes `fall` (and `change`); `PressEvents` emits `fall` on its way from `Down` to `Up`."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `rise` in both."
+    },
+    {
+      "inputs": {},
+      "note": "Held: nothing."
+    },
+    {
+      "inputs": {},
+      "note": "Held: however long the press lasts, each edge lasts one tick."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released: `fall` in both."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `rise`."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released after a press of one tick: `fall`. From tick 2 on the two charts agree; only tick 1 differs."
+    }
+  ],
+  "expect": "ok"
+}

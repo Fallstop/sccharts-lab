@@ -1,0 +1,14 @@
+scchart UpdateStyles {
+  input bool a, b
+  output int score = 0
+
+  region A {
+    initial state Watch
+      if a do score = score + 1 go to Watch
+  }
+
+  region B {
+    initial state Watch
+      if b do score += 2 go to Watch
+  }
+}

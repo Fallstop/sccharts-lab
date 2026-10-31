@@ -1,0 +1,71 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button1": false,
+        "button2": false,
+        "at1": false,
+        "at2": false
+      },
+      "note": "Tick 1: no calls."
+    },
+    {
+      "inputs": {
+        "button1": true
+      },
+      "note": "A call on floor 1: `lamp1`."
+    },
+    {
+      "inputs": {
+        "button1": false,
+        "button2": true
+      },
+      "note": "A call on floor 2: the starter ignores it. Your version should light `lamp2` here."
+    },
+    {
+      "inputs": {
+        "button2": false
+      },
+      "note": "Both calls are waiting (in your version)."
+    },
+    {
+      "inputs": {
+        "at1": true
+      },
+      "note": "The lift is at floor 1: `lamp1` goes off. `lamp2` should stay on."
+    },
+    {
+      "inputs": {
+        "at1": false
+      },
+      "note": "The lift moves on."
+    },
+    {
+      "inputs": {
+        "at2": true,
+        "button1": true
+      },
+      "note": "The lift is at floor 2: your `lamp2` goes off. At the same moment someone calls on floor 1: `lamp1` goes on."
+    },
+    {
+      "inputs": {
+        "button1": false,
+        "at2": false
+      },
+      "note": "Waiting."
+    },
+    {
+      "inputs": {
+        "at1": true
+      },
+      "note": "Floor 1 served."
+    },
+    {
+      "inputs": {
+        "at1": false
+      },
+      "note": "Idle."
+    }
+  ],
+  "expect": "ok"
+}

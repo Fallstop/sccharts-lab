@@ -1,0 +1,21 @@
+scchart StateAccessAbort {
+  input bool step, rst
+  output int n = 0
+  method bool inB() {
+    return state(Main.Sup)
+  }
+  region Main {
+    initial state A
+      if step go to Sup
+    state Sup {
+      initial state X
+        if step go to Y
+      state Y
+    }
+    if rst abort to A
+  }
+  region Watch {
+    initial state W
+      if inB() do n++ go to W
+  }
+}

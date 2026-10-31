@@ -1,0 +1,11 @@
+scchart SelfLoopActions {
+  input bool again
+  output int entries = 0, exits = 0
+  output int step = 0, exitAt = 0, effectAt = 0, entryAt = 0
+
+  initial state A {
+    entry do entries += 1; step += 1; entryAt = step
+    exit do exits += 1; step += 1; exitAt = step
+  }
+  if again do step += 1; effectAt = step go to A
+}

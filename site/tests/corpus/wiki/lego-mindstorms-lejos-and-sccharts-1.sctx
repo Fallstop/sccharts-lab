@@ -1,0 +1,12 @@
+scchart Floodlight {
+    
+    input bool @macro "Button", "ENTER" button
+    
+    output bool @macro "Floodlight", "S1" light
+    
+    initial state lightOff
+    if button do light = true go to lightOn
+    
+    state lightOn
+    if !button do light = false go to lightOff
+}

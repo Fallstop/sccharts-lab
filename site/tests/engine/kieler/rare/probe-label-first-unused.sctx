@@ -1,0 +1,7 @@
+// The second block's label is never jumped to: no clash.
+scchart LabelFirstUnused {
+  input bool a, b
+  output int x = 0, y = 0, z = 0
+  initial state S
+    if a do { if (b) { goto skip } x += 1; skip: y += 1 }; { skip: z += 1 } go to S
+}

@@ -1,0 +1,75 @@
+{
+  "hash": "d522c71eaddcb027ddd0ade48a9603964615c1b8",
+  "chart": "tests/conformance/preemption/81-weak-exit-simple-state.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "plainExit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "weakExit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "plainExit": 0,
+        "weakExit": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "S": true,
+        "plainExit": 1,
+        "weakExit": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "plainExit": 1,
+        "weakExit": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

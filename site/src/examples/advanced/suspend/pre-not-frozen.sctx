@@ -1,0 +1,12 @@
+scchart RateOfChange {
+  input bool hold
+  input int sensor
+  output int change = 0
+
+  initial state Measuring {
+    suspend if hold
+
+    initial state Sample
+      if true do change = sensor - pre(sensor) go to Sample
+  }
+}

@@ -1,0 +1,29 @@
+scchart CounterApplication {
+  
+  output int O
+  
+  class Counter {
+    private int counter
+    
+    void increment() {
+      counter++
+    }
+    void decrement() {
+      counter--
+    }
+    int getValue() {
+      return counter
+    }
+  } counter
+  
+  immediate during do O = counter.getValue()
+  
+  initial state A {
+    during do counter.increment()
+  }
+  if counter.getValue() >= 5
+  go to B
+  
+  final state B
+  
+}

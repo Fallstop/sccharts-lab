@@ -1,0 +1,22 @@
+/*
+ * Valued signals and combine functions:
+ * two concurrent regions emit sum with the
+ * values of a and b. sum combines its
+ * emissions with +, so in a tick in which
+ * both a and b are present, sum carries a
+ * + b.
+ */
+scchart Adder {
+  input signal int a, b
+  output signal int sum combine +
+
+  region FromA:
+    initial state Pass {
+      immediate during if a do sum(val(a))
+    }
+
+  region FromB:
+    initial state Pass {
+      immediate during if b do sum(val(b))
+    }
+}

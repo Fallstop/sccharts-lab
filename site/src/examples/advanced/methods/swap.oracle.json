@@ -1,0 +1,92 @@
+{
+  "hash": "128f9665a21673042a2617b9beb696ba31216d21",
+  "chart": "src/examples/advanced/methods/swap.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__effect0_t is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "swap": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "swap": false
+      },
+      "values": {
+        "swap": false,
+        "a": 1,
+        "b": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "swap": true
+      },
+      "values": {
+        "swap": true,
+        "a": 2,
+        "b": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "swap": false
+      },
+      "values": {
+        "swap": false,
+        "a": 2,
+        "b": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "swap": true
+      },
+      "values": {
+        "swap": true,
+        "a": 1,
+        "b": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

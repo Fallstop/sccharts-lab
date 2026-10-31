@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "reading": 20
+      },
+      "note": "Tick 1 runs the initial values in declaration order: `zero = reading` reads this tick's input, so `zero` is 20. The self-loop is delayed, so `offset` keeps its initial value."
+    },
+    {
+      "note": "`reading` is still 20: `offset` is 0."
+    },
+    {
+      "inputs": {
+        "reading": 23
+      },
+      "note": "`offset` is 23 − 20 = 3. `zero` is still 20: an initial value is assigned once, when its scope is entered, and does not follow `reading`."
+    },
+    {
+      "inputs": {
+        "reading": 18
+      },
+      "note": "`offset` is −2."
+    },
+    {
+      "note": "`reading` keeps its value, 18, so `offset` stays −2."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,9 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz36 {
+  output int n = 0
+  clock x
+  initial state S
+  if x >= 300 && n < 2 do n++; x = 0 go to S
+  if x >= 300 do n += 10 go to D
+  state D
+}

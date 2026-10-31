@@ -1,0 +1,10 @@
+// The priority-based compiler accepts the chart of 90 and runs the loop at run time: n++ happens five times
+// within one tick. (An unguarded immediate loop compiles too, but its simulation then hangs.)
+scchart St91Loop {
+  input bool A
+  output int n = 0
+  initial state S
+  immediate if A && n < 5 do n++ go to T
+  state T
+  immediate go to S
+}

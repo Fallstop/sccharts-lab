@@ -1,0 +1,14 @@
+// Two declarations of one name in a superstate only draw the warning; unlike at the root (test 08) the chart
+// compiles, and the name refers to the first declaration.
+scchart DuplicateInSuperstate {
+  output int o
+
+  initial state S {
+    int x = 1
+    int x = 2
+
+    initial state A
+    do x += 10; o = x go to B
+    state B
+  }
+}

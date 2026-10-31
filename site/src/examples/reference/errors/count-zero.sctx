@@ -1,0 +1,8 @@
+scchart CountZero {
+  input bool A
+
+  initial state Idle
+    if 0 A go to Done
+
+  state Done
+}

@@ -1,0 +1,188 @@
+---
+title: "Handshakes"
+description: "Request and acknowledge between concurrent regions, within one tick and across ticks, and the causality cycle that catches the classic four-phase handshake."
+sidebar:
+  order: 7
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Two parts of a system that work together need a way to say "please do this" and "done". A controller asks
+a motor driver to move; a client asks a server for data; a producer offers an item and a consumer takes
+it. The exchange is a **handshake**: a **request** in one direction, an **acknowledgement** in the other.
+
+In SCCharts the two parts are usually concurrent [regions](/learn/concurrency/), and a handshake between
+them can happen in two ways: within a single tick, or spread over several. This page shows both, then
+the four-phase handshake that hardware designers know, which KIELER rejects in its obvious form, and the
+`pre` that fixes it.
+
+## A handshake within one tick
+
+Here a client sends a request (the local signal `req`) when it is told to `start`, and waits for the
+acknowledgement `ack`. The server acknowledges every request at once:
+
+<Sim example="patterns/handshake/same-tick" caption="Tick 2: request, acknowledgement and the client's reaction all happen in the same tick." />
+
+In tick 2 everything happens at once: the client emits `req` and enters `Waiting`; the server sees
+`req` and emits `ack`; and the client's immediate transition out of `Waiting` sees `ack` and counts
+the job. Regions are not run one after the other in the order you wrote them. KIELER orders the work
+inside a tick by its data: every emission of a signal comes before every test of it, and each region keeps
+its own order. Here that gives one consistent schedule:
+
+1. Client: emit `req`, enter `Waiting`.
+2. Server: test `req`, emit `ack`.
+3. Client: test `ack`, `served++`, back to `Idle`.
+
+Note the `immediate` on the client's transition. Without it, `Waiting` could not react in the tick it is
+entered, and the acknowledgement of tick 2 would be missed: `ack` is a signal, present only in the tick
+it is emitted. Here is the client without it:
+
+<Compare a="patterns/handshake/same-tick" b="patterns/handshake/same-tick-delayed" scenario="b" caption="Tick 2: the same request and the same acknowledgement. Only the client with `immediate if ack` sees it; the other waits for ever." />
+
+## A handshake across ticks
+
+Real servers take time. This one goes to `Working` on a request and acknowledges two ticks later. The
+client is unchanged:
+
+<Compare a="patterns/handshake/same-tick" b="patterns/handshake/slow-server" scenario="b" caption="The same client with two servers. The slow one acknowledges in tick 4 instead of tick 2." />
+
+The client does not need to know which kind of server it talks to. `immediate if ack` is checked in the
+tick `Waiting` is entered *and* in every later tick, so it catches an acknowledgement in the same tick or
+any number of ticks later. Writing the waiting transition this way makes the client work with both.
+
+Because `req` and `ack` are signals, each lasts one tick: they are *events*. The server must notice
+the request in the tick it is made, and here it does. `Ready` tests `req` in every tick except the one
+in which it is entered, and in that tick the client, which has just been served, cannot ask yet. If the
+server could be busy when a request arrives, the request would be lost; the [latch](/patterns/latch/)
+pattern is how you keep it.
+
+## The four-phase handshake
+
+Hardware often uses *levels* instead of events: the client raises `req` and keeps it up until it sees
+`ack`; the server raises `ack` and keeps it up until it sees `req` drop. That is four phases: `req` up,
+`ack` up, `req` down, `ack` down. Each side owns one `bool` and watches the other's. Written directly,
+it looks like this, and KIELER rejects it:
+
+<Sim example="patterns/handshake/four-phase-cycle" caption="KIELER rejects this chart: the client and the server each wait for the other within one tick." />
+
+The messages are `Can't schedule from …` (many times) and `The SCG is NOT asc-schedulable!`; SCCharts Lab
+adds (the two names may come in either order):
+
+```text wrap
+Circular dependency involving ack, req prevents scheduling this tick.
+```
+
+The reason is the order rule from above, applied to both directions at once:
+
+- The client's transition out of `Waiting` reads `ack` and then writes `req`.
+- The server's transitions read `req` and then write `ack`.
+- Within a tick, every write of a variable must come before every read of it in another region.
+
+So the server's write of `ack` must come before the client reads `ack`; the client reads `ack` before it
+writes `req`; that write must come before the server reads `req`; and the server reads `req` before it
+writes `ack`. Each step must happen before the next, and the chain leads back to where it started. No
+order satisfies it, so KIELER refuses the chart. It decides this from the reads and writes alone,
+without asking which states are active or which triggers are true: if the accesses *could* form such a
+cycle within one tick, the chart is rejected.
+
+### Breaking the cycle with pre
+
+The cycle needs both sides to react to each other *in the same tick*. Let one side react to the other's
+value from the *previous* tick, and the cycle is gone. `pre(req)` is `req` at the end of the last tick, so
+it does not depend on anything written in this tick:
+
+<Sim example="patterns/handshake/four-phase" caption="One handshake takes three ticks: `req` up in tick 2, `ack` up and `req` down in tick 3, `ack` down in tick 4." />
+
+With `start` in tick 2, tick by tick (the states are those after the tick):
+
+| Tick | `req` | `ack` | Client | Server |
+| ---: | --- | --- | --- | --- |
+| 1 | false | false | Idle | Ready |
+| 2 | true | false | Waiting | Ready |
+| 3 | false | true | Releasing | Busy |
+| 4 | false | false | Idle | Ready |
+
+In tick 3 the server reacts to the request raised in tick 2, and the client, which reads `ack` directly,
+reacts to the server in the same tick. In tick 4 the server sees that `req` dropped in tick 3. Each `pre`
+costs a tick, so the handshake is a little slower. In return it is accepted, and the timing is clear:
+information flows one way within a tick, and the way back crosses a tick boundary.
+
+You can put the `pre` on either side; the exercise below puts it on the client. What you cannot do is
+have both sides read each other's *current* value and write their own in response.
+
+<Aside type="tip">
+SCCharts Lab's live diagnostics mark a causality cycle while you type, and name the variables involved.
+When you see one between two regions that talk to each other, look for the pair of transitions that
+each read what the other writes, and decide which side may wait a tick.
+</Aside>
+
+## Try it
+
+<TryIt example="patterns/handshake/four-phase-client-starter" solution="patterns/handshake/four-phase-client" title="Break the cycle on the other side">
+The starter is the rejected four-phase handshake. Make KIELER accept it by changing only the **client**,
+not the server. Then step through your version with `start` in tick 2: in which ticks do `req` and
+`ack` go up and down now, compared with `FourPhase`?
+</TryIt>
+
+<TryIt example="patterns/handshake/give-up-starter" solution="patterns/handshake/give-up" title="Give up after a while">
+This server ignores requests while it is not `online`, and the starter's client then waits for ever.
+Make the client give up when no acknowledgement has come three ticks after the request: count the failure
+in `failed` and go back to `Idle`, so that the next `start` works again. To test it: with `online` true,
+`start` in tick 2 is served in tick 4. Switch `online` off in tick 5 and give `start` in tick 6: the
+starter's client waits for ever, and ignores a new `start` (tick 12) even after `online` is back (tick
+11). Your client should give up in tick 9 (`failed` is 1), and the `start` in tick 12 should be served
+in tick 14.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/handshake/slow-server-predict"
+  ask={[{ tick: 4, value: 'served' }, { tick: 6, value: 'served' }, { tick: 10, value: 'served' }]}
+  caption="The slow server, with `start` held from tick 2 on. `served` is a number: what is it after ticks 4, 6 and 10?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`served` is 1 after tick 4, still 1 after tick 6, and 3 after tick 10. The request of tick 2 is
+acknowledged two ticks later, in tick 4. `start` is still held, so the client, back in `Idle`, requests
+again in tick 5 and is served in tick 7, and the third request is served in tick 10: one handshake
+every three ticks.
+
+</details>
+
+<Quiz
+  question="You remove the `immediate` from the client in `SlowServer`, so that `Waiting` has `if ack do served++ go to Idle`. What changes?"
+  options={['The client misses every acknowledgement', 'KIELER rejects the chart', 'Each handshake takes one tick longer', 'Nothing: `served` counts the same']}
+  answer={3}
+>
+The slow server acknowledges two ticks after the request, never in the tick `Waiting` is entered, which
+is the only tick a delayed transition skips. KIELER's run of the delayed client is the same as
+`SlowServer`'s, tick for tick: `served` becomes 1 in tick 4 and 2 in tick 7. The `immediate` matters
+for a server that may answer in the same tick, as in `SameTick`; with it, the client works with both.
+</Quiz>
+
+<Quiz
+  question="Two regions: A has `if y do x = true go to …`, B has `if x do y = true go to …`. The states involved can never be active in the same tick. Does KIELER accept the chart?"
+  options={['Yes: the transitions never fire in the same tick', 'No: the reads and writes form a cycle', 'Yes: both write `true`']}
+  answer={1}
+>
+KIELER's check is static: it looks at which variables each region may read and write within a tick, not
+at which states can be active together. A reads `y` and then writes `x`; B reads `x` and then writes `y`.
+Every write must precede the other region's reads, so the reads and writes form a cycle, and the chart is
+rejected. Reading `pre(x)` or `pre(y)` on one side breaks it.
+</Quiz>
+
+<KeyIdeas>
+- A handshake is a request and an acknowledgement between two parts, usually concurrent regions.
+- Within one tick, KIELER orders every write (or emission) before every read in other regions, so a
+  request can be answered and the answer used in the same tick.
+- `immediate if ack` waits for an acknowledgement that may come in the same tick or later.
+- If both sides read the other's current value and write their own in response, the accesses form a
+  causality cycle, and KIELER rejects the chart, whatever the states and triggers.
+- Break the cycle with `pre` on one side: the way back then crosses a tick boundary.
+</KeyIdeas>
+
+Next, [Watchdogs](/patterns/watchdog/): noticing that something has stopped happening.

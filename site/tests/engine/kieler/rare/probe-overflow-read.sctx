@@ -1,0 +1,8 @@
+// Reading a[3] reads z.
+scchart OverflowRead {
+  output int a[3] = {1, 2, 3}
+  output int z = 42
+  output int x = 0
+  initial state Run
+    do x = a[3]; z++ go to Run
+}

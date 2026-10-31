@@ -1,0 +1,13 @@
+scchart CountRestarts {
+  input bool A, B
+  output int fired = 0
+
+  initial state S
+  if 3 A do fired = 1 go to T
+  if B go to U
+
+  state T
+
+  state U
+  go to S
+}

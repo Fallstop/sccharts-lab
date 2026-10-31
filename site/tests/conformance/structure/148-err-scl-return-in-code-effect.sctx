@@ -1,0 +1,9 @@
+// return is only allowed in method bodies, not in a code effect.
+scchart St148ReturnBlock {
+  output int O = 0
+  initial state S
+  do {
+    O = 1;
+    return 1
+  } go to S
+}

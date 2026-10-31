@@ -1,0 +1,19 @@
+// As probe-abort-trigger-inside-strong-count without the count delay: accepted (P-20: the inner regions are aborted one by one).
+scchart W {
+  input bool a, beat
+  output signal expired
+  initial state Running {
+    region Watchdog {
+      initial state Watching
+        if beat go to Watching
+        if a do expired go to Expired
+      state Expired
+    }
+    region Work {
+      initial state Idle
+        if beat go to Idle
+    }
+  }
+  if expired abort to Safe
+  state Safe
+}

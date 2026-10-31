@@ -1,0 +1,128 @@
+{
+ "sourceHash": "6329c5b828d55b17",
+ "states": [
+  {
+   "path": [
+    "HostCounterApplication"
+   ],
+   "rows": [
+    [
+     "HostCounterApplication"
+    ],
+    [
+     "input bool ",
+     "CountUp"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "host class ",
+     "Counter {"
+    ],
+    [
+     "void ",
+     "increment( )"
+    ],
+    [
+     "void ",
+     "decrement( )"
+    ],
+    [
+     "int ",
+     "getValue( )"
+    ],
+    [
+     "} counter"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    205.5,
+    364.4
+   ]
+  },
+  {
+   "path": [
+    "HostCounterApplication",
+    0,
+    "A"
+   ],
+   "rows": [],
+   "box": [
+    78.9,
+    163.4,
+    34,
+    34
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "HostCounterApplication",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    150.7,
+    191.8,
+    207.4
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NHostCounterApplication$$N0$NA$EA0",
+   "source": [
+    "HostCounterApplication",
+    0,
+    "A"
+   ],
+   "target": [
+    "HostCounterApplication",
+    0,
+    "A"
+   ],
+   "text": "1: CountUp / counter.increment(); O = counter.getValue()",
+   "lines": [
+    "1: CountUp",
+    "/ counter.increment();",
+    "  O = counter.getValue()"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NHostCounterApplication$$N0$NA$EA1",
+   "source": [
+    "HostCounterApplication",
+    0,
+    "A"
+   ],
+   "target": [
+    "HostCounterApplication",
+    0,
+    "A"
+   ],
+   "text": "2: !CountUp / counter.decrement(); O = counter.getValue()",
+   "lines": [
+    "2: !CountUp",
+    "/ counter.decrement();",
+    "  O = counter.getValue()"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

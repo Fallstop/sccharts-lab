@@ -1,0 +1,35 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "Surprise: M has a `suspend` (which never triggers), and its entry action does **not** run on the first entry (entries = 0). KIELER guards M's own actions with the suspend flag, which is only set after the entry action has read it."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "M is left: the exit action runs (exits = 1)."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "In N."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "Back to M: this time the entry action runs (entries = 1), because the flag still holds `true` from M's last activation."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "In M."
+    }
+  ],
+  "expect": "ok"
+}

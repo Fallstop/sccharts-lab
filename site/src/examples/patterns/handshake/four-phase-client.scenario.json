@@ -1,0 +1,71 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Tick 1: idle."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start`: the client raises `req`, and the server, which reads `req` directly, raises `ack` in the same tick."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "The client sees `pre(ack)`, the acknowledgement of the last tick, and lowers `req`; the server sees `req` down and lowers `ack`, in the same tick."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "The client sees `pre(ack)` down: idle again. Three ticks, as with `FourPhase`, but the flags move at different moments."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "A new handshake: `req` and `ack` up."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Both down."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Idle."
+    }
+  ],
+  "expect": "ok"
+}

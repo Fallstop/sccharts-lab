@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "c": true
+      },
+      "note": "All three superstates terminate in tick 1 (immediate `W` → `F`) and `c` is true. Only `immediate if c join to` fires in tick 1 (`doneImmediate = true`). `if c join to` is delayed by default because it has a trigger, and `delayed join to` is delayed explicitly: neither fires in the entry tick."
+    },
+    {
+      "inputs": {
+        "c": true
+      },
+      "note": "Tick 2: both delayed joins fire (`doneTrigger = true`, `doneDelayed = true`)."
+    },
+    {
+      "inputs": {
+        "c": false
+      },
+      "note": "Nothing more happens."
+    }
+  ],
+  "expect": "ok"
+}

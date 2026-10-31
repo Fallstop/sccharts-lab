@@ -1,0 +1,9 @@
+// The same chart as 92 with the priority-based compiler: the first-tick write to x takes effect.
+scchart St93Write {
+  input int x
+  output int y = 0
+  initial state S
+  immediate do x = 7; y = x go to T
+  state T
+  do y = x go to T
+}

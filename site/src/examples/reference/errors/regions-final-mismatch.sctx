@@ -1,0 +1,18 @@
+scchart RegionsFinalMismatch {
+  input bool A, B
+  output bool sawA, sawB
+
+  initial state Both {
+    region One:
+      initial state WaitA
+        if A do sawA = true go to DoneA
+      final state DoneA
+
+    region Two:
+      initial state WaitB
+        if B do sawB = true go to WaitB
+  }
+  join to End
+
+  state End
+}

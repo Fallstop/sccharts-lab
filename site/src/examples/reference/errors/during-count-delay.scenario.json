@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "Tick 1 enters `Counting`. A `during` action does not run in the tick its state is entered."
+    },
+    {
+      "note": "`A` is true and the during action runs: `n` is 1. The count delay `2` is ignored (that is what the warning says): the action runs every time `A` holds, not every second time."
+    },
+    {
+      "note": "`n` is 2."
+    }
+  ],
+  "expect": "ok"
+}

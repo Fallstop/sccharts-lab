@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "up": false, "down": false }, "note": "Tick 1: the dial shows 0." },
+    { "inputs": { "down": true }, "note": "`down` at 0 gives −1. The dial should wrap round to 9." },
+    { "inputs": { "down": false, "up": true }, "note": "`up`: 0." },
+    { "note": "`up` is still true (inputs keep their value), so the dial turns again: 1." }
+  ],
+  "expect": "ok"
+}

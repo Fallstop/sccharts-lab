@@ -1,0 +1,20 @@
+scchart P2 {
+  input bool I
+  output bool O
+
+  region Upper "First region":
+  initial state A
+  if I go to B
+  state B
+
+  region Lower:
+  initial state C
+  if I do O = true go to D label "my label"
+  final state D
+
+  region:
+  initial state E
+  auto go to F
+  state F
+  delayed go to E
+}

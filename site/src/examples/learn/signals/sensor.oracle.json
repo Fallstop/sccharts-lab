@@ -1,0 +1,151 @@
+{
+  "hash": "86f4d95c1a1902344b4c2dc06e9a10272ac46d32",
+  "chart": "src/examples/learn/signals/sensor.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "reading": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "sample": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "last": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "level": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "level_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "level_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "sample": false,
+        "reading": 7
+      },
+      "values": {
+        "reading": 7,
+        "sample": false,
+        "last": 0,
+        "level": false,
+        "level_val": 0,
+        "level_curval": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "sample": true
+      },
+      "values": {
+        "reading": 7,
+        "sample": true,
+        "last": 7,
+        "level": true,
+        "level_val": 7,
+        "level_curval": 7
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "sample": false,
+        "reading": 9
+      },
+      "values": {
+        "reading": 9,
+        "sample": false,
+        "last": 7,
+        "level": false,
+        "level_val": 7,
+        "level_curval": 7
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "sample": true
+      },
+      "values": {
+        "reading": 9,
+        "sample": true,
+        "last": 9,
+        "level": true,
+        "level_val": 9,
+        "level_curval": 9
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "sample": false
+      },
+      "values": {
+        "reading": 9,
+        "sample": false,
+        "last": 9,
+        "level": false,
+        "level_val": 9,
+        "level_curval": 9
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

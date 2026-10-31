@@ -1,0 +1,21 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: `ring` is `{1, 2, 3}`. The self-loop is delayed."
+    },
+    {
+      "inputs": {},
+      "note": "`ring = {ring[1], ring[2], ring[0]}` runs as `ring[0] = ring[1]; ring[1] = ring[2]; ring[2] = ring[0]`, in that order. By the time `ring[2]` is assigned, `ring[0]` is already 2, so the result is `{2, 3, 2}`: the 1 is lost."
+    },
+    {
+      "inputs": {},
+      "note": "Same again: `{3, 2, 3}`."
+    },
+    {
+      "inputs": {},
+      "note": "And back to `{2, 3, 2}`. The array never rotates."
+    }
+  ],
+  "expect": "ok"
+}

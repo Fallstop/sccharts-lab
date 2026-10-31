@@ -1,0 +1,16 @@
+scchart JoinBasic {
+  input bool a
+  output int n
+  output bool done
+
+  initial state S {
+    initial state W
+    if a do n = 1 go to F
+    final state F
+  }
+  do n *= 10 join to D
+
+  state D {
+    entry do done = true
+  }
+}

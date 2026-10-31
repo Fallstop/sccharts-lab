@@ -1,0 +1,144 @@
+{
+  "hash": "e6d046ec707681bd9a422babcb6b6a77ac76e5a2",
+  "chart": "tests/engine/kieler/structure/probe-dz17.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on x."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "x": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "n": 0,
+        "sleepT": 400,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 400,
+        "n": 1,
+        "sleepT": 600,
+        "x": 400
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 600,
+        "n": 11,
+        "sleepT": 400,
+        "x": 0
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 400,
+        "n": 12,
+        "sleepT": 600,
+        "x": 400
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 600,
+        "n": 22,
+        "sleepT": 400,
+        "x": 0
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 400,
+        "n": 23,
+        "sleepT": 600,
+        "x": 400
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

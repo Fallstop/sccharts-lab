@@ -1,0 +1,40 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Tick 1 enters M: **entries = 1**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "Nothing finishes: **entries = 1**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": true
+      },
+      "note": "W finishes: M is done and its join enters it again in the same tick: **entries = 2**."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "The new visit waits: **entries = 2**."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false
+      },
+      "note": "The first region finishes: with an abort region any finished region ends M, which is entered again: **entries = 3**."
+    }
+  ],
+  "expect": "ok"
+}

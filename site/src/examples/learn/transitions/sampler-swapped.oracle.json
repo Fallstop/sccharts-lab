@@ -1,0 +1,119 @@
+{
+  "hash": "63ca9ce8bc0751f7d9bc1d19551721ac696c4537",
+  "chart": "src/examples/learn/transitions/sampler-swapped.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "reading": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "sample": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "latest": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "previous": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "sample": false,
+        "reading": 0
+      },
+      "values": {
+        "reading": 0,
+        "sample": false,
+        "latest": 0,
+        "previous": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "sample": true,
+        "reading": 5
+      },
+      "values": {
+        "reading": 5,
+        "sample": true,
+        "latest": 5,
+        "previous": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "sample": false,
+        "reading": 8
+      },
+      "values": {
+        "reading": 8,
+        "sample": false,
+        "latest": 5,
+        "previous": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "sample": true
+      },
+      "values": {
+        "reading": 8,
+        "sample": true,
+        "latest": 8,
+        "previous": 8
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "sample": false
+      },
+      "values": {
+        "reading": 8,
+        "sample": false,
+        "latest": 8,
+        "previous": 8
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

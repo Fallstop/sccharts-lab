@@ -1,0 +1,90 @@
+{
+  "hash": "a5dfca0c631cff4141944507babdcd6888501757",
+  "chart": "tests/conformance/structure/153-scl-goto-forward.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "skip": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "P": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "O": 0,
+        "P": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "O": 1,
+        "P": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "skip": true
+      },
+      "values": {
+        "skip": true,
+        "O": 1,
+        "P": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "O": 2,
+        "P": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

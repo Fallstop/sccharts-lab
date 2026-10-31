@@ -1,0 +1,78 @@
+{
+  "hash": "31fd134db99a53b224ffcc0a14733c22b6592fca",
+  "chart": "tests/conformance/structure/46-dataflow-sfby.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "chain": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "two": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "I": 1
+      },
+      "values": {
+        "I": 1,
+        "chain": 1,
+        "two": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 2
+      },
+      "values": {
+        "I": 2,
+        "chain": 2,
+        "two": 20
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "I": 3
+      },
+      "values": {
+        "I": 3,
+        "chain": 2,
+        "two": 30
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "I": 4
+      },
+      "values": {
+        "I": 4,
+        "chain": 2,
+        "two": 40
+      },
+      "terminated": false
+    }
+  ]
+}

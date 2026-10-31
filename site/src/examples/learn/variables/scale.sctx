@@ -1,0 +1,8 @@
+scchart Scale {
+  input int n
+  output int compound = 0
+  output int plain = 0
+
+  initial state Calc
+    do compound = n; compound *= 1.5; plain = n * 1.5 go to Calc
+}

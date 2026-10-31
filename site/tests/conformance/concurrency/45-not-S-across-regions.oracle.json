@@ -1,0 +1,73 @@
+{
+  "hash": "d4caae703e0711120bd0a74130a41660b4266159",
+  "chart": "tests/conformance/concurrency/45-not-S-across-regions.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "r1Took": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "r2Took": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "S": true,
+        "r1Took": false,
+        "r2Took": true
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "r1Took": true,
+        "r2Took": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "S": false,
+        "r1Took": true,
+        "r2Took": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

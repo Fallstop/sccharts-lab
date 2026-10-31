@@ -1,0 +1,35 @@
+scchart ControlledCountingCounter extends CountingCounter {
+  private bool counting = false
+  
+  public method start() {
+    counting = true
+  }
+  public method stop() {
+    counting = false
+  }
+  
+  override region Counting {
+    initial state Waiting
+      immediate if counting go to Counting
+      
+    state Counting {
+      region Counting is super.Counting
+    } if !counting abort to Waiting
+  }
+}
+
+scchart CountingCounter extends Counter {
+  region Counting {
+    initial final state Counting
+      do increment()
+      go to Counting
+  }
+}
+
+scchart Counter {
+  private int counter
+  
+  method increment() { counter++ }
+  method decrement() { counter-- }
+  method int getValue() { return counter }
+}

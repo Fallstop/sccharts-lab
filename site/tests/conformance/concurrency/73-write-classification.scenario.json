@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Tick 1: `x = 3`, `w = 3`."
+    },
+    {
+      "inputs": {},
+      "note": "`x = x * x` reads `x` twice, so it is an absolute write (not an update); `w += w` reads its own target, so it is an absolute write too. Absolute writes run before the other region's relative `+= 1`: `x = 3 * 3 + 1 = 10`, `w = 3 + 3 + 1 = 7`. (KIELER warns that `x = x * x` looks like old relative-write syntax.)"
+    },
+    {
+      "inputs": {},
+      "note": "No further change."
+    }
+  ],
+  "expect": "ok"
+}

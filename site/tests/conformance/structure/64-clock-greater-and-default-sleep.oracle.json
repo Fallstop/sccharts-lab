@@ -1,0 +1,104 @@
+{
+  "hash": "ecfd33210eb89cd454de252d5e0196b0a786de38",
+  "chart": "tests/conformance/structure/64-clock-greater-and-default-sleep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "a": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "a": false,
+        "sleepT": 50,
+        "t": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 50
+      },
+      "values": {
+        "deltaT": 50,
+        "a": false,
+        "sleepT": 50,
+        "t": 50
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 50
+      },
+      "values": {
+        "deltaT": 50,
+        "a": false,
+        "sleepT": 1,
+        "t": 100
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 1
+      },
+      "values": {
+        "deltaT": 1,
+        "a": true,
+        "sleepT": 50,
+        "t": 101
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

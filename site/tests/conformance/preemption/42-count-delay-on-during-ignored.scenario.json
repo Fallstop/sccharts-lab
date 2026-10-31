@@ -1,0 +1,19 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "KIELER warns 'Count Delays on During Actions are not supported yet. The valued will be ignored by the transformation.' and treats `during if 3 A` as `during if A`. Entry tick: the delayed during does not run."
+    },
+    {
+      "inputs": {},
+      "note": "x = 1: the count is ignored."
+    },
+    {
+      "inputs": {},
+      "note": "x = 2."
+    }
+  ],
+  "expect": "ok"
+}

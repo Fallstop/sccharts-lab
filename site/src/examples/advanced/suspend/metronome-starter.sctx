@@ -1,0 +1,15 @@
+scchart Metronome {
+  input bool pause, stop
+  output bool click = false
+
+  initial state Running {
+    initial state Low
+      do click = true go to High
+
+    state High
+      do click = false go to Low
+  }
+  if stop go to Stopped
+
+  state Stopped
+}

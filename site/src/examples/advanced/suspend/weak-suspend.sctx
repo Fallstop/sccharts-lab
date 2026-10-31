@@ -1,0 +1,20 @@
+scchart Preview {
+  input bool preview, next
+  output int page = 1
+
+  initial state Slides {
+    weak suspend if preview
+
+    initial state Page1
+      if next go to Page2
+
+    state Page2 {
+      entry do page = 2
+    }
+    if next go to Page3
+
+    state Page3 {
+      entry do page = 3
+    }
+  }
+}

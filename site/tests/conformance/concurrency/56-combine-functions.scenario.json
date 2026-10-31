@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Tick 1: all absent. The `_curval` helpers hold each combine function's neutral element: 0 for `+`, `|` and `&`, 1 for `*`, -2147483648 for `max`, 2147483647 for `min`, false for bool `|`, true for bool `&`."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "Both regions emit (5 and 6, or true and false): `Sum = 11`, `Prod = 30`, `Max = 6`, `Min = 5`, `Or = 7`, `BOr = true`, `BAnd = false`. **`And = 0`, not 4**: KIELER uses 0 as the neutral element of `&` on ints, so an int `&` signal always combines to 0. `max`/`min` work despite the warning \"Min or max combine operators are currently not supported.\""
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "All absent; the values persist and the `_curval` helpers are back at the neutral elements."
+    }
+  ],
+  "expect": "ok"
+}

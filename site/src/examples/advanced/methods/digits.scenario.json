@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "value": 7 }, "note": "Tick 1 enters `Count`; the self-loop is delayed. `digits` keeps its initial value, 1." },
+    { "inputs": { "value": 42 }, "note": "The loop runs once (`rest` goes from 42 to 4): `digits` is 2." },
+    { "inputs": { "value": 12345 }, "note": "Four passes round the loop, all within this one tick: 5 digits." },
+    { "inputs": { "value": 9 }, "note": "9 is below 10, so the loop body never runs: 1." },
+    { "inputs": { "value": 100 }, "note": "3 digits." }
+  ],
+  "expect": "ok"
+}

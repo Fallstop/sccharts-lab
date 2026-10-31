@@ -1,0 +1,63 @@
+{
+  "hash": "8958e2fa4a5d0b3908566207ea3699dbbe86c587",
+  "chart": "tests/engine/kieler/rare/probe-string-tab.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "s": {
+      "type": "string",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "s": "a\tb"
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "A": true,
+        "s": "a\tb"
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

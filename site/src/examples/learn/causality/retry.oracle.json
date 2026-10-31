@@ -1,0 +1,27 @@
+{
+  "hash": "c0aba60deb0d19cda75d9951e01b5ff0449760e6",
+  "chart": "src/examples/learn/causality/retry.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _cg1",
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _g1",
+    "Can't schedule from _g1 to _g3",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Try]",
+      "line": 5,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

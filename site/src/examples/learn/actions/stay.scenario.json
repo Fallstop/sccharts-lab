@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Ready`: `entries` is 1." },
+    { "inputs": { "press": true }, "note": "The guarded during action counts the press. `Ready` is never left, so its entry action does not run again." },
+    { "inputs": { "press": false }, "note": "No press." },
+    { "inputs": { "press": true }, "note": "Second press: `presses` is 2, `entries` is still 1." },
+    { "note": "`press` is held: `presses` is 3." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,127 @@
+{
+  "hash": "12111b0e0ed5020e694287c9f11e7d6baa1160e2",
+  "chart": "src/examples/start/welcome/turnstile.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "coin": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "push": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "unlocked": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "coin": false,
+        "push": false
+      },
+      "values": {
+        "coin": false,
+        "push": false,
+        "unlocked": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "push": true
+      },
+      "values": {
+        "coin": false,
+        "push": true,
+        "unlocked": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "push": false,
+        "coin": true
+      },
+      "values": {
+        "coin": true,
+        "push": false,
+        "unlocked": true
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "coin": true,
+        "push": false,
+        "unlocked": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "coin": false,
+        "push": true
+      },
+      "values": {
+        "coin": false,
+        "push": true,
+        "unlocked": false
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "push": false
+      },
+      "values": {
+        "coin": false,
+        "push": false,
+        "unlocked": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

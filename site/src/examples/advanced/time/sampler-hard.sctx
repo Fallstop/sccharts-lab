@@ -1,0 +1,11 @@
+scchart SamplerHard {
+  output int samples = 0
+
+  initial state Run {
+    @HardReset
+    period 500
+
+    initial state Measure
+      do samples++ go to Measure
+  }
+}

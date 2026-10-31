@@ -1,0 +1,10 @@
+// Timed SCCharts: a clock counts the time that passes between ticks. The environment tells the chart how much
+// time passed through the generated input deltaT (float); the chart answers with the generated output sleepT,
+// the time until its next timeout (1000 when there is none). Time advances only through deltaT.
+scchart St60Timer {
+  output bool done = false
+  clock t
+  initial state Wait
+  if t >= 300 do done = true go to Done
+  final state Done
+}

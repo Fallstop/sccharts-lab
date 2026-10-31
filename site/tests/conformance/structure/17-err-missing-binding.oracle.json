@@ -1,0 +1,24 @@
+{
+  "hash": "c58f63e12103478f970d123ccf6f40df1a124b6b",
+  "chart": "tests/conformance/structure/17-err-missing-binding.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "6:22 The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: second",
+    "There are binding errors in a referenced state!\nValued object in the referenced scope was not bound properly: second",
+    "The valued object reference points to a valued object (second) that is not contained in the model!",
+    "The valued object reference points to a valued object (second) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: second",
+      "line": 6,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: second"
+    }
+  ],
+  "ticks": []
+}

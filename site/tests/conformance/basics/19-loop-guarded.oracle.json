@@ -1,0 +1,37 @@
+{
+  "hash": "1f0846837615a13313a099b48c8d185b5d64e182",
+  "chart": "tests/conformance/basics/19-loop-guarded.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _cg1",
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _g3",
+    "Can't schedule from _g3 to _cg3",
+    "Can't schedule from _g3 to _g4",
+    "Can't schedule from _g4 to _g1",
+    "Can't schedule from _g3 to _g5",
+    "Can't schedule from _g1 to _g7",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [B, A]",
+      "line": 8,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [B, A]",
+      "line": 5,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

@@ -1,0 +1,170 @@
+{
+  "hash": "bf4f0fd63f5bc8391a70d5c3028faa998e04d8b5",
+  "chart": "tests/conformance/preemption/15-weak-exit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "W": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "plainExit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "weakExit": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": false,
+        "W": false,
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "W": false,
+        "plainExit": 0,
+        "weakExit": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": true
+      },
+      "values": {
+        "A": false,
+        "S": true,
+        "W": false,
+        "plainExit": 1,
+        "weakExit": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "W": false,
+        "plainExit": 1,
+        "weakExit": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "W": true
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "W": true,
+        "plainExit": 2,
+        "weakExit": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "W": false
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "W": false,
+        "plainExit": 2,
+        "weakExit": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "S": false,
+        "W": false,
+        "plainExit": 3,
+        "weakExit": 1
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

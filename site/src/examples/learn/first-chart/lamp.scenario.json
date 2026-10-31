@@ -1,0 +1,36 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "onButton": false,
+        "offButton": false
+      },
+      "note": "Tick 1 enters `Dark`."
+    },
+    {
+      "inputs": {
+        "onButton": true
+      },
+      "note": "`onButton`: `Dark` to `Lit`, `lit` is true."
+    },
+    {
+      "inputs": {
+        "onButton": false
+      },
+      "note": "Released: still `Lit`."
+    },
+    {
+      "inputs": {
+        "offButton": true
+      },
+      "note": "`offButton`: back to `Dark`, `lit` is false."
+    },
+    {
+      "inputs": {
+        "offButton": false
+      },
+      "note": "Released: still `Dark`."
+    }
+  ],
+  "expect": "ok"
+}

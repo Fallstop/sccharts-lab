@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"I": 2}, "note": "Tick 1: arrays get their initialisers; a shorter initialiser fills the rest with 0 (partial = [7, 8, 0]); flags default to false."},
+    {"inputs": {}, "note": "A vector assigns all elements at once: arr = [6, 7, 8, 9, 10]."},
+    {"inputs": {}, "note": "A shorter vector assigns only the first elements: arr = [0, 0, 8, 9, 10], then arr[2] += 100 gives 108. grid[1][0] = 2 * 10 = 20 (KIELER warns that this looks like a relative write because it reads the array it writes), flags[1] = true, sum = 0 + 10 = 10."},
+    {"inputs": {"I": 4}, "note": "arr = [0, 0, 108, 9, 110]: the vector resets elements 0 and 1 only. sum = 0 + 110 = 110."}
+  ],
+  "expect": "ok"
+}

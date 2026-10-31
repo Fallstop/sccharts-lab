@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "start": false, "stop": false, "emergency": false }, "note": "Tick 1 enters `Running`: the entry action switches the motor on. The during action waits for the next tick." },
+    { "note": "Running: the during action counts the tick (`ticks` is 1)." },
+    { "inputs": { "stop": true }, "note": "`stop` leaves `Running` by a weak abort (`go to`): the during action still runs (`ticks` is 2), then the exit action switches the motor off." },
+    { "inputs": { "stop": false, "start": true }, "note": "`start` enters `Running` again: the motor is on." },
+    { "inputs": { "start": false }, "note": "`ticks` is 3." },
+    { "inputs": { "emergency": true }, "note": "`emergency` leaves by a strong abort (`abort to`). The during action is skipped (`ticks` stays 3), but the **exit action still runs**: the motor is off." },
+    { "inputs": { "emergency": false }, "note": "In `Halted`: nothing changes." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,10 @@
+scchart P81 {
+  input bool A
+  output bool X
+  initial state R is Sub2(A, X)
+}
+scchart Sub2 {
+  input bool a
+  output bool x
+  initial state W
+}

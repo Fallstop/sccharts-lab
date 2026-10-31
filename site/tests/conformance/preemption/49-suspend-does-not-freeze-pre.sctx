@@ -1,0 +1,12 @@
+scchart SuspendAndPre {
+  input bool S
+  input int X
+  output int previous = 0
+
+  initial state M {
+    suspend if S
+
+    initial state I
+    if true do previous = pre(X) go to I
+  }
+}

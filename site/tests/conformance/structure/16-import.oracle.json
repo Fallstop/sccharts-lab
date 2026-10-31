@@ -1,0 +1,44 @@
+{
+  "hash": "eb299e7bd75d46b487653e3662e272e0aaf5aed1",
+  "chart": "tests/conformance/structure/16-import.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "second": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "speaker": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "second": true
+      },
+      "values": {
+        "second": true,
+        "speaker": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "second": true,
+        "speaker": true
+      },
+      "terminated": false
+    }
+  ]
+}

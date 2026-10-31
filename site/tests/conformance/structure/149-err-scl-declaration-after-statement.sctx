@@ -1,0 +1,11 @@
+// Declarations go at the start of a block, before its statements.
+scchart St149DeclLate {
+  output int y = 0
+  method f() {
+    y = 1;
+    int t = 2
+    y = t
+  }
+  initial state S
+  do f() go to S
+}

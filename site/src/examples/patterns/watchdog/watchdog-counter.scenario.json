@@ -1,0 +1,53 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Tick 1: both watch. The count delay does not count the entry tick, and `quiet` is 0."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat. `Watchdog`'s self-loop re-enters `Watching`, which restarts its count; `WatchdogCounter` sets `quiet` to 0."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "A tick without a beat: `quiet` is 1."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat: both start again, `quiet` is 0."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Quiet: 1."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Quiet: 2."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "The third quiet tick in a row: both expire and raise the alarm. (`quiet` shows 3.)"
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Expired."
+    }
+  ],
+  "expect": "ok"
+}

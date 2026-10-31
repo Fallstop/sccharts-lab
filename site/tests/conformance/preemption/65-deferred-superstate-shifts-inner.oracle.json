@@ -1,0 +1,133 @@
+{
+  "hash": "deeeec40bea6827ede65239b0521429079f58832",
+  "chart": "tests/conformance/preemption/65-deferred-superstate-shifts-inner.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "G": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "innerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outerEntry": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "step2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step1": 0,
+        "step2": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "G": true
+      },
+      "values": {
+        "G": true,
+        "innerEntry": 0,
+        "outerEntry": 0,
+        "step1": 0,
+        "step2": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "G": false
+      },
+      "values": {
+        "G": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step1": 0,
+        "step2": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "G": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step1": 1,
+        "step2": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "G": false,
+        "innerEntry": 1,
+        "outerEntry": 0,
+        "step1": 1,
+        "step2": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "hash": "513d87e66b8aed1d0d2a2eb3eac20b376b46f827",
+  "chart": "tests/conformance/concurrency/14-join-delay-types.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "doneDelayed": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "doneImmediate": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "doneTrigger": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "doneDelayed": false,
+        "doneImmediate": true,
+        "doneTrigger": false
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "doneDelayed": true,
+        "doneImmediate": true,
+        "doneTrigger": true
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "doneDelayed": true,
+        "doneImmediate": true,
+        "doneTrigger": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+// Signals cannot be members of a struct or class (official KIELER 0.3.0: "Cannot serialize simulation
+// interface. Unsupported type: pure").
+scchart St156SignalMember {
+  struct Box {
+    signal S
+  } b
+  initial state A
+}

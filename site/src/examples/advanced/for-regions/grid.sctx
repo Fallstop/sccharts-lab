@@ -1,0 +1,21 @@
+scchart ForGrid {
+  output int sum = 0
+  region Row1 {
+    initial state A {
+      region for j : 1 to 3 {
+        initial state W
+          immediate do sum += j go to D
+        final state D
+      }
+    }
+  }
+  region Row2 {
+    initial state A {
+      region for j : 1 to 3 {
+        initial state W
+          immediate do sum += j * 10 go to D
+        final state D
+      }
+    }
+  }
+}

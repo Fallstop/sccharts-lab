@@ -1,0 +1,13 @@
+// A global declaration in a referenced chart is moved to the root and shared by all instances (a plain local
+// would exist once per instance, see 08). It appears in the data pool by its own name.
+scchart St86Main {
+  output int o = 0
+  region { initial state R1 is St86Inc }
+  region { initial state R2 is St86Inc }
+}
+
+scchart St86Inc {
+  global int shared = 0
+  initial state S
+  do shared += 1 go to S
+}

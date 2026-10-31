@@ -1,0 +1,16 @@
+// Host code effects in transition labels and actions: KIELER prints the code without its backticks, and a
+// code effect that ends with ';' followed by another effect shows ';;' (KIELER's label, kept as it is).
+scchart HostCode {
+  output int x
+  initial state A
+  do `d->x = 42;` go to B
+  state B
+  do `foo()` go to C
+  state C
+  do `a = 1;`; x = 2 go to D
+  state D {
+    entry do `d->x = 42;`
+    exit do x = 1; `bar();`
+  }
+  if x > 0 do x = 3; `d->x = 42;` go to A
+}

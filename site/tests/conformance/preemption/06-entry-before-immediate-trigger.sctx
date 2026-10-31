@@ -1,0 +1,12 @@
+scchart EntryThenTrigger {
+  input bool unused
+  output bool ready = false
+  output int left = 0
+
+  initial state A {
+    entry do ready = true
+  }
+  immediate if ready do left = 1 go to B
+
+  state B
+}

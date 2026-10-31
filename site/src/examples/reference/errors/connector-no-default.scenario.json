@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "B": false
+      },
+      "note": "Tick 1 enters `Idle`."
+    },
+    {
+      "inputs": {
+        "A": true
+      },
+      "note": "`A` is true: `Idle` goes to `Pick`. `B` is false, so no transition out of `Pick` is enabled and control stays in the connector, like in an ordinary state. This is what the warning is about."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "B": true
+      },
+      "note": "`B` is now true, so the chart finally leaves `Pick` and sets `x` to 1."
+    }
+  ],
+  "expect": "ok"
+}

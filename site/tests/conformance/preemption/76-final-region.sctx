@@ -1,0 +1,21 @@
+scchart FinalRegion {
+  input bool A
+  output int background = 0, done = 0
+
+  initial state M {
+    region Main {
+      initial state I
+      if A go to F
+      final state F
+    }
+    final region Background {
+      initial state C
+      if true do background += 1 go to C
+    }
+  }
+  join to Done
+
+  state Done {
+    entry do done = 1
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "hash": "83789d13590a105506aef3f144596772b713e925",
+  "chart": "src/examples/advanced/dataflow/highest-start.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "level": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "highest": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "level": -3
+      },
+      "values": {
+        "level": -3,
+        "highest": -3
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "level": -5
+      },
+      "values": {
+        "level": -5,
+        "highest": -5
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "note": "Tick 1 enters both regions."
+    },
+    {
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false
+      },
+      "note": "`a`: `RA` reaches `F`; `RB` is waiting."
+    },
+    {
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true
+      },
+      "note": "`b` and `c` together: `RB` reaches `F` but `RA` leaves `F` again (`if c go to W`). The regions are never both final at the end of this tick, so no join: `done = false`."
+    },
+    {
+      "inputs": {
+        "b": false,
+        "c": false
+      },
+      "note": "Nothing fires (`a`, `b`, `c` are false)."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `RA` reaches `F` again while `RB` is still in its `F`: the join fires, `done = true`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "In `D`: `done = true`."
+    }
+  ],
+  "expect": "ok"
+}

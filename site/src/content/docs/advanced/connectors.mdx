@@ -1,0 +1,206 @@
+---
+title: "Connector states"
+description: "Connector states let transitions meet and branch again within a tick, so that a decision is written once."
+sidebar:
+  order: 3
+---
+
+import { Chart, Sim, Compare, Quiz, TryIt, KeyIdeas } from '~components/guide'
+
+A railway junction is not a station: trains pass over it without stopping, and which way they go
+depends on how the points are set. A **connector state** is a junction for transitions. Control
+arrives at it and leaves it again in the same tick, along the first of its outgoing transitions
+whose trigger holds.
+
+Connectors add no new behaviour to the language. They let you write a decision once, at the point
+where several paths meet, instead of copying it onto every path.
+
+## A junction in a vending machine
+
+A drink costs 30 cents, and the machine takes 10c and 20c coins. Both coin transitions add to
+`credit` and lead to the connector `Check`, which decides whether to vend:
+
+<Sim example="advanced/connectors/vending" caption="Each coin passes through `Check` in the tick it is inserted. In tick 4 of the tour, `credit` reaches 30 and is spent in the same tick." />
+
+In tick 4 the 10c coin brings `credit` to 30. The transition into `Check` and the transition out of
+it run in the same tick, one after the other: `credit += 10`, then the test `credit >= 30`, which sees
+the new value, then `credit -= 30; vend`. Without a coin, the machine stays in `Waiting`. It never
+rests in `Check`.
+
+The ticks of the tour in which a coin arrives:
+
+| Tick | Coin | `credit` after | `vend` |
+| ---: | --- | --- | --- |
+| 2 | 20c | 20 | absent |
+| 4 | 10c | 0 | present |
+| 6 | 20c | 20 | absent |
+| 8 | 20c and 10c | 10 | present |
+
+Tick 8 shows the priorities at work: both coins arrive in one tick, and `Waiting`'s first transition
+(the 20c one) wins: 20 + 20 = 40 vends, with 10 left over. The 10c coin is ignored: the machine keeps
+it, and the customer has lost 10 cents. A real machine would handle the two coins together, with a first
+transition `if coin10 && coin20 do credit += 30 go to Check`.
+
+## The rule
+
+A connector is declared with the keyword `connector`: `connector state Check`. The diagram draws it as
+a small filled dot, without its name. Then:
+
+- **Its outgoing transitions are always immediate**, whether or not they say `immediate`. Control that
+  reaches a connector leaves it in the same tick, as in a chain of
+  [immediate transitions](/learn/immediate/). The diagram draws them dashed, like every immediate
+  transition.
+- **They are tried in priority order**, like the outgoing transitions of any state: the first one whose
+  trigger holds is taken. Give the last one no trigger, so that one of them always fires.
+- **They see what the incoming transition did.** Effects run in sequence along the whole path, so the
+  test `credit >= 30` reads the `credit` that the coin transition has just updated.
+
+A connector may also have entry actions, which run as control passes through, and it may be the
+initial state of a region (see [below](#starting-with-a-decision)).
+
+KIELER implements a connector as an ordinary state whose outgoing transitions are made immediate. The
+keyword is a convenience and a piece of notation: it tells the reader, and the compiler's checks, that
+this state is only a branching point.
+
+## Why connectors help
+
+Here is the same machine without a connector. Each coin now needs two transitions of its own, one that
+vends and one that does not, and each vending guard has to work out the new credit in advance:
+
+<Compare
+  a="advanced/connectors/vending"
+  b="advanced/connectors/vending-without"
+  scenario="advanced/connectors/vending-compare"
+  caption="The same coins go into both machines, and they always agree. Switch to Code to compare them: the price, 30, appears twice in `Vending` and four times in `VendingWithout`."
+/>
+
+Both charts behave the same in every tick. But in `VendingWithout` the price appears in four places,
+and a 50c coin would need two more transitions, one of them with yet another copy of the test. With
+the connector, a new coin is one new transition into `Check`, and the test is written once. The bigger the decision,
+the more this matters: with *n* ways in and *m* ways out, a connector needs *n* + *m* transitions
+instead of *n* × *m*.
+
+Connectors are also handy right after a superstate finishes: `join to Decide` followed by a connector
+that looks at what the superstate computed and picks the next state.
+
+## Starting with a decision
+
+A connector can be a region's initial state. Then the region makes its first decision in the tick it
+starts. This fan starts in `High` or `Low`, depending on `boost` in tick 1:
+
+<Sim example="advanced/connectors/initial-connector" caption="Tick 1 passes through `Start` and enters `High` because `boost` is true. Set `boost` to false and reset to start in `Low`." />
+
+Because a connector is left in the tick it is entered, the region is never "in" `Start` at the end of a
+tick, and nothing leads back to it, so `boost` matters only in tick 1.
+
+## What KIELER warns about
+
+Two habits keep a connector honest, and KIELER warns when you break them.
+
+**Write `immediate` on its outgoing transitions.** They are immediate anyway, but without the keyword
+the chart reads as if they were delayed. KIELER warns, once for each such transition,
+
+```text wrap
+Outgoing transitions of connector states should be marked as immediate.
+```
+
+and treats them as immediate. Writing `if credit >= 30 do ...` instead of
+`immediate if credit >= 30 do ...` in the vending machine changes nothing in its behaviour.
+
+**Give it an outgoing transition without a trigger.** Otherwise there may be ticks in which no way out
+is open, and then control simply stays in the connector, as in a normal state:
+
+<Sim example="advanced/connectors/resting" caption="In tick 2 `enough` is false, so control stops in `Check` and waits there until tick 4." />
+
+KIELER warns
+
+```text wrap
+Connector states should have an outgoing transition without trigger.
+```
+
+The chart still works: control stays in `Check`, and its transitions are checked again in every tick.
+But a connector that can hold control is a state in disguise. If waiting is what you mean, use a normal
+state.
+
+## What KIELER rejects
+
+**A connector with no way out.** A connector must have at least one outgoing transition. Without one,
+KIELER rejects the chart:
+
+```text wrap
+Connector states must have an outgoing transition.
+```
+
+
+<Chart example="advanced/connectors/dead-end" caption="`Check` has no outgoing transition: KIELER rejects the chart." />
+
+**Connectors in a cycle.** Connectors that lead back to each other, directly or through other immediate
+transitions, form a cycle of immediate transitions. Below, `Add` and `Check` send control round and
+round, and the guard `coins < 3` would end the cycle after three rounds. KIELER rejects the chart all
+the same: it rejects every cycle of immediate transitions, whatever its guards (see
+[Delayed and immediate transitions](/learn/immediate/#immediate-loops-are-rejected)).
+
+<Chart example="advanced/connectors/loop" caption="`Add` and `Check` form a cycle of immediate transitions: KIELER rejects the chart, although the guard would end the cycle." />
+
+The editor warns, once for each connector,
+
+```text wrap
+There is an immediate loop. The model is not SASC.
+Involved states: [Check, Add]
+```
+
+and compiling fails with `The SCG is NOT asc-schedulable!`. To repeat something, let a
+tick pass: go through a normal state with a delayed transition.
+
+## Try it
+
+<TryIt example="advanced/connectors/dial-starter" solution="advanced/connectors/dial-solution" title="A dial that wraps round">
+`Dial` shows a digit that `up` and `down` change by one. Make it wrap round, like the wheel of a
+combination lock: `up` at 9 gives 0, and `down` at 0 gives 9. Use one connector, so that the wrapping is
+written only once for both buttons. (Inputs keep their value, so release a button before you press it
+again.)
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="Which of these makes KIELER reject a chart, rather than just warn?"
+  options={[
+    'A connector whose outgoing transitions are not marked `immediate`',
+    'A connector without an untriggered outgoing transition',
+    'A connector with no outgoing transitions at all',
+    'A connector as the initial state of a region',
+  ]}
+  answer={2}
+>
+A connector with no way out is an error: `Connector states must have an outgoing transition.` The first
+two are only warnings (the transitions are immediate anyway; without a default, control may rest in the
+connector), and an initial connector is fine.
+</Quiz>
+
+<Quiz
+  question="A delayed transition `if coin do credit += 10 go to Check` leads into a connector whose first transition is `immediate if credit >= 30 do vend go to Waiting`. `credit` was 20 and `coin` is true in this tick. What happens?"
+  options={[
+    '`credit` becomes 30, and `vend` is emitted in the same tick',
+    '`credit` becomes 30, and `vend` is emitted in the next tick, when the connector is checked',
+    "`vend` is not emitted: the connector's test reads `credit` from the start of the tick",
+  ]}
+  answer={0}
+>
+Control passes through a connector within the tick, and the effects along the path run in order, so the
+test sees `credit` = 30 and the connector's first transition fires at once.
+</Quiz>
+
+<KeyIdeas>
+- A connector (`connector state C`, drawn as a dot) is a junction: control passes through it within the
+  tick.
+- Its outgoing transitions are always immediate and are tried in priority order; they see the effects of
+  the transition that led in.
+- Use a connector to write a decision once where several paths meet, or as an initial state that picks
+  where a region starts.
+- Mark its transitions `immediate` and give it an untriggered last transition, or KIELER warns (and
+  control may stop in it).
+- A connector without outgoing transitions, or a cycle of connectors, is rejected.
+</KeyIdeas>
+
+Next, [Reusing charts](/advanced/references/): one chart used inside another, wired to its variables.

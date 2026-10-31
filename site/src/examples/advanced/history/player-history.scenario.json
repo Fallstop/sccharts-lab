@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "next": false, "call": false, "hangUp": false }, "note": "Tick 1 enters `Playing` and `Track1` (`track` = 1)." },
+    { "inputs": { "next": true }, "note": "`Track1` to `Track2` (`track` = 2)." },
+    { "inputs": { "next": false }, "note": "Listening to track 2." },
+    { "inputs": { "call": true }, "note": "A call comes in: `Playing` is left for `OnCall` (`track` = 0). KIELER remembers that `Playing` was in `Track2`." },
+    { "inputs": { "call": false, "hangUp": true }, "note": "Hang up: `go to Playing history` resumes `Playing` in `Track2`. `Track2` is entered again, so its entry action runs (`track` = 2)." },
+    { "inputs": { "hangUp": false }, "note": "Listening to track 2 again." },
+    { "inputs": { "next": true, "call": true }, "note": "`next` and `call` together: the weak abort lets the inside take its last step, `Track2` to `Track3`, then leaves for `OnCall` (`track` = 0)." },
+    { "inputs": { "next": false, "call": false, "hangUp": true }, "note": "History resumes the state entered last, `Track3`, the one reached in the abort tick (`track` = 3)." },
+    { "inputs": { "hangUp": false }, "note": "Listening to track 3." }
+  ],
+  "expect": "ok"
+}

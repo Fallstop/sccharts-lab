@@ -1,0 +1,105 @@
+{
+  "hash": "d352a2b275e42ee9530bb075a59b279499906aaf",
+  "chart": "tests/conformance/structure/50-dataflow-reentry-restarts-delays.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through A, B."
+  ],
+  "interface": {
+    "I": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "again": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "A": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "B": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "again": false,
+        "I": 5
+      },
+      "values": {
+        "I": 5,
+        "again": false,
+        "A": 0,
+        "B": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "I": 6
+      },
+      "values": {
+        "I": 6,
+        "again": false,
+        "A": 6,
+        "B": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "again": true,
+        "I": 7
+      },
+      "values": {
+        "I": 7,
+        "again": true,
+        "A": 0,
+        "B": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "again": false,
+        "I": 8
+      },
+      "values": {
+        "I": 8,
+        "again": false,
+        "A": 8,
+        "B": 7
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: `done` is a `bool` variable, and only signals can be emitted. Assign it instead: `do done = true`."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "cannot be emitted"
+}

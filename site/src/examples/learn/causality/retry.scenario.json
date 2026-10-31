@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": {}, "note": "Rejected: the immediate self-loop could run again and again within one tick. KIELER does not evaluate `tries < 3` to see that it would stop." }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

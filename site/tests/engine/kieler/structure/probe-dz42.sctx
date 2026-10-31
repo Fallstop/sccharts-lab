@@ -1,0 +1,12 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz42 {
+  output int o = 0
+  region { initial state R1 is Dz42G(o) }
+  region { initial state R2 is Dz42G(o) }
+}
+scchart Dz42G {
+  output int out
+  global int total = 3
+  initial state S
+  do total += 1; out = total go to S
+}

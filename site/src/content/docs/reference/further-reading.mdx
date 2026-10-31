@@ -1,0 +1,155 @@
+---
+title: "Further reading"
+description: "The KIELER documentation, the papers and theses behind SCCharts, and the languages it is related to, each with a line on what you will find there."
+sidebar:
+  order: 6
+---
+
+This guide teaches SCCharts as KIELER implements it today. The sources below give the full story:
+the original documentation, the research papers that define the language and its compiler, and the
+languages SCCharts grew out of or sits next to. The links were last checked in October 2026.
+
+**Where to start.** For the syntax, the KIELER wiki's [Syntax](https://github.com/kieler/semantics/wiki/Syntax)
+page, read next to this guide's [cheat sheet](/reference/cheatsheet/). For the ideas behind the
+language, the PLDI 2014 paper [*SCCharts: Sequentially Constructive Statecharts for Safety-Critical
+Applications*](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/pldi14.pdf): it is short,
+readable, and explains why SCCharts is built the way it is.
+
+**How hard is it?** The documentation and the tools are written for users. The papers are research
+papers: each entry below says whether you can read it with this guide behind you (**readable**), or
+whether it assumes a background in formal semantics (**formal**); the thesis is a long reference to
+dip into. Where a paper has a DOI, it is given as well: the DOI keeps working if the university's
+download links move. For how this guide checks its own claims, see
+[How this guide is checked](/reference/about/).
+
+## KIELER's documentation
+
+- [KIELER semantics wiki](https://github.com/kieler/semantics/wiki): the official documentation of
+  SCCharts and the KIELER tools, maintained with the source code.
+- [Syntax](https://github.com/kieler/semantics/wiki/Syntax): the reference for the textual syntax,
+  construct by construct, with KIELER's diagram of each example. Brief, and in a few places out of date:
+  for example, it says that strong aborts skip exit actions, but in KIELER's compiler they run. This
+  guide points out such differences where they matter.
+- [Quick Start Guide](https://github.com/kieler/semantics/wiki/Quick-Start-Guide): a first chart (ABRO)
+  in KIELER's Eclipse application, with screenshots of each step: modelling, compiling, and
+  [simulating](https://github.com/kieler/semantics/wiki/Quick-Start-Guide#simulating-sccharts) with
+  the simulation view.
+- [VS Code Extensions](https://github.com/kieler/semantics/wiki/VS-Code-Extensions): installing and
+  using KIELER VS Code: opening the diagram, compiling, and simulating with the simulation view, its
+  controls and trace export, with an annotated screenshot.
+- [Syntax: Annotations and Pragmas](https://github.com/kieler/semantics/wiki/Syntax:-Annotations-and-Pragmas):
+  every annotation and pragma that changes the diagram or the compilation.
+- [Syntax: Dataflow](https://github.com/kieler/semantics/wiki/Syntax:-Dataflow): dataflow regions,
+  equations, instances of other charts and their diagrams.
+- [Syntax: Timed Automata](https://github.com/kieler/semantics/wiki/Syntax:-Timed-Automata): clocks,
+  `deltaT`, `sleepT`, `period` and the timing annotations. It says `@HardReset` is the default for
+  `period`; in KIELER's compiler soft reset is.
+- [Syntax: Hostcode](https://github.com/kieler/semantics/wiki/Syntax:-Hostcode): host code, `extern`
+  and the `#hostcode` pragmas.
+- [Syntax: Object Orientation](https://github.com/kieler/semantics/wiki/Syntax:-Object-Orientation):
+  classes, methods, inheritance and policies.
+- [KIELER semantics on GitHub](https://github.com/kieler/semantics): the source code of the compiler,
+  the simulator and the grammar. The grammar files (`SCTX.xtext`, `KExpressions.xtext`) are the final
+  word on what the syntax allows.
+- [KIELER on GitHub](https://github.com/kieler): every repository of the KIELER project, which Kiel
+  University's [Real-Time and Embedded Systems group](https://www.uni-kiel.de/de/tf/forschen/institut-informatik/echtzeitsysteme/eingebettete-systeme)
+  (page in German) runs.
+
+## Tools
+
+- [SCCharts Lab](https://marketplace.visualstudio.com/items?itemName=qinnovate.sccharts-lab): the VS Code
+  extension this guide recommends, with diagrams, a tick-by-tick simulator and live diagnostics.
+  Source code on [GitHub](https://github.com/Fallstop/sccharts-lab).
+- [KIELER VS Code](https://open-vsx.org/extension/kieler/keith-vscode): KIELER's own VS Code
+  extension, on the Open VSX registry.
+
+[Getting SCCharts](/start/tools/) compares the two.
+
+## SCCharts papers
+
+- Reinhard von Hanxleden, Björn Duderstadt, Christian Motika, Steven Smyth, Michael Mendler, Joaquín
+  Aguado and others, [*SCCharts: Sequentially Constructive Statecharts for Safety-Critical
+  Applications*](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/pldi14.pdf), PLDI 2014
+  ([DOI](https://doi.org/10.1145/2594291.2594310)). The paper that introduced SCCharts: the language,
+  Core and Extended SCCharts, and how both are compiled to hardware and software. Readable: the
+  language comes first, with examples; the formal parts can be skipped.
+- Reinhard von Hanxleden, Michael Mendler, Joaquín Aguado and others, [*Sequentially Constructive
+  Concurrency: A Conservative Extension of the Synchronous Model of
+  Computation*](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/date13.pdf), DATE 2013
+  ([DOI](https://doi.org/10.7873/DATE.2013.128)). The model of computation behind SCCharts: why
+  sequential code within a thread and initialise–update–read between threads give determinacy.
+  Formal. A longer version appeared in [ACM Transactions on Embedded Computing Systems in
+  2014](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/tecs14.pdf)
+  ([DOI](https://doi.org/10.1145/2627350)), with the full definitions in the [technical report
+  1308](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/report-1308.pdf) (Kiel University,
+  2013).
+- Christian Motika, Steven Smyth and Reinhard von Hanxleden, [*Compiling SCCharts: A Case-Study on
+  Interactive Model-Based Compilation*](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/isola14.pdf),
+  ISoLA 2014 ([DOI](https://doi.org/10.1007/978-3-662-45234-9_32)). How KIELER compiles an Extended
+  SCChart step by step into Core SCCharts and then into code. Readable, and the background to
+  [From chart to C](/advanced/code-generation/).
+- Christian Motika, [*SCCharts: Language and Interactive Incremental
+  Compilation*](https://doi.org/10.21941/kcss/2017/02), PhD thesis, Kiel University, 2017. The most
+  complete account of the language and its compiler; sections 3.1 and 3.2 define the semantics that the
+  KIELER wiki points to. Long: a reference to look things up in.
+- Alexander Schulz-Rosengarten, Reinhard von Hanxleden, Frédéric Mallet, Robert de Simone and Julien
+  Deantoni, [*Time in SCCharts*](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/fdl18.pdf),
+  FDL 2018 ([DOI](https://doi.org/10.1109/FDL.2018.8524111)). Clocks, `deltaT`, `sleepT` and dynamic
+  ticks: the basis of the [time](/advanced/time/) chapter. Readable, with examples.
+- Steven Smyth, Alexander Schulz-Rosengarten and Reinhard von Hanxleden, [*Practical Causality
+  Handling for Synchronous Languages*](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/date19.pdf),
+  DATE 2019 ([DOI](https://doi.org/10.23919/DATE.2019.8715081)). Scheduling directives and causality
+  views that help to find and fix causality problems, shown with SCCharts and KIELER. Readable once
+  you know [Why the compiler says no](/learn/causality/).
+- Alexander Schulz-Rosengarten, Steven Smyth and Michael Mendler, [*Toward Object-oriented Modeling in
+  SCCharts*](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/tecs21.pdf), ACM Transactions
+  on Embedded Computing Systems, 2021 ([DOI](https://doi.org/10.1145/3453482)). Classes, inheritance
+  and host objects in SCCharts: the background to
+  [Enums, structs and classes](/advanced/data-types/). Partly formal.
+- Alexander Schulz-Rosengarten, Reinhard von Hanxleden, Marten Lohstroh, Soroush Bateni and Edward A.
+  Lee, [*Modal Reactors*](https://arxiv.org/abs/2301.09597), 2023. Modes of operation, with transitions
+  between them, for the reactors of Lingua Franca (see below), by authors of SCCharts. For readers
+  who know Lingua Franca.
+
+## Background
+
+- David Harel, [*Statecharts: A Visual Formalism for Complex
+  Systems*](https://doi.org/10.1016/0167-6423(87)90035-9), Science of Computer Programming, 1987. The
+  paper that introduced statecharts: hierarchy, concurrency and the diagrams. Readable, and long: it
+  builds up a digital wristwatch step by step.
+- Charles André, [*Representation and Analysis of Reactive Behaviors: A Synchronous
+  Approach*](https://webusers.i3s.unice.fr/~map/WEBSPORTS/SyncCharts/TR96-28.pdf), 1996. SyncCharts,
+  the synchronous statecharts whose notation SCCharts inherits (strong and weak aborts, termination).
+  A technical report, partly formal.
+- Albert Benveniste, Paul Caspi, Stephen A. Edwards, Nicolas Halbwachs, Paul Le Guernic and Robert de
+  Simone, [*The Synchronous Languages 12 Years
+  Later*](https://www.cs.columbia.edu/~sedwards/papers/benveniste2003synchronous.pdf), Proceedings of
+  the IEEE, 2003 ([DOI](https://doi.org/10.1109/JPROC.2002.805826)). A survey of Esterel, Lustre and
+  Signal, their ideas and their industrial use. Readable.
+
+## Related languages
+
+- **Esterel**, the imperative synchronous language whose ideas (signals, preemption, the tick)
+  SCCharts takes over. Gérard Berry's [*The Esterel v5 Language
+  Primer*](https://www-sop.inria.fr/members/Gerard.Berry/Papers/primer.pdf) teaches it;
+  his [*The Constructive Semantics of Pure
+  Esterel*](https://www-sop.inria.fr/members/Gerard.Berry/Papers/EsterelConstructiveBook.pdf) (draft
+  book) is the background to SCCharts' causality rules; Gérard Berry and Georges Gonthier,
+  [*The Esterel Synchronous Programming Language: Design, Semantics,
+  Implementation*](https://doi.org/10.1016/0167-6423(92)90005-V) (Science of Computer Programming,
+  1992), is the classic paper; and [Wikipedia](https://en.wikipedia.org/wiki/Esterel) has an overview.
+- **Lustre**, the synchronous dataflow language behind SCCharts' dataflow regions and its `->`, `pre`
+  and `fby`. Nicolas Halbwachs, Paul Caspi, Pascal Raymond and Daniel Pilaud,
+  [*The Synchronous Dataflow Programming Language
+  Lustre*](https://www-verimag.imag.fr/~halbwach/lustre-ieee.html), Proceedings of the IEEE, 1991
+  ([DOI](https://doi.org/10.1109/5.97300)), and
+  the [Lustre page at Verimag](https://www-verimag.imag.fr/The-Lustre-Programming-Language-and.html).
+  In Lustre, `x = x + 1` is a cycle; in a dataflow region of SCCharts it is an update.
+- **SCADE**, the industrial tool built on Lustre, used for safety-critical embedded software:
+  [Ansys SCADE Suite](https://www.ansys.com/products/embedded-software/ansys-scade-suite).
+- **Céu**, "structured synchronous reactive programming": an Esterel-like textual language with
+  synchronous, deterministic concurrency and close integration with C, aimed at small embedded devices:
+  [ceu-lang.org](https://ceu-lang.org/) and its [source on GitHub](https://github.com/ceu-lang/ceu).
+- **Lingua Franca**, a coordination language for deterministic concurrent and distributed systems built
+  from reactors, with code in C, Python, Rust and other languages: [lf-lang.org](https://www.lf-lang.org/)
+  and its [publications](https://www.lf-lang.org/research/), among them the modal reactors above.

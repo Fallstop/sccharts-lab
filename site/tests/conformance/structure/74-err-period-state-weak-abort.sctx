@@ -1,0 +1,14 @@
+// period also guards the transitions leaving the state that declares it. A weak abort (go to) out of such a
+// state cannot be scheduled (netlist and priority). Put the period in an inner region instead:
+//   initial state S { region { period 300 ... } } if A go to T   works.
+scchart St74Leave {
+  input bool A
+  output int n = 0
+  initial state S {
+    period 300
+    initial state X
+    do n++ go to X
+  }
+  if A go to T
+  state T
+}

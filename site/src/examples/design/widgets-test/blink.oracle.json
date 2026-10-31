@@ -1,0 +1,31 @@
+{
+  "hash": "25cb1de98e788011e41a22b6e6a15b4d827f7b6a",
+  "chart": "src/examples/design/widgets-test/blink.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _g1",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving light prevents scheduling this tick.",
+    "Circular dependency involving light prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through light.",
+    "Potential instantaneous loop through light."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [On, Off]",
+      "line": 8,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [On, Off]",
+      "line": 5,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

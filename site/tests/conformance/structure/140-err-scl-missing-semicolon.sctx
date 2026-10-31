@@ -1,0 +1,10 @@
+// An assignment followed by another statement needs ";": "y = 1" then "z = 2" on the next line is rejected.
+scchart St140Missing {
+  output int y = 0, z = 0
+  method g() {
+    y = 1
+    z = 2
+  }
+  initial state S
+  do g() go to S
+}

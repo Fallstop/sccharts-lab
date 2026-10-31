@@ -1,0 +1,12 @@
+scchart DeferredCount {
+  input bool G, B
+  output int fired = 0
+
+  initial state A
+  if G go to S deferred
+
+  state S
+  immediate if 2 B do fired = 1 go to T
+
+  state T
+}

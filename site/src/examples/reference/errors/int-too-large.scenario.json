@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "KIELER rejects the chart: an `int` is a 32-bit C int, and 3000000000 is larger than 2147483647."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "For input string: \"3000000000\""
+}

@@ -1,0 +1,12 @@
+scchart Base1 {
+  output int o
+  region Main {
+    initial state W
+  }
+}
+scchart Derived1 extends Base1 {
+  override region Main {
+    initial state V
+    do o = 1 go to V
+  }
+}

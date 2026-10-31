@@ -1,0 +1,10 @@
+scchart SameRegionWrites {
+  input bool a
+  output int x
+
+  initial state A
+  if a do x = 1 go to B
+
+  state B
+  if a do x = 2 go to A
+}

@@ -1,0 +1,12 @@
+scchart InnerOutput {
+  output int y
+
+  initial state S {
+    output int z = 3
+    initial state A
+    do y = z; z = 4 go to B
+    state B
+    do y = z go to C
+    state C
+  }
+}

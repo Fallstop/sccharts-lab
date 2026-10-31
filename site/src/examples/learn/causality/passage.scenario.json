@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "aWants": false, "bWants": false }, "note": "Rejected: each robot reads what the other writes before it decides what to write itself. Neither region can go first." }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

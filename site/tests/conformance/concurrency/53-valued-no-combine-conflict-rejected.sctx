@@ -1,0 +1,15 @@
+scchart ValuedConflict {
+  output signal int V
+
+  region R1 {
+    initial state A
+    do V(1) go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    do V(2) go to B
+    state B
+  }
+}

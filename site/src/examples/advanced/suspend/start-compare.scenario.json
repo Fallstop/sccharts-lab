@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    { "inputs": { "doorOpen": true }, "note": "The door is already open in tick 1. `StartDelayed`: a plain `suspend` is not checked in the tick `Cooking` is entered, so the immediate transition from `Start` runs and switches the heater on. `StartImmediate`: `immediate suspend` is checked in the entry tick too, so `Cooking` is suspended at once and the heater stays off." },
+    { "inputs": {}, "note": "From tick 2 on, the plain `suspend` is checked as well. The door is open, so both charts are frozen." },
+    { "inputs": { "doorOpen": false }, "note": "The door shuts. `StartDelayed` is already in `Heating`, so its countdown starts: `remaining` = 2. `StartImmediate` now runs the immediate transition that waited: the heater goes on and `Heating` is entered, but its delayed countdown can only start in the next tick." },
+    { "inputs": {}, "note": "Both count down, `StartImmediate` one tick behind: `remaining` is 1 and 2." }
+  ],
+  "expect": "ok"
+}

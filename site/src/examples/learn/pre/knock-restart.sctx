@@ -1,0 +1,12 @@
+scchart KnockRestart {
+  input bool knock, restart
+  output signal unlock
+
+  initial state Door {
+    initial state Shut
+      if 3 knock do unlock go to Open
+
+    state Open
+  }
+  if restart abort to Door
+}

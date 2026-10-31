@@ -1,0 +1,6 @@
+scchart SelfLoopEveryTick {
+  output int x = 0
+
+  initial state A
+  do x += 1 go to A
+}

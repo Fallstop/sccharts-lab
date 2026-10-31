@@ -1,0 +1,14 @@
+// The "first tick" of -> and fby is the first tick of the state that contains the equation. Re-entering the
+// state restarts them.
+scchart St50Again {
+  input bool again
+  input int I
+  output int A, B
+  initial state S {
+    dataflow {
+      A = 0 -> I
+      B = 0 fby I
+    }
+  }
+  if again go to S
+}

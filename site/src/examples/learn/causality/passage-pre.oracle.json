@@ -1,0 +1,113 @@
+{
+  "hash": "c9a6a689d4f958b8ba2feb45c58e816b15695793",
+  "chart": "src/examples/learn/causality/passage-pre.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "aWants": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "bWants": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "aGoes": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "bGoes": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "aWants": false,
+        "bWants": false
+      },
+      "values": {
+        "aWants": false,
+        "bWants": false,
+        "aGoes": false,
+        "bGoes": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "aWants": true,
+        "bWants": true
+      },
+      "values": {
+        "aWants": true,
+        "bWants": true,
+        "aGoes": true,
+        "bGoes": true
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "aWants": false,
+        "bWants": false
+      },
+      "values": {
+        "aWants": false,
+        "bWants": false,
+        "aGoes": false,
+        "bGoes": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "aWants": false,
+        "bWants": false,
+        "aGoes": false,
+        "bGoes": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

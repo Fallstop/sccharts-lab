@@ -1,0 +1,23 @@
+scchart PartialAbort {
+  input bool A
+  output bool stop = false
+  output int countR1 = 0, countR2 = 0, done = 0
+
+  initial state M {
+    region R1 {
+      initial state I
+      if A do stop = true go to J
+      state J
+      if true do countR1 += 1 go to J
+    }
+    region R2 {
+      initial state K
+      if true do countR2 += 1 go to K
+    }
+  }
+  if stop abort to Done
+
+  state Done {
+    entry do done = 1
+  }
+}

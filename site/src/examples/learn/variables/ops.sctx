@@ -1,0 +1,11 @@
+scchart Ops {
+  input int reading
+  output int lowest = 1000
+  output int highest = 0
+  output int count = 0
+  output int doubling = 10
+
+  initial state Watch
+    do lowest min= reading; highest max= reading; count++; doubling *= 2
+       go to Watch
+}

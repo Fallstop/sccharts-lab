@@ -1,0 +1,50 @@
+{
+  "hash": "da055ff1c19e523a3f23774f5d2c08f3473bb5cd",
+  "chart": "tests/engine/kieler/rare/probe-d-inlined.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_f_d is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "r": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "r": 0,
+        "x": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "r": 6,
+        "x": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

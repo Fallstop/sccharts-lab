@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "knock": true, "away": false }, "note": "An `immediate` count delay counts the entry tick too: 1." },
+    { "note": "`knock` is still true: two counted, one short of opening the door." },
+    { "inputs": { "knock": false, "away": true }, "note": "The visitor walks away with two knocks counted." },
+    { "inputs": { "knock": true, "away": false }, "note": "Back, and knocking: `Shut` is entered anew, which should restart the count. Yet the door opens at once, after one knock in this visit. The trigger reads `pre` of the counter, which still holds the 2 from the last visit." },
+    { "note": "The door stays open." }
+  ],
+  "expect": "ok"
+}

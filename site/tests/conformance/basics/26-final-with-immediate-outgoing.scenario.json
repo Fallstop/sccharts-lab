@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "A -> B immediately; B is final but its immediate transition fires in the same tick (x = 5), so the reaction ends in C, which is not final: the root does not terminate."},
+    {"inputs": {}, "note": "C has no transitions; terminated = false, x = 5."}
+  ],
+  "expect": "ok"
+}

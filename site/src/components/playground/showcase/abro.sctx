@@ -1,0 +1,29 @@
+/*
+ * ABRO, the "hello world" of synchronous
+ * languages: emit O as soon as both A and
+ * B have happened (in any order, or in the
+ * same tick), then wait for R, which
+ * starts it all over.
+ */
+scchart ABRO {
+  input signal A, B, R
+  output signal O
+
+  initial state ABO {
+    initial state WaitAB {
+      region HandleA:
+        initial state WaitA
+          if A go to DoneA
+        final state DoneA
+
+      region HandleB:
+        initial state WaitB
+          if B go to DoneB
+        final state DoneB
+    }
+    do O join to Done
+
+    state Done
+  }
+  if R abort to ABO
+}

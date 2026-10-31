@@ -1,0 +1,78 @@
+{
+  "hash": "6ddc7ce455e03366a4e7805c53462b34baba0e5e",
+  "chart": "src/examples/advanced/dataflow/celsius.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "fahrenheit": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "celsius": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "freezing": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "fahrenheit": 50
+      },
+      "values": {
+        "fahrenheit": 50,
+        "celsius": 10,
+        "freezing": false
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "fahrenheit": 32
+      },
+      "values": {
+        "fahrenheit": 32,
+        "celsius": 0,
+        "freezing": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "fahrenheit": 14
+      },
+      "values": {
+        "fahrenheit": 14,
+        "celsius": -10,
+        "freezing": true
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "fahrenheit": 100
+      },
+      "values": {
+        "fahrenheit": 100,
+        "celsius": 37,
+        "freezing": false
+      },
+      "terminated": false
+    }
+  ]
+}

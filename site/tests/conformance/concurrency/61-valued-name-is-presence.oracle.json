@@ -1,0 +1,111 @@
+{
+  "hash": "ea2a78f61dfcfef935251db1f32ca2e3f1de5140",
+  "chart": "tests/conformance/concurrency/61-valued-name-is-presence.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "V": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "V_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "plusOne": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "valPlusOne": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "V_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "V": false,
+        "V_val": 0,
+        "plusOne": 0,
+        "valPlusOne": 0,
+        "V_curval": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "V": true,
+        "V_val": 5,
+        "plusOne": 2,
+        "valPlusOne": 6,
+        "V_curval": 5
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "V": false,
+        "V_val": 5,
+        "plusOne": 2,
+        "valPlusOne": 6,
+        "V_curval": 5
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

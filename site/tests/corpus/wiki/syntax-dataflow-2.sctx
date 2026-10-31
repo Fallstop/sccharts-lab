@@ -1,0 +1,12 @@
+import "DF-0002"
+
+scchart df#0461 {
+  output int O, O2, O3, O4
+  ref df#0002 A, A2, A3, A4
+
+  dataflow:
+  O = A.O || A2.O || A3.O 
+  O2 = A.O || A2.O || A3.O 
+  O3 = A.O || A2.O || A3.O 
+  O4 = A.O || A2.O || A3.O 
+}

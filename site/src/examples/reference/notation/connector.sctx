@@ -1,0 +1,13 @@
+scchart Junction {
+  input bool sample
+  input int level
+  output int band
+
+  initial state Idle
+    if sample go to Classify
+
+  connector state Classify
+    immediate if level > 10 do band = 2 go to Idle
+    immediate if level > 5 do band = 1 go to Idle
+    immediate do band = 0 go to Idle
+}

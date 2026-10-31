@@ -1,0 +1,15 @@
+scchart Sig {
+  input signal A
+  output signal B
+  output signal int V = 0 combine +
+  region R1 {
+    initial state W
+    if A do B; V(3) go to D
+    final state D
+  }
+  region R2 {
+    initial state W
+    immediate if B do V(4) go to D
+    final state D
+  }
+}

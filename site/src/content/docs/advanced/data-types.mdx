@@ -1,0 +1,366 @@
+---
+title: "Enums, structs and classes"
+description: "Enums for named modes, structs for records, classes for data with methods: how to declare and use them, what a simulation shows, and what KIELER rejects."
+sidebar:
+  order: 8.5
+---
+
+import { Chart, Sim, Quiz, Predict, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+So far every variable has held one value of a basic type, or an array of them. Real devices want a
+little more structure. A fan's speed is *off*, *low* or *high*, not 0, 1 or 2; a sensor reading comes
+with the number of the sample it belongs to; a counter comes with the operations that change it.
+SCCharts borrows three declarations from C and Java for this: **enums**, **structs** and **classes**.
+They belong to SCCharts' object-oriented extensions
+([Schulz-Rosengarten et al., 2021](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/tecs21.pdf)),
+and KIELER compiles all three away before it generates code, so they cost nothing when the chart runs.
+
+The examples use methods and code effects, which [the previous chapter](/advanced/methods/)
+introduces.
+
+## Enums: names instead of codes
+
+[Variables, types and expressions](/learn/variables/#strings-compare-as-pointers) advised you to
+encode choices as ints, as in `mode == 2`, or with an enum, which this section introduces. An int code
+works, but whoever reads the chart has to remember what 2 means, and nothing stops a transition from
+setting the mode to 7. An **enum** gives the codes names. Here is a three-speed fan:
+
+<Sim example="advanced/data-types/fan" show={['button', 'speed', 'power']} caption="Each tick in which `button` is true steps `speed` from `Speed.OFF` to `Speed.LOW` to `Speed.HIGH` and back. The trace shows `speed` as 0, 1 and 2." />
+
+Written with int codes, the fan would declare `int speed = 0` and test `speed == 0` and `speed == 1`.
+With the enum, the transitions say what they mean, and after compilation the two versions are the same
+chart (below). The two lines that declare the enum and its variable:
+
+```sctx
+enum Speed { OFF, LOW, HIGH }
+ref Speed speed = Speed.OFF
+```
+
+- `enum Speed { OFF, LOW, HIGH }` declares a type and its values. It declares no variable. Put it
+  among the chart's own declarations: an enum declared inside a state is not found
+  (`Couldn't resolve reference to EObject 'Speed'.`).
+- `ref Speed speed` declares a variable of that type. The `ref` is required: `Speed speed` is a syntax
+  error (`no viable alternative at input 'Speed'`). Without an initial value it starts at the first
+  value, `Speed.OFF`. In current KIELER it can also be an `input` or an `output`
+  (see [KIELER versions](#kieler-versions)).
+- A value is always written with its type in front, `Speed.LOW`. `LOW` on its own is not found.
+- Compare values with `==` and `!=`.
+
+KIELER checks what you assign to an enum variable: only values of its own enum.
+
+<Chart example="advanced/data-types/fan-wrong" caption="`speed = 1` is rejected: 1 is an `int`, not a `Speed`." />
+
+The same message comes for `speed = speed + 1` and for a value of another enum. Current KIELER also
+accepts another variable of the same enum (`b = a`). The other direction is allowed: `level = speed`
+stores the value in an `int`.
+
+### What the simulator shows
+
+KIELER replaces each value by its position in the declaration, counting from 0: `Speed.OFF` becomes 0,
+`Speed.LOW` 1 and `Speed.HIGH` 2, and `ref Speed speed` becomes an `int`. That is why the trace, and
+KIELER's own simulation, show `speed` as a number: after compilation the fan is the int-code version,
+with `speed == 0` where you wrote `speed == Speed.OFF`.
+The names exist only in your source, so keep the declaration at hand when you read a trace.
+
+Comparisons are not checked, so the numbers show through there. `speed > Speed.LOW` compiles and
+compares positions; so does `speed == 1`; and so does a comparison between values of two *different*
+enums, `speed == light`, which is true whenever the positions happen to be equal. An enum input
+(current KIELER) arrives as a number, and any number is accepted: with 5 the chart sees a value that
+matches none of the names. Don't rely on any of these.
+
+## Structs: variables that belong together
+
+A temperature logger keeps two readings: the latest and the highest so far. Each reading is a value
+and the number of the sample it came from. A **struct** makes the pair one record:
+
+<Sim example="advanced/data-types/logger" view="code" caption="Samples are taken in ticks 2, 3, 5 and 6. `peak` and `peakNumber` report `highest`, which changes only when a sample beats it." />
+
+```sctx
+struct Reading {
+  int value
+  int number
+} latest, highest
+```
+
+- This declares the type `Reading` and, after the closing brace, its two **instances**, `latest` and
+  `highest`. That is the only place to declare instances: KIELER has no type definitions on their own,
+  and a struct with no instances after its brace gets the warning
+
+  ```text wrap
+  A class/struct should have at least one variable defined (Type definitions are not supported).
+  ```
+
+- Members are ordinary declarations of any type, arrays included, and may have initial values
+  (`int value = -1`), which every instance starts with. A member without one starts at its type's
+  default, 0 here.
+- `latest.value` reads or writes one member. Each instance has its own members: writing `latest.value`
+  leaves `highest.value` alone.
+- A struct declared inside a state belongs to that state, like its other variables: its members are
+  initialised again whenever the state is entered.
+
+The logger fills `latest` and then copies it into `highest`, one member at a time. It has to: an
+instance as a whole is not a value. `highest = latest` is rejected with
+
+```text wrap
+Assignments to class/struct types are not supported. Please specify a member.
+```
+
+and `highest == latest` with
+
+```text wrap
+Referencing class/struct types is not supported. Please specify a member.
+```
+
+Copy and compare member by member.
+
+A struct cannot be an input or an output either: `output struct Reading { … } latest` is a syntax
+error. Report the members the environment needs through outputs of basic types, as `peak` and
+`peakNumber` do.
+
+## Classes: data with its own methods
+
+A **class** is a struct that also has methods. The methods work on the instance they are called on, and
+members marked `private` can be used only inside the class, so the rest of the chart has to go through
+the methods. This scoreboard counts goals with two instances of one class, `Counter`:
+
+<Sim example="advanced/data-types/scoreboard" show={['homeGoal', 'awayGoal', 'newMatch', 'homeScore', 'awayScore', 'home.count', 'away.count']} caption="In tick 4 both teams score: each region calls `add()` on its own instance. The trace also shows each instance's own `count`." />
+
+- Methods in a class are written like C functions: a return type (or `void`), the name and the
+  parameters. The keyword `method` that a chart's own [methods](/advanced/methods/#methods) take is
+  not allowed here: it gives `missing '}' at 'method'`.
+- A call names the instance: `home.add()`, `home.get()`. The parentheses are required even without
+  arguments; `home.add` gives
+
+  ```text wrap
+  Methods must be used with call syntax using parenthesis.
+  ```
+
+- Inside a method, the members of the instance are used by their plain names (`count++`), and the
+  class's other methods can be called the same way (`return get() * 2`). A method can also read and
+  write the chart's variables.
+- A `private` member, variable or method, can be used only inside the class: `home.count` in a
+  transition gives `Couldn't resolve reference to ValuedObject 'count'.` Members without `private` can
+  be read and written from outside, as in a struct (`home.count = 7`).
+- Each instance has its own members: `home.add()` changes `home`'s `count` and nothing else.
+- Method names follow the rules for all names. `void reset()` is rejected because `reset` is a keyword
+  ([`mismatched input 'reset' expecting RULE_ID`](/reference/errors/#mismatched-input-reset-expecting-rule_id)),
+  which is why the scoreboard's method is called `clear`.
+
+KIELER inlines short methods like these, as it does a chart's own: `home.add()` in a transition
+behaves exactly like writing `home.count++` there. So a call takes part in the tick like the reads and writes it
+contains, also when concurrent regions call methods of the same instance (the first question in
+[Check your understanding](#check-your-understanding) shows what happens).
+
+<Aside type="note" title="Inheritance">
+A class cannot extend another class, but a chart can take over another chart's declarations, regions
+and methods: `scchart Lamp extends Blink { … }` inherits what `Blink` declares, and
+`override region Show { … }` in `Lamp` replaces `Blink`'s region `Show` with a new one. A chart without
+inputs and outputs can even serve as a class, through `ref Blink b`. This guide does not go further;
+the KIELER wiki's
+[Object Orientation](https://github.com/kieler/semantics/wiki/Syntax:-Object-Orientation) page
+describes both. Overriding *methods* (`override method`) works only in current KIELER.
+</Aside>
+
+## In the simulation
+
+KIELER's simulation reports each struct or class instance declared at the top of the chart as one entry
+holding its members, in the JSON that its simulator exchanges (an instance declared inside a state is
+hidden, like the state's other variables). The first four ticks of the scoreboard (`homeScore` and
+`awayScore` copy the counts):
+
+| Tick | Goal for | `home` | `away` |
+| ---: | --- | --- | --- |
+| 1 | nobody | `{"count":0}` | `{"count":0}` |
+| 2 | home | `{"count":1}` | `{"count":0}` |
+| 3 | away | `{"count":1}` | `{"count":1}` |
+| 4 | both | `{"count":2}` | `{"count":2}` |
+
+Private members are listed too: `private` limits what the chart's code may use, not what the
+simulation shows. Enums appear as their numbers.
+
+This site's trace can show members one at a time. The scoreboard above traces `home.count` and
+`away.count`, private as they are, and in the playground you can tick any member under *Variables*. It
+cannot show an instance as a whole. Every example here still copies what it reports into an output,
+`homeScore = home.get()`, because a chart on a device has to do the same: only inputs and outputs
+connect it to the rest of the program.
+
+## What KIELER makes of them
+
+None of the three survives compilation. In the C code that KIELER generates
+(see [From chart to C](/advanced/code-generation/)) an enum variable is an `int` and its values are
+numbers, a struct or class becomes a C struct inside the chart's `TickData`, and the methods have
+disappeared into the transitions that called them. For the scoreboard, KIELER's header declares
+
+```c
+typedef struct {
+  int count;
+} Scoreboard_Counter;
+
+typedef struct {
+  char homeGoal;
+  char awayGoal;
+  char newMatch;
+  int homeScore;
+  int awayScore;
+  Scoreboard_Counter home,  away;
+  /* ... the compiler's own fields ... */
+} TickData;
+```
+
+and the transition `if homeGoal do home.add(); homeScore = home.get()` has become
+
+```c
+  if (d->_g6) {
+    d->home.count++;
+    d->homeScore = d->home.count;
+  }
+```
+
+A method with a loop is the exception: KIELER keeps it as a C function (see
+[What KIELER makes of a method](/advanced/methods/#what-kieler-makes-of-a-method)).
+
+## What KIELER rejects
+
+Enums:
+
+- `Speed speed`, without `ref`: `no viable alternative at input 'Speed'`.
+- `speed = LOW`, without `Speed.`: `Couldn't resolve reference to ValuedObject 'LOW'.`; the same for a
+  value the enum does not have, `Speed.MEDIUM`.
+- `speed = 1`: `Cannot assign enum value of an incompatible type.`
+- An enum without values, `enum Speed { }`: `missing RULE_ID at '}'`.
+- An enum declared inside a state: `Couldn't resolve reference to EObject 'Speed'.`
+
+Structs and classes:
+
+- A struct without a type name, `struct { … } latest`:
+  `A class/struct must have a unique name.`
+- `private` in a struct: `All members of a struct must be publicly accessible.`
+- A method in a struct: `mismatched input 'void' expecting '}'` for a `void` method, as the classes
+  above write them, and `no viable alternative at input '()'` for one with a return type,
+  `int get()`.
+- An instance as an input or output, `output struct …` or `output class …`:
+  `mismatched input 'struct' expecting 'primitive'`.
+- The keyword `method` inside a class: `missing '}' at 'method'`.
+- A private member used outside its class, `home.count`:
+  `Couldn't resolve reference to ValuedObject 'count'.`
+- A method called without parentheses, `home.add`:
+
+  ```text wrap
+  Methods must be used with call syntax using parenthesis.
+  ```
+
+- A method named like a keyword, `void reset()`: `mismatched input 'reset' expecting RULE_ID`.
+- A call with the wrong number of arguments, `add(1, 2)` for a method `void add(int k)`:
+
+  ```text wrap
+  Number of arguments does not match required parameters in definition.
+  ```
+
+- A class that extends another, `class Fancy extends Counter { … }`:
+  `mismatched input 'extends' expecting '{'`.
+
+After a name it cannot resolve, KIELER usually adds `The required feature 'valuedObject' of '…' must
+be set`. That one follows from the first message and goes away with it (see
+[Fix the first message first](/reference/errors/#fix-the-first-message-first)).
+
+## KIELER versions
+
+Enums, structs and classes work the same in the KIELER VS Code extension (0.3.0) and in current KIELER,
+which SCCharts Lab uses, except for these:
+
+- **Enum inputs and outputs.** In current KIELER, `input ref Speed wanted` and
+  `output ref Speed speed` make an enum input and output (numbers, like every enum variable). 0.3.0
+  rejects the output with a syntax error at `ref`, `no viable alternative at input 'ref'`, followed by
+
+  ```text wrap
+  Pure types are only allowed if used in combination with signals.
+  ```
+
+  It accepts the input but drops the word `input` without a message: `wanted` becomes a local that the
+  simulation cannot set, so it keeps its first value whatever you enter. This chapter keeps its enum
+  variables local, which works in both; to report one, copy it into an `int` output
+  (`level = speed`).
+- **Copying an enum variable.** `b = a` between two variables of one enum is accepted by current KIELER
+  only; 0.3.0 says `Cannot assign enum value of an incompatible type.`
+- **Struct and class outputs.** Both versions reject them; 0.3.0 says
+  `no viable alternative at input 'struct'` and adds the `Pure types` message above.
+- **Calls.** 0.3.0 accepts a call with too many arguments and ignores the extra ones.
+- **Unresolved names.** For a name it cannot resolve in an assignment (`speed = Speed.MEDIUM`,
+  `speed = LOW`) or a private member, 0.3.0 adds a series of Java exceptions
+  (`java.lang.NullPointerException` and others) to the message. For one in an initial value,
+  `ref Speed speed = OFF`, and for a call of a private method, its compilation never finishes and no
+  message appears at all. Current KIELER gives the message alone.
+
+## Try it
+
+<TryIt example="advanced/data-types/player-codes" solution="advanced/data-types/player" title="Name the modes">
+`Player` encodes its mode as an int: 0 is stopped, 1 playing, 2 paused. Declare an enum `Mode` with
+these three values and make `mode` a variable of it, so that the transitions read
+`mode = Mode.PLAYING`. `sound` should behave exactly as before, so the playground's comparison with the
+model solution matches even before you start: run it when you are done, to check that nothing else
+changed.
+</TryIt>
+
+<TryIt example="advanced/data-types/laps-start" solution="advanced/data-types/laps-solution" title="Finish the race">
+`Laps` counts laps with a `Counter` whose `count` is private. Add a method `bool done()` to the class
+that is true once three laps have been counted, and use it to end the race: from `Racing`, go to a
+final state `Finished` as soon as `counter.done()` holds. Laps after that must not count.
+</TryIt>
+
+## Check your understanding
+
+Two regions call `add()` on the same instance `c`, and a third copies `c.get()` to `total` in every
+tick. Both inputs are true from tick 2 on. Predict `total` after ticks 2 and 3, check, then open the
+explanation.
+
+<Predict
+  example="advanced/data-types/shared-counter"
+  ask={[{ tick: 2, value: 'total' }, { tick: 3, value: 'total' }]}
+  caption="`Left` and `Right` call `c.add()` in the same tick; `Show` reads `c.get()`."
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`total` is 2 after tick 2 and 4 after tick 3. KIELER inlines `c.add()` as `c.count++`, so in tick 2 the
+two regions make two concurrent updates of the same variable, and concurrent updates add up.
+`c.get()` reads `c.count`, and a read waits until every update of the tick is done
+(see [Why the compiler says no](/learn/causality/#three-kinds-of-access)), so `Show` sees both. In
+tick 3 the inputs are still true, and two more updates follow.
+
+</details>
+
+<Quiz
+  question="A chart declares `enum Level { LOW, MEDIUM, HIGH }` and `ref Level level = Level.HIGH`. What does a trace of `level` show in tick 1?"
+  options={['`HIGH`', '2', '3', '`Level.HIGH`']}
+  answer={1}
+>
+KIELER replaces each value of an enum by its position, counting from 0, so `Level.HIGH` is 2. The
+names exist only in the source.
+</Quiz>
+
+<Quiz
+  question="`latest` and `highest` are instances of the same struct, with the members `value` and `number`. How do you copy `latest` into `highest`?"
+  options={['With `highest = latest`', 'One member at a time: `highest.value = latest.value`, and so on', 'With a `copy` method of the struct', 'Not at all: instances cannot be written']}
+  answer={1}
+>
+An instance as a whole is not a value, so KIELER rejects `highest = latest`. Structs have no methods,
+so there is no `copy` either. Assign the members one by one.
+</Quiz>
+
+<KeyIdeas>
+- `enum E { A, B, C }` declares a type and its values; `ref E x = E.A` declares a variable of it. Write
+  values as `E.A`; KIELER checks that only values of `E` are assigned.
+- KIELER replaces enum values by their positions, 0, 1, 2, so traces and data pools show numbers.
+- `struct R { … } a, b` declares a type and its instances at once. Use members with a dot, and copy or
+  compare instances member by member.
+- A class adds methods, written like C functions without `method`, and `private` members. Calls name
+  the instance, `c.add()`, and every instance has its own members.
+- Instances cannot be inputs or outputs: report members through outputs.
+- KIELER compiles all three away: enums into ints, instances into C structs, short methods into the
+  transitions that call them.
+</KeyIdeas>
+
+Next, [Comments and annotations](/advanced/annotations/): the parts of a file that are there for
+the reader, and two comment traps.

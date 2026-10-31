@@ -1,0 +1,103 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "SCTX",
+  "scopeName": "text.sctx",
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#annotations"
+    },
+    {
+      "include": "#constants-and-special-vars"
+    },
+    {
+      "include": "#comment"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.sctx",
+          "match": "\\b(Pr|_|abort|auto|bool|calls|class|clock|combine|commuting|conflicting|connector|const|dataflow|deep|deferred|delayed|do|during|else|end|entry|enum|exit|expression|extends|extern|fby|final|float|for|fork|global|go|goto|history|host|if|immediate|import|initial|input|int|is|join|json|label|max|method|min|module|nondeterministic|none|null|ode|once|output|override|par|pause|period|policy|pre|print|private|protected|public|pure|random|randomize|ref|region|reset|return|run|scchart|schedule|scope|seq|sfby|shallow|signal|state|static|string|strong|struct|suspend|then|this|to|undefined|val|violation|void|weak|while)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.sctx",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.sctx",
+          "match": "."
+        }
+      ]
+    },
+    "annotations": {
+      "patterns": [
+        {
+          "name": "storage.type.annotation.sctx",
+          "match": "@\\w*"
+        }
+      ]
+    },
+    "constants-and-special-vars": {
+      "patterns": [
+        {
+          "name": "constant.language.sctx",
+          "match": "\\b(true|false)\\b"
+        },
+        {
+          "name": "constant.numeric.integer.sctx",
+          "match": "\\b(0|[1-9]([0-9_]*[0-9])?)[lL]?(?!\\w|\\.)"
+        },
+        {
+          "name": "constant.numeric.float.sctx",
+          "match": "(?x)\n\t\t\t\t\t\t(?\u003c!\\w)\t\t\t\t\t\t\t\t\t\t\t# Ensure word boundry\n\t\t\t\t\t\t(?\u003e\n\t\t\t\t\t\t\t(\n\t\t\t\t\t\t\t\t(0|[1-9]([0-9_]*[0-9])?)\t\t\t\t# Leading digits\n\t\t\t\t\t\t\t\t(?\u003d[eEfFdD.])\t\t\t\t\t\t\t# Allow for numbers without .\n\t\t\t\t\t\t\t)?\n\t\t\t\t\t\t\t(\n\t\t\t\t\t\t\t\t(?\u003c\u003d[0-9])(?\u003d[eEfFdD])\t\t\t\t\t# Allow for numbers without .\n\t\t\t\t\t\t\t  | \\.\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t(\n\t\t\t\t\t\t\t\t[0-9]([0-9_]*[0-9])?\t\t\t\t\t# Numbers after .\n\t\t\t\t\t\t\t)?\n\t\t\t\t\t\t\t(\n\t\t\t\t\t\t\t\t[eE][+-]?(0|[1-9]([0-9_]*[0-9])?)\t\t# Exponent\n\t\t\t\t\t\t\t)?\n\t\t\t\t\t\t\t[fFdD]?\t\t\t\t\t\t\t\t\t\t# Float Type Suffix\n\t\t\t\t\t\t)\n\t\t\t\t\t\t(?!\\w)\t\t\t\t\t\t\t\t\t\t\t# Ensure word boundry\n\t\t\t\t\t"
+        }
+      ]
+    },
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.block.sctx",
+          "begin": "(/\\*)(?:\\s*((@)internal)(?\u003d\\s|(\\*/)))?",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.sctx"
+            },
+            "2": {
+              "name": "punctuation.decorator.internaldeclaration.sctx"
+            },
+            "3": {}
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.whitespace.comment.leading.sctx"
+            }
+          }
+        },
+        {
+          "begin": "(^[ \\t]+)?((//)(?:\\s*((@)internal)(?\u003d\\s|$))?)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.sctx"
+            },
+            "2": {
+              "name": "comment.line.double-slash.sctx"
+            }
+          },
+          "end": "(?\u003d^)",
+          "contentName": "comment.line.double-slash.sctx"
+        }
+      ]
+    }
+  }
+}

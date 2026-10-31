@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "leave": false }, "note": "Tick 1 enters `Outer` and `Inner`. They have no entry actions, so `step` stays 0." },
+    { "inputs": { "leave": true }, "note": "Leaving runs the exit actions from the inside out (`Inner` 1, `Outer` 2), then the effect (3). Entering runs the entry actions from the outside in (`Target` 4, `First` 5). Finally `First`'s immediate transition fires in the same tick (6)." },
+    { "inputs": { "leave": false }, "note": "The chart rests in `Second`: nothing changes." }
+  ],
+  "expect": "ok"
+}

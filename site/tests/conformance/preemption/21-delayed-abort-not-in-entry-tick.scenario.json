@@ -1,0 +1,25 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": true,
+        "W": true
+      },
+      "note": "Both triggers hold, but aborts without `immediate` are delayed: they are not checked in the tick M is entered. effect = 0."
+    },
+    {
+      "inputs": {
+        "S": false,
+        "W": false
+      },
+      "note": "Neither trigger holds."
+    },
+    {
+      "inputs": {
+        "W": true
+      },
+      "note": "The weak abort fires: effect = 2."
+    }
+  ],
+  "expect": "ok"
+}

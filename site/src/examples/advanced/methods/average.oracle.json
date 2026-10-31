@@ -1,0 +1,110 @@
+{
+  "hash": "3ad20241237d49e5df553fb0e5667dd16e766266",
+  "chart": "src/examples/advanced/methods/average.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name sum is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "samples": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "mean": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "total": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "samples": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "values": {
+        "samples": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "mean": 0,
+        "total": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "samples": [
+          10,
+          20,
+          30,
+          41
+        ]
+      },
+      "values": {
+        "samples": [
+          10,
+          20,
+          30,
+          41
+        ],
+        "mean": 25,
+        "total": 101
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "samples": [
+          0,
+          0,
+          0,
+          -8
+        ]
+      },
+      "values": {
+        "samples": [
+          0,
+          0,
+          0,
+          -8
+        ],
+        "mean": -2,
+        "total": -8
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

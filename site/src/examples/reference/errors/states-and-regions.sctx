@@ -1,0 +1,10 @@
+scchart StatesAndRegions {
+  input bool A, B
+
+  initial state Idle
+    if A go to Idle
+
+  region Other:
+    initial state Waiting
+      if B go to Waiting
+}

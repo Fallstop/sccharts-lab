@@ -1,0 +1,298 @@
+---
+title: "Suspension"
+description: "Freezing a state in place with suspend, immediate suspend and weak suspend, and what that does to its actions and transitions."
+sidebar:
+  order: 1
+---
+
+import { Chart, Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Open a microwave halfway through and it stops. Shut the door and it carries on: the timer does not
+start again from the beginning, and it does not skip ahead either. It was simply paused.
+
+The [aborts](/learn/preemption/) you have met so far end a state for good. **Suspension** is a third
+way to interrupt a state from outside: it stops the state for a tick, or for many ticks, without
+leaving it. When the suspension lifts, the state continues exactly where it was. (Together, weak
+aborts, strong aborts and suspension are called *preemption*: something outside a state takes
+control away from it.)
+
+## A pause button
+
+Here is a microwave that counts down from 3. Its cooking state carries one extra line,
+`suspend if doorOpen`:
+
+<Sim example="advanced/suspend/microwave" caption="The guided tour opens the door in ticks 3 and 4: `remaining` stops at 2 and carries on from 2 when the door shuts. After the tour, press **Take over** to try it yourself: `doorOpen` stays on until you switch it off." />
+
+KIELER's trace of the tour, with the state and the values after each tick:
+
+| Tick | `doorOpen` | State | `remaining` | `beep` |
+| ---: | --- | --- | --- | --- |
+| 1 | false | Cooking (Heating) | 3 | false |
+| 2 | false (held) | Cooking (Heating) | 2 | false |
+| 3 | true | Cooking (Heating) | 2 | false |
+| 4 | true (held) | Cooking (Heating) | 2 | false |
+| 5 | false | Cooking (Heating) | 1 | false |
+| 6 | false (held) | Done | 0 | true |
+| 7 | false (held) | Done | 0 | true |
+
+In ticks 3 and 4 the self-loop on `Heating` would normally fire, but `Cooking` is suspended, so
+nothing inside it moves. In tick 5 the count resumes from 2. Nothing was lost and nothing restarted.
+
+## The rule
+
+`suspend if c` is a state action, written at the top of a state next to its `entry`, `during` and
+`exit` actions. The diagram lists it with them, as `suspend doorOpen`.
+
+In every tick in which `c` holds, the state is **suspended**, and nothing that belongs to it runs:
+
+- no transition inside it fires, delayed or immediate;
+- no `during` action runs, neither the state's own nor those of the states inside it;
+- no entry or exit action of an inner state runs;
+- count delays inside it (`if 3 press`) do not count that tick.
+
+The active inner states stay active. In the next tick in which `c` is false, the state carries on
+from them as if the suspended ticks had not happened.
+
+Three details complete the rule:
+
+- **A plain `suspend` is delayed**, like a delayed transition: it is not checked in the tick the
+  state is entered, only from the next tick on. [Immediate suspend](#immediate-suspend) changes that.
+- **Only the state that carries the `suspend`, and what is inside it, freezes.** The states around it
+  and the regions next to it keep reacting as usual.
+- **Several `suspend` actions on one state** suspend it whenever any of their triggers holds.
+
+<Aside type="caution" title="A suspend without a condition">
+A `suspend` must have a trigger. When it has none, official KIELER fails with an internal error in
+its code generator; SCCharts Lab says
+
+```text wrap
+This suspend has no trigger. KIELER cannot compile a suspend without an if condition.
+```
+
+[Compiler messages](/reference/errors/#this-suspend-has-no-trigger-kieler-cannot-compile-a-suspend-without-an-if-condition)
+explains it. A `weak suspend` without `if` is rejected too. Write the condition you mean, for example
+`suspend if pause`. Leave out count delays as well: KIELER accepts `suspend if 2 A` but silently
+ignores the 2, so the state is suspended at the first `A`.
+</Aside>
+
+## What freezes, and what does not
+
+Suspension stops behaviour, not time. Whatever looks at "the previous tick" still sees the previous
+tick, even if that tick was a suspended one. The most important case is [`pre`](/learn/pre/).
+
+The chart below measures how much `sensor` changed since the last tick, `sensor - pre(sensor)`, and
+has a `hold` input that suspends it. Before you run it, predict what `change` is in tick 3, and in
+tick 5, the first tick after the hold. Then open the explanation below.
+
+<Predict
+  example="advanced/suspend/pre-not-frozen"
+  ask={[{ tick: 3, value: 'change' }, { tick: 5, value: 'change' }]}
+  caption="`hold` is true in ticks 3 and 4. In tick 5, does `pre(sensor)` remember 12 or 20?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+In tick 3 nothing runs, so `change` keeps its old value, 2. In tick 5 the transition runs again, and
+`pre(sensor)` is 20, the value `sensor` had in tick 4. That tick was suspended, but `pre` does not
+care: it always means "at the end of the previous tick". So `change` is 26 − 20 = 6. If you wanted
+"the change since the last tick that ran", you would have to keep that value yourself, in a variable
+that the transition writes.
+
+</details>
+
+Count delays, on the other hand, belong to the state's behaviour, so they do freeze. A transition
+`if 3 press go to Done` inside a suspended state counts only the presses in unsuspended ticks.
+
+## Surprises
+
+The rule fits in a paragraph, but the way KIELER implements it has consequences that catch people
+out. Suspension does not exist in KIELER's core language. The compiler rewrites a `suspend` into a
+hidden flag, `_enabled`, which is recomputed in every tick, and adds `&& _enabled` to the trigger of
+every action and transition that belongs to the state. Each surprise below comes from something that
+counts as "belonging to the state".
+
+### A suspended state cannot be left by its own transitions
+
+The state's own outgoing transitions belong to it too. While the state is suspended, they cannot fire.
+
+That is a real trap. Give the microwave a `cancel` button with `if cancel go to Idle` on `Cooking`, and
+cancelling stops working while the door is open. The fix is to put the suspension one level further in:
+a superstate `Oven` holds the cancel transition, and only the `Cooking` inside it is suspended.
+
+<Compare
+  a="advanced/suspend/cancel-trap"
+  b="advanced/suspend/cancel-fixed"
+  scenario="advanced/suspend/cancel-compare"
+  caption="The tour opens the door in tick 3 and presses `cancel` in tick 4. `CancelTrap` ignores the press and later carries on cooking; `CancelFixed` goes to `Idle` at once."
+/>
+
+The rule of thumb: **put the `suspend` on an inner state and the ways out on a state around it.** The
+outer state is never suspended, so its transitions always work.
+
+<Aside type="caution" title="A strong abort out of a suspended state">
+With `if cancel abort to Idle` on `Cooking` itself, KIELER does not accept the chart at all. The
+strong abort and the hidden flag depend on each other within the tick, a
+[causality cycle](/learn/causality/): the compiler lists errors such as
+`Can't schedule from _g8 to _g13b` and reports `The SCG is NOT asc-schedulable!`. Every `abort to` out
+of a state that has its own `suspend` is rejected like this, immediate or not. On the enclosing `Oven`,
+`abort to` works.
+</Aside>
+
+<Chart example="advanced/suspend/abort-rejected" caption="`CancelTrap` with `abort to` in place of `go to`: KIELER rejects it." />
+
+### Entry actions can be lost
+
+The state's own entry and exit actions belong to it as well, and here the hidden flag misbehaves: when
+the state is entered, its entry actions run *before* the flag has been switched on for the first time.
+The result is that **a state with a `suspend` skips its own entry actions the first time it is
+entered**, even if the suspend never triggers.
+
+This chart counts cooking sessions with an entry action on `Cooking`:
+
+<Sim example="advanced/suspend/lost-entry" caption="The first visit to `Cooking` (tick 2) leaves `sessions` at 0; the second (tick 4) counts." />
+
+KIELER gives no error and no warning; the count is simply wrong.
+
+<Aside type="danger" title="Entry and exit actions on a suspendable state">
+On later entries the entry actions run only if the state was not suspended in the tick it was last
+left, because the flag keeps its value while the state is inactive. A `suspend` on the chart itself
+means the chart's own entry actions never run. And when a state is removed by a transition of an
+enclosing state while it is suspended, its exit actions are skipped.
+</Aside>
+
+The safe habit is to keep `entry` and `exit` actions off the state that carries the `suspend`. Do the
+set-up on the transition that enters the state (`if start do sessions++ go to Cooking`), or in an entry
+action of a state inside it: the entry actions of the inner initial states do run on the first entry,
+as long as the state is not suspended in that tick.
+
+### A suspend can delay termination
+
+The `join to` of a superstate belongs to the superstate, so it gets `&& _enabled` added to its trigger.
+A termination with a trigger is delayed (see [Superstates](/learn/hierarchy/)), so a superstate whose
+inside finishes in the tick it is entered terminates one tick later once it has a `suspend`. The two
+charts below differ only in the line `suspend if doorOpen`, and the door stays shut throughout:
+
+<Compare
+  a="advanced/suspend/join-plain"
+  b="advanced/suspend/join-suspend"
+  scenario="advanced/suspend/join-compare"
+  caption="`Prepare` finishes in its entry tick in both charts, but `PreheatSuspend` switches the heater on a tick later."
+/>
+
+If the inside takes at least one tick to finish, as in the microwave, the timing is the same with or
+without the suspend.
+
+## Immediate suspend
+
+A plain `suspend` is not checked in the tick its state is entered; an `immediate suspend` is. The two
+charts below differ only in that keyword. Both enter `Cooking` with the door already open, and the
+inner transition `immediate do heater = true go to Heating` runs as soon as it is allowed to:
+
+<Compare
+  a="advanced/suspend/delayed-suspend"
+  b="advanced/suspend/immediate-suspend"
+  scenario="advanced/suspend/start-compare"
+  caption="The door is open in tick 1: `StartDelayed` switches the heater on anyway, `StartImmediate` waits until the door shuts in tick 3."
+/>
+
+`heater` and `remaining` after each tick:
+
+| Tick | `doorOpen` | Delayed | Immediate |
+| ---: | --- | --- | --- |
+| 1 | true | true, 3 | false, 3 |
+| 2 | true (held) | true, 3 | false, 3 |
+| 3 | false | true, 2 | true, 3 |
+| 4 | false (held) | true, 1 | true, 2 |
+
+`StartImmediate`'s countdown also starts a tick later: the transition that waited enters `Heating` in
+tick 3, and `Heating`'s delayed self-loop can only fire from tick 4.
+
+A state whose `immediate suspend` holds in its entry tick does none of its entry-tick behaviour. Its
+immediate inner transitions and `immediate during` actions wait until it resumes, and then run. Its
+entry actions, and those of its inner initial states, are not postponed: they are skipped for good.
+Use `immediate suspend` when a state must do nothing at all while the condition holds, including in
+the tick it starts, and keep its set-up out of entry actions.
+
+## Weak suspend
+
+`weak suspend if c` sounds like a gentler `suspend`, but it does something quite different. In a tick
+in which `c` holds, the inside runs normally: transitions fire, entry and during actions run, and the
+values they write are kept. Then, at the end of the tick, every inner region is put back into the
+state it was in at the end of the last tick without weak suspension, and no entry action runs on the
+way back. The outputs of the tick happen; the moves do not count.
+
+<Sim example="advanced/suspend/weak-suspend" caption="In tick 2 `next` moves to `Page2` and sets `page` = 2, but the chart is back in `Page1` afterwards. In tick 5 the same transition fires again." />
+
+After tick 2, `page` says 2 while the chart is in `Page1`: data and control disagree, which is rarely
+what you want. Unlike `suspend`, a `weak suspend` does not block the state's own outgoing transitions,
+and `immediate weak suspend` applies in the entry tick too.
+
+<Aside>
+The KIELER wiki says weak suspend is not fully supported and may not be shown correctly during
+simulation. KIELER's simulation does behave as described here; combinations with exit actions or
+history have not been checked for this guide. If you need "run, but don't move on", say so
+explicitly, with a guard on the transitions.
+</Aside>
+
+## Try it
+
+<TryIt example="advanced/suspend/metronome-starter" solution="advanced/suspend/metronome-solution" title="A metronome with a pause">
+`Metronome` toggles `click` in every tick until `stop` is pressed. Add a `pause` input that freezes the
+beat, so that when `pause` is released the metronome carries on where it was. `stop` must still work
+while the metronome is paused: check it by setting `pause` and then `stop`.
+</TryIt>
+
+<TryIt example="advanced/suspend/lost-entry" solution="advanced/suspend/sessions-solution" title="Count every session">
+`SessionCounter` misses the first cooking session, because the entry action on the suspendable
+`Cooking` does not run on its first entry. Change the chart so that `sessions` counts every visit to
+`Cooking`, without removing the `suspend`.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="State `S` has `suspend if P` and an outgoing transition `if X go to T`. `S` was entered in tick 1. In tick 5, `P` and `X` are both true. What happens in tick 5?"
+  options={[
+    '`S` is left to `T`, because `X` holds',
+    'The inside of `S` takes one last step, then `S` is left to `T`',
+    '`S` stays where it is and nothing inside it runs: the transition to `T` is frozen too',
+    'KIELER rejects the chart, because `P` and `X` can be true at the same time',
+  ]}
+  answer={2}
+>
+`S`'s own outgoing transitions belong to `S`, so they are suspended with it. `T` is reached in the first
+tick in which `X` holds and `P` does not. To be able to leave while suspended, put the suspend on a state
+inside `S` and keep the transition on `S`.
+</Quiz>
+
+<Quiz
+  question="A state with `suspend if P` (not immediate) is entered in tick 4, and `P` is true in tick 4. Does the state's immediate inner behaviour run in tick 4?"
+  options={[
+    'Yes: a plain `suspend` is not checked in the tick the state is entered',
+    'No: `P` holds, so the state is suspended at once',
+    'Only its entry actions run',
+  ]}
+  answer={0}
+>
+A plain `suspend` is delayed, like a delayed transition: it is checked from the tick after the entry on.
+In the entry tick the state behaves normally (apart from the [entry action quirk](#entry-actions-can-be-lost)).
+`immediate suspend if P` would suspend it in tick 4 already.
+</Quiz>
+
+<KeyIdeas>
+- `suspend if c` freezes a state in the ticks in which `c` holds: nothing inside it runs and nothing is
+  counted, and it resumes where it stopped.
+- A plain `suspend` is not checked in the entry tick; `immediate suspend` is, and then swallows the
+  entry actions.
+- `pre` is not frozen: it always looks at the previous tick, suspended or not.
+- A suspended state cannot be left by its own transitions, and `abort to` on it is rejected. Put the
+  `suspend` on an inner state and the ways out on the state around it.
+- Keep `entry` and `exit` actions off a state with a `suspend`: KIELER skips them in some ticks
+  without telling you.
+- `weak suspend` runs the tick and then forgets the state changes. You will rarely need it.
+</KeyIdeas>
+
+Next, [History and deferred transitions](/advanced/history/): coming back to a superstate where you
+left it, and arriving in a state without its arrival behaviour.

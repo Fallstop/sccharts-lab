@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "raw": 42 }, "note": "Rejected: without the semicolons the three equations are concurrent, and three concurrent writes of `level` that do not agree cannot be scheduled." }
+  ],
+  "expect": "error",
+  "errorIncludes": "The SCG is NOT asc-schedulable!"
+}

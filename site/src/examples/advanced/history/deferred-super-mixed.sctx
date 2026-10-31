@@ -1,0 +1,19 @@
+scchart DeferredMixed {
+  input bool walk, rush
+  output int outerEntry = 0, innerEntry = 0, step = 0
+
+  initial state Outside
+    if walk go to Inside deferred
+    if rush go to Inside
+
+  state Inside {
+    entry do outerEntry++
+
+    initial state First {
+      entry do innerEntry++
+    }
+    if true do step++ go to Second
+
+    state Second
+  }
+}

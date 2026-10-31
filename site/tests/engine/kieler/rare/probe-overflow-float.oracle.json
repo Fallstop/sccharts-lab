@@ -1,0 +1,54 @@
+{
+  "hash": "ac5d1fd1a2d3e308397909a981a508f946631d4f",
+  "chart": "tests/engine/kieler/rare/probe-overflow-float.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "g": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "f": [
+          0,
+          0
+        ],
+        "g": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "f": [
+          0,
+          0
+        ],
+        "g": 1.5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "hash": "28e7c0d82dfcc38f04a149d3da60eb8b9ef167f6",
+  "chart": "src/examples/reference/notation/history.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _HMode is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "again": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "back": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "hush": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "leave": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "quiet": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "leave": false,
+        "back": false,
+        "again": false,
+        "quiet": false,
+        "hush": false
+      },
+      "values": {
+        "again": false,
+        "back": false,
+        "hush": false,
+        "leave": false,
+        "quiet": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "again": false,
+        "back": false,
+        "hush": false,
+        "leave": false,
+        "quiet": false
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "leave": true
+      },
+      "values": {
+        "again": false,
+        "back": false,
+        "hush": false,
+        "leave": true,
+        "quiet": false
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "leave": false,
+        "back": true
+      },
+      "values": {
+        "again": false,
+        "back": true,
+        "hush": false,
+        "leave": false,
+        "quiet": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

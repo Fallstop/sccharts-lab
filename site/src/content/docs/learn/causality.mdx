@@ -1,0 +1,482 @@
+---
+title: "Why the compiler says no"
+description: "What KIELER checks before it runs a chart with concurrent regions, why it refuses a causality cycle, what its error messages mean, and how to change the chart."
+sidebar:
+  order: 12
+---
+
+import { Chart, Sim, Compare, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Sooner or later KIELER will refuse a chart that looks perfectly sensible to you, with messages such
+as `Can't schedule from _g4 to _g9` and `The SCG is NOT asc-schedulable!`. These are not syntax
+errors. The chart is well formed, but the compiler cannot promise that every tick has exactly one
+outcome. This chapter explains what it checks, in plain words, so that you can read those messages
+and change the chart.
+
+## Two writers, one light
+
+In [Concurrent regions](/learn/concurrency/) KIELER refused this chart:
+
+<Chart
+  example="learn/concurrency/conflict"
+  caption="Two regions write `light`. KIELER rejects the chart."
+/>
+
+`SwitchOn` sets the light when `on` holds, `SwitchOff` clears it when `off` holds. Now imagine a
+tick in which both hold. Concurrent regions run in the same tick, and their order in the file is not
+an order. If the compiler ran `SwitchOn` first the light would end up off, if it ran `SwitchOff`
+first the light would end up on. The result would depend on a choice nobody wrote down, so KIELER
+refuses the chart:
+
+```text
+Can't schedule from _g4 to _g9
+Can't schedule from _g9 to _g4
+Can't schedule from _g4 to _g2
+Can't schedule from _g9 to _g7
+The SCG is NOT asc-schedulable!
+```
+
+SCCharts Lab adds a line that is easier to read:
+
+```text wrap
+Circular dependency involving light prevents scheduling this tick.
+```
+
+You'll be able to decode all of them by the end of the chapter.
+
+## One tick, one answer
+
+SCCharts promises *determinacy* (see [Thinking in ticks](/learn/ticks/#the-same-inputs-the-same-outputs)):
+the same inputs in the same situation always give the same reaction, on every run and every machine. Within one region that comes for free. A region's code runs in
+the order you wrote it, like a C program: an effect list runs left to right, a transition's effects
+run after its trigger, and every step sees what the steps before it wrote.
+
+Between concurrent regions there is no written order, so the compiler has to choose one, and it must
+choose one that can't change the result. The rule it uses is the heart of the **sequentially
+constructive** model of computation (SC for short) that SCCharts is built on: a chart is accepted if
+the compiler can order every tick's work so that, for each variable, everything that *sets* it happens
+first, everything that *updates* it next, and everything that *reads* it last, while each region keeps
+its own order. That is the **initialise–update–read** protocol from
+[Concurrent regions](/learn/concurrency/). This chapter looks at it the other way round: at the charts
+for which no such order exists.
+
+## Three kinds of access
+
+KIELER sorts every access to a variable `x` into one of three kinds:
+
+| Kind | Examples | Scheduled |
+| --- | --- | --- |
+| absolute write | `x = 5`, `x = y + 1`, `x = x * x` | first |
+| relative write (update) | `x += 2`, `x -= 1`, `x *= 3`, `x++`, `x = x + 1` | after the absolute writes |
+| read | `x` in a trigger, or on the right of another assignment | last |
+
+An update is an assignment that builds on the variable's current value: one of the operators `+=`,
+`-=`, `*=` and friends, `++` and `--`, or an assignment `x = …` whose right-hand side mentions `x`
+exactly once. `x = x * x` mentions `x` twice and counts as an absolute write. `pre(x)` is not a read
+of this tick's `x` at all: it reads last tick's value, which is already known.
+
+The visitor counter in [Concurrent regions](/learn/concurrency/) has all three: **Clear** sets
+`inside = 0`, the door regions update it with `inside++`, and **Display** reads it in its triggers. In
+the tick in which `clear` and both doors come together, the absolute write goes first, then the two
+updates, then the read, and the count is 2, whichever order the regions are written in.
+
+Two conditions make that order safe, and KIELER checks both:
+
+- **Concurrent absolute writes must agree.** Two regions may both write `x = 3`, or both `x = y`
+  (the same value or the same expression). Two regions writing different values is a conflict.
+- **Concurrent updates must commute**, that is give the same result in either order. KIELER accepts
+  updates with the same operator (two `+=`, two `*=`) and any mix of `+=`, `-=`, `++` and `--`.
+
+One more detail: a region never waits for itself. If a region reads `x` and *then* writes it, its read
+sees the value from before its own write, while a read in another region waits for that write.
+
+When the order exists, the chart is accepted. When it can't exist, because some access would have to
+come both before and after another, the chart is rejected. The rest of this chapter is the ways that
+happens.
+
+## Write–write conflicts
+
+`Conflict` above is the classic case: two absolute writes of different values in concurrent regions.
+A tempting way out is to make the triggers exclusive, so that the two writes can never happen in the
+same tick:
+
+<Chart
+  example="learn/causality/light-exclusive"
+  caption="`on` and `!on` can never hold together. KIELER rejects this chart too."
+/>
+
+KIELER rejects it with the same messages. **The analysis is static**: it looks at which accesses
+*could* happen in the same tick, given the structure of the regions, and never at the triggers, the
+values or which states can be active together. If two writes could conflict on paper, the chart is
+refused, even when you can see that they never would.
+
+The fix is to give the light **one owner**: one region that does all the writing.
+
+<Sim
+  example="learn/causality/light-one-owner"
+  caption="One region owns `light`. Watch tick 5, when `on` and `off` both hold."
+/>
+
+The question "what if both hold?" has not gone away, but now the chart answers it, in writing: `Dark`
+switches on only when `off` is not held, so `off` wins. That is the real gain. The compiler refused to
+guess, and the fix made you decide. [Latches](/patterns/latch/#one-writer-per-variable) turns this into
+a habit: one writer per variable, and signals to send it requests.
+
+### Updates that don't commute
+
+Updates conflict as well when their order matters. `x += 2` in one region and `x *= 2` in another
+gives 6 from 1 in one order and 4 in the other, so KIELER rejects that pair.
+
+It also rejects a pair that does commute mathematically:
+
+<Chart
+  example="learn/causality/update-styles"
+  caption="`score = score + 1` in one region, `score += 2` in the other. KIELER rejects the chart."
+/>
+
+KIELER decides whether updates commute by comparing their assignment operators, and the old style
+`score = score + 1` uses `=`. Every update written that way also gets a warning. Official KIELER says:
+
+```text wrap
+This assignment looks like old relative write SC syntax and is considered deprecated.
+If you want to create a relative write in new syntax, please use an infix assignment operator.
+```
+
+SCCharts Lab says what it means instead (from version 0.9.9; earlier versions show KIELER's
+wording):
+
+```text wrap
+This assignment reads score, so the compiler treats it as an update of score (a relative write, as in the deprecated old SC syntax).
+Write it as score += 1 to say so. In one region it means the same.
+It only matters when another region also writes score in the same tick: this assignment then runs after that write instead of conflicting with it.
+```
+
+The last line is about an absolute write, such as `score = 0`, in the other region. Next to another
+update, as here, the operators are compared, and the chart is still rejected. Take the hint, for a
+reason that follows.
+
+### A trap: old-style updates in two regions
+
+Because KIELER compares operators, two old-style updates both count as `=` and are let through even
+when they don't commute. Here are the same two updates twice, with the regions written in the other
+order:
+
+<Compare
+  a="learn/causality/old-updates"
+  b="learn/causality/old-updates-swapped"
+  scenario="learn/causality/old-updates-compare"
+  caption="`x = x + 2` and `x = x * 3` in two regions. KIELER accepts both charts, with deprecation warnings, and gives 9 in `OldUpdates` and 5 in `OldUpdatesSwapped`."
+/>
+
+Both updates run in tick 2, and KIELER runs them in the order the regions are written: (1 + 2) * 3 = 9
+when `Add` comes first, 1 * 3 + 2 = 5 when `Triple` does.
+
+<Aside type="danger" title="The order of regions decides">
+With old-style updates such as `x = x + 2` in concurrent regions, the order in which the regions are
+written in the file, which should never matter, can change the result, and KIELER says nothing beyond
+the deprecation warning. Write updates with `+=`, `*=`, `++` and `--`; then KIELER checks them
+properly.
+</Aside>
+
+## Causality cycles
+
+Two robots share a narrow passage. Each one goes only if the other one isn't going:
+
+<Chart
+  example="learn/causality/passage"
+  caption="Each robot reads the other's flag before it sets its own. KIELER rejects the chart."
+/>
+
+Follow the dependencies around. `RobotA`'s trigger reads `bGoes`, so it must wait for `RobotB`'s
+write of `bGoes`. That write is the effect of `RobotB`'s transition, so it comes after `RobotB`'s
+trigger, which reads `aGoes` and must wait for `RobotA`'s write. And that write comes after
+`RobotA`'s trigger, where we started. Each region waits for the other: a **causality cycle**.
+SCCharts Lab names the variables on it, in an order that can change from one compile to the next:
+
+```text wrap
+Circular dependency involving aGoes, bGoes prevents scheduling this tick.
+```
+
+There is no way to schedule this chart, because the chart doesn't say what should happen when both
+robots arrive together. Two different fixes give two different answers.
+
+**Decide who goes first.** If `RobotA` has priority, it doesn't need to look at `RobotB` at all.
+The dependency then runs one way only, from A's write to B's read, and that is fine:
+
+<Sim
+  example="learn/causality/passage-priority"
+  caption="Both arrive in tick 2. A goes; B reads `aGoes` after A's write and waits until A clears it in tick 3."
+/>
+
+**Look at the previous tick.** With `pre`, each robot reads the other's flag as it was at the end of
+the previous tick, which is already known, so nothing has to wait:
+
+<Sim
+  example="learn/causality/passage-pre"
+  caption="The cycle is gone, and KIELER accepts the chart. But look at tick 2."
+/>
+
+Both robots go in tick 2, because neither went in tick 1: a collision. The chart is determinate,
+but it now answers a different question ("did the other one go last tick?"). `pre` breaks a cycle
+at the price of a tick of delay; check that the delay doesn't change what your chart means.
+[Handshakes](/patterns/handshake/#the-four-phase-handshake) meets the same kind of cycle in the classic
+four-phase handshake, and breaks it the same way.
+
+## Signals are variables in disguise
+
+Signals follow the same rules, because KIELER compiles them into variables. In every tick in which a
+signal's scope is active, the signal is first reset to absent: an absolute write. Emitting it is an
+update (`S |= true`, "or it with true"). Testing it is a read. So in every tick, all emissions of a
+signal happen before any test of it, which is why every region sees an emission in the same tick
+([Signals](/learn/signals/)).
+
+One consequence surprises people who know Esterel. A region may test a signal and then emit it:
+
+<Sim
+  example="learn/causality/claim"
+  caption="Region `A` tests `!busy`, then emits `busy`. Region `B` tests `!busy` too, but sees A's emission."
+/>
+
+In tick 1, `A`'s test comes before `A`'s own emission, and a region never waits for itself, so
+`A` sees `busy` absent, emits it and starts working. `B`'s test must wait for every emission of
+`busy`, sees it present and stays idle; it starts in tick 2, when nobody emits `busy`. In Esterel the
+equivalent `present S else emit S end` is rejected: a signal there is present exactly when it is
+emitted, so a program may not emit a signal it has just found absent. The sequentially constructive
+model accepts it because a region's own order counts.
+
+Let both regions claim the signal that way, though, and you have a cycle: each region's test must wait
+for the other region's emission, and each emission comes after its own region's test.
+
+<Chart
+  example="learn/causality/claim-both"
+  caption="Both regions test `!busy` and then emit `busy`. KIELER rejects the chart."
+/>
+
+Valued signals add one more case, which you met in
+[Signals](/learn/signals/#building-on-the-last-value): an emission such as `count(val(count) + 1)`
+reads the value that the emission itself produces, so it would have to wait for itself. KIELER
+rejects it; `count(pre(val(count)) + 1)` is the fix.
+
+## Instantaneous loops
+
+The last kind of rejection has nothing to do with concurrency. In [Delayed and immediate
+transitions](/learn/immediate/) you saw that KIELER refuses a cycle of immediate transitions. Here is
+one that looks harmless, because its guard stops it after three rounds:
+
+<Chart
+  example="learn/causality/retry"
+  caption="An immediate self-loop that would stop after three rounds. KIELER rejects it anyway."
+/>
+
+```text
+Can't schedule from _g1 to _cg1
+Can't schedule from _g1 to _g2
+Can't schedule from _g2 to _g1
+Can't schedule from _g1 to _g3
+The SCG is NOT asc-schedulable!
+```
+
+While you type, the editor also warns on the transition:
+
+```text wrap
+There is an immediate loop. The model is not SASC.
+Involved states: [Try]
+```
+
+The check is structural, like the causality check: any cycle of immediate transitions is refused, whatever its
+guards say. The SC model itself only demands determinacy and would allow a loop that ends; KIELER's
+default compiler insists on seeing, from the structure alone, that every tick ends. The fix is to let
+something take time: make one transition on the cycle delayed.
+
+<Sim
+  example="learn/causality/retry-fixed"
+  caption="The same loop with a delayed transition: one try per tick."
+/>
+
+## Reading KIELER's messages
+
+[Compiler messages](/reference/errors/#scheduling-errors) explains each of these with an example chart,
+and [Official KIELER and SCCharts Lab](/reference/about/#official-kieler-and-sccharts-lab) explains
+where the two word them differently. In short, the errors, which reject the chart:
+
+- `Can't schedule from _g4 to _g9` (official KIELER; SCCharts Lab shows it under **Technical
+  details**). One edge of the cycle the scheduler could not break, and there is usually one line per
+  edge. `_g4` and `_g9` are *guards*: names the compiler gives to the blocks of the program it built
+  from your chart. `_cg4` is the condition tested at the end of block 4. None of them appear in your
+  source.
+- `The SCG is NOT asc-schedulable!` (official KIELER). The verdict. The SCG, the *sequentially
+  constructive graph*, is that compiled program; ASC stands for *acyclic SC*: the program needs an order
+  without a cycle, and it has none.
+- SCCharts Lab's own line, the same verdict in words:
+
+  ```text wrap
+  Circular dependency involving light prevents scheduling this tick.
+  ```
+
+  It names the variables that the operations on the cycle assign with a plain `=`, which are not
+  always the ones the cycle runs through: for `ClaimBoth` it names `aWorks` and `bWorks`, not the
+  signal `busy`. Emissions, `val` and updates such as `x += 2` are never named, so a cycle made only
+  of those gives `Circular dependency prevents scheduling this tick.` The message links to each
+  operation involved and adds a hint:
+
+  ```text wrap
+  Give the shared state one owner, or read the previous tick's value with pre().
+  ```
+- `The SCG is not IASC-schedulable!`, the priority-based compiler's wording of the verdict (see the
+  note below).
+
+Warnings, which on their own never reject a chart:
+
+- `Instantaneous loop detected!` (official KIELER) or `Potential instantaneous loop through light.`
+  (SCCharts Lab): the loop analyser found operations that depend on each other within one tick. These
+  accompany the errors above, and now and then turn up on charts that compile and behave correctly.
+- `There is an immediate loop. The model is not SASC.`, followed by the states involved: shown in the
+  editor as you type, on each transition of a cycle of immediate transitions.
+
+<Aside type="tip">
+SCCharts Lab runs the scheduling analysis while you type, about half a second after you stop, and
+underlines the operations on a cycle in the editor. When a compile fails, **Highlight in diagram**
+selects the operations involved in the diagram, which is often the quickest way to see the cycle.
+</Aside>
+
+## A catalogue of fixes
+
+Every fix answers the question the compiler would not guess the answer to. Pick the one that says
+what you mean:
+
+1. **Give the variable one owner.** Move every write of it into one region, and decide there, with
+   triggers or transition priority, what happens when two causes coincide (`OneOwner`). This is the
+   fix for most write–write conflicts; [Sharing a resource](/patterns/arbiter/) builds an owner that
+   hands a device to one region at a time.
+2. **Update instead of overwriting.** When several regions contribute to one total, let each of them
+   update it with `+=` or `++` (`Visitors` in [Concurrent regions](/learn/concurrency/)). To merge
+   other kinds of values, use a valued signal with a combine function ([Signals](/learn/signals/)).
+3. **Decide who goes first.** If only one side needs to know about the other, let only that side read
+   it, so that the dependency runs one way (`PassagePriority`).
+4. **Read the previous tick.** `pre(x)` never waits, so it breaks any cycle through `x`, at the cost of
+   one tick of delay (`PassagePre`). Check that the delay doesn't change the meaning.
+5. **Wait a tick.** Make one transition on the cycle delayed, so the cycle spans two ticks
+   (`RetryFixed`). For instantaneous loops, this is the fix.
+6. **Merge regions.** Two regions that constantly need each other's results in the same tick are
+   often one region in disguise. Inside one region the order is the order you write, and there is
+   nothing to schedule.
+
+<Aside title="The priority-based compiler">
+KIELER also has a second compiler, the priority-based one, which you can choose when you compile or
+simulate. It rejects the same causality cycles, with `The SCG is not IASC-schedulable!`, but accepts
+instantaneous loops and runs them inside the tick: with it, `Retry` above reaches `tries = 3` in
+tick 1. A loop that never ends then makes the tick never end. This guide uses the netlist-based
+compiler, KIELER's default, which accepts less but promises more.
+</Aside>
+
+The model behind all of this is described in the paper that introduced it,
+[*Sequentially Constructive Concurrency*](https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/report-1308.pdf)
+by von Hanxleden and others (the technical report, Kiel University, 2013), whose authors include
+Partha Roop of the University of Auckland.
+
+## Try it
+
+<TryIt example="learn/causality/shared-alarm-start" solution="learn/causality/shared-alarm-solution" title="A shared alarm" hint="Writes of the same value agree, so the two writes of `alarm = true` are not the problem. Which fix in the catalogue above gives `alarm` a single owner?">
+Smoke or heat should sound the alarm and `ack` should silence it, but KIELER rejects this chart.
+Find the conflict, then change the chart so that KIELER accepts it. Decide what should happen when
+`ack` arrives in the same tick as smoke or heat, and make your chart say so.
+</TryIt>
+
+<TryIt example="learn/causality/kettle-start" solution="learn/causality/kettle-solution" title="A kettle with a cut-out" hint="Reacting one tick late means reading the value from the previous tick. Only one of the two reads needs to do that: which one?">
+The heater switches on unless the cut-out has tripped, and the cut-out trips when the kettle is
+heating above 95 degrees. KIELER rejects the chart. Trace the cycle through `heating` and `cutOut`,
+then fix it so that the heater reacts to the cut-out one tick late.
+</TryIt>
+
+## Put it together
+
+This is the last chapter of Learn, so here is one exercise that needs most of it: a chart written from
+its interface alone, with two regions that talk through a signal, a strong abort and an edge found with
+`pre`.
+
+<TryIt example="learn/causality/press-start" solution="learn/causality/press-solution" title="A two-hand press" hint="`Hands` needs only one state, with an `immediate during` action that compares this tick's buttons with `pre(left)` and `pre(right)`.
+
+For `Ram`, a state with a `during` action can move the ram. Ask what a weak abort would still let that action do in the tick a hand lets go.">
+A press stamps parts with a ram that comes down from above. It may only move while the operator holds
+a button with each hand, `left` and `right`, so that neither hand can be under the ram. The starter
+declares the interface; write the rest:
+
+- The ram starts at the top, with `pos` 0. A stroke starts in a tick in which both buttons are held and
+  were not both held in the previous tick, so that holding them down does not start stroke after
+  stroke.
+- From the tick after the start, the ram moves down one step per tick: `pos` is 1, 2, 3. In the tick it
+  reaches 3, `strokes` goes up by one, and in the next tick the ram is back at the top: `pos` is 0.
+- If either button is let go during a stroke, the ram stops at once. In that tick `pos` does not change,
+  even if it would have reached 3, and the stroke does not count. In the next tick the ram is back at
+  the top.
+- Use two regions: `Hands` watches the buttons and emits a local signal `start`; `Ram` moves the ram.
+
+To test it: press `left` in tick 2 and `right` in tick 3, and keep both held. `strokes` should be 1 in
+tick 6, and no second stroke should follow. Let go of `right` in tick 10 and press it again in tick 11
+for a second stroke, then let go of `left` in tick 13: `pos` should stay 1. In the playground, the
+comparison with the model solution runs a longer test.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="Region `R1` has `do x = 3 go to B`, region `R2` has `do x = 3 go to B`, both in the same tick. Does KIELER accept the chart?"
+  options={[
+    'Yes: concurrent absolute writes of the same value agree',
+    'No: two regions write the same variable',
+    'Only with the priority-based compiler',
+  ]}
+  answer={0}
+>
+Concurrent absolute writes are fine when they agree: the same constant or the same expression. Only
+writes of different values conflict.
+</Quiz>
+
+<Quiz
+  question="Region `R1` has `if a do x = 1 go to B`, region `R2` has `if !a do x = 2 go to B`. The two triggers can never hold in the same tick. Does KIELER accept the chart?"
+  options={[
+    'Yes: the writes can never happen together',
+    'No: the analysis ignores triggers, so the two writes conflict',
+    'Yes, but it warns',
+  ]}
+  answer={1}
+>
+KIELER's check is static. It looks at which accesses could meet in a tick, given the regions, and
+never at the triggers. Two different absolute writes in concurrent regions are a conflict on paper,
+so the chart is rejected, like `ExclusiveConflict` above.
+</Quiz>
+
+<Quiz
+  question="A chart with one region has `immediate if !S do S; took = true go to B` from its initial state, where `S` is an output signal. What happens in tick 1?"
+  options={[
+    'KIELER rejects the chart: the test and the emission of `S` form a cycle',
+    'The transition fires and `S` is present: the test comes before the region\'s own emission',
+    'The transition never fires, because `S` is emitted in this tick',
+  ]}
+  answer={1}
+>
+Within one region the order is the order written, and a region never waits for itself. The test sees
+`S` absent, the transition fires and emits `S`. A test of `S` in another region would wait for that
+emission and see `S` present.
+</Quiz>
+
+<KeyIdeas>
+- KIELER accepts a chart only if it can order every tick so that the result cannot depend on the
+  order of the regions. The one hole: old-style updates such as `x = x + 1` in two regions; write
+  `+=`.
+- For each variable, every tick runs all absolute writes first, then all updates, then all reads,
+  while each region keeps its own order. Concurrent writes must agree; updates must commute.
+- The check is static: it ignores triggers and values, so conflicts that only exist on paper are
+  rejected too.
+- An emission is an update and a test is a read, so emissions come before tests; a region may test a
+  signal before emitting it.
+- A cycle of immediate transitions is rejected whatever its guards; something must take time.
+- Fixes: one owner, updates with `+=`, a one-way dependency, `pre`, a delayed transition, or one region
+  instead of two.
+</KeyIdeas>
+
+That is the end of Learn. [Going further](/advanced/suspend/) covers the rest of the language, from
+suspension to the C code KIELER generates, and [Patterns](/patterns/abro/) puts the chapters to work in
+complete, explained charts. When a chart compiles but does not do what you expect,
+[Troubleshooting](/reference/troubleshooting/) starts from the symptom.

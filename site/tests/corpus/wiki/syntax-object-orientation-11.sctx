@@ -1,0 +1,19 @@
+#hostcode "import java.util.List;"
+#hostcode "import java.util.LinkedList;"
+
+scchart UsingJavaList {
+
+  output string info = "[]"
+  int size = 99
+  
+  host class "List<Integer>" {
+    private schedule {commuting, commuting} order
+    bool add(int v) schedule order 0
+    int size() schedule order 1 
+    string toString() schedule order 1
+  } list = `new LinkedList()`
+  
+  during do list.add(size); list.add(size + 1)
+  during do size = list.size()
+  during do info = list.toString()
+}

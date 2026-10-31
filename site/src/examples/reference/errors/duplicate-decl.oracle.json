@@ -1,0 +1,23 @@
+{
+  "hash": "52646d8b5a50941e7e1e4902c9ef85d516e5f2aa",
+  "chart": "src/examples/reference/errors/duplicate-decl.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "duplicate member ‘count’",
+    "duplicate member ‘count’",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "VariableStore contains ambiguous information for variables."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The variable is declared multiple times in this scope.",
+      "line": 4,
+      "column": 14
+    }
+  ],
+  "ticks": []
+}

@@ -1,0 +1,84 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false,
+        "online": true
+      },
+      "note": "Tick 1: idle, the server is online."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start`: `req`, the server starts working."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Working."
+    },
+    {
+      "inputs": {},
+      "note": "`ack`: `served` is 1."
+    },
+    {
+      "inputs": {
+        "online": false
+      },
+      "note": "The server goes offline."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start`: `req`, but the server ignores requests while offline."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "The client waits ..."
+    },
+    {
+      "inputs": {},
+      "note": "... and waits ..."
+    },
+    {
+      "inputs": {},
+      "note": "... your version gives up here, three ticks after the request, and counts a failure."
+    },
+    {
+      "inputs": {},
+      "note": "The starter is still waiting."
+    },
+    {
+      "inputs": {
+        "online": true
+      },
+      "note": "The server is back online, but the request it ignored is gone: the starter will wait for ever."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "`start` is ignored too: the starter's client is stuck in `Waiting`."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "Stuck."
+    },
+    {
+      "inputs": {},
+      "note": "Stuck."
+    },
+    {
+      "inputs": {},
+      "note": "Stuck."
+    }
+  ],
+  "expect": "ok"
+}

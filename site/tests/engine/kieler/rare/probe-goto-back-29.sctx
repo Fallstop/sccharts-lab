@@ -1,0 +1,38 @@
+// A code block whose graph has 29 nodes (entry, exit, 27 statements; labels and gotos are none): still inlined, so its backward goto is rejected.
+scchart GotoBack29 {
+  input bool start
+  output int n = 0, m = 0
+  initial state S
+    if start do {
+      again:
+      n++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      m++;
+      if (n % 3 != 0) {
+        goto again
+      }
+    } go to S
+}

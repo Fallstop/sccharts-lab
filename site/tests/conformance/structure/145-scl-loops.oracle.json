@@ -1,0 +1,95 @@
+{
+  "hash": "881d1c6a60d6b1f9ddd389df4ffac390daa241a3",
+  "chart": "tests/conformance/structure/145-scl-loops.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Could not redirect VOR to new VO when copying method. VO name: n",
+    "Could not redirect VOR to new VO when copying method. VO name: n",
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name v is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name firstMultiple is contained in the model but not in VariableStore.",
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _effect0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "bits": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "first": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sum": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "bits": 0,
+        "first": 0,
+        "sum": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "bits": 1,
+        "first": 7,
+        "sum": 10
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 7
+      },
+      "values": {
+        "n": 7,
+        "bits": 3,
+        "first": 10,
+        "sum": 28
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

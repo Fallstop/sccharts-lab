@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Ready` in both charts and runs its entry action: `entries` is 1 on both sides." },
+    { "inputs": { "press": true }, "note": "A press. `SelfLoop`'s self-loop leaves `Ready` and enters it again, so its entry action runs again (`entries` 2) and the effect counts the press. `Stay`'s guarded during action counts the press without leaving: `entries` stays 1." },
+    { "inputs": { "press": false }, "note": "No press: nothing changes on either side." },
+    { "inputs": { "press": true }, "note": "Second press: `presses` is 2 on both sides, `entries` is 3 in `SelfLoop` and still 1 in `Stay`." },
+    { "inputs": {}, "note": "`press` is held, so both count again: `presses` is 3. `SelfLoop` has been entered four times, `Stay` once." }
+  ],
+  "expect": "ok"
+}

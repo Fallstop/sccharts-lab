@@ -1,0 +1,12 @@
+scchart LoopD {
+  output int r = 0
+  method int f() {
+    int s = 0
+    for (int d = 0; d < 3; d++) {
+      s += 2
+    }
+    return s
+  }
+  initial state S
+    do r = f() go to S
+}

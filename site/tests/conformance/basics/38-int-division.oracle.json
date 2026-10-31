@@ -1,0 +1,127 @@
+{
+  "hash": "a37e534dede78ab4fbc77c81a8d0a44008fbf25f",
+  "chart": "tests/conformance/basics/38-int-division.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "B": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "r": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": 7,
+        "B": 2
+      },
+      "values": {
+        "A": 7,
+        "B": 2,
+        "f": 0,
+        "q": 0,
+        "r": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "A": 7,
+        "B": 2,
+        "f": 3,
+        "q": 3,
+        "r": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": -7
+      },
+      "values": {
+        "A": -7,
+        "B": 2,
+        "f": -3,
+        "q": -3,
+        "r": -1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": 7,
+        "B": -2
+      },
+      "values": {
+        "A": 7,
+        "B": -2,
+        "f": -3,
+        "q": -3,
+        "r": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": -7
+      },
+      "values": {
+        "A": -7,
+        "B": -2,
+        "f": 3,
+        "q": 3,
+        "r": -1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

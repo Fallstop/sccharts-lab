@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "samples": [3, 8, 1, 9], "threshold": 5 }, "note": "Tick 1 enters `Measure`; the self-loop is delayed." },
+    { "note": "Two samples, 8 and 9, are above 5: `high` should be 2. The starter always writes 0." },
+    { "inputs": { "threshold": 0 }, "note": "All four are above 0: `high` should be 4." }
+  ],
+  "expect": "ok"
+}

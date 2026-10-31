@@ -1,0 +1,10 @@
+// An equation may read the variable it writes: N = N + 1 is an update, not a causality cycle, so it reads the
+// value from before this tick. X += I works too.
+scchart St45Self {
+  input int I
+  output int N = 0, X = 0
+  dataflow {
+    N = N + 1
+    X += I
+  }
+}

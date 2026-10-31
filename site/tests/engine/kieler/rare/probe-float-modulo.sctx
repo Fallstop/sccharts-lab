@@ -1,0 +1,7 @@
+scchart FloatModulo {
+  input float F
+  output float r
+  initial state S
+    do r = F % 2.0 go to T
+  state T
+}

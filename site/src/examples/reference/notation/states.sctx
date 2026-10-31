@@ -1,0 +1,15 @@
+scchart States {
+  input bool next
+
+  region Steps:
+    initial state First
+      if next go to Middle
+
+    state Middle
+      if next go to Last
+
+    final state Last
+
+  region Idle:
+    initial final state Ready
+}

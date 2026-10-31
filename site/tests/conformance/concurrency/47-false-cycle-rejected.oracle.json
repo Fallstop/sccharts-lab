@@ -1,0 +1,25 @@
+{
+  "hash": "2167f0076d29410f794d2230ec3142a04261006d",
+  "chart": "tests/conformance/concurrency/47-false-cycle-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3 to _cg3",
+    "Can't schedule from _g3 to _g4",
+    "Can't schedule from _g4 to _g11",
+    "Can't schedule from _g11 to _cg11",
+    "Can't schedule from _g11 to _g12",
+    "Can't schedule from _g12 to _g3",
+    "Can't schedule from _g4 to _g5",
+    "Can't schedule from _g3 to _g7",
+    "Can't schedule from _g12 to _g13",
+    "Can't schedule from _g11 to _g15",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "ticks": []
+}

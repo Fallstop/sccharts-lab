@@ -1,0 +1,21 @@
+// A range may count down: for i : 3 to 1 gives copies i = 3, 2, 1, in that order. The copies are appended
+// AFTER all other regions of the state. Concurrent updates of s run in region order in KIELER's
+// generated code, which makes the order visible: s = 9 7 3 2 1.
+scchart St32Order {
+  output int s = 0
+  region First {
+    initial state W
+    immediate do s = s * 10 + 9 go to D
+    final state D
+  }
+  region R for i : 3 to 1 {
+    initial state W
+    immediate do s = s * 10 + i go to D
+    final state D
+  }
+  region Last {
+    initial state W
+    immediate do s = s * 10 + 7 go to D
+    final state D
+  }
+}

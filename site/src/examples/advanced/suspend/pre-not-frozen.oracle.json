@@ -1,0 +1,123 @@
+{
+  "hash": "5c9b68ac3e09eed5b21177e4212cdc90f31fa83a",
+  "chart": "src/examples/advanced/suspend/pre-not-frozen.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "hold": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "sensor": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "change": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "hold": false,
+        "sensor": 10
+      },
+      "values": {
+        "hold": false,
+        "sensor": 10,
+        "change": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "sensor": 12
+      },
+      "values": {
+        "hold": false,
+        "sensor": 12,
+        "change": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "hold": true,
+        "sensor": 15
+      },
+      "values": {
+        "hold": true,
+        "sensor": 15,
+        "change": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "sensor": 20
+      },
+      "values": {
+        "hold": true,
+        "sensor": 20,
+        "change": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "hold": false,
+        "sensor": 26
+      },
+      "values": {
+        "hold": false,
+        "sensor": 26,
+        "change": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "sensor": 27
+      },
+      "values": {
+        "hold": false,
+        "sensor": 27,
+        "change": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

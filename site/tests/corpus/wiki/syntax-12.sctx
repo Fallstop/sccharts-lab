@@ -1,0 +1,23 @@
+scchart IIIRO {
+  input int I
+  input bool R
+  output bool O
+  input bool ACTIVE[10]
+
+  initial state IIO {
+    entry do O = false
+
+    initial state II {
+      region for i : ACTIVE {
+        initial state IWait
+        if ACTIVE[i] go to IDone 
+    
+        final state IDone
+      }
+    }
+    do O = true join to Done 
+    
+    state Done
+  }
+  if Rgo to IIO 
+}

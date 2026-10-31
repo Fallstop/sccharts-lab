@@ -1,0 +1,7 @@
+scchart BitwiseAndShifts {
+  input int A, B
+  output int and, or, xor, not, shl, shr, neg
+
+  initial state S
+  do and = A & B; or = A | B; xor = A ^ B; not = ~A; shl = A << 2; shr = -A >> 1; neg = -A go to S
+}

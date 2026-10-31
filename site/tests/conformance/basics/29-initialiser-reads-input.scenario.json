@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": 5}, "note": "Initialisers are evaluated in tick 1, after the tick-1 inputs have been read: y = 5, z = 6."},
+    {"inputs": {"I": 7}, "note": "An initialiser runs once, when its scope is entered; it is not a continuous definition. y and z keep 5 and 6."},
+    {"inputs": {}, "note": "Unchanged: y = 5, z = 6."}
+  ],
+  "expect": "ok"
+}

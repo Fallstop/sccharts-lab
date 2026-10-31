@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "KIELER rejects this chart. An immediate self-loop could fire again and again within one tick; the guard `n < 3` makes no difference, because the check ignores triggers."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}

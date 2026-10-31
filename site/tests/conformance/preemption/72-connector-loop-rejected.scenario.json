@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "Two connectors pointing at each other form an instantaneous loop; the netlist compiler rejects the chart ('There is an immediate loop' warning plus scheduling errors)."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "asc-schedulable"
+}

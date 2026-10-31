@@ -1,0 +1,33 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "open": true
+      },
+      "note": "Tick 1 enters `Closed`. Its transition is immediate, so it is checked at once: `open` is true, so the chart moves on to `Opened` and `isOpen` is true, all in tick 1. `Opened`'s transition is delayed, so it is not checked in `Opened`'s entry tick: that is what breaks the cycle."
+    },
+    {
+      "inputs": {},
+      "note": "`open` is still true, so nothing changes."
+    },
+    {
+      "inputs": {
+        "open": false
+      },
+      "note": "`open` is false: `Opened` → `Closed`, and `isOpen` is false. `Closed` has just been entered, so its immediate transition is checked, but `open` is false, so the chart stays in `Closed`."
+    },
+    {
+      "inputs": {
+        "open": true
+      },
+      "note": "`open` is true again, and `Closed`'s immediate transition fires in this tick: `Opened`, `isOpen` true."
+    },
+    {
+      "inputs": {
+        "open": false
+      },
+      "note": "`Opened` was entered in tick 4, so its delayed transition is checked now: `open` is false, so the chart goes back to `Closed`."
+    }
+  ],
+  "expect": "ok"
+}

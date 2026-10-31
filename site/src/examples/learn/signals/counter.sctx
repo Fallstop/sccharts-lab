@@ -1,0 +1,7 @@
+scchart Counter {
+  input bool press
+  output signal int count
+
+  initial state Run
+    if press do count(val(count) + 1) go to Run
+}

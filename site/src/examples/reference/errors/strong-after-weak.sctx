@@ -1,0 +1,12 @@
+scchart StrongAfterWeak {
+  input bool stop, pause
+
+  initial state Running {
+    initial state Work
+  }
+  if pause go to Paused
+  if stop abort to Stopped
+
+  state Paused
+  state Stopped
+}

@@ -1,0 +1,10 @@
+scchart Clamp {
+  input int raw
+  output int level
+
+  dataflow {
+    level = raw;
+    level = (level > 100) ? 100 : level;
+    level = (level < 0) ? 0 : level
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "Tick 1 enters A."
+    },
+    {
+      "inputs": {
+        "G": true
+      },
+      "note": "`deep deferred` also suppresses the immediate behaviour of the inner initial states: nothing happens in this tick."
+    },
+    {
+      "inputs": {
+        "G": false
+      },
+      "note": "The inner immediate transition fires now (chained = 1). Neither entry action ever runs (0, 0)."
+    },
+    {
+      "inputs": {},
+      "note": "J's delayed transition: step = 1."
+    }
+  ],
+  "expect": "ok"
+}

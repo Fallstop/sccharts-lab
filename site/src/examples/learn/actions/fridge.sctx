@@ -1,0 +1,13 @@
+scchart Fridge {
+  input bool doorOpen
+  output bool lamp = false
+
+  initial state Closed
+    if doorOpen go to Open
+
+  state Open {
+    entry do lamp = true
+    exit do lamp = false
+  }
+  if !doorOpen go to Closed
+}

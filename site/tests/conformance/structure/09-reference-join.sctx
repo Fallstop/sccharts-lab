@@ -1,0 +1,20 @@
+// A termination transition (join to) on a referencing state fires when the referenced chart terminates,
+// i.e. when all its regions are in final states, in that same tick.
+scchart St09Main {
+  input bool start
+  output bool done = false
+  output int steps = 0
+  initial state R is St09Waiter(start, steps)
+  join to D
+  state D {
+    entry do done = true
+  }
+}
+
+scchart St09Waiter {
+  input bool trigger
+  output int count = 0
+  initial state W
+  if trigger do count++ go to F
+  final state F
+}

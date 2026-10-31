@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "Tick 1 enters S. Its only transition is a delayed self-loop, so nothing is computed yet and every output still has its initial value."},
+    {"inputs": {}, "note": "Surprise: for an int target KIELER truncates a float right-hand side before the compound operator applies, so x *= 1.5 means x *= 1 and x stays 7. y = y * 1.5 computes 10.5 and truncates the result: y = 10. ++ on a float adds 1.0: f = 2.5."},
+    {"inputs": {}, "note": "Again: x = 7, y = 15, f = 3.5."}
+  ],
+  "expect": "ok"
+}

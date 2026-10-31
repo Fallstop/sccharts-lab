@@ -1,0 +1,68 @@
+{
+  "hash": "cfdc6a4c78f7e3c19a07fd52d87baee863c906d6",
+  "chart": "src/examples/advanced/host-code/distance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name abs is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "position": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "distance": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "position": -5
+      },
+      "values": {
+        "position": -5,
+        "distance": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "position": -6
+      },
+      "values": {
+        "position": -6,
+        "distance": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "position": 7
+      },
+      "values": {
+        "position": 7,
+        "distance": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

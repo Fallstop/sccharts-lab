@@ -1,0 +1,164 @@
+{
+  "hash": "a436f56435ea5f6b43fe1815a260b092e5271d67",
+  "chart": "src/examples/learn/hierarchy/washer.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "full": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "timeUp": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "motor": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "full": false,
+        "timeUp": false
+      },
+      "values": {
+        "full": false,
+        "start": false,
+        "timeUp": false,
+        "motor": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "full": false,
+        "start": true,
+        "timeUp": false,
+        "motor": false
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "full": false,
+        "start": false,
+        "timeUp": false,
+        "motor": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "full": true
+      },
+      "values": {
+        "full": true,
+        "start": false,
+        "timeUp": false,
+        "motor": true
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "full": false
+      },
+      "values": {
+        "full": false,
+        "start": false,
+        "timeUp": false,
+        "motor": true
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "timeUp": true
+      },
+      "values": {
+        "full": false,
+        "start": false,
+        "timeUp": true,
+        "motor": false
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "timeUp": false
+      },
+      "values": {
+        "full": false,
+        "start": false,
+        "timeUp": false,
+        "motor": false
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

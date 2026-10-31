@@ -1,0 +1,37 @@
+{
+  "hash": "ab843ddb9e73fb507ea1e7c12659593f53fa1608",
+  "chart": "src/examples/learn/immediate/door.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1 to _cg1",
+    "Can't schedule from _g1 to _g2",
+    "Can't schedule from _g2 to _g3",
+    "Can't schedule from _g3 to _cg3",
+    "Can't schedule from _g3 to _g4",
+    "Can't schedule from _g4 to _g1",
+    "Can't schedule from _g3 to _g5",
+    "Can't schedule from _g1 to _g7",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving isOpen prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through isOpen.",
+    "Potential instantaneous loop through isOpen."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Closed, Opened]",
+      "line": 6,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Closed, Opened]",
+      "line": 9,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

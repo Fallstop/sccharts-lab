@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Rejected with an internal error: \"java.lang.IllegalArgumentException: Can't copy valued object. Valued object is null!\". A local declaration inside a for-region body fails the same way."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Can't copy valued object"
+}

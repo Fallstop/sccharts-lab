@@ -1,0 +1,17 @@
+{
+  "hash": "bd1375ca40920d6a1ee40d2fde9ce93f72aed82c",
+  "chart": "tests/conformance/structure/55-err-dataflow-cycle.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g2 to _g6",
+    "Can't schedule from _g6 to _g2",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "ticks": []
+}

@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "`ImplicitSwitch()` binds nothing explicitly, so `press` and `lit` are bound by name to the parent's `press` and `lit`. The editor warns `Valued Objects are bound implicitly!`, followed by the names." },
+    { "inputs": { "press": true }, "note": "The implicitly bound `press` is the parent's input: `lit` comes on." },
+    { "inputs": { "press": false }, "note": "On." }
+  ],
+  "expect": "ok"
+}

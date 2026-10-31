@@ -1,0 +1,10 @@
+scchart Finish {
+  input bool next
+  output int laps = 0
+
+  initial state Lap
+    if next do laps += 1 go to Done
+
+  final state Done
+    if next go to Lap
+}

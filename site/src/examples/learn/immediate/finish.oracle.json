@@ -1,0 +1,80 @@
+{
+  "hash": "f06b9884ceeaf4a8093d874c1f14bee9f10b5188",
+  "chart": "src/examples/learn/immediate/finish.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "laps": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "next": true,
+        "laps": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "next": true,
+        "laps": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": true
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "next": true,
+        "laps": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "next": false
+      },
+      "values": {
+        "next": false,
+        "laps": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

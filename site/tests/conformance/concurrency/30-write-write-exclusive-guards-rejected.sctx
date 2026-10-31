@@ -1,0 +1,16 @@
+scchart ExclusiveGuards {
+  input bool a
+  output int x
+
+  region R1 {
+    initial state A
+    if a do x = 3 go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    if !a do x = 4 go to B
+    state B
+  }
+}

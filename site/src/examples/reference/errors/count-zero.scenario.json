@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false
+      },
+      "note": "KIELER rejects the chart: a count delay counts how often the trigger has held, starting at 1."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "A count delay of 0 is not allowed on a trigger."
+}

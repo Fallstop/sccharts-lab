@@ -1,0 +1,16 @@
+{
+  "ticks": [
+    { "inputs": { "knock": false, "away": false }, "note": "Tick 1 enters `Shut`. The count delay starts at zero." },
+    { "inputs": { "knock": true }, "note": "First knock: one tick in which `knock` holds." },
+    { "inputs": { "knock": false }, "note": "A pause does not reset the count: the ticks need not be consecutive." },
+    { "inputs": { "knock": true }, "note": "Second knock." },
+    { "inputs": { "knock": false, "away": true }, "note": "The visitor walks away before the third knock: `Shut` is left." },
+    { "inputs": { "away": false }, "note": "Back again: `Shut` is entered anew, and every entry starts the count from zero." },
+    { "inputs": { "knock": true }, "note": "First knock of the new visit." },
+    { "inputs": { "knock": false }, "note": "Pause." },
+    { "inputs": { "knock": true }, "note": "Second knock." },
+    { "note": "Third tick with `knock` in this visit: the transition fires and the door opens." },
+    { "note": "Open." }
+  ],
+  "expect": "ok"
+}

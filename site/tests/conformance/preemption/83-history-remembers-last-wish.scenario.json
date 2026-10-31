@@ -1,0 +1,34 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": false
+      },
+      "note": "Tick 1 enters M and I."
+    },
+    {
+      "inputs": {
+        "A": true,
+        "P": true
+      },
+      "note": "Weak abort: the inner transition I → J still runs in this tick, then M is left (where = 9)."
+    },
+    {
+      "inputs": {
+        "A": false,
+        "P": false,
+        "R": true
+      },
+      "note": "History resumes in J, the state entered in the abort tick (where = 2)."
+    },
+    {
+      "inputs": {
+        "R": false
+      },
+      "note": "In J."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,22 @@
+{
+  "hash": "ef153ea1d8ee34cb368bced22837df62ef1e363c",
+  "chart": "tests/engine/kieler/rare/probe-float-modulo-method.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "invalid operands to binary % (have \u2018double\u2019 and \u2018double\u2019)",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name _fn0_wrap_x is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "You are using modulo with floats. Most implemented code backend (such as C) will not support this. Use dedicated hostcode functions (such as fmod) to implement the behavior.",
+      "line": 5,
+      "column": 12
+    }
+  ],
+  "ticks": []
+}

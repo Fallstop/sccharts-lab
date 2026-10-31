@@ -1,0 +1,13 @@
+scchart SeatLamps {
+  const int SEATS = 4
+  input bool buckled[SEATS]
+  output bool lamp[SEATS] = {true, true, true, true}
+  output int fastened = 0
+
+  region Seat for i : buckled {
+    initial state Open
+      if buckled[i] do lamp[i] = false; fastened++ go to Fastened
+
+    final state Fastened
+  }
+}

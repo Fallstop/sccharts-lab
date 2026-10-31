@@ -1,0 +1,142 @@
+{
+  "hash": "c193cbfc2b372363dccb46da8ed848738ce631da",
+  "chart": "tests/engine/kieler/rare/probe-goto-cfunction.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name bump is contained in the model but not in VariableStore.",
+    "ValuedObject with name branchEnd is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "skip": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "w": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "start": false,
+        "a": 0,
+        "b": 0,
+        "m": 0,
+        "n": 0,
+        "w": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true,
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "start": true,
+        "a": 0,
+        "b": 1,
+        "m": 0,
+        "n": 1,
+        "w": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": true,
+        "skip": true
+      },
+      "values": {
+        "skip": true,
+        "start": true,
+        "a": 0,
+        "b": 1,
+        "m": 0,
+        "n": 2,
+        "w": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "start": true,
+        "skip": false
+      },
+      "values": {
+        "skip": false,
+        "start": true,
+        "a": 1,
+        "b": 3,
+        "m": 1,
+        "n": 3,
+        "w": 3
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

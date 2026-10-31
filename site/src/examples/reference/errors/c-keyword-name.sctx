@@ -1,0 +1,7 @@
+scchart CKeywordName {
+  input bool A
+  output int default
+
+  initial state Idle
+    if A do default++ go to Idle
+}

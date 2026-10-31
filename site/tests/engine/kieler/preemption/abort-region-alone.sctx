@@ -1,0 +1,14 @@
+scchart AbortRegionAlone {
+  input bool A
+
+  initial state M {
+    abort region Watch {
+      initial state W
+      if A go to F
+      final state F
+    }
+  }
+  join to Done
+
+  state Done
+}

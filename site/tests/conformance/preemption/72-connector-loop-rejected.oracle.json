@@ -1,0 +1,31 @@
+{
+  "hash": "a112def113f17271ce777348fa31e3b4df666704",
+  "chart": "tests/conformance/preemption/72-connector-loop-rejected.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g4 to _g4",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick.",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop.",
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [C2, C1]",
+      "line": 11,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [C2, C1]",
+      "line": 8,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

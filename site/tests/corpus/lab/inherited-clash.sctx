@@ -1,0 +1,15 @@
+scchart Derived extends Base {
+  output int shared = 1
+  region Main {
+    initial state Go
+    do shared = 0 go to Go
+  }
+}
+
+scchart Base {
+  output int shared = 0
+  region Main {
+    initial state Run
+    do shared = shared + 1 go to Run
+  }
+}

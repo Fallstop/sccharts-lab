@@ -1,0 +1,9 @@
+// Two equations for the same variable are concurrent writes; KIELER cannot schedule them.
+scchart St54Bad {
+  input int I
+  output int X
+  dataflow {
+    X = I
+    X = I + 1
+  }
+}

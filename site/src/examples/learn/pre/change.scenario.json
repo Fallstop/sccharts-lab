@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    { "inputs": { "temp": 20 }, "note": "Tick 1: there is no previous tick, so `pre(temp)` is the default for an `int`, 0. That makes `delta` 20, as if the temperature had jumped from 0." },
+    { "inputs": { "temp": 21 }, "note": "`pre(temp)` is 20, the value `temp` had when tick 1 ended. `delta` is 1." },
+    { "note": "`temp` stays 21 (inputs keep their value), so `pre(temp)` is 21 and `delta` is 0." },
+    { "inputs": { "temp": 19 }, "note": "A drop of 2: `delta` is −2." },
+    { "inputs": { "temp": 22 }, "note": "`pre(temp)` is 19: `delta` is 3." }
+  ],
+  "expect": "ok"
+}

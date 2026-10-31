@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Counting`. `count` is 0." },
+    { "inputs": { "press": true }, "note": "`press` is true and was false in the previous tick: the rising edge. One." },
+    { "inputs": {}, "note": "`press` is still true, but `pre(press)` is true as well, so there is no edge." },
+    { "inputs": {}, "note": "No edge." },
+    { "inputs": { "press": false }, "note": "The button is released." },
+    { "inputs": { "press": true }, "note": "A second press, a second edge: two." },
+    { "inputs": { "press": false }, "note": "Released." }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,59 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1: `Start` passes straight on to `Up`."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `rise`, and `Down` is entered."
+    },
+    {
+      "inputs": {},
+      "note": "Held: `if 2 true` has counted one tick."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released before the count is complete: `fall`, and back to `Up`. No `longPress`."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `rise`. `Down` is entered afresh, so its count starts again."
+    },
+    {
+      "inputs": {},
+      "note": "Held: one."
+    },
+    {
+      "inputs": {},
+      "note": "Held: two. `if 2 true` fires in the third tick of the press: `longPress`, and the chart moves to `Held`."
+    },
+    {
+      "inputs": {},
+      "note": "Still held: `Held` waits only for the release, so `longPress` comes once per press."
+    },
+    {
+      "inputs": {},
+      "note": "Still held."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released: `fall`, from `Held`."
+    },
+    {
+      "inputs": {},
+      "note": "Up."
+    }
+  ],
+  "expect": "ok"
+}

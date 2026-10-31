@@ -1,0 +1,20 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "tick": false
+      },
+      "note": "Tick 1 enters `Blinking`, a copy of the chart `Blinker`, with its `tick` connected to `tick` and its `light` to `lamp`."
+    },
+    {
+      "inputs": {
+        "tick": true
+      },
+      "note": "Inside the copy, `Dark` goes to `Lit`: `lamp` is true."
+    },
+    {
+      "note": "`tick` is still true: `Lit` goes back to `Dark` and `lamp` is false."
+    }
+  ],
+  "expect": "ok"
+}

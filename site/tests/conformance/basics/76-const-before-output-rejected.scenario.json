@@ -1,0 +1,10 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "Syntax error in current KIELER (lab server): `mismatched input 'output' expecting 'primitive'`. Official KIELER 0.3.0 accepts this chart and gives o = 4 from tick 2 (probe). Charts meant for both versions avoid `const` together with `input` or `output`."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "mismatched input 'output' expecting 'primitive'"
+}

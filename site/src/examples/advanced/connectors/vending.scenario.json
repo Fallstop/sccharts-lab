@@ -1,0 +1,14 @@
+{
+  "ticks": [
+    { "inputs": { "coin10": false, "coin20": false }, "note": "Tick 1 enters `Waiting`. A drink costs 30 cents." },
+    { "inputs": { "coin20": true }, "note": "A 20c coin: `credit += 20`, then straight on through the connector `Check` in the same tick. `credit >= 30` is false, so the second, untriggered transition takes the machine back to `Waiting` (`credit` = 20)." },
+    { "inputs": { "coin20": false }, "note": "No coin. `Waiting` waits." },
+    { "inputs": { "coin10": true }, "note": "A 10c coin: `credit` becomes 30, and `Check` sees the new value at once. The first transition fires: `credit -= 30` and `vend` is emitted, all in this tick." },
+    { "inputs": { "coin10": false }, "note": "`vend` is a signal, so it is present only in the tick it was emitted." },
+    { "inputs": { "coin20": true }, "note": "20c again (`credit` = 20)." },
+    { "inputs": { "coin20": false }, "note": "No coin." },
+    { "inputs": { "coin10": true, "coin20": true }, "note": "Both coins in one tick: `Waiting`'s transitions are tried in priority order, so the 20c one wins and the 10c coin is ignored: the machine keeps it, and the customer loses 10 cents. 20 + 20 = 40, so `Check` vends and leaves `credit` = 10." },
+    { "inputs": { "coin10": false, "coin20": false }, "note": "Back in `Waiting` with 10c of credit." }
+  ],
+  "expect": "ok"
+}

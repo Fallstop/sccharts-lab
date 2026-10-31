@@ -1,0 +1,19 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz46 {
+  input bool stop
+  output int o = 0, e = 0
+  initial state R is Dz46W(o, e)
+  if stop abort to D
+  state D
+}
+scchart Dz46W {
+  output int out
+  output int ex
+  exit do ex += 1
+  initial state A {
+    during do out += 1
+    exit do ex += 10
+  }
+  if out > 2 go to B
+  state B
+}

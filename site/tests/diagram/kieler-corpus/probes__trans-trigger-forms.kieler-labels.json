@@ -1,0 +1,208 @@
+{
+ "sourceHash": "0d3441dd87d2061a",
+ "states": [
+  {
+   "path": [
+    "P115"
+   ],
+   "rows": [
+    [
+     "P115"
+    ],
+    [
+     "input bool ",
+     "A, B"
+    ],
+    [
+     "input int ",
+     "I"
+    ],
+    [
+     "output int ",
+     "O"
+    ],
+    [
+     "output bool ",
+     "X"
+    ],
+    [
+     "signal ",
+     "S"
+    ],
+    [
+     "signal int ",
+     "V = 0 ",
+     "combine ",
+     "+"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    286,
+    317.8
+   ]
+  },
+  {
+   "path": [
+    "P115",
+    0,
+    "S0"
+   ],
+   "rows": [
+    [
+     "S0"
+    ]
+   ],
+   "box": [
+    10,
+    71.9,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "P115",
+    0,
+    "S1"
+   ],
+   "rows": [
+    [
+     "S1"
+    ]
+   ],
+   "box": [
+    227.1,
+    71.9,
+    35.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "P115",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    133.8,
+    272.7,
+    177.8
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NP115$$N0$NS0$ES10",
+   "source": [
+    "P115",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P115",
+    0,
+    "S1"
+   ],
+   "text": "1: A && !B || I > 3",
+   "lines": [
+    "1: A && !B || I > 3"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP115$$N0$NS0$ES11",
+   "source": [
+    "P115",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P115",
+    0,
+    "S1"
+   ],
+   "text": "2: pre(A)",
+   "lines": [
+    "2: pre(A)"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP115$$N0$NS0$ES12",
+   "source": [
+    "P115",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P115",
+    0,
+    "S1"
+   ],
+   "text": "3: S",
+   "lines": [
+    "3: S"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP115$$N0$NS0$ES13",
+   "source": [
+    "P115",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P115",
+    0,
+    "S1"
+   ],
+   "text": "4: V",
+   "lines": [
+    "4: V"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NP115$$N0$NS0$ES14",
+   "source": [
+    "P115",
+    0,
+    "S0"
+   ],
+   "target": [
+    "P115",
+    0,
+    "S1"
+   ],
+   "text": "5: val(V) == 3",
+   "lines": [
+    "5: val(V) == 3"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

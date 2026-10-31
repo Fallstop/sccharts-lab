@@ -1,0 +1,126 @@
+{
+  "hash": "86136e7e5e02d9ddc2133b00c9c254076139174c",
+  "chart": "tests/engine/kieler/structure/probe-dz13.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "O": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "P": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "O": 0,
+        "P": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "O": 0,
+        "P": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "O": 1,
+        "P": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "O": 1,
+        "P": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "O": 11,
+        "P": 22
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "O": 0,
+        "P": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "A": true
+      },
+      "values": {
+        "A": true,
+        "O": 1,
+        "P": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "A": false
+      },
+      "values": {
+        "A": false,
+        "O": 1,
+        "P": 2
+      },
+      "terminated": false
+    }
+  ]
+}

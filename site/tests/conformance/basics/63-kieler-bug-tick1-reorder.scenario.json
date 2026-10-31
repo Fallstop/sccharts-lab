@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"I": 3}, "note": "KIELER netlist bug. Read in order, the effects give y = 13 and z = 14 (the priority-based compiler does: see the -priority twin). The netlist compiler moves every tick-1 assignment whose right-hand side does not mention an input into reset(), which runs before the first inputs are read. So y += 10 (y = 10), z = y (z = 10) and z += 1 (z = 11) run first, and only then y = I: y = 3, z = 11."},
+    {"inputs": {}, "note": "Nothing changes afterwards: y = 3, z = 11."}
+  ],
+  "expect": "ok",
+  "kielerBug": "Netlist GOInitOptimizer reorders tick-1 assignments: those whose expression does not reference an input run in reset() before inputs are read. Intended (priority) result: y = 13, z = 14."
+}

@@ -1,0 +1,7 @@
+scchart ReservedName {
+  input bool reset
+  output int count
+
+  initial state Counting
+    if reset do count = 0 go to Counting
+}

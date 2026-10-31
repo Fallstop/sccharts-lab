@@ -1,0 +1,9 @@
+{
+  "system": "priority",
+  "ticks": [
+    { "inputs": { "fire": false }, "note": "Priority-based compilation. `fire` is false: `shots` = 0." },
+    { "inputs": { "fire": true }, "note": "`Ready` → `Reload` → `Ready` runs three times within this one tick, until `shots < 3` fails: `shots` = 3." },
+    { "inputs": { "fire": false }, "note": "`shots` = 3." }
+  ],
+  "expect": "ok"
+}

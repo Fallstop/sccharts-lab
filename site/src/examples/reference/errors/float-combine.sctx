@@ -1,0 +1,7 @@
+scchart FloatCombine {
+  input bool A
+  output signal float level combine +
+
+  initial state Idle
+    if A do level(1.5) go to Idle
+}

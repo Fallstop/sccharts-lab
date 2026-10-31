@@ -1,0 +1,31 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Tick 1 enters M. A plain `suspend` is delayed: it is not checked in the entry tick."
+    },
+    {
+      "inputs": {},
+      "note": "Not suspended: the during action and the inner self-loop run (1, 1)."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "Suspended: nothing inside M runs, neither the during action nor inner transitions (1, 1)."
+    },
+    {
+      "inputs": {},
+      "note": "Still suspended (1, 1)."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Resumed where it was: (2, 2)."
+    }
+  ],
+  "expect": "ok"
+}

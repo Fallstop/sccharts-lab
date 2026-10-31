@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "The instance waits in W: **done = false**."
+    },
+    {
+      "inputs": {
+        "start": true
+      },
+      "note": "W → F reaches the final state, the instance terminates and the join fires in the same tick: **steps = 1, done = true**."
+    },
+    {
+      "inputs": {
+        "start": false
+      },
+      "note": "D has no outgoing transitions: nothing changes (**done = true, steps = 1**)."
+    }
+  ],
+  "expect": "ok"
+}

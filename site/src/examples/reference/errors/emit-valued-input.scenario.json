@@ -1,0 +1,15 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "level": true,
+        "level_val": 7
+      },
+      "note": "Tick 1 enters `Watch`. The environment provides `level` present with the value 7."
+    },
+    {
+      "note": "The transition copies the value into `seen` (7) and then emits `level(0)`. KIELER warns that emitting a valued input is not supported: the value 0 is dropped."
+    }
+  ],
+  "expect": "ok"
+}

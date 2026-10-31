@@ -1,0 +1,59 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Tick 1: `Start` passes straight on to `Up`."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `rise`."
+    },
+    {
+      "inputs": {},
+      "note": "Held: a press of two ticks."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released: `fall`. A short press: your version emits no `longPress` here either."
+    },
+    {
+      "inputs": {
+        "button": true
+      },
+      "note": "Pressed: `rise`."
+    },
+    {
+      "inputs": {},
+      "note": "Held."
+    },
+    {
+      "inputs": {},
+      "note": "Held for the third tick: your version emits `longPress` here."
+    },
+    {
+      "inputs": {},
+      "note": "Still held: nothing more."
+    },
+    {
+      "inputs": {},
+      "note": "Still held."
+    },
+    {
+      "inputs": {
+        "button": false
+      },
+      "note": "Released: `fall`."
+    },
+    {
+      "inputs": {},
+      "note": "Up."
+    }
+  ],
+  "expect": "ok"
+}

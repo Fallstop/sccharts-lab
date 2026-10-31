@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "homeGoal": false, "awayGoal": false, "newMatch": false }, "note": "Tick 1 enters both regions; every transition is delayed. `home` and `away` each have their own `count`, both 0." },
+    { "inputs": { "homeGoal": true }, "note": "`home.add()` increments `home`'s `count` only, and `home.get()` reads it back: `homeScore` is 1." },
+    { "inputs": { "homeGoal": false, "awayGoal": true }, "note": "`away.add()`: `awayScore` is 1. `home`'s `count` is untouched." },
+    { "inputs": { "homeGoal": true }, "note": "Both teams score in the same tick. Each region calls the methods of its own instance: 2 and 2." },
+    { "inputs": { "homeGoal": false, "awayGoal": false }, "note": "No goals: the scores stay." },
+    { "inputs": { "newMatch": true }, "note": "`clear()` sets each `count` back to 0, and the scores follow." },
+    { "inputs": { "newMatch": false, "awayGoal": true }, "note": "A new match, and `away` leads 1 to 0." }
+  ],
+  "expect": "ok"
+}

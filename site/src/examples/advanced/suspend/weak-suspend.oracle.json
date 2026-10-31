@@ -1,0 +1,126 @@
+{
+  "hash": "66a4d15bf455d648eaf9835dbcd213b10fe528f0",
+  "chart": "src/examples/advanced/suspend/weak-suspend.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "next": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "preview": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "page": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "preview": false,
+        "next": false
+      },
+      "values": {
+        "next": false,
+        "preview": false,
+        "page": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "preview": true,
+        "next": true
+      },
+      "values": {
+        "next": true,
+        "preview": true,
+        "page": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "next": false
+      },
+      "values": {
+        "next": false,
+        "preview": true,
+        "page": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "preview": false
+      },
+      "values": {
+        "next": false,
+        "preview": false,
+        "page": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "next": true
+      },
+      "values": {
+        "next": true,
+        "preview": false,
+        "page": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "next": true,
+        "preview": false,
+        "page": 3
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

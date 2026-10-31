@@ -1,0 +1,13 @@
+scchart superstates {
+  input bool F
+    
+  initial state init {
+    initial state init
+    if F go to done 
+        
+    final state done    
+  }
+  join to done
+    
+  final state done
+}

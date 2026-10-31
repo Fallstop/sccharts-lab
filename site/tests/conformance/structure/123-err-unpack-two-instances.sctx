@@ -1,0 +1,9 @@
+// @UnpackClass needs exactly one instance (official KIELER 0.3.0 ignores the annotation and accepts this).
+scchart St123UnpackTwo {
+  @UnpackClass
+  class Acc {
+    int sum
+  } a, b
+  initial state A
+  do a.sum++ go to A
+}

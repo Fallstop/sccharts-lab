@@ -1,0 +1,223 @@
+---
+title: "Arrays and for regions"
+description: "Arrays of inputs and outputs, and for regions, which make one concurrent copy of a region for every index."
+sidebar:
+  order: 5
+---
+
+import { Chart, Sim, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+A car with four seats has four seatbelt sensors, and the logic for each seat is the same: wait until
+that belt is buckled. You could write four identical [regions](/learn/concurrency/), one per seat, and
+four more the day the car gets a fifth seat. A **for region** writes the region once and lets KIELER
+make the copies, one per index, each with its own constant `i`.
+
+For regions are almost always used with arrays, so this chapter starts with a short reminder of how
+arrays work.
+
+## Arrays, briefly
+
+[Variables, types and expressions](/learn/variables/) introduced arrays. The parts that matter here:
+
+```sctx
+const int SEATS = 4
+input bool buckled[SEATS]
+output bool lamp[SEATS] = {true, true, true, true}
+```
+
+- `T name[n]` declares an array of `n` elements, numbered from 0 to `n` − 1. The size must be an integer
+  literal or a `const int` with a literal value; anything else is rejected with
+
+  ```text wrap
+  Array cardinalities must be an int literal or a reference to a constant int object.
+  ```
+
+- Elements start at their type's default (`false`, `0`) unless a vector such as `{true, true, true, true}`
+  gives initial values. A shorter vector sets only the first elements.
+- `a[2]` reads or writes one element. In the simulator, an array input has one value per element.
+- A vector assignment `a = {x, y, z}` assigns the elements one after another, in index order. Copying a
+  whole array with `b = a` does not compile (the C compiler reports
+  `assignment to expression with array type`).
+
+<Aside type="danger" title="Indices are not checked">
+KIELER does not check that an index is inside the array. In its C simulation, writing `a[3]` of a
+three-element array silently overwrites whatever variable is stored next to it. Keep indices in range;
+for regions, below, are the easiest way to be sure.
+</Aside>
+
+Between concurrent regions, elements with different *constant* indices count as different variables:
+two regions writing `lamp[0]` and `lamp[1]` do not conflict. An element whose index is a variable,
+`lamp[k]`, counts as all of them at once.
+
+## One region, four copies
+
+Here are the seatbelts. `Checking` holds one region, `Seat`, written once with `for i : 0 to 3`:
+
+<Sim example="advanced/for-regions/seatbelts" caption="Each copy of `Seat` waits for its own belt. In tick 5 the last belt finishes the last copy, and the join fires in the same tick." />
+
+KIELER replaces the for region by four ordinary regions, one for each value of `i` from 0 to 3. In each
+copy, `i` is a constant: the first copy tests `buckled[0]`, the second `buckled[1]`, and so on. The
+copies run concurrently, like regions you had written out by hand, and `join to Ready` waits until every
+copy has reached its final state. The diagram draws the region once, labelled with the counter and its
+range: `Seat | i [0, 3]`.
+
+In the simulation, the diagram marks a state as active when any copy is in it, and a small badge says
+how many copies are in it: in tick 3, `Open` carries ×1 and `Fastened` ×3. The timing diagram has a lane
+for each copy, `Seat i=0` to `Seat i=3`, so you can follow every copy on its own: `Seat i=2` is the
+one that stays in `Open` until tick 5.
+
+This chart only waits for each belt once: unbuckling in tick 4 changes nothing. A real seatbelt warning
+would also have to notice a belt being opened again.
+
+## The rule
+
+A for region is written `region Name for i : a to b { ... }`, or without a name,
+`region for i : a to b { ... }`. KIELER makes one copy of the region for every value of `i` from `a` to
+`b`, **both ends included**:
+
+- In each copy, `i` is a constant with that copy's value. It is replaced by the number itself, so it is
+  not a variable you can watch in the simulator, and assigning to it is an error.
+- If `a` is greater than `b`, the copies count down: `for i : 3 to 1` gives `i` = 3, 2, 1. `for i : 5 to 5`
+  gives one copy.
+- All copies are concurrent regions of the same state, and each has the region's name.
+- A `join to` on a state with for regions waits until every copy, and every other region, is in a final
+  state.
+
+The second form runs over the indices of an array: `region for i : buckled` is the same as
+`region for i : 0 to 3` when `buckled` has four elements. Its size may be a literal or a `const`, so
+changing `SEATS` changes the number of copies:
+
+<Sim example="advanced/for-regions/seat-lamps" caption="Seats 0 and 2 in tick 2: each copy switches off its own `lamp[i]`, and both add to `fastened` in the same tick." />
+
+Each copy writes its own element, `lamp[0]` to `lamp[3]`, so the copies never conflict over `lamp`, and
+`fastened++` from several copies in one tick is fine: concurrent increments add up (see
+[Why the compiler says no](/learn/causality/#three-kinds-of-access)). Without a `join to` around it, the copies are regions of
+the chart itself, and when the last one finishes in tick 4, the whole chart terminates.
+
+## Copies have no order to rely on
+
+Concurrent regions have no order: data decides what runs first. Copies of a for region are no different.
+As long as their writes do not depend on order (`++`, `+=`, writes to their own element), you never see an
+order. If they do, KIELER may still accept the chart, and the order it picks is not the one you would
+guess:
+
+<Sim example="advanced/for-regions/copy-order" caption="In tick 1 three regions append a digit to `log`: `First` (9), the copies of `R` for `i` = 3, 2, 1, written in the middle, and `Last` (7). The result is 97321: the copies run after all the other regions." />
+
+Each region runs `log = log * 10 + digit`, which KIELER treats as an update of `log`. Official KIELER
+warns
+
+```text wrap
+This assignment looks like old relative write SC syntax and is considered deprecated.
+```
+
+and SCCharts Lab says what it means:
+
+```text wrap
+This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).
+```
+
+KIELER runs the updates of a tick in region order, with the copies *after all the other regions* of
+the state. The timing diagram cannot show that order: it lists the lanes as the regions are written,
+`First`, the copies, then `Last`. Don't write concurrent updates whose result depends on the order.
+
+## Limits
+
+KIELER expands a for region by copying it, and it is strict about what it can copy. Keep for regions
+flat and simple.
+
+<Aside type="caution" title="The bounds must be integer literals">
+`for i : 0 to N` with a `const int N` is not accepted; nor is `for i : 3` (a number without `to`), or a
+negative bound. Official KIELER crashes on the first two; SCCharts Lab says why, for example
+
+```text wrap
+The for-region range "for i : 1 to N" ends at N, which is not an integer literal.
+```
+
+[Compiler messages](/reference/errors/#the-for-region-range-for-i--1-to-n-ends-at-n-which-is-not-an-integer-literal)
+explains it. A negative bound, `for i : -1 to 1`, is a syntax error
+(`no viable alternative at input '-'`). To size a for region with a constant, declare an array of that
+size and write `for i : ARRAY`.
+</Aside>
+
+<Aside type="caution" title="No for regions inside for regions">
+A for region inside a state of another for region crashes the compiler. SCCharts Lab reports
+
+```text wrap
+java.lang.IllegalArgumentException: Can't copy valued object. Valued object is null!
+```
+
+and in the KIELER VS Code extension the compilation never finishes and no message appears. For a grid,
+write the outer level by hand and use a for region for the inner one.
+</Aside>
+
+Two more things to avoid: assigning to the counter (`i = 5`) is rejected with
+`Cannot replace left hand side of assignment by a value.`, and `dataflow for i : ...` is accepted by the
+editor but cannot be compiled.
+
+### Variables in a for region
+
+Be careful where a for region's variables are declared. A declaration at the top of the for region
+belongs to the enclosing state, like any region's declarations, so all copies share one `k`. If each
+copy writes its own value into it in the same tick, KIELER rejects the chart as a
+[write–write conflict](/learn/causality/):
+
+<Chart example="advanced/for-regions/shared-local" caption="`int k` is declared once, for all three copies, and each copy assigns a different value to it in tick 1." />
+
+A variable each copy should have for itself goes inside a state of the for region. Then every copy
+gets its own, and its initial value may use the counter:
+
+<Sim example="advanced/for-regions/local-per-copy" caption="Each copy's `W` declares its own `k = i * 2`: the copies add 2, 4 and 6, and `sum` is 12 after tick 1." />
+
+At the top of the for region, an initial value that uses the counter (`int k = i`) crashes the
+compiler the same way as nested for regions (SCCharts Lab's message; no answer at all in the KIELER VS
+Code extension).
+
+## Try it
+
+<TryIt example="advanced/for-regions/keys-starter" solution="advanced/for-regions/keys-solution" title="Turn the keys">
+`LaunchKeys` launches when all three keys have been turned, in any order. It has one hand-written region
+per key. Replace the three regions with a single for region, so that giving `key` a fourth element is
+the only change needed for a fourth key. The behaviour must stay exactly the same, so the playground's
+comparison with the model solution matches even before you start: use it to check that your for region
+still behaves like the three regions.
+</TryIt>
+
+## Check your understanding
+
+<Quiz
+  question="How many copies does `region R for i : 2 to 5` make, and which values does `i` take?"
+  options={['Three: 2, 3 and 4', 'Four: 2, 3, 4 and 5', 'Five: 0 to 4']}
+  answer={1}
+>
+Both ends are included, so `i` takes the values 2, 3, 4 and 5, one copy each. In each copy `i` is that
+constant.
+</Quiz>
+
+<Quiz
+  question="Which of these does KIELER compile?"
+  options={[
+    '`region for i : 0 to N` with `const int N = 3`',
+    'A for region nested inside a state of another for region',
+    '`region for i : 1 to 3` whose transition does `i = i + 1`',
+    '`region for i : A` where `A` is declared `input int A[N]` with `const int N = 3`',
+  ]}
+  answer={3}
+>
+The range form needs integer literals, so `0 to N` is rejected, but the array form accepts an array whose
+size is a literal `const`. Nesting crashes the compiler, and the counter is a constant that cannot be
+assigned.
+</Quiz>
+
+<KeyIdeas>
+- `region R for i : a to b` makes one concurrent copy of `R` for each `i` from `a` to `b`, both included;
+  in each copy, `i` is a constant.
+- `region R for i : A` runs over the indices of array `A`, from 0 to its size minus 1.
+- Copies that write their own array element, or add to a shared counter, never conflict.
+- Copies are concurrent, like hand-written regions: don't write concurrent updates whose result depends
+  on their order.
+- Bounds must be integer literals (use the array form to size by a `const`), for regions cannot be
+  nested, and a variable each copy needs for itself is declared inside a state of the copy.
+</KeyIdeas>
+
+Next, [Dataflow regions](/advanced/dataflow/): equations that are worked out again in every tick.

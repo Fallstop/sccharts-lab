@@ -1,0 +1,29 @@
+// Methods: declared with "method", called in triggers and effects. Bodies are SCL statements (assignments,
+// if/else, for/while loops, return); a method can change variables of its scope. Methods without a return type are
+// void ("method void inc()" is the same). Calls behave as if the body were inlined at the call.
+scchart St75Methods {
+  input int x
+  output int y = 0, count = 0, s = 0
+  output bool big = false
+  method int sq(int v) {
+    return v * v
+  }
+  method inc() {
+    count++
+  }
+  method int sumTo(int limit) {
+    int sum = 0
+    for (int i = 0; i < limit; i++) {
+      sum += i
+    }
+    return sum
+  }
+  method bool isBig(int v) {
+    return v > 10
+  }
+  initial state S
+  immediate do y = sq(x); s = sumTo(x) go to T
+  state T
+  if isBig(x) do big = true; inc() go to T
+  do y = sq(x) + 1; inc() go to T
+}

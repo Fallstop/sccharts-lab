@@ -1,0 +1,12 @@
+// A clock declared in a superstate is initialised (to 0) each time that state is entered.
+scchart St63Watchdog {
+  input bool kick
+  output bool timeout = false
+  initial state Run {
+    clock t
+    initial state W
+    if t >= 300 do timeout = true go to D
+    final state D
+  }
+  if kick do timeout = false go to Run
+}

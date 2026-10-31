@@ -1,0 +1,351 @@
+{
+  "hash": "bcb73f825c80ebb1fae97f52dd060ef47a5f6951",
+  "chart": "src/examples/start/in-a-hurry/microwave.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "door": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "second": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "beep": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "heating": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "lamp": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "door": false,
+        "second": false
+      },
+      "values": {
+        "door": false,
+        "second": false,
+        "start": false,
+        "beep": false,
+        "heating": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "door": false,
+        "second": false,
+        "start": true,
+        "beep": true,
+        "heating": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "second": true
+      },
+      "values": {
+        "door": false,
+        "second": true,
+        "start": true,
+        "beep": false,
+        "heating": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "second": false
+      },
+      "values": {
+        "door": false,
+        "second": false,
+        "start": true,
+        "beep": false,
+        "heating": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "second": true
+      },
+      "values": {
+        "door": false,
+        "second": true,
+        "start": true,
+        "beep": false,
+        "heating": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "second": false
+      },
+      "values": {
+        "door": false,
+        "second": false,
+        "start": true,
+        "beep": false,
+        "heating": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "second": true
+      },
+      "values": {
+        "door": false,
+        "second": true,
+        "start": true,
+        "beep": true,
+        "heating": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "second": false
+      },
+      "values": {
+        "door": false,
+        "second": false,
+        "start": true,
+        "beep": false,
+        "heating": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "door": false,
+        "second": false,
+        "start": false,
+        "beep": false,
+        "heating": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "door": false,
+        "second": false,
+        "start": true,
+        "beep": true,
+        "heating": true,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "door": true
+      },
+      "values": {
+        "door": true,
+        "second": false,
+        "start": true,
+        "beep": false,
+        "heating": false,
+        "lamp": true
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "second": false,
+        "start": true,
+        "beep": false,
+        "heating": false,
+        "lamp": false
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

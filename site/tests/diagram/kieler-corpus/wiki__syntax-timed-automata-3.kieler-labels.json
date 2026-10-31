@@ -1,0 +1,232 @@
+{
+ "sourceHash": "5cb992547a13a9ae",
+ "states": [
+  {
+   "path": [
+    "Motor"
+   ],
+   "rows": [
+    [
+     "Motor"
+    ],
+    [
+     "output bool ",
+     "motorL = false, motorR = false"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    276.2,
+    286.3
+   ]
+  },
+  {
+   "path": [
+    "Motor",
+    "Left",
+    "Off"
+   ],
+   "rows": [
+    [
+     "Off"
+    ]
+   ],
+   "box": [
+    12,
+    58.4,
+    42.7,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Motor",
+    "Left",
+    "On"
+   ],
+   "rows": [
+    [
+     "On"
+    ]
+   ],
+   "box": [
+    211.3,
+    58.4,
+    39.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Motor",
+    "Right",
+    "Off"
+   ],
+   "rows": [
+    [
+     "Off"
+    ]
+   ],
+   "box": [
+    11.5,
+    58.4,
+    42.7,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Motor",
+    "Right",
+    "On"
+   ],
+   "rows": [
+    [
+     "On"
+    ]
+   ],
+   "box": [
+    212.1,
+    58.4,
+    39.6,
+    34.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Motor",
+    "Left"
+   ],
+   "label": [
+    "Left"
+   ],
+   "rows": [
+    [
+     "period ",
+     "4.2 ",
+     ""
+    ]
+   ],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    49.4,
+    262.3,
+    113.1
+   ]
+  },
+  {
+   "path": [
+    "Motor",
+    "Right"
+   ],
+   "label": [
+    "Right"
+   ],
+   "rows": [
+    [
+     "period ",
+     "1.0 ",
+     ""
+    ]
+   ],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    167.6,
+    262.3,
+    113.1
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NMotor$NLeft$NOff$EOn0",
+   "source": [
+    "Motor",
+    "Left",
+    "Off"
+   ],
+   "target": [
+    "Motor",
+    "Left",
+    "On"
+   ],
+   "text": "/ motorL = true",
+   "lines": [
+    "/ motorL = true"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NMotor$NLeft$NOn$EOff0",
+   "source": [
+    "Motor",
+    "Left",
+    "On"
+   ],
+   "target": [
+    "Motor",
+    "Left",
+    "Off"
+   ],
+   "text": "/ motorL = false",
+   "lines": [
+    "/ motorL = false"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NMotor$NRight$NOff$EOn0",
+   "source": [
+    "Motor",
+    "Right",
+    "Off"
+   ],
+   "target": [
+    "Motor",
+    "Right",
+    "On"
+   ],
+   "text": "/ motorR = true",
+   "lines": [
+    "/ motorR = true"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  },
+  {
+   "id": "$root$NMotor$NRight$NOn$EOff0",
+   "source": [
+    "Motor",
+    "Right",
+    "On"
+   ],
+   "target": [
+    "Motor",
+    "Right",
+    "Off"
+   ],
+   "text": "/ motorR = false",
+   "lines": [
+    "/ motorR = false"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

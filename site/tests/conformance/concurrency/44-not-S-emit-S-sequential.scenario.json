@@ -1,0 +1,17 @@
+{
+  "ticks": [
+    {
+      "inputs": {},
+      "note": "`immediate if !S do S` in a single region is accepted (Esterel would reject `present S else emit S` as non-constructive). The test reads `S` before the region's own emission, so it sees `S` absent and fires: `S` is present and `took = true` in tick 1."
+    },
+    {
+      "inputs": {},
+      "note": "`S` absent again; in `B` nothing happens."
+    },
+    {
+      "inputs": {},
+      "note": "No change."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,15 @@
+scchart DelayedThenImmediate {
+  input bool I, J
+  output int x = 0
+
+  initial state A
+  if I do x += 1 go to B
+
+  state B
+  immediate do x += 10 go to C
+
+  state C
+  immediate if J do x += 100 go to D
+
+  state D
+}

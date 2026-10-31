@@ -1,0 +1,151 @@
+{
+  "hash": "c12e13c1ef178b53d7db6aae92ad68c0c69db996",
+  "chart": "tests/conformance/structure/113-class-fields-methods.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn2_c1_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn3_c2_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "up": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "report": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Counter.count": {
+      "type": "int",
+      "properties": []
+    },
+    "base": {
+      "type": "int",
+      "properties": []
+    },
+    "c1": {
+      "type": "class",
+      "properties": []
+    },
+    "c2": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "up": true,
+        "a": 0,
+        "b": 0,
+        "report": 0,
+        "base": 100,
+        "c1": {
+          "count": 10
+        },
+        "c2": {
+          "count": 10
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "up": false
+      },
+      "values": {
+        "up": false,
+        "a": 0,
+        "b": 15,
+        "report": 115,
+        "base": 100,
+        "c1": {
+          "count": 10
+        },
+        "c2": {
+          "count": 15
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "up": true
+      },
+      "values": {
+        "up": true,
+        "a": 11,
+        "b": 15,
+        "report": 111,
+        "base": 100,
+        "c1": {
+          "count": 11
+        },
+        "c2": {
+          "count": 15
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "up": false
+      },
+      "values": {
+        "up": false,
+        "a": 11,
+        "b": 20,
+        "report": 120,
+        "base": 100,
+        "c1": {
+          "count": 11
+        },
+        "c2": {
+          "count": 20
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

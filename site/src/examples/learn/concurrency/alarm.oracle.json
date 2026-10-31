@@ -1,0 +1,90 @@
+{
+  "hash": "03a9d94fc24ee5b3e06ba15628899730eb6053f8",
+  "chart": "src/examples/learn/concurrency/alarm.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "door": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "siren": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "intruder": {
+      "type": "bool",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "siren": false,
+        "intruder": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "door": false,
+        "siren": false,
+        "intruder": false
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "door": true
+      },
+      "values": {
+        "door": true,
+        "siren": true,
+        "intruder": true
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "door": false
+      },
+      "values": {
+        "door": false,
+        "siren": true,
+        "intruder": true
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "hash": "72fcb8c5930782e4b4d03a25ab385882fca33c27",
+  "chart": "tests/engine/kieler/structure/probe-dz55.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through t."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "n": 0,
+        "t": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "n": 0,
+        "t": 60
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "n": 1,
+        "t": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 60
+      },
+      "values": {
+        "deltaT": 60,
+        "n": 1,
+        "t": 60
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

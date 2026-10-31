@@ -1,0 +1,15 @@
+scchart P147 {
+  input bool A, B
+  input int I
+  output int O
+  output bool X
+  signal S
+  signal int V = 0 combine +
+  initial state S0
+  @foo go to S1
+  @bar baz if A go to S1
+  /** doc */ if B go to S1
+  @layout[elk.priority] 3 go to S1
+  state S1
+
+}

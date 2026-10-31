@@ -1,0 +1,16 @@
+scchart Returning {
+  input bool leave, back, again, quiet, hush
+
+  initial state Mode {
+    initial state One
+      go to Two
+    state Two
+  }
+  if leave go to Away
+
+  state Away
+    if back go to Mode history
+    if again go to Mode shallow history
+    if quiet go to Mode deferred
+    if hush go to Mode deep deferred
+}

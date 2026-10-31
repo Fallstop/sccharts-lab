@@ -1,0 +1,12 @@
+scchart Shadowing {
+  input bool g
+  output int x = 1
+  output int y
+
+  initial state S {
+    int x = 10
+    initial state A
+    if g do x += 1; y = x go to B
+    state B
+  }
+}

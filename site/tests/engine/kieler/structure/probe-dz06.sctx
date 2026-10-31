@@ -1,0 +1,15 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz06 {
+  input bool A[3]
+  output int n = 0
+  region for i : A {
+    initial state W
+    if A[i] do n += i + 1 go to D
+    final state D
+  }
+  region Watch {
+    initial state X
+    if n > 3 go to Y
+    state Y
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {}, "note": "A, B and C are entered and left in the same tick: three immediate transitions fire one after another (x = 1, then 10, then 15) and the chain stops in D, whose transition is delayed. taken = [1, 1, 1, 0]."},
+    {"inputs": {}, "note": "D's delayed transition without trigger fires one tick after D was entered: state E, x stays 15. taken = [0, 0, 0, 1]."},
+    {"inputs": {}, "note": "Nothing left to do: E has no transitions, x stays 15."}
+  ],
+  "expect": "ok"
+}

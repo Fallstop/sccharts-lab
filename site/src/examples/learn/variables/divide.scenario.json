@@ -1,0 +1,39 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": 7,
+        "b": 2
+      },
+      "note": "Tick 1 enters `Calc`; the self-loop is delayed, so nothing is computed yet."
+    },
+    {
+      "note": "7 / 2 is 3 and 7 % 2 is 1, as in C: integer division throws away the fraction."
+    },
+    {
+      "inputs": {
+        "a": -7
+      },
+      "note": "−7 / 2 is −3, not −4: division truncates towards zero. The remainder takes the sign of the dividend: −7 % 2 is −1."
+    },
+    {
+      "inputs": {
+        "b": -2
+      },
+      "note": "−7 / −2 is 3, and −7 % −2 is −1: the remainder's sign follows `a`, never `b`."
+    },
+    {
+      "inputs": {
+        "a": 7
+      },
+      "note": "7 / −2 is −3 and 7 % −2 is 1."
+    },
+    {
+      "inputs": {
+        "b": 0
+      },
+      "note": "`b` is 0, so the trigger `b != 0` is false and the outputs keep their values. Without that guard this tick would divide by zero."
+    }
+  ],
+  "expect": "ok"
+}

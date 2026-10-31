@@ -1,0 +1,102 @@
+{
+  "hash": "1e09e2774ee50b66a9518b5ae52b854decf34293",
+  "chart": "tests/conformance/preemption/18-strong-abort-skips-inner.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "chained": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "effect": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "A": false,
+        "S": false
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "chained": 0,
+        "effect": 0,
+        "inner": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "A": true,
+        "S": true
+      },
+      "values": {
+        "A": true,
+        "S": true,
+        "chained": 0,
+        "effect": 1,
+        "inner": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "A": false,
+        "S": false
+      },
+      "values": {
+        "A": false,
+        "S": false,
+        "chained": 0,
+        "effect": 1,
+        "inner": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

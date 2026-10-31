@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "deltaT": 0
+      },
+      "note": "Rejected. Lab server: \"Clock t is read by several concurrent regions of St67Shared.\" Official KIELER: \"Cannot handle concurrent timed automata using the same clock. Add @ClocksUseSD annotation for experimental support based on schduling directives.\""
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "Clock t is read by several concurrent regions"
+}

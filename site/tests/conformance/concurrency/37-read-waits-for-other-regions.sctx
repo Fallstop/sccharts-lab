@@ -1,0 +1,15 @@
+scchart ReadWaitsForOthers {
+  output int x, y, z
+
+  region R1 {
+    initial state A
+    do y = x go to B
+    state B
+  }
+
+  region R2 {
+    initial state A
+    do z = x; x = 1 go to B
+    state B
+  }
+}

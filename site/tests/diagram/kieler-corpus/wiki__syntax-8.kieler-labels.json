@@ -1,0 +1,189 @@
+{
+ "sourceHash": "606c5afea48698b9",
+ "states": [
+  {
+   "path": [
+    "Root"
+   ],
+   "rows": [
+    [
+     "Root"
+    ],
+    [
+     "input bool ",
+     "second"
+    ],
+    [
+     "output bool ",
+     "speaker"
+    ]
+   ],
+   "box": [
+    0,
+    29.8,
+    440.9,
+    277
+   ]
+  },
+  {
+   "path": [
+    "Root",
+    "main",
+    "Superstate"
+   ],
+   "rows": [
+    [
+     "Superstate"
+    ]
+   ],
+   "box": [
+    67.3,
+    61.6,
+    92,
+    93.6
+   ]
+  },
+  {
+   "path": [
+    "Root",
+    "main",
+    "Superstate",
+    0,
+    "R1"
+   ],
+   "rows": [
+    [
+     "R1"
+    ]
+   ],
+   "box": [
+    19.2,
+    10,
+    35.6,
+    34.6
+   ]
+  },
+  {
+   "path": [
+    "Root",
+    "main",
+    "S"
+   ],
+   "rows": [
+    [
+     "S"
+    ]
+   ],
+   "box": [
+    361,
+    88.1,
+    40,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "Root",
+    "main"
+   ],
+   "label": [
+    "main"
+   ],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    66.3,
+    427.7,
+    205
+   ]
+  },
+  {
+   "path": [
+    "Root",
+    "main",
+    "Superstate",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "DOWN",
+   "box": [
+    9,
+    30.6,
+    74,
+    54.6
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NRoot$Nmain$NSuperstate$ES0",
+   "source": [
+    "Root",
+    "main",
+    "Superstate"
+   ],
+   "target": [
+    "Root",
+    "main",
+    "S"
+   ],
+   "text": "",
+   "lines": [],
+   "dashed": true,
+   "decorators": [
+    "arrow",
+    "termination"
+   ],
+   "comments": [
+    {
+     "text": "Transition",
+     "lines": [
+      "Transition"
+     ]
+    },
+    {
+     "text": "Transition 2",
+     "lines": [
+      "Transition 2"
+     ]
+    }
+   ]
+  }
+ ],
+ "comments": [
+  {
+   "path": [
+    "Root",
+    "main",
+    1
+   ],
+   "text": "The initial state\nThis is entered as soon as the program starts."
+  },
+  {
+   "path": [
+    "Root",
+    "main",
+    3
+   ],
+   "text": "The final state!"
+  },
+  {
+   "path": [
+    "Root",
+    "main",
+    4
+   ],
+   "text": "Main region!"
+  },
+  {
+   "path": [
+    1
+   ],
+   "text": "Getting there!"
+  }
+ ]
+}

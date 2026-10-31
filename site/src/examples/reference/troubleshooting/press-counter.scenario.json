@@ -1,0 +1,12 @@
+{
+  "ticks": [
+    { "inputs": { "press": false }, "note": "Tick 1 enters `Counting`. `count` is 0." },
+    { "inputs": { "press": true }, "note": "`press`: the self-loop adds one." },
+    { "inputs": {}, "note": "`press` is still true, so the self-loop fires again." },
+    { "inputs": {}, "note": "And again: three ticks of one press, three counts." },
+    { "inputs": { "press": false }, "note": "The button is released." },
+    { "inputs": { "press": true }, "note": "A second press: four." },
+    { "inputs": { "press": false }, "note": "Released." }
+  ],
+  "expect": "ok"
+}

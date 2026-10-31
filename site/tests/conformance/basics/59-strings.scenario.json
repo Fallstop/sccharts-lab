@@ -1,0 +1,8 @@
+{
+  "ticks": [
+    {"inputs": {"S": "hi"}, "note": "Tick 1 enters A; copy is null, so it is missing from the pool."},
+    {"inputs": {}, "note": "== on strings compares C pointers, not text (gcc warns: \"comparison with string literal results in unspecified behavior\"). The input S holds the text \"hi\" but not the literal's address, so S == \"hi\" is false. t was set from an identical literal, so t == \"hi\" is true, as is \"x\" == \"x\". copy == null is true; then copy = S."},
+    {"inputs": {"S": "ho"}, "note": "isNull is now false; copy = \"ho\". S == \"hi\" is false whatever the text."}
+  ],
+  "expect": "ok"
+}

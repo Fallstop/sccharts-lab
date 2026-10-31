@@ -1,0 +1,13 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false,
+        "b": false
+      },
+      "note": "KIELER crashes in the dependency analysis: the transition into Spin has no target."
+    }
+  ],
+  "expect": "error",
+  "errorIncludes": "java.lang.NullPointerException"
+}

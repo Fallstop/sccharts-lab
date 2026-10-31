@@ -1,0 +1,27 @@
+{
+  "hash": "c72f990f9bd0d2872512caf4686327c1ed7eb061",
+  "chart": "src/examples/reference/errors/missing-brace.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "9:3 A state with a termination transition must have inner behaviour.",
+    "mismatched input '<EOF>' expecting '}'"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "mismatched input '<EOF>' expecting '}'",
+      "line": 12,
+      "column": 2,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 1,
+      "message": "A state with a termination transition must have inner behaviour.",
+      "line": 9,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

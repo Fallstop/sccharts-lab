@@ -1,0 +1,10 @@
+scchart Dimmer {
+  input bool button
+
+  initial state Off
+    if button do level = 30 go to Dim
+
+  state Dim
+
+  output int level = 0
+}

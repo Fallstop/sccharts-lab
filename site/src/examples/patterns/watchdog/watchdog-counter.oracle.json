@@ -1,0 +1,166 @@
+{
+  "hash": "8380d3bb9320916a0df5ce65a65f54a47bd22343",
+  "chart": "src/examples/patterns/watchdog/watchdog-counter.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "beat": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "alarm": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "quiet": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "quiet": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "alarm": false,
+        "quiet": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "quiet": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "beat": true
+      },
+      "values": {
+        "beat": true,
+        "alarm": false,
+        "quiet": 0
+      },
+      "taken": [
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "quiet": 1
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": false,
+        "quiet": 2
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": true,
+        "quiet": 3
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "beat": false
+      },
+      "values": {
+        "beat": false,
+        "alarm": true,
+        "quiet": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

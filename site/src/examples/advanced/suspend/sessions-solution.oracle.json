@@ -1,0 +1,159 @@
+{
+  "hash": "d9a45585c4c0ffe1d42059a83acc5bc5900416ce",
+  "chart": "src/examples/advanced/suspend/sessions-solution.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "doorOpen": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "sessions": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "stop": false,
+        "doorOpen": false
+      },
+      "values": {
+        "doorOpen": false,
+        "start": false,
+        "stop": false,
+        "sessions": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "doorOpen": false,
+        "start": true,
+        "stop": false,
+        "sessions": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false,
+        "stop": true
+      },
+      "values": {
+        "doorOpen": false,
+        "start": false,
+        "stop": true,
+        "sessions": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "start": true,
+        "stop": false
+      },
+      "values": {
+        "doorOpen": false,
+        "start": true,
+        "stop": false,
+        "sessions": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "doorOpen": false,
+        "start": false,
+        "stop": false,
+        "sessions": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "stop": true
+      },
+      "values": {
+        "doorOpen": false,
+        "start": false,
+        "stop": true,
+        "sessions": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "stop": false
+      },
+      "values": {
+        "doorOpen": false,
+        "start": false,
+        "stop": false,
+        "sessions": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

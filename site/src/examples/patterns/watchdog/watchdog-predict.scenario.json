@@ -1,0 +1,59 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Tick 1."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat: restart."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "One quiet tick."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Two."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat, just in time: restart."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "One."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Two."
+    },
+    {
+      "inputs": {
+        "beat": false
+      },
+      "note": "Three: the alarm."
+    },
+    {
+      "inputs": {
+        "beat": true
+      },
+      "note": "A beat comes too late: `Expired` has no transitions."
+    }
+  ],
+  "expect": "ok"
+}

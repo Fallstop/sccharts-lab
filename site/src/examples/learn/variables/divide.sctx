@@ -1,0 +1,7 @@
+scchart Divide {
+  input int a, b
+  output int quotient = 0, remainder = 0
+
+  initial state Calc
+    if b != 0 do quotient = a / b; remainder = a % b go to Calc
+}

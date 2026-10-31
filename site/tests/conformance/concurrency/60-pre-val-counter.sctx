@@ -1,0 +1,7 @@
+scchart PreValCounter {
+  input bool a
+  output signal int V
+
+  initial state X
+  if a do V(pre(val(V)) + 1) go to X
+}

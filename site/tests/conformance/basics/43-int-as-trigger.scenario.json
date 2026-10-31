@@ -1,0 +1,9 @@
+{
+  "ticks": [
+    {"inputs": {"I": 0}, "note": "Tick 1 enters S; its transition is delayed."},
+    {"inputs": {}, "note": "An int used as a trigger means \"is not 0\" (as in C). I = 0: no transition, x = 0."},
+    {"inputs": {"I": -3}, "note": "Any non-zero value enables it: x = 1."},
+    {"inputs": {"I": 2}, "note": "I = 2 is non-zero too: x = 2."}
+  ],
+  "expect": "ok"
+}

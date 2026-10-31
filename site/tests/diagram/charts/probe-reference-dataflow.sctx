@@ -1,0 +1,21 @@
+scchart P3 {
+  input bool a
+  output bool b
+  region main:
+  initial state R is Inner(a, b)
+  join to Done
+  final state Done
+
+  dataflow DF:
+  b = a && !pre(a)
+
+}
+
+scchart Inner {
+  input bool i
+  output bool o
+  initial state S
+  if i do o = true go to T
+  final state T
+}
+

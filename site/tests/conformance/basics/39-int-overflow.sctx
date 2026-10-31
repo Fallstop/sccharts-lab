@@ -1,0 +1,7 @@
+scchart IntOverflow {
+  input int A
+  output int sum, product, negated
+
+  initial state S
+  do sum = A + 1; product = A * 2; negated = -A go to S
+}

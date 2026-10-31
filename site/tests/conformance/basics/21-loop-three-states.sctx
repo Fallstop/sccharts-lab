@@ -1,0 +1,12 @@
+scchart LoopThreeStates {
+  input bool I
+
+  initial state A
+  immediate go to B
+
+  state B
+  immediate go to C
+
+  state C
+  immediate if I go to A
+}

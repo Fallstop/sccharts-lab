@@ -1,0 +1,9 @@
+// An initial value: the variable keeps its (zero) value.
+scchart CondNoElseInit {
+  input bool c
+  output int x = 4
+  initial state S {
+    int y = (c) ? 7
+    during do x = y
+  }
+}

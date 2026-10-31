@@ -1,0 +1,12 @@
+# Cloudflare static assets (wrangler.jsonc) applies these headers; the file itself is not served.
+# Everything else keeps Cloudflare's default (revalidate with an ETag), so a new build shows at once.
+
+# Astro's build output: every file name carries a content hash, so it never changes.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# No CSP: Starlight's theme script and Astro's islands are inline scripts, and Pagefind needs WebAssembly.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000

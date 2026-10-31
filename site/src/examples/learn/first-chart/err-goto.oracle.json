@@ -1,0 +1,42 @@
+{
+  "hash": "1cc7d90df5167cb7094c9cf0ae6854be5de25327",
+  "chart": "src/examples/learn/first-chart/err-goto.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "6:5 The required feature 'targetState' of 'de.cau.cs.kieler.sccharts.impl.TransitionImpl@720f72aa{file:///tmp/sccharts-oracle-LRWV02/m2/err-goto.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0}' must be set",
+    "no viable alternative at input 'goto'",
+    "mismatched input 'state' expecting 'to'"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "no viable alternative at input 'goto'",
+      "line": 6,
+      "column": 29,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 1,
+      "message": "mismatched input 'state' expecting 'to'",
+      "line": 8,
+      "column": 3,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'targetState' of 'de.cau.cs.kieler.sccharts.impl.TransitionImpl@720f72aa{file:///tmp/sccharts-oracle-LRWV02/m2/err-goto.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0}' must be set",
+      "line": 6,
+      "column": 5,
+      "code": "org.eclipse.emf.ecore.1"
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 8,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

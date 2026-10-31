@@ -1,0 +1,339 @@
+{
+  "hash": "46bad2e87e3a1f616e21f07e6ea5900facf9e506",
+  "chart": "src/examples/learn/transitions/stopwatch-clear.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "clear": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "start": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "elapsed": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "start": false,
+        "stop": false,
+        "clear": false
+      },
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "clear": false,
+        "start": true,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": false,
+        "elapsed": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": false,
+        "elapsed": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "clear": true
+      },
+      "values": {
+        "clear": true,
+        "start": false,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "clear": false
+      },
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "clear": false,
+        "start": true,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": false,
+        "elapsed": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "stop": true
+      },
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": true,
+        "elapsed": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "stop": false,
+        "clear": true
+      },
+      "values": {
+        "clear": true,
+        "start": false,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "clear": false
+      },
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "start": true
+      },
+      "values": {
+        "clear": false,
+        "start": true,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "start": false
+      },
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": false,
+        "elapsed": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "stop": true,
+        "clear": true
+      },
+      "values": {
+        "clear": true,
+        "start": false,
+        "stop": true,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {
+        "stop": false,
+        "clear": false
+      },
+      "values": {
+        "clear": false,
+        "start": false,
+        "stop": false,
+        "elapsed": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

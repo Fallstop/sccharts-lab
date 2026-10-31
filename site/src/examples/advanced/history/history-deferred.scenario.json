@@ -1,0 +1,11 @@
+{
+  "ticks": [
+    { "inputs": { "walk": false, "out": false, "back": false }, "note": "Tick 1 enters `House` and `Hall`; `Hall`'s entry action sets `room` = 1." },
+    { "inputs": { "walk": true }, "note": "`go to Kitchen deferred`: the transition's own effect sets `room` = 2, and `Kitchen` is entered quietly." },
+    { "inputs": { "walk": false }, "note": "In `Kitchen`." },
+    { "inputs": { "out": true }, "note": "Out into the `Garden` (`room` = 9). `House` was in `Kitchen` when it was left." },
+    { "inputs": { "out": false, "back": true }, "note": "`go to House history` resumes `Hall`, not `Kitchen`: `Kitchen` was entered with `deferred`, so KIELER never recorded it. `Hall`'s entry action runs again (`room` = 1)." },
+    { "inputs": { "back": false }, "note": "In `Hall`." }
+  ],
+  "expect": "ok"
+}

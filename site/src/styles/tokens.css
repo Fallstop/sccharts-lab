@@ -1,0 +1,373 @@
+/*
+ * Design tokens for the SCCharts guide. The rationale is in docs-internal/DESIGN.md.
+ *
+ * Three layers:
+ *   1. Site tokens (--c-*, --text-*, --space-*, ...): what the guide's own CSS and components use.
+ *   2. Starlight's variables (--sl-*), mapped onto the site tokens so the built-in UI matches.
+ *   3. Diagram and simulation tokens (--sc-*): the contract with the diagram renderer (src/diagram) and
+ *      the simulation widgets. They read exactly these names via var(--sc-..., fallback); keep them stable.
+ *
+ * Starlight's convention: :root holds the dark theme, :root[data-theme='light'] the light one. The light
+ * block comes second so it wins when both match.
+ *
+ * Every text colour here meets WCAG AA (4.5:1) on the surfaces it is used on; control borders, focus
+ * rings and diagram strokes meet 3:1. docs-internal/DESIGN.md lists the measured ratios.
+ */
+
+:root {
+	/* ----- Type ------------------------------------------------------------------------------------ */
+	/* Text: Atkinson Hyperlegible Next. Charts are full of one-letter names (A, I, l, O) next to digits
+	 * (0, 1); Atkinson was drawn so that these never look alike. Code: its monospaced sibling. Display:
+	 * Archivo at an expanded width, the lettering of instrument front panels, for page titles only. */
+	--font-text: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', ui-sans-serif,
+		system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--font-mono: 'Atkinson Hyperlegible Mono Variable', 'Atkinson Hyperlegible Mono', ui-monospace,
+		SFMono-Regular, Menlo, Consolas, monospace;
+	--font-display: 'Archivo Variable', 'Archivo', var(--font-text);
+	--display-stretch: 112%;
+	--display-weight: 580;
+
+	/* The type scale. Body text is 18 px: Atkinson is a compact face (0.425 em per character on average),
+	 * and 18 px gives a long-form reading size with ~70 characters in the measure below. */
+	--text-2xs: 0.75rem; /* 12 */
+	--text-xs: 0.8125rem; /* 13 */
+	--text-sm: 0.9375rem; /* 15 */
+	--text-md: 1.125rem; /* 18, body */
+	--text-lg: 1.25rem; /* 20 */
+	--text-xl: 1.5rem; /* 24 */
+	--text-2xl: 1.875rem; /* 30 */
+	--text-3xl: 2.25rem; /* 36 */
+	--text-4xl: 2.875rem; /* 46 */
+	--text-hero: clamp(2.375rem, 1.35rem + 3.9vw, 4.25rem);
+
+	--leading-body: 1.65;
+	--leading-snug: 1.4;
+	--leading-tight: 1.15;
+	/* Prose measure: at most ~75 characters per line. In em, not ch: Atkinson's zero (what ch measures)
+	 * is half as wide again as its average character, so 68ch would allow ~100 characters. */
+	--measure: 32em;
+
+	/* ----- Space (4 px base) ----------------------------------------------------------------------- */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.5rem;
+	--space-6: 2rem;
+	--space-7: 3rem;
+	--space-8: 4.5rem;
+	--space-9: 6rem;
+
+	/* ----- Shape ----------------------------------------------------------------------------------- */
+	/* Radii follow KIELER's shapes: simple states are capsules, superstates and the root state rounded
+	 * rectangles. Controls are capsules (they look like states), frames like superstates. */
+	--radius-xs: 0.1875rem;
+	--radius-sm: 0.3125rem;
+	--radius-md: 0.5rem;
+	--radius-frame: 0.875rem;
+	--radius-capsule: 999px;
+
+	/* The tick: the pitch of the ruler motif (header edge, chapter ruler, frames, timing diagrams). */
+	--tick: 8px;
+
+	/* ----- Colour: dark theme (Starlight's default block) ------------------------------------------ */
+	color-scheme: dark;
+	--c-paper: #0f141e; /* page background */
+	--c-sheet: #151b27; /* raised surfaces: frames, panels, cards */
+	--c-rail: #121823; /* sidebar, frame headers, table heads */
+	--c-code-bg: #141a26;
+	--c-inset: #0c1018; /* wells inside frames (the diagram stage) */
+	--c-ink: #eef2f8; /* headings, strongest text */
+	--c-text: #c8d0dd; /* body */
+	--c-muted: #93a0b4; /* secondary text */
+	--c-faint: #5a667b; /* decoration only, never text */
+	--c-rule: #232b3a; /* hairlines */
+	--c-rule-strong: #364155; /* emphasised hairlines, ruler ticks */
+	--c-control: #69768c; /* borders of interactive controls (3:1) */
+	--c-on-strong: #0f141e; /* text on a strong colour fill */
+
+	/* Accent: KIELER's keyword plum, lifted to an orchid for dark backgrounds. */
+	--c-accent: #eda6d6; /* links, accent text */
+	--c-accent-bright: #f27fc7; /* focus rings, indicators */
+	--c-accent-soft: #34203a; /* tinted backgrounds */
+	--c-accent-strong: #f8cdea; /* link hover */
+	--c-mark-bg: #3b2944;
+	--c-selection: #4a2f52;
+
+	/* Simulation colours, after KIELER's simulator: current states red, traversed elements blue. */
+	--c-signal: #ff6b7d; /* active state, present signal */
+	--c-signal-soft: #3b1f2b;
+	--c-trace: #5aa9ff; /* taken transition, entered state */
+	--c-trace-soft: #172a47;
+	--c-go: #4fd283; /* termination, success */
+	--c-go-soft: #13291f;
+
+	/* Semantic colours for asides, badges and quiz feedback. */
+	--c-note-ink: #a9c9f6;
+	--c-note-bg: #14223a;
+	--c-note-rule: #5b93e0;
+	--c-tip-ink: #9addb2;
+	--c-tip-bg: #12261d;
+	--c-tip-rule: #3fae6a;
+	--c-caution-ink: #f5cf86;
+	--c-caution-bg: #2a2114;
+	--c-caution-rule: #d8a03a;
+	--c-danger-ink: #f7a6b1;
+	--c-danger-bg: #301722;
+	--c-danger-rule: #e8596c;
+
+	--shadow-frame: 0 1px 0 hsl(222 40% 3% / 0.6), 0 12px 32px -18px hsl(222 50% 2% / 0.8);
+	--shadow-pop: 0 18px 48px -20px hsl(222 50% 2% / 0.9);
+
+	/* ----- Starlight mapping (dark) ---------------------------------------------------------------- */
+	--sl-font: var(--font-text);
+	--sl-font-mono: var(--font-mono);
+	--sl-color-white: var(--c-ink);
+	--sl-color-gray-1: #dde3ee;
+	--sl-color-gray-2: var(--c-text);
+	--sl-color-gray-3: var(--c-muted);
+	--sl-color-gray-4: var(--c-faint);
+	--sl-color-gray-5: var(--c-rule-strong);
+	--sl-color-gray-6: #1a2130;
+	--sl-color-black: var(--c-paper);
+	--sl-color-accent-low: var(--c-accent-soft);
+	--sl-color-accent: #c2549a;
+	--sl-color-accent-high: var(--c-accent);
+	--sl-color-text: var(--c-text);
+	--sl-color-text-accent: var(--c-accent);
+	--sl-color-text-invert: var(--c-on-strong);
+	--sl-color-bg: var(--c-paper);
+	--sl-color-bg-nav: var(--c-paper);
+	--sl-color-bg-sidebar: var(--c-rail);
+	--sl-color-bg-inline-code: #1f2737;
+	--sl-color-bg-accent: var(--c-accent);
+	--sl-color-hairline-light: var(--c-rule);
+	--sl-color-hairline: var(--c-rule);
+	--sl-color-hairline-shade: var(--c-rule);
+	--sl-color-backdrop-overlay: hsl(222 40% 4% / 0.72);
+	--sl-color-blue-low: var(--c-note-bg);
+	--sl-color-blue: var(--c-note-rule);
+	--sl-color-blue-high: var(--c-note-ink);
+	--sl-color-green-low: var(--c-tip-bg);
+	--sl-color-green: var(--c-tip-rule);
+	--sl-color-green-high: var(--c-tip-ink);
+	--sl-color-orange-low: var(--c-caution-bg);
+	--sl-color-orange: var(--c-caution-rule);
+	--sl-color-orange-high: var(--c-caution-ink);
+	--sl-color-red-low: var(--c-danger-bg);
+	--sl-color-red: var(--c-danger-rule);
+	--sl-color-red-high: var(--c-danger-ink);
+	--sl-color-purple-low: var(--c-accent-soft);
+	--sl-color-purple: var(--c-accent-bright);
+	--sl-color-purple-high: var(--c-accent);
+
+	--sl-text-body: var(--text-md);
+	--sl-text-body-sm: var(--text-sm);
+	--sl-text-code: 0.875rem;
+	--sl-text-code-sm: 0.8125rem;
+	--sl-line-height: var(--leading-body);
+	--sl-line-height-headings: var(--leading-tight);
+	--sl-text-h1: var(--text-3xl);
+	--sl-text-h2: var(--text-2xl);
+	--sl-text-h3: var(--text-xl);
+	--sl-text-h4: var(--text-lg);
+	--sl-text-h5: var(--text-md);
+	--sl-text-h6: var(--text-md);
+
+	/* The content column is a little wider than the prose measure, so widgets (charts, simulations)
+	 * get room while paragraphs keep ~68 characters per line. */
+	--sl-content-width: 44rem;
+	--sl-sidebar-width: 17.5rem;
+	--sl-nav-height: 3.75rem;
+	--sl-content-gap-y: 1.125rem;
+
+	/* ----- Diagram tokens (dark) ------------------------------------------------------------------- */
+	/* KIELER's notation on a dark ground: slate-blue state gradient, light strokes, orchid keywords,
+	 * red strong-abort dots, green termination triangles, a dim yellow for comments. */
+	--sc-font: var(--font-text);
+	--sc-font-mono: var(--font-mono);
+	--sc-root-fill: #141a26;
+	--sc-root-stroke: #4a5873;
+	--sc-state-fill: #3a4760;
+	--sc-state-fill-end: #4f5d7a;
+	--sc-state-stroke: #dfe5ef; /* initial and final states (KIELER: black) */
+	--sc-state-outline: #8592a8; /* simple states and superstates (KIELER: grey) */
+	--sc-state-text: #f3f6fa;
+	--sc-superstate-fill: #1d2536;
+	--sc-superstate-fill-end: #26314a;
+	--sc-region-fill: #121822;
+	--sc-region-stroke: #3f4b62;
+	--sc-region-label: #a3aec0;
+	--sc-keyword: #f0b2df;
+	--sc-decl-text: #dfe5ef;
+	--sc-action-text: #dfe5ef;
+	--sc-edge: #d4dbe7;
+	--sc-edge-label: #eef2f8;
+	--sc-edge-label-bg: rgb(15 20 30 / 0.86);
+	--sc-strong-abort: #ff5c6c;
+	--sc-termination: #48d17c;
+	--sc-history: #c9d1dd;
+	--sc-comment-fill: #353222;
+	--sc-comment-stroke: #8f866a;
+	--sc-comment-text: #ede6d2;
+	--sc-shadow: rgb(0 0 0 / 0.5); /* KIELER's drop shadow under states */
+	--sc-active-stroke: var(--c-signal);
+	--sc-active-fill: #4a2232;
+	--sc-active-glow: rgb(255 107 125 / 0.42);
+	--sc-taken: var(--c-trace);
+	--sc-taken-glow: rgb(90 169 255 / 0.4);
+	--sc-entered: var(--c-trace);
+	--sc-error: #ff8a65;
+	/* Highlight geometry: a highlight never relies on colour alone. */
+	--sc-active-width: 3.5px;
+	--sc-taken-width: 3px;
+	--sc-glow-width: 7px;
+
+	/* Timing diagram (waveform) tokens for the simulation widgets. */
+	--sc-wave-line: #dfe5ef;
+	--sc-wave-fill: rgb(122 156 214 / 0.28); /* the area under a high (true / present) signal */
+	--sc-wave-grid: var(--c-rule);
+	--sc-wave-text: var(--c-muted);
+	--sc-wave-value: var(--c-ink); /* values written on int/float/string buses */
+	--sc-wave-cursor: rgb(90 169 255 / 0.14); /* the column of the latest tick */
+}
+
+:root[data-theme='light'] {
+	color-scheme: light;
+	/* The paper is KIELER's state-gradient start colour (248, 249, 253): the page is the inside of a state. */
+	--c-paper: #f8f9fd;
+	--c-sheet: #ffffff;
+	--c-rail: #f1f4fa;
+	--c-code-bg: #f3f5fa;
+	--c-inset: #fbfcfe;
+	--c-ink: #111a2c;
+	--c-text: #283246;
+	--c-muted: #536075;
+	--c-faint: #8b96a8;
+	--c-rule: #dce2ec;
+	--c-rule-strong: #b8c3d4;
+	--c-control: #77839a;
+	--c-on-strong: #ffffff;
+
+	/* KIELER's keyword colour (115, 0, 65), nudged so it also works as the link colour. */
+	--c-accent: #7a1452;
+	--c-accent-bright: #a8287a;
+	--c-accent-soft: #f5e6ef;
+	--c-accent-strong: #4f0a34;
+	--c-mark-bg: #f8e3ef;
+	--c-selection: #f1d0e3;
+
+	--c-signal: #c61f3a;
+	--c-signal-soft: #fde8eb;
+	--c-trace: #1769d6;
+	--c-trace-soft: #e6effc;
+	--c-go: #1a7f42;
+	--c-go-soft: #e8f5ed;
+
+	--c-note-ink: #1f4e8f;
+	--c-note-bg: #edf3fc;
+	--c-note-rule: #3d78c9;
+	--c-tip-ink: #17623a;
+	--c-tip-bg: #eaf5ee;
+	--c-tip-rule: #2c9457;
+	--c-caution-ink: #774600;
+	--c-caution-bg: #fff4df;
+	--c-caution-rule: #b57509; /* 3:1 on sheet and on --c-caution-bg (tools/contrast.mjs) */
+	--c-danger-ink: #9c1c2f;
+	--c-danger-bg: #fdecee;
+	--c-danger-rule: #d23349;
+
+	--shadow-frame: 0 1px 0 hsl(220 30% 60% / 0.12), 0 14px 32px -20px hsl(220 40% 30% / 0.3);
+	--shadow-pop: 0 18px 48px -22px hsl(220 40% 25% / 0.38);
+
+	--sl-color-white: var(--c-ink);
+	--sl-color-gray-1: #1e2738;
+	--sl-color-gray-2: var(--c-text);
+	--sl-color-gray-3: var(--c-muted);
+	--sl-color-gray-4: var(--c-faint);
+	--sl-color-gray-5: #c6cfdb;
+	--sl-color-gray-6: #eef1f6;
+	--sl-color-gray-7: #f6f8fb;
+	--sl-color-black: var(--c-paper);
+	--sl-color-accent-low: var(--c-accent-soft);
+	--sl-color-accent: var(--c-accent-bright);
+	--sl-color-accent-high: var(--c-accent);
+	--sl-color-text: var(--c-text);
+	--sl-color-text-accent: var(--c-accent);
+	--sl-color-text-invert: var(--c-on-strong);
+	--sl-color-bg: var(--c-paper);
+	--sl-color-bg-nav: var(--c-paper);
+	--sl-color-bg-sidebar: var(--c-rail);
+	--sl-color-bg-inline-code: #ebeff6;
+	--sl-color-bg-accent: var(--c-accent);
+	--sl-color-hairline-light: var(--c-rule);
+	--sl-color-hairline: var(--c-rule);
+	--sl-color-hairline-shade: var(--c-rule);
+	--sl-color-backdrop-overlay: hsl(222 25% 30% / 0.55);
+	--sl-color-blue-low: var(--c-note-bg);
+	--sl-color-blue: var(--c-note-rule);
+	--sl-color-blue-high: var(--c-note-ink);
+	--sl-color-green-low: var(--c-tip-bg);
+	--sl-color-green: var(--c-tip-rule);
+	--sl-color-green-high: var(--c-tip-ink);
+	--sl-color-orange-low: var(--c-caution-bg);
+	--sl-color-orange: var(--c-caution-rule);
+	--sl-color-orange-high: var(--c-caution-ink);
+	--sl-color-red-low: var(--c-danger-bg);
+	--sl-color-red: var(--c-danger-rule);
+	--sl-color-red-high: var(--c-danger-ink);
+	--sl-color-purple-low: var(--c-accent-soft);
+	--sl-color-purple: var(--c-accent-bright);
+	--sl-color-purple-high: var(--c-accent);
+
+	/* ----- Diagram tokens (light) ------------------------------------------------------------------ */
+	/* KIELER's own look: states fade from (248, 249, 253) to (205, 220, 243), black strokes, keywords in
+	 * (115, 0, 65), red strong-abort dots, green termination triangles, yellow comments. Strokes are a
+	 * blue-black instead of pure black so they sit with the page's ink. */
+	--sc-root-fill: #fafbfe;
+	--sc-root-stroke: #a3aebd;
+	--sc-state-fill: #f8f9fd;
+	--sc-state-fill-end: #cddcf3;
+	--sc-state-stroke: #182030;
+	--sc-state-outline: #7d889b;
+	--sc-state-text: #111826;
+	--sc-superstate-fill: #fafbfe;
+	--sc-superstate-fill-end: #e3ebf8;
+	--sc-region-fill: #ffffff;
+	--sc-region-stroke: #b4bfce;
+	--sc-region-label: #5b6678;
+	--sc-keyword: #730041;
+	--sc-decl-text: #182030;
+	--sc-action-text: #182030;
+	--sc-edge: #182030;
+	--sc-edge-label: #111826;
+	--sc-edge-label-bg: rgb(255 255 255 / 0.86);
+	--sc-strong-abort: #dc2633;
+	--sc-termination: #1c9a43;
+	--sc-history: #3c3c3c;
+	--sc-comment-fill: #fffbd1;
+	--sc-comment-stroke: #d4c23a;
+	--sc-comment-text: #2b2a1e;
+	--sc-shadow: rgb(16 24 40 / 0.14);
+	--sc-active-stroke: var(--c-signal);
+	--sc-active-fill: #ffe7ea;
+	--sc-active-glow: rgb(198 31 58 / 0.3);
+	--sc-taken: var(--c-trace);
+	--sc-taken-glow: rgb(23 105 214 / 0.26);
+	--sc-entered: var(--c-trace);
+	--sc-error: #c4361c;
+
+	--sc-wave-line: #182030;
+	--sc-wave-fill: rgb(150 182 232 / 0.42);
+	--sc-wave-grid: var(--c-rule);
+	--sc-wave-text: var(--c-muted);
+	--sc-wave-value: var(--c-ink);
+	--sc-wave-cursor: rgb(23 105 214 / 0.08);
+}
+
+@media (min-width: 50em) {
+	:root {
+		--sl-text-h1: var(--text-4xl);
+		--sl-nav-height: 4rem;
+	}
+}

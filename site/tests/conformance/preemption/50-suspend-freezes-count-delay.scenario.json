@@ -1,0 +1,36 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "S": false,
+        "A": true
+      },
+      "note": "Entry tick: count 0."
+    },
+    {
+      "inputs": {},
+      "note": "Count 1."
+    },
+    {
+      "inputs": {
+        "S": true
+      },
+      "note": "Suspended: A holds but is not counted."
+    },
+    {
+      "inputs": {},
+      "note": "Suspended: not counted."
+    },
+    {
+      "inputs": {
+        "S": false
+      },
+      "note": "Count 2."
+    },
+    {
+      "inputs": {},
+      "note": "Count 3: fires (fired = 1)."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,18 @@
+// Differential probe of the structure features (structure.md); recorded with the oracle.
+scchart Dz24 {
+  input bool A
+  output int x = 0, y = 0
+  region {
+    initial state S {
+      initial state P
+      immediate do x = 0 -> 5 go to Q
+      final state Q
+    }
+    join to T
+    state T
+  }
+  region {
+    initial state U
+    if A do y = 1 sfby 2 go to U
+  }
+}

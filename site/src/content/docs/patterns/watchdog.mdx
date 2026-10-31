@@ -1,0 +1,195 @@
+---
+title: "Watchdogs"
+description: "Noticing when something stops happening, and forcing a safe state with a strong abort."
+sidebar:
+  order: 8
+---
+
+import { Sim, Compare, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
+import { Aside } from '@astrojs/starlight/components'
+
+Most failures are loud: a sensor reports an error, a limit switch trips. The dangerous ones are quiet. A
+sensor's cable breaks and it stops reporting; a controller hangs and stops answering. To
+catch a silence, a system needs a **watchdog**: something that expects a regular sign of life, a
+**heartbeat**, and raises the alarm when the heartbeat has been missing for too long.
+
+This page builds a watchdog, then uses it to *supervise* a controller: when the watchdog expires, a
+strong abort forces the controller into a safe state, whatever it was doing. It builds on
+[counters and timeouts](/patterns/counters/) and [aborts](/learn/preemption/).
+
+## A watchdog with a count delay
+
+The watchdog waits in `Watching`. A beat restarts the wait; three ticks without one, and it expires:
+
+<Sim example="patterns/watchdog/watchdog" caption="Beats in ticks 2 and 4 keep the watchdog happy. After the last one, three quiet ticks (5 to 7), and the alarm goes up in tick 7." />
+
+The trick is the self-loop. `if beat go to Watching` leaves `Watching` and enters it again, and every
+entry restarts the count delay `if 3 true`. So `if 3 true` can only fire after three ticks in a row
+without a beat. The beat transition is written first, so a beat in the very tick the count would
+complete still wins. (KIELER warns `Instantaneous loop detected!` for this chart, and SCCharts Lab
+`Potential instantaneous loop.`: a [false alarm](/reference/errors/#instantaneous-loop-detected), as
+for the stairwell light on the [counters page](/patterns/counters/).)
+
+### The same with a counter
+
+A counter makes the time since the last beat visible, and lets the limit be anything you like:
+
+<Compare a="patterns/watchdog/watchdog" b="patterns/watchdog/watchdog-counter" scenario="b" caption="Both raise the alarm in tick 7. `quiet` shows how long the silence has lasted." />
+
+`quiet` is reset by a beat and counted up otherwise; when it is 2 and the third quiet tick arrives,
+the watchdog expires. The two versions agree tick for tick. A real watchdog's limit comes from the sensor:
+if it is specified to report every 50 ms and the chart ticks every 10 ms, a limit of a few more than 5
+ticks tolerates a little jitter without waiting dangerously long.
+
+<Aside type="tip" title="Testing a watchdog in the simulator">
+In KIELER's simulator and in SCCharts Lab, inputs keep their value until you change them. A `beat` you
+switch on stays on, and a watchdog that sees `beat` in every tick never expires. Give beats as single
+ticks: on in one tick, off in the next. In this guide's simulations the pulse button next to an input's
+switch does that for you.
+</Aside>
+
+## Supervision: a strong abort into a safe state
+
+Now a controller to supervise. `Running` drives a motor on demand and counts its starts. A watchdog in
+a concurrent region listens for the heartbeat of the sensor the controller depends on, and when it expires
+it emits `expired`. `Running` has a strong abort on that signal into `Safe`, which raises the alarm.
+`restart` brings both back.
+
+<Sim example="patterns/watchdog/supervisor" caption="Tick 7: the watchdog expires in the same tick as a demand. The motor is not started; the controller goes to `Safe`." />
+
+Look at tick 7. The watchdog expires, and in the same tick demand rises. Two things happen in that tick:
+
+- The watchdog region emits `expired`, and `Running`'s abort, which reads `expired` after the
+  emission (every emission of a signal comes before every test of it in another region), fires.
+- Because the abort is strong, it is decided *before* anything inside `Running` reacts. `Stopped` never
+  sees the demand: no start, `starts` stays 1.
+
+`Running`'s exit action, `exit do motor = false`, runs although `Running` is left by a strong abort: exit
+actions run on every kind of exit, as [mode switching](/patterns/modes/#switches-that-must-not-wait)
+explains. Put "switch everything off" into the exit action of the supervised state, and every way out of
+it, normal or forced, ends with the outputs safe.
+
+### Strong, not weak
+
+With a weak abort, `if expired go to Safe`, the inside of `Running` would finish its tick first:
+
+<Compare a="patterns/watchdog/supervisor" b="patterns/watchdog/supervisor-weak" scenario="b" caption="Tick 7: with the weak abort, the motor is started (`starts` becomes 2) before the controller goes to `Safe`." />
+
+**Strong** and **Weak** are `starts` in `Supervisor` and in `SupervisorWeak`. Both raise the alarm in
+tick 7:
+
+| Tick | Inputs | Strong | Weak |
+| ---: | --- | ---: | ---: |
+| 3 | `demand` | 1 | 1 |
+| 6 | none | 1 | 1 |
+| 7 | `demand` | 1 | 2 |
+| 8 | none | 1 | 2 |
+
+In `SupervisorWeak`, the motor is started in tick 7 and switched off again by `Running`'s exit action in
+the same tick. `motor` ends the tick off in both charts, but in `SupervisorWeak` a start command was
+issued and counted (`starts` is 2), and in a real system perhaps sent to hardware, by a controller that
+was already known to be blind. For supervision, use a strong abort: once the watchdog has spoken, nothing
+inside gets another move.
+
+## Keep the watchdog outside
+
+It is tempting to put the watchdog inside the state it supervises, as one more region of `Running`.
+KIELER rejects this version:
+
+<Sim example="patterns/watchdog/watchdog-inside" caption="The watchdog is a region of `Running` itself. KIELER rejects the chart." />
+
+The messages are `Can't schedule from …` and `The SCG is NOT asc-schedulable!`; SCCharts Lab adds:
+
+```text wrap
+Circular dependency prevents scheduling this tick.
+```
+
+The abort out of `Running` reads `expired`, and now the watchdog emits `expired` inside `Running`, on the
+transition with the count delay. KIELER has to check the abort and run the inside of `Running` in some
+order, and with that count delay it cannot find one. It is not a matter of the abort being strong:
+KIELER rejects the weak version, `if expired go to Safe`, in the same way.
+
+Without a count delay, KIELER does accept a watchdog inside the state it aborts. Here is the counter
+watchdog as a region of `Running`, with beats in ticks 2 and 4 as for `Supervisor`:
+
+<Sim example="patterns/watchdog/watchdog-inside-counter" caption="Tick 7: the watchdog expires and `Work` stops, with the motor on. `Running` is never left: no `Safe`, no alarm, and the motor runs on." />
+
+That is worse than a rejection. KIELER checks a strong abort separately in each region inside the
+state, as that region runs. The `Work` region checks it after the watchdog has emitted `expired`, and
+stops at once, in `Started`. The `Watchdog` region checks it before its own emission, sees nothing, and
+moves on to `Expired`. `Running` is left only once every region inside it has stopped, and from tick 8
+on `expired`, a signal, is absent again. So `Running` is never left, its exit action never runs, and
+nothing switches the motor off.
+
+The rule is simple: the watchdog and the thing it supervises are siblings, never parent and child. As a
+sibling region, the watchdog emits `expired` before `Running`'s abort reads it, and the abort stops
+`Running` in one piece.
+
+## Try it
+
+<TryIt example="patterns/watchdog/early-warning-starter" solution="patterns/watchdog/early-warning" title="An early warning">
+Extend the counter watchdog with an output `late` that is true in the second tick in a row without a
+beat, one tick before the alarm, and false otherwise (also once the alarm is up). To test it: a beat in
+tick 2 and none in ticks 3 and 4 make `late` true in tick 4; a beat in tick 5 clears it; after that,
+silence makes it true in tick 7, and in tick 8 the alarm goes up and `late` is false again.
+</TryIt>
+
+<TryIt example="patterns/watchdog/two-sensors-starter" solution="patterns/watchdog/two-sensors" title="Two sensors">
+The starter watches sensor A. Add a second watchdog for sensor B (`beatB`), so that the alarm goes up when
+*either* sensor falls silent. Both watchdogs may emit the same signal. To test it: both sensors beat in
+tick 2, then only A (ticks 4 and 6). The starter never raises the alarm; yours should raise it in tick 5,
+the third tick without a beat from B, and `restart` with both beating (tick 8) should clear it.
+</TryIt>
+
+## Check your understanding
+
+<Predict
+  example="patterns/watchdog/watchdog-predict"
+  ask={[{ tick: 5, value: 'alarm' }, { tick: 7, value: 'alarm' }, { tick: 8, value: 'alarm' }, { tick: 9, value: 'alarm' }]}
+  caption="The count-delay watchdog, with beats in ticks 2, 5 and 9. What is `alarm` after ticks 5, 7, 8 and 9?"
+/>
+
+<details>
+<summary>Explanation</summary>
+
+`alarm` is false after ticks 5 and 7 and true after ticks 8 and 9. The beat in tick 5 comes after two
+quiet ticks, just in time, and restarts the count. Ticks 6, 7 and 8 are quiet, so the watchdog expires
+in tick 8. The beat in tick 9 is too late: `Expired` has no transitions, so the alarm stays up.
+
+</details>
+
+<Quiz
+  question="In `WatchdogInsideCounter` the watchdog emits `expired` in tick 7, but `Running` is never left. Why?"
+  options={['A strong abort is never checked in a state with more than one region', '`Watchdog` checks the abort before emitting `expired`, and by tick 8 it is gone', "A signal emitted inside a state cannot trigger that state's own transitions"]}
+  answer={1}
+>
+KIELER checks a strong abort separately in each region inside the state. `Work` checks it after the
+emission and stops, which also shows that a signal from inside can trigger the abort. `Watchdog` checks
+it before, so it is not stopped, and from tick 8 on `expired` is absent. `Running` is left only once all
+its regions have stopped, so it never is. With the watchdog as a sibling region, `expired` is emitted
+before `Running`'s abort reads it, and the abort stops `Running` in one piece.
+</Quiz>
+
+<Quiz
+  question="Why does the watchdog restart its count with a self-loop `if beat go to Watching` instead of using `if 3 !beat go to Expired`?"
+  options={['`if 3 !beat` is a syntax error', 'There is no difference: both expire after three quiet ticks', '`if 3 !beat` counts quiet ticks, not quiet ticks in a row']}
+  answer={2}
+>
+A count delay counts the ticks in which its trigger holds, consecutive or not. `if 3 !beat` would expire
+after any three quiet ticks since `Watching` was entered, even if beats came in between: with a beat in
+every other tick (ticks 2, 4 and 6), it expires in tick 7. KIELER accepts it without a word. The
+self-loop re-enters `Watching` on every beat, and re-entering restarts the count.
+</Quiz>
+
+<KeyIdeas>
+- A watchdog expects a heartbeat and expires when it has been missing for N ticks: a count delay
+  restarted by a self-loop, or a counter reset by each beat.
+- Give beats as single ticks when you test: inputs keep their value in the simulator.
+- Supervise with a strong abort on the watchdog's signal: in the expiry tick nothing inside the
+  supervised state moves.
+- Exit actions run on strong aborts too; use them to switch outputs off.
+- Keep the watchdog in a sibling region, never inside the state it aborts.
+</KeyIdeas>
+
+Next, [Sharing a resource](/patterns/arbiter/): two clients, one device, and an arbiter that decides
+who goes first.

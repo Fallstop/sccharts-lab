@@ -1,0 +1,29 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`F` is initial and final, so the region starts in a final state. Yet the trigger-less join does **not** fire in tick 1: KIELER only counts a final state as reached when a transition enters it (a final initial state with outgoing transitions starts as not terminated). `done = false`."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "`a`: `F` → `G`. The region is not final."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`G` → `F` enters the final state through a transition: now the join fires, `done = true`."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "In `D`: `done = true`."
+    }
+  ],
+  "expect": "ok"
+}

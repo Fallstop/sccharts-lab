@@ -1,0 +1,13 @@
+scchart Base6 {
+  input int i
+  output int o
+  initial state S
+  do o = i go to S
+}
+scchart User6 {
+  input int x
+  output int y
+  initial state R {
+    initial state Inner is Base6(x to i, y to o)
+  }
+}

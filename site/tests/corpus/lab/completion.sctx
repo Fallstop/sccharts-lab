@@ -1,0 +1,23 @@
+/** Counter chart used by the completion suite. */
+scchart Counter {
+  // Pulse from the environment.
+  input bool tick
+  // How many pulses have been seen.
+  output int count = 0
+  const int LIMIT = 3
+
+  initial state Idle "Waiting"
+  if tick go to Counting
+
+  state Counting {
+
+    int local = 0
+
+    region main:
+      initial state Running
+
+      final state Done
+  }
+
+  go to Idle
+}

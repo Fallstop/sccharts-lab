@@ -1,0 +1,10 @@
+// sfby ("sequential followed by") behaves like -> for two operands: a in the first tick, then b in every
+// later tick (b is not delayed). A chain a sfby b sfby c never reaches c in KIELER: it gives a, b, b, ...
+scchart St46Sfby {
+  input int I
+  output int two, chain
+  dataflow {
+    two = I sfby (I * 10)
+    chain = 1 sfby 2 sfby 3
+  }
+}

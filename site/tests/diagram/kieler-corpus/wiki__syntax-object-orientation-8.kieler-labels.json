@@ -1,0 +1,116 @@
+{
+ "sourceHash": "ae1e1edd82b0e27c",
+ "states": [
+  {
+   "path": [
+    "CodeEffects"
+   ],
+   "rows": [
+    [
+     "CodeEffects"
+    ],
+    [
+     "output int ",
+     "O[3]"
+    ],
+    [
+     "entry ",
+     "/ {O[0] = 1; O[1] = 2; O[2] = 3;}"
+    ]
+   ],
+   "box": [
+    0,
+    0,
+    531.6,
+    165.3
+   ]
+  },
+  {
+   "path": [
+    "CodeEffects",
+    0,
+    "A"
+   ],
+   "rows": [
+    [
+     "A"
+    ],
+    [
+     "int ",
+     "i = 1"
+    ],
+    [
+     "during ",
+     "/ {O[0]++; O[1] += 2; O[2] *= i;}"
+    ]
+   ],
+   "box": [
+    10,
+    10,
+    246.5,
+    72.3
+   ]
+  },
+  {
+   "path": [
+    "CodeEffects",
+    0,
+    "B"
+   ],
+   "rows": [
+    [
+     "B"
+    ]
+   ],
+   "box": [
+    468.3,
+    25.9,
+    40,
+    40.6
+   ]
+  }
+ ],
+ "regions": [
+  {
+   "path": [
+    "CodeEffects",
+    0
+   ],
+   "label": [],
+   "rows": [],
+   "direction": "RIGHT",
+   "box": [
+    7,
+    68.3,
+    518.3,
+    92.3
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "$root$NCodeEffects$$N0$NA$EB0",
+   "source": [
+    "CodeEffects",
+    0,
+    "A"
+   ],
+   "target": [
+    "CodeEffects",
+    0,
+    "B"
+   ],
+   "text": "O[0] > 5 / {O[0]++; if (O[2] > 10) {O[2] *= 10;}}",
+   "lines": [
+    "O[0] > 5",
+    "/ {O[0]++; if (O[2] > 10)",
+    "{O[2] *= 10;}}"
+   ],
+   "dashed": false,
+   "decorators": [
+    "arrow"
+   ]
+  }
+ ],
+ "comments": []
+}

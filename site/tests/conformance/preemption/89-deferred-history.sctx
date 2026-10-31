@@ -1,0 +1,23 @@
+scchart DeferredHistory {
+  input bool A, P, R
+  output int where = 0, entries = 0
+
+  initial state M {
+    entry do entries += 1
+
+    initial state I {
+      entry do where = 1
+    }
+    if A go to J
+
+    state J {
+      entry do where = 2
+    }
+  }
+  if P go to Paused
+
+  state Paused {
+    entry do where = 9
+  }
+  if R go to M deep deferred history
+}

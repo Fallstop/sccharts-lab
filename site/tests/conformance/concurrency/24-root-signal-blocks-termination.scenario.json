@@ -1,0 +1,23 @@
+{
+  "ticks": [
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "Same shape as a terminating chart, but the root declares a signal."
+    },
+    {
+      "inputs": {
+        "a": true
+      },
+      "note": "Both regions reach final states and `S` is emitted, yet `terminated` stays false. In KIELER's simulation the root has an entry action (added for transition tracking), and a scope that declares a signal and has an action is wrapped in a non-final state by the signal transformation, so it can never terminate."
+    },
+    {
+      "inputs": {
+        "a": false
+      },
+      "note": "`S` is absent again; the chart still has not terminated (and never will)."
+    }
+  ],
+  "expect": "ok"
+}

@@ -1,0 +1,8 @@
+// A transition's trigger comes after its effects in KIELER's order: the trigger's pre(v, c) decides.
+scchart PreClockTrigger {
+  input int v
+  input bool c
+  output int p = 0, n = 0
+  initial state S
+    if pre(v, c) > 2 do p = pre(v); n++ go to S
+}

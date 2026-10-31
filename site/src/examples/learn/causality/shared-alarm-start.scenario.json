@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "smoke": false, "heat": false, "ack": false }, "note": "Rejected: two regions set `alarm = true` (that pair agrees) but a third sets `alarm = false`." }
+  ],
+  "expect": "error",
+  "errorIncludes": "NOT asc-schedulable"
+}
