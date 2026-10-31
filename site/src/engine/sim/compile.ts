@@ -360,12 +360,14 @@ function orderDependentUpdates(scg: SCG): Diagnostic[] {
         if (!selfRead) continue
         const other = writes.find(m => m !== n && (m.effect as typeof f).ref.v === f.ref.v && concurrentThreads(n.thread, m.thread))
         if (!other) continue
-        const name = f.ref.v.display ?? f.ref.v.name
+        const name = say(f.ref.v)
+        const plain = varName(f.ref.v)
         const line = (other.effect as typeof f).o.span?.line
+        const own = !f.ref.v.generated || /^[\w$.'^[\]]+$/.test(plain)
         out.push({
             severity: 'warning', code: 'kieler-quirk', span: f.o.span, related: f.o.by ? [f.o.by] : undefined,
-            message: `KIELER's C code for this update reads \`${name}\` (the missing else part is \`${name}\`), but KIELER does not see the read: it orders it freely against the concurrent update of \`${name}\`${line ? ` (line ${line})` : ''}, and the result depends on that order`,
-            hint: `The guide's simulation runs the two in the order it computes for KIELER's scheduler, which can differ from KIELER's in such a case. Write the else part (\`${name} ${f.op} (c) ? e : 0\`) so that the update does not read \`${name}\`.`,
+            message: `KIELER's C code for this update reads ${name} (the missing else part is ${name}), but KIELER does not see the read: it orders it freely against the concurrent update of ${name}${line ? ` (line ${line})` : ''}, and the result depends on that order`,
+            hint: `The guide's simulation runs the two in the order it computes for KIELER's scheduler, which can differ from KIELER's in such a case. ${own ? `Write the else part (\`${plain} ${f.op} (c) ? e : 0\`) so that the update does not read ${name}.` : `Write the else part of the conditional so that KIELER's C code does not read ${name}.`}`,
         })
         break
     }

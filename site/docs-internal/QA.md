@@ -217,29 +217,27 @@ corpus test reads where they are, never copied). No file in the site has the con
 
 ## Not fixed (for the owners)
 
-- **Engine**: KIELER rejects a backward `goto` in a code block that it inlines (`effect-code-goto`, `Can't schedule
-  from _g3 to _g3`), even one a condition ends (content-D's `goto-back-guarded`); the engine accepts both. Which
-  blocks KIELER inlines (no loop, under 30 nodes) needs probes first. Also: a trigger with a conditional without an
-  `else` (`if (c) ? a`) keeps the previous tick's guard in KIELER; `pre(x)` next to `pre(x, c)` shares one memory per
-  variable; an out-of-range constant index write (`a[3] = 9` with `int a[3]`) lands in the next variable in KIELER
-  and nowhere in the engine (the cheat sheet and for-regions describe KIELER, so the playground contradicts them on
-  these charts; no example uses them). `describeTick` names elements inside reference copies by internal id
-  (`LampPanel.Left/PushSwitch.Off`) and formal name; an inlined method's `if`s are logged as checks after the Take
-  (`advanced/methods`, Thermometer); `traceableVariables` gives a for-region state's local one key for all copies
-  (`local-per-copy`); `parseExpression` has KIELER's wording for 61 % of broken texts; the `(did you mean 'X'?)` part
-  of messages can now get backticks. Validation after a syntax error stays withheld on purpose (STATUS.md).
-- **Widgets**: after a run-time error Step stays enabled and each press adds a tick with the same error (the message
-  now names the right tick; disabling Step needs the focus kept, as Back does); `.sc-source`'s 32rem cap scrolls with
-  no visual cue; short inline code in prose and captions can break mid-expression at 390; a copy state's accessible
-  name says "left in this tick" for the union of the copies (`TickResult.copies` has no `exited`); code over 12
-  characters in phone tables breaks at its spaces (the best that fits without scrolling); `advanced/time` keeps five
-  collapsed loop-warning lines, one per widget, by choice.
-- **Playground**: at 390 the Simulate tab's diagram head shrinks the chart's name to one letter; the inline
-  playground grows by about 185 px when it starts (after the reader's input, so not counted as layout shift), its
-  static diagram sits under the zoom buttons, and without JavaScript it still shows a Step bar that cannot work;
-  shared-run notes name only the inputs that changed; Run until takes about 4 s for 1000 ticks; the watch reads only
-  the top-level data pool; charts that fit only below 40 % open at 70 % from their top left; `runInputs` could use
-  `TickResult.ranWith`.
+- **Engine**: `parseExpression` has KIELER's wording for 61 % of broken texts (the rest keep the guide's own); validation
+  after a syntax error stays withheld on purpose (STATUS.md). The oracle cannot run on this machine at the moment
+  (its default Java, a Minecraft runtime, is gone after the drive move, and the JetBrains runtime lacks
+  `jdk.unsupported`): set `SCCHARTS_JAVA` to a full JDK 21 to record; until then the CS303 verdicts of files edited
+  after their recording are skipped by the corpus test (re-record them with `tests/corpus/record.mjs`). Done this
+  round (with recorded probes in `tests/engine/kieler/rare`): backward `goto`s in inlined blocks rejected, a trigger's
+  `?` without `else`, `pre(x)` next to `pre(x, c)`, out-of-range constant indices, readable names in copies, no
+  method `if`s logged as checks, stopped simulation after a run-time error.
+- **Widgets** (by choice, not bugs): inline code over 12 characters (16 without spaces) in prose, captions and
+  phone tables may break at its spaces (the best that fits at 390 without scrolling); `advanced/time` keeps five
+  collapsed loop-warning lines, one per widget. Checked done this round: after a run-time error Step, Run, Next and
+  the inputs are off, the foot names the tick and offers Restart (focus moves from Step to Restart, then back to
+  Step), `.sc-source`'s cap has the fade and the "Show all n lines" button, the guide's lints count as notes, and a
+  copy state's name says which copy it left (`markCopies` with `prev`).
+- **Playground**: Run until takes about 4 s for 1000 ticks (each tick renders the panel, `SimHost.stepNow`); charts
+  that fit only below 40 % open at 70 % from their top left, by choice (readable; Fit shows the whole). Checked done
+  this round: the inline playground starts at its final size with its diagram below the zoom buttons and, without
+  JavaScript, a note in place of the panel; the Simulate tab's head at 390 keeps the name whole (its zoom read-out
+  goes); shared-run notes give the whole input of a chart with up to six inputs, and `runInputs` uses `ranWith`; the
+  watch reads inner locals and members from the trace; for-region copy badges and names on the diagram; an
+  unsupported chart is not compared ("cannot run in the browser").
 - **Content**: the 404 hero's right two thirds stay empty at 1280.
 - **Owner decisions**: the report channel (`REPORT_URL` in `src/components/site.ts` is unset, issues are off on
   Fallstop/sccharts-lab, and `reference/about` points to the Marketplace Q&A meanwhile); the upstream SCCharts Lab

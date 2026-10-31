@@ -109,6 +109,21 @@ describe('a conditional without an else part', () => {
         expect(ticks.map(t => [t.values.x, t.values.y])).toEqual([[3, 5], [4, 10], [3, 11]])
     })
 
+    it('in a suspend trigger: the order warning names the suspend condition once, in words', () => {
+        const [d] = byCode(diagnostics(`scchart C {
+  input bool c, a
+  output int n = 0
+  initial state S {
+    suspend if (c) ? a
+    initial state T
+      do n++ go to T
+  }
+}`), 'kieler-quirk')
+        expect(d.message).toContain('reads `S`\'s suspend condition (the missing else part is `S`\'s suspend condition)')
+        expect(d.message).not.toContain('``')
+        expect(d.hint).toContain('Write the else part of the conditional')
+    })
+
     it('in print, a call on its own or an assigned index: gcc rejects it', () => {
         for (const effect of ['print((c) ? 1)', 'x[(c) ? 1] = 5']) {
             const r = compile(`scchart C {\n  input bool c\n  output int x[2]\n  initial state S\n    if true do ${effect} go to S\n}`)
