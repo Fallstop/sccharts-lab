@@ -264,7 +264,8 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         expect(await page.isVisible('[data-pg-sim]')).toBe(true)
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
         await page.context().close()
-        // The diagram's head keeps the chart's name whole beside its six tools, in the Diagram and the Simulate tab.
+        // The diagram's head keeps the chart's name whole beside its tools, in the Diagram and the Simulate tab (whose
+        // diagram is there to watch: its zoom read-out goes, playground.css).
         const seat = await open('/playground/?example=advanced/for-regions/seatbelts', 390)
         await seat.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'Seatbelts')
         for (const tab of ['diagram', 'sim']) {
@@ -272,7 +273,7 @@ describe.skipIf(!enabled)('playground in the browser', () => {
             const name = await seat.$eval('[data-pg-chart-name]', e => ({ text: e.textContent, shown: e.clientWidth, needs: e.scrollWidth }))
             expect(name.text).toBe('Seatbelts')
             expect(name.shown, tab).toBeGreaterThanOrEqual(name.needs)
-            expect(await seat.locator('.sc-pg__panel--diagram .sc-pg__zoom .sc-pg__tool:visible').count()).toBe(6)
+            expect(await seat.locator('.sc-pg__panel--diagram .sc-pg__zoom .sc-pg__tool:visible').count(), tab).toBe(tab === 'sim' ? 5 : 6)
         }
         await seat.context().close()
     }, 120000)

@@ -24,7 +24,8 @@ of guide pages (`src/components/Playground.astro` renders `PlaygroundInline.astr
   get the widgets' "×n" badge and "active in 3 of 4 copies" in their names (`markCopies`). Click an element: its source
   is selected (a comment box: its doc comment). The element under the editor's cursor gets `is-focus`; hovering an
   element marks its source. On a phone the diagram's head is the chart's name and its six tools at full size (the
-  "Diagram" heading is said to screen readers only: the tab names it; below 24rem the zoom read-out goes).
+  "Diagram" heading is said to screen readers only: the tab names it; below 24rem, and in the Simulate tab, the zoom
+  read-out goes, so that the name stays whole).
 - **The diagram from the keyboard** (both the page and the inline playground, as the widgets: `enableDiagramKeys`
   and `refreshNames` from `src/components/sim/link.ts`): after the stage's own tab stop (pan and zoom), the chart's
   states, named regions and transitions are one more, the arrow keys move between them in source order, Home and

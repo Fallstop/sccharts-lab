@@ -52,6 +52,10 @@ const positions = (list: { line: number; col: number }[]) => list.map(d => pos(d
 const spanPositions = (list: Diagnostic[]) => list.map(d => pos(d.span?.line, d.span?.col)).sort()
 
 const keys = Object.keys(expectations).filter(k => fs.existsSync(fileOf(k)))
+// The CS303 files are someone's coursework and change on their own: a file edited after its verdict was recorded is
+// skipped (re-record it with record.mjs) rather than compared with what KIELER said about an older text.
+const cs303Recorded = fs.existsSync(path.join(here, 'expectations.cs303.json')) ? fs.statSync(path.join(here, 'expectations.cs303.json')).mtimeMs : 0
+const stale = (key: string) => key.startsWith('cs303:') && fs.statSync(fileOf(key)).mtimeMs > cs303Recorded
 
 describe('corpus agrees with KIELER', () => {
     it('has a recorded verdict for every corpus file', () => {
@@ -63,7 +67,7 @@ describe('corpus agrees with KIELER', () => {
     })
 
     for (const key of keys) {
-        it(key, () => {
+        it.skipIf(stale(key))(key, () => {
             const e = expectations[key]
             const source = fs.readFileSync(fileOf(key), 'utf8')
             const parsed = parse(source)
