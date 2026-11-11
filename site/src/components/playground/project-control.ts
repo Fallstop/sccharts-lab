@@ -349,6 +349,8 @@ export class ProjectControl {
             setCurrent(at.id)
             this.pg.toast(`${this.name} was also changed in another tab, so the edits here are saved as a copy of it (both are in the project menu).`)
         })
+        // A save that failed never holds up the next ones.
+        this.saving = this.saving.catch(() => undefined)
     }
 
     /** Writes the files that differ from the folder (and removes those deleted since), asking for permission once. A

@@ -194,19 +194,33 @@ compact single-file widget). Owner: the playground workstream.
   The diagram and the simulation follow the active file (the chart select picks another chart of it). An example that
   imports files (`loadImports`) opens as a project of its file and those. A project keeps at least one file; an
   empty folder starts with `main.sctx`.
-- **Saving** (`project-control.ts`, `project-store.ts`): every edit is saved after a pause in typing: in the browser
-  (IndexedDB, guarded: the playground works the same without it; the 40 most recent projects, and every folder project whose edits are not in its folder yet), in the scratch buffer
-  of local storage (the active file's text; boot falls back to it without IndexedDB), and in the address bar
-  (`#code=` for one file, `#project=` for several; `history.replaceState`), so a reload never loses work. A project
-  is saved under an id only once the reader edits it: loading an example, a link or a file saves nothing, so it never
-  overwrites the reader's work, and the project before it stays in the recent list. Loading saves the edits not yet
-  saved first, and the toast offers Undo.
+- **Saving** (`project-control.ts`, `project-store.ts`): every edit is saved after a pause in typing, and at once when
+  the page is hidden (a reload, a closed tab): in the browser (IndexedDB, guarded: the playground works the same
+  without it; the 40 most recent projects, and every folder project whose edits are not in its folder yet), in the
+  scratch buffer of local storage (the active file's text; boot falls back to it without IndexedDB), and in the
+  address bar (`#code=` for one file, `#project=` for several; `history.replaceState`), so a reload never loses work.
+  IndexedDB saves asynchronously and a page going away may not finish, and a reload loads the address as it was
+  before the last save updated it: so each save is also kept at once in session storage (this tab's) and local
+  storage (the last save), and boot opens that copy when the address is one this tab saved it at, or when the store
+  is a save behind (`tabProject`, `lastSaved`). Each stored project has a version (`rev`), checked in the
+  transaction that saves it: a tab whose version is stale (another tab saved the project meanwhile) saves its edits
+  as a copy, and says so. A project is saved under an id only once the reader edits it: loading an example, a link or
+  a file saves nothing, so it never overwrites the reader's work, and the project before it stays in the recent list.
+  Loading saves the edits not yet saved first, and the toast offers Undo. Paths from outside (a link, a .zip) are
+  normalised and kept inside the project (`projectPath`); a file's membership is an own key (`hasFile`), never one
+  every object has (`toString`).
 - **Files on disk** (`folder.ts`): **Open folder** (the File System Access API, Chromium) reads a folder's `.sctx`
   files (two levels down, at most 200, none over 2 MB) into a project backed by it; Ctrl/⌘+S (or Save in the
-  sidebar's folder bar) writes the files that differ from the disk and removes those deleted or renamed since; unsaved
-  files have a dot. The handle is stored with the project, so after a reload the folder bar offers Reconnect (the
-  browser asks again). Elsewhere: **Open files** (several `.sctx` files, or a `.zip` of a project), **Download** (the
-  `.sctx`, or the project as a `.zip`, fflate loaded on demand), drop files on the editor.
+  sidebar's folder bar) writes the files that differ from the disk and removes those deleted or renamed since
+  (`saveFolder`); unsaved files have a dot. Each file is read before it is written or removed: one the folder changed
+  since the playground read it (another editor, a file made there under a name made here too) is left as it is, and
+  the toast offers Overwrite. A rename that changes only the case removes the old name first (on macOS and Windows
+  both names are one file). Nothing else in the folder is touched, and no path leaves it. The handle is stored with
+  the project, so after a reload the folder bar offers Reconnect (the browser asks again); the folder read again
+  (`mergeFolder`) gives the files not edited here the folder's text and adds new ones, while a file edited, deleted
+  or renamed here stays so, against the text it was read with. Elsewhere: **Open files** (several `.sctx` files, or a
+  `.zip` of a project), **Download** (the `.sctx`, or the project as a `.zip`, fflate loaded on demand), drop files on
+  the editor.
 - **Sharing** (`share.ts`): `#code=<lz-string>` links (one file), `#project=<lz-string>` (several: name, active file,
   every file), Copy link (Ctrl/⌘+Shift+S); a shared run of a project carries the project (`#project=…&run=…`).
 - **Links followed in an open tab**: a `#code=` or `#run=` pasted into the address bar of an open playground, and
@@ -345,6 +359,8 @@ switch), `[data-pg-vars-toggle]` with `[data-pg-vars-count]` and the strip `[dat
 
 ```sh
 pnpm exec vitest run tests/playground                       # tokenizer, language, share links, projects (names,
+                                                            # paths from outside), a folder on disk (Save's
+                                                            # conflicts, case-only renames, Reconnect),
                                                             # KIELER's imports), queries, catalogue,
                                                             # the comparison with model solutions, shared runs
                                                             # (every example's run replays the same), variables,
@@ -354,4 +370,7 @@ pnpm exec vitest run tests/playground                       # tokenizer, languag
                                                             # and run against the engine; skipped without gcc)
 PLAYGROUND_E2E=1 pnpm exec vitest run tests/playground/e2e.test.ts   # Chromium against the dev server
                                                             # (PLAYGROUND_URL=http://127.0.0.1:4341 for another one)
+PLAYGROUND_E2E=1 pnpm exec vitest run tests/playground/e2e-safety.test.ts   # the reader's work: reloads, two tabs,
+                                                            # the 40 projects, a folder changed behind the
+                                                            # playground's back, hostile links and charts
 ```
