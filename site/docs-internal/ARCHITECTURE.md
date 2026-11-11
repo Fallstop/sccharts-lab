@@ -37,7 +37,7 @@ for the shell, Svelte 5 for the interactive islands, vitest for the tests.
 | `src/content/docs/**` | content editors | Guide pages (MDX) |
 | `src/examples/**` | content editors | Example charts (`.sctx`), scenarios (`.scenario.json`) and their KIELER recordings (`.oracle.json`) |
 | `docs-internal/semantics/`, this file | semantics-docs | The semantics specs (numbered rules) |
-| `packages/README.md`, `packages/*/package.json` and `README.md`, `tools/packages/`, `.github/workflows/packages.yml` | packages | Publishing the three packages to npm: build to `dist/`, curated entry points, consumer smoke test, release workflow |
+| `packages/README.md`, `packages/*/package.json` and `README.md`, `tools/packages/`, `.github/workflows/packages.yml` | packages | Publishing the packages to npm: build to `dist/`, curated entry points, consumer smoke test, release workflow |
 | `tests/conformance/<area>/` | semantics-docs | Probe charts, scenarios and oracle recordings that define correct behaviour |
 | `tests/conformance/engine*`, `tests/engine/`, `tests/corpus/`, `tests/codegen/`, `tools/fuzz/`, `tools/oracle/`, `tools/cgen/` | engine | Engine vs KIELER, engine unit tests, parser corpus, generated C vs engine and KIELER, differential fuzzer, the oracle harness |
 | `tests/diagram/`, `tests/playground/`, `tools/diagram-*.mjs` | playground + diagram | Diagram and playground tests and tools |
@@ -227,14 +227,15 @@ interface GeneratedC {
 
 ## The packages on npm
 
-`packages/engine`, `packages/diagram` and `packages/trace` are published as `@sccharts-lab/engine`, `/diagram` and
-`/trace` (`packages/README.md`: entry points, conventions for a new package, release procedure). The site keeps
+`packages/engine`, `packages/diagram`, `packages/trace` and `packages/embed` are published as `@sccharts-lab/engine`,
+`/diagram`, `/trace` and `/embed` (`packages/README.md`: entry points, conventions for a new package, release procedure). The site keeps
 importing their TypeScript sources; `pnpm packages:build` builds `dist/` (tools/packages/build.mjs: tsc, then `.js`
 in the relative specifiers), `pnpm packages:smoke` checks the packed tarballs in a fresh npm project, and a
 `packages-v<version>` tag publishes them (`.github/workflows/packages.yml`). Only the published entry points (each
 package's `publishConfig.exports`) are public; the site's deep imports (`@sccharts-lab/engine/sim/compile`, ...)
 work only in the workspace. The diagram package ships its fonts (`@sccharts-lab/diagram/fonts.css`), since the
-layout measures text in them.
+layout measures text in them, and the embed package ships `dist/embed.min.js`, the very file the site serves as
+`/embed.js` (both built by tools/packages/embed-bundle.mjs).
 
 ## Diagrams (`packages/diagram/src/`)
 

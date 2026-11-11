@@ -1,14 +1,39 @@
 {
   "name": "@sccharts-lab/embed",
   "version": "0.1.0",
-  "description": "SCCharts Lab's embeds: the <sccharts-lab-chart> element, the embed's options and its postMessage protocol",
+  "description": "Live SCCharts charts on any page: the <sccharts-lab-chart> element, the embed's options and its postMessage protocol, as a module and as one script tag",
+  "keywords": ["sccharts", "kieler", "embed", "web-component", "custom-element", "iframe", "postmessage", "statecharts", "simulation"],
+  "homepage": "https://sccharts.jmw.nz/reference/embed/",
+  "bugs": "https://github.com/Fallstop/sccharts-lab/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fallstop/sccharts-lab.git",
+    "directory": "site/packages/embed"
+  },
   "license": "EPL-2.0",
   "type": "module",
-  "sideEffects": [
-    "./src/loader.ts"
-  ],
+  "sideEffects": ["./src/loader.ts", "./dist/loader.js", "./dist/embed.min.js"],
+  "engines": {
+    "node": ">=20"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
+  },
+  "jsdelivr": "./dist/embed.min.js",
+  "unpkg": "./dist/embed.min.js",
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+      "./protocol": { "types": "./dist/protocol.d.ts", "default": "./dist/protocol.js" },
+      "./options": { "types": "./dist/options.d.ts", "default": "./dist/options.js" },
+      "./loader": { "types": "./dist/loader.d.ts", "default": "./dist/loader.js" },
+      "./embed.min.js": "./dist/embed.min.js",
+      "./package.json": "./package.json"
+    }
   }
 }

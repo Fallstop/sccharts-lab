@@ -1,4 +1,4 @@
-// Builds the publishable packages (packages/engine, diagram, trace) into each package's dist/: ES modules, .d.ts and
+// Builds the publishable packages (packages/engine, diagram, trace, embed) into each package's dist/: ES modules, .d.ts and
 // source maps, with tsc (the TypeScript API) and packages/<name>/tsconfig.build.json. The site does not need this: it
 // imports the TypeScript sources (each package.json's `exports`); `publishConfig` points the packed package at dist/.
 //
@@ -15,11 +15,12 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
+import { buildEmbedBundle } from './embed-bundle.mjs'
 
 const site = fileURLToPath(new URL('../../', import.meta.url))
 const packagesDir = path.join(site, 'packages')
 /** Build order: each package after the ones it imports. */
-export const PACKAGES = ['engine', 'diagram', 'trace']
+export const PACKAGES = ['engine', 'diagram', 'trace', 'embed']
 
 const manifests = new Map(PACKAGES.map(name => [`@sccharts-lab/${name}`, readManifest(name)]))
 
@@ -126,6 +127,14 @@ function compile(manifest) {
     if (result.emitSkipped || result.diagnostics.length) fail(`${manifest.json.name}:\n${formatDiagnostics(result.diagnostics)}`)
 }
 
+/** Published entries the build makes rather than compiles: they have no twin in src/. */
+const GENERATED = new Set(['./fonts.css', './embed.min.js'])
+
+/** embed: <sccharts-lab-chart> as one script for a script tag or a CDN, the very build the site serves as /embed.js. */
+async function buildEmbedScript(manifest) {
+    fs.writeFileSync(path.join(manifest.dir, 'dist/embed.min.js'), await buildEmbedBundle(path.join(manifest.dir, 'src/loader.ts')))
+}
+
 /** diagram: its stylesheet, and the fonts its text is measured in (fonts.css, self-hosted). */
 function copyDiagramAssets(manifest) {
     const dist = path.join(manifest.dir, 'dist')
@@ -211,20 +220,20 @@ function checkEntries(manifest) {
         }
         const dev = developmentTarget(manifest, subpath)
         const built = targets.default.replace(/^\.\/dist\//, './src/').replace(/\.js$/, '.ts')
-        // fonts.css is made by the build (the site loads the fonts itself).
-        if (subpath !== './fonts.css' && dev !== built) {
+        if (!GENERATED.has(subpath) && dev !== built) {
             fail(`${manifest.json.name}: '${subpath}' is ${targets.default} when published but ${dev ?? 'missing'} in development (expected ${built})`)
         }
     }
 }
 
-export function build(names = PACKAGES) {
+export async function build(names = PACKAGES) {
     for (const name of names) {
         const manifest = manifests.get(`@sccharts-lab/${name}`)
         const started = Date.now()
         fs.rmSync(path.join(manifest.dir, 'dist'), { recursive: true, force: true })
         compile(manifest)
         if (name === 'diagram') copyDiagramAssets(manifest)
+        if (name === 'embed') await buildEmbedScript(manifest)
         checkSpecifiers(manifest)
         checkEntries(manifest)
         console.log(`${manifest.json.name}: dist/ in ${Date.now() - started} ms`)
@@ -233,7 +242,7 @@ export function build(names = PACKAGES) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     try {
-        build(process.argv.slice(2).length ? process.argv.slice(2) : PACKAGES)
+        await build(process.argv.slice(2).length ? process.argv.slice(2) : PACKAGES)
     } catch (error) {
         console.error(error.message)
         process.exit(1)

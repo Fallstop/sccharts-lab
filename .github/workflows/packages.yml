@@ -1,10 +1,10 @@
-# Publishes the npm packages @sccharts-lab/engine, @sccharts-lab/diagram and @sccharts-lab/trace (site/packages) when a
-# tag packages-v1.2.3 is pushed. The tag must equal the version of all three packages. Requires the NPM_TOKEN secret:
-# an npm granular access token with read and write access to the @sccharts-lab scope (site/packages/README.md).
+# Publishes the npm packages @sccharts-lab/engine, /diagram, /trace and /embed (site/packages) when a tag
+# packages-v1.2.3 is pushed. The tag must equal the version of all four packages. Requires the NPM_TOKEN secret: an
+# npm granular access token with read and write access to the @sccharts-lab scope (site/packages/README.md).
 #
-# The site's test suite runs first, then pnpm packages:smoke builds and packs the packages and checks the tarballs in
-# a fresh npm project (Node, TypeScript, a Vite bundle in Chromium); those same tarballs are published, with npm
-# provenance. A tag with a pre-release suffix (packages-v0.2.0-beta.1) publishes under the dist-tag "next". A version
+# The site's test suite runs first, then the site is built (the embed check needs its /embed/) and pnpm
+# packages:smoke builds and packs the packages and checks the tarballs in a fresh npm project (Node, TypeScript, a
+# Vite bundle and the embed's script in Chromium); those same tarballs are published, with npm provenance. A tag with a pre-release suffix (packages-v0.2.0-beta.1) publishes under the dist-tag "next". A version
 # already on npm is skipped, so a failed run can be re-run.
 
 name: packages
@@ -44,8 +44,9 @@ jobs:
             - run: pnpm exec playwright install --with-deps chromium
 
             - run: pnpm exec vitest run
+            - run: pnpm build
             - name: Build, pack and check the tarballs in a fresh project
-              run: pnpm packages:smoke --version "$VERSION" --dir "$RUNNER_TEMP/packages"
+              run: pnpm packages:smoke --version "$VERSION" --dir "$RUNNER_TEMP/packages" --site dist
 
             - name: Publish
               env:
@@ -53,8 +54,8 @@ jobs:
               run: |
                   tag=latest
                   case "$VERSION" in *-*) tag=next ;; esac
-                  # The engine first: the others name it as a peer dependency.
-                  for name in engine diagram trace; do
+                  # The engine first: diagram and trace name it as a peer dependency.
+                  for name in engine diagram trace embed; do
                       if npm view "@sccharts-lab/$name@$VERSION" version >/dev/null 2>&1; then
                           echo "@sccharts-lab/$name@$VERSION is already on npm"
                           continue
