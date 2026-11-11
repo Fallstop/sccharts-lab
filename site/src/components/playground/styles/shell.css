@@ -103,7 +103,8 @@ main:has([data-sc-playground]) .content-panel:first-of-type {
 }
 .sc-pg__grid {
 	display: grid;
-	grid-template-rows: minmax(0, 1fr) 0.3125rem var(--pg-sim-h, minmax(11rem, 40%));
+	/* Before the app measures the simulation: about what the default chart (ABRO) needs. */
+	grid-template-rows: minmax(0, 1fr) 0.3125rem var(--pg-sim-h, min(25rem, 55%));
 	min-height: 0;
 	min-width: 0;
 }

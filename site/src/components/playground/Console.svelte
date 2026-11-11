@@ -66,8 +66,10 @@
 <div class="sc-pg-console">
     {#if !model.simulation}
         <p class="sc-pg-console__empty">The console shows what the chart prints once it runs.</p>
+    {:else if !model.simulation.result.chart}
+        <p class="sc-pg-console__empty">There is no chart to run yet.</p>
     {:else if !runs}
-        <p class="sc-pg-console__empty">This chart does not run here, so it prints nothing.</p>
+        <p class="sc-pg-console__empty">This chart does not run (the Problems tab says why), so it prints nothing.</p>
     {:else if !lines.length}
         <p class="sc-pg-console__empty">
             {#if cleared && cleared === history.length}
