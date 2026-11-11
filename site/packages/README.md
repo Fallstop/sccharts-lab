@@ -16,7 +16,7 @@ pnpm packages:pack       # build, then a tarball each in packages/tarballs/, and
 pnpm packages:smoke      # pack, install the tarballs with npm in a fresh project, check Node, TypeScript, a browser bundle
 ```
 
-`pnpm packages:smoke` (tools/packages/smoke.mjs, about a minute; needs the npm registry, gcc and Playwright's
+`pnpm packages:smoke` (tools/packages/smoke.mjs, under a minute; needs the npm registry, gcc and Playwright's
 Chromium) is the proof that the published packages work: in a new project that installs the tarballs with npm it runs
 ABRO against KIELER's recording, its generated C through gcc, its diagram, its trace in every format and the quick
 start of each README; type-checks a consumer with `moduleResolution` `bundler` and `node16`; and bundles a page with
