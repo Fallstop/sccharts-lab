@@ -93,6 +93,7 @@ over the options passed in (prefix match, case and spaces ignored): `commentNode
 | `classes` | none | initial highlight classes per element id, e.g. `{ 'ABRO.ABO': ['is-active'] }` |
 | `title` | `SCChart <name>` | accessible name; a `<desc>` lists states and transitions |
 | `shadows`, `regionCorner` | `true` | KIELER's state shadows and the region corner |
+| `stylesheet` | none | CSS embedded as a `<style>` (diagram.css's text, plus the fonts as data URLs, makes a standalone .svg file; `../README.md` has the recipe) |
 
 Off the main thread (playground): either run `layoutChart` itself in a Web Worker (it is pure; the layout is
 JSON, and `renderSvg` is cheap enough for the main thread), or keep it on the main thread and give it a
@@ -175,7 +176,9 @@ Text is real SVG `<text>` (selectable, crisp at any zoom). The layout measures i
 widths generated from the font files (`node tools/diagram-metrics.mjs` regenerates `font-metrics.ts`), and the
 CSS turns kerning, ligatures and contextual alternates off, so the rendered width is exactly the measured one
 (the gallery checks this in chromium: within 0.02 px). If `--sc-font` changes to another family, regenerate
-the table for it.
+the table for it. The published package ships the fonts too: `@sccharts-lab/diagram/fonts.css` (made by
+tools/packages/build.mjs from the `@fontsource-variable` packages the site uses) for pages that do not load them
+already.
 
 ## Tools and tests
 

@@ -4,7 +4,7 @@
 // the right, wired left to right with orthogonal edges. KIELER's full synthesis (inlining, sequential
 // constraints, skins) is richer; this covers the equations the guide teaches.
 
-import type { ElkExtendedEdge, ElkLabel, ElkNode, ElkPort } from 'elkjs/lib/elk-api'
+import type { ElkExtendedEdge, ElkLabel, ElkNode, ElkPort } from 'elkjs/lib/elk-api.js'
 import { formatExpression, type FormatContext } from '@sccharts-lab/engine/format'
 import type { Expression, Reference, Region, State } from '@sccharts-lab/engine/types'
 import { r2 } from './geometry'

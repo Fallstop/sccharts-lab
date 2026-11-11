@@ -290,6 +290,7 @@ export function renderSvg(layout: DiagramLayout, options: RenderOptions = {}): s
         ` role="img" aria-labelledby="${prefix}-title ${prefix}-desc" data-chart="${esc(layout.chart)}" data-natural-width="${naturalW}"`,
         ` data-natural-height="${naturalH}" style="${esc(style)}">`,
         `<title id="${prefix}-title">${esc(title)}</title><desc id="${prefix}-desc">${esc(describe(layout))}</desc>`,
+        options.stylesheet ? `<style><![CDATA[\n${options.stylesheet.replaceAll(']]>', ']]]]><![CDATA[>')}\n]]></style>` : '',
         `<defs>${defs}</defs>`,
         renderState(layout.root, ctx),
         layout.root.comments.map(renderComment).join(''),

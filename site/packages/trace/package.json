@@ -1,15 +1,45 @@
 {
   "name": "@sccharts-lab/trace",
   "version": "0.1.0",
-  "description": "SCCharts Lab's simulation traces: KTrace, CSV, JSON and XML files, replay, comparison, and runs of the in-browser engine as traces",
+  "description": "SCCharts simulation traces: KTrace, CSV, JSON and XML files, replay and comparison, and runs of @sccharts-lab/engine as traces",
+  "keywords": ["sccharts", "kieler", "ktrace", "trace", "simulation", "replay", "csv", "statecharts"],
+  "homepage": "https://sccharts.jmw.nz",
+  "bugs": "https://github.com/Fallstop/sccharts-lab/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fallstop/sccharts-lab.git",
+    "directory": "site/packages/trace"
+  },
   "license": "EPL-2.0",
   "type": "module",
   "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
   },
-  "dependencies": {
+  "files": ["dist"],
+  "peerDependencies": {
     "@sccharts-lab/engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@sccharts-lab/engine": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+      "./trace-file": { "types": "./dist/trace-file.d.ts", "default": "./dist/trace-file.js" },
+      "./trace-compare": { "types": "./dist/trace-compare.d.ts", "default": "./dist/trace-compare.js" },
+      "./comparison-report": { "types": "./dist/comparison-report.d.ts", "default": "./dist/comparison-report.js" },
+      "./trace-replay": { "types": "./dist/trace-replay.d.ts", "default": "./dist/trace-replay.js" },
+      "./trace-rename": { "types": "./dist/trace-rename.d.ts", "default": "./dist/trace-rename.js" },
+      "./trace-timing": { "types": "./dist/trace-timing.d.ts", "default": "./dist/trace-timing.js" },
+      "./package.json": "./package.json"
+    }
   }
 }

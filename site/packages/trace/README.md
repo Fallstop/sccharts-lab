@@ -1,16 +1,52 @@
 # @sccharts-lab/trace
 
-Simulation traces for SCCharts Lab: save a run, replay a trace into a model, compare runs. The same files as the
-SCCharts Lab VS Code extension (Save, Replay and Compare in its trace drawer), on the in-browser engine
-(`@sccharts-lab/engine`). A trace saved in the browser and one the extension saves for the same run on KIELER's server
-are the same file, apart from the model's file name you pass.
+Simulation traces for SCCharts: save a run, replay a trace into a model, compare runs. KIELER's KTrace format, plus
+CSV, JSON and XML, the same files as the SCCharts Lab VS Code extension (Save, Replay and Compare in its trace drawer),
+for runs of the in-browser engine [@sccharts-lab/engine](https://www.npmjs.com/package/@sccharts-lab/engine). A trace
+saved here and one the extension saves for the same run on KIELER's own simulator are the same file. No DOM and no Node
+APIs: it runs in browsers and in Node 20+.
 
-The format code, comparison, replay matching, timed sequences and renames are ported from
-`keith-vscode/src/simulation/trace-*.ts` (with the extension's tests, `src/*.test.ts`); `engine.ts` and
-`engine-replay.ts` and
-`engine-sequence.ts` are new and connect them to the engine. No DOM, no Node APIs: it runs in the browser and in Node.
+```sh
+npm install @sccharts-lab/engine @sccharts-lab/trace
+```
 
-## Use
+## Quick start
+
+```js
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import { readTrace, replayTrace, traceFromRun, writeTrace } from '@sccharts-lab/trace'
+
+const result = compile(`
+scchart Beeper {
+  input bool press
+  output int count = 0
+  output signal int beep
+
+  initial state Idle
+    if press do count++; beep(count); print("beep", count) go to Idle
+}`)
+const simulation = createSimulation(result)
+for (const press of [false, true, true, false]) simulation.step({ press })
+
+const trace = traceFromRun(result, simulation, { model: 'Beeper.sctx' })
+console.log(writeTrace(trace, 'ktrace'))
+// // Beeper.sctx: 4 ticks, saved by SCCharts Lab
+// press = false => beep = false beep_val = 0 count = 0;
+// press = true => beep = true beep_val = 1 count = 1; // printed "beep 1"
+// => beep_val = 2 count = 2; // printed "beep 2"
+// press = false => beep = false;
+const csv = writeTrace(trace, 'csv')
+
+// Replay the file into a fresh simulation: every output it holds is checked.
+const outcome = replayTrace(result, readTrace(csv, 'run.csv'), { label: 'run.csv' })
+console.log(outcome.mismatches)   // []
+```
+
+The format code, comparison, replay matching, timed sequences and renames are ported from the extension
+(`keith-vscode/src/simulation/trace-*.ts`, with its tests); `engine.ts`, `engine-replay.ts` and `engine-sequence.ts`
+connect them to the engine.
+
+## API
 
 ```ts
 import { compile, createSimulation } from '@sccharts-lab/engine'
@@ -166,19 +202,33 @@ or an array index past the end), that is not what the tick read, and replaying t
 again, in the extension as here. `traceFromRun(..., { inputs: 'read' })` records what each tick read; that trace
 replays such a run exactly (it is no longer the extension's file).
 
-## Tests
+## Entry points
 
-```sh
-pnpm exec vitest run packages/trace                    # the extension's trace tests, ported; the engine adapter
-pnpm exec vitest run tests/trace/engine-traces.test.ts # every scenario with a KIELER recording (below)
-TRACE_SERVER=1 pnpm exec vitest run tests/trace/server-traces.test.ts   # against the lab server (Java, one JVM)
-```
+| Import | What |
+| --- | --- |
+| `@sccharts-lab/trace` | everything above |
+| `@sccharts-lab/trace/trace-file` | the four formats: `readTrace`, `writeTrace`, `inputsOnly`, `TRACE_FORMATS`, ... |
+| `@sccharts-lab/trace/trace-compare`, `/comparison-report` | `compareTraces`; `comparisonMarkdown`, `comparisonCsv` |
+| `@sccharts-lab/trace/trace-replay`, `/trace-rename`, `/trace-timing` | `TraceReplay`, name matching, timed sequences |
 
-`tests/trace/engine-traces.test.ts` runs the engine on the inputs of every recorded scenario
-(`src/examples/**`, `tests/conformance/**`, `tests/engine/kieler/**`) that `tests/conformance/engine.test.ts` runs
-too, builds the extension's trace from the recording alone (KIELER's `#interface` and data pool,
-`tests/trace/recordings.ts`) and checks: the same columns and values, the four files byte for byte the same, each
-file read back as the run, and each file replayed into a fresh simulation without a mismatch. The server test runs
-nine charts on the lab server, builds the extension's trace from the server's messages with the extension's rules,
-and checks the engine's files against it (printed lines included), KIELER's saved KTrace against the engine's run,
-and the engine's KTrace in KIELER's parser.
+The subpaths do not load the engine: a tool that only reads, writes or compares trace files (such as the VS Code
+extension, whose runs come from KIELER's simulator) can import them alone.
+
+## Verification
+
+Every recorded KIELER run in the SCCharts Lab repository (the guide's examples and the conformance suites) is run on
+the engine and saved: the trace has the columns and values the extension builds from KIELER's simulator, the four
+files are byte for byte the extension's, and each reads back as the run and replays without a mismatch. Against the
+lab's KIELER server, KIELER's saved KTrace matches the engine's run, printed lines included, and the engine's KTrace
+loads in KIELER's own parser.
+
+## License and credit
+
+SCCharts, KIELER and the KTrace format are developed by the
+[Real-Time and Embedded Systems group](https://rtsys.informatik.uni-kiel.de) at Kiel University. This package ports the
+trace code of the SCCharts Lab VS Code extension, a fork of KIELER's VS Code extension, and is licensed under the
+[Eclipse Public License 2.0](./LICENSE). SCCharts Lab is an independent project, not affiliated with or endorsed by
+Kiel University.
+
+Source: [github.com/Fallstop/sccharts-lab](https://github.com/Fallstop/sccharts-lab/tree/main/site/packages/trace).
+Tests (in the repository): `pnpm exec vitest run packages/trace tests/trace`.

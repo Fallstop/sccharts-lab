@@ -1,0 +1,25 @@
+{
+    // The published build of the packages (tools/packages/build.mjs): ES2022 modules with declarations and source
+    // maps for modern browsers and Node 20+. ES2023 is what Node 20 has, so the lib keeps newer APIs out.
+    "compilerOptions": {
+        "target": "ES2022",
+        "lib": ["ES2023"],
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "verbatimModuleSyntax": true,
+        "isolatedModules": true,
+        "strict": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "types": [],
+        "declaration": true,
+        "sourceMap": true,
+        "inlineSources": true,
+        "noEmitOnError": true,
+        "rootDir": "${configDir}/src",
+        "outDir": "${configDir}/dist"
+    },
+    "include": ["${configDir}/src"],
+    "exclude": ["${configDir}/src/**/*.test.ts", "${configDir}/src/test-fixtures.ts"]
+}

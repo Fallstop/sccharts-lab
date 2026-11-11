@@ -10,7 +10,7 @@
 //   - sizes and paddings are KIELER's (simple states 34 px minimum with 10/8 px text padding, superstate title
 //     rows, 20 px region headers, ...). Text is measured with the guide's diagram font instead of KIELER's.
 
-import type { ElkExtendedEdge, ElkLabel, ElkNode } from 'elkjs/lib/elk-api'
+import type { ElkExtendedEdge, ElkLabel, ElkNode } from 'elkjs/lib/elk-api.js'
 import {
     actionSegments, createFormatContext, declarationLines, formatEquation, formatExpression, isImplicitlyImmediate, mergeComponents,
     regionLabelSegments, stateDisplayName, stateTitleSegments, transitionLabelLines,
@@ -886,7 +886,7 @@ export async function layoutChart(chart: State, givenOptions: LayoutOptions = {}
         edges: rootComments.map(commentEdge),
     })
     const elk = options.elk
-    if (!elk) throw new Error('layoutChart needs an ELK instance (options.elk); packages/diagram/src/index.ts supplies elkjs\'s bundled build')
+    if (!elk) throw new Error('layoutChart needs an ELK instance (options.elk); the one from @sccharts-lab/diagram supplies elkjs\'s bundled build')
     let result = await elk.layout(graph(new Set()))
     // Self-loops on four sides whose labels collide: once more, with those loops on two sides.
     const crowded = crowdedLoops(result)

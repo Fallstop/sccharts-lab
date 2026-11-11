@@ -10,6 +10,7 @@ pnpm install
 pnpm dev                 # http://localhost:4321
 pnpm test                # parser, semantics conformance, diagrams, widgets (no Java needed)
 pnpm build               # static site in dist/
+pnpm packages:smoke      # the npm packages (packages/README.md), packed and checked in a fresh project
 ```
 
 Checking against KIELER needs Java 21, gcc and the sccharts-lite server JAR (see
@@ -25,6 +26,7 @@ Deploying: `pnpm build && pnpm dlx wrangler deploy` (Cloudflare static assets, `
 | `packages/engine/src/` | parser, resolver, validator, simulator |
 | `packages/diagram/src/` | ELK layout and SVG rendering in KIELER's notation |
 | `packages/trace/src/` | simulation traces (KTrace, CSV, JSON, XML), replay and comparison, as the VS Code extension's |
+| `packages/README.md` | the three packages on npm (`@sccharts-lab/engine`, `/diagram`, `/trace`): building, conventions, releasing |
 | `src/components/` | the interactive widgets and the playground |
 | `tests/conformance/` | probe charts that pin down KIELER's semantics, with recordings |
 | `docs-internal/` | architecture, semantics specs, design system, content plan |

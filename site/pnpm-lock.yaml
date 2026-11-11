@@ -102,17 +102,18 @@ importers:
 
   packages/diagram:
     dependencies:
-      '@sccharts-lab/engine':
-        specifier: workspace:*
-        version: link:../engine
       elkjs:
         specifier: 0.12.0
         version: 0.12.0
+    devDependencies:
+      '@sccharts-lab/engine':
+        specifier: workspace:*
+        version: link:../engine
 
   packages/engine: {}
 
   packages/trace:
-    dependencies:
+    devDependencies:
       '@sccharts-lab/engine':
         specifier: workspace:*
         version: link:../engine
