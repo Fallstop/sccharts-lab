@@ -294,7 +294,7 @@ root's `data-files` = `open | closed`), `[data-pg-files]` (the sidebar) with `[d
 `[data-pg-fsplit]`, `[data-pg-grid]` (`--pg-sim-h`), `[data-pg-top]` (`--pg-split`), `[data-pg-split]`,
 `[data-pg-hsplit]`, `[data-pg-file-tabs]` (FileTabs mounts), `[data-pg-static-file]` (the build-time file name),
 `[data-pg-cursor]`, `[data-pg-chart]`, `[data-pg-chart-name]`, `[data-pg-zoom]`, `[data-pg-outline]`; the bottom panel
-`[data-pg-panel]` (`data-panel-tab`) with `[data-pg-panel-tabs]` (buttons `[data-panel-tab=<id>]` with
+`[data-pg-panel]` (`data-current`: the tab shown) with `[data-pg-panel-tabs]` (buttons `[data-panel-tab=<id>]` with
 `[data-pg-badge-count]`, `[data-pg-badge-words]`), `[data-pg-panel-tools=<id>]`, `[data-pg-panel-body=<id>]`
 (`[data-pg-sim-panel]` on the simulation's: SimPanel's keyboard area); in the Simulation tab `[data-pg-mode]` (tour
 switch), `[data-pg-vars-toggle]` with `[data-pg-vars-count]` and the strip `[data-pg-vars]` (`[data-pg-vars-list]`,

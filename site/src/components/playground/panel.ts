@@ -44,7 +44,7 @@ export class BottomPanel {
         }
         for (const p of this.root.querySelectorAll<HTMLElement>('[data-pg-panel-body]')) p.hidden = p.dataset.pgPanelBody !== id
         for (const p of this.root.querySelectorAll<HTMLElement>('[data-pg-panel-tools]')) p.hidden = p.dataset.pgPanelTools !== id
-        this.root.dataset.panelTab = id
+        this.root.dataset.current = id
         if (this.pg.isNarrow()) this.pg.showTab('sim')
         void this.mount(spec)
         for (const l of this.listeners.get(id) ?? []) l()
