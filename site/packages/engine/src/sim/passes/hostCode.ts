@@ -115,7 +115,7 @@ export const hostCode: Pass = {
             ctx.report({
                 severity: 'info', code: 'unsupported', span: uses[0].span, related: [...new Set(uses.flatMap(u => u.related ?? []))],
                 message: `This chart uses ${uses[0].what}, which cannot run in the browser`,
-                hint: 'KIELER pastes host code and extern calls into the C program it generates and compiles that with gcc, so whether it accepts the chart depends on that C text; the guide\'s simulator runs in your browser and has no C compiler. Try the chart in SCCharts Lab or KIELER.',
+                hint: 'KIELER pastes host code and extern calls into the C program it generates and compiles that with gcc, so whether it accepts the chart depends on that C text; the guide\'s simulator runs in your browser and has no C compiler. Its generated C runs it: download it from the playground\'s C code tab, or build it with SCCharts Lab for VS Code or KIELER.',
             })
         }
     },

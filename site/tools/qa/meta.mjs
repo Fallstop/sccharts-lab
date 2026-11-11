@@ -32,6 +32,11 @@ for (const file of pages.sort()) {
     const html = fs.readFileSync(file, 'utf8')
     const head = html.slice(html.indexOf('<head'), html.indexOf('</head>'))
     const r = routeOf(file)
+    // The embed is a frame for other sites (noindex, no social card of its own).
+    if (r.startsWith('/embed/')) {
+        if (!/<meta name="robots" content="noindex/.test(head)) problems.push(`${r} can be indexed`)
+        continue
+    }
     routes.push(r)
     const meta = (attr, name) => {
         const m = new RegExp(`<meta\\s+${attr}="${name.replace(/[.:]/g, '\\$&')}"\\s+content="([^"]*)"`).exec(head)

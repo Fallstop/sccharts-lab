@@ -26,7 +26,9 @@
         }
     })()
 
-    let naming = $state<'default' | 'prefix' | 'suffix'>(saved.naming === 'prefix' || saved.naming === 'suffix' ? saved.naming : 'default')
+    // 'chart': the chart's own #code.naming, else KIELER's default names (what KIELER itself does).
+    let naming = $state<'chart' | 'default' | 'prefix' | 'suffix'>(saved.naming === 'prefix' || saved.naming === 'suffix' || saved.naming === 'default' ? saved.naming : 'chart')
+    const pragma = $derived(model.compiled?.result.program?.pragmas.find(p => p.name === 'code.naming'))
     let comments = $state(saved.comments !== false)
     let which = $state<'header' | 'source'>('source')
     let showInterface = $state(false)
@@ -45,7 +47,7 @@
         const compiled = model.compiled
         if (!compiled) return
         broken = !compiled.result.ok
-        generated = broken ? undefined : generateC(compiled.result, { naming, comments })
+        generated = broken ? undefined : generateC(compiled.result, { naming: naming === 'chart' ? undefined : naming, comments })
     }
 
     // The chart changed, or an option: regenerate after a pause, and only while the tab is shown.
@@ -108,7 +110,12 @@
         <label class="sc-pg-c__option">
             <span>Names</span>
             <select bind:value={naming} title="The names of the functions and the struct (KIELER's #code.naming)">
-                <option value="default">tick, reset, TickData</option>
+                {#if pragma}
+                    <option value="chart">As the chart says: {generated?.names.tick ?? '#code.naming'}</option>
+                    <option value="default">tick, reset, TickData</option>
+                {:else}
+                    <option value="chart">tick, reset, TickData</option>
+                {/if}
                 <option value="prefix">Prefix: {model.compiled?.result.chart?.name ?? 'Chart'}tick</option>
                 <option value="suffix">Suffix: tick{model.compiled?.result.chart?.name ?? 'Chart'}</option>
             </select>

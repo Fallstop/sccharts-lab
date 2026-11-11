@@ -90,7 +90,7 @@ const views = [
 						<span class="sc-diag__mark sc-diag__mark--caution" aria-hidden="true" />
 						<span set:html={inlineCode(p.cannotRun)} />
 					</p>
-					{p.cannotRunHint ? <p class="sc-diag__hint" set:html={inlineCode(p.cannotRunHint)} /> : <p>KIELER accepts this chart: open it in KIELER or SCCharts Lab to run it.</p>}
+					{p.cannotRunHint ? <p class="sc-diag__hint" set:html={inlineCode(p.cannotRunHint)} /> : <p>KIELER accepts this chart: its generated C runs it (the playground's C code tab, SCCharts Lab for VS Code or KIELER).</p>}
 				</div>
 				<Diagnostics prepared={p} />
 			</div>

@@ -109,7 +109,7 @@ const host = nextId('scxh-')
 								<code>{p.name}</code>: <Fragment set:html={inlineCode(p.cannotRun!)} />
 							</span>
 						</p>
-						{p.cannotRunHint ? <p class="sc-diag__hint" set:html={inlineCode(p.cannotRunHint)} /> : <p>KIELER accepts this chart: open it in KIELER or SCCharts Lab to run it.</p>}
+						{p.cannotRunHint ? <p class="sc-diag__hint" set:html={inlineCode(p.cannotRunHint)} /> : <p>KIELER accepts this chart: its generated C runs it (the playground's C code tab, SCCharts Lab for VS Code or KIELER).</p>}
 					</div>
 				))}
 			</div>

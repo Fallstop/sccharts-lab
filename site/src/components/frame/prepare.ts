@@ -223,7 +223,7 @@ export async function prepareChart(ex: PrepareInput): Promise<PreparedChart> {
         if (unsupported) {
             cannotRun = unsupported.message
             // The recording says what the engine's hint cannot know: KIELER accepts this chart.
-            cannotRunHint = oracle?.ok && unsupported.hint ? `${unsupported.hint.replace(/ Try the chart in SCCharts Lab or KIELER\.$/, '')} KIELER accepts this chart: open it in KIELER or SCCharts Lab to run it.` : unsupported.hint
+            cannotRunHint = oracle?.ok && unsupported.hint ? `${unsupported.hint.replace(/ Its generated C runs it: .*$/, '')} KIELER accepts this chart: its generated C runs it (the playground's C code tab, SCCharts Lab for VS Code or KIELER).` : unsupported.hint
         } else if (ex.scenario?.system && ex.scenario.system !== 'netlist') {
             cannotRun = `This chart is meant for KIELER's ${ex.scenario.system}-based compiler, which the guide's simulator does not implement`
         } else {
