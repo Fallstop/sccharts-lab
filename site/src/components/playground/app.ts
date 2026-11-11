@@ -103,6 +103,11 @@ export class Playground {
             this.project.mountUi()
             setupProjectMenu(this)
             this.workspace.applyFiles()
+            // Leaving the page (a reload, the tab closed, another app on a phone): the edits of the last pause in
+            // typing are saved at once.
+            addEventListener('pagehide', () => this.project.flush(true))
+            document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && this.project.flush(true))
+            if (init.project.resave) this.project.edit()
         }
         this.actions = new FileActions(this)
         this.updateTitle()

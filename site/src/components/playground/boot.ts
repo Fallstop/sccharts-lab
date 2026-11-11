@@ -12,7 +12,7 @@ import type { LinkTarget, Origin, Playground, ProjectSpec } from './app'
 import { setupTabs } from './tabs'
 import { createDiagramView } from './diagram-view'
 import { baseOf, exampleFile, sortedPaths } from './project'
-import { currentProject } from './project-store'
+import { lastSaved, tabProject, type Newest } from './project-store'
 import { loadFailed, one } from './boot-inline'
 
 interface PageData {
@@ -211,14 +211,17 @@ export async function linkTarget(loc: Location, describe: (id: string) => Origin
 /** Without a chart in the address: the reader's last project in this browser, else the scratch buffer (the last
  *  chart edited, in local storage), else the default chart. */
 async function lastProject(data: PageData, describe: (id: string) => Origin | undefined): Promise<{ project: ProjectSpec; origin: Origin }> {
-    const stored = await currentProject()
-    if (stored && Object.keys(stored.files).length) {
-        const origin: Origin = stored.folder ? { kind: 'folder', title: stored.name } : { kind: 'scratch', title: stored.name }
-        return { project: { name: stored.name, files: stored.files, active: stored.active, open: stored.open, id: stored.id, rev: stored.rev ?? null, folder: stored.folder }, origin }
-    }
+    const stored = await lastSaved()
+    if (stored && Object.keys(stored.files).length) return storedTarget(stored)
     const saved = storageGet(SCRATCH_KEY)
     if (saved?.trim() && saved !== data.defaultSource) return { project: one('Your last chart', fileFor(saved), saved), origin: { kind: 'scratch', title: 'Your last chart' } }
     return defaultProject(data, describe)
+}
+
+/** A project from the browser (its store, or the last save kept at once) to open. */
+function storedTarget(p: Newest): { project: ProjectSpec; origin: Origin } {
+    const origin: Origin = p.folder ? { kind: 'folder', title: p.name } : { kind: 'scratch', title: p.name }
+    return { project: { name: p.name, files: p.files, active: p.active, open: p.open, id: p.id, rev: p.base, folder: p.folder, resave: p.resave }, origin }
 }
 
 function defaultProject(data: PageData, describe: (id: string) => Origin | undefined): { project: ProjectSpec; origin: Origin } {
@@ -247,8 +250,11 @@ export async function bootPage() {
         () => app?.currentExample,
     )
 
-    // Which project to open.
+    // Which project to open. This tab's own project first, when the address is one it saved it at: a reload right
+    // after typing loads the address as it was before the last save.
+    const tab = await tabProject(location.href)
     const target = await linkTarget(location, describe)
+    if (tab) Object.assign(target, { notice: undefined, run: undefined, chart: undefined, scenario: undefined }, storedTarget(tab))
     const { notice, param, run: replay, solution } = target
     let { project, origin } = target
     // A link that names a chart it cannot give (a damaged one, an example that is not there) opens the default chart.

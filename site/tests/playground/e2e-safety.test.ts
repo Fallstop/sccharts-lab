@@ -7,6 +7,7 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import type { Browser, BrowserContext, Page } from 'playwright'
 import LZString from 'lz-string'
 import { launchChromium } from '../../tools/chromium.mjs'
+import { hashForSource } from '../../src/components/playground/share'
 
 const BASE = process.env.PLAYGROUND_URL ?? 'http://127.0.0.1:4321'
 const enabled = !!process.env.PLAYGROUND_E2E
@@ -85,6 +86,47 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         }
         throw new Error(`No stored project holds ${text}`)
     }
+
+    test('a reload right after typing keeps every keystroke, and so does closing the tab', async () => {
+        const ctx = await context()
+        const page = await open(ctx, '/playground/')
+        await page.locator('.cm-content').click()
+        await page.keyboard.press('Control+End')
+        await page.keyboard.type('// typed')
+        await page.waitForTimeout(600)
+        // Typed and reloaded at once, before the pause in typing that saves.
+        await page.keyboard.type(' then reloaded')
+        await page.reload({ waitUntil: 'commit' })
+        await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+        expect(await editorText(page)).toContain('// typed then reloaded')
+        // A project of two files: the other file is in the browser only.
+        await page.locator('.cm-content').click()
+        await page.keyboard.press('Control+End')
+        await page.keyboard.type(' and closed')
+        await page.close({ runBeforeUnload: true })
+        const again = await open(ctx, '/playground/')
+        expect(await editorText(again)).toContain('// typed then reloaded and closed')
+        await ctx.close()
+    }, 120000)
+
+    test('Back to another link right after typing, then a reload: the reload opens that link, the edits stay in the browser', async () => {
+        const ctx = await context()
+        const B = 'scchart Bee {\n  initial state B\n}\n'
+        const A = 'scchart Ay {\n  initial state A\n}\n'
+        const page = await open(ctx, `/playground/${hashForSource(B)}`)
+        await page.evaluate(h => (location.hash = h), hashForSource(A).slice(1))
+        await page.waitForFunction(() => /scchart Ay/.test((document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString()))
+        await page.locator('.cm-content').click()
+        await page.keyboard.press('Control+End')
+        await page.keyboard.type('// edited A')
+        await page.goBack({ waitUntil: 'commit' })
+        await page.waitForFunction(() => /scchart Bee/.test((document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString()))
+        await page.reload({ waitUntil: 'commit' })
+        await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+        expect(await editorText(page)).toContain('scchart Bee')
+        await storedWith(page, '// edited A')
+        await ctx.close()
+    }, 120000)
 
     test("two tabs of one project: each tab's edits are kept, neither saves over the other's", async () => {
         const ctx = await context()

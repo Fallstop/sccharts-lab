@@ -30,6 +30,8 @@ export interface ProjectSpec {
     /** The stored version opened (`StoredProject.rev`; null: stored before versions). */
     rev?: string | null
     folder?: StoredProject['folder']
+    /** Newer than the browser's store has it (its last save did not finish): saved again at once. */
+    resave?: boolean
 }
 
 export interface PlaygroundInit {

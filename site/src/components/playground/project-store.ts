@@ -91,8 +91,8 @@ export async function putProject(p: StoredProject, base?: string | null): Promis
         // A handle that cannot be cloned (an older browser): the project without its folder's handle.
         copy = { ...p, files: { ...p.files }, open: [...p.open], folder: p.folder ? { name: p.folder.name, disk: { ...p.folder.disk } } : undefined }
     }
-    // A record put back as it was (Undo of a removal) keeps its version.
-    copy.rev = base === undefined && p.rev ? p.rev : newProjectId()
+    // The version this save writes (the caller's: a record put back as it was keeps its own).
+    copy.rev = p.rev ?? newProjectId()
     const db = await openDb()
     const done = await new Promise<boolean>(resolve => {
         if (!db) return resolve(false)
@@ -135,12 +135,86 @@ async function trim() {
     for (const p of all.slice(KEEP)) if (!unsavedInFolder(p)) await deleteProject(p.id)
 }
 
-/** The project the reader last worked on, if the browser still has it. */
-export async function currentProject(): Promise<StoredProject | undefined> {
-    const id = storageGet(CURRENT_KEY)
-    return id ? getProject(id) : undefined
-}
-
 export function setCurrent(id: string | undefined) {
     storageSet(CURRENT_KEY, id ?? null)
+}
+
+// ----- The last save, kept at once (session and local storage) -----------------------------------------------------
+//
+// The browser's store saves asynchronously, and a page that is going away (a reload or a closed tab right after
+// typing) may not finish. A reload also loads the address as it was before the last save updated it. So every save
+// also keeps the project, at once, in session storage (this tab's only; it survives a reload) and in local storage
+// (the last save of any tab). Boot opens this tab's copy when the address loaded is one this tab saved it at, and
+// the last save when it is newer than the store's copy of the reader's last project.
+
+const TAB_KEY = 'sccharts-guide:playground:tab'
+const LAST_KEY = 'sccharts-guide:playground:last'
+
+export interface SavedCopy {
+    /** The addresses the project was saved at (before and after the save's own update of the address). */
+    at: string[]
+    project: Omit<StoredProject, 'updated' | 'folder'> & { folder?: { name: string; disk: Record<string, string> } }
+    /** The versions the store may hold: what this save writes, and what it writes over. */
+    accept: (string | null)[]
+}
+
+/** A project to open from the store or a copy: `base`, the version to save over; `resave`, the store is behind. */
+export type Newest = StoredProject & { base?: string | null; resave?: boolean }
+
+export function rememberSave(t: SavedCopy) {
+    const text = JSON.stringify(t)
+    for (const [area, key] of [['sessionStorage', TAB_KEY], ['localStorage', LAST_KEY]] as const) {
+        try {
+            globalThis[area]?.setItem(key, text)
+        } catch {
+            // Blocked or full: the store and the address still have the save before.
+        }
+    }
+}
+
+/** Another project opened in this tab: its copy goes (the page lives on, so the store's save of it finishes), so
+ *  that a reload never opens it in place of the address. */
+export function forgetTab() {
+    try {
+        globalThis.sessionStorage?.removeItem(TAB_KEY)
+    } catch {
+        // Blocked: there is no copy either.
+    }
+}
+
+function copyIn(area: 'sessionStorage' | 'localStorage', key: string): SavedCopy | undefined {
+    try {
+        const t = JSON.parse(globalThis[area]?.getItem(key) ?? 'null') as SavedCopy | null
+        return t && Array.isArray(t.at) && Array.isArray(t.accept) && t.project?.id && t.project.files ? t : undefined
+    } catch {
+        return undefined
+    }
+}
+
+/** The newer of a saved copy and the store's project: the store's when it has that save; the copy (to be saved
+ *  again) when the store is a save behind or lacks it; the copy as a project of its own when another tab saved
+ *  since (its next save makes a copy). */
+function newest(t: SavedCopy, stored: StoredProject | undefined): Newest {
+    if (stored && stored.rev === t.project.rev) return { ...stored, base: stored.rev }
+    const folder = t.project.folder && { ...t.project.folder, handle: stored?.folder?.handle }
+    const copy = { ...t.project, updated: Date.now(), folder, resave: true }
+    if (!stored) return copy
+    return { ...copy, base: t.accept.includes(stored.rev ?? null) ? (stored.rev ?? null) : 'another tab' }
+}
+
+/** This tab's last save, when `href` is an address this tab saved it at (a reload). */
+export async function tabProject(href: string): Promise<Newest | undefined> {
+    const t = copyIn('sessionStorage', TAB_KEY)
+    if (!t || !t.at.includes(href)) return undefined
+    return newest(t, await getProject(t.project.id))
+}
+
+/** The project the reader last worked on: the store's, or the last save when the store did not finish it. */
+export async function lastSaved(): Promise<Newest | undefined> {
+    const id = storageGet(CURRENT_KEY)
+    if (!id) return undefined
+    const stored = await getProject(id)
+    const t = copyIn('localStorage', LAST_KEY)
+    if (t?.project.id === id) return newest(t, stored)
+    return stored && { ...stored, base: stored.rev ?? null }
 }

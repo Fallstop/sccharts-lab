@@ -13,7 +13,7 @@ import { stateFor } from './editor'
 import { listFiles, mergeFolder, permitted, readFolder, readText, saveFolder, writeFile } from './folder'
 import type { ProjectFolder } from './panel-tabs'
 import { baseOf, checkName, freeName, hasFile, importedFiles, makeProject, sameFiles, sortedPaths } from './project'
-import { newProjectId, putProject, setCurrent, type StoredProject } from './project-store'
+import { forgetTab, newProjectId, putProject, rememberSave, setCurrent, type StoredProject } from './project-store'
 import { hashForProject, SCRATCH_KEY, storageSet } from './share'
 import { pgIcons } from './icons'
 import FileTree from './FileTree.svelte'
@@ -40,6 +40,8 @@ export class ProjectControl {
     private pending = false
     /** The version (`rev`) of each stored project this tab opened or saved: it saves over that version only. */
     private revs = new Map<string, string | null>()
+    /** The version of each project the newest save queued writes. */
+    private queued = new Map<string, string>()
     /** A project another tab saved meanwhile, saved by this tab as a copy: its id to the copy's. */
     private copies = new Map<string, string>()
     /** The saves to the browser, one after another (each needs the version the one before stored). */
@@ -100,7 +102,10 @@ export class ProjectControl {
         this.mainFile = p.active
         this.open = p.open
         this.id = spec.id
-        if (spec.id && spec.rev !== undefined) this.revs.set(spec.id, spec.rev)
+        if (spec.id && spec.rev !== undefined) {
+            this.revs.set(spec.id, spec.rev)
+            this.queued.delete(spec.id)
+        }
         this.loaded = { ...p.files }
         this.folder = spec.folder ? { ...spec.folder, disk: { ...spec.folder.disk }, connected: false } : undefined
         this.states.clear()
@@ -111,6 +116,7 @@ export class ProjectControl {
         clearTimeout(this.saveTimer)
         this.pending = false
         this.set(spec)
+        forgetTab()
         const view = this.pg.view
         view.setState(stateFor(view, this.files[this.active] ?? ''))
         if (this.folder?.handle) void this.checkFolder(false)
@@ -286,7 +292,8 @@ export class ProjectControl {
         this.saveTimer = setTimeout(() => this.flush(url), SAVE_DELAY)
     }
 
-    /** Saves what is not saved yet: in the browser, the scratch buffer and (`url`) the address bar's entry. */
+    /** Saves what is not saved yet: in the browser, the scratch buffer, this tab's session storage and (`url`) the
+     *  address bar's entry. */
     flush(url: boolean) {
         clearTimeout(this.saveTimer)
         if (!this.pending) return
@@ -298,6 +305,7 @@ export class ProjectControl {
         setCurrent(this.id)
         const pg = this.pg
         const o = pg.origin
+        const rev = newProjectId()
         const stored: StoredProject = {
             id: this.id,
             name: this.name,
@@ -307,16 +315,22 @@ export class ProjectControl {
             updated: Date.now(),
             origin: { kind: o.kind, id: o.id, title: o.title },
             folder: this.folder && { name: this.folder.name, handle: this.folder.handle, disk: { ...this.folder.disk } },
+            rev,
         }
+        const accept = [rev, this.queued.get(this.id) ?? this.revs.get(this.id) ?? null]
+        this.queued.set(this.id, rev)
         this.store(stored)
-        if (!url || sameFiles(files, this.loaded)) return
-        const next = new URL(location.href)
-        // An edited exercise keeps its model solution (a reload can still compare).
-        const solution = pg.exercise?.solution
-        next.search = solution ? `?solution=${solution.id}` : ''
-        // A folder's files stay on the reader's disk: the address carries no copy of them.
-        next.hash = this.folder ? '' : hashForProject({ name: this.name, files, active: this.active })
-        history.replaceState(history.state, '', next)
+        const before = location.href
+        if (url && !sameFiles(files, this.loaded)) {
+            const next = new URL(location.href)
+            // An edited exercise keeps its model solution (a reload can still compare).
+            const solution = pg.exercise?.solution
+            next.search = solution ? `?solution=${solution.id}` : ''
+            // A folder's files stay on the reader's disk: the address carries no copy of them.
+            next.hash = this.folder ? '' : hashForProject({ name: this.name, files, active: this.active })
+            history.replaceState(history.state, '', next)
+        }
+        rememberSave({ at: [before, location.href], project: { ...stored, folder: stored.folder && { name: stored.folder.name, disk: stored.folder.disk } }, accept })
     }
 
     /** Saves in the browser after the saves before it. When another tab saved the project meanwhile, this tab's
