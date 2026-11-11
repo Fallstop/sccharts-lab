@@ -162,7 +162,8 @@ compare values (see [chapter 5](/learn/variables/#strings-compare-as-pointers)).
 ## Try it
 
 <TryIt example="advanced/host-code/gauge" solution="advanced/host-code/gauge-method" title="Clamp it yourself">
-`Gauge` calls a C function, `clamp`, so it runs only as C, and the playground cannot simulate it.
+`Gauge` calls a C function, `clamp`, so only a C compiler can run it, and the playground cannot
+simulate it.
 Replace the `#hostcode-c` line and the `extern` declaration with a method of the chart that does the
 same, so that `Gauge` behaves exactly as before and also runs in the playground. Test it with readings
 above 100 and below 0.
