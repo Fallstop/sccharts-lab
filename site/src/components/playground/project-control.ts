@@ -40,7 +40,7 @@ export class ProjectControl {
     private pending = false
     /** The version (`rev`) of each stored project this tab opened or saved: it saves over that version only. */
     private revs = new Map<string, string | null>()
-    /** The version of each project the newest save queued writes. */
+    /** The version the newest queued save of each project writes. */
     private queued = new Map<string, string>()
     /** A project another tab saved meanwhile, saved by this tab as a copy: its id to the copy's. */
     private copies = new Map<string, string>()

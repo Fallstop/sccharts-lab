@@ -128,7 +128,7 @@ export async function listProjects(): Promise<StoredProject[]> {
 }
 
 /** A folder project with edits not saved into its folder: the browser holds the only copy of them. */
-export const unsavedInFolder = (p: StoredProject): boolean => !!p.folder && !sameFiles(p.files, p.folder.disk)
+const unsavedInFolder = (p: StoredProject): boolean => !!p.folder && !sameFiles(p.files, p.folder.disk)
 
 async function trim() {
     const all = await listProjects()
