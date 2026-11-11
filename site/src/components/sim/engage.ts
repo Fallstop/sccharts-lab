@@ -9,6 +9,7 @@
 // nodes, so nothing moves when it happens.
 
 import type { ClientDirective } from 'astro'
+import { showLoadFailure } from '../frame/load-failure'
 
 const TRIGGERS = ['pointerover', 'pointerdown', 'touchstart', 'focusin', 'keydown'] as const
 
@@ -41,17 +42,43 @@ const engage: ClientDirective = (load, _options, el) => {
         )
     }
 
+    // Astro's island retries a failed import once itself, then reports `astro:hydration-error` and hands back a
+    // hydrate that does nothing: that event is the failure to load (an island nested in one not yet hydrated keeps
+    // `ssr` for a while, so the attribute is no sign). Each load() imports anew (Astro adds a cache-busting
+    // `astro-retry`), so Retry works without a reload.
+    const hydrateNow = async () => {
+        let failed: unknown
+        const onError = (e: Event) => {
+            e.preventDefault()
+            failed = (e as CustomEvent<{ error?: unknown }>).detail?.error ?? new Error('The island did not hydrate')
+        }
+        el.addEventListener('astro:hydration-error', onError)
+        try {
+            const hydrate = await load()
+            await hydrate()
+        } finally {
+            el.removeEventListener('astro:hydration-error', onError)
+        }
+        if (failed) throw failed
+    }
+
     const start = async () => {
         if (state !== 'waiting') return
         state = 'loading'
         for (const type of TRIGGERS) zone.removeEventListener(type, start)
         try {
-            const hydrate = await load()
-            await hydrate()
-        } finally {
-            state = 'live'
+            await hydrateNow()
+        } catch {
+            // The island's code did not arrive (offline, say): say so in the widget, with Retry, instead of leaving
+            // controls that do nothing. The held click is dropped: the reader clicks again once it works.
+            held = undefined
             el.removeEventListener('click', hold, true)
+            state = 'live'
+            showLoadFailure(zone, 'The simulation', hydrateNow)
+            return
         }
+        state = 'live'
+        el.removeEventListener('click', hold, true)
         replay()
     }
 

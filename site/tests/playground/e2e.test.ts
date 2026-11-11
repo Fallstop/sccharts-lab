@@ -311,6 +311,51 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         await page.context().close()
     })
 
+    test('code that does not arrive (offline): the tab and the lesson widget say so, and Retry brings them back', async () => {
+        // A bottom-panel tab. (Pages of their own: the failed loads made here on purpose are no console errors of the
+        // playground's, which the last test collects from pages made with open().)
+        const page = await (await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' })).newPage()
+        await page.goto(BASE + '/playground/', { waitUntil: 'commit', timeout: 60000 })
+        await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+        await page.route(url => url.href.includes('trace-tab') || url.href.includes('TraceTab'), route => route.abort())
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="trace"]')
+        await page.waitForSelector('[data-pg-panel-body="trace"] .sc-load-failure')
+        expect(await page.textContent('[data-pg-panel-body="trace"] .sc-load-failure')).toContain('The Trace tab could not load')
+        await page.unrouteAll()
+        const recover = async (p: Page, done: () => Promise<boolean>, again: () => Promise<void>) => {
+            await p.click('.sc-load-failure button')
+            for (let i = 0; i < 50 && !(await done()); i++) {
+                if (await p.locator('.sc-load-failure button:has-text("Reload the page")').count()) {
+                    await Promise.all([p.waitForEvent('load'), p.click('.sc-load-failure button')])
+                    await again()
+                }
+                await p.waitForTimeout(200)
+            }
+            expect(await done()).toBe(true)
+        }
+        await recover(page, async () => (await page.locator('[data-pg-panel-body="trace"] .sc-pg-trace').count()) > 0, async () => {
+            await page.waitForSelector('[data-pg-ready]')
+            await page.click('[data-pg-panel-tabs] [data-panel-tab="trace"]')
+        })
+        await page.context().close()
+        // A lesson's widget, engaged while its code cannot load.
+        const lesson = await (await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' })).newPage()
+        await lesson.goto(BASE + '/learn/transitions/', { waitUntil: 'load' })
+        await lesson.route(url => /\/src\/components\/sim\/|\/packages\/engine\/|\.svelte/.test(url.pathname), route => route.abort())
+        const frame = lesson.locator('figure.sc-frame--sim').first()
+        await frame.scrollIntoViewIfNeeded()
+        await frame.hover()
+        await frame.locator('.sc-load-failure').waitFor()
+        expect(await frame.locator('.sc-load-failure').textContent()).toContain('The simulation could not load')
+        await lesson.unrouteAll()
+        const live = async () => !(await lesson.locator('figure.sc-frame--sim astro-island').first().getAttribute('ssr').then(v => v !== null).catch(() => true))
+        await recover(lesson, live, async () => {
+            await lesson.locator('figure.sc-frame--sim').first().hover()
+            await lesson.waitForTimeout(500)
+        })
+        await lesson.context().close()
+    }, 120000)
+
     test('phones: tabs, no sideways scrolling', async () => {
         const page = await open('/playground/', 390)
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)

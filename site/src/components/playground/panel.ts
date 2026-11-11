@@ -2,6 +2,7 @@
 // made by playground.astro. Each tab's content is mounted the first time it is shown (or at start, `eager`); a
 // tab's tools sit in the panel's head and show with it; badges (counts) sit next to the names.
 
+import { showLoadFailure } from '../frame/load-failure'
 import { $ } from './app-types'
 import { PANEL_TABS, type PanelTab, type PanelTabContext } from './panel-tabs'
 import type { Playground } from './app'
@@ -92,10 +93,18 @@ export class BottomPanel {
             },
             folder: () => pg.project.folderAccess(),
         }
+        host.querySelector(':scope > .sc-load-failure')?.remove()
         try {
             await spec.mount(host, ctx)
-        } catch (e) {
-            host.textContent = `This tab could not be loaded: ${(e as Error).message}`
+        } catch {
+            // Its code did not arrive (offline, say): Retry, here or by showing the tab again, mounts it anew.
+            this.mounted.delete(spec.id)
+            showLoadFailure(host, `The ${spec.label} tab`, async () => {
+                host.replaceChildren()
+                tools.replaceChildren()
+                await spec.mount!(host, ctx)
+                this.mounted.add(spec.id)
+            }, 'replace')
         }
     }
 }

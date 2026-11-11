@@ -1255,3 +1255,17 @@ svg .sc-focus-ring {
 .sc-frame .sc-simctl select {
 	border-radius: var(--radius-sm);
 }
+
+/* Code loaded on demand that did not arrive (frame/load-failure.ts): the message and Retry, in the widget or tab. */
+.sc-load-failure {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0.75rem;
+	margin: 0;
+	padding: 0.625rem var(--frame-pad, 1rem);
+	border-block: 1px solid var(--c-rule);
+	background-color: var(--c-sheet);
+	font-size: var(--text-sm);
+	color: var(--c-ink);
+}
