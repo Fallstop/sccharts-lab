@@ -17,6 +17,12 @@
 		display: inline;
 	}
 }
+/* A phone's app bar has no room for the word: the icon (the button keeps its name, aria-label). */
+@media (max-width: 25.99rem) {
+	.sc-pg__compare-short {
+		display: none;
+	}
+}
 .sc-pg-pop--compare .sc-pg-pop__panel {
 	width: min(34rem, calc(100vw - 2rem));
 	max-height: min(40rem, 75dvh);

@@ -112,7 +112,7 @@ const data = json({ defaultId: DEFAULT_ID, defaultSource, defaultFile })
 			<a class="sc-pg__title-page" data-pg-title-page hidden></a>
 			<span class="sc-pg-appbar__fill"></span>
 			<details class="sc-pg-pop sc-pg-pop--compare" data-pg-compare hidden>
-				<summary class="sc-pg-appbar__btn sc-pg__compare" title="Run your chart on the model solution's test inputs and compare the outputs">
+				<summary class="sc-pg-appbar__btn sc-pg__compare" aria-label="Compare with the model solution" title="Run your chart on the model solution's test inputs and compare the outputs">
 					<Fragment set:html={pgIcons.compare} /><span class="sc-pg__compare-long">Compare with the model solution</span><span class="sc-pg__compare-short" aria-hidden="true">Compare</span><Fragment set:html={pgIcons.chevron} />
 				</summary>
 				<div class="sc-pg-pop__panel sc-pg-compare" role="group" aria-label="Comparison with the model solution" data-pg-compare-panel></div>

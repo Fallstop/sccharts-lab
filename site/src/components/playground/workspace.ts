@@ -42,7 +42,10 @@ export class Workspace {
         if (hsplit && this.grid) this.setupPanelHeight(this.grid, hsplit)
         this.setupFiles()
         pg.root.addEventListener('sc-pg-tab', e => {
-            if ((e as CustomEvent).detail.tab === 'code') requestAnimationFrame(() => pg.view.requestMeasure())
+            const tab = (e as CustomEvent).detail.tab
+            if (tab === 'code') requestAnimationFrame(() => pg.view.requestMeasure())
+            // On a phone the Simulate tab's diagram is a strip above the panel: the whole chart, so every region shows.
+            if (pg.isNarrow()) pg.diagram.view.preferWhole(tab === 'sim')
         })
     }
 

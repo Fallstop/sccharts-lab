@@ -258,6 +258,34 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         await page.context().close()
     }, 120000)
 
+    test('phones: the Simulate tab shows the whole chart; an exercise keeps every app bar control on screen', async () => {
+        // The tab first, at once: the diagram the layout draws later must keep to it too.
+        const page = await open('/playground/?example=showcase/abro', 390)
+        await page.click('[data-pg-tabs] [data-tab="sim"]')
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'ABRO')
+        await page.waitForTimeout(1500)
+        // Every region of the chart inside the strip above the panel (the reader watches them all).
+        const inside = await page.evaluate(() => {
+            const stage = document.querySelector('[data-pg-stage]')!.getBoundingClientRect()
+            const svg = document.querySelector('[data-pg-stage] svg')!.getBoundingClientRect()
+            return svg.top >= stage.top - 1 && svg.bottom <= stage.bottom + 1 && svg.left >= stage.left - 1 && svg.right <= stage.right + 1
+        })
+        expect(inside).toBe(true)
+        // Back in the Diagram tab, the readable opening view again.
+        await page.click('[data-pg-tabs] [data-tab="diagram"]')
+        await page.context().close()
+        const ex = await open('/playground/?example=learn%2Ffirst-chart%2Flamp-broken&solution=learn%2Ffirst-chart%2Flamp', 390)
+        await ex.waitForSelector('[data-pg-compare]:not([hidden])')
+        const bar = await ex.evaluate(() => {
+            const help = document.querySelector('[data-pg-help] > summary')!.getBoundingClientRect()
+            const compare = document.querySelector('[data-pg-compare] > summary')!
+            return { right: help.right, width: document.documentElement.clientWidth, name: compare.getAttribute('aria-label') }
+        })
+        expect(bar.right).toBeLessThanOrEqual(bar.width)
+        expect(bar.name).toBe('Compare with the model solution')
+        await ex.context().close()
+    })
+
     test('phones: tabs, no sideways scrolling', async () => {
         const page = await open('/playground/', 390)
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)

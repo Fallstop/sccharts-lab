@@ -47,6 +47,8 @@ export class DiagramView {
     private y = 0
     /** The sticky view: 'auto' (readable), 'fit' (the whole chart), or null once the reader pans or zooms. */
     private mode: 'auto' | 'fit' | null = 'auto'
+    /** The opening view shows the whole chart however small (preferWhole), also for diagrams that come later. */
+    private whole = false
     private classes: ClassMap = {}
     private pointers = new Map<number, { x: number; y: number }>()
     private drag: { x: number; y: number; moved: boolean; id: string | null } | null = null
@@ -97,6 +99,13 @@ export class DiagramView {
             // Keep the top-left corner of the chart where it was.
             this.apply()
         }
+    }
+
+    /** The whole chart, however small, while `whole` (a phone's Simulate tab, where the reader watches every region),
+     *  else the readable opening view; only while the view is still sticky (the reader has not panned or zoomed). */
+    preferWhole(whole: boolean) {
+        this.whole = whole
+        if (this.mode === 'auto') this.autoFit()
     }
 
     /** Re-applies the sticky view (after a resize or a new diagram). */
@@ -152,7 +161,7 @@ export class DiagramView {
         if (!this.natural.w || !W || !H) return
         const k = this.fitScale(W, H)
         const min = this.opts.fitMin
-        this.place(min !== undefined ? Math.max(k, min) : k >= FIT_MIN ? k : k >= NEARLY ? FIT_MIN : READABLE, W, H)
+        this.place(this.whole ? k : min !== undefined ? Math.max(k, min) : k >= FIT_MIN ? k : k >= NEARLY ? FIT_MIN : READABLE, W, H)
     }
 
     /** Zoom k; centred where the chart fits, else from its top (and its left). */
