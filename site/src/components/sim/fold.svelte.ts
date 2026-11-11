@@ -1,11 +1,12 @@
-// The fold in a simulation's foot: whether a tick's details ("What happened", "Explain this tick") are shown, the
-// reader's choice remembered across the site, and the height the unfolded details keep while the reader steps.
+// The fold in a simulation's foot: whether a tick's details ("What happened", "Explain this tick") are shown, and the
+// height the unfolded details keep while the reader steps. Only the reader's own click unfolds a widget of the guide:
+// a choice remembered and applied as the widget hydrates (on load, on a hover) would move the page under the reader.
 
 import { tick } from 'svelte'
 
-/** Panels that start folded (the guide's widgets) remember one choice; panels that start unfolded (the playground)
- *  another, so unfolding in the playground never unfolds the guide. */
-const KEYS = { folded: 'sc-sim-details', open: 'sc-sim-details-open' } as const
+/** Panels that start unfolded (the playground, whose panel has a size of its own) remember the reader's choice;
+ *  panels that start folded (the guide's widgets, the landing chart, embeds) always start folded. */
+const KEYS = { folded: undefined, open: 'sc-sim-details-open' } as const
 
 export type FoldStart = keyof typeof KEYS
 
@@ -15,7 +16,7 @@ export class Fold {
      *  to a shorter tick does not shrink them and move the page. */
     min = $state(0)
     private node: HTMLElement | undefined
-    private readonly key: string
+    private readonly key: string | undefined
 
     constructor(start: FoldStart) {
         this.key = KEYS[start]
@@ -24,6 +25,7 @@ export class Fold {
 
     /** The reader's earlier choice, if any (on mount: the server renders the default). */
     restore() {
+        if (!this.key) return
         try {
             const v = localStorage.getItem(this.key)
             if (v === 'open' || v === 'folded') this.open = v === 'open'
@@ -36,6 +38,7 @@ export class Fold {
     toggle() {
         this.open = !this.open
         this.min = 0
+        if (!this.key) return
         try {
             localStorage.setItem(this.key, this.open ? 'open' : 'folded')
         } catch {

@@ -451,14 +451,32 @@ describe.skipIf(!up)('widgets in the browser', () => {
         expect(await f.locator('.sc-what__item').count()).toBeGreaterThan(0)
         expect(await f.locator('details.sc-explain').count()).toBe(1)
         expect(await height()).toBeGreaterThan(h)
-        expect(await page.evaluate(() => localStorage.getItem('sc-sim-details'))).toBe('open')
+        // The guide's widgets remember no choice: the next widget, or this page again, starts folded.
+        expect(await page.evaluate(() => localStorage.getItem('sc-sim-details'))).toBeNull()
         // Unfolded, stepping back never shrinks it.
         const open = await height()
         await f.getByRole('button', { name: 'Back one tick' }).click()
         expect(await height()).toBeGreaterThanOrEqual(open)
         await details.click()
-        expect(await page.evaluate(() => localStorage.getItem('sc-sim-details'))).toBe('folded')
         expect(await height()).toBe(h)
+    })
+
+    it('Sim: a reader who unfolded Details before finds the landing chart folded, and nothing on the page moves', async () => {
+        const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' })
+        // A choice an earlier version remembered: it is not applied (it would unfold the chart as it hydrates).
+        await ctx.addInitScript(() => localStorage.setItem('sc-sim-details', 'open'))
+        const landing = await ctx.newPage()
+        await landing.goto(`${BASE}/`, { waitUntil: 'load' })
+        const hero = landing.locator('.sc-hero-chart').first()
+        const learn = landing.getByRole('link', { name: 'Start learning' }).first()
+        const top = async () => (await learn.boundingBox())!.y + (await landing.evaluate(() => scrollY))
+        const before = await top()
+        // The landing chart hydrates as it comes into view and plays its run: wait until it is live and has played.
+        await landing.waitForFunction(() => !document.querySelector('.sc-hero-chart astro-island')?.hasAttribute('ssr'), null, { timeout: 30000 })
+        await landing.waitForTimeout(6000)
+        expect(await hero.locator('.sc-foot__toggle').getAttribute('aria-expanded')).toBe('false')
+        expect(await top()).toBe(before)
+        await ctx.close()
     })
 
     it('Keyboard: a diagram is one tab stop; the arrows walk its elements in source order and link their lines', async () => {

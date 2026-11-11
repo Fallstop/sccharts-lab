@@ -7,7 +7,7 @@ playground all use them. Owner: the widgets workstream.
 SimPanel.svelte     inputs + controls + timing diagram + "What happened": one simulation, no diagram
 Inputs.svelte       the input controls alone (used by SimPanel and CompareSim)
 Stack.svelte        texts stacked in one grid cell, one shown: the foot's known texts (see "The foot")
-fold.svelte.ts      the foot's Details fold: the reader's choice (remembered) and the unfolded height kept
+fold.svelte.ts      the foot's Details fold: open or folded (the playground remembers it) and the unfolded height kept
 Sim.svelte          the <Sim> island: a SimPanel wired to the pre-rendered diagram and code of its frame
 CompareSim.svelte   the <Compare> island: two charts stepped together (optionally a guided tour on both)
 PredictSim.svelte   the <Predict> island: predictions, then "Run and check"
@@ -116,9 +116,9 @@ replays them as they were; changing an input while behind the end makes the next
 rewinds to the shown tick and runs the new inputs). The model is `timeline.ts` (unit-tested in
 `tests/widgets/timeline.test.ts`). Run stops at termination, at a run-time error, at the end of the tour, and
 when the panel scrolls out of view. Two things are persisted: the run speed (`localStorage` `sc-sim-speed`) and
-the reader's choice of folded or unfolded details (`sc-sim-details` for panels that start folded, so one choice for
-the whole guide; `sc-sim-details-open` for the playground's). Both are read on mount and wrapped in `try`: without
-storage the panel uses its defaults.
+the playground's choice of folded or unfolded details (`sc-sim-details-open`). Both are read on mount and wrapped in
+`try`: without storage the panel uses its defaults. A guide widget's details always start folded: a remembered choice
+applied as it hydrates (the landing chart on load, a lesson's widget on a hover) would move the page.
 
 A run-time error (`TickResult.error`: division by zero, an index out of range, ...) stops the simulation, as it
 stops KIELER's: the engine repeats the error in every later step (`Diagnostic.tick` names the tick it happened in).
@@ -198,9 +198,9 @@ the reader steps it.
   without their reasons, termination, or the run-time error; "Tick 0: nothing has run yet." before the first).
   *Details* (`button.sc-foot__toggle`, `aria-expanded`) at its end unfolds the whole story under it: the "What
   happened" list and *Explain this tick*, and in free play the tour's note of a scripted tick and what Step does
-  from an earlier tick or after a changed input. It starts folded on guide pages (`details`), and the reader's
-  choice is remembered for every widget of the site (`fold.svelte.ts`: read when a panel starts, never pushed to
-  panels already running, so a click in one widget never moves another).
+  from an earlier tick or after a changed input. It starts folded on guide pages (`details`), always: only the
+  reader's click unfolds it (a remembered choice applied as the widget hydrates would move the page). The playground
+  remembers its own choice (`fold.svelte.ts`), as its panel has a size of its own.
 - **In the tour, its texts are stacked** (`Stack.svelte`) under that line: the intro and every tick's note are laid
   out in one grid cell, and all but the current one are hidden (`visibility: hidden`, `aria-hidden`, `inert`). The
   cell is as tall as the longest at the current width, with no measuring in script. Entries render the same whichever

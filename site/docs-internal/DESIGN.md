@@ -395,7 +395,8 @@ Simulation look (styles in `widgets.css`, `wave.css`, `diagram.css`):
   tall as the longest), then Previous / Next / Take over. In free play only the idle line or *Restart the guided
   tour* follows. *Details* unfolds "What happened" (one line per fact, each marked with a small piece of notation)
   and *Explain this tick* (the engine's log in order); hovering a line marks its elements on the diagram. Folded on
-  guide pages, unfolded in the playground; the reader's choice is remembered. Unfolded, the details keep the height
+  guide pages (always, so that a page never moves without the reader's click), unfolded in the playground (which
+  remembers the reader's choice). Unfolded, the details keep the height
   of the tallest tick shown until Restart (`src/components/sim/README.md`, "The foot").
 - **Timed charts.** *Advance by sleepT (300)* (a quiet small button right after the `deltaT` field, the value
   muted and monospaced) sets `deltaT` to the `sleepT` of the tick shown and steps; disabled before tick 1.
