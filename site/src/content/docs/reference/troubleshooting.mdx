@@ -217,8 +217,11 @@ really are the same:
   [How this guide is checked](/reference/about/#official-kieler-and-sccharts-lab) lists the
   differences.
 
-If they still disagree, one of them has a bug: please [report it](/reference/about/#found-a-mistake),
-with the playground's **Copy link** for your chart and the inputs that show the difference.
+To compare the two runs tick by tick, save the playground's run from its **Trace** tab and **Replay**
+the file in SCCharts Lab: the extension drives the chart with the file's inputs, checks its outputs after
+every tick and names the first difference. If they still disagree, one of them has a bug: please
+[report it](/reference/about/#found-a-mistake), with the playground's **Copy link to this run**, which
+carries your chart and the inputs that show the difference.
 
 ## Setup problems
 
@@ -297,8 +300,9 @@ A chart is only as good as the runs you have tried. Before you rely on one:
 
 SCCharts Lab helps with all of this:
 
-- **Save** and **Load**, at the right end of the trace's top line, write a run to a `.ktrace` file and
-  replay it. Save a test once and replay it after every change to the chart.
+- **Save** and **Replay**, in the trace drawer, write a run to a file (KTrace, CSV, JSON or XML) and
+  drive the chart with it again, checking its outputs after every tick. Save a test once and replay it
+  after every change to the chart.
 - **Breakpoints**, in the preview's toolbar, pause the simulation when a state is entered, or after a
   tick in which a condition holds, such as `heating && door`. The `C` key runs ticks until one fires.
 - **Watch** expressions, in the trace's top line, are evaluated after every tick: `pre(count) != count`,
@@ -309,7 +313,8 @@ SCCharts Lab helps with all of this:
 In the [playground](/playground/), **Rebuild** after an edit replays the inputs you have given so far on
 the new version of the chart, as long as its inputs and outputs are unchanged. Under **Variables**,
 **Watch** shows the value of an expression in the tick shown, and **Run until** steps until the watch
-holds or a state you choose is active.
+holds or a state you choose is active. Its **Trace** tab saves and replays the same files as SCCharts
+Lab, and compares runs ([The playground](/reference/playground/#trace)).
 
 <Aside type="tip">
 [Patterns](/patterns/abro/) has complete, explained charts for the problems that come up again and

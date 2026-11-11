@@ -407,6 +407,12 @@ The research project at Kiel University that created SCCharts, and its tools: th
 simulator and the diagram synthesis. The name stands for *Kiel Integrated Environment for Layout
 Eclipse RichClient*. See [getting SCCharts](/start/tools/).
 
+### KTrace
+
+KIELER's file format for a run of a simulation: a line per tick with the inputs and, after `=>`, the
+outputs, each written only when its value changes. The [playground](#playground) and SCCharts Lab save runs in it
+and replay them. See [the playground](/reference/playground/#trace).
+
 ## L
 
 ### Label
@@ -477,6 +483,11 @@ A variable or signal declared with `output`, which the environment can read afte
 An action `period 500` that lets the inside of a state run only in ticks in which another 500 time
 units have passed. By default it keeps excess time (soft reset); `@HardReset` drops it. See
 [time](/advanced/time/#doing-something-every-so-often-period).
+
+### Playground
+
+SCCharts Lab in the browser, on this site: an editor with the chart's diagram, a simulator, projects of
+several files, traces and the chart's C code. See [the playground](/reference/playground/).
 
 ### Pragma
 
@@ -587,8 +598,9 @@ with the synchronous model of time and the [sequentially constructive](#sequenti
 
 ### SCCharts Lab
 
-A VS Code extension for SCCharts with diagrams, a tick-by-tick simulator and live diagnostics. It uses
-KIELER's compiler. See [getting SCCharts](/start/tools/).
+Tools for SCCharts, independent of KIELER: this guide with its [playground](#playground), and a VS Code
+extension with diagrams, a tick-by-tick simulator and live diagnostics, which uses KIELER's compiler.
+In this guide, *SCCharts Lab* on its own means the extension. See [getting SCCharts](/start/tools/).
 
 ### SCG
 

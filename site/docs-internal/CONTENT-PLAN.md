@@ -55,8 +55,9 @@ Slugs are under `src/content/docs/`. Each page's frontmatter sets `title`, `desc
    how this guide works (the widgets), and a first live chart to poke.
 2. `in-a-hurry`: Short on time?: setup in three steps, one microwave chart built up in five simulations,
    the eight surprises, what to do when it fails, and every Learn chapter's key ideas (`<KeyIdeasDigest>`).
-3. `tools`: Getting SCCharts: the SCCharts Lab VS Code extension (recommended; diagrams, simulation,
-   live diagnostics), official KIELER, and this site's playground. What each is good for.
+3. `tools`: Getting SCCharts: SCCharts Lab's two forms, the VS Code extension (KIELER's own compiler,
+   host code, files in VS Code) and the playground (in the browser, nothing to install, C code to download),
+   and official KIELER. What each is good for; the guide's *SCCharts Lab* alone means the extension.
 
 ### Learn (`learn/`), the core tutorial, read in order
 1. `ticks`: Thinking in ticks: reactive systems, the synchronous hypothesis, a tick as the unit of
@@ -100,8 +101,9 @@ Slugs are under `src/content/docs/`. Each page's frontmatter sets `title`, `desc
     class, what KIELER rejects, and the differences in the older KIELER 0.3.0.
 22. `annotations`: Comments in diagrams, labels, annotations and pragmas.
 23. `host-code`: Host code: backticks, `extern`, `#hostcode`, host types and strings.
-24. `code-generation`: From chart to C or Java: what the compiler generates (`reset`, `tick`, the
-    `TickData` struct), a main loop on a microcontroller, netlist vs priority-based compilation.
+24. `code-generation`: From chart to C or Java: getting the code (the extension's **Code** button, the
+    playground's C code tab), what the compiler generates (`reset`, `tick`, the `TickData` struct), a main
+    loop on a microcontroller, netlist vs priority-based compilation.
 
 ### Patterns (`patterns/`), a cookbook of complete, explained charts
 `abro`, `edges` (rising/falling edge, one-shot pulse), `debounce`, `counters` (counting ticks,
@@ -114,12 +116,17 @@ uses almost everything; don't reproduce any course's assignment solution, so no 
 `cheatsheet` (all syntax on one page), `notation` (how every construct is drawn), `operators`
 (expressions, precedence, assignment operators), `errors` (KIELER compiler messages explained, each with
 a chart that triggers it and the fix), `troubleshooting` (from a symptom to its cause, and setup
-problems), `glossary`, `further-reading`, `about` (how the guide is checked against KIELER).
+problems), `glossary`, `further-reading`, `about` (how the guide, and the playground's C code, are checked
+against KIELER), `playground` (the IDE part by part: projects and files, saving, links, the panel's tabs),
+`embed` (the web component and the iframe, their options, the postMessage API).
 
 ### Playground (`/playground`)
-Editor + live diagram + simulator, example library, shareable links (`#run=` links replay a run), a
-Variables strip for the trace, KIELER's recorded words with "About this message" links, keyboard access to
-the diagram (`src/components/playground/README.md`).
+SCCharts Lab's in-browser IDE: projects of several files (imports, autosave, a folder on disk in Chromium,
+`.zip` in and out, `#project=` links), the editor, the live diagram, and a bottom panel with Simulation (tours,
+Variables, Watch, Run until, `&run=` links), Problems (KIELER's recorded words, "About this message"), Console,
+Trace (KTrace, CSV, JSON, XML; replay; compare) and C code (a `.zip` with `main.c`). Readers' documentation:
+`reference/playground`; internals: `src/components/playground/README.md`. Embeds of a chart on other sites:
+`/embed/`, `/embed.js`, documented in `reference/embed`.
 
 ## Examples and scenarios
 

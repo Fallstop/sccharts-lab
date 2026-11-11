@@ -1,18 +1,22 @@
-# SCCharts Guide: design
+# SCCharts Lab site: design
 
 How the site looks, why, and how to use it. Owner: the design workstream. Read this before you style a
 component or write a chapter.
 
 ## Name and titles
 
-- **Site title (header, `<title>` suffix):** `SCCharts`. The header lockup adds the subtitle *an
-  interactive guide* from 34em up (`src/components/overrides/SiteTitle.astro`).
-- **The guide's full name:** *SCCharts: an interactive guide*. It is the landing page's `<title>` and
-  `og:title` (`src/content/docs/index.mdx`, `head` frontmatter), and the name to use when linking to
-  the site from elsewhere.
-- **Page titles:** `<Chapter title> | SCCharts`, e.g. *Thinking in ticks | SCCharts* (Starlight's
-  default with `title: 'SCCharts'`).
+- **Site title (header, `<title>` suffix):** `SCCharts Lab`. The header lockup adds the subtitle *guide
+  and playground* from 34em up (`src/components/overrides/SiteTitle.astro`).
+- **The site's full name:** *SCCharts Lab: an interactive guide to SCCharts*. It is the landing page's
+  `<title>` and `og:title` (`src/content/docs/index.mdx`, `head` frontmatter), and the name to use when
+  linking to the site from elsewhere.
+- **Page titles:** `<Chapter title> | SCCharts Lab`, e.g. *Thinking in ticks | SCCharts Lab* (Starlight's
+  default with `title: 'SCCharts Lab'`).
 - **Landing headline:** *Statecharts, one tick at a time.*
+- **Names.** The language is always *SCCharts*; SCCharts and KIELER belong to Kiel University. *SCCharts Lab*
+  names the tools: this site (the guide, the playground, the embeds) and the VS Code extension. The site's IDE
+  is *the playground*; in guide prose *SCCharts Lab* on its own means the extension (`start/tools` says so),
+  and *SCCharts Lab for VS Code* where both are in play.
 
 ## Identity
 
@@ -215,12 +219,18 @@ what follows. Numbers in tables and counters use tabular figures.
 - The landing page is a splash page (67.5rem wide): hero (copy and live chart side by side from 64rem,
   stacked below), *What you'll learn*, *Ways in* (a full row, two by two, a full row from 48rem; one column
   below), *Credits*, each separated by a hairline.
-- `/playground` is full width: editor | diagram on one row from 60rem, simulation underneath.
+- `/playground` is a full-window app with no page scroll: the app bar, then from 60rem the files sidebar, the
+  editor with its tabs | the diagram, and under both the bottom panel (Simulation, Problems, Console, Trace,
+  C code; its height fits the simulation, or the reader's own); below 60rem one pane at a time under the tabs
+  Code, Diagram and Simulate. `/embed/` shows the same parts, by the embed's `view`. Details:
+  `src/components/playground/README.md`.
 
 ## Chrome
 
-- **Header:** the mark, *SCCharts* in Archivo, *an interactive guide*; search; theme switch. Its bottom
-  edge is the tick ruler.
+- **Header:** the mark, *SCCharts Lab* in Archivo, *guide and playground*; search; the GitHub link (no theme
+  switch while the site is light only: `overrides/ThemeProvider.astro`, `ThemeSelect.astro`). Its bottom edge is
+  the tick ruler. The playground has an app bar of its own instead (the mark, the Guide drawer, the
+  project, its tools).
 - **Mark** (`public/favicon.svg`, `src/components/overrides/LogoMark.astro`): an initial state (a capsule
   with a heavy outline) holding a pulse one tick wide. The inline version follows the theme through the
   `--sc-*` tokens; the favicon switches with `prefers-color-scheme`; `public/apple-touch-icon.png` is the
@@ -520,6 +530,7 @@ the full column. Don't put prose inside widgets.
 | `src/components/landing/` | `HeroChart` (the compact SimPanel on `landing/toggle`), `LearnPath`, `EntryPoints` (*Ways in*: *Start learning* across the full width, then *Short on time?* (an immediate transition, dashed, as its glyph), Playground, Cheat sheet, SCCharts Lab two by two, then *Stuck?* across the full width (a state with the error mark as its glyph) with its two links, *Look up a compiler message* and *It compiles but misbehaves*, in the same two columns), `Credits` |
 | `src/components/guide.ts` and `*.astro` | the MDX components |
 | `src/pages/playground.astro` | `/playground` |
+| `src/pages/embed.astro`, `src/pages/embed.js.ts` | `/embed/` (a chart in an iframe) and `/embed.js` (`<sccharts-lab-chart>`) |
 | `src/content/docs/design/specimen.mdx`, `widgets-test.mdx` | `/design/specimen/` (every element in the guide's styles) and `/design/widgets-test/` (every widget and its edge cases): drafts, so only the dev server has them (not in production builds, the sitemap or the search index) |
 | `src/content/docs/404.mdx` | the 404 page's content, rendered by Starlight's own `/404` route; `draft: true` keeps it out of `[...slug]` in production (which would render `/404` twice). From 64rem its content (the small teaching chart, then a paragraph of links) sits beside the hero's copy (`overrides/Hero.astro`, the plain hero), below it on phones |
 | `src/highlight/sctx.tmLanguage.json`, `src/highlight/code-themes.mjs`, `ec.config.mjs` | code highlighting (`ec.config.mjs` also names the scrolling code regions for screen readers) |
