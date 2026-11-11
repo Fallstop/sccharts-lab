@@ -22,6 +22,9 @@ export interface ProjectView {
     folder?: string
     /** The folder needs the reader's permission again (after a reload). */
     disconnected?: boolean
+    /** Counts the projects opened in this page (New, an example, a link, a file): what a tab keeps about one project
+     *  (a replay, a comparison) goes when it changes. Edits never change it. */
+    generation: number
 }
 
 export interface Compiled {
@@ -33,7 +36,7 @@ export interface Compiled {
 }
 
 export class PlaygroundModel {
-    project = $state.raw<ProjectView>({ name: '', files: [], active: '', open: [], unsaved: [] })
+    project = $state.raw<ProjectView>({ name: '', files: [], active: '', open: [], unsaved: [], generation: 0 })
     /** The newest compile of the active file. */
     compiled = $state.raw<Compiled | undefined>()
     /** Its problems (the engine's diagnostics, with KIELER's words for an example as recorded). */

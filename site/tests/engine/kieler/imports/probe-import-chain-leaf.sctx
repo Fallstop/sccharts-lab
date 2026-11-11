@@ -1,0 +1,6 @@
+scchart ProbeImportChainLeaf {
+  input bool press
+  output int n = 0
+  initial state Counting
+    if press do nothere += 1 go to Counting
+}

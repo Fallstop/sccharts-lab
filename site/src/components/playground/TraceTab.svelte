@@ -40,6 +40,15 @@
 
     $effect(() => remember(FORMAT_KEY, format))
 
+    // Another project opened (New, an example, a link, a file): the replay and the comparison were of the one before.
+    let generation = model.project.generation
+    $effect(() => {
+        if (model.project.generation === generation) return
+        generation = model.project.generation
+        replay = undefined
+        compared = []
+    })
+
     // The tab's badge: the ticks of the replay that differ from the file.
     $effect(() => {
         const n = replay?.plan.byTick.size ?? 0

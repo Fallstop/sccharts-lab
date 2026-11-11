@@ -999,6 +999,12 @@ describe.skipIf(!enabled)('playground in the browser', () => {
             const [report] = await Promise.all([page.waitForEvent('download'), page.click(`.sc-pg-trace__head button:has-text(".${kind}")`)])
             expect(report.suggestedFilename()).toBe(`Stopwatch-comparison.${kind}`)
         }
+        // Another project (New chart): the replay and the comparison were of Stopwatch, so they go, with the badge.
+        await page.click('[data-pg-project] > summary')
+        await page.click('[data-action="new"]')
+        await page.waitForFunction(() => !document.querySelector('[data-panel-tab="trace"] [data-pg-badge-count]')?.textContent)
+        expect(await page.locator('.sc-pg-grid td.is-different').count()).toBe(0)
+        expect(await page.locator('.sc-pg-report table').count()).toBe(0)
         fs.rmSync(dir, { recursive: true, force: true })
         await page.context().close()
     }, 120000)

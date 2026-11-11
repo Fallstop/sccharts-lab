@@ -1,0 +1,7 @@
+// The error is two imports down: main imports mid, mid imports leaf, and leaf has the error.
+import "probe-import-chain-mid"
+scchart ProbeImportBrokenChain {
+  input bool press
+  output int total = 0
+  initial state C is ProbeImportChainMid(press to press, total to n)
+}

@@ -47,6 +47,9 @@ export class ProjectControl {
     /** The saves to the browser, one after another (each needs the version the one before stored). */
     private saving: Promise<void> = Promise.resolve()
 
+    /** Projects opened in this page (ProjectView.generation). */
+    private generation = 0
+
     constructor(private pg: Playground, spec: ProjectSpec) {
         this.set(spec)
     }
@@ -115,6 +118,7 @@ export class ProjectControl {
     replace(spec: ProjectSpec) {
         clearTimeout(this.saveTimer)
         this.pending = false
+        this.generation++
         this.set(spec)
         forgetTab()
         const view = this.pg.view
@@ -165,6 +169,7 @@ export class ProjectControl {
             unsaved: this.folder ? this.unsaved() : [],
             folder: this.folder?.name,
             disconnected: !!this.folder && !this.folder.connected,
+            generation: this.generation,
         }
     }
 

@@ -1,0 +1,6 @@
+import "probe-import-chain-leaf"
+scchart ProbeImportChainMid {
+  input bool press
+  output int n = 0
+  initial state M is ProbeImportChainLeaf(press to press, n to n)
+}

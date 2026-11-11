@@ -1,0 +1,22 @@
+{
+ "imports": [
+  "probe-import-chain-mid.sctx",
+  "probe-import-chain-leaf.sctx"
+ ],
+ "ticks": [
+  {
+   "inputs": {
+    "press": true
+   },
+   "note": "A file two imports down has an error."
+  },
+  {
+   "inputs": {
+    "press": false
+   },
+   "note": "Next tick."
+  }
+ ],
+ "expect": "error",
+ "errorIncludes": "has errors"
+}

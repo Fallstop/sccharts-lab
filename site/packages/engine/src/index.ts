@@ -158,7 +158,8 @@ export function compile(source: string, options: CompileOptions = {}): CompileRe
         // 7 of its 15 unreachable states and 1 of its 5 missing initial states also KIELER's. They wait until the
         // syntax is fixed; only a broken import, which does not depend on the rest of the file, is reported at once.
         const syntaxBroken = main.syntax.some(d => d.severity === 'error')
-        const diagnostics = syntaxBroken ? [...main.syntax, ...linking, ...validation.filter(d => d.code === 'broken-import')] : [...main.syntax, ...linking, ...validation]
+        const imported = importErrors(main.program, options.files ?? {})
+        const diagnostics = syntaxBroken ? [...main.syntax, ...linking, ...validation.filter(d => d.code === 'broken-import'), ...imported] : [...main.syntax, ...linking, ...validation, ...imported]
         let chart: State | undefined
         if (options.chart !== undefined) {
             chart = main.program.charts.find(c => c.name === options.chart)
@@ -194,6 +195,77 @@ export function compile(source: string, options: CompileOptions = {}): CompileRe
         const fallback = parse(source)
         return { ok: false, program: fallback.program, diagnostics: [...fallback.diagnostics, internalError(error)], interface: [] }
     }
+}
+
+// ----- Imported files with errors ---------------------------------------------------------------------------------
+
+/** The files an `import` names (S-20): `"beep"` and `"beep.sctx"` the file, `"dir/*"` every .sctx file in it. */
+function importTargets(name: string, files: string[]): string[] {
+    if (name.endsWith('*')) return files.filter(f => f.startsWith(name.slice(0, -1)) && f.endsWith('.sctx'))
+    const want = name.endsWith('.sctx') ? name : `${name}.sctx`
+    return files.filter(f => f === want || f.endsWith('/' + want))
+}
+
+/**
+ * KIELER does not compile a chart while a file it imports has errors (its own, or those of a file that one imports);
+ * SCCharts Lab says so on the import: "The imported file counter.sctx has errors. Line 5: Couldn't resolve reference
+ * to ValuedObject 'missing'." (probes tests/engine/kieler/imports/probe-import-broken*). Each file is checked as KIELER
+ * reads it: it sees the charts of the files it imports itself.
+ */
+function importErrors(program: Program, files: Record<string, string>): Diagnostic[] {
+    const names = Object.keys(files)
+    if (!program.imports.length || !names.length) return []
+    // A file's first error: the file it is in (the file itself, or one it imports, perhaps through others), its line.
+    type Found = { file: string; through: string[]; line: number; message: string; kieler: string }
+    const memo = new Map<string, Found | undefined>()
+    const charts = (name: string) => {
+        const p = parseOnly(files[name]).program
+        resolveProgram(p)
+        return p.charts
+    }
+    const firstError = (name: string, stack: Set<string>): Found | undefined => {
+        if (memo.has(name)) return memo.get(name)
+        if (stack.has(name)) return undefined
+        stack.add(name)
+        const text = files[name]
+        const parsed = parseOnly(text)
+        const targets = parsed.program.imports.map(i => importTargets(i, names))
+        const { index, diagnostics: linking } = resolveProgram(parsed.program, { externalCharts: targets.flat().filter(t => t !== name).flatMap(charts) })
+        const own = [...parsed.syntax, ...linking, ...validateProgram(parsed.program, index, text, { files })].filter(d => d.severity === 'error')
+        let first: Found | undefined
+        const take = (f: Found, at: number) => { if (!first || at < first.line) first = f }
+        for (const d of own) take({ file: name, through: [], line: d.span?.line ?? 1, message: d.message, kieler: d.kieler ?? d.message }, d.span?.line ?? 1)
+        parsed.program.imports.forEach((_, i) => {
+            for (const t of targets[i]) {
+                const e = t === name ? undefined : firstError(t, stack)
+                if (e) {
+                    take({ ...e, through: [t, ...e.through] }, parsed.program.importSpans?.[i]?.line ?? 1)
+                    break
+                }
+            }
+        })
+        stack.delete(name)
+        memo.set(name, first)
+        return first
+    }
+    const out: Diagnostic[] = []
+    program.imports.forEach((name, i) => {
+        for (const t of importTargets(name, names)) {
+            const e = firstError(t, new Set())
+            if (!e) continue
+            // The file with the error, and the imports it came through (SCCharts Lab's words for an import of an import).
+            const via = e.through.length ? ` (imported through ${[t, ...e.through.slice(0, -1)].join(', ')})` : ''
+            const viaText = e.through.length ? `, imported through \`${[t, ...e.through.slice(0, -1)].join('`, `')}\`,` : ''
+            out.push({
+                severity: 'error', code: 'import-errors', span: program.importSpans?.[i] ?? program.span,
+                message: `The imported file \`${e.file}\`${viaText} has errors (line ${e.line}: ${e.message})`,
+                kieler: `The imported file ${e.file}${via} has errors. Line ${e.line}: ${e.kieler}`,
+                hint: `Open \`${e.file}\` and fix it: a chart does not compile while a file it imports has errors.`,
+            })
+            break
+        }
+    })
+    return out
 }
 
 /** A variable a reader may want to trace in a simulation (`traceableVariables`). */

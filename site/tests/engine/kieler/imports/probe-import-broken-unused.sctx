@@ -1,0 +1,9 @@
+// The imported file has an error, and the chart uses none of its charts.
+import "probe-import-broken-counter"
+scchart ProbeImportBrokenUnused {
+  input bool press
+  output bool on = false
+  initial state Off
+    if press do on = true go to On
+  state On
+}

@@ -1,0 +1,8 @@
+// A chart whose imported file has an error (a name it cannot resolve): KIELER does not compile it, and SCCharts Lab
+// reports the imported file's error on the import.
+import "probe-import-broken-counter"
+scchart ProbeImportBroken {
+  input bool press
+  output int total = 0
+  initial state C is ProbeImportBrokenCounter(press to press, total to n)
+}
