@@ -20,8 +20,8 @@ const PORT = Number(process.env.EMBED_HOST_PORT ?? 4352)
 const HOST = `http://127.0.0.1:${PORT}`
 const enabled = !!process.env.EMBED_E2E
 
-/** The dev server's own noise, not the page's. */
-const IGNORED = [/Outdated Optimize Dep/, /\[vite\]/, /dev-toolbar/]
+/** The dev server's own noise, not the page's (and the 404 of a test's missing file). */
+const IGNORED = [/Outdated Optimize Dep/, /\[vite\]/, /dev-toolbar/, /nothing-here\.sctx/]
 
 const ABRO = `scchart ABRO {
   input signal A, B, R
@@ -276,6 +276,37 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
             const content = await embedFrame(page, id).evaluate(() => document.querySelector('[data-sc-embed]')!.getBoundingClientRect().height)
             expect(Math.abs(sizes[1 - i].h - content), `${id}: frame ${sizes[1 - i].h}, content ${content}`).toBeLessThanOrEqual(2)
         }
+        await context.close()
+    }, 120000)
+
+    test('an element made by a script: `ready` and the commands sent before it, a new address, a file that is not there', async () => {
+        const { page, context } = await open('/element.html')
+        const result = await page.evaluate(async () => {
+            type Chart = HTMLElement & { ready: Promise<{ compiled: { chart: string } }>; step: (i?: unknown) => Promise<{ tick: number; values: Record<string, unknown> }>; compiled?: { chart: string } }
+            const el = document.createElement('sccharts-lab-chart') as Chart
+            el.setAttribute('example', 'showcase/abro')
+            el.setAttribute('loading', 'eager')
+            document.body.append(el)
+            // Asked for at once, before the frame exists: both wait for it.
+            const [ready, first] = await Promise.all([el.ready, el.step({ A: true })])
+            // Another chart: the frame loads again, and `ready` is a new promise.
+            const before = el.ready
+            el.setAttribute('example', 'learn/first-chart/dimmer')
+            const again = await el.ready
+            const missing = document.createElement('sccharts-lab-chart') as Chart
+            missing.setAttribute('src', '/nothing-here.sctx')
+            const failed = new Promise(resolve => missing.addEventListener('error', e => resolve((e as CustomEvent<{ message: string }>).detail.message)))
+            document.body.append(missing)
+            return { ready: ready.compiled.chart, first: first.tick, renewed: before !== el.ready, again: again.compiled.chart, failed: await failed, alert: missing.shadowRoot?.querySelector('[role="alert"]')?.textContent }
+        })
+        expect(result).toEqual({
+            ready: 'ABRO',
+            first: 1,
+            renewed: true,
+            again: 'Dimmer',
+            failed: 'The chart /nothing-here.sctx could not be loaded (404 Not Found).',
+            alert: 'The chart /nothing-here.sctx could not be loaded (404 Not Found).',
+        })
         await context.close()
     }, 120000)
 

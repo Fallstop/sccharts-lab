@@ -73,14 +73,17 @@ export class SCChartsLabChart extends Base {
     private frame?: HTMLIFrameElement
     private message?: HTMLParagraphElement
     private pending = new Map<CommandId, Pending>()
-    private queue: (() => void)[] = []
+    /** Commands waiting for the embed to be ready. */
+    private queue: { send: () => void; reject: (error: Error) => void }[] = []
     private nextId = 1
     private live = false
     private renderQueued = false
+    private generation = 0
     private origin = ''
     private chartName?: string
     private resolveReady!: (info: ReadyInfo) => void
     private readyPromise!: Promise<ReadyInfo>
+    private readySettled = true
     private lastTick?: TickInfo
     private lastCompiled?: CompiledInfo
     private onMessage = (e: MessageEvent) => this.receive(e)
@@ -101,12 +104,17 @@ export class SCChartsLabChart extends Base {
 
     disconnectedCallback() {
         window.removeEventListener('message', this.onMessage)
-        this.fail(new Error('The chart was removed from the page.'))
+        const error = new Error('The chart was removed from the page.')
+        this.fail(error)
+        for (const q of this.queue.splice(0)) q.reject(error)
     }
 
     attributeChangedCallback(name: string, old: string | null, value: string | null) {
         if (old === value || !this.isConnected || !this.frame) return
-        if (ADDRESS.includes(name)) this.scheduleRender()
+        if (ADDRESS.includes(name)) {
+            this.invalidate()
+            this.scheduleRender()
+        }
         else if (name === 'label') this.updateTitle()
         else if (name === 'loading') this.frame.loading = value === 'eager' ? 'eager' : 'lazy'
     }
@@ -128,8 +136,8 @@ export class SCChartsLabChart extends Base {
         const base = this.getAttribute('base') || SCChartsLabChart.base
         this.origin = new URL(base, location.href).origin
         this.dataset.height = typeof target.height === 'number' ? 'fixed' : (target.height ?? 'auto')
-        this.fail(new Error('The chart was loaded again.'))
-        this.resetReady()
+        this.invalidate()
+        const generation = ++this.generation
         this.message?.remove()
         this.message = undefined
 
@@ -142,12 +150,14 @@ export class SCChartsLabChart extends Base {
                     const res = await fetch(url)
                     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`.trim())
                     const name = decodeURIComponent(url.pathname.split('/').pop() || 'main.sctx')
-                    files = { files: { [/^[\w ./+-]+\.sctx$/.test(name) ? name : 'main.sctx']: await res.text() }, active: '' }
-                    files.active = Object.keys(files.files)[0]
+                    const path = /^[\w ./+-]+\.sctx$/.test(name) ? name : 'main.sctx'
+                    files = { files: { [path]: await res.text() }, active: path }
                 } catch (error) {
-                    this.showError(`The chart ${src} could not be loaded (${error instanceof Error ? error.message : String(error)}).`)
+                    if (generation === this.generation) this.showError(`The chart ${src} could not be loaded (${error instanceof Error ? error.message : String(error)}).`)
                     return
                 }
+                // The attributes changed while the file was on its way: a later render has it.
+                if (generation !== this.generation) return
             } else files = inlineFiles(this)
         }
         // A run to replay (the playground's `run=`, lz-string's URL-safe letters only).
@@ -185,6 +195,7 @@ export class SCChartsLabChart extends Base {
         p.textContent = text
         this.message = p
         this.shadowRoot?.append(p)
+        for (const q of this.queue.splice(0)) q.reject(new Error(text))
         this.emit('error', { message: text })
     }
 
@@ -208,8 +219,9 @@ export class SCChartsLabChart extends Base {
                 this.lastTick = info.tick
                 this.chartName = info.compiled?.chart ?? this.chartName
                 this.updateTitle()
+                this.readySettled = true
                 this.resolveReady(info)
-                for (const send of this.queue.splice(0)) send()
+                for (const q of this.queue.splice(0)) q.send()
                 this.emit('ready', info)
                 break
             }
@@ -271,23 +283,30 @@ export class SCChartsLabChart extends Base {
                 this.post({ ...command, id })
             }
             if (this.live) send()
-            else this.queue.push(send)
+            else this.queue.push({ send, reject })
         })
     }
 
-    private resetReady() {
-        this.readyPromise = new Promise(resolve => (this.resolveReady = resolve))
-        // A page that never awaits it should not see an unhandled rejection.
-        this.readyPromise.catch(() => undefined)
+    /** The frame is about to load again: commands sent to it are lost with it (those still waiting go to the next one
+     *  once it is ready), and `ready` is a new promise, at once (a pending one is kept for the next frame). */
+    private invalidate() {
+        this.fail(new Error('The chart was loaded again.'))
+        if (this.readySettled) this.resetReady()
     }
 
+    /** A new `ready` for the next frame. */
+    private resetReady() {
+        this.readySettled = false
+        this.readyPromise = new Promise(resolve => (this.resolveReady = resolve))
+    }
+
+    /** Rejects the commands sent to the frame that are not answered yet. */
     private fail(error: Error) {
         for (const p of this.pending.values()) {
             clearTimeout(p.timer)
             p.reject(error)
         }
         this.pending.clear()
-        this.queue = []
         this.live = false
     }
 
