@@ -261,7 +261,7 @@ function cell(text: string): string {
 
 function code(value: unknown): string {
     const text = formatTraceValue(value)
-    return text === '' ? '—' : `\`${text.replace(/`/g, "'")}\``
+    return text === '' ? '-' : `\`${text.replace(/`/g, "'")}\``
 }
 
 function seconds(time: number): string {
@@ -317,9 +317,9 @@ export function comparisonMarkdown(
     lines.push('| | Trace | Model | Ticks | Simulated time |', '|---|---|---|---|---|')
     traces.forEach((trace, index) =>
         lines.push(
-            `| ${index === 0 ? 'Reference' : index + 1} | ${cell(trace.label)} | ${cell(trace.model ?? '—')} | ${
+            `| ${index === 0 ? 'Reference' : index + 1} | ${cell(trace.label)} | ${cell(trace.model ?? '-')} | ${
                 trace.ticks
-            } | ${trace.duration === undefined ? '—' : seconds(trace.duration)} |`
+            } | ${trace.duration === undefined ? '-' : seconds(trace.duration)} |`
         )
     )
     lines.push('')
@@ -366,14 +366,14 @@ export function comparisonMarkdown(
         variables.forEach((variable) => {
             const first = variable.differing[0]
             const firstText =
-                first === undefined ? '—' : `${place(alignment, first)}: ${valuesAt(comparison, variable, first)}`
+                first === undefined ? '-' : `${place(alignment, first)}: ${valuesAt(comparison, variable, first)}`
             const extent = byTime
                 ? `${seconds(variable.differingFor ?? 0)} of ${seconds(comparison.until ?? 0)}`
                 : `${variable.differing.length} of ${variable.compared}`
             let shift = byTime ? seconds(variable.worstTimeShift ?? 0) : plural(variable.worstTickShift, 'tick')
             if (!byTime && variable.worstTimeShift !== undefined) shift += ` (${seconds(variable.worstTimeShift)})`
             lines.push(
-                `| \`${variable.name}\` | ${variable.role ?? '—'} | ${extent} | ${cell(firstText)} | ${variable.changes
+                `| \`${variable.name}\` | ${variable.role ?? '-'} | ${extent} | ${cell(firstText)} | ${variable.changes
                     .map((changes) => changes.length)
                     .join(' / ')} | ${variable.sameSequence ? 'yes' : '**no**'} | ${shift} |`
             )
@@ -428,7 +428,7 @@ export function comparisonMarkdown(
             const reference = variable.changes[0][index]
             const entries = variable.changes.map((changes) => changes[index])
             const shifts = entries.slice(1).map((entry) => {
-                if (!entry || !reference) return '—'
+                if (!entry || !reference) return '-'
                 const ticks = signed(entry.tick - reference.tick)
                 if (entry.time === undefined || reference.time === undefined) return ticks
                 const time = signed(entry.time - reference.time, ' s')
@@ -439,7 +439,7 @@ export function comparisonMarkdown(
             )
             lines.push(
                 `| ${index + 1}${differs ? ' ≠' : ''} | ${entries
-                    .map((entry) => (entry ? `${code(entry.value)} at ${when(alignment, entry)}` : '—'))
+                    .map((entry) => (entry ? `${code(entry.value)} at ${when(alignment, entry)}` : '-'))
                     .map(cell)
                     .join(' | ')} | ${shifts.join(', ')} |`
             )
@@ -456,7 +456,7 @@ export function comparisonMarkdown(
             const reference = printed.lines[0][index]
             const entries = printed.lines.map((each) => each[index])
             const shifts = entries.slice(1).map((entry) => {
-                if (!entry || !reference) return '—'
+                if (!entry || !reference) return '-'
                 const ticks = signed(entry.tick - reference.tick)
                 if (entry.time === undefined || reference.time === undefined) return ticks
                 const time = signed(entry.time - reference.time, ' s')
@@ -466,7 +466,7 @@ export function comparisonMarkdown(
             lines.push(
                 `| ${index + 1}${differs ? ' ≠' : ''} | ${entries
                     .map((entry) =>
-                        entry ? `${code(entry.text)} at ${when(alignment, { ...entry, value: entry.text })}` : '—'
+                        entry ? `${code(entry.text)} at ${when(alignment, { ...entry, value: entry.text })}` : '-'
                     )
                     .map(cell)
                     .join(' | ')} | ${shifts.join(', ')} |`

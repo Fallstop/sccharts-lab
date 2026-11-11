@@ -143,9 +143,8 @@ Nearly everyone meets these in their first week.
    both syntax errors; write `if A do x = 1 go to B` and `if x == 3 go to B`.
    [Grammar traps](/reference/cheatsheet/#grammar-traps)
 7. **No `;` after a declaration.** `input bool A;` is a syntax error, reported as
-   `no viable alternative at input ';'` together with a puzzling message about `bool`:
-   `mismatched input 'bool' expecting 'primitive'` in SCCharts Lab,
-   `no viable alternative at input 'bool'` in KIELER VS Code.
+   `no viable alternative at input ';'` together with a puzzling message about `bool`,
+   `mismatched input 'bool' expecting 'primitive'`.
    [A semicolon after a declaration](/learn/first-chart/#a-semicolon-after-a-declaration)
 8. **The first chart in the file is the one that runs.** With several `scchart`s in one file, KIELER
    simulates the first, not the one you are looking at.

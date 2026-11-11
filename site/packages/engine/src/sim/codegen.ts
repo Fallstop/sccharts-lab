@@ -218,15 +218,7 @@ function cNames(root: CState): Diagnostic[] {
                 if (!m || !called.has(v)) continue
                 const name = v.member ? v.member.name : v.name
                 if (prime(name) && !isInlined(m)) report(v, name, 'method', PRIME_GCC)
-                // Current KIELER compiles a C function with a caret name; official KIELER 0.3.0 does not (S-71).
-                if (caret(name) && !isInlined(m)) {
-                    out.push({
-                        severity: 'warning', code: 'kieler-divergence', span: v.span, related: v.decl ? [v.decl] : undefined,
-                        message: `Official KIELER 0.3.0 cannot compile this chart: its C code keeps the \`^\` of the method name \`${name}\``,
-                        kieler: GCC_FAILED,
-                        hint: `Current KIELER and SCCharts Lab compile it, and so does the guide. To be safe with every version, write the name without the \`^\`${KEYWORDS.has(name.slice(1)) ? `, or choose another one (\`${name.slice(1)}Value\`)` : ''}.`,
-                    })
-                }
+                // A C function with a caret name compiles in KIELER 1.6.1 (only the 2024 extension 0.3.0 failed, S-71).
                 for (const p of [...m.params, ...m.locals]) {
                     const local = m.locals.includes(p)
                     if (prime(p.name)) report(p, p.name, local ? 'local variable' : 'parameter', PRIME_GCC)

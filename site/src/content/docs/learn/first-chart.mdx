@@ -212,8 +212,7 @@ page, for when you know what you want to write.
 
 Everyone gets these. Here are the messages you will see, word for word as KIELER prints them, and what
 they mean. SCCharts Lab prints the same messages: it underlines them in the editor while you type and
-lists them in the Problems panel. The KIELER inside the *KIELER VS Code* extension (0.3.0) is older and
-words a few syntax errors differently; where that matters, both are given. This site's playground
+lists them in the Problems panel, and so does the *KIELER VS Code* extension. This site's playground
 describes the problems in plainer words of its own and, where it can, quotes KIELER's next to them.
 
 ### A semicolon after a declaration
@@ -223,8 +222,7 @@ describes the problems in plainer words of its own and, where it can, quotes KIE
 The frame puts the culprit first: `no viable alternative at input ';'`, at the semicolon. KIELER
 reports a second error on the same line, and lists it first: `mismatched input 'bool' expecting
 'primitive'`. It is a side effect of the way the parser recovers from the mistake, and it points at
-`bool`, which is not wrong at all. (KIELER VS Code 0.3.0 words this one
-`no viable alternative at input 'bool'`.)
+`bool`, which is not wrong at all.
 
 Delete the `;`. Declarations never end with a semicolon. (Semicolons do appear in charts, between the
 effects of a transition: [chapter 3](/learn/transitions/).)
@@ -272,8 +270,9 @@ message is `Every region must not have more than one initial state.`
 - **A keyword as a name.** `input bool go` gives `mismatched input 'go' expecting RULE_ID`
   (`RULE_ID` means a name), plus the same side effect on `bool` as the semicolon. `go` is a keyword,
   and keywords can't be names; others that tempt beginners are `reset`, `label` and `state`. Choose
-  another name. KIELER VS Code 0.3.0 shows these errors and then never finishes compiling the chart,
-  so if a compilation there seems to hang, look for a keyword used as a name.
+  another name. The KIELER VS Code extension shows these errors and then never finishes compiling the
+  chart, so if a compilation there seems to hang, look for a keyword used
+  as a name.
 
 When KIELER reports several errors at once, start with the earliest line it complains about, and look
 again after each fix: the other messages are often consequences of the first mistake. When you compile

@@ -9,8 +9,8 @@ import { Chart, Sim } from '~components/guide'
 import { Aside } from '@astrojs/starlight/components'
 
 Every message on this page was produced by KIELER, most of them from the small example chart given
-with them: by the compiler inside the *KIELER VS Code* extension, by SCCharts Lab's build of KIELER's
-current sources, or by both. An entry says when a message comes from only one of them. Search the
+with them: by the compiler inside the *KIELER VS Code* extension, by SCCharts Lab's build of the same
+sources, or by both. An entry says when a message comes from only one of them. Search the
 page for the words of your message (Ctrl+F, or ⌘F on a Mac); the parts that change from chart to
 chart, such as a variable name, appear as they do in the example.
 
@@ -76,19 +76,16 @@ describe the compiler tripping over the broken model, not further mistakes in yo
 first message, the one with a line and column, and they go away. SCCharts Lab stops after the first
 stage that fails, so it does not show them.
 
-For some syntax errors, the KIELER VS Code extension (0.3.0) never finishes compiling at all: the
-simulation does not start and no message comes. A keyword used as a name (`input bool reset`), a
-number that is too large and `if 3 == level` are known cases. The editor still marks the syntax
+For some syntax errors, the KIELER VS Code extension never finishes compiling at all: the simulation does not start and no message comes. A keyword used as a name
+(`input bool reset`), a number that is too large and `if 3 == level` are known cases. The editor still marks the syntax
 errors as you type: fix those, and compile again.
 
 ### KIELER and SCCharts Lab
 
 SCCharts Lab compiles with KIELER's own compiler and keeps its messages, but rewrites a few into
 plainer English and adds some of its own where KIELER would crash or say nothing useful. Where the
-two differ, both texts are given below, KIELER's first. The two are also built from different
-versions of KIELER (the one inside the *KIELER VS Code* extension 0.3.0 dates from 2024; SCCharts Lab
-follows KIELER's current sources), and for a few syntax errors that alone changes the wording; those
-cases are noted too.
+two differ, both texts are given below, KIELER's first. SCCharts Lab and the *KIELER VS Code*
+extension are built from the same KIELER sources.
 
 ## Syntax errors
 
@@ -205,10 +202,6 @@ reports. Three mistakes cause it:
   [the next message](#mismatched-input-reset-expecting-rule_id)).
 - **Modifiers in the wrong order.** `output input bool x` gives the same message with the misplaced
   word, `mismatched input 'input' expecting 'primitive'`. Write `input output bool x`.
-
-The KIELER inside the KIELER VS Code extension says `no viable alternative at input 'bool'` (and
-`'input'`) for the same mistakes; SCCharts Lab and KIELER's current sources say
-`mismatched input 'bool' expecting 'primitive'`.
 
 ### `mismatched input 'reset' expecting RULE_ID`
 
@@ -619,8 +612,7 @@ compiling: `A binding for the valued object reference "…" exists, but the type
 ### `Pure types are only allowed if used in combination with signals.`
 
 `pure flag` declares a variable of type `pure`, which only signals can have: write `signal flag` (a
-pure signal). The same message also follows other declarations that could not be read, such as
-`output const int` in the KIELER VS Code extension, where it means "this declaration is broken".
+pure signal).
 [Open `pure-variable`](/playground/?example=reference/errors/pure-variable).
 
 ### Enums, structs, classes and methods
@@ -633,8 +625,8 @@ Cannot assign enum value of an incompatible type.
 ```
 
 An enum variable was given a number (`speed = 1`), arithmetic (`speed = speed + 1`) or a value of
-another enum. Assign a value of its own enum: `speed = Speed.LOW`. The KIELER VS Code extension says
-the same for `b = a` between two variables of one enum, which current KIELER accepts.
+another enum. Assign a value of its own enum: `speed = Speed.LOW`. Another variable of the same enum
+(`b = a`) is fine.
 
 ```text wrap
 Assignments to class/struct types are not supported. Please specify a member.
@@ -659,8 +651,7 @@ A method named without parentheses, `home.add` or `n = home.get`. Write `home.ad
 Number of arguments does not match required parameters in definition.
 ```
 
-A call with more or fewer arguments than the method has parameters. The KIELER VS Code extension
-accepts too many and ignores the extra ones.
+A call with more or fewer arguments than the method has parameters.
 
 ```text wrap
 All members of a struct must be publicly accessible.
@@ -983,9 +974,8 @@ appears. See [reusing charts](/advanced/references/#other-forms-you-may-meet).
 
 ### `The for-region range "for i : 1 to N" ends at N, which is not an integer literal.`
 
-SCCharts Lab's message for a `for` region whose bound is a name, such as a `const`. The KIELER VS Code
-extension crashes on it with `java.lang.ClassCastException: … ValuedObjectReferenceImpl cannot be
-cast to class … IntValue`. Write the bounds as numbers, or let the region run over an array:
+SCCharts Lab's message for a `for` region whose bound is a name, such as a `const`. In the KIELER VS
+Code extension the compilation never finishes and no message appears. Write the bounds as numbers, or let the region run over an array:
 `for i : ARR`. A bound without `to` (`for i : 3`) gives
 `The for-region range "for i : 3" has a start value but no end value.` See
 [arrays and for regions](/advanced/for-regions/#limits).
@@ -993,7 +983,8 @@ cast to class … IntValue`. Write the bounds as numbers, or let the region run 
 ### `This suspend has no trigger. KIELER cannot compile a suspend without an if condition.`
 
 SCCharts Lab's message for a `suspend` or `weak suspend` without `if`. The KIELER VS Code extension
-fails with an internal error in its code generator instead. Write the condition you mean:
+fails with an internal error in its code generator instead, and on a `weak suspend` its compilation
+never finishes. Write the condition you mean:
 `suspend if pause`. See [suspension](/advanced/suspend/#the-rule).
 
 ### `There is no SCChart to compile. Add a scchart declaration first.`

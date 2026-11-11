@@ -335,8 +335,9 @@ API around them).
 - **Rare forms** (probes `tests/engine/kieler/rare/`, 34 charts recorded with KIELER): `state(R.S)` in a method body
   (S-69: KIELER's MethodSignaling flag, set by an entry and cleared by an exit action of S; simulated, every probe
   agrees tick by tick); `scchart(C).X` (S-70: the constant's value; what KIELER cannot copy is `static-access`); primed
-  and caret names (S-71, `c-name`; a called method that stays a C function and has a `^` name compiles in current
-  KIELER but not in official 0.3.0: a `kieler-divergence` warning). Any expression the lowering could not represent is an `unsupported` info at
+  and caret names (S-71, `c-name`; a called method that stays a C function and has a `^` name compiles in KIELER
+  1.6.1 but not in the old official 0.3.0; the `kieler-divergence` warning for it was dropped in November 2026,
+  when the official extension 0.4.3 shipped 1.6.1). Any expression the lowering could not represent is an `unsupported` info at
   compile time now (`The guide's simulator cannot evaluate ...`), never a runtime error in a later tick.
 
 ## Tools (round 4)

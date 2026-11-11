@@ -242,6 +242,22 @@ and light-390 (96 page loads, no problems; `/start/tools/` and the 404 page CLS 
 - **Extension**: the SCCharts Lab grammar (`keith-vscode/syntaxes/sctx.tmLanguage.json`, main branch) highlights
   `deep`, under Unreleased in its CHANGELOG.
 
+## 11 November 2026: official KIELER 0.4.3
+
+KIELER released 1.6.0 and 1.6.1 (October 2026); the official KIELER VS Code extension 0.4.3 ships 1.6.1, which is
+the fork's upstream base plus one diagram line (now ported to the server). Every recorded scenario was run
+through the 0.4.3 jar (`tools/oracle/official-diff.mjs`, results in `semantics/basics.md` 10.1): no chart that 0.4.3
+accepts is rejected by the lab, values agree except for string inputs, and 0.4.3 still never answers on the
+crashes the lab reports. Checks: `pnpm exec vitest run` (6494 passed, 84 skipped: the opt-in browser, e2e and
+Java suites), `pnpm check` (0 errors, 0 warnings, 12 hints), `pnpm build`, links (7142 links, no problems).
+
+- **Content**: the guide names no KIELER version. "Official KIELER" and "the KIELER VS Code extension" mean the
+  current release, and only differences that hold for it are described; everything about 0.3.0 is gone from the
+  pages (it stays in the specs as evidence). Claims written against 0.3.0 that 0.4.3 contradicts were corrected
+  (`'bool'` wording, `output const`, extra call arguments, `b = a` on enums, a `for` bound that is a name now never
+  answers, `weak suspend` without `if` never answers). Eclipse KIELER needs Java 21.
+- **Engine**: the S-71 `kieler-divergence` warning on a called `^` method is gone; 0.4.3 compiles that chart.
+
 ## Not fixed (for the owners)
 
 - **Engine**: the remaining 32 % of broken texts keep the guide's own message only; what is left is the shape where

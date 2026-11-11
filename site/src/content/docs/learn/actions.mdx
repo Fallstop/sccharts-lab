@@ -220,7 +220,7 @@ a state is left.
 
 <Aside type="caution" title="The KIELER wiki is out of date here">
 The [wiki's syntax page](https://github.com/kieler/semantics/wiki/Syntax) says that exit actions
-count as inner behaviour and are suppressed when a state is strongly aborted. The current KIELER
+count as inner behaviour and are suppressed when a state is strongly aborted. KIELER's
 compiler does not do that: as `Machine` shows in tick 6, an `exit` action runs on `abort to` as well,
 and on a superstate so do the exit actions of every active state inside it. Write exit actions as
 clean-up that always happens.

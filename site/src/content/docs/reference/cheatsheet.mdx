@@ -460,7 +460,7 @@ class Counter {
 | `highest.value = latest.value` | copy member by member: `highest = latest` and `highest == latest` are rejected |
 
 Declare enums among the chart's own declarations, not inside a state. Structs and classes cannot be
-inputs or outputs; enums can be in current KIELER only. A simulation shows an enum value as its
+inputs or outputs; enums can. A simulation shows an enum value as its
 position (`Speed.LOW` is 1). See [enums, structs and classes](/advanced/data-types/).
 
 ## Comments, labels and annotations
@@ -510,9 +510,9 @@ These parse, but this guide does not use them, and some do not compile in every 
 | `x = (c) ? a` | a conditional without an else. In a plain assignment `x` keeps its value when `c` is false, as in `(c) ? a : x`; elsewhere the missing branch is something else again (`x += (c) ? 1` doubles `x`). Avoid: write the else |
 | `pre(x, c)` | `pre` with a clock, `c` a `bool` or a signal: in a tick in which `c` holds it is `x` from the previous such tick, in between it keeps that value. KIELER keeps one memory per variable, so next to a `pre(x)` of the same `x` the clock is ignored or applies to both. Avoid: keep the value in a variable of your own |
 | `bump(&x)`, `put(!&x)` | passes the address of `x` to an `extern` C function that takes a pointer (`!&` if it only writes `x`). Not for methods: an [inlined method](/advanced/methods/#what-kieler-makes-of-a-method) changes its argument anyway, and one compiled to a C function breaks the C code |
-| `super.inc()`, `region is super.Main` | in a chart that `extends` another: the base chart's method or region. Overriding methods works in current KIELER only |
+| `super.inc()`, `region is super.Main` | in a chart that `extends` another: the base chart's method or region. Methods can be overridden too |
 | `state S is Sub(this)` | parses, but KIELER fails on it |
-| `clock-time last` | a variable of the clocks' type, for keeping a clock's value; only in a chart with a `clock`, and only in current KIELER |
+| `clock-time last` | a variable of the clocks' type, for keeping a clock's value; only in a chart with a `clock` |
 | `@info {"step": 2}`, `#meta {"tags": ["a"]}` | an annotation or a pragma whose value is a JSON object; the compiler ignores it |
 | `@figure "and.kgt"` | a custom drawing (a KLighD `.kgt` file, looked up in `#skinpath "dir"`) for a reference in a dataflow diagram; only KIELER's own diagrams use it, the compiler and this guide ignore it |
 | `int x'`, `x'' = x'` | names with primes: KIELER's parser accepts them, but the generated C does not compile ([`missing terminating ' character`](/reference/errors/#compiler-did-not-return-success-exit-value--0)), and this guide rejects them too |

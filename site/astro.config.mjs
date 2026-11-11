@@ -96,6 +96,8 @@ export default defineConfig({
             description:
                 'SCCharts Lab: a beginner-friendly, interactive guide to SCCharts, the synchronous statechart language from Kiel University’s KIELER project, and an in-browser IDE to write, run and export charts.',
             favicon: '/favicon.svg',
+            // The guide and SCCharts Lab share one repository.
+            social: [{ icon: 'github', label: 'SCCharts Lab and this guide on GitHub', href: 'https://github.com/Fallstop/sccharts-lab' }],
             head: [
                 { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
                 // Social card (tools/og-image.mjs renders it).
