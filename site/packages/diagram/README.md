@@ -50,8 +50,9 @@ import '@sccharts-lab/diagram/fonts.css'
 import '@sccharts-lab/diagram/diagram.css'
 
 const result = compile(source)
+if (!result.ok || !result.chart) throw new Error('The chart does not compile')
 const host = document.querySelector('#diagram')!
-host.innerHTML = await chartToSvg(result.chart!, { program: result.program })
+host.innerHTML = await chartToSvg(result.chart, { program: result.program })
 
 const simulation = createSimulation(result)
 const tick = simulation.step({ button: true })
@@ -100,16 +101,16 @@ rendering serves light and dark pages. A dark theme (the guide's):
 `layoutChart` hands the graph to ELK. Without an `elk` option it loads elkjs's bundled build on first use (1.4 MB,
 435 kB gzipped; a bundler splits it into a chunk of its own) and runs it on the calling thread: right for Node and for
 build-time rendering, fine for an occasional diagram in a browser. To keep a page responsive, run ELK in a Web Worker
-with elkjs's `elk-api` (add `elkjs` to your own dependencies, at the version this package uses). With Vite:
+with `workerElk` and elkjs's worker script (add `elkjs` to your own dependencies, at the version this package uses,
+so that your bundler finds the script). With Vite:
 
 ```ts
-import ELK from 'elkjs/lib/elk-api.js'
 import elkWorkerUrl from 'elkjs/lib/elk-worker.min.js?url'
-import { layoutChart } from '@sccharts-lab/diagram/layout'
+import { layoutChart, workerElk } from '@sccharts-lab/diagram/layout'
 import { renderSvg } from '@sccharts-lab/diagram/render'
 
-const elk = new ELK({ workerFactory: () => new Worker(elkWorkerUrl) })
-const layout = await layoutChart(result.chart, { program: result.program, elk })
+if (!result.ok || !result.chart) throw new Error('The chart does not compile')
+const layout = await layoutChart(result.chart, { program: result.program, elk: workerElk(elkWorkerUrl) })
 host.innerHTML = renderSvg(layout)
 ```
 
@@ -122,6 +123,7 @@ also run in a worker and post the layout back.
 
 | Export | |
 | --- | --- |
+| `workerElk(workerUrl)` | An `elk` for `layoutChart` that lays out in a Web Worker (elkjs's `elk-api` and its `elk-worker.min.js` at `workerUrl`); also from `@sccharts-lab/diagram/layout` |
 | `layoutChart(chart, options?)` | `Promise<DiagramLayout>`. Options: `elk`, `program` (the parsed file: referenced charts, formatter context), `charts` (other files' charts, for `import`), `references` (`'collapsed'`, `'expanded'` or reference state ids), `direction` (`'HV'`, KIELER's default, `'VH'`, `'down'`, `'right'`), `userLabels`, `comments`, `declarations`, `actions`, `labelWidth`, `collapsed`, `dataflowCircuit`, `measure`. The chart's `@layout`, `@HVLayout`, `@VHLayout`, `@diagram[...]`, `@hide` and `@collapse` annotations apply as in KIELER |
 | `renderSvg(layout, options?)` | SVG markup. Options: `fit` (`'natural'`: 100 % wide up to the natural size; `'width'`; `'none'`: fixed size), `scale` (1.25), `minScale`, `idPrefix` (unique per diagram on a page), `title`, `className`, `classes` (initial highlights by id), `shadows`, `regionCorner`, `stylesheet` |
 | `chartToSvg(chart, options?)` | both in one call |

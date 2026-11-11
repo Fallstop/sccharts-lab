@@ -39,8 +39,8 @@ export interface Simulation {
     /** Completed ticks. */
     readonly tick: number
     readonly history: SimTickResult[]
-    /** Runs one tick. Missing inputs keep their previous value, as in KIELER. */
-    step(inputs?: Record<string, Value>): SimTickResult
+    /** One tick. `inputs` by name; one left out, or `undefined`, keeps its value (as in KIELER). */
+    step(inputs?: Readonly<Record<string, Value | undefined>>): SimTickResult
     reset(): void
     /** Goes back to the state after tick `toTick` (0: before the first tick); later history is dropped. */
     rewind(toTick: number): void
@@ -59,7 +59,14 @@ export interface SimulationInput {
     sim?: CompiledChart
 }
 
-export function createSimulation(result: SimulationInput): Simulation {
+export interface SimulationOptions {
+    /** step() throws on a name that is no input of the chart (a typo: `buton` for `button`), with the input it most
+     *  likely meant. Off by default: KIELER's simulation takes any name from its environment into the data pool (the
+     *  pool then has it; replaying a trace file with extra columns relies on that). */
+    strict?: boolean
+}
+
+export function createSimulation(result: SimulationInput, options: SimulationOptions = {}): Simulation {
     if (!result.ok || !result.chart) return rejectedSimulation(result, result.sim)
     const compiled = result.sim ?? compileChart(result.chart, result.index)
     if (!result.ok || !compiled || !compiled.runnable || !result.chart) return rejectedSimulation(result, compiled)
@@ -72,7 +79,9 @@ export function createSimulation(result: SimulationInput): Simulation {
         interface: result.interface,
         get tick() { return history.length },
         get history() { return history },
-        step(inputs: Record<string, Value> = {}) {
+        step(given: Readonly<Record<string, Value | undefined>> = {}) {
+            const inputs = defined(given)
+            if (options.strict) checkInputNames(inputs, result.interface)
             const r = runner.step(history.length + 1, inputs)
             history.push(r)
             inputsLog.push({ ...inputs })
@@ -111,7 +120,8 @@ function rejectedSimulation(result: SimulationInput, compiled: CompiledChart | u
         interface: result.interface,
         get tick() { return history.length },
         get history() { return history },
-        step(inputs: Record<string, Value> = {}) {
+        step(given: Readonly<Record<string, Value | undefined>> = {}) {
+            const inputs = defined(given)
             const r: SimTickResult = {
                 tick: history.length + 1, inputs, values: {}, present: {}, active: [], entered: [], exited: [], taken: [], actions: [],
                 terminated: false, terminatedNow: false, log: [], printed: [], error, pool: {}, trace: {},
@@ -123,4 +133,41 @@ function rejectedSimulation(result: SimulationInput, compiled: CompiledChart | u
         rewind(toTick: number) { history.length = Math.max(0, Math.min(toTick, history.length)) },
         takenCounts() { return [] },
     }
+}
+
+/** The names step() takes in strict mode: the chart's inputs, and `V_val` for a valued input signal `V` (KIELER's). */
+function checkInputNames(inputs: Record<string, Value>, iface: VariableInfo[]) {
+    const known = new Set<string>()
+    for (const v of iface) {
+        if (!v.input) continue
+        known.add(v.name)
+        if (v.valued) known.add(`${v.name}_val`)
+    }
+    for (const name of Object.keys(inputs)) {
+        if (known.has(name)) continue
+        const close = [...known].map(k => ({ k, d: editDistance(name.toLowerCase(), k.toLowerCase()) })).sort((a, b) => a.d - b.d)[0]
+        const hint = close && close.d <= Math.max(2, Math.floor(name.length / 3)) ? ` (did you mean \`${close.k}\`?)` : ''
+        throw new Error(`\`${name}\` is not an input of the chart${hint}. Its inputs: ${[...known].map(k => `\`${k}\``).join(', ') || 'none'}.`)
+    }
+}
+
+function editDistance(a: string, b: string): number {
+    const row = Array.from({ length: b.length + 1 }, (_, j) => j)
+    for (let i = 1; i <= a.length; i++) {
+        let prev = row[0]
+        row[0] = i
+        for (let j = 1; j <= b.length; j++) {
+            const keep = row[j]
+            row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1))
+            prev = keep
+        }
+    }
+    return row[b.length]
+}
+
+/** The inputs given a value (`undefined` is one not given: it keeps its value). */
+function defined(given: Readonly<Record<string, Value | undefined>>): Record<string, Value> {
+    const out: Record<string, Value> = {}
+    for (const [k, v] of Object.entries(given)) if (v !== undefined) out[k] = v
+    return out
 }

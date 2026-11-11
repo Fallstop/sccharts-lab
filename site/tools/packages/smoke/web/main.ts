@@ -4,8 +4,7 @@
 // go to window.smoke.
 
 import { compile, createSimulation } from '@sccharts-lab/engine'
-import { applyClasses, chartToSvg, layoutChart, measureWithTable, renderSvg, tickClasses } from '@sccharts-lab/diagram'
-import ELK from 'elkjs/lib/elk-api.js'
+import { applyClasses, chartToSvg, layoutChart, measureWithTable, renderSvg, tickClasses, workerElk } from '@sccharts-lab/diagram'
 import elkWorkerUrl from 'elkjs/lib/elk-worker.min.js?url'
 import '@sccharts-lab/diagram/fonts.css'
 import '@sccharts-lab/diagram/diagram.css'
@@ -26,8 +25,7 @@ async function run() {
     host.innerHTML = await chartToSvg(chart, { program, idPrefix: 'main' })
 
     // ELK in a Web Worker: the same layout.
-    const elk = new ELK({ workerFactory: () => new Worker(elkWorkerUrl) })
-    const layout = await layoutChart(chart, { program, elk })
+    const layout = await layoutChart(chart, { program, elk: workerElk(elkWorkerUrl) })
     document.getElementById('worker')!.innerHTML = renderSvg(layout, { idPrefix: 'worker' })
     const svgs = [...document.querySelectorAll('svg.sc-diagram')]
     const sameLayout = svgs[0].innerHTML.replaceAll('main', 'X') === svgs[1].innerHTML.replaceAll('worker', 'X')

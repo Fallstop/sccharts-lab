@@ -33,7 +33,7 @@ export { extractInterface, constantValue } from './parser/interface'
 export { lex, KEYWORDS } from './parser/lexer'
 export { referenceName, type StandaloneMode } from './parser/parser'
 export { formatExpressionParenthesised, formatEffectParenthesised, type ParenthesiseOptions } from './format'
-export { createSimulation, describeTick, elementName, SIMULATOR_CODES, type DescribeOptions, type PoolValue, type Simulation, type SimTickResult } from './sim/index'
+export { createSimulation, describeTick, elementName, SIMULATOR_CODES, type DescribeOptions, type PoolValue, type Simulation, type SimulationOptions, type SimTickResult } from './sim/index'
 export { generateC, type CNaming, type CVariable, type GenerateCOptions, type GeneratedC } from './codegen/index'
 
 export interface CompileOptions {

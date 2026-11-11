@@ -910,3 +910,5 @@ export async function layoutChart(chart: State, givenOptions: LayoutOptions = {}
     if (options.shadows === false) diagram.shadows = false
     return diagram
 }
+
+export { workerElk } from './elk-worker'

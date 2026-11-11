@@ -78,7 +78,7 @@ class Validator {
             if (!ok) {
                 this.add('warning', 'broken-import', this.program.importSpans?.[i] ?? span, folder ? `No SCCharts files match the import "${name}"` : `There is no file \`${name.endsWith('.sctx') ? name : name + '.sctx'}\` to import`,
                     folder ? 'Broken Import: There are no SCCharts models in the given directory.' : 'Broken Import: There is no SCCharts model with the given name.',
-                    'In this guide, imports only see the other files of the same example.')
+                    'Imports load the other .sctx files given with the chart, by their path relative to it: a project\'s files in the playground, `compile(source, { files })` with the engine package.')
             }
         })
     }

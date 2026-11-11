@@ -38,3 +38,5 @@ export async function layoutChart(chart: State, options: LayoutOptions = {}): Pr
 export async function chartToSvg(chart: State, options: LayoutOptions & RenderOptions = {}): Promise<string> {
     return renderSvg(await layoutChart(chart, options), options)
 }
+
+export { workerElk } from './elk-worker'

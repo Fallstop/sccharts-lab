@@ -75,7 +75,7 @@ for `import`. The result:
 The simulator's compilation (KIELER's transformations, causality and instantaneous-loop analysis) runs lazily, on the
 first read of `ok`, `diagnostics` or `sim`; reading only `program` and `chart` stays cheap.
 
-`createSimulation(result)` gives a `Simulation`: `step(inputs?)` runs one tick (missing inputs keep their value) and
+`createSimulation(result, { strict? })` gives a `Simulation`: `step(inputs?)` runs one tick (missing inputs keep their value; with `strict: true` a name that is no input of the chart, a typo, throws with the input it most likely meant) and
 returns a `SimTickResult` with `values` (by interface name), `pool` (KIELER's data pool, KIELER's names), `active`,
 `entered`, `exited` (state ids), `taken` (transition ids in firing order), `printed`, `terminated`, and `error` for a
 runtime failure such as a division by zero. `history`, `reset()`, `rewind(tick)` and `takenCounts(tick)` (KIELER's

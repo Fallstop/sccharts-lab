@@ -83,6 +83,8 @@ function createProject(tarballs) {
     const tsconfig = (module, moduleResolution) => JSON.stringify({ compilerOptions: { ...compilerOptions, module, moduleResolution }, files: ['consumer.ts'] }, null, 2)
     fs.writeFileSync(path.join(consumer, 'tsconfig.bundler.json'), tsconfig('ESNext', 'Bundler'))
     fs.writeFileSync(path.join(consumer, 'tsconfig.node16.json'), tsconfig('Node16', 'Node16'))
+    // The browser app as the diagram's README writes it (ELK in a Web Worker, `?url` and `?raw` imports): Vite's client types.
+    fs.writeFileSync(path.join(consumer, 'tsconfig.web.json'), JSON.stringify({ compilerOptions: { ...compilerOptions, module: 'ESNext', moduleResolution: 'Bundler', types: ['vite/client'] }, files: ['web/main.ts'] }, null, 2))
     fs.writeFileSync(path.join(consumer, 'vite.config.mjs'), "export default { root: 'web', base: './', logLevel: 'warn', build: { outDir: '../web-dist', emptyOutDir: true } }\n")
 }
 
@@ -342,7 +344,7 @@ async function main() {
     console.log('the first js block of each README runs (the embed\'s: its options and protocol, no DOM)')
 
     step('(b) TypeScript: moduleResolution bundler and node16, skipLibCheck off')
-    for (const config of ['tsconfig.bundler.json', 'tsconfig.node16.json']) {
+    for (const config of ['tsconfig.bundler.json', 'tsconfig.node16.json', 'tsconfig.web.json']) {
         let output = ''
         try {
             run(path.join(consumer, 'node_modules/.bin/tsc'), ['-p', config, '--pretty', 'false'])

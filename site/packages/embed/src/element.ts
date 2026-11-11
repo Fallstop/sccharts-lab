@@ -63,7 +63,33 @@ iframe { display: block; width: 100%; height: 100%; border: 0; background: trans
 // Importable where there is no DOM (the site's build, tests): the class is only defined, never made, there.
 const Base = (typeof HTMLElement === 'undefined' ? class {} : HTMLElement) as typeof HTMLElement
 
+/** The element's events (CustomEvents, not bubbling) and their `detail`. */
+export interface SCChartsLabChartEventMap {
+    /** The chart is live: what it shows, and its tick. */
+    ready: CustomEvent<ReadyInfo>
+    /** A chart compiled (a new source, files or chart): `ok`, its diagnostics, inputs and outputs. */
+    compiled: CustomEvent<CompiledInfo>
+    /** A tick shown: its values (KIELER's names), active states, taken transitions, printed text. */
+    tick: CustomEvent<TickInfo>
+    /** The embed's content height, with `height="auto"`. */
+    resize: CustomEvent<{ height: number }>
+    /** What went wrong: a file that could not be fetched, a command the embed refused. */
+    error: CustomEvent<{ message: string; command?: string }>
+}
+
 export class SCChartsLabChart extends Base {
+    addEventListener<K extends keyof SCChartsLabChartEventMap>(type: K, listener: (this: SCChartsLabChart, event: SCChartsLabChartEventMap[K]) => unknown, options?: boolean | AddEventListenerOptions): void
+    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void
+    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void {
+        super.addEventListener(type, listener, options)
+    }
+
+    removeEventListener<K extends keyof SCChartsLabChartEventMap>(type: K, listener: (this: SCChartsLabChart, event: SCChartsLabChartEventMap[K]) => unknown, options?: boolean | EventListenerOptions): void
+    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void
+    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void {
+        super.removeEventListener(type, listener, options)
+    }
+
     /** Where /embed/ is: the site the loader came from (set by `define`), else sccharts.jmw.nz. */
     static base = DEFAULT_BASE
     static get observedAttributes() {

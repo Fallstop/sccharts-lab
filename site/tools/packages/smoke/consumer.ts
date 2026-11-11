@@ -88,3 +88,15 @@ export async function embed(): Promise<number> {
     void [url, wrong, kind, event, TAG]
     return tick?.tick ?? 0
 }
+
+/** The element's events are typed: `detail` of a tick is the embed's TickInfo (a misuse would not compile). */
+export function listen(chart: SCChartsLabChart): void {
+    chart.addEventListener('tick', event => {
+        const tick: EmbedTick = event.detail
+        void tick.values
+    })
+    chart.addEventListener('ready', event => void event.detail.view)
+    chart.addEventListener('error', event => void event.detail.message.toUpperCase())
+    // @ts-expect-error: a tick's detail has no `nonsense`
+    chart.addEventListener('tick', event => void event.detail.nonsense)
+}

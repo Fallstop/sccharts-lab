@@ -3,4 +3,4 @@
 // entry point of the site's /embed.js).
 export * from './protocol'
 export * from './options'
-export { SCChartsLabChart, TAG, define, dedent, inlineFiles } from './element'
+export { SCChartsLabChart, TAG, define, dedent, inlineFiles, type SCChartsLabChartEventMap } from './element'

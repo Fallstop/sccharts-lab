@@ -45,7 +45,7 @@ const chart = document.querySelector('sccharts-lab-chart')!
 await chart.ready
 const tick = await chart.step({ A: true })      // also setInputs, reset, rewind, setSource, setFiles, selectChart, getState
 console.log(tick.values, tick.active)
-chart.addEventListener('tick', event => console.log(event.detail.values))   // ready, compiled, tick, resize, error
+chart.addEventListener('tick', event => console.log(event.detail.values))   // ready, compiled, tick, resize, error (typed: SCChartsLabChartEventMap)
 ```
 
 ## An iframe of your own
