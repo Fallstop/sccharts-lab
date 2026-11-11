@@ -291,9 +291,11 @@ export async function bootPage() {
     let handled = location.href
     const follow = async () => {
         if (location.href === handled || !app) return
-        handled = location.href
+        // This navigation's own address: a later one (Back, Forward, another link) changes `handled`, and then this
+        // one, still loading its chart, must not open it over the later one's.
+        const mine = (handled = location.href)
         const next = await linkTarget(location, describe)
-        if (location.href !== handled) return
+        if (handled !== mine) return
         if (!next.project && !next.param && !hasSharedChart(location.hash)) Object.assign(next, await lastProject(data, describe))
         if (!next.project || !next.origin) {
             if (next.notice) app.toast(next.notice.replace(/ Here is the default chart instead\.$/, ''))
@@ -301,7 +303,7 @@ export async function bootPage() {
         }
         const id = next.origin.kind === 'example' || next.origin.kind === 'default' ? next.origin.id ?? data.defaultId : undefined
         const tour = next.scenario ?? (id ? await import('./sources').then(m => m.loadScenario(id)).catch(() => undefined) : undefined)
-        if (location.href !== handled) return
+        if (handled !== mine) return
         app.openLink({ project: next.project, origin: next.origin, scenario: tour, run: next.run, chart: next.chart, solution: next.solution }, next.notice)
     }
     window.addEventListener('hashchange', () => void follow())

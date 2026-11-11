@@ -107,10 +107,12 @@ export function renameTrace(trace: TraceRecord, renames: Renames): TraceRecord {
     pairs.forEach(([from, to]) => {
         if (!names.has(from)) throw new Error(`The trace has no variable ${from}.`)
         if (targets.has(to)) throw new Error(`Two variables cannot both become ${to}.`)
-        if (names.has(to) && !renames[to]) throw new Error(`The trace has a variable ${to} already.`)
+        // Into a name that is itself renamed away (a swap) is fine; one that stays (no rename, or to itself) is taken.
+        const away = Object.hasOwn(renames, to) && renames[to] !== to
+        if (names.has(to) && !away) throw new Error(`The trace has a variable ${to} already.`)
         targets.add(to)
     })
-    const rename = (name: string) => renames[name] ?? name
+    const rename = (name: string) => (Object.hasOwn(renames, name) ? renames[name] : name)
     return {
         ...trace,
         variables: trace.variables.map((variable): TraceVariable => ({ ...variable, name: rename(variable.name) })),

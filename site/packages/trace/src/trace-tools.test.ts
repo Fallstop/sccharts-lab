@@ -357,3 +357,17 @@ test('remembered aliases put the newest first and forget declined pairs either w
     assert.deepEqual(forgetAliases(aliases, { a: 'A' }), [['b', 'B']])
     assert.equal(rememberAliases([], Object.fromEntries(Array.from({ length: 300 }, (_, i) => [`x${i}`, `y${i}`]))).length, 200)
 })
+
+test('renames read only their own names: a variable called constructor keeps its name and values', () => {
+    const trace: TraceRecord = { variables: [{ name: 'a', role: 'input' }, { name: 'constructor', role: 'input' }], ticks: [{ a: 1, constructor: 5 }] }
+    const renamed = renameTrace(trace, { a: 'A' })
+    assert.deepEqual(renamed.variables.map(v => v.name), ['A', 'constructor'])
+    assert.deepEqual(renamed.ticks[0], { A: 1, constructor: 5 })
+})
+
+test('a rename into a name that stays (no rename, or one to itself) is refused, never two columns of one name', () => {
+    const trace: TraceRecord = { variables: [{ name: 'a' }, { name: 'b' }], ticks: [{ a: 1, b: 2 }] }
+    assert.throws(() => renameTrace(trace, { a: 'b', b: 'b' }), /already/)
+    assert.throws(() => renameTrace(trace, { a: 'b' }), /already/)
+    assert.deepEqual(renameTrace(trace, { a: 'b', b: 'a' }).ticks[0], { b: 1, a: 2 })
+})

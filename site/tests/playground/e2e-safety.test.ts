@@ -109,6 +109,28 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await ctx.close()
     }, 120000)
 
+    test('Back, then Forward before the chart Back opened has loaded: the chart of the address shown opens, not the slow one', async () => {
+        const ctx = await context()
+        const page = await open(ctx, '/playground/')
+        const B = 'scchart Latest {\n  initial state L\n}\n'
+        // An example this page has not loaded yet, slow to arrive.
+        await page.route(url => url.href.includes('lamp-broken'), async route => {
+            await new Promise(r => setTimeout(r, 1500))
+            await route.continue()
+        })
+        await page.evaluate(h => {
+            history.pushState(null, '', '/playground/?example=learn/first-chart/lamp-broken')
+            history.pushState(null, '', `/playground/${h}`)
+        }, hashForSource(B))
+        await page.evaluate(() => history.back())
+        await page.waitForFunction(() => location.search.includes('lamp-broken'))
+        await page.evaluate(() => history.forward())
+        await page.waitForFunction(() => /scchart Latest/.test((document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString()))
+        await page.waitForTimeout(2500)
+        expect(await editorText(page)).toContain('scchart Latest')
+        await ctx.close()
+    }, 120000)
+
     test('Back to another link right after typing, then a reload, at any moment: the edits are always stored by the time the page is back', async () => {
         const ctx = await context()
         const B = 'scchart Bee {\n  initial state B\n}\n'
