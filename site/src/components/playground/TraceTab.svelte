@@ -212,15 +212,13 @@
             </div>
             <p class="sc-pg-trace__hint">{canSave ? `${ran} ${ran === 1 ? 'tick' : 'ticks'} of ${chart}${inputsOnly ? ', its inputs as a sequence' : ''}.` : 'Run the chart first: the file holds the ticks you run.'}</p>
         </section>
-        <section class="sc-pg-trace__group" aria-labelledby="sc-pg-trace-replay">
-            <h3 id="sc-pg-trace-replay">Replay a trace</h3>
-            <p class="sc-pg-trace__hint">Its inputs drive the chart tick by tick; its outputs are checked after each tick.</p>
-            <button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" onclick={() => pick('replay')}>{@html icons.open}Open a trace…</button>
-        </section>
-        <section class="sc-pg-trace__group" aria-labelledby="sc-pg-trace-compare">
-            <h3 id="sc-pg-trace-compare">Compare</h3>
-            <p class="sc-pg-trace__hint">This run against saved traces, variable by variable.</p>
-            <button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" onclick={() => pick('compare')}>{@html icons.plus}Add traces…</button>
+        <section class="sc-pg-trace__group" aria-labelledby="sc-pg-trace-open">
+            <h3 id="sc-pg-trace-open">Open a trace</h3>
+            <p class="sc-pg-trace__hint"><b>Replay</b> drives the chart with its inputs and checks its outputs after each tick; <b>Compare</b> sets it beside this run.</p>
+            <div class="sc-pg-trace__row">
+                <button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" onclick={() => pick('replay')}>{@html icons.open}Replay…</button>
+                <button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" onclick={() => pick('compare')}>{@html icons.compare}Compare…</button>
+            </div>
         </section>
         {#if folderFiles.length}
             <section class="sc-pg-trace__group" aria-labelledby="sc-pg-trace-folder">

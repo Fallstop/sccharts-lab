@@ -932,7 +932,7 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         expect(csv.split('\n')[0]).toMatch(/^tick,/)
         // Replayed: the panel plays its inputs as a tour; Run goes to the end with every output the same.
         const replay = async (file: string) => {
-            const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('.sc-pg-trace__group button:has-text("Open a trace")')])
+            const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('.sc-pg-trace__group button:has-text("Replay…")')])
             await chooser.setFiles(file)
             await page.waitForFunction(f => document.querySelector('.sc-pg-trace__status')?.textContent?.includes(f), path.basename(file))
         }
@@ -963,7 +963,7 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         expect(await page.textContent('[data-pg-sim] .sc-tour__note')).toBe('display is 2; the file has 99.')
         // Compare: the run against both files, as a report; downloads as .md and .csv.
         await page.click('[data-pg-panel-tabs] [data-panel-tab="trace"]')
-        const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('.sc-pg-trace__group button:has-text("Add traces")')])
+        const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('.sc-pg-trace__group button:has-text("Compare…")')])
         await chooser.setFiles([saved, changed])
         await page.waitForSelector('.sc-pg-report table')
         expect(await page.textContent('.sc-pg-report h3')).toBe('Trace comparison')

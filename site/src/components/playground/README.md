@@ -15,7 +15,7 @@ compact single-file widget). Owner: the playground workstream.
 │ a     ┊ │ editor                │ ┊ │ stage                          │                                      │
 │ lib/  ┊ │ ● No problems  Ln 3   │ ┊ └────────────────────────────────┘                                      │
 │   b   ┊ ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┴┄┴┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┤
-│       ┊ │ Simulation · Problems 2 · Console 3           (the tab's tools: Guided tour | Free play, …)  │
+│       ┊ │ Simulation · Problems 2 · Console 3 · Trace · C code   (the tab's tools: Guided tour, …)     │
 │       ┊ │ the tab's panel                                                                              │
 └───────┴─┴──────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -126,6 +126,39 @@ compact single-file widget). Owner: the playground workstream.
   with `print(...)` (`TickResult.printed`), each line with its tick; it follows the run (the tick shown in view, later
   ticks dimmed after Back), Clear hides the lines so far, Copy copies the lines shown with their ticks; the badge
   counts the lines up to the tick shown.
+- **Trace** (the bottom panel's Trace tab, `TraceTab.svelte`, `TraceGrid.svelte`, `trace-actions.ts`,
+  `report-md.ts`): the SCCharts Lab extension's trace files (`@sccharts-lab/trace`, the same bytes for the same run).
+  - **Save this run**: KTrace (KIELER's), CSV, JSON or XML, the whole run or its inputs as an input sequence
+    (`traceFromRun`, `inputsOnly`, `writeTrace`); downloaded as `<Chart>-run.<ext>`, or, in a folder project, saved
+    into the folder under a free name (`traceFileName`).
+  - **Replay a trace** (Open a trace…, a file dropped on the tab, or a trace file listed from the project's folder):
+    the file is replayed once into a fresh simulation (`replayTrace`: its inputs matched to the chart's by name and
+    converted to their types; its outputs checked after every tick), and the inputs each tick read (`ranWith`, via
+    `runInputs`) become a tour that the simulation panel plays, as a shared run's or the test run's: "Replay, tick 3
+    of 12", each tick's note naming what differs ("`display` is 2; the file has 99."). The engine is deterministic,
+    so the panel's run is the checked run. The tab has its own Previous / Next / Run (Run stops at the first tick
+    that differs and at the end of the file; the panel's own Run stops there too while the tab is mounted) and a grid
+    of the file's ticks: the file's inputs (a carried value muted), the checked outputs as the chart computed them,
+    a cell that differs marked (a dashed outline and the file's value) and its tick (≠), the tick shown shaded; a
+    tick's number shows it in the panel. Names the file spells another way are offered as renames
+    (`suggestRenames`: "Read `LEVEL` as `level`"); inputs the chart lacks, inputs the file does not set, values that
+    do not fit, and the reader's notes are listed. The tab's badge counts the ticks that differ.
+  - **Compare**: the run in the panel (the reference) against one or more trace files (`compareTraces` through
+    `compareRun`): the extension's report (`comparisonMarkdown`) rendered as HTML (`reportHtml`: its headings, pipe
+    tables and inline Markdown; rows that differ marked), following the run; downloads as `.md` and `.csv`
+    (`comparisonCsv`).
+- **C code** (the bottom panel's C code tab, `CCode.svelte`, `c-view.ts`, `c-project.ts`): the chart in the editor as
+  C (`generateC` of the engine: `<Chart>.h` and `<Chart>.c` in the shape of KIELER's netlist-based compilation, which
+  `pnpm cgen:check` checks against KIELER on the whole corpus), read only, highlighted (CodeMirror's C mode,
+  `@codemirror/legacy-modes`, in the guide's code colours), with a file switch, the names (KIELER's `#code.naming`:
+  `tick` / `reset` / `TickData`, prefix `ABROtick`, suffix `tickABRO`) and source comments (remembered), Copy, and
+  **Download .zip**: the two files and a `main.c` (`mainC`) that resets the chart, ticks it ten times, prints the
+  outputs after each tick and stops at termination, built with the one command in its first comment (gcc as KIELER's
+  simulation calls it: `gcc -std=c99 -Wall -o ABRO main.c ABRO.c -lm`). **Interface** shows which struct member is
+  which chart variable, its C type and whether it is an input or an output. The code follows the chart while the tab
+  is shown (after a pause in typing; a hidden tab regenerates when shown). A chart with errors says so and offers
+  the Problems tab; `generateC`'s own diagnostics are listed. A chart with host code (backticks, `extern`,
+  `#hostcode`), which the browser cannot simulate, has its C here, ready to build.
 - **Exercises** (`compare.ts`): TryIt links open `?example=<starter>&solution=<solution id>`. When the solution has a
   scenario and an oracle recording, the toolbar offers **Compare with the model solution**: the reader's chart (as it
   is now) runs on the scenario's inputs and every output the solution declares is compared, tick by tick, with KIELER's
@@ -223,7 +256,9 @@ tab-focus mode, `app.ts`); /playground keeps the editor's own Tab (Escape, then 
 | `problems.ts` | squiggles, the status, the list, KIELER's recorded words, the verdict |
 | `sim-control.ts`, `variables-strip.ts`, `watch-strip.ts`, `sim-host.svelte.ts` | the simulation: SimPanel, tours, Rebuild, sharing a run; the variables; Watch and Run until |
 | `exercise.ts` | the task banner and Compare with the model solution |
-| `panel.ts`, `panel-tabs.ts`, `console-tab.ts`, `Console.svelte` | the bottom panel and its tabs |
+| `panel.ts`, `panel-tabs.ts`, `console-tab.ts`, `Console.svelte` | the bottom panel and its tabs; the console |
+| `trace-tab.ts`, `TraceTab.svelte`, `TraceGrid.svelte`, `trace-actions.ts`, `report-md.ts` | the Trace tab: save, replay, compare |
+| `c-code-tab.ts`, `CCode.svelte`, `c-view.ts`, `c-project.ts` | the C code tab: the code view, `main.c` and the .zip |
 | `model.svelte.ts` | `PlaygroundModel`: what the Svelte parts and the panel's tabs read |
 | `FileTree.svelte`, `FileTabs.svelte` | the files sidebar, the editor's tabs |
 | `workspace.ts`, `tabs.ts`, `file-actions.ts`, `toast.ts` | splitters and heights; the phone tabs; actions and keys; the toast |
@@ -234,26 +269,28 @@ tab-focus mode, `app.ts`); /playground keeps the editor's own Tab (Escape, then 
 
 The tabs are a registry, `PANEL_TABS` in `panel-tabs.ts`. `page/BottomPanel.astro` renders a tab button, a tools slot
 (in the panel's head) and an empty panel for each entry at build time; `panel.ts` mounts a tab's content the first
-time it is shown (or at start, `eager: true`). A "Trace" or a "C code" tab is one entry and one module:
+time it is shown (or at start, `eager: true`). A tab is one entry and one module; the C code tab is:
 
 ```ts
 // panel-tabs.ts
-{ id: 'c', label: 'C code', mount: (host, ctx) => import('./c-code-tab').then(m => m.mount(host, ctx)) },
+{ id: 'c', label: 'C code', mount: (host, ctx) => import('./c-code-tab').then(m => m.mountCCode(host, ctx)) },
 
 // c-code-tab.ts
-import { mount as mountSvelte } from 'svelte'
-import CCode from './CCode.svelte'
-import type { PanelTabContext } from './panel-tabs'
-export function mount(host: HTMLElement, ctx: PanelTabContext) {
-    const app = mountSvelte(CCode, { target: host, props: { model: ctx.model } })   // reads ctx.model.compiled
-    return () => unmount(app)
+export function mountCCode(host: HTMLElement, ctx: PanelTabContext): () => void {
+    const app = mount(CCode, { target: host, props: { ctx, icons: pgIcons } })   // CCode reads ctx.model.compiled
+    return () => void unmount(app)
 }
 ```
 
 The tab's context (`PanelTabContext`): `model` (below, reactive), `tools` (an element in the panel's head for the
-tab's buttons, shown with the tab), `setBadge(value, words, state)`, `reveal(path, from, to)` (select a range of a file
-in the editor), `toast(message)`, `visible` and `onShow(listener)`. Keep `panel-tabs.ts` free of browser code at its
-top level (the page imports it at build time).
+tab's buttons, shown with the tab; the Console's Clear and Copy), `setBadge(value, words, state)`, `reveal(path,
+from, to)` (select a range of a file in the editor), `toast(message)`, `visible` and `onShow(listener)` (the C tab
+regenerates only while shown), `showTab(id)`; `sim`, the simulation panel: `tour({ scenario, name, title, intro })`
+plays a tour of inputs on the file in the editor (`model.tour` is `{ kind: 'trace', name }` and `model.simView.tour`
+true while it is in control; the Trace tab's replay), and its transport `step`, `back`, `run`, `pause`, `goto(tick)`;
+`folder()`, the project's folder on disk when it is one (`list(match)`, `read(path)`, `write(path, text)`; it asks the
+browser for permission if need be). Keep `panel-tabs.ts` free of browser code at its top level (the page imports it
+at build time).
 
 ## What a tab can read: `PlaygroundModel` (`model.svelte.ts`)
 
@@ -267,6 +304,7 @@ code subscribes with `watch(() => model.compiled, c => …)`.
 | `problems` | its problems (the engine's diagnostics, with KIELER's recorded words for an example as written) |
 | `simulation` | `{ file, source, result }`: what the simulation runs (another file than the active one while a run of it lasts) |
 | `simView` | `{ cursor, tick, history, tour, lines }`: the tick shown and every tick computed (`TickResult`s with `printed`, `ranWith`, `values`, the engine's `pool` and `trace`) |
+| `tour` | the tour the panel was mounted with: `{ kind: 'tour' \| 'test' \| 'shared' \| 'trace', name }`, in control while `simView.tour` |
 
 The controller (`root.playground`, for tests and the console) also has `project.texts()` (every file's text now),
 `project.imports()` (what the active file's compile gets) and `sim.host` (the panel's `SimHost`).
@@ -309,7 +347,9 @@ pnpm exec vitest run tests/playground                       # tokenizer, languag
                                                             # the comparison with model solutions, shared runs
                                                             # (every example's run replays the same), variables,
                                                             # KIELER's recorded words, the exercises' tasks,
-                                                            # the watch
+                                                            # the watch, traces (save, replay, compare, the
+                                                            # report as HTML), the C code's .zip (built with gcc
+                                                            # and run against the engine; skipped without gcc)
 PLAYGROUND_E2E=1 pnpm exec vitest run tests/playground/e2e.test.ts   # Chromium against the dev server
                                                             # (PLAYGROUND_URL=http://127.0.0.1:4341 for another one)
 ```
