@@ -41,6 +41,7 @@ export class BottomPanel {
             t.setAttribute('aria-selected', String(on))
             t.tabIndex = on ? 0 : -1
             if (on && o.focus) t.focus()
+            if (on) t.scrollIntoView({ block: 'nearest', inline: 'nearest' })
         }
         for (const p of this.root.querySelectorAll<HTMLElement>('[data-pg-panel-body]')) p.hidden = p.dataset.pgPanelBody !== id
         for (const p of this.root.querySelectorAll<HTMLElement>('[data-pg-panel-tools]')) p.hidden = p.dataset.pgPanelTools !== id
@@ -80,6 +81,16 @@ export class BottomPanel {
                 return panel.current === spec.id
             },
             onShow: listener => this.listeners.set(spec.id, [...(this.listeners.get(spec.id) ?? []), listener]),
+            showTab: id => this.show(id),
+            sim: {
+                tour: t => pg.sim.playTour(t),
+                step: () => pg.sim.host?.step(),
+                back: () => pg.sim.host?.back(),
+                run: () => pg.sim.host?.run(),
+                pause: () => pg.sim.host?.pause(),
+                goto: tick => pg.sim.host?.goto(tick),
+            },
+            folder: () => pg.project.folderAccess(),
         }
         try {
             await spec.mount(host, ctx)

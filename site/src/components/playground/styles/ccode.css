@@ -1,0 +1,200 @@
+/* The bottom panel's C code tab: its bar, the code (CodeMirror, read only), the Interface beside it. */
+
+.sc-pg-panel__body[data-pg-panel-body='c'] {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+.sc-pg-c {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}
+.sc-pg-c__bar {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.375rem 0.875rem;
+	padding: 0.375rem 0.5rem 0.375rem 0.5rem;
+	border-bottom: 1px solid var(--pg-line);
+	background-color: var(--c-rail);
+	font-size: var(--text-xs);
+}
+.sc-pg-c__files {
+	display: inline-flex;
+	padding: 2px;
+	border: 1px solid var(--c-control);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+}
+.sc-pg-c__files button {
+	min-height: 1.625rem;
+	padding: 0 0.75rem;
+	border: 0;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-muted);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	font-weight: 700;
+	cursor: pointer;
+}
+.sc-pg-c__files button[aria-pressed='true'] {
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+.sc-pg-c__option {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	color: var(--c-ink);
+}
+.sc-pg-c__option > span {
+	color: var(--c-muted);
+	font-weight: 700;
+}
+.sc-pg-c__option select {
+	min-height: 1.75rem;
+	padding: 0 0.375rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font: inherit;
+}
+.sc-pg-c__fill {
+	flex: 1;
+}
+.sc-pg-c .sc-pg__simtool[aria-disabled='true'] {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+.sc-pg-c__notes {
+	flex: none;
+	padding: 0.375rem 0.875rem;
+	border-bottom: 1px solid var(--pg-line);
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+}
+.sc-pg-c__notes p {
+	margin: 0;
+}
+.sc-pg-c__notes p.is-feature {
+	color: var(--c-tip-ink);
+}
+.sc-pg-c__notes p.is-feature::before {
+	content: '';
+	display: inline-block;
+	width: 0.875rem;
+	height: 0.5625rem;
+	margin-inline-end: 0.5rem;
+	border: 2px solid var(--sc-state-stroke);
+	border-radius: var(--radius-capsule);
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	vertical-align: -0.0625rem;
+}
+.sc-pg-c__body {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+}
+.sc-pg-c__code {
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	background-color: var(--c-code-bg);
+}
+.sc-pg-c__code .cm-editor {
+	height: 100%;
+}
+.sc-pg-c__code .cm-scroller {
+	scrollbar-width: thin;
+}
+.sc-pg-c__interface {
+	flex: none;
+	width: min(30rem, 45%);
+	overflow: auto;
+	padding: 0.5rem 0.875rem 0.75rem;
+	border-inline-start: 1px solid var(--pg-line);
+	background-color: var(--c-sheet);
+	font-size: var(--text-xs);
+}
+.sc-pg-c__interface h3 {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	margin: 0 0 0.375rem;
+	font-size: var(--text-xs);
+	color: var(--c-ink);
+}
+.sc-pg-c__interface h3 span {
+	font-family: var(--font-mono);
+	font-weight: 400;
+	color: var(--c-muted);
+}
+.sc-pg-c__interface table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.sc-pg-c__interface th,
+.sc-pg-c__interface td {
+	padding: 0.1875rem 0.5rem 0.1875rem 0;
+	border-bottom: 1px solid var(--c-rule);
+	text-align: start;
+	white-space: nowrap;
+}
+.sc-pg-c__interface thead th {
+	color: var(--c-muted);
+	font-weight: 700;
+}
+.sc-pg-c__interface tbody th {
+	font-weight: 400;
+}
+.sc-pg-c__interface code {
+	font-family: var(--font-mono);
+	color: var(--c-ink);
+}
+.sc-pg-c__interface tr.is-input td:last-child {
+	color: var(--c-muted);
+}
+.sc-pg-c__interface p {
+	margin: 0.5rem 0 0;
+	color: var(--c-muted);
+	line-height: var(--leading-snug);
+}
+.sc-pg-c__status {
+	flex: none;
+	margin: 0;
+	padding: 0.1875rem 0.875rem;
+	border-top: 1px solid var(--pg-line);
+	background-color: var(--c-rail);
+	color: var(--c-muted);
+	font-size: var(--text-2xs);
+	font-variant-numeric: tabular-nums;
+}
+.sc-pg-c__empty {
+	margin: 0;
+	padding: 0.875rem 1rem;
+	color: var(--c-muted);
+	font-size: var(--text-sm);
+}
+.sc-pg-c__empty p {
+	margin: 0 0 0.5rem;
+}
+.sc-pg-c__where {
+	color: var(--c-muted);
+	font-size: var(--text-2xs);
+}
+@media (max-width: 47.99rem) {
+	.sc-pg-c__body {
+		flex-direction: column;
+	}
+	.sc-pg-c__interface {
+		width: auto;
+		max-height: 45%;
+		border-inline-start: 0;
+		border-top: 1px solid var(--pg-line);
+	}
+}

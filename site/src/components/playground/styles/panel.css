@@ -173,9 +173,11 @@
 }
 
 @media (max-width: 47.99rem) {
-	/* On a phone the tab's tools take a row of their own, under the tabs. */
+	/* On a phone the tab's tools take a row of their own, under the tabs; the tabs scroll sideways. */
 	.sc-pg-panel__tabs {
 		flex: 1 0 100%;
+		overflow-x: auto;
+		scrollbar-width: none;
 	}
 	.sc-pg-panel__tabs [role='tab'] {
 		padding-inline: 0.625rem;

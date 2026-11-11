@@ -11,6 +11,26 @@
 // This module is imported at build time too: keep it free of browser code at its top level.
 
 import type { PlaygroundModel } from './model.svelte'
+import type { Scenario } from '../frame/examples'
+
+/** A tour of inputs for the simulation panel (as a guided tour: per tick its inputs and a note). */
+export interface PanelTour {
+    scenario: Scenario
+    /** What the panel calls it ("Replay": "Replay, tick 3 of 12"), and the switch's title. */
+    name: string
+    title: string
+    /** The panel's words before tick 1 (inline Markdown). */
+    intro: string
+}
+
+/** The project's folder on disk (Open folder), while the browser lets the playground use it. */
+export interface ProjectFolder {
+    name: string
+    /** Paths of the folder's files whose names match (two levels down). */
+    list(match: RegExp): Promise<string[]>
+    read(path: string): Promise<string>
+    write(path: string, text: string): Promise<void>
+}
 
 export interface PanelTabContext {
     /** The playground's state, reactive (read only). */
@@ -26,6 +46,20 @@ export interface PanelTabContext {
     /** Whether the tab is shown now; `onShow` is called each time it is. */
     readonly visible: boolean
     onShow(listener: () => void): void
+    /** Shows another tab of the panel ('sim', 'problems', ...). */
+    showTab(id: string): void
+    /** The simulation panel: plays a tour of inputs on the file in the editor (`model.tour` says it is in
+     *  control while `model.simView.tour`), and its transport. */
+    sim: {
+        tour(t: PanelTour): void
+        step(): void
+        back(): void
+        run(): void
+        pause(): void
+        goto(tick: number): void
+    }
+    /** The project's folder on disk, when it is one (asks the browser for permission if need be). */
+    folder(): Promise<ProjectFolder | undefined>
 }
 
 export interface PanelTab {
@@ -44,4 +78,6 @@ export const PANEL_TABS: PanelTab[] = [
     { id: 'sim', label: 'Simulation', builtin: true },
     { id: 'problems', label: 'Problems', builtin: true },
     { id: 'console', label: 'Console', eager: true, mount: (host, ctx) => import('./console-tab').then(m => m.mountConsole(host, ctx)) },
+    { id: 'trace', label: 'Trace', mount: (host, ctx) => import('./trace-tab').then(m => m.mountTrace(host, ctx)) },
+    { id: 'c', label: 'C code', mount: (host, ctx) => import('./c-code-tab').then(m => m.mountCCode(host, ctx)) },
 ]

@@ -40,6 +40,8 @@ export interface SimHost {
     /** Draws the tick the quiet steps reached: `onhighlight` has reported it when this returns. */
     settle(): void
     back(): void
+    /** Shows a tick of the run (one computed already). */
+    goto(tick: number): void
     reset(): void
     run(): void
     pause(): void
@@ -59,6 +61,7 @@ interface PanelExports {
     stepQuietly?: () => QuietStep | undefined
     settle?: () => void
     back?: () => void
+    goto?: (tick: number) => void
     reset?: () => void
     run?: () => void
     pause?: () => void
@@ -115,7 +118,7 @@ export async function mountSim(
         tourName: options.tourName,
     }
     const instance = mount(SimPanel, { target, props }) as unknown as PanelExports
-    const call = (name: keyof PanelExports) => () => instance[name]?.()
+    const call = (name: Exclude<keyof PanelExports, 'goto' | 'stepQuietly'>) => () => void instance[name]?.()
     return {
         setCompiled(result, text, mode) {
             recompile = mode
@@ -137,6 +140,9 @@ export async function mountSim(
             flushSync()
         },
         back: call('back'),
+        goto(tick) {
+            instance.goto?.(tick)
+        },
         reset: call('reset'),
         run: call('run'),
         pause: call('pause'),

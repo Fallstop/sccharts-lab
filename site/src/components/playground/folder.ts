@@ -66,6 +66,27 @@ export async function readFolder(handle: FileSystemDirectoryHandle): Promise<Fol
     return { name: handle.name, handle, files: ordered, skipped }
 }
 
+/** The paths of the folder's files whose names match (two levels down, as readFolder), sorted. */
+export async function listFiles(handle: FileSystemDirectoryHandle, match: RegExp): Promise<string[]> {
+    const out: string[] = []
+    const walk = async (dir: DirHandle, prefix: string, depth: number) => {
+        for await (const entry of dir.values()) {
+            if (SKIP.test(entry.name)) continue
+            if (entry.kind === 'directory') {
+                if (depth < 2) await walk(entry as DirHandle, `${prefix}${entry.name}/`, depth + 1)
+            } else if (match.test(entry.name) && out.length < MAX_FILES) out.push(`${prefix}${entry.name}`)
+        }
+    }
+    await walk(handle as DirHandle, '', 0)
+    return sortedPaths(out)
+}
+
+/** A file of the folder, as text. */
+export async function readText(root: FileSystemDirectoryHandle, path: string): Promise<string> {
+    const { dir, name } = await dirFor(root, path, false)
+    return (await (await dir.getFileHandle(name)).getFile()).text()
+}
+
 /** Whether the playground may write to the folder; asks (it needs a click or a key) when `ask`. */
 export async function permitted(handle: FileSystemDirectoryHandle, ask: boolean): Promise<boolean> {
     const h = handle as DirHandle

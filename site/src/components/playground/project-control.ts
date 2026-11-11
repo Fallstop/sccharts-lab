@@ -10,7 +10,8 @@ import type { EditorState } from '@codemirror/state'
 import { mount } from 'svelte'
 import { $, type ProjectSpec } from './app-types'
 import { stateFor } from './editor'
-import { permitted, readFolder, removeFile, writeFile } from './folder'
+import { listFiles, permitted, readFolder, readText, removeFile, writeFile } from './folder'
+import type { ProjectFolder } from './panel-tabs'
 import { baseOf, checkName, freeName, importedFiles, makeProject, sameFiles, sortedPaths } from './project'
 import { newProjectId, putProject, setCurrent, type StoredProject } from './project-store'
 import { hashForProject, SCRATCH_KEY, storageSet } from './share'
@@ -338,6 +339,20 @@ export class ProjectControl {
         this.publish()
         const n = write.length + gone.length
         pg.toast(n ? `Saved ${n === 1 ? (write[0] ?? `the removal of ${gone[0]}`) : `${n} files`} to ${folder.name}.` : `Everything is saved in ${folder.name}.`)
+    }
+
+    /** The project's folder for the panel's tabs (a trace saved there, the trace files in it), once permitted. */
+    async folderAccess(): Promise<ProjectFolder | undefined> {
+        const folder = this.folder
+        if (!folder?.handle || !(await permitted(folder.handle, true))) return undefined
+        folder.connected = true
+        const handle = folder.handle
+        return {
+            name: folder.name,
+            list: match => listFiles(handle, match),
+            read: path => readText(handle, path),
+            write: (path, text) => writeFile(handle, path, text),
+        }
     }
 
     /** A folder project after a reload: the browser asks again before the playground may read or write it. Reads

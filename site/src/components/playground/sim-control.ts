@@ -19,12 +19,13 @@ import type { Playground } from './app'
 
 /** What the panel's tour is: the example's guided tour, the model solution's test run (Compare), or a shared run.
  *  The switch in the panel's head says what the panel says ("Test run, tick 3 of 7"). */
-type TourKind = 'tour' | 'test' | 'shared'
-const TOUR_NAMES: Record<TourKind, string> = { tour: 'Guided tour', test: 'Test run', shared: 'Shared run' }
+type TourKind = 'tour' | 'test' | 'shared' | 'trace'
+const TOUR_NAMES: Record<TourKind, string> = { tour: 'Guided tour', test: 'Test run', shared: 'Shared run', trace: 'Replay' }
 const TOUR_TITLES: Record<TourKind, string> = {
     tour: "Step through the example's scripted inputs, with notes",
     test: "Step through the inputs of the model solution's test run",
     shared: 'Step through the inputs of the shared run',
+    trace: 'Step through the inputs of the trace file',
 }
 
 /** A chart with errors reaches a simulation that has not started only after a pause in typing. */
@@ -59,8 +60,9 @@ export class SimControl {
     wantTour = false
     /** The panel's tour is in control (SimPanel's SimView.tour). */
     tourActive = false
-    /** The panel replays other inputs than the example's tour: the comparison's test run, or a shared run. */
-    private replay?: { scenario: Scenario; ticks: number; kind: 'test' | 'shared' }
+    /** The panel replays other inputs than the example's tour: the comparison's test run, a shared run, or a trace
+     *  file (the Trace tab: `file` is the file it drives; `name`, `title` and `intro` its words). */
+    private replay?: { scenario: Scenario; ticks: number; kind: 'test' | 'shared' | 'trace'; file?: string; name?: string; title?: string; intro?: string }
     /** A shared run waiting for the chart to compile (its notes need the chart's inputs). */
     private sharedRun?: SharedRun
     private runAnnounced = false
@@ -140,6 +142,14 @@ export class SimControl {
         this.force()
     }
 
+    /** A tour of inputs from a tab of the panel (a trace file replayed) on the file in the editor, from tick 0. */
+    playTour(t: { scenario: Scenario; name: string; title: string; intro: string }) {
+        this.replay = { scenario: t.scenario, ticks: 0, kind: 'trace', file: this.pg.project.active, name: t.name, title: t.title, intro: t.intro }
+        this.sharedRun = undefined
+        this.wantTour = true
+        this.force()
+    }
+
     private get tourKind(): TourKind {
         return this.replay?.kind ?? (this.sharedRun ? 'shared' : 'tour')
     }
@@ -147,7 +157,7 @@ export class SimControl {
     /** The tours belong to the project's main file (the example, the file a run was shared from). */
     private toursFor(file: string | undefined) {
         const main = file === this.pg.project.mainFile
-        return { tour: main ? this.tour : undefined, replay: main ? this.replay : undefined }
+        return { tour: main ? this.tour : undefined, replay: this.replay && (this.replay.file ?? this.pg.project.mainFile) === file ? this.replay : undefined }
     }
 
     updateModeSwitch() {
@@ -157,8 +167,8 @@ export class SimControl {
         box.hidden = !(tour || replay) || !this.ok
         const tourButton = box.querySelector<HTMLButtonElement>('[data-mode="tour"]')
         if (tourButton) {
-            tourButton.textContent = TOUR_NAMES[this.tourKind]
-            tourButton.title = TOUR_TITLES[this.tourKind]
+            tourButton.textContent = this.replay?.name ?? TOUR_NAMES[this.tourKind]
+            tourButton.title = this.replay?.title ?? TOUR_TITLES[this.tourKind]
         }
         for (const b of box.querySelectorAll<HTMLButtonElement>('button[data-mode]')) b.setAttribute('aria-pressed', String((b.dataset.mode === 'tour') === this.tourActive))
     }
@@ -188,6 +198,7 @@ export class SimControl {
         const { tour, replay } = this.toursFor(a.file)
         this.vars.setChoices(a.result)
         // A second mount before the first has reported back (two loads in a row) replaces it.
+        pg.model.tour = replay ? { kind: replay.kind, name: replay.name ?? TOUR_NAMES[replay.kind] } : tour ? { kind: 'tour', name: TOUR_NAMES.tour } : undefined
         const generation = ++this.generation
         this.ready = mountSim(target, a.result, a.tracker.doc.toString(), {
             onhighlight: (classes, view) => this.onHighlight(classes, view),
@@ -203,8 +214,8 @@ export class SimControl {
             id: pg.mode === 'embed' ? `pge-sim-${Math.random().toString(36).slice(2, 7)}` : 'pg-sim',
             scenario: replay?.scenario ?? tour,
             initialTicks: replay?.ticks ?? 0,
-            tourName: TOUR_NAMES[kind],
-            intro: kind === 'test'
+            tourName: replay?.name ?? TOUR_NAMES[kind],
+            intro: replay?.intro ? replay.intro : kind === 'test'
                 ? "These are the inputs of the model solution's test run. Press **Next** to run tick 1."
                 : kind === 'shared' && replay
                   ? `These are the inputs of a shared run (${plural(replay.scenario.ticks.length, 'tick')}). Press **Next** to run tick 1, or **Take over** to set the inputs yourself.`

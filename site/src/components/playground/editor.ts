@@ -104,7 +104,7 @@ const marksField = StateField.define<DecorationSet>({
 
 // ----- Theme -------------------------------------------------------------------------------------------------------
 
-const theme = EditorView.theme({
+export const editorTheme = EditorView.theme({
     '&': {
         height: '100%',
         color: 'var(--pg-code-fg)',
@@ -267,7 +267,7 @@ export function createEditor(parent: HTMLElement, options: EditorOptions): Edito
             { key: 'Mod-/', run: toggleComment },
             indentWithTab,
         ]),
-        theme,
+        editorTheme,
         // The search panel's words, in the guide's sentence case.
         EditorState.phrases.of({
             next: 'Next',

@@ -42,6 +42,9 @@ export class PlaygroundModel {
     simulation = $state.raw<Compiled | undefined>()
     /** Where its run stands: the tick shown (`cursor`), every tick computed (`history`, with `printed`). */
     simView = $state.raw<SimView | undefined>()
+    /** The tour the panel was mounted with, if any: the example's guided tour, a test run, a shared run, a trace
+     *  replayed ('trace'). It is in control while `simView.tour`. */
+    tour = $state.raw<{ kind: 'tour' | 'test' | 'shared' | 'trace'; name: string } | undefined>()
 }
 
 /** Calls `then` with `read()` now and whenever what it reads changes. Returns the unsubscribe. */

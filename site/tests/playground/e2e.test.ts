@@ -13,6 +13,10 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import type { Browser, Page } from 'playwright'
 import { launchChromium } from '../../tools/chromium.mjs'
 import { encodeRun, hashForSource } from '../../src/components/playground/share'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { strFromU8, unzipSync } from 'fflate'
 
 const BASE = process.env.PLAYGROUND_URL ?? 'http://127.0.0.1:4321'
 const enabled = !!process.env.PLAYGROUND_E2E
@@ -898,6 +902,118 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         expect(await disk('lamp.sctx')).toBeNull()
         expect(await disk('notes.txt')).toBe('not a chart')
         await ctx.close()
+    }, 120000)
+
+    /** A run of the stopwatch: tick 1, startStop, two ticks, lap, a tick. */
+    async function stopwatchRun(page: Page) {
+        const pulse = (name: string) => page.click(`[data-pg-sim] .sc-input--bool[data-input="${name}"] .sc-input__pulse`)
+        const step = () => page.click('[data-pg-sim] .sc-simctl__step')
+        await step()
+        await pulse('startStop')
+        await step()
+        await step()
+        await step()
+        await pulse('lap')
+        await step()
+        await step()
+    }
+
+    test('the Trace tab: a run saved, replayed without a difference, a changed file stopped at its tick, compared', async () => {
+        const page = await open('/playground/?example=showcase/stopwatch', 1440)
+        await stopwatchRun(page)
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="trace"]')
+        await page.selectOption('.sc-pg-trace select', 'csv')
+        const [download] = await Promise.all([page.waitForEvent('download'), page.click('.sc-pg-trace__group button:has-text("Download")')])
+        expect(download.suggestedFilename()).toBe('Stopwatch-run.csv')
+        const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pg-trace-'))
+        const saved = path.join(dir, 'Stopwatch-run.csv')
+        await download.saveAs(saved)
+        const csv = fs.readFileSync(saved, 'utf8')
+        expect(csv.split('\n')[0]).toMatch(/^tick,/)
+        // Replayed: the panel plays its inputs as a tour; Run goes to the end with every output the same.
+        const replay = async (file: string) => {
+            const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('.sc-pg-trace__group button:has-text("Open a trace")')])
+            await chooser.setFiles(file)
+            await page.waitForFunction(f => document.querySelector('.sc-pg-trace__status')?.textContent?.includes(f), path.basename(file))
+        }
+        await replay(saved)
+        expect(await page.textContent('.sc-pg-trace__summary')).toBe('The outputs match the file in all 6 ticks.')
+        expect(await page.$eval('[data-pg-mode] [data-mode="tour"]', b => b.textContent)).toBe('Replay')
+        await page.click('.sc-pg-trace__transport button:has-text("Run")')
+        await page.waitForFunction(() => /tick 6 of 6/.test(document.querySelector('.sc-pg-trace__status')?.textContent ?? ''), null, { timeout: 20000 })
+        expect(await page.locator('.sc-pg-grid td.is-different').count()).toBe(0)
+        // A file whose display differs in tick 4: Run stops there, the cell and the tick are marked, the tab says so.
+        const lines = csv.split('\n')
+        const header = lines[0].split(',')
+        const row = lines[4].split(',')
+        row[header.indexOf('display')] = '99'
+        lines[4] = row.join(',')
+        const changed = path.join(dir, 'changed.csv')
+        fs.writeFileSync(changed, lines.join('\n'))
+        await replay(changed)
+        await page.click('.sc-pg-trace__transport button:has-text("Run")')
+        await page.waitForFunction(() => /tick 4 of 6/.test(document.querySelector('.sc-pg-trace__status')?.textContent ?? ''), null, { timeout: 20000 })
+        await page.waitForTimeout(1200)
+        expect(await page.textContent('.sc-pg-trace__status')).toMatch(/tick 4 of 6\s*differs/)
+        expect(await page.textContent('.sc-pg-trace__summary')).toBe('1 of 6 ticks differ; first in tick 4: display is 2; the file has 99.')
+        expect(await page.locator('.sc-pg-grid td.is-different').count()).toBe(1)
+        expect(await page.textContent('[data-panel-tab="trace"] [data-pg-badge-count]')).toBe('1')
+        // The simulation panel's note for the tick names the difference too.
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="sim"]')
+        expect(await page.textContent('[data-pg-sim] .sc-tour__note')).toBe('display is 2; the file has 99.')
+        // Compare: the run against both files, as a report; downloads as .md and .csv.
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="trace"]')
+        const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('.sc-pg-trace__group button:has-text("Add traces")')])
+        await chooser.setFiles([saved, changed])
+        await page.waitForSelector('.sc-pg-report table')
+        expect(await page.textContent('.sc-pg-report h3')).toBe('Trace comparison')
+        for (const kind of ['md', 'csv']) {
+            const [report] = await Promise.all([page.waitForEvent('download'), page.click(`.sc-pg-trace__head button:has-text(".${kind}")`)])
+            expect(report.suggestedFilename()).toBe(`Stopwatch-comparison.${kind}`)
+        }
+        fs.rmSync(dir, { recursive: true, force: true })
+        await page.context().close()
+    }, 120000)
+
+    test('the C code tab: the generated files, naming, the zip with main.c; errors point to Problems', async () => {
+        const page = await open('/playground/?example=showcase/abro', 1440)
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="c"]')
+        await page.waitForSelector('.sc-pg-c__code .cm-content')
+        expect(await page.$$eval('.sc-pg-c__files button', bs => bs.map(b => b.textContent))).toEqual(['ABRO.h', 'ABRO.c'])
+        await page.waitForFunction(() => /void tick\(TickData\* d\)/.test(document.querySelector('.sc-pg-c__code .cm-content')?.textContent ?? ''))
+        await page.click('.sc-pg-c__files button:has-text("ABRO.h")')
+        await page.waitForFunction(() => /#ifndef ABRO_H/.test(document.querySelector('.sc-pg-c__code .cm-content')?.textContent ?? ''))
+        // KIELER's #code.naming "prefix".
+        await page.selectOption('.sc-pg-c__option select', 'prefix')
+        await page.waitForFunction(() => /void ABROtick\(ABROTickData\* d\);/.test(document.querySelector('.sc-pg-c__code .cm-content')?.textContent ?? ''))
+        await page.selectOption('.sc-pg-c__option select', 'default')
+        // The interface: which member is which variable.
+        await page.click('.sc-pg-c__bar button[aria-controls="sc-pg-c-interface"]')
+        expect(await page.$$eval('.sc-pg-c__interface tbody tr', rs => rs.map(r => [...(r as HTMLTableRowElement).cells].map(c => c.textContent!.trim()).join(' ')))).toEqual(['A d->A char input', 'B d->B char input', 'R d->R char input', 'O d->O char output'])
+        // The .zip: the two files and main.c.
+        const [download] = await Promise.all([page.waitForEvent('download'), page.click('.sc-pg-c__bar button:has-text("Download")')])
+        expect(download.suggestedFilename()).toBe('ABRO-c.zip')
+        const bytes = Buffer.concat(await (await download.createReadStream()).toArray())
+        const files = unzipSync(new Uint8Array(bytes))
+        expect(Object.keys(files).sort()).toEqual(['ABRO/ABRO.c', 'ABRO/ABRO.h', 'ABRO/main.c'])
+        expect(strFromU8(files['ABRO/main.c'])).toContain('gcc -std=c99 -Wall -o ABRO main.c ABRO.c -lm')
+        // The chart follows the editor; a chart with errors says so and points to Problems.
+        await page.locator('.cm-content').first().click()
+        await page.keyboard.press('Control+End')
+        await page.keyboard.type('\nscchart Broken { state }')
+        await page.waitForSelector('.sc-pg-c__empty button')
+        await page.click('.sc-pg-c__empty button')
+        expect(await page.getAttribute('[data-panel-tab="problems"]', 'aria-selected')).toBe('true')
+        await page.context().close()
+    }, 120000)
+
+    test('the C code tab: host code is C the browser cannot run', async () => {
+        const page = await open('/playground/?example=advanced/host-code/gauge', 1440)
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="c"]')
+        await page.waitForSelector('.sc-pg-c__notes .is-feature')
+        expect(await page.textContent('.sc-pg-c__notes .is-feature')).toMatch(/^The chart's host code is in the C as written/)
+        await page.waitForFunction(() => /static int clamp/.test(document.querySelector('.sc-pg-c__code .cm-content')?.textContent ?? ''))
+        await page.context().close()
     }, 120000)
 
     test('no console errors', () => {
