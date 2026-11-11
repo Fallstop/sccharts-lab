@@ -29,7 +29,9 @@ export interface ProjectFolder {
     /** Paths of the folder's files whose names match (two levels down). */
     list(match: RegExp): Promise<string[]>
     read(path: string): Promise<string>
-    write(path: string, text: string): Promise<void>
+    /** Writes a new file, never over one: under the first name `pick` gives that is free (`pick` gets the names found
+     *  taken); resolves to the name. */
+    create(pick: (taken: string[]) => string, text: string): Promise<string>
 }
 
 export interface PanelTabContext {

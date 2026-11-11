@@ -451,6 +451,30 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await ctx.close()
     }, 120000)
 
+    test("the Trace tab's Save in folder never writes over a file there, however many the folder holds", async () => {
+        const ctx = await context()
+        await ctx.addInitScript({ path: new URL('./fixtures/mock-folder.js', import.meta.url).pathname })
+        await ctx.addInitScript(() => {
+            const files: Record<string, string> = { 'lamp.sctx': 'scchart Lamp {\n  input bool press\n  output bool lit = false\n  initial state Off\n    if press do lit = true go to On\n  state On\n}\n' }
+            for (let i = 0; i < 200; i++) files[`old-${String(i).padStart(3, '0')}.csv`] = 'tick\n'
+            files['Lamp-run.csv'] = 'precious'
+            const w = window as unknown as { mockFolder: (f: Record<string, string>, o: object) => unknown; theFolder: unknown; showDirectoryPicker: () => Promise<unknown> }
+            w.theFolder = w.mockFolder(files, { name: 'runs' })
+            w.showDirectoryPicker = async () => w.theFolder
+        })
+        const page = await open(ctx, '/playground/')
+        await openFolder(page)
+        await page.click('[data-pg-sim] .sc-simctl__step')
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="trace"]')
+        await page.selectOption('.sc-pg-trace select', 'csv')
+        await page.click('.sc-pg-trace__group button:has-text("Save in folder")')
+        await page.waitForFunction(() => /^Saved Lamp-run/.test(document.querySelector('[data-pg-toast]')?.textContent ?? ''))
+        const disk = await page.evaluate(() => (window as unknown as { theFolder: { files(): Record<string, string> } }).theFolder.files())
+        expect(disk['Lamp-run.csv']).toBe('precious')
+        expect(disk['Lamp-run-2.csv']).toMatch(/^tick,/)
+        await ctx.close()
+    }, 120000)
+
     // ----- Text from outside stays text ----------------------------------------------------------------------
 
     test("a chart from a link: its labels, comments, strings and what it prints are shown as text everywhere", async () => {

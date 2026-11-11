@@ -116,6 +116,35 @@ export async function writeFile(root: FileSystemDirectoryHandle, path: string, t
     await out.close()
 }
 
+/** Whether the folder has something at `path` (a file, or a folder in its way). */
+async function taken(root: FileSystemDirectoryHandle, path: string): Promise<boolean> {
+    try {
+        const { dir, name } = await dirFor(root, path, false)
+        await dir.getFileHandle(name)
+        return true
+    } catch (e) {
+        const name = (e as DOMException)?.name
+        if (name === 'NotFoundError') return false
+        if (name === 'TypeMismatchError') return true
+        throw e
+    }
+}
+
+/** Writes a new file into the folder, never over one: under the first name `pick` gives that is free there (`pick`
+ *  gets the names found taken so far, beyond those it knew of). Resolves to the name. */
+export async function createFile(root: FileSystemDirectoryHandle, pick: (taken: string[]) => string, text: string): Promise<string> {
+    const seen: string[] = []
+    for (let i = 0; i < 1000; i++) {
+        const path = pick(seen)
+        if (!(await taken(root, path))) {
+            await writeFile(root, path, text)
+            return path
+        }
+        seen.push(path)
+    }
+    throw new Error('There is no free name for the file.')
+}
+
 /** Removes a file of the folder (gone already is fine). */
 export async function removeFile(root: FileSystemDirectoryHandle, path: string): Promise<void> {
     try {

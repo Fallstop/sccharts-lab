@@ -304,8 +304,8 @@ from, to)` (select a range of a file in the editor), `toast(message)`, `visible`
 regenerates only while shown), `showTab(id)`; `sim`, the simulation panel: `tour({ scenario, name, title, intro })`
 plays a tour of inputs on the file in the editor (`model.tour` is `{ kind: 'trace', name }` and `model.simView.tour`
 true while it is in control; the Trace tab's replay), and its transport `step`, `back`, `run`, `pause`, `goto(tick)`;
-`folder()`, the project's folder on disk when it is one (`list(match)`, `read(path)`, `write(path, text)`; it asks the
-browser for permission if need be). Keep `panel-tabs.ts` free of browser code at its top level (the page imports it
+`folder()`, the project's folder on disk when it is one (`list(match)`, `read(path)`, `create(pick, text)`: a new
+file under the first free name `pick` gives, never over one; it asks the browser for permission if need be). Keep `panel-tabs.ts` free of browser code at its top level (the page imports it
 at build time).
 
 ## What a tab can read: `PlaygroundModel` (`model.svelte.ts`)

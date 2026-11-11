@@ -77,9 +77,11 @@
         if (!canSave) return
         const folder = await ctx.folder()
         if (!folder) return ctx.toast('The browser did not allow writing to the folder.')
-        const name = traceFileName(chart, format, inputsOnly, await folder.list(TRACE_FILE))
+        let name: string
         try {
-            await folder.write(name, fileText())
+            // The listing is a hint (it stops at 200 files): the folder itself says whether a name is free.
+            const listed = await folder.list(TRACE_FILE)
+            name = await folder.create(seen => traceFileName(chart, format, inputsOnly, [...listed, ...seen]), fileText())
         } catch (e) {
             return ctx.toast(`Saving to ${folder.name} failed: ${(e as Error).message}`)
         }

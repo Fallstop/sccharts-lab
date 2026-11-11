@@ -10,7 +10,7 @@ import type { EditorState } from '@codemirror/state'
 import { mount } from 'svelte'
 import { $, type ProjectSpec } from './app-types'
 import { stateFor } from './editor'
-import { listFiles, mergeFolder, permitted, readFolder, readText, saveFolder, writeFile } from './folder'
+import { createFile, listFiles, mergeFolder, permitted, readFolder, readText, saveFolder } from './folder'
 import type { ProjectFolder } from './panel-tabs'
 import { baseOf, checkName, freeName, hasFile, importedFiles, makeProject, sameFiles, sortedPaths } from './project'
 import { forgetTab, newProjectId, putProject, rememberSave, setCurrent, type StoredProject } from './project-store'
@@ -399,7 +399,7 @@ export class ProjectControl {
             name: folder.name,
             list: match => listFiles(handle, match),
             read: path => readText(handle, path),
-            write: (path, text) => writeFile(handle, path, text),
+            create: (pick, text) => createFile(handle, pick, text),
         }
     }
 

@@ -3,7 +3,8 @@
 // chart, anything outside the folder. Driven on an in-memory FileSystemDirectoryHandle (fixtures/mock-folder.js),
 // one that matches names exactly and one that ignores case (macOS, Windows).
 import { describe, expect, test } from 'vitest'
-import { mergeFolder, readFolder, saveFolder } from '../../src/components/playground/folder'
+import { createFile, listFiles, mergeFolder, readFolder, saveFolder } from '../../src/components/playground/folder'
+import { traceFileName } from '../../src/components/playground/trace-actions'
 import './fixtures/mock-folder.js'
 
 interface Mock extends FileSystemDirectoryHandle {
@@ -88,6 +89,21 @@ describe('Save', () => {
         }) as FileSystemDirectoryHandle
         const saved = await saveFolder(failing, disk, { 'a.sctx': 'a2', 'b.sctx': 'b2' })
         expect(saved).toMatchObject({ written: ['a.sctx'], error: 'The disk is full.', disk: { 'a.sctx': 'a2', 'b.sctx': B } })
+    })
+})
+
+describe("a panel tab's new file (a run saved into the folder)", () => {
+    test.each([false, true])('never written over a file there, beyond the listing too (a disk that ignores case: %s)', async caseInsensitive => {
+        const files: Record<string, string> = {}
+        for (let i = 0; i < 250; i++) files[`old-${i}.csv`] = 'tick\n'
+        files[caseInsensitive ? 'lamp-RUN.csv' : 'Lamp-run.csv'] = 'precious'
+        files['Lamp-run-2.csv'] = 'precious 2'
+        const folder = mockFolder(files, { caseInsensitive })
+        const listed = await listFiles(folder, /\.csv$/i)
+        expect(listed).toHaveLength(200)
+        const name = await createFile(folder, seen => traceFileName('Lamp', 'csv', false, [...listed, ...seen]), 'tick,lit\n')
+        expect(name).toBe('Lamp-run-3.csv')
+        expect(Object.values(folder.files()).filter(t => t.startsWith('precious'))).toHaveLength(2)
     })
 })
 
