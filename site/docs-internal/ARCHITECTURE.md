@@ -71,7 +71,7 @@ for the shell, Svelte 5 for the interactive islands, vitest for the tests.
 ## The oracle (real KIELER)
 
 `tools/oracle/oracle.mjs` starts the sccharts-lite language server (the KIELER server fork: current KIELER
-sources, kieler/semantics 5f02d129, with the same compiler and simulator; it adds diagnostics and fixes some
+sources, kieler/semantics 5f02d129 plus KIELER 1.6.1's one source change, with the same compiler and simulator; it adds diagnostics and fixes some
 crashes, which it flags with `kieler-divergence` warnings) on Java 21, compiles a chart with the netlist-based C
 simulation and steps it. About half a second per chart once the JVM runs.
 
@@ -112,9 +112,11 @@ the server needs `jdk.unsupported`, so a JetBrains runtime will not do), else `j
 (override with `SCCHARTS_SERVER_JAR`). `gcc` is on PATH. Memory is limited: run at most one oracle process at
 a time (prefer `--batch` and `oracle:record`, which reuse one JVM) and never leave one running.
 
-**Official KIELER.** The KIELER VS Code extension 0.3.0 ships an older compiler (May 2024). Its jar can be
-driven by the same oracle (`SCCHARTS_SERVER_JAR=<official jar>`); where it is, how to run it, and how its
-behaviour and messages differ from current KIELER: `basics.md` section 10.1. Use it to check wording and to
+**Official KIELER.** The KIELER VS Code extension 0.4.3 (October 2026) ships KIELER 1.6.1, the same sources as
+the lab server apart from the fork's edits; the older 0.3.0 (May 2024, KIELER 1.5.0) has an older compiler. Both
+jars can be driven by the same oracle (`SCCHARTS_SERVER_JAR=<official jar>`), and
+`tools/oracle/official-diff.mjs` runs every recorded scenario through one. Where to get them, how to run them,
+and how their behaviour and messages differ from the lab server: `basics.md` section 10.1. Use it to check wording and to
 avoid presenting version-dependent behaviour as universal.
 
 ## The semantics specs (`docs-internal/semantics/`)
@@ -124,7 +126,7 @@ Four specs with numbered rules, each backed by a conformance chart in `tests/con
 
 | Spec | Rule ids | Area |
 | --- | --- | --- |
-| `basics.md` | B-n | ticks, variables, transitions, final states, expressions, `taken`, netlist bugs; section 10.1: official KIELER 0.3.0 vs current |
+| `basics.md` | B-n | ticks, variables, transitions, final states, expressions, `taken`, netlist bugs; section 10.1: official KIELER 0.4.3 and 0.3.0 vs the lab server |
 | `concurrency.md` | H-, T-, C-, SIG-, V-, PRE-, A-, K-n | hierarchy, termination, concurrency and causality, signals, valued signals, `pre`, ABRO, KIELER defects |
 | `preemption.md` | P-n | actions, aborts, count delays, suspend, history, deferred, connectors, final/abort regions |
 | `structure.md` | S-n | several charts, references, imports, for-regions, dataflow, time, methods and SCL code blocks, enums/structs/classes and chart classes with inheritance, host code, `static`/`global`, systems |

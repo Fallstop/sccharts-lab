@@ -211,10 +211,12 @@ really are the same:
 - **The same simulation system.** The guide follows **Netlist-based Simulation (C)**. Others, such as
   **Priority-based Simulation (C)**, differ in a few details, for example in tick 1.
 - **The same chart.** Both run the first `scchart` in the file.
-- **The same KIELER.** The official *KIELER VS Code* extension (0.3.0) has an older compiler than
-  SCCharts Lab. They behave the same on the charts checked so far, but they do not accept quite the
-  same charts. [How this guide is checked](/reference/about/#official-kieler-and-sccharts-lab) lists
-  the differences.
+- **The same KIELER.** The official *KIELER VS Code* extension 0.4.3 runs KIELER 1.6.1, built from
+  the same sources as SCCharts Lab, and every chart of this guide that both accept runs the same in
+  both, except that string inputs are broken in the extension. The older 0.3.0 has an older compiler
+  that does not accept quite the same charts.
+  [How this guide is checked](/reference/about/#official-kieler-and-sccharts-lab) lists the
+  differences.
 
 If they still disagree, one of them has a bug: please [report it](/reference/about/#found-a-mistake),
 with the playground's **Copy link** for your chart and the inputs that show the difference.

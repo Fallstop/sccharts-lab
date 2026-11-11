@@ -128,8 +128,8 @@ when they arrive in the tick in which `ABO` is entered. Follow the tour to tick 
 
 The same happens if `A` and `B` are both present in tick 1. This is a defect in KIELER's
 [netlist-based compiler](/advanced/code-generation/#netlist-versus-priority-based-compilation), the one its
-simulation uses by default. It shows both in the current KIELER sources and in the KIELER extension for
-VS Code (version 0.3.0), checked in October 2026 ([how the guide checks KIELER](/reference/about/)).
+simulation uses by default. It shows in KIELER 1.6.1 (the KIELER extension for VS Code, version 0.4.3)
+and in the older 0.3.0, checked in November 2026 ([how the guide checks KIELER](/reference/about/)).
 A superstate that terminates in the tick it is entered, inside a state that a reset re-enters, loses its
 join. With a strong reset, as here, the state around it then never reacts again, not even to `R`. The
 only hint is the warning `Instantaneous loop detected!` (SCCharts Lab: `Potential instantaneous loop.`).

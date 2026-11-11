@@ -95,30 +95,43 @@ those.
 
 ## Official KIELER and SCCharts Lab
 
-Many readers use the official *KIELER VS Code* extension, version 0.3.0 from May 2024. Its compiler is
-older than the KIELER sources the recordings come from. Many of the charts behind the guide's rules were
-run through that compiler too, in particular wherever the two versions might differ. Every chart checked
-that both accept behaved identically in both; the differences are in which charts they accept and in what
-they say:
+The official *KIELER VS Code* extension is at version 0.4.3, from October 2026. It runs KIELER 1.6.1,
+which is built from the same KIELER sources as SCCharts Lab. In November 2026 every chart of this guide
+and its test collection, over 1,200 runs, went through both. Wherever both compiled a chart, the values
+agreed tick for tick, except for string inputs. The differences:
 
-- **`random()`** compiles in 0.3.0 only if the file starts with `#hostcode "#include <stdlib.h>"`.
-  Current KIELER, and so SCCharts Lab, includes `<stdlib.h>` in the generated C code itself whenever a
-  chart calls `random()`; your file stays as it is. `randomize()` needs the line in both, unless the
-  chart also calls `random()`.
-- **`const` with `input` or `output`.** 0.3.0 accepts `const output int M` and current KIELER
-  `output const int M`; each rejects the other order. Leave `const` off inputs and outputs.
-- **Crashes.** On a handful of unusual charts the 0.3.0 compiler crashes: its message is a Java
-  exception, or the compilation never finishes. It never finishes on some common syntax errors too, such
-  as a keyword used as a name ([Compiler messages](/reference/errors/#fix-the-first-message-first)).
-  SCCharts Lab gives a message with a line number instead.
-- **A file without any `scchart`.** 0.3.0 compiles nothing and says nothing; SCCharts Lab says:
+- **String inputs.** In the extension, a `string` input does not get the text you send: the
+  simulation of [`Greeting`](/learn/variables/) shows `name` as `nameIsHi` in every tick.
+  SCCharts Lab passes the text through.
+- **Crashes.** On a few dozen of these charts, all of which SCCharts Lab rejects, the extension's
+  compilation never finishes. Some are unusual charts, but some are common syntax errors, such as a
+  keyword used as a name
+  ([Compiler messages](/reference/errors/#fix-the-first-message-first)). On a few others its message
+  is a Java exception. SCCharts Lab gives a message with a line number instead.
+- **A file without any `scchart`.** The extension's compilation never finishes; SCCharts Lab says:
 
   ```text wrap
   There is no SCChart to compile. Add a scchart declaration first.
   ```
 
+- **Fixed in SCCharts Lab.** For a few charts that official KIELER fails to compile, SCCharts Lab
+  fixes the bug and compiles them, with the warning *Official KIELER differs here* (see the notices
+  below). In the runs above, two charts were like this, both with `pre` used directly as the trigger
+  of an action. No chart compiled in the extension that SCCharts Lab rejects.
 - **Wording.** SCCharts Lab rewrites some of KIELER's messages in plainer English and adds a few of its
   own. [Compiler messages](/reference/errors/) quotes both where they differ.
+
+If you still have the extension's older version 0.3.0, from May 2024, update it. Its compiler predates
+these sources, and besides the differences above:
+
+- **`random()`** compiles in 0.3.0 only if the file starts with `#hostcode "#include <stdlib.h>"`.
+  KIELER 1.6.1, and so SCCharts Lab, includes `<stdlib.h>` in the generated C code itself whenever a
+  chart calls `random()`; your file stays as it is. `randomize()` needs the line in both, unless the
+  chart also calls `random()`.
+- **`const` with `input` or `output`.** 0.3.0 accepts `const output int M` and 1.6.1
+  `output const int M`; each rejects the other order. Leave `const` off inputs and outputs.
+- **Enums, structs and classes.** 0.3.0 rejects enum outputs, cannot compile method overrides, and
+  differs in a few other details ([KIELER versions](/advanced/data-types/#kieler-versions)).
 
 ## Notices on examples
 

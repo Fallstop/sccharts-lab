@@ -97,7 +97,7 @@ Slugs are under `src/content/docs/`. Each page's frontmatter sets `title`, `desc
 20. `methods`: Methods and code effects: SCL statements (`if`/`else`, loops, local variables, the
     semicolon rule), methods and what KIELER makes of them, `print`, `random()`.
 21. `data-types`: Enums, structs and classes: enum values, struct and class instances, methods of a
-    class, what KIELER rejects, and the differences in KIELER 0.3.0.
+    class, what KIELER rejects, and the differences in the older KIELER 0.3.0.
 22. `annotations`: Comments in diagrams, labels, annotations and pragmas.
 23. `host-code`: Host code: backticks, `extern`, `#hostcode`, host types and strings.
 24. `code-generation`: From chart to C or Java: what the compiler generates (`reset`, `tick`, the

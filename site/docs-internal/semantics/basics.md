@@ -912,27 +912,49 @@ warning (B-31), gcc warnings forwarded as KIELER warnings (`overflow in conversi
 `comparison with string literal results in unspecified behavior`, `suggest parentheses around
 comparison in operand of ‘&’`, `division by zero`).
 
-### 10.1 Official KIELER 0.3.0 versus current KIELER
+### 10.1 Official KIELER: 0.4.3 (KIELER 1.6.1) and the older 0.3.0
 
-The oracle runs the lab's fork of the KIELER server, built from current KIELER sources (kieler/semantics
-5f02d129). Readers who use the **KIELER VS Code extension** (`kieler.keith-vscode` 0.3.0 from Open
-VSX) run an older compiler: its `extension/server/kieler-language-server.jar` was built in May 2024. A few
-things differ between the two, so the guide must not present them as universal. Each row below was
+The oracle runs the lab's fork of the KIELER server, built from kieler/semantics 5f02d129 plus the one source
+change of release 1.6.1 (the Smart Zoom title fix in `StateSynthesis.xtend`). The official **KIELER VS Code
+extension** `kieler.keith-vscode` 0.4.3 (Open VSX, 29 October 2026) ships KIELER 1.6.1
+(`kieler.version` in its jar); `git diff 5f02d129 release-1.6.1` changes only that line, version numbers and
+branding. So the official compiler and the lab's are the same sources, apart from the fork's own edits.
+
+**0.4.3 against the recordings** (November 2026, `tools/oracle/official-diff.mjs`, all 1,244 scenarios of
+`src/examples`, `tests/conformance` and `tests/engine`):
+
+| Outcome | Charts |
+| --- | --- |
+| both accept, identical values in every tick | 944 |
+| both accept, values differ: string inputs (`learn/variables/greeting`, `basics/59-strings`, `structure/82-string-equality-c`; 0.4.3 shows a string input as the name of some other variable, e.g. `name` = `nameIsHi`) | 3 |
+| both reject | 257 |
+| the lab rejects with a message, 0.4.3 never answers (60 s): the crashes listed below, a keyword as a name, an int literal over 2147483647, a file without `scchart`, ... | 38 |
+| the lab accepts with a `kieler-divergence` warning, 0.4.3 rejects (`probe-pre-entry-trigger`, `probe-pre-during-trigger`: `Pre expressions are only supported in ...`) | 2 |
+| 0.4.3 accepts, the lab rejects | 0 |
+
+That 0.4.3 behaves like the table's third column was confirmed this way or by direct probes (`const` order, misplaced modifiers, `;` after a declaration, `random()`, `randomize()`, the
+object-oriented rows of structure.md S-68, the caret method of S-71, `clock-time`). The crash rows still hold
+for 0.4.3: `for i : 3` and a bare `@DefaultSleep` give the same Java exceptions, and the "no answer" charts
+never answer. The C code of `advanced/code-generation`'s listings is byte-identical between 0.4.3 and the lab.
+
+**The older extension 0.3.0** (Open VSX, May 2024; its jar is KIELER 1.5.0) runs an older compiler. A few
+things differ between it and 1.6.1, so the guide must not present them as universal. Each row below was
 checked by running the same chart through both servers (October 2026); on every chart that both accept,
 the recorded values were identical.
 
-| Topic | Official KIELER 0.3.0 | Current KIELER / lab server | Evidence |
+| Topic | Official KIELER 0.3.0 | KIELER 1.6.1 (0.4.3) / lab server | Evidence |
 | --- | --- | --- | --- |
 | `const` with `input` / `output` | `const output int M`; `output const int M` → `no viable alternative at input 'const'` + `Pure types are only allowed if used in combination with signals.` | `output const int M`; `const output int M` → `mismatched input 'output' expecting 'primitive'` | B-8, `75`, `76` |
 | Other misplaced modifiers (`output input bool x`) | `no viable alternative at input 'input'` + `Pure types are only allowed if used in combination with signals.` | `mismatched input 'input' expecting 'primitive'` | probe |
 | A `;` after a declaration (`input bool A;`) | `no viable alternative at input 'bool'` + `no viable alternative at input ';'` | `mismatched input 'bool' expecting 'primitive'` + `no viable alternative at input ';'` | probe; `learn/first-chart` |
-| String inputs | the value is corrupted: `learn/variables/greeting` with `name` "hi", then "bye" reports `name` = `nameIsHi` in every tick | the values as given (`hi`, `bye`) | probe (October 2026) |
+| String inputs | the value is corrupted: `learn/variables/greeting` with `name` "hi", then "bye" reports `name` = `nameIsHi` in every tick | 0.4.3: corrupted the same way; lab: the values as given (`hi`, `bye`) | probe (October 2026), official-diff (November 2026) |
 | `random()` | needs `#hostcode "#include <stdlib.h>"`, else gcc fails (`Compiler did not return success`) | compiles as is (`<stdlib.h>` added) | B-29, probe |
 | `randomize()` | needs `#hostcode "#include <stdlib.h>"` | needs it too unless the chart also calls `random()` | B-29, `77`, `structure/99` |
-| Compiler crashes | the Java exception as the message, or **no answer at all** (the compilation never reports back; the oracle times out) | a located error message | below |
-| File without any `scchart` | compiles nothing, without a message (the oracle reports that the simulation did not start) | `There is no SCChart to compile. Add a scchart declaration first.` | probe |
+| Compiler crashes | the Java exception as the message, or **no answer at all** (the compilation never reports back; the oracle times out) | 0.4.3: the same; lab: a located error message | below |
+| File without any `scchart` | compiles nothing, without a message (the oracle reports that the simulation did not start) | 0.4.3: no answer; lab: `There is no SCChart to compile. Add a scchart declaration first.` | probe |
 
-Crashes in official KIELER, as observed through the oracle (`SCCHARTS_SERVER_JAR=<official jar>`):
+Crashes in official KIELER (0.3.0, October 2026; 0.4.3 crashes on the same charts, November 2026), as observed
+through the oracle (`SCCHARTS_SERVER_JAR=<official jar>`):
 
 - **No answer** (the oracle's 90 s probe timeout; in VS Code the compilation never finishes): a `join to`
   on a single region without final state into a simple state with an entry or during action
@@ -961,15 +983,15 @@ difference; the specs mark those as "lab" or "fork": the loop warning (`Instanta
 tick.` error, the relative-write warning (B-31), the clock errors (structure.md S-39) and the
 `kieler-divergence` warnings on charts the lab compiles although official KIELER fails on them.
 
-**Running the official jar.** The jar is at
-`/mnt/home/fallstop/Documents/projects/sccharts-lab/keith-vscode/out/upstream/kieler-language-server.jar`
-(93.8 MB, sha1 `6a7b33c6…`; it is the vsix's `extension/server/kieler-language-server.jar`). It has the same
-main class and runs on the same Java 21, so the oracle drives it unchanged:
+**Running the official jar.** Neither jar is kept in the repositories. Download the vsix from Open VSX
+(`https://open-vsx.org/api/kieler/keith-vscode/0.4.3/file/kieler.keith-vscode-0.4.3.vsix`, 92.6 MB; `0.3.0`
+for the old one, 93.8 MB jar) and take `extension/server/kieler-language-server.jar` out of it (a zip). It has
+the same main class and runs on the same Java 21, so the oracle drives it unchanged:
 `SCCHARTS_SERVER_JAR=<that jar> node tools/oracle/oracle.mjs chart.sctx --ticks 3`, or
-`startOracle({ jar })` from a script (`--batch` reuses one JVM). Give each probe a timeout: the crashes
-above never answer. The Java simulation systems need `javac` on `PATH` for the official jar
-(`PATH=/mnt/home/fallstop/.minecraft/runtime/java-runtime-delta/linux/java-runtime-delta/bin:$PATH`);
-the lab server finds it itself. Run only one server at a time (memory).
+`startOracle({ jar })` from a script (`--batch` reuses one JVM), or `tools/oracle/official-diff.mjs` for every
+recorded scenario. Give each probe a timeout: the crashes above never answer. The Java simulation systems need
+`javac` on `PATH` for the official jar (the JDK in `keith-vscode/out/runtime-cache/jdk-linux-x64-*/`, which
+`tools/oracle/java.mjs` also finds); the lab server finds it itself.
 
 ---
 

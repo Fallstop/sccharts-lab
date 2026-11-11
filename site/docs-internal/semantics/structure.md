@@ -1168,8 +1168,8 @@ code uses a valued object's name as it is, so gcc fails wherever such a name rea
 
 - Evidence: probes `tests/engine/kieler/rare/probe-prime-*`, `probe-caret-*` (24 charts), corpus probes
   `lex-primes`, `lex-caret-ids`. Official KIELER 0.3.0 agrees on all but one: it also rejects a called C-function
-  method named `^max` (`probe-caret-method-loop`; gcc, `Compiler did not return success`), which current KIELER
-  compiles.
+  method named `^max` (`probe-caret-method-loop`; gcc, `Compiler did not return success`), which KIELER 1.6.1
+  (official 0.4.3) and the lab compile; the engine no longer warns about it.
 - Teaching: a `^` lets a keyword name a state or a region; give variables and signals names that are not keywords.
 - Implementation: `codegen.ts` `cNames` (code `c-name`, gcc's first error in `kieler`).
 
@@ -1537,10 +1537,12 @@ definition with `unknown type name ‘Counter’`).
 
 ### S-68 Official KIELER 0.3.0 and the object-oriented features
 
+Official 0.4.3 (KIELER 1.6.1) behaves as the third column on every chart below (official-diff, November 2026).
+
 Every chart of this section and its probes (83 probes and the conformance charts) was run through both servers.
 Where both accept a chart, the pools agree except for the rows marked "pool".
 
-| Chart | Official KIELER 0.3.0 | Current KIELER / lab server |
+| Chart | Official KIELER 0.3.0 | KIELER 1.6.1 (0.4.3) / lab server |
 | --- | --- | --- |
 | `output ref E x` | `no viable alternative at input 'ref'` | an output enum (`102`) |
 | `input ref E x` | accepted, but not an input: the variable stays 0 whatever the environment sets | an input enum (`102`) |
@@ -1563,7 +1565,7 @@ Where both accept a chart, the pools agree except for the rows marked "pool".
 Teaching consequence: the guide's examples of this section should stay within what both accept (enums declared
 at the top and used in non-input/output variables, enum values assigned explicitly, structs, classes with
 fields and methods called with the right arguments, chart classes, override regions); method overriding,
-enum inputs/outputs and `@UnpackClass` need a "current KIELER only" note.
+enum inputs/outputs and `@UnpackClass` need a "KIELER 1.6 only, not the old extension 0.3.0" note.
 
 ---
 
