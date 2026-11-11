@@ -195,7 +195,7 @@ compact single-file widget). Owner: the playground workstream.
   imports files (`loadImports`) opens as a project of its file and those. A project keeps at least one file; an
   empty folder starts with `main.sctx`.
 - **Saving** (`project-control.ts`, `project-store.ts`): every edit is saved after a pause in typing: in the browser
-  (IndexedDB, guarded: the playground works the same without it; the 40 most recent projects), in the scratch buffer
+  (IndexedDB, guarded: the playground works the same without it; the 40 most recent projects, and every folder project whose edits are not in its folder yet), in the scratch buffer
   of local storage (the active file's text; boot falls back to it without IndexedDB), and in the address bar
   (`#code=` for one file, `#project=` for several; `history.replaceState`), so a reload never loses work. A project
   is saved under an id only once the reader edits it: loading an example, a link or a file saves nothing, so it never

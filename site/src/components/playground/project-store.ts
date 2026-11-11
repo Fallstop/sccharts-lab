@@ -4,7 +4,7 @@
 // loading an example saves nothing, so it never overwrites the reader's work. Small and dependency-free: boot.ts
 // reads the last project before the app loads.
 
-import type { ProjectData } from './project'
+import { sameFiles, type ProjectData } from './project'
 import { storageGet, storageSet } from './share'
 
 /** Where a stored project came from (the toolbar's title and the example's guided tour after a reload). */
@@ -127,9 +127,12 @@ export async function listProjects(): Promise<StoredProject[]> {
     return all.sort((a, b) => b.updated - a.updated)
 }
 
+/** A folder project with edits not saved into its folder: the browser holds the only copy of them. */
+export const unsavedInFolder = (p: StoredProject): boolean => !!p.folder && !sameFiles(p.files, p.folder.disk)
+
 async function trim() {
     const all = await listProjects()
-    for (const p of all.slice(KEEP)) await deleteProject(p.id)
+    for (const p of all.slice(KEEP)) if (!unsavedInFolder(p)) await deleteProject(p.id)
 }
 
 /** The project the reader last worked on, if the browser still has it. */

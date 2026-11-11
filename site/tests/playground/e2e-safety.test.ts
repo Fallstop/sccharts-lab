@@ -262,6 +262,40 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await ctx.close()
     }, 120000)
 
+    test('the browser keeps 40 projects, but never drops a folder project whose edits are not in its folder yet', async () => {
+        const ctx = await context()
+        await withOpfs(ctx)
+        const page = await opfsFolder(ctx, 'safety-keep', { 'main.sctx': MAIN, 'lamp.sctx': LAMP })
+        await typeAtEnd(page, 'main.sctx', '// only here')
+        await storedWith(page, '// only here')
+        // Forty projects edited since, the newest one through the page.
+        const since = Math.max(...(await stored(page)).map(p => p.updated))
+        await page.evaluate(
+            since =>
+                new Promise<void>(resolve => {
+                    const req = indexedDB.open('sccharts-lab-playground')
+                    req.onsuccess = () => {
+                        const tx = req.result.transaction('projects', 'readwrite')
+                        for (let i = 0; i < 40; i++) tx.objectStore('projects').put({ id: `filler-${i}`, name: `Filler ${i}`, files: { 'f.sctx': 'scchart F {}' }, active: 'f.sctx', open: ['f.sctx'], updated: since + 1 + i })
+                        tx.oncomplete = () => resolve()
+                    }
+                }),
+            since,
+        )
+        await page.click('[data-pg-project] > summary')
+        await page.click('[data-action="new"]')
+        await page.locator('.cm-content').click()
+        await page.keyboard.press('Control+End')
+        await page.keyboard.type('// newest')
+        await storedWith(page, '// newest')
+        await page.waitForTimeout(300)
+        const all = await stored(page)
+        expect(all.some(p => Object.values(p.files).some(t => t.includes('// only here')))).toBe(true)
+        // The rest is trimmed to 40: the oldest filler went.
+        expect(all.filter(p => !p.folder)).toHaveLength(40)
+        await ctx.close()
+    }, 120000)
+
     test('after a reload, Save keeps a file the folder gained meanwhile, an empty one too', async () => {
         const ctx = await context()
         await withOpfs(ctx)
