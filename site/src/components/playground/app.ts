@@ -18,7 +18,7 @@ import type { EditorView, KeyBinding } from '@codemirror/view'
 import { compile } from '@sccharts-lab/engine'
 import { $, isSyntaxBroken, type Analysed, type LinkTarget, type Origin, type PlaygroundInit, type ProjectSpec } from './app-types'
 import { DiagramControl } from './diagram-control'
-import { DocTracker, createEditor, selectRange, setMarks, type Marks } from './editor'
+import { DocTracker, createEditor, selectRange, setMarks, tabThrough, type Marks } from './editor'
 import type { AnalysisView } from './editor-features'
 import { ExerciseControl } from './exercise'
 import { FileActions } from './file-actions'
@@ -43,8 +43,6 @@ export type { LinkTarget, Origin, PlaygroundInit, ProjectSpec } from './app-type
 export { MOD } from './app-types'
 
 const COMPILE_DELAY = 180
-/** How long an inline editor focused without a pointer lets Tab move on, unless the reader presses another key first. */
-const TAB_THROUGH_MS = 10 * 60_000
 
 /** A short key of the files a compile imports (a run is stale when they change). */
 function depsKey(files: Record<string, string>): string {
@@ -151,28 +149,7 @@ export class Playground {
             label: 'SCTX source',
             compact: this.mode === 'embed',
         })
-        if (this.mode === 'embed') {
-            // In a page, a reader tabbing past the chart must not end up indenting it: when the editor gets the focus
-            // other than by a pointer (Tab, or the build-time code's focus handed over when the app starts), Tab and
-            // Shift+Tab move on, as everywhere else on the page, until the reader presses another key or clicks into the
-            // code (CodeMirror's tab-focus mode). /playground keeps the editor's own Tab, with Escape then Tab to leave.
-            const content = this.view.contentDOM
-            let pointer = false
-            let passing = false
-            const passTab = (on: boolean) => {
-                this.view.setTabFocusMode(on ? TAB_THROUGH_MS : false)
-                passing = on
-            }
-            content.addEventListener('pointerdown', () => {
-                pointer = true
-                if (passing) passTab(false)
-            }, { capture: true })
-            content.addEventListener('focus', () => {
-                if (!pointer) passTab(true)
-                pointer = false
-            })
-            if (document.activeElement === content) passTab(true)
-        }
+        if (this.mode === 'embed') tabThrough(this.view)
     }
 
     private onEditorUpdate(u: ViewUpdate) {
@@ -299,12 +276,6 @@ export class Playground {
         this.showTab('code')
         void this.problems.fetchRecording()
         this.workspace?.applyFiles()
-    }
-
-    /** A chart of one file in place of this project. */
-    load(text: string, origin: Origin, message?: string, scenario?: Scenario) {
-        const file = origin.id ? exampleProject(origin.id, text, {}, origin.title).active : `${(firstChartName(text) ?? 'chart').replace(/[^\w.-]+/g, '') || 'chart'}.sctx`
-        this.loadProject({ name: origin.title, files: { [file]: text }, active: file }, origin, message, scenario)
     }
 
     /** Puts back what was there before a load (the toast's Undo). */

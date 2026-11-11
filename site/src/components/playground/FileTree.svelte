@@ -22,6 +22,18 @@
     let { model, actions, icons }: { model: PlaygroundModel; actions: Actions; icons: Record<string, string> } = $props()
 
     const p = $derived(model.project)
+    /** The files under their folders (a folder's row, then its files by name): the paths are sorted that way. */
+    const rows = $derived.by(() => {
+        const out: ({ dir: string } | { path: string; nested: boolean })[] = []
+        let dir = ''
+        for (const path of p.files) {
+            const d = dirOf(path)
+            if (d && d !== dir) out.push({ dir: d.slice(0, -1) })
+            dir = d
+            out.push({ path, nested: !!d })
+        }
+        return out
+    })
     /** The file being renamed, or '' for a new one. */
     let editing = $state<string | null>(null)
     let draft = $state('')
@@ -120,16 +132,20 @@
 {/if}
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <ul class="sc-pg-files__list" bind:this={list} aria-labelledby="sc-pg-files-title" onkeydown={onkey}>
-    {#each p.files as path (path)}
+    {#each rows as row ('dir' in row ? `dir:${row.dir}` : row.path)}
+        {#if 'dir' in row}
+            <li class="sc-pg-files__dir" aria-hidden="true">{@html icons.folder}<span>{row.dir}</span></li>
+        {:else}
+        {@const path = row.path}
         {@const unsaved = p.unsaved.includes(path)}
-        <li class="sc-pg-files__item" class:is-active={path === p.active} data-path={path}>
+        <li class="sc-pg-files__item" class:is-nested={row.nested} class:is-active={path === p.active} data-path={path}>
             {#if editing === path}
                 <input class="sc-pg-files__input" data-name bind:value={draft} aria-label={`New name for ${path}`} aria-invalid={error ? 'true' : undefined} aria-describedby={error ? 'sc-pg-files-error' : undefined} spellcheck="false" autocomplete="off" onblur={() => (error ? undefined : commit())} />
                 {#if error}<p class="sc-pg-files__error" id="sc-pg-files-error" role="alert">{error}</p>{/if}
             {:else}
                 <button type="button" class="sc-pg-file" data-path={path} aria-current={path === p.active ? 'true' : undefined} title={path} onclick={() => actions.open(path)} ondblclick={() => edit(path)}>
                     <span class="sc-pg-file__glyph" aria-hidden="true"></span>
-                    <span class="sc-pg-file__name">{#if dirOf(path)}<span class="sc-pg-file__dir">{dirOf(path)}</span>{/if}{baseOf(path)}</span>
+                    <span class="sc-pg-file__name"><span class="sc-visually-hidden">{dirOf(path)}</span>{baseOf(path)}</span>
                     {#if unsaved}<span class="sc-pg-file__dot" title="Not saved to the folder"><span class="sc-visually-hidden">, not saved</span></span>{/if}
                 </button>
                 <span class="sc-pg-file__acts">
@@ -138,6 +154,7 @@
                 </span>
             {/if}
         </li>
+        {/if}
     {/each}
     {#if editing === ''}
         <li class="sc-pg-files__item is-new">

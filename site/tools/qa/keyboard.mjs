@@ -27,7 +27,7 @@ try {
         await page.waitForTimeout(1500)
         const name = () => page.evaluate(() => (document.activeElement?.getAttribute('aria-label') || document.activeElement?.textContent || '').trim().slice(0, 40))
         const seen = []
-        // The skip link, the header, the trust note's two links and the toolbar come before the editor.
+        // The skip link, the app bar and the editor's file tabs come before the editor.
         for (let i = 0; i < 20; i++) {
             await page.keyboard.press('Tab')
             seen.push(await name())

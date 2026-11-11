@@ -132,9 +132,27 @@
 	white-space: nowrap;
 	font-family: var(--font-mono);
 }
-.sc-pg-file__dir {
+/* A folder: a row of its own, its files indented under it. */
+.sc-pg-files__dir {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+	min-height: 1.75rem;
+	margin: 0.25rem 0 0;
+	padding: 0 0.5rem 0 0.75rem;
 	color: var(--c-muted);
-	font-weight: 400;
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	white-space: nowrap;
+	overflow: hidden;
+}
+.sc-pg-files__dir svg {
+	flex: none;
+	width: 0.875rem;
+	height: 0.875rem;
+}
+.sc-pg-files__item.is-nested .sc-pg-file {
+	padding-inline-start: 1.875rem;
 }
 /* Unsaved (a folder's file) or edited: a dot, and words for screen readers. */
 .sc-pg-file__dot {

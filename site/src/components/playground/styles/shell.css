@@ -15,7 +15,8 @@ html:has([data-sc-playground][data-pg-js]) {
 	overflow: hidden;
 }
 :root:has([data-sc-playground]) header.header,
-:root:has([data-sc-playground]) .main-frame footer:not([data-sc-playground] footer) {
+:root:has([data-sc-playground]) .main-frame footer:not([data-sc-playground] footer),
+:root:has([data-sc-playground][data-pg-js]) .main-frame .sc-report {
 	display: none;
 }
 /* The page's title stays for screen readers (and the skip link), under the app. */
@@ -112,6 +113,37 @@ main:has([data-sc-playground]) .content-panel:first-of-type {
 	grid-template-columns: minmax(14rem, var(--pg-split)) 0.3125rem minmax(14rem, 1fr);
 	min-height: 0;
 	min-width: 0;
+}
+/* Every pane in its own track, so that a hidden splitter (no JavaScript, a phone) leaves its track empty. */
+.sc-pg-files {
+	grid-column: 1;
+}
+.sc-pg__fsplit {
+	grid-column: 2;
+}
+.sc-pg__grid {
+	grid-column: 3;
+}
+.sc-pg[data-files='closed'] .sc-pg__grid {
+	grid-column: 1;
+}
+.sc-pg__top {
+	grid-row: 1;
+}
+.sc-pg__hsplit {
+	grid-row: 2;
+}
+.sc-pg-panel {
+	grid-row: 3;
+}
+.sc-pg__panel--editor {
+	grid-column: 1;
+}
+.sc-pg__split {
+	grid-column: 2;
+}
+.sc-pg__panel--diagram {
+	grid-column: 3;
 }
 .sc-pg__panel {
 	display: flex;
@@ -237,10 +269,16 @@ main:has([data-sc-playground]) .content-panel:first-of-type {
 		display: none;
 	}
 	.sc-pg__grid {
+		grid-column: 1;
 		grid-template-rows: minmax(0, 1fr);
 	}
 	.sc-pg__top {
 		grid-template-columns: minmax(0, 1fr);
+	}
+	.sc-pg__top > *,
+	.sc-pg__grid > * {
+		grid-column: 1;
+		grid-row: auto;
 	}
 	.sc-pg[data-pg-js] .sc-pg__tabs {
 		display: flex;

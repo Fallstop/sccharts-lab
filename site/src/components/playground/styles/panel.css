@@ -117,6 +117,9 @@
 	padding: 0.25rem 0;
 	list-style: none;
 }
+.sc-pg-panel__body .sc-pg-diag {
+	max-width: 52rem;
+}
 
 /* ----- The console ----- */
 
@@ -167,4 +170,26 @@
 /* Printed in a tick after the one shown (after Back): dimmed, as the timing diagram dims those ticks. */
 .sc-pg-console__lines li.is-later {
 	opacity: 0.45;
+}
+
+@media (max-width: 47.99rem) {
+	/* On a phone the tab's tools take a row of their own, under the tabs. */
+	.sc-pg-panel__tabs {
+		flex: 1 0 100%;
+	}
+	.sc-pg-panel__tabs [role='tab'] {
+		padding-inline: 0.625rem;
+	}
+	.sc-pg-panel__tools {
+		flex-basis: 100%;
+		justify-content: flex-start;
+		padding: 0.375rem 0.25rem;
+		border-top: 1px solid var(--pg-line);
+	}
+	.sc-pg-panel__tools:empty {
+		display: none;
+	}
+	.sc-pg-panel__tools .sc-pg__simtools {
+		margin-inline-start: auto;
+	}
 }

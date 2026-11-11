@@ -20,7 +20,7 @@ const { inputs } = Astro.props
 		<div class="sc-pg-panel__tabs" role="tablist" aria-label="Panel" data-pg-panel-tabs>
 			{
 				PANEL_TABS.map((t, i) => (
-					<button type="button" role="tab" id={`sc-pg-tab-${t.id}`} data-panel-tab={t.id} aria-selected={String(i === 0)} aria-controls={`sc-pg-panel-${t.id}`} tabindex={i === 0 ? 0 : -1}>
+					<button type="button" role="tab" id={`sc-pg-tab-${t.id}`} data-panel-tab={t.id} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`sc-pg-panel-${t.id}`} tabindex={i === 0 ? 0 : -1}>
 						{t.id === 'sim' && <span class="sc-pg__glyph is-sim" aria-hidden="true" />}
 						<span>{t.label}</span>
 						<span class="sc-pg-panel__badge" data-pg-badge-count hidden />

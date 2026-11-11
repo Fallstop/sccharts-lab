@@ -52,21 +52,19 @@ function openDb(): Promise<IDBDatabase | null> {
     return opening
 }
 
-function run<T>(mode: IDBTransactionMode, work: (store: IDBObjectStore) => IDBRequest<T> | void): Promise<T | undefined> {
-    return openDb().then(
-        db =>
-            new Promise<T | undefined>(resolve => {
-                if (!db) return resolve(undefined)
-                try {
-                    const tx = db.transaction(STORE, mode)
-                    const req = work(tx.objectStore(STORE))
-                    tx.oncomplete = () => resolve(req ? req.result : undefined)
-                    tx.onerror = tx.onabort = () => resolve(undefined)
-                } catch {
-                    resolve(undefined)
-                }
-            }),
-    )
+async function run<T>(mode: IDBTransactionMode, work: (store: IDBObjectStore) => IDBRequest<T> | void): Promise<T | undefined> {
+    const db = await openDb()
+    return new Promise<T | undefined>(resolve => {
+        if (!db) return resolve(undefined)
+        try {
+            const tx = db.transaction(STORE, mode)
+            const req = work(tx.objectStore(STORE))
+            tx.oncomplete = () => resolve(req ? req.result : undefined)
+            tx.onerror = tx.onabort = () => resolve(undefined)
+        } catch {
+            resolve(undefined)
+        }
+    })
 }
 
 export function newProjectId(): string {

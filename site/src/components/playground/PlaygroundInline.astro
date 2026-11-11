@@ -106,7 +106,7 @@ const json = (v: unknown) => JSON.stringify(v).replace(/</g, '\\u003c')
 </WidgetFrame>
 
 <script>
-	import { bootInline } from './boot'
+	import { bootInline } from './boot-inline'
 	bootInline()
 	document.addEventListener('astro:page-load', bootInline)
 </script>
