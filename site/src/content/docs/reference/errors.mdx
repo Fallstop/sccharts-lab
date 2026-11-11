@@ -76,19 +76,18 @@ describe the compiler tripping over the broken model, not further mistakes in yo
 first message, the one with a line and column, and they go away. SCCharts Lab stops after the first
 stage that fails, so it does not show them.
 
-For some syntax errors, the KIELER VS Code extension (0.3.0) never finishes compiling at all: the
-simulation does not start and no message comes. A keyword used as a name (`input bool reset`), a
-number that is too large and `if 3 == level` are known cases. The editor still marks the syntax
+For some syntax errors, the KIELER VS Code extension (0.4.3, and 0.3.0 before it) never finishes
+compiling at all: the simulation does not start and no message comes. A keyword used as a name
+(`input bool reset`), a number that is too large and `if 3 == level` are known cases. The editor still marks the syntax
 errors as you type: fix those, and compile again.
 
 ### KIELER and SCCharts Lab
 
 SCCharts Lab compiles with KIELER's own compiler and keeps its messages, but rewrites a few into
 plainer English and adds some of its own where KIELER would crash or say nothing useful. Where the
-two differ, both texts are given below, KIELER's first. The two are also built from different
-versions of KIELER (the one inside the *KIELER VS Code* extension 0.3.0 dates from 2024; SCCharts Lab
-follows KIELER's current sources), and for a few syntax errors that alone changes the wording; those
-cases are noted too.
+two differ, both texts are given below, KIELER's first. SCCharts Lab and the *KIELER VS Code*
+extension 0.4.3 are built from the same KIELER sources (KIELER 1.6.1). The older extension 0.3.0, from
+2024, words a few syntax errors differently; those cases are noted too.
 
 ## Syntax errors
 
@@ -633,8 +632,8 @@ Cannot assign enum value of an incompatible type.
 ```
 
 An enum variable was given a number (`speed = 1`), arithmetic (`speed = speed + 1`) or a value of
-another enum. Assign a value of its own enum: `speed = Speed.LOW`. The KIELER VS Code extension says
-the same for `b = a` between two variables of one enum, which current KIELER accepts.
+another enum. Assign a value of its own enum: `speed = Speed.LOW`. The older KIELER VS Code extension
+0.3.0 says the same for `b = a` between two variables of one enum, which KIELER 1.6 accepts.
 
 ```text wrap
 Assignments to class/struct types are not supported. Please specify a member.

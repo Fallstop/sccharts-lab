@@ -136,15 +136,8 @@ It also rejects a pair that does commute mathematically:
 />
 
 KIELER decides whether updates commute by comparing their assignment operators, and the old style
-`score = score + 1` uses `=`. Every update written that way also gets a warning. Official KIELER says:
-
-```text wrap
-This assignment looks like old relative write SC syntax and is considered deprecated.
-If you want to create a relative write in new syntax, please use an infix assignment operator.
-```
-
-SCCharts Lab says what it means instead (from version 0.9.9; earlier versions show KIELER's
-wording):
+`score = score + 1` uses `=`. Every update written that way also gets a warning. SCCharts Lab says
+([KIELER's wording](/reference/errors/#this-assignment-looks-like-old-relative-write-sc-syntax-and-is-considered-deprecated) is terser):
 
 ```text wrap
 This assignment reads score, so the compiler treats it as an update of score (a relative write, as in the deprecated old SC syntax).

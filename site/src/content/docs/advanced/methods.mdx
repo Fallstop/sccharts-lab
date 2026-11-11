@@ -228,9 +228,9 @@ tick.) With the GNU C library, which Linux
 uses, they are 0.840, 0.394, 0.783, ..., and this site's simulator produces the same sequence. Other
 systems' C libraries have their own `rand()`, so in SCCharts Lab on Windows or a Mac the numbers may
 well differ ([How this guide is checked](/reference/about/#random-numbers)). Either way, the sequence
-makes simulations reproducible, which is useful for testing, but it is not randomness. In the KIELER VS Code extension (0.3.0) the chart above also needs
-`#hostcode "#include <stdlib.h>"`, or gcc fails; current KIELER and SCCharts Lab add that include
-themselves when a chart calls `random()`.
+makes simulations reproducible, which is useful for testing, but it is not randomness. SCCharts Lab and
+the KIELER VS Code extension 0.4.3 add the include `random()` needs themselves; in the older extension
+0.3.0 the chart above also needs `#hostcode "#include <stdlib.h>"`, or gcc fails.
 
 `randomize()` is meant to seed the generator from the time of day, so that runs differ. In what KIELER
 runs unconditionally in tick 1 (an entry action of the chart or of an initial state, or an immediate

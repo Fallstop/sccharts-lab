@@ -104,14 +104,8 @@ guess:
 
 <Sim example="advanced/for-regions/copy-order" caption="In tick 1 three regions append a digit to `log`: `First` (9), the copies of `R` for `i` = 3, 2, 1, written in the middle, and `Last` (7). The result is 97321: the copies run after all the other regions." />
 
-Each region runs `log = log * 10 + digit`, which KIELER treats as an update of `log`. Official KIELER
-warns
-
-```text wrap
-This assignment looks like old relative write SC syntax and is considered deprecated.
-```
-
-and SCCharts Lab says what it means:
+Each region runs `log = log * 10 + digit`, which KIELER treats as an update of `log`, with a
+[warning](/reference/errors/#this-assignment-looks-like-old-relative-write-sc-syntax-and-is-considered-deprecated):
 
 ```text wrap
 This assignment reads log, so the compiler treats it as an update of log (a relative write, as in the deprecated old SC syntax).

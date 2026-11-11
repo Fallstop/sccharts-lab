@@ -41,7 +41,7 @@ the order it runs:
 | 10 | `ComplexFinalState` | final states with actions or inner states (P-10) |
 | 11 | `Exit` (weak) | `weak exit` (P-12) |
 | 12 | `Entry` (weak) | `weak entry` (P-11) |
-| 13 | `AbortRegion` (pre-process, off by default) | — |
+| 13 | `AbortRegion` (pre-process, off by default) | n/a |
 | 14 | `Abort` | `abort to`, aborts on superstates (P-14 …) |
 | 15 | `Exit` (strong) | `exit`, `strong exit` |
 | 16 | `Initialization` | initial values of declarations (become the first entry action) |
@@ -85,7 +85,7 @@ Terminology used below:
 | inner states' `during` | yes (#11) | no (#11) | yes |
 | `exit` / `strong exit` (state and active inner states, innermost first) | yes (#01, #04) | yes (#02, #20) | yes (#15, #16) |
 | `weak exit` on a superstate | **no** (#15) | no (#15) | yes (#15) |
-| `weak exit` on a simple state | yes | yes (#81) | — |
+| `weak exit` on a simple state | yes | yes (#81) | n/a |
 | transition effect, then target's entry actions | yes | yes | yes |
 
 **What runs in the tick a state is entered**:
@@ -96,7 +96,7 @@ Terminology used below:
 | `weak entry` | yes | no (#14) | never | never |
 | entry actions of inner initial states | yes | yes (#20) | shallow: yes (#66) or one tick later (#65); deep: never (#67) | never (#46) |
 | `immediate during` | yes (#10) | no (#33) | next tick (#63) | when resumed (#46) |
-| immediate outgoing transitions | yes | — | next tick (#63, #64) | when resumed (#46) |
+| immediate outgoing transitions | yes | n/a | next tick (#63, #64) | when resumed (#46) |
 | delayed `during`, delayed transitions | no | no | from the next tick | when resumed |
 
 **Order within one transition** (P-1): *during of source (weak only) → exit actions, innermost first, each

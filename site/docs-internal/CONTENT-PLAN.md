@@ -50,57 +50,57 @@ Slugs are under `src/content/docs/`. Each page's frontmatter sets `title`, `desc
 `sidebar.order`.
 
 ### Start here (`start/`)
-1. `welcome` — What SCCharts is (statecharts + synchronous languages + sequential constructiveness), where
+1. `welcome`: What SCCharts is (statecharts + synchronous languages + sequential constructiveness), where
    it comes from (Kiel University's KIELER project; Harel's statecharts; Esterel), what it is used for,
    how this guide works (the widgets), and a first live chart to poke.
-2. `in-a-hurry` — Short on time?: setup in three steps, one microwave chart built up in five simulations,
+2. `in-a-hurry`: Short on time?: setup in three steps, one microwave chart built up in five simulations,
    the eight surprises, what to do when it fails, and every Learn chapter's key ideas (`<KeyIdeasDigest>`).
-3. `tools` — Getting SCCharts: the SCCharts Lab VS Code extension (recommended; diagrams, simulation,
+3. `tools`: Getting SCCharts: the SCCharts Lab VS Code extension (recommended; diagrams, simulation,
    live diagnostics), official KIELER, and this site's playground. What each is good for.
 
 ### Learn (`learn/`), the core tutorial, read in order
-1. `ticks` — Thinking in ticks: reactive systems, the synchronous hypothesis, a tick as the unit of
+1. `ticks`: Thinking in ticks: reactive systems, the synchronous hypothesis, a tick as the unit of
    logical time, inputs sampled → reaction in zero time → outputs. Why this makes programs deterministic.
-2. `first-chart` — Your first SCChart: anatomy of a `.sctx` file (`scchart`, interface declarations,
+2. `first-chart`: Your first SCChart: anatomy of a `.sctx` file (`scchart`, interface declarations,
    states, `initial`, transitions), reading the diagram, running it.
-3. `transitions` — Triggers, effects and priority: `if … do … go to`, effect lists with `;`, several
+3. `transitions`: Triggers, effects and priority: `if … do … go to`, effect lists with `;`, several
    outgoing transitions and their priority numbers, self-loops, transitions without trigger.
-4. `immediate` — Delayed and immediate transitions: the entry tick, `immediate`, chains of immediate
+4. `immediate`: Delayed and immediate transitions: the entry tick, `immediate`, chains of immediate
    transitions within one tick, why a cycle of immediate transitions is rejected, `final` states.
-5. `variables` — Variables, types and expressions: `bool`/`int`/`float`/`string`, `input`/`output`/local,
+5. `variables`: Variables, types and expressions: `bool`/`int`/`float`/`string`, `input`/`output`/local,
    initial values, `const`, operators, assignment operators and `++`, arrays; how inputs behave in the
    simulator (they keep their value until changed).
-6. `signals` — Signals: pure signals, presence per tick, emitting, input and output signals, signals vs
+6. `signals`: Signals: pure signals, presence per tick, emitting, input and output signals, signals vs
    boolean variables; valued signals, `val()`/value access and combine functions.
-7. `hierarchy` — Superstates: nesting, scope of declarations, final states and termination (`join to`).
-8. `concurrency` — Concurrent regions: regions run in the same tick, communication between regions in the
+7. `hierarchy`: Superstates: nesting, scope of declarations, final states and termination (`join to`).
+8. `concurrency`: Concurrent regions: regions run in the same tick, communication between regions in the
    same tick, termination when all regions finish; ABRO.
-9. `preemption` — Aborts: weak abort (`go to`, the default), strong abort (`abort to`), immediate aborts,
+9. `preemption`: Aborts: weak abort (`go to`, the default), strong abort (`abort to`), immediate aborts,
    termination; exactly what runs in the tick an abort happens.
-10. `actions` — Entry, during and exit actions; `immediate during`; triggers on actions; how they relate to
+10. `actions`: Entry, during and exit actions; `immediate during`; triggers on actions; how they relate to
     transitions; labels.
-11. `pre` — The previous tick: `pre()`, edge detection, count delays (`if 3 A`).
-12. `causality` — Why the compiler says no: the sequentially constructive model of computation, the
+11. `pre`: The previous tick: `pre()`, edge detection, count delays (`if 3 A`).
+12. `causality`: Why the compiler says no: the sequentially constructive model of computation, the
     initialise–update–read protocol between concurrent regions, causality cycles, write–write conflicts,
     instantaneous loops; reading KIELER's error messages and fixing them.
 
 ### Going further (`advanced/`)
-13. `suspend` — Suspension: `suspend`, `immediate suspend`, `weak suspend`.
-14. `history` — History and deferred transitions: `history`, `shallow history`, `deferred`.
-15. `connectors` — Connector states.
-16. `references` — Reusing charts: `state S is Other(...)`, `import`, bindings (explicit, by order,
+13. `suspend`: Suspension: `suspend`, `immediate suspend`, `weak suspend`.
+14. `history`: History and deferred transitions: `history`, `shallow history`, `deferred`.
+15. `connectors`: Connector states.
+16. `references`: Reusing charts: `state S is Other(...)`, `import`, bindings (explicit, by order,
     implicit), several charts per file, `region is`.
-17. `for-regions` — Arrays and `for` regions.
-18. `dataflow` — Dataflow regions.
-19. `time` — Time: clocks (`clock`), Timed SCCharts, `period`, dynamic ticks (`deltaT`, `sleepT`), and
+17. `for-regions`: Arrays and `for` regions.
+18. `dataflow`: Dataflow regions.
+19. `time`: Time: clocks (`clock`), Timed SCCharts, `period`, dynamic ticks (`deltaT`, `sleepT`), and
     counting an external timer input instead.
-20. `methods` — Methods and code effects: SCL statements (`if`/`else`, loops, local variables, the
+20. `methods`: Methods and code effects: SCL statements (`if`/`else`, loops, local variables, the
     semicolon rule), methods and what KIELER makes of them, `print`, `random()`.
-21. `data-types` — Enums, structs and classes: enum values, struct and class instances, methods of a
-    class, what KIELER rejects, and the differences in KIELER 0.3.0.
-22. `annotations` — Comments in diagrams, labels, annotations and pragmas.
-23. `host-code` — Host code: backticks, `extern`, `#hostcode`, host types and strings.
-24. `code-generation` — From chart to C or Java: what the compiler generates (`reset`, `tick`, the
+21. `data-types`: Enums, structs and classes: enum values, struct and class instances, methods of a
+    class, what KIELER rejects, and the differences in the older KIELER 0.3.0.
+22. `annotations`: Comments in diagrams, labels, annotations and pragmas.
+23. `host-code`: Host code: backticks, `extern`, `#hostcode`, host types and strings.
+24. `code-generation`: From chart to C or Java: what the compiler generates (`reset`, `tick`, the
     `TickData` struct), a main loop on a microcontroller, netlist vs priority-based compilation.
 
 ### Patterns (`patterns/`), a cookbook of complete, explained charts
@@ -158,7 +158,7 @@ import HowKielerReads from '~components/HowKielerReads.astro'   // likewise
 import { Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components'
 ```
 
-- `<Chart example="learn/first-chart/toggle" />` — the diagram (pre-rendered SVG) with the source.
+- `<Chart example="learn/first-chart/toggle" />`: the diagram (pre-rendered SVG) with the source.
   Props: `code` (default `true`), `caption`, `highlight` (states or transitions to emphasise: ids such as
   `Toggle.On` and `Toggle.Off->1`, ids without the chart's name such as `Off->1`, or a unique state name
   such as `On`; a typo is a build error), `view` (`'diagram'`, `'code'` or `'both'`: the view shown first),
@@ -175,7 +175,7 @@ import { Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components'
   link to its section (`src/components/frame/error-links.ts`; a test fails when a heading it links to is
   renamed, so tell the widgets workstream when you rename or add a message heading there). The elements a
   message is about are drawn with a solid red-orange outline and a small "!" marker.
-- `<Sim example="learn/first-chart/toggle" />` — runnable chart: diagram, source, inputs, step /
+- `<Sim example="learn/first-chart/toggle" />`: runnable chart: diagram, source, inputs, step /
   back / reset / run, and a waveform trace. Uses `<example>.scenario.json` when present (the reader can
   play the scripted tour or take over; during the tour the input switches show the inputs of the tick shown,
   the one its note is about). Props: `scenario` (another scenario file), `show` (variables to trace,
@@ -196,7 +196,7 @@ import { Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components'
   `sleepT` output) gets **Advance by sleepT** next to the `deltaT` field: it sets `deltaT` to the `sleepT` of the
   tick shown and steps. A chart that imports others is compiled with them (the scenario's `"imports"`, else
   the `import "name"` lines that have a file next to the example).
-- `<Compare a="…" b="…" caption="…" />` — two charts side by side, stepped together with the same inputs
+- `<Compare a="…" b="…" caption="…" />`: two charts side by side, stepped together with the same inputs
   (the union of both charts' inputs; each chart gets the ones it declares); outputs both have are marked where
   they differ. **Guided tour**: `scenario` is `'a'` (the default: a's scenario, when it has one), `'b'` (b's),
   an example-style id of another scenario file, or `{false}` (free play from the start). The tour plays the
@@ -208,9 +208,9 @@ import { Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components'
   declares, and a local both charts have, at the same place, is compared like an output; a name neither declares
   is a build error). KIELER's warnings for either chart
   are listed under the simulation; timed charts get **Advance by sleepT** (the earlier deadline of the two).
-- `<Playground example="…" />` — editable chart with live diagram and simulation (also `/playground`).
+- `<Playground example="…" />`: editable chart with live diagram and simulation (also `/playground`).
 - `<Quiz question="…" options={["…", "…"]} answer={1}>Explanation (Markdown)</Quiz>`
-- `<Predict example="…" ask={[{ tick: 3, value: "O" }, { tick: 3, state: "Done" }]} />` — the reader
+- `<Predict example="…" ask={[{ tick: 3, value: "O" }, { tick: 3, state: "Done" }]} />`: the reader
   predicts, then the simulation runs the scenario and checks the answers. `value` asks for a variable's
   value after the tick (a pure signal: present or absent; a valued signal: its value); `state` asks whether
   a state is active (an id or a unique state name). Needs a scenario with at least that many ticks. `caption`
@@ -221,15 +221,15 @@ import { Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components'
   KIELER rejects (its recording says so) is a build error; a chart KIELER accepts that the guide's engine
   cannot run is not: the `value` answers are checked against KIELER's recorded run (a `state` question then
   cannot be checked, and says so), with a notice.
-- `<TryIt example="…" solution="…" title="…" hint="…">Task description</TryIt>` — exercise; opens the
+- `<TryIt example="…" solution="…" title="…" hint="…">Task description</TryIt>`: exercise; opens the
   starter in a playground (with a solution, the link carries `&solution=<solution id>`, so the playground can
   compare the reader's chart with the model solution). Under the button, each in its own closed box: the starter's
   source, the hint, the solution. `title` names the exercise (the box's heading; default "Try it"). `hint` is
   optional, short inline Markdown (`code`, **bold**, *italic*, links; a blank line starts a new paragraph): a nudge
   towards the idea, not the answer ("Which state should remember that `A` was seen?"). Write identifiers in code
   spans, as in tour notes; inside a JSX attribute use `hint={'…'}` or `hint="…"` with `&quot;` for a double quote.
-- `<KeyIdeas>` — bullet list summary at the end of a chapter.
-- `<HowKielerReads />` — "How KIELER reads it": the reader types an expression, an effect or a trigger
+- `<KeyIdeas>`: bullet list summary at the end of a chapter.
+- `<HowKielerReads />`: "How KIELER reads it": the reader types an expression, an effect or a trigger
   and sees KIELER's grouping fully parenthesised (`A > 2 ? A : 0` is `A > (2 ? A : 0)`) and as a tree, or
   the syntax error with a link to `reference/errors`. Buttons load the traps of `reference/operators` (the
   ternary, `->`, `fby`, `!`, `&`, a count delay, an `==` chain). Props: `initial` (the text shown first,
@@ -253,13 +253,13 @@ used.
 - KIELER wiki: https://github.com/kieler/semantics/wiki (Syntax, Timed Automata, Dataflow, Hostcode,
   Annotations and Pragmas, Object Orientation)
 - von Hanxleden et al., *SCCharts: Sequentially Constructive Statecharts for Safety-Critical
-  Applications*, PLDI 2014 — https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/pldi14.pdf
+  Applications*, PLDI 2014: https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/pldi14.pdf
 - von Hanxleden et al., *Sequentially Constructive Concurrency: A Conservative Extension of the
   Synchronous Model of Computation*, ACM TECS 2014 (DATE 2013).
-- Motika, *SCCharts: Language and Interactive Incremental Implementation*, PhD thesis 2017, §3.1–3.2 —
+- Motika, *SCCharts: Language and Interactive Incremental Implementation*, PhD thesis 2017, §3.1–3.2:
   https://www.uni-kiel.de/journals/servlets/MCRFileNodeServlet/jportal_derivate_00001270/kcss_2017_02.pdf
 - Smyth, Schulz-Rosengarten, von Hanxleden, *Practical Causality Handling for Synchronous Languages*,
   DATE 2019.
-- Schulz-Rosengarten et al., *Polyglot Modal Models through Lingua Franca* / *Time in SCCharts*, FDL 2018 —
+- Schulz-Rosengarten et al., *Polyglot Modal Models through Lingua Franca* / *Time in SCCharts*, FDL 2018:
   https://rtsys.informatik.uni-kiel.de/~biblio/downloads/papers/fdl18.pdf
 - Berry, *The Esterel v5 Language Primer*; Harel, *Statecharts: A Visual Formalism for Complex Systems*, 1987.
