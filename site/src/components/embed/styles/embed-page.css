@@ -71,8 +71,8 @@ body {
 .sc-embed:is([data-view='diagram'], [data-view='sim']) .sc-embed__restore {
 	display: none !important;
 }
-/* `controls=0`: the page drives the chart (postMessage); the trace and what happened stay. */
-.sc-embed[data-controls='off'] :is(.sc-sim__controls, .sc-embed__tools) {
+/* `controls=0`: the page drives the chart (postMessage); the trace and what happened stay, the tour's buttons go. */
+.sc-embed[data-controls='off'] :is(.sc-sim__controls, .sc-embed__tools, .sc-tour__nav, .sc-tour__restart) {
 	display: none !important;
 }
 :root:not([data-js]) .sc-embed__if-js,

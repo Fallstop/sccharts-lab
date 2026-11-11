@@ -49,13 +49,14 @@ const id = `sc-embed-demo-${example.replace(/\W+/g, '-')}${api ? '-api' : ''}`
 			const outputs = Object.entries(t.present).filter(([k, on]) => on && !inputs.includes(k)).map(([k]) => k)
 			out.textContent = t.tick ? `Tick ${t.tick}: ${outputs.length ? `${outputs.join(', ')} present` : 'no output'}` : 'Tick 0: nothing has run yet'
 		}
-		chart.addEventListener('ready', () => say(chart.tick!))
+		// Tick 1 enters the initial states, as the code under the demo runs it first: the reader's A then counts.
+		chart.addEventListener('ready', () => void chart.step().catch((error: Error) => (out.textContent = error.message)))
 		chart.addEventListener('tick', (e) => say((e as CustomEvent<TickInfo>).detail))
 		box.addEventListener('click', (e) => {
 			const b = (e.target as Element).closest<HTMLButtonElement>('button')
 			if (!b) return
 			// Each button is a pulse: its input present in this tick, the others absent.
-			const done = b.hasAttribute('data-reset') ? chart.reset() : chart.step(Object.fromEntries(inputs.map((n) => [n, n === b.dataset.input])))
+			const done = b.hasAttribute('data-reset') ? chart.reset().then(() => chart.step()) : chart.step(Object.fromEntries(inputs.map((n) => [n, n === b.dataset.input])))
 			done.catch((error: Error) => (out.textContent = error.message))
 		})
 	}

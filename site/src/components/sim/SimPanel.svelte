@@ -450,6 +450,8 @@
 
 	function onKey(e: KeyboardEvent) {
 		if (!timeline || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return
+		// An embed whose page drives the chart (`controls=0`): its keys do not step it either.
+		if (root?.closest('[data-controls="off"]')) return
 		const target = e.target as HTMLElement
 		const typing = target.closest('input:not([type="checkbox"]), select, textarea, [contenteditable]')
 		if (typing) return

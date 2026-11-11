@@ -363,6 +363,37 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
         await context.close()
     }, 120000)
 
+    test('controls=0: the page drives the chart, so neither the tour\'s buttons nor the keys step it', async () => {
+        const { page, context } = await open('/embed/?example=learn/first-chart/dimmer&view=sim&tour&tick=3&controls=0', 640, 520, BASE)
+        await page.waitForSelector('[data-pg-ready]')
+        await page.waitForFunction(() => /Tick\s*3/.test(document.querySelector('.sc-simctl__tick')?.textContent ?? document.body.textContent ?? ''))
+        const shown = await page.$$eval('.sc-tour__nav button, .sc-tour__restart, .sc-simctl__step', bs => bs.filter(b => (b as HTMLElement).offsetParent !== null).length)
+        expect(shown).toBe(0)
+        const tick = () => page.evaluate(() => document.querySelector('.sc-sim')?.querySelector('.sc-simctl__tick b')?.textContent ?? '')
+        const before = await tick()
+        await page.focus('.sc-sim__trace')
+        for (const key of [' ', 'Enter', 'ArrowRight', 'r', 'ArrowLeft']) await page.keyboard.press(key)
+        await page.waitForTimeout(300)
+        expect(await tick()).toBe(before)
+        await context.close()
+    }, 120000)
+
+    test('the reference page\'s demo does what its caption says: A, then B, and O is present', async () => {
+        const { page, context } = await open('/reference/embed/', 1280, 900, BASE)
+        const box = page.locator('[data-api]')
+        await box.scrollIntoViewIfNeeded()
+        await page.waitForFunction(() => /^Tick 1/.test(document.querySelector('[data-api] [data-out]')?.textContent ?? ''), undefined, { timeout: 60000 })
+        await box.locator('button:has-text("Step with A")').click()
+        await page.waitForFunction(() => /^Tick 2/.test(document.querySelector('[data-api] [data-out]')?.textContent ?? ''))
+        await box.locator('button:has-text("Step with B")').click()
+        await page.waitForFunction(() => /^Tick 3/.test(document.querySelector('[data-api] [data-out]')?.textContent ?? ''))
+        expect(await page.textContent('[data-api] [data-out]')).toBe('Tick 3: O present')
+        // Reset starts it again, with tick 1 run: A, then B work again.
+        await box.locator('button:has-text("Reset")').click()
+        await page.waitForFunction(() => /^Tick 1/.test(document.querySelector('[data-api] [data-out]')?.textContent ?? ''))
+        await context.close()
+    }, 120000)
+
     test('at a phone width nothing scrolls sideways', async () => {
         const { page, context } = await open('/element.html', 390, 844)
         await page.evaluate(() => Promise.all(['ex', 'inline', 'fetched'].map(id => (document.getElementById(id) as HTMLElement & { ready: Promise<unknown> }).ready)))
