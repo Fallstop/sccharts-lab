@@ -15,21 +15,22 @@ read and write the same `.sctx` files.
 | Tool | What it is | Best for |
 | --- | --- | --- |
 | [SCCharts Lab](#sccharts-lab-for-vs-code) | A VS Code extension, built on KIELER's compiler | Writing and debugging your own charts. Recommended. |
-| [KIELER](#the-official-kieler-tools) | Kiel University's own tools: a VS Code extension and an Eclipse application | The official reference, and KIELER features beyond SCCharts |
+| [KIELER](#the-official-kieler-tools) | Kiel University's own tools: a VS Code extension and an Eclipse application | Features beyond SCCharts, such as model checking and Esterel |
 | [The playground](#this-sites-playground) | This site's editor and simulator, in the browser | Trying things out, with nothing to install |
 
 About that recommendation: the author of this guide also makes SCCharts Lab
 ([who made this](/reference/about/#who-made-this)). It is recommended because it runs KIELER's own
-compiler and adds a simulation view and messages written for beginners; the `.sctx` files are the
-same in both.
+compiler, fixes a number of its crashes, and adds a simulation view and clearer messages; the `.sctx`
+files are the same in both.
 
 ## SCCharts Lab for VS Code
 
 [SCCharts Lab](https://marketplace.visualstudio.com/items?itemName=qinnovate.sccharts-lab) is an
 extension for [Visual Studio Code](https://code.visualstudio.com/) that edits, draws, simulates and
 compiles SCCharts. It is an independent fork of KIELER's VS Code extension: it runs a language server
-built from KIELER's own sources, so it compiles and simulates exactly as KIELER does, and it adds a
-rewritten simulation view and more helpful diagnostics. It is not affiliated with the KIELER project.
+built from KIELER's own sources, so it accepts the same charts as KIELER and simulates them the same
+way. Where KIELER crashes on a chart, SCCharts Lab gives a located message, or compiles the chart and
+warns that official KIELER will not. It adds a rewritten simulation view and more helpful diagnostics. It is not affiliated with the KIELER project.
 
 <figure>
   <a href="/images/sccharts-lab.webp" class="sc-figure-link"><img src="/images/sccharts-lab.webp" width="1440" height="1040" loading="lazy" decoding="async" alt="VS Code with SCCharts Lab: the Washer chart's source on the left; on the right its diagram, where the active states Programme and Washing are drawn in red, and below it the simulation's trace after four ticks: start was present in tick 2, full in tick 3, and the output motor is on from tick 3." /></a>
@@ -190,18 +191,18 @@ starter chart there, with the task above it and **Compare with the model solutio
 answer.
 
 The playground runs this guide's own engine: a reimplementation of KIELER's compiler checks and
-simulator, written in TypeScript so it can run in a web page. Every example in the guide is checked
-against KIELER tick for tick ([How this guide is checked](/reference/about/) explains how), but a chart
-you write yourself has not been. When it matters (a chart you hand in, or code for a real device),
-confirm the result with SCCharts Lab or KIELER, which run KIELER's own compiler.
+simulator, written in TypeScript so it can run in a web page. It is tested against KIELER on every
+example in the guide and on thousands of generated charts, and where it knowingly differs from KIELER
+it says so ([How this guide is checked](/reference/about/) explains how). It does not run host code or
+generate C, so for those you need SCCharts Lab or KIELER.
 
 ## Which one should I use?
 
 - **Learning with this guide:** nothing to install. Run the examples in the page and experiment in the
   [playground](/playground/). Install SCCharts Lab when you start writing charts of your own.
-- **Coursework and projects:** SCCharts Lab. It compiles and simulates with KIELER's compiler, so what
-  you see is what KIELER does, and its diagnostics explain more of what goes wrong. If your course
-  prescribes the official KIELER tools, use those; your `.sctx` files work in both.
+- **Writing and building charts:** SCCharts Lab. It keeps your charts in files, generates C for a
+  device, runs host code, and its diagnostics explain more of what goes wrong. If you need the official
+  KIELER tools, your `.sctx` files work in both.
 - **Beyond SCCharts:** KIELER for Eclipse, if you need model checking, the simulation visualisation,
   or KIELER's Esterel and Lustre support.
 

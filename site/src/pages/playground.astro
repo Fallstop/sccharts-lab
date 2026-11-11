@@ -100,8 +100,8 @@ const shortcuts: [string[], string][] = [
 	<Fragment set:html={`<style>${codeColourCss()}</style>`} />
 	<p class="sc-pg-trust not-content">
 		<Fragment set:html={pgIcons.info} />
-		<span class="sc-pg-trust__long">The playground runs the guide's own reimplementation of KIELER. For work you hand in, confirm the result in <a href="/start/tools/#sccharts-lab-for-vs-code">SCCharts Lab</a> or KIELER. <a href="/reference/about/">About the simulator</a></span>
-		<span class="sc-pg-trust__short">The guide's own simulator, not KIELER. <a href="/reference/about/">How it is checked</a></span>
+		<span class="sc-pg-trust__long">The playground runs the guide's own reimplementation of KIELER, tested against KIELER on every example and thousands of generated charts. <a href="/reference/about/">About the simulator</a></span>
+		<span class="sc-pg-trust__short">The guide's own simulator, tested against KIELER. <a href="/reference/about/">How it is checked</a></span>
 	</p>
 	<div class="sc-pg not-content" data-sc-playground data-tab="code" data-pagefind-ignore="all">
 		<script is:inline>document.currentScript.parentElement.setAttribute('data-pg-js', '')</script>
@@ -182,7 +182,7 @@ const shortcuts: [string[], string][] = [
 					</summary>
 					<div class="sc-pg-pop__panel sc-pg-help">
 						<h2>About the simulator</h2>
-						<p>The playground runs the guide's own reimplementation of KIELER's compiler and simulator, checked against KIELER. For work you hand in, confirm the result in <a href="/start/tools/#sccharts-lab-for-vs-code">SCCharts Lab</a> or KIELER. <a href="/reference/about/">More about the simulator</a></p>
+						<p>The playground runs the guide's own reimplementation of KIELER's compiler and simulator, checked against KIELER. It does not run host code or generate C; <a href="/start/tools/#sccharts-lab-for-vs-code">SCCharts Lab</a> does. <a href="/reference/about/">More about the simulator</a></p>
 						<h2>Keyboard shortcuts</h2>
 						<dl>
 							{

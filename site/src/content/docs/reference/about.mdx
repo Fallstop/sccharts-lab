@@ -21,11 +21,10 @@ export const tests = counted('test', Object.values(import.meta.glob(['/tests/con
 export const accepted = (list) => list.filter((r) => r.ok).length
 export const rejected = (list) => list.filter((r) => !r.ok).length
 
-This guide makes a strong promise: an example behaves in the page exactly as it does in KIELER, tick for
-tick. This page explains how that promise is kept, where it stops, and what the notices you will see on a
-few examples mean.
-
-Last checked against KIELER: October 2026.
+Every example in this guide is run through KIELER's compiler, and the page's simulation of it is tested
+against that run, tick for tick. KIELER is the baseline, not an oracle: where it crashes, varies from run
+to run or gets a result wrong by its own rules, the guide says so. This page explains how the checks
+work, where they stop, and what the notices you will see on a few examples mean.
 
 ## Every example is run through KIELER
 
@@ -75,8 +74,8 @@ engine's parser is checked against KIELER's verdict on {Object.keys(corpusFiles)
 messages, and on {corpusSnippets.length} short snippets.
 
 So an example in the guide behaves as KIELER does. A chart you write yourself in the
-[playground](/playground/) runs on the same engine, but nobody has compared it with KIELER. When it
-matters, such as a chart you hand in or code for a real device, run it in SCCharts Lab or KIELER.
+[playground](/playground/) runs on the same engine. It has no recording of its own, but the
+[random charts](#random-charts-compared-with-kieler) below test the engine on charts nobody wrote by hand.
 
 ### What the engine does not run
 
@@ -187,10 +186,10 @@ KIELER's warnings were compared too, each at its place in the chart.
 
 ## What the checks cannot promise
 
-- **Your own charts.** The playground has not been compared with KIELER on them. Confirm in SCCharts
-  Lab or KIELER when it matters.
-- **Future versions of KIELER.** The guide describes KIELER as it is now. A later release may behave
-  differently, and the guide will follow it once it has been checked.
+- **Your own charts.** Nothing has recorded them. The random charts make a difference unlikely, not
+  impossible; if you find one, please [report it](#found-a-mistake).
+- **Future versions of KIELER.** The guide describes KIELER as it was when last checked, in October
+  2026. A later release may behave differently; the guide will say so once it has been checked.
 - **The prose.** The recordings check behaviour, not sentences. If the text and an example disagree,
   the example is the one that ran through KIELER.
 
@@ -200,6 +199,8 @@ This guide is independent of Kiel University's KIELER team, who created SCCharts
 also makes SCCharts Lab, the VS Code extension the guide recommends, which is independent of the KIELER
 team too. Where SCCharts Lab and official KIELER differ, the guide follows KIELER's sources and says
 what official KIELER does ([Official KIELER and SCCharts Lab](#official-kieler-and-sccharts-lab)).
+
+The guide explains the language and its tools. It contains no solutions to any course's assignments.
 
 ## Found a mistake?
 

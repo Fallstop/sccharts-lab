@@ -83,9 +83,8 @@ of guide pages (`src/components/Playground.astro` renders `PlaygroundInline.astr
   is present; `R` stays absent."); a toast with **Take over** says so. A damaged run is reported and the chart opens
   without it.
 - **Trust**: a line under the page's description (and the first section of the help popover, the `?` button):
-  the playground runs the guide's own reimplementation of KIELER; for work you hand in, confirm the result in
-  SCCharts Lab or KIELER; links /reference/about/. On a phone it is one line ("The guide's own simulator, not KIELER.
-  How it is checked"). The help popover also points to Troubleshooting and Compiler messages ("When a chart
+  the playground runs the guide's own reimplementation of KIELER, tested against KIELER; links /reference/about/.
+  On a phone it is one line ("The guide's own simulator, tested against KIELER. How it is checked"). The help popover also points to Troubleshooting and Compiler messages ("When a chart
   misbehaves").
 - **Site menu**: the page has Starlight's sidebar, for its menu button on phones (the guide's navigation, from the
   playground too); from 50rem on the sidebar is hidden and the app takes the whole width (playground.css). SimPanel's `verdict` is `'recorded'` for an example as written

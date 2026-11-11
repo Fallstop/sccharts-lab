@@ -202,9 +202,9 @@ out wrong in tick 1, because of a bug in KIELER's compiler; compute it on a tran
 ## The playground and SCCharts Lab disagree
 
 The playground runs this guide's own engine, a reimplementation of KIELER's compiler checks and
-simulator that runs in the browser. Every example in the guide has been checked against KIELER, but
-your own chart has not, and SCCharts Lab runs KIELER's actual compiler. Before you suspect either of
-them, check that the two runs really are the same:
+simulator that runs in the browser; SCCharts Lab runs a fork of KIELER's compiler. Both are tested
+against KIELER, so a disagreement is rare. Before you suspect either of them, check that the two runs
+really are the same:
 
 - **The same inputs in the same ticks.** Both keep an input's value until you change it, so an input
   left on in one and switched off in the other gives different runs.
@@ -216,7 +216,7 @@ them, check that the two runs really are the same:
   same charts. [How this guide is checked](/reference/about/#official-kieler-and-sccharts-lab) lists
   the differences.
 
-If they still disagree, trust SCCharts Lab, and please [report it](/reference/about/#found-a-mistake),
+If they still disagree, one of them has a bug: please [report it](/reference/about/#found-a-mistake),
 with the playground's **Copy link** for your chart and the inputs that show the difference.
 
 ## Setup problems
@@ -276,12 +276,12 @@ SCCharts Lab cannot run beside KIELER VS Code. Uninstall it, then reload the win
 ```
 
 **Uninstall and reload** does exactly that; disabling KIELER VS Code in the Extensions view and
-reloading works too. If your course needs the official extension, disable SCCharts Lab instead: your
+reloading works too. If you need the official extension, disable SCCharts Lab instead: your
 `.sctx` files work in both.
 
 ## Test your chart
 
-A chart is only as good as the runs you have tried. Before you hand one in:
+A chart is only as good as the runs you have tried. Before you rely on one:
 
 - **Set every input in tick 1,** and remember that tick 1 only enters the initial states.
 - **Press and hold.** Try each button for a single tick and held down for several. Inputs keep their

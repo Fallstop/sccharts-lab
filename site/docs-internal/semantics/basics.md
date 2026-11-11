@@ -880,7 +880,7 @@ warning only; `ok` stays true.
 | Input initialisers (B-7) | value before the first input; supplied tick-1 value wins | overwrite the supplied tick-1 value |
 | Tick-1 reordering (B-34) | yes | no (written order) |
 | Compound-then-read bug (B-35) | yes | no |
-| Everything else in this suite | — | same values and same `taken`: all 54 charts of the suite that the netlist compiler accepts were rerun with priority; only the four rows above differ (charts 31, 63, 65, 66), and all 7 rejected loop charts are accepted by priority |
+| Everything else in this suite | n/a | same values and same `taken`: all 54 charts of the suite that the netlist compiler accepts were rerun with priority; only the four rows above differ (charts 31, 63, 65, 66), and all 7 rejected loop charts are accepted by priority |
 
 ---
 

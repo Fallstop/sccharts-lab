@@ -474,9 +474,9 @@ updates of the same variable in region order (`32`: regions First, R (3 to 1), L
 
 | Chart | Message |
 | --- | --- |
-| `for i : 3` (number, no end) | lab: `The for-region range "for i : 3" has a start value but no end value.` — official KIELER crashes (`java.lang.NullPointerException: … because "_forEnd" is null`) |
-| `for i : 0 to N`, `N` a const | lab: `The for-region range "for i : 0 to N" ends at N, which is not an integer literal.` — official crashes (`java.lang.ClassCastException: … ValuedObjectReferenceImpl cannot be cast to class … IntValue`) |
-| nested for-regions | lab: internal error `java.lang.IllegalArgumentException: Can't copy valued object. Valued object is null!` — official KIELER never reports back |
+| `for i : 3` (number, no end) | lab: `The for-region range "for i : 3" has a start value but no end value.`; official KIELER crashes (`java.lang.NullPointerException: … because "_forEnd" is null`) |
+| `for i : 0 to N`, `N` a const | lab: `The for-region range "for i : 0 to N" ends at N, which is not an integer literal.`; official crashes (`java.lang.ClassCastException: … ValuedObjectReferenceImpl cannot be cast to class … IntValue`) |
+| nested for-regions | lab: internal error `java.lang.IllegalArgumentException: Can't copy valued object. Valued object is null!`; official KIELER never reports back |
 | a declaration at the top of the for-region whose initial value uses the counter (`int k = i`) | the same (lab: `Can't copy valued object…`; official: no answer) |
 | a declaration at the top of the for-region written by several copies (`int k = 0`, `do k = i`) | write-write conflict: `The SCG is NOT asc-schedulable!` (lab: also `Circular dependency involving k prevents scheduling this tick.`) |
 | assigning the counter (`i = 5`) | `Cannot replace left hand side of assignment by a value. (Trying to replace ... i by ... (value: 1) in ... i = 5)` |
@@ -798,8 +798,8 @@ that region's own (probe: two regions, each `clock t`, time out independently).
 At the end of every tick:
 
     sleepT = maxSleep                                    (1000, or @DefaultSleep's value)
-    for every state S active in this tick (both a state that was active at the start of the tick —
-        with its clock after this tick's increment, even if S is left in this tick — and a state entered in
+    for every state S active in this tick (both a state that was active at the start of the tick,
+        with its clock after this tick's increment, even if S is left in this tick, and a state entered in
         this tick, with the clock after the transition's effects):
       for every bound b of S's outgoing timed transitions:
         if clock < b: sleepT = min(sleepT, b - clock)
