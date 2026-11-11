@@ -54,13 +54,14 @@ export class Workspace {
         return saved ? saved === 'open' : this.pg.project.paths.length > 1
     }
 
-    applyFiles(open = this.filesOpen()) {
+    /** On a phone the files are a sheet over the editor: closed until asked for. */
+    applyFiles(open = !this.pg.isNarrow() && this.filesOpen()) {
         this.pg.root.dataset.files = open ? 'open' : 'closed'
         for (const b of this.pg.root.querySelectorAll<HTMLElement>('[data-action="toggle-files"]')) b.setAttribute('aria-expanded', String(open))
     }
 
     toggleFiles(open = this.pg.root.dataset.files !== 'open') {
-        remember(FILES_KEY, open ? 'open' : 'closed')
+        if (!this.pg.isNarrow()) remember(FILES_KEY, open ? 'open' : 'closed')
         this.applyFiles(open)
         // On a phone the sidebar is a sheet over the editor: focus moves into it and back.
         if (open) requestAnimationFrame(() => $(this.pg.root, '[data-pg-files] [aria-current="true"], [data-pg-files] button')?.focus())

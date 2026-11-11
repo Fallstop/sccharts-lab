@@ -142,13 +142,13 @@ export class ProjectControl {
     /** The model's view of the project (the sidebar, the tabs, and tabs of the bottom panel read it). */
     publish() {
         const pg = this.pg
-        const loaded = this.loaded
         pg.model.project = {
             name: this.name,
             files: this.paths,
             active: this.active,
             open: [...this.open],
-            unsaved: this.folder ? this.unsaved() : this.paths.filter(p => loaded[p] !== this.text(p)),
+            // Only a folder's files can be unsaved: the browser keeps the rest as they are typed.
+            unsaved: this.folder ? this.unsaved() : [],
             folder: this.folder?.name,
             disconnected: !!this.folder && !this.folder.connected,
         }

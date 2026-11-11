@@ -107,7 +107,8 @@ export class SimControl {
     }
 
     setMode(mode: 'tour' | 'free') {
-        if (!(this.tour || this.replay)) return
+        const tours = this.toursFor(this.analysed?.file ?? this.pg.project.active)
+        if (!(tours.tour || tours.replay)) return
         this.wantTour = mode === 'tour'
         // Not mounted yet: the panel starts in this mode.
         if (!this.host) return
@@ -142,10 +143,17 @@ export class SimControl {
         return this.replay?.kind ?? (this.sharedRun ? 'shared' : 'tour')
     }
 
+    /** The tours belong to the project's main file (the example, the file a run was shared from). */
+    private toursFor(file: string | undefined) {
+        const main = file === this.pg.project.mainFile
+        return { tour: main ? this.tour : undefined, replay: main ? this.replay : undefined }
+    }
+
     updateModeSwitch() {
         const box = $(this.pg.root, '[data-pg-mode]')
         if (!box) return
-        box.hidden = !(this.tour || this.replay) || !this.ok
+        const { tour, replay } = this.toursFor(this.analysed?.file)
+        box.hidden = !(tour || replay) || !this.ok
         const tourButton = box.querySelector<HTMLButtonElement>('[data-mode="tour"]')
         if (tourButton) {
             tourButton.textContent = TOUR_NAMES[this.tourKind]
@@ -172,11 +180,11 @@ export class SimControl {
         this.ok = a.result.ok
         pg.model.simulation = { file: a.file, source: a.tracker.doc.toString(), result: a.result }
         // A shared run's notes say which inputs changed: they need the chart's inputs.
-        if (this.sharedRun && !this.replay && a.result.ok) {
+        if (this.sharedRun && !this.replay && a.result.ok && a.file === pg.project.mainFile) {
             this.replay = { scenario: sharedRunTour(this.sharedRun, a.result.interface), ticks: this.sharedRun.at, kind: 'shared' }
         }
         const kind = this.tourKind
-        const replay = this.replay
+        const { tour, replay } = this.toursFor(a.file)
         this.vars.setChoices(a.result)
         // A second mount before the first has reported back (two loads in a row) replaces it.
         const generation = ++this.generation
@@ -192,7 +200,7 @@ export class SimControl {
             variant: 'full',
             label: 'Simulation',
             id: pg.mode === 'embed' ? `pge-sim-${Math.random().toString(36).slice(2, 7)}` : 'pg-sim',
-            scenario: replay?.scenario ?? this.tour,
+            scenario: replay?.scenario ?? tour,
             initialTicks: replay?.ticks ?? 0,
             tourName: TOUR_NAMES[kind],
             intro: kind === 'test'
@@ -209,7 +217,7 @@ export class SimControl {
             }
             this.host = host
             // Free play: the tour stays one click away ("Guided tour", or "Restart the guided tour" in the panel).
-            if (host && this.tour && !this.replay && !this.wantTour) host.takeOver()
+            if (host && tour && !replay && !this.wantTour) host.takeOver()
             pg.workspace?.observeSim()
             this.updateModeSwitch()
             if (host && replay?.kind === 'shared' && !this.runAnnounced) this.announceRun(replay)
@@ -220,7 +228,8 @@ export class SimControl {
     private onHighlight(classes: ClassMap, view: SimView) {
         const pg = this.pg
         this.view = view
-        pg.model.simView = view
+        // A fresh object each time: SimPanel reports the same one, its history grown in place.
+        pg.model.simView = { ...view, history: view.history.slice() }
         if (view.tour !== this.tourActive) {
             this.tourActive = view.tour
             this.updateModeSwitch()

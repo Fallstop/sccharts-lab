@@ -213,9 +213,19 @@
 	align-self: center;
 	margin: 0 0.125rem 0 0.25rem;
 }
-.sc-pg-tabs__files[aria-expanded='true'] {
+/* The sidebar's own button hides it; this one shows it (and, on a phone, its sheet). */
+.sc-pg:not([data-files='closed']) .sc-pg-tabs__files {
+	display: none;
+}
+.sc-pg-files .sc-pg__tool[aria-expanded='true'],
+.sc-pg-tabs__files[aria-expanded] {
+	background: none;
+	color: var(--c-muted);
+}
+.sc-pg-files .sc-pg__tool[aria-expanded='true']:hover,
+.sc-pg-tabs__files[aria-expanded]:hover {
+	background-color: var(--c-accent-soft);
 	color: var(--c-ink);
-	background-color: var(--pg-hover);
 }
 .sc-pg-tabs__count {
 	position: absolute;
@@ -233,9 +243,6 @@
 	font-variant-numeric: tabular-nums;
 }
 .sc-pg-tabs__count:empty {
-	display: none;
-}
-.sc-pg[data-files='open'] .sc-pg-tabs__count {
 	display: none;
 }
 .sc-pg-tabs {

@@ -38,7 +38,7 @@
             <button type="button" class="sc-pg-tab" aria-current={path === p.active ? 'true' : undefined} aria-controls="sc-pg-editor-panel" title={path} onclick={() => actions.open(path)} onauxclick={e => e.button === 1 && p.open.length > 1 && actions.close(path)}>
                 <span class="sc-pg-file__glyph" aria-hidden="true"></span>
                 <span class="sc-pg-tab__name">{baseOf(path)}</span>
-                {#if unsaved}<span class="sc-pg-file__dot"><span class="sc-visually-hidden">, {p.folder ? 'not saved' : 'edited'}</span></span>{/if}
+                {#if unsaved}<span class="sc-pg-file__dot" title="Not saved to the folder"><span class="sc-visually-hidden">, not saved</span></span>{/if}
             </button>
             {#if p.open.length > 1}
                 <button type="button" class="sc-pg-tab__close" aria-label={`Close ${baseOf(path)}`} title="Close the tab (the file stays in the project)" onclick={() => actions.close(path)}>{@html icons.close}</button>

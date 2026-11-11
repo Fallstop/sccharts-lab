@@ -130,7 +130,7 @@
                 <button type="button" class="sc-pg-file" data-path={path} aria-current={path === p.active ? 'true' : undefined} title={path} onclick={() => actions.open(path)} ondblclick={() => edit(path)}>
                     <span class="sc-pg-file__glyph" aria-hidden="true"></span>
                     <span class="sc-pg-file__name">{#if dirOf(path)}<span class="sc-pg-file__dir">{dirOf(path)}</span>{/if}{baseOf(path)}</span>
-                    {#if unsaved}<span class="sc-pg-file__dot" title={p.folder ? 'Not saved to the folder' : 'Edited'}><span class="sc-visually-hidden">, {p.folder ? 'not saved' : 'edited'}</span></span>{/if}
+                    {#if unsaved}<span class="sc-pg-file__dot" title="Not saved to the folder"><span class="sc-visually-hidden">, not saved</span></span>{/if}
                 </button>
                 <span class="sc-pg-file__acts">
                     <button type="button" class="sc-pg__tool" aria-label={`Rename ${path}`} title="Rename (F2)" onclick={() => edit(path)}>{@html icons.pencil}</button>

@@ -120,8 +120,7 @@
 
 /* ----- The console ----- */
 
-.sc-pg-console {
-	min-height: 100%;
+.sc-pg-panel__body[data-pg-panel-body='console'] {
 	background-color: var(--c-code-bg);
 }
 .sc-pg-console__empty {
@@ -152,7 +151,9 @@
 	border-top: 1px dashed var(--pg-line);
 }
 .sc-pg-console__tick {
-	padding-inline-end: 0.75rem;
+	margin-inline-end: 0.75rem;
+	padding-inline-end: 0.625rem;
+	border-inline-end: 1px solid var(--c-rule);
 	color: var(--pg-gutter-fg);
 	text-align: right;
 	font-variant-numeric: tabular-nums;
