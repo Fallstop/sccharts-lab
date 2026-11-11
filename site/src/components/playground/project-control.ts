@@ -13,7 +13,7 @@ import { stateFor } from './editor'
 import { createFile, listFiles, mergeFolder, permitted, readFolder, readText, saveFolder } from './folder'
 import type { ProjectFolder } from './panel-tabs'
 import { baseOf, checkName, freeName, hasFile, importedFiles, makeProject, sameFiles, sortedPaths } from './project'
-import { forgetTab, newProjectId, putProject, rememberSave, setCurrent, settled, type StoredProject } from './project-store'
+import { forgetTab, newProjectId, putProject, rememberSave, setCurrent, settled, type StoredProject, retargetTab } from './project-store'
 import { hashForProject, SCRATCH_KEY, storageSet } from './share'
 import { pgIcons } from './icons'
 import FileTree from './FileTree.svelte'
@@ -353,6 +353,7 @@ export class ProjectControl {
             if (this.id !== stored.id) return
             this.id = at.id
             setCurrent(at.id)
+            retargetTab(stored.id, at.id, at.rev)
             this.pg.toast(`${this.name} was also changed in another tab, so the edits here are saved as a copy of it (both are in the project menu).`)
         })
         // A save that failed never holds up the next ones.

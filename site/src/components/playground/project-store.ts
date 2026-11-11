@@ -219,6 +219,14 @@ export function settled(id: string, rev: string) {
     if (copyIn('localStorage', PENDING + id)?.project.rev === rev) keep('localStorage', PENDING + id, null)
 }
 
+/** This tab's project was saved as a copy of `from` (another tab saved `from` meanwhile): its copy in session storage
+ *  is the copy's now, so that a reload opens the copy instead of saving yet another one. */
+export function retargetTab(from: string, to: string, rev: string) {
+    const t = copyIn('sessionStorage', TAB_KEY)
+    if (!t || t.project.id !== from) return
+    keep('sessionStorage', TAB_KEY, JSON.stringify({ ...t, project: { ...t.project, id: to, rev }, accept: [rev] }))
+}
+
 /** Another project opened in this tab: its copy in session storage goes (the one in local storage stays until the
  *  store has it), so that a reload never opens it in place of the address. */
 export function forgetTab() {

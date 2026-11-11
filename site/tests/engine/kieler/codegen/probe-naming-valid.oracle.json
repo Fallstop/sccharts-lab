@@ -1,0 +1,52 @@
+{
+  "hash": "e4e19752b974c331a903d27302b26f4fe367aa3f",
+  "chart": "tests/engine/kieler/codegen/probe-naming-valid.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "on": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "on": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "on": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

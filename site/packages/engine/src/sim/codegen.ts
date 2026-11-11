@@ -6,10 +6,10 @@ import { allActionSites, allScopes, effectExprs, walkExpr, type CEffect, type CE
 import { isInlined } from './structure/methods'
 import { KEYWORDS } from '../parser/lexer'
 
-const GCC_FAILED = 'Compiler did not return success (exit value != 0)'
+export const GCC_FAILED = 'Compiler did not return success (exit value != 0)'
 
 /** C keywords: a top-level variable of that name breaks the generated C code (KIELER does not rename them). */
-const C_KEYWORDS = new Set([
+export const C_KEYWORDS = new Set([
     'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extern', 'float',
     'for', 'goto', 'if', 'inline', 'int', 'long', 'register', 'restrict', 'return', 'short', 'signed', 'sizeof', 'static',
     'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', '_Bool', '_Complex', '_Imaginary',
@@ -583,5 +583,29 @@ export function conditionalWithoutElse(nodes: { kind: string; effect?: CEffect; 
             body(m.method!.body)
         }
     }
+    return out
+}
+
+/**
+ * `#code.naming "tick", "reset", "logic", "Struct"`: KIELER's simulation compiles its C with these names too, so
+ * names gcc cannot take reject the chart there (probes tests/engine/kieler/codegen/probe-naming-*): a C keyword, two
+ * functions of one name, and a logic function called `d`, the tick data parameter that tick() passes to it.
+ */
+export function codeNamingProblems(pragmas: { name: string; values: string[]; span?: Span }[]): Diagnostic[] {
+    const p = pragmas.find(x => x.name === 'code.naming')
+    if (!p || p.values.length !== 4) return []
+    const [tick, reset, logic, struct] = p.values
+    const out: Diagnostic[] = []
+    const add = (message: string, kieler: string) => out.push({
+        severity: 'error', code: 'c-naming', span: p.span, message, kieler: `${kieler}\n${GCC_FAILED}`,
+        hint: 'Give the tick, reset and logic functions and the struct four different names that are not keywords of C, and do not call the logic function `d`.',
+    })
+    const keyword = [tick, reset, logic, struct].find(n => C_KEYWORDS.has(n))
+    if (keyword) add(`\`#code.naming\` uses \`${keyword}\`, a keyword of C, as a name, so KIELER's generated C code does not compile`, `expected identifier or ‘(’ before ‘${keyword}’`)
+    const functions = [tick, reset, logic]
+    const twice = functions.find((n, i) => functions.indexOf(n) !== i)
+    if (twice) add(`\`#code.naming\` gives two functions the name \`${twice}\`, so KIELER's generated C code does not compile`, `redefinition of ‘${twice}’`)
+    else if (functions.includes(struct)) add(`\`#code.naming\` gives a function and the struct the name \`${struct}\`, so KIELER's generated C code does not compile`, `‘${struct}’ redeclared as different kind of symbol`)
+    if (logic === 'd') add('`#code.naming` calls the logic function `d`, the name tick() gives its tick data, so KIELER\'s generated C code does not compile', "called object ‘d’ is not a function or function pointer")
     return out
 }

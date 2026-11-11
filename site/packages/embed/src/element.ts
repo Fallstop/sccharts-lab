@@ -79,6 +79,8 @@ export class SCChartsLabChart extends Base {
     private live = false
     private renderQueued = false
     private generation = 0
+    /** The frame a render is replacing: its messages are ignored meanwhile. */
+    private stale?: HTMLIFrameElement
     private origin = ''
     private chartName?: string
     private resolveReady!: (info: ReadyInfo) => void
@@ -141,6 +143,9 @@ export class SCChartsLabChart extends Base {
         this.dataset.height = typeof target.height === 'number' ? 'fixed' : (target.height ?? 'auto')
         this.invalidate()
         const generation = ++this.generation
+        // The frame on screen stays until the new one is made (no jump), but it is the old chart's: what it says (a
+        // late `ready`) is not about the chart these attributes ask for.
+        this.stale = this.frame
         this.message?.remove()
         this.message = undefined
 
@@ -179,6 +184,7 @@ export class SCChartsLabChart extends Base {
             if (files) this.post({ command: 'setFiles', files: files.files, active: files.active })
         })
         this.frame = frame
+        this.stale = undefined
         this.live = false
         this.updateTitle()
         if (old) old.replaceWith(frame)
@@ -218,7 +224,7 @@ export class SCChartsLabChart extends Base {
     }
 
     private receive(e: MessageEvent) {
-        if (!this.frame || e.source !== this.frame.contentWindow) return
+        if (!this.frame || this.frame === this.stale || e.source !== this.frame.contentWindow) return
         if (e.origin !== this.origin && !(this.opaque && e.origin === 'null')) return
         const msg = parseEvent(e.data)
         if (!msg) return

@@ -1,0 +1,8 @@
+#code.naming "switch", "init", "logic", "TickData"
+scchart ProbeNamingKeyword {
+  input bool b
+  output bool on = false
+  initial state Off
+    if b do on = true go to On
+  state On
+}

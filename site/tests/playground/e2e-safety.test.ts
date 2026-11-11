@@ -296,6 +296,12 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         expect(texts.some(t => t.includes('// start two'))).toBe(true)
         // The project and the copy: a tab's own saves, one after another, never make copies.
         expect(texts).toHaveLength(2)
+        // The tab with the copy, reloaded without another edit, opens the copy: it saves no third project.
+        await two.reload({ waitUntil: 'commit' })
+        await two.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+        expect(await editorText(two)).toContain('// start two')
+        await two.waitForTimeout(1500)
+        expect((await stored(two)).length).toBe(2)
         await ctx.close()
     }, 120000)
 

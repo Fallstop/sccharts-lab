@@ -318,7 +318,18 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
             slow.setAttribute('view', 'diagram')
             const slowChart = (await slow.ready).compiled.chart
             const slowView = new URL(slow.shadowRoot!.querySelector('iframe')!.src).searchParams.get('view')
-            return { ready: ready.compiled.chart, first: first.tick, renewed: before !== el.ready, again: again.compiled.chart, failed: failure, alert, recovered, alertAfter, slowChart, slowView }
+            // Another file before the first chart is ready, and a step asked for meanwhile: both are the new chart's.
+            const swap = document.createElement('sccharts-lab-chart') as Chart
+            swap.setAttribute('src', '/lamp.sctx')
+            swap.setAttribute('loading', 'eager')
+            document.body.append(swap)
+            await new Promise(r => setTimeout(r, 50))
+            swap.setAttribute('src', '/slow.sctx')
+            const stepped = swap.step()
+            const swapped = (await swap.ready).compiled.chart
+            await stepped
+            const swappedAfter = swap.compiled?.chart
+            return { ready: ready.compiled.chart, first: first.tick, renewed: before !== el.ready, again: again.compiled.chart, failed: failure, alert, recovered, alertAfter, slowChart, slowView, swapped, swappedAfter }
         })
         expect(result).toEqual({
             ready: 'ABRO',
@@ -331,6 +342,8 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
             alertAfter: null,
             slowChart: 'Slow',
             slowView: 'diagram',
+            swapped: 'Slow',
+            swappedAfter: 'Slow',
         })
         await context.close()
     }, 120000)

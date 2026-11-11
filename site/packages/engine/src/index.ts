@@ -24,6 +24,7 @@ import { importTargets } from './parser/imports'
 import { kielerSyntaxWording } from './parser/kielerWording'
 import { compileChart, type CompiledChart } from './sim/compile'
 import { rememberImports } from './sim/describe'
+import { codeNamingProblems } from './sim/codegen'
 
 // The data contract (the model, diagnostics, tick results), also published on its own as @sccharts-lab/engine/types.
 export type * from './types'
@@ -180,6 +181,7 @@ export function compile(source: string, options: CompileOptions = {}): CompileRe
                 hint: 'A file needs at least one chart: `scchart Name { initial state Start }`.',
             })
         }
+        if (chart) diagnostics.push(...codeNamingProblems(main.program.pragmas))
         const front = sortDiagnostics(diagnostics)
         const result: CompileResult = {
             ok: !front.some(d => d.severity === 'error'),

@@ -1,0 +1,8 @@
+#code.naming "step", "init", "calc", "ToggleData"
+scchart ProbeNamingValid {
+  input bool b
+  output bool on = false
+  initial state Off
+    if b do on = true go to On
+  state On
+}
