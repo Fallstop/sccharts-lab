@@ -13,7 +13,7 @@ import type { Memory } from './memory'
 import { random, type RandState } from './random'
 import { compileMethodCall } from './structure/methods'
 import {
-    convert, ctypeOf, doubleToInt, INT_MIN, isCString, literalString, printfValue, toChar,
+    convert, doubleToInt, INT_MIN, isCString, literalString, printfValue, toChar,
     type CString, type CType, type RValue,
 } from './values'
 
