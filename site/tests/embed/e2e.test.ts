@@ -14,6 +14,7 @@ import http from 'node:http'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import type { Browser, BrowserContext, Frame, Page } from 'playwright'
 import { launchChromium } from '../../tools/chromium.mjs'
+import { hashForSource } from '../../src/components/playground/share'
 
 const BASE = (process.env.EMBED_URL ?? process.env.PLAYGROUND_URL ?? 'http://127.0.0.1:4321').replace(/\/$/, '')
 const PORT = Number(process.env.EMBED_HOST_PORT ?? 4352)
@@ -391,6 +392,20 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
         // Reset starts it again, with tick 1 run: A, then B work again.
         await box.locator('button:has-text("Reset")').click()
         await page.waitForFunction(() => /^Tick 1/.test(document.querySelector('[data-api] [data-out]')?.textContent ?? ''))
+        await context.close()
+    }, 120000)
+
+    test('Open in SCCharts Lab keeps the chart the embed shows, also before its first tick', async () => {
+        const src = 'scchart First {\n  initial state A\n}\n\nscchart Second {\n  initial state B\n}\n'
+        const { page, context } = await open(`/embed/?view=sim${hashForSource(src)}&chart=Second`, 900, 700, BASE)
+        await page.waitForSelector('[data-pg-ready]')
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'Second')
+        await page.focus('[data-embed-open]')
+        const href = await page.getAttribute('[data-embed-open]', 'href')
+        expect(href).toContain('chart=Second')
+        const ide = await context.newPage()
+        await ide.goto(href!, { waitUntil: 'commit' })
+        await ide.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'Second', null, { timeout: 30000 })
         await context.close()
     }, 120000)
 

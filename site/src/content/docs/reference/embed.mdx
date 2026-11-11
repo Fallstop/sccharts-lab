@@ -73,6 +73,10 @@ after `#`, which the Embed button writes for your own charts (`#code=`, `#projec
 and `&run=` for a run to replay). Copy a playground link and change `/playground/` to `/embed/`: it
 opens the same chart.
 
+Course platforms often show pages inside a sandboxed frame. Both forms work there with
+`sandbox="allow-scripts"`, also without `allow-same-origin`; **Open in SCCharts Lab** opens a new tab, so
+it needs `allow-popups` as well.
+
 ## Options
 
 The same options go into the iframe's address (`?view=sim&height=auto`) and onto the element

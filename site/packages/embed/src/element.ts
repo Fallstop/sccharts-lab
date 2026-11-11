@@ -210,8 +210,16 @@ export class SCChartsLabChart extends Base {
 
     // ----- Messages -------------------------------------------------------------------------------------------------
 
+    /** The page has no web origin (a frame sandboxed without allow-same-origin, as an LMS frames its pages): the embed it
+     *  frames has none either, since sandbox flags pass down, so messages go to '*' and arrive from 'null'. The frame's
+     *  own window, which this element made, is what identifies them then. */
+    private get opaque(): boolean {
+        return self.origin === 'null'
+    }
+
     private receive(e: MessageEvent) {
-        if (!this.frame || e.source !== this.frame.contentWindow || e.origin !== this.origin) return
+        if (!this.frame || e.source !== this.frame.contentWindow) return
+        if (e.origin !== this.origin && !(this.opaque && e.origin === 'null')) return
         const msg = parseEvent(e.data)
         if (!msg) return
         switch (msg.event) {
@@ -270,7 +278,7 @@ export class SCChartsLabChart extends Base {
     }
 
     private post(command: EmbedCommand & { id?: CommandId }) {
-        this.frame?.contentWindow?.postMessage(envelope(command), this.origin)
+        this.frame?.contentWindow?.postMessage(envelope(command), this.opaque ? '*' : this.origin)
     }
 
     /** Sends a command once the embed is ready; resolves with its reply's result. */

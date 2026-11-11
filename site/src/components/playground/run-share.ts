@@ -4,7 +4,7 @@
 
 import { plural } from './app-types'
 import { runInputs } from './run-tour'
-import { makeRun, runUrl } from './share'
+import { makeRun, runUrl, MAX_RUN_TICKS } from './share'
 import type { Playground } from './app'
 
 export async function shareRun(pg: Playground) {
@@ -37,7 +37,10 @@ export async function shareRun(pg: Playground) {
     } catch {
         copied = false
     }
-    const what = `${plural(run.ticks.length, 'tick')}${run.at < run.ticks.length ? `, opening at tick ${run.at}` : ''}`
+    const cut = found.ticks.length > run.ticks.length
+    const what = cut
+        ? `its first ${run.ticks.length.toLocaleString('en-NZ')} of ${found.ticks.length.toLocaleString('en-NZ')} ticks: a link carries at most ${MAX_RUN_TICKS.toLocaleString('en-NZ')}, and the Trace tab saves the whole run`
+        : `${plural(run.ticks.length, 'tick')}${run.at < run.ticks.length ? `, opening at tick ${run.at}` : ''}`
     const stale = sim.stale && sim.started ? ' It has the chart as it was when this run started.' : ''
     // The inputs are the engine's own (TickResult.ranWith); a replay that still differs (it should not) is said.
     const inexact = found.exact < found.ticks.length ? ` Replayed here, the run differs from tick ${found.exact + 1} on, so the link may show another run from there.` : ''

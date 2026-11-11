@@ -103,8 +103,9 @@ file and the run stays; **Rebuild** starts the file in the editor.
 - **Watch**, under the variables, shows the value of an expression in the tick shown:
   `count >= 3 && !done`, `pre(x) != x`, `val(level) / 2`. It means what it would mean in the chart.
   **Run until** steps until the watch holds or a state you choose is active, for up to 1000 ticks.
-- **Copy link to this run** copies a link that carries the chart and the inputs of every tick you ran.
-  Opening it replays the run as a tour, at the tick you were looking at.
+- **Copy link to this run** copies a link that carries the chart and the inputs of every tick you ran,
+  up to 20,000 ticks (it says so when a run is longer; the Trace tab saves all of it). Opening it
+  replays the run as a tour, at the tick you were looking at.
 
 A chart with host code shows why the browser cannot run it, in place of the controls; its C code is in
 the [C code](#c-code) tab.

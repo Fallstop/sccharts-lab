@@ -94,8 +94,24 @@ const TYPES = {
     '.xml': 'application/xml', '.webmanifest': 'application/manifest+json', '.wasm': 'application/wasm', '.sctx': 'text/plain',
 }
 
-/** A static server for a built site: `/x/` and `/x` find `/x/index.html` (or `/x.html`), as a static host does. */
+/** The rules of a `_headers` file (Cloudflare's format): a path pattern (`*` matches anything), then indented
+ *  `Name: value` lines, or `! Name` to drop a header an earlier rule set. */
+function headerRules(root) {
+    const file = path.join(root, '_headers')
+    if (!fs.existsSync(file)) return []
+    const rules = []
+    for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+        if (!line.trim() || line.trim().startsWith('#')) continue
+        if (!/^\s/.test(line)) rules.push({ match: new RegExp(`^${line.trim().replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')}$`), set: [] })
+        else rules.at(-1)?.set.push(line.trim())
+    }
+    return rules
+}
+
+/** A static server for a built site: `/x/` and `/x` find `/x/index.html` (or `/x.html`), as a static host does, with
+ *  the headers of the site's `_headers` (what Cloudflare sends; the embed in a sandboxed frame depends on them). */
 function serve(root) {
+    const rules = headerRules(root)
     const server = http.createServer((request, response) => {
         const pathname = decodeURIComponent(new URL(request.url, 'http://x').pathname)
         const file = [pathname, path.join(pathname, 'index.html'), `${pathname}.html`]
@@ -105,7 +121,15 @@ function serve(root) {
             response.writeHead(404).end()
             return
         }
-        response.writeHead(200, { 'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream' }).end(fs.readFileSync(file))
+        const headers = { 'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream' }
+        for (const rule of rules) {
+            if (!rule.match.test(pathname)) continue
+            for (const line of rule.set) {
+                if (line.startsWith('!')) delete headers[line.slice(1).trim().toLowerCase()]
+                else headers[line.slice(0, line.indexOf(':')).trim().toLowerCase()] = line.slice(line.indexOf(':') + 1).trim()
+            }
+        }
+        response.writeHead(200, headers).end(fs.readFileSync(file))
     })
     return new Promise(resolve => server.listen(0, '127.0.0.1', () => resolve(server)))
 }
@@ -200,9 +224,43 @@ async function embedCheck() {
     return result
   })().catch(error => ({ error: String(error) }))
 </script></body></html>`)
+    // The same element inside a frame sandboxed as course platforms do (no allow-same-origin: no web origin there, and
+    // none in the embed it frames), with a chart of its own: it must load, take the chart and step it.
+    const inner = `<!doctype html><meta charset="utf-8"><script src="vendor/embed.min.js" data-base="${base}"></script>
+<sccharts-lab-chart id="mine" view="sim" loading="eager"><pre>scchart Mine {
+  input bool press
+  output bool on = false
+  initial state Off
+    if press do on = true go to On
+  state On
+}</pre></sccharts-lab-chart>
+<script>
+  window.embedSmoke = (async () => {
+    const chart = document.getElementById('mine')
+    const ready = await chart.ready
+    const ticks = []
+    for (const inputs of [{ press: false }, { press: true }]) ticks.push(await chart.step(inputs))
+    return { origin: self.origin, chart: ready.compiled?.chart, on: ticks.map(t => t.values.on) }
+  })().catch(error => ({ error: String(error) }))
+</script>`
+    fs.writeFileSync(path.join(hostRoot, 'sandboxed.html'), `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Course page</title></head><body>
+<iframe title="Lesson" sandbox="allow-scripts allow-popups" style="width: 900px; height: 700px" srcdoc="${inner.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}"></iframe></body></html>`)
     const browser = await launchChromium()
     const problems = []
     try {
+        if (siteDir) {
+            const page = await browser.newPage({ viewport: { width: 1000, height: 900 } })
+            watch(page, problems)
+            await page.goto(`http://127.0.0.1:${host.address().port}/sandboxed.html`)
+            const frame = page.frames().find(f => f.url() === 'about:srcdoc')
+            // A chart that never gets ready (messages lost to a frame without an origin) fails here, not by hanging.
+            const sandboxed = await frame?.evaluate(() => Promise.race([window.embedSmoke, new Promise(resolve => setTimeout(() => resolve({ error: 'not ready within 30 s' }), 30000))]))
+            if (!sandboxed || sandboxed.error || sandboxed.origin !== 'null' || sandboxed.chart !== 'Mine' || JSON.stringify(sandboxed.on) !== '[false,true]' || problems.length) {
+                fail(`embed in a sandboxed frame: ${JSON.stringify({ sandboxed, problems }, null, 2)}`)
+            }
+            console.log(`a sandboxed course page (origin ${sandboxed.origin}): ${sandboxed.chart} took its chart and stepped, on ${JSON.stringify(sandboxed.on)}`)
+            await page.close()
+        }
         const page = await browser.newPage({ viewport: { width: 1000, height: 900 } })
         watch(page, problems)
         await page.goto(`http://127.0.0.1:${host.address().port}/`)

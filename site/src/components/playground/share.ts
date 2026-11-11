@@ -115,8 +115,9 @@ export const hasSharedChart = (hash: string): boolean => /^#(?:code|project)=/.t
 // value it had.
 
 const RUN = 'run='
-/** More ticks than anyone steps through by hand; a longer run is cut (the link would be too long anyway). */
-export const MAX_RUN_TICKS = 2000
+/** The ticks a link carries: far more than anyone steps through or runs until; Copy link to this run says when a
+ *  run is longer (a trace file keeps all of it). Only the changes are stored, so a long steady run stays short. */
+export const MAX_RUN_TICKS = 20000
 
 export interface SharedRun {
     /** The inputs of every tick (index 0 is tick 1), each complete. */

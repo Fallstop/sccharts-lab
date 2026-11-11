@@ -16,10 +16,12 @@ export function playgroundHref(app: Playground): string {
     const sim = app.sim
     const view = sim.view
     const a = sim.analysed
+    // Another chart of the file than the first (the embed's `chart`, or one chosen in it): the link names it.
+    const ran = a?.result.chart?.name
+    const name = ran && ran !== a?.result.program?.charts[0]?.name ? ran : undefined
+    const which = name ? `chart=${encodeURIComponent(name)}` : ''
     if (a && view?.history.length && sim.ok && !sim.stale) {
         const run = makeRun(runInputs(a.result, view.history).ticks, view.cursor)
-        const ran = a.result.chart?.name
-        const name = ran && ran !== a.result.program?.charts[0]?.name ? ran : undefined
         const several = Object.keys(texts).length > 1
         const where =
             example && a.file === project.mainFile
@@ -31,9 +33,10 @@ export function playgroundHref(app: Playground): string {
     }
     if (example) {
         url.search = `?example=${encodeURIComponent(example).replace(/%2F/g, '/')}`
+        if (which) url.hash = which
         return url.href
     }
-    url.hash = hashForProject({ name: project.name, files: texts, active: project.active })
+    url.hash = `${hashForProject({ name: project.name, files: texts, active: project.active })}${which ? `&${which}` : ''}`
     return url.href
 }
 

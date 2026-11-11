@@ -205,7 +205,7 @@ export async function linkTarget(loc: Location, describe: (id: string) => Origin
     }
     // A run without its chart (a damaged link) is not replayed on another chart.
     const replay: SharedRun | undefined = run && project ? run : undefined
-    return { project, origin, scenario, notice, param, run: replay, chart: replay ? chartFromHash(loc.hash) : undefined, solution: solutionParam && lib ? lib.normaliseId(solutionParam) : undefined }
+    return { project, origin, scenario, notice, param, run: replay, chart: chartFromHash(loc.hash), solution: solutionParam && lib ? lib.normaliseId(solutionParam) : undefined }
 }
 
 /** Without a chart in the address: the reader's last project in this browser, else the scratch buffer (the last
