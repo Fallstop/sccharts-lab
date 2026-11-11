@@ -146,6 +146,11 @@ export function harness(gen: GeneratedC, ticks: Record<string, Value>[]): string
         const skip = v.type === 'string' && !v.dims.length ? `if (${access}) ` : ''
         lines.push(`  ${skip}{ if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(v.pool) + ':')}, stdout); ${body.join(' ')} }`)
     }
+    // Instances without fields are empty objects in KIELER's data pool.
+    for (const inst of gen.instances) {
+        if (inst.pool === undefined || objects.has(inst.pool)) continue
+        lines.push(`  { if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(inst.pool) + ':{}')}, stdout); }`)
+    }
     for (const [name, members] of objects) {
         lines.push(`  { if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(name) + ':{')}, stdout);`)
         members.forEach((m, i) => lines.push(`    ${i ? 'putchar(\',\'); ' : ''}fputs(${cString(JSON.stringify(m.pool) + ':')}, stdout); ${printValue(`d.${m.member}`, m, m.dims, 0).join(' ')}`))

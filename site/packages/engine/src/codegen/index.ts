@@ -40,7 +40,7 @@ function namingOf(result: CompileResult, chart: string, option: GenerateCOptions
 }
 
 function failure(chart: string, names: CNaming, diagnostics: Diagnostic[]): GeneratedC {
-    return { ok: false, chart, files: {}, header: `${chart}.h`, source: `${chart}.c`, names, variables: [], diagnostics, hostCode: false, simulated: false }
+    return { ok: false, chart, files: {}, header: `${chart}.h`, source: `${chart}.c`, names, variables: [], instances: [], diagnostics, hostCode: false, simulated: false }
 }
 
 /** The compiled chart to generate from: the simulator's, or, for host code, one compiled with host code on. */
@@ -76,7 +76,8 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
     const { compiled, simulated, problem } = compiledFor(result, chart)
     if (!compiled) return failure(chartName, names, problem ? [problem] : [])
 
-    const diagnostics: Diagnostic[] = []
+    // Where KIELER's own code computes something else (B-34, B-35), this code does what the simulation shows.
+    const diagnostics: Diagnostic[] = result.diagnostics.filter(d => d.code === 'kieler-bug')
     const exe = new ExecutableChart(compiled, result.interface)
     const fileName = options.fileName ?? chartName
     const comments = options.comments !== false
@@ -182,7 +183,7 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
     return {
         ok: true, chart: chartName, header: `${fileName}.h`, source: `${fileName}.c`,
         files: { [`${fileName}.h`]: header, [`${fileName}.c`]: source },
-        names, variables: layout.variables, diagnostics, simulated,
+        names, variables: layout.variables, instances: layout.instances, diagnostics, simulated,
         hostCode: usesHostCode(compiled, exe, functions.length ? methods : [], chart, result),
         takenTransitions: options.takenTransitions ? compiled.lowered.takenOrder : undefined,
     }
@@ -233,4 +234,3 @@ function externCodes(result: CompileResult): Map<string, string> {
     return out
 }
 
-export { bodyExprs }

@@ -57,6 +57,8 @@ export class Layout {
     /** `typedef struct { ... } <name>;` of the chart's classes and structs, before TickData. */
     readonly typedefs: string[] = []
     readonly variables: CVariable[] = []
+    /** Instances of classes, structs and charts used as classes (KIELER's data pool reports each as an object). */
+    readonly instances: { name: string; member: string; ctype: string; pool?: string }[] = []
     private readonly used = new Set<string>()
     private readonly maxSuffix = new Map<string, number>()
 
@@ -76,8 +78,28 @@ export class Layout {
             this.used.add('_taken_transitions')
         }
         const classes = new Map<string, string>()
+        // Charts used as classes and `ref C g(...)` instances (passes/reference.ts): their fields are variables whose
+        // instance is no declaration any more; one without fields is known by name only.
+        const rootSet = new Set(rootDecls)
+        const empty = new Set((core.ext.emptyInstances as string[] | undefined) ?? [])
+        const chartInstanceOf = (v: CVar): string | undefined => {
+            if (v.member && !rootSet.has(v.member.of)) return v.member.of.name
+            const at = v.decl?.indexOf('$') ?? -1
+            const slash = v.decl?.indexOf('/', at) ?? -1
+            const inst = at >= 0 && slash > at ? v.decl!.slice(at + 1, slash) : undefined
+            return inst !== undefined && empty.has(inst) ? inst : undefined
+        }
+        const placed = new Set<string>()
         for (let i = 0; i < rootDecls.length; i++) {
             const v = rootDecls[i]
+            const inst = chartInstanceOf(v)
+            if (inst !== undefined) {
+                if (!placed.has(inst)) {
+                    placed.add(inst)
+                    this.chartInstance(inst, rootDecls, classes)
+                }
+                continue
+            }
             if (v.const || v.extern || v.declKind === 'method' || v.declKind === 'enum' || v.member) continue
             if (v.generated || v.role === 'presence' || v.role === 'value' || v.role === 'curval') placeTaken()
             if (v.declKind === 'class' || v.declKind === 'struct') {
@@ -89,6 +111,7 @@ export class Layout {
                 const names = group.map(w => {
                     const n = this.unique(identifier(w.name))
                     this.instance(w, n, rootDecls)
+                    this.instances.push({ name: w.name, member: n, ctype: type })
                     return n
                 })
                 this.lines.push(`${type} ${names.join(', ')};`)
@@ -115,7 +138,37 @@ export class Layout {
                 this.plain(v, name, false)
             }
         }
+        for (const inst of empty) if (!placed.has(inst)) this.chartInstance(inst, rootDecls, classes)
         for (const v of extra) if (!this.slots.has(v) && !v.declKind) this.plain(v, this.unique(identifier(v.name)), false)
+    }
+
+    /** An instance of a chart used as a class: `<Chart>_<Referenced>1 c;` (KIELER's naming) with the chart's fields. */
+    private chartInstance(inst: string, decls: CVar[], classes: Map<string, string>) {
+        const members = decls.filter(m => m.member?.of.name === inst && !m.declKind)
+        // Ids inside the instance are `<Chart>$<instance>/<Referenced chart>[/<Base>]$<name>`.
+        const id = decls.map(m => m.decl ?? '').find(d => d.includes(`$${inst}/`)) ?? ''
+        const rest = id.slice(id.indexOf(`$${inst}/`) + inst.length + 2)
+        const chart = rest ? rest.split(/[/$]/)[0] : inst
+        const fields = members.map(m => `${ctypeOf(m)} ${identifier(m.member!.name)}${dimsOf(m).map(n => `[${n}]`).join('')};`)
+        const key = `chart ${chart}|${fields.join(' ')}`
+        let type = classes.get(key)
+        if (!type) {
+            type = this.unique(`${this.chartName}_${identifier(chart)}1`)
+            classes.set(key, type)
+            this.typedefs.push(`typedef struct {\n${fields.map(f => `  ${f}\n`).join('')}} ${type};\n`)
+        }
+        const name = this.unique(identifier(inst))
+        this.lines.push(`${type} ${name};`)
+        this.instances.push({ name: inst, member: name, ctype: type, pool: inst })
+        for (const m of members) {
+            const member = `${name}.${identifier(m.member!.name)}`
+            this.slots.set(m, { v: m, member })
+            if (m.tags.has('#const-member')) continue
+            this.variables.push({
+                name: `${inst}.${m.member!.name}`, member, ctype: ctypeOf(m), type: simpleType(m), dims: dimsOf(m),
+                input: false, output: false, pool: m.member!.name, poolObject: inst,
+            })
+        }
     }
 
     /** Reserves a member name (KIELER's UniqueNameCache: `x`, then `x1`, `x2`, ...). */
@@ -179,7 +232,7 @@ export class Layout {
             type = this.unique(`${this.chartName}_${identifier(cls)}`)
             classes.set(key, type)
             const body = members.map(m => `  ${ctypeOf(m)} ${identifier(m.member!.name)}${dimsOf(m).map(n => `[${n}]`).join('')};`)
-            this.typedefs.push(`typedef struct {\n${body.length ? body.join('\n') : '  char _empty;'}\n} ${type};\n`)
+            this.typedefs.push(`typedef struct {\n${body.map(b => `${b}\n`).join('')}} ${type};\n`)
         }
         return type
     }

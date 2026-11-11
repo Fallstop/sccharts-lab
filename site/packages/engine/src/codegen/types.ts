@@ -63,6 +63,11 @@ export interface GeneratedC {
     names: CNaming
     /** The chart's variables in the struct, in struct order (KIELER's helpers, `_g...`, are not listed). */
     variables: CVariable[]
+    /**
+     * Instances of classes, structs and charts used as classes: the struct member and its typedef. `pool`: KIELER's
+     * data pool reports the instance as an object under this key even when it has no fields (`{}`).
+     */
+    instances: { name: string; member: string; ctype: string; pool?: string }[]
     /** Why there is no code (errors), or what to know about it (warnings, infos). */
     diagnostics: Diagnostic[]
     /** The chart uses host code (backticks, `extern`, host types, `#hostcode`): the C code carries it as written. */

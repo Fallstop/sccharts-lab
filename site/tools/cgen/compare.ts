@@ -119,7 +119,7 @@ export async function checkCase(c: Case, options: { keep?: string } = {}): Promi
     const out = parseOutput(run.stdout)
     const warnings = generatedWarnings(run, gen)
     const r: CaseResult = { ...base, verdict: 'match', warnings, hostCode: gen.hostCode }
-    if (sim) compareWithEngine(r, gen, engine, out, run)
+    if (sim) compareWithEngine(r, c, gen, engine, out, run)
     if (rec) compareWithKieler(r, c, gen, rec, out, run)
     if (r.problems.length) r.verdict = 'mismatch'
     return r
@@ -137,14 +137,23 @@ function generatedWarnings(run: RunResult, gen: GeneratedC): string | undefined 
     return lines.length ? lines.join('\n') : undefined
 }
 
-function knownKeys(gen: GeneratedC): Set<string> {
+/**
+ * Pool keys that the C program cannot report: values the environment gave for names that are not variables of the
+ * chart (KIELER's data pool keeps them, sim/exec.ts applyInputs). Every other key must be in the C program's pool.
+ */
+function foreignKeys(gen: GeneratedC, c: Case): Set<string> {
+    const known = new Set<string>()
+    for (const v of gen.variables) {
+        if (v.pool !== undefined) known.add(v.poolObject ?? v.pool)
+        if (v.signal) known.add(v.name.replace(/_(val|curval)$/, ''))
+    }
     const out = new Set<string>()
-    for (const v of gen.variables) if (v.pool !== undefined) out.add(v.poolObject ?? v.pool)
+    for (const given of c.inputs) for (const k of Object.keys(given)) if (!known.has(k)) out.add(k)
     return out
 }
 
-function compareWithEngine(r: CaseResult, gen: GeneratedC, engine: { tick: SimTickResult; taken: number[] }[], out: { ticks: HarnessTick[]; diedIn?: number }, run: RunResult) {
-    const known = knownKeys(gen)
+function compareWithEngine(r: CaseResult, c: Case, gen: GeneratedC, engine: { tick: SimTickResult; taken: number[] }[], out: { ticks: HarnessTick[]; diedIn?: number }, run: RunResult) {
+    const foreign = foreignKeys(gen, c)
     for (let i = 0; i < engine.length; i++) {
         const tick = i + 1
         const e = engine[i].tick
@@ -165,7 +174,7 @@ function compareWithEngine(r: CaseResult, gen: GeneratedC, engine: { tick: SimTi
         for (const [key, value] of Object.entries(ct.pool)) if (!same(value, e.pool[key])) r.problems.push(`engine: tick ${tick}: ${key} is ${show(value)} in C, ${show(e.pool[key])} in the engine`)
         for (const [key, value] of Object.entries(e.pool)) {
             if (key in ct.pool || value === null) continue
-            if (!known.has(key)) continue
+            if (foreign.has(key)) continue
             r.problems.push(`engine: tick ${tick}: ${key} = ${show(value)} in the engine is missing in C`)
         }
         const printed = e.printed.join('')
@@ -179,7 +188,7 @@ function compareWithEngine(r: CaseResult, gen: GeneratedC, engine: { tick: SimTi
 
 function compareWithKieler(r: CaseResult, c: Case, gen: GeneratedC, rec: Recording, out: { ticks: HarnessTick[]; diedIn?: number }, run: RunResult) {
     const problems: string[] = []
-    const known = knownKeys(gen)
+    const foreign = foreignKeys(gen, c)
     const stop = c.scenario?.runtimeError
     let kielerTerminated = -1
     let cTerminated = -1
@@ -197,7 +206,7 @@ function compareWithKieler(r: CaseResult, c: Case, gen: GeneratedC, rec: Recordi
         }
         r.kielerTicks++
         for (const [key, value] of Object.entries(expected.values)) {
-            if (!(key in ct.pool) && !known.has(key)) continue
+            if (!(key in ct.pool) && foreign.has(key)) continue
             if (!same(ct.pool[key], value)) problems.push(`KIELER: tick ${tick}: ${key} is ${show(ct.pool[key])} in C, ${show(value)} in KIELER`)
         }
         for (const [key, value] of Object.entries(ct.pool)) if (!(key in expected.values) && value !== null) problems.push(`KIELER: tick ${tick}: ${key} = ${show(value)} is not in KIELER's data pool`)
