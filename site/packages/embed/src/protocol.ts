@@ -203,7 +203,7 @@ export function parseCommand(data: unknown): Parsed {
                 files[p] = text
             }
             if (size > LIMITS.source) return bad('The files are too long.')
-            if (own(data, 'active') && data.active !== undefined && (typeof data.active !== 'string' || !(data.active in files))) return bad('`active` must name one of the files.')
+            if (own(data, 'active') && data.active !== undefined && (typeof data.active !== 'string' || !own(files, data.active))) return bad('`active` must name one of the files.')
             if (own(data, 'name') && data.name !== undefined && (typeof data.name !== 'string' || data.name.length > LIMITS.path)) return bad('`name` must be a short string.')
             return {
                 kind: 'command',
