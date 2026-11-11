@@ -1,0 +1,18 @@
+// Locals of one name in the two branches of an if, and one that shadows nothing: each is its own variable.
+scchart ProbeMethodLocalsBlocks {
+  input int n
+  output int y = 0
+  method int pick(int n) {
+    int r = 0
+    if (n > 2) {
+      int t = n * 2
+      r = t
+    } else {
+      int t = n + 100
+      r = t
+    }
+    return r
+  }
+  initial state S
+    if true do y = pick(n) go to S
+}

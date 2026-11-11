@@ -1,0 +1,74 @@
+{
+  "hash": "466259941761ee5397de60c6e94c1746562ca5c8",
+  "chart": "tests/engine/kieler/codegen/probe-method-locals-loops.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name n is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name sum is contained in the model but not in VariableStore.",
+    "ValuedObject with name n is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "y": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "y": 12
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "hash": "3fba02b80c6a19110dddb2749dbeac08e8139f7c",
+  "chart": "tests/engine/kieler/codegen/probe-method-locals-blocks.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_pick_r is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_pick_t is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_pick_t_ is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_pick_n is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "y": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "y": 101
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+// Two loops of one method, each with its own counter `i`: KIELER compiles it (y is 0+1+2 twice).
+scchart ProbeMethodLocalsLoops {
+  input int n
+  output int y = 0
+  method int sum(int n) {
+    int r = 0
+    for (int i = 0; i < n; i++) {
+      r += i
+    }
+    for (int i = 0; i < n; i++) {
+      r += i
+    }
+    return r
+  }
+  initial state S
+    if true do y = sum(n) go to S
+}

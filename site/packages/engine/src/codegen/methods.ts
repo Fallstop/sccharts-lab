@@ -77,9 +77,19 @@ const localName = (v: CVar) => {
 /** The function: its locals, then its body. */
 export function functionCode(v: CVar, input: MethodsInput): string[] {
     const m = v.method!
+    // Every local is declared at the top of the function, so two of one name in different blocks (two loops' `i`) get
+    // a name each: the first keeps it, the next is `i_2` (probes tests/engine/kieler/codegen/probe-method-locals-*).
     const locals = new Map<CVar, string>()
-    for (const p of m.params) locals.set(p, localName(p))
-    for (const l of m.locals) locals.set(l, localName(l))
+    const used = new Set<string>()
+    const unique = (x: CVar) => {
+        const base = localName(x)
+        let name = base
+        for (let k = 2; used.has(name); k++) name = `${base}_${k}`
+        used.add(name)
+        return name
+    }
+    for (const p of m.params) locals.set(p, unique(p))
+    for (const l of m.locals) locals.set(l, unique(l))
     const env: ExprEnv = {
         ...input.env,
         access: x => locals.get(x) ?? input.env.access(x),
@@ -87,7 +97,7 @@ export function functionCode(v: CVar, input: MethodsInput): string[] {
         dropped: undefined,
     }
     const lines = [`${signature(v, input)} {`]
-    for (const l of m.locals) lines.push(`  ${ctypeOf(l)} ${localName(l)}${dimsOf(l).map(n => `[${n}]`).join('')};`)
+    for (const l of m.locals) lines.push(`  ${ctypeOf(l)} ${locals.get(l)}${dimsOf(l).map(n => `[${n}]`).join('')};`)
     const typed = m.returnType !== 'void'
     const end = typed ? 'return 0;' : 'return;'
     block(m.body, 1, [], lines, env, end, forwardTargets(m.body))
