@@ -161,13 +161,22 @@ export interface SavedCopy {
 /** A project to open from the store or a copy: `base`, the version to save over; `resave`, the store is behind. */
 export type Newest = StoredProject & { base?: string | null; resave?: boolean }
 
+/** A larger project is not copied (local storage is small, and shared with the site's settings). */
+const MAX_COPY = 1_000_000
+
 export function rememberSave(t: SavedCopy) {
     const text = JSON.stringify(t)
     for (const [area, key] of [['sessionStorage', TAB_KEY], ['localStorage', LAST_KEY]] as const) {
         try {
-            globalThis[area]?.setItem(key, text)
+            if (text.length > MAX_COPY) globalThis[area]?.removeItem(key)
+            else globalThis[area]?.setItem(key, text)
         } catch {
-            // Blocked or full: the store and the address still have the save before.
+            // Full or blocked: no copy then, never an older one (it would be taken for this save).
+            try {
+                globalThis[area]?.removeItem(key)
+            } catch {
+                // Blocked: there is none.
+            }
         }
     }
 }
