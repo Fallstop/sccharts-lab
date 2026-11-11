@@ -115,6 +115,21 @@ describe('compare', () => {
         expect(html).not.toMatch(/\|\s*---/)
     })
 
+    test('a hostile trace file: its names and model put no live link or markup in the report', () => {
+        const mine = run(stopwatch, presses)
+        const link = '[Show the difference](javascript:alert%28document.domain%29)'
+        // A column named so that it closes the report's code span, and a model name that is a Markdown link.
+        const csv = `tick,startStop,x\` ${link} \`y,<img src=x onerror=alert(1)>\n1,false,1,2\n2,true,1,2\n`
+        const json = JSON.stringify({ format: 'sccharts-lab-trace', version: 1, model: link, variables: [{ name: 'startStop', role: 'input', type: 'bool' }], ticks: [{ startStop: false }] })
+        const files = [{ label: `${link}.csv`, trace: readTrace(csv, 'hostile.csv') }]
+        const fromJson = readTraceFile(json, 'hostile.json')
+        if ('trace' in fromJson) files.push({ label: 'hostile.json', trace: fromJson.trace })
+        const html = reportHtml(compareRun(stopwatch, mine.history, 'This run', files).markdown)
+        expect(html).toContain('Show the difference')
+        expect(html).not.toMatch(/href="\s*javascript:/i)
+        expect(html).not.toMatch(/<img/i)
+    })
+
     test('the Markdown subset: headings, tables with escaped bars, marked rows, paragraphs', () => {
         const html = reportHtml('# A\n\nSome **bold** and `code`\nwrapped.\n\n| x | y |\n|---|---|\n| 1 ≠ | a \\| b |\n| 2 | c |\n', 1)
         expect(html).toBe(

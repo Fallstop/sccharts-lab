@@ -87,6 +87,14 @@ describe('inlineMd', () => {
     it('does not format inside code spans', () => {
         expect(inlineMd('`**not bold** here`')).toBe('<code>**not bold** here</code>')
     })
+    it('links only to the site, the web and mail: a script link stays text', () => {
+        expect(inlineMd('[a](https://x.test/) [b](#c) [d](mailto:x@y.test) [e](../f/)')).toBe(
+            '<a href="https://x.test/">a</a> <a href="#c">b</a> <a href="mailto:x@y.test">d</a> <a href="../f/">e</a>'
+        )
+        for (const href of ['javascript:alert%281%29', 'JavaScript:x', '\u0001javascript:x', 'java\u0000script:x', 'data:text/html,x', 'vbscript:x']) {
+            expect(inlineMd(`[go](${href})`)).not.toContain('<a')
+        }
+    })
     it('takes backslash escapes literally', () => {
         expect(inlineMd('2 \\* 3 \\* 4')).toBe('2 * 3 * 4')
         expect(inlineMd('\\*not italic\\*')).toBe('*not italic*')

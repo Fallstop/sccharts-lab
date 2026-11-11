@@ -27,9 +27,17 @@ const smart = (s: string) =>
         .replace(/(^|[\s([\u2014\u2013-])"/g, '$1\u201c')
         .replace(/"/g, '\u201d')
 
+/** A link target a page may follow: a path or `#` on the site, http(s) or mailto; never `javascript:` and the like,
+ *  since text from outside reaches here (a trace file's names in the Trace tab's report). Browsers drop control
+ *  characters and spaces before reading a scheme, so they are dropped here too. */
+function safeHref(href: string): boolean {
+    const scheme = /^([a-z][a-z\d+.-]*):/i.exec(href.replace(/[\u0000- \u007f]/g, ''))
+    return !scheme || /^(?:https?|mailto)$/i.test(scheme[1])
+}
+
 function format(text: string): string {
     let s = esc(smart(text))
-    s = s.replace(/\[([^\]]+)\]\(([^)\s\ue100-\uf8ff]+)\)/g, (_, label, href) => `<a href="${href}">${label}</a>`)
+    s = s.replace(/\[([^\]]+)\]\(([^)\s\ue100-\uf8ff]+)\)/g, (all, label, href) => (safeHref(href) ? `<a href="${href}">${label}</a>` : all))
     s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     s = s.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>')
     return unpark(s)
