@@ -1,0 +1,60 @@
+{
+  "hash": "e206c000944b984433a25ae9a878f136ea156b6c",
+  "chart": "tests/engine/kieler/codegen/probe-ternary-float.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "b": false,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "b": true,
+        "x": 16777216
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "b": true,
+        "x": 16777216
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

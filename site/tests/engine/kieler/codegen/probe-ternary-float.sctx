@@ -1,0 +1,7 @@
+// A conditional whose branches are an int and a C float has the type float: the int branch, taken, is rounded.
+scchart ProbeTernaryFloat {
+  output int x = 0
+  output bool b = false
+  initial state A
+    do x = (true ? 16777217 : random()); b = (true ? 16777217 : random()) == 16777217 go to A
+}

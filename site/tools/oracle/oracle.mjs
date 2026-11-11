@@ -91,7 +91,10 @@ export async function startOracle({ java = DEFAULT_JAVA, jar = process.env.SCCHA
         const dir = path.join(workspace, `m${counter++}`)
         fs.mkdirSync(dir)
         // Imported charts (scenario.imports: { "file.sctx": text }) live next to the model.
-        for (const [file, text] of Object.entries(scenario.imports ?? {})) fs.writeFileSync(path.join(dir, file), text)
+        for (const [file, text] of Object.entries(scenario.imports ?? {})) {
+            fs.mkdirSync(path.dirname(path.join(dir, file)), { recursive: true })
+            fs.writeFileSync(path.join(dir, file), text)
+        }
         const file = path.join(dir, scenario.fileName ?? 'model.sctx')
         fs.writeFileSync(file, model)
         const uri = pathToFileURL(file).href

@@ -6,6 +6,7 @@
 // rather than its validator): emitting a variable that is not a signal in reachable code, and a for region that
 // starts at a number but does not end at one.
 
+import { importTargets } from './imports'
 import type {
     Declaration, Diagnostic, Effect, Equation, Expression, LocalAction, Pragma, Program, Reference, Region, ScopeCall, SclStatement, Span,
     State, Transition, ValuedObject,
@@ -70,14 +71,10 @@ class Validator {
     private checkImports() {
         if (!this.program.imports.length) return
         const files = Object.keys(this.options.files ?? {}).map(f => f.replace(/\\/g, '/'))
-        const has = (name: string) => {
-            const want = name.endsWith('.sctx') ? name : `${name}.sctx`
-            return files.some(f => f === want || f.endsWith('/' + want))
-        }
         const span = this.program.span
         this.program.imports.forEach((name, i) => {
             const folder = name.endsWith('*')
-            const ok = folder ? files.some(f => f.startsWith(name.slice(0, -1))) : has(name)
+            const ok = importTargets(name, '', files).length > 0
             if (!ok) {
                 this.add('warning', 'broken-import', this.program.importSpans?.[i] ?? span, folder ? `No SCCharts files match the import "${name}"` : `There is no file \`${name.endsWith('.sctx') ? name : name + '.sctx'}\` to import`,
                     folder ? 'Broken Import: There are no SCCharts models in the given directory.' : 'Broken Import: There is no SCCharts model with the given name.',

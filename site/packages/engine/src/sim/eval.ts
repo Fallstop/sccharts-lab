@@ -97,6 +97,12 @@ function lowerType(r: CRef): string {
     return x.v.type === 'pure' ? 'bool' : x.v.type
 }
 
+/** The operands of a comparison as C compares them: converted to their common type (a C float rounds an int). */
+function operands(a: Compiled, b: Compiled): [(rt: Runtime) => number, (rt: Runtime) => number] {
+    if (binaryType(a.type, b.type) !== 'f32') return [rt => num(a.fn(rt)), rt => num(b.fn(rt))]
+    return [rt => Math.fround(num(a.fn(rt))), rt => Math.fround(num(b.fn(rt)))]
+}
+
 function binaryType(a: EType, b: EType): EType {
     if (a === 'float' || b === 'float') return 'float'
     if (a === 'f32' || b === 'f32') return 'f32'
@@ -261,12 +267,16 @@ export class ExprCompiler {
                     // Strings and NULL compare as pointers (B-26).
                     return { fn: rt => (sameValue(a.fn(rt), b.fn(rt)) === eq ? 1 : 0), type: 'int' }
                 }
-                return { fn: rt => ((num(a.fn(rt)) === num(b.fn(rt))) === eq ? 1 : 0), type: 'int' }
+                const [x, y] = operands(a, b)
+                return { fn: rt => ((x(rt) === y(rt)) === eq ? 1 : 0), type: 'int' }
             }
-            case '<': return { fn: rt => (num(a.fn(rt)) < num(b.fn(rt)) ? 1 : 0), type: 'int' }
-            case '<=': return { fn: rt => (num(a.fn(rt)) <= num(b.fn(rt)) ? 1 : 0), type: 'int' }
-            case '>': return { fn: rt => (num(a.fn(rt)) > num(b.fn(rt)) ? 1 : 0), type: 'int' }
-            case '>=': return { fn: rt => (num(a.fn(rt)) >= num(b.fn(rt)) ? 1 : 0), type: 'int' }
+            case '<': case '<=': case '>': case '>=': {
+                const [x, y] = operands(a, b)
+                if (o === '<') return { fn: rt => (x(rt) < y(rt) ? 1 : 0), type: 'int' }
+                if (o === '<=') return { fn: rt => (x(rt) <= y(rt) ? 1 : 0), type: 'int' }
+                if (o === '>') return { fn: rt => (x(rt) > y(rt) ? 1 : 0), type: 'int' }
+                return { fn: rt => (x(rt) >= y(rt) ? 1 : 0), type: 'int' }
+            }
             case '&': return { fn: rt => num(a.fn(rt)) & num(b.fn(rt)), type: 'int' }
             case '|': return { fn: rt => num(a.fn(rt)) | num(b.fn(rt)), type: 'int' }
             case '^': return { fn: rt => num(a.fn(rt)) ^ num(b.fn(rt)), type: 'int' }
@@ -298,6 +308,8 @@ export class ExprCompiler {
                     return { fn: rt => (truthy(cond.fn(rt)) ? then.fn(rt) : 0), type: then.type }
                 }
                 const type: EType = then.type === 'string' || then.type === 'null' ? then.type : binaryType(then.type, other.type)
+                // C converts the branch taken to the conditional's type: an int branch beside a C float one is rounded.
+                if (type === 'f32') return { fn: rt => Math.fround(num(truthy(cond.fn(rt)) ? then.fn(rt) : other.fn(rt))), type }
                 return { fn: rt => (truthy(cond.fn(rt)) ? then.fn(rt) : other.fn(rt)), type }
             }
             case 'pre': case 'val': {

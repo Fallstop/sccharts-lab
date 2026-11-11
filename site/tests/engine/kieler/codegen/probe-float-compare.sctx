@@ -1,0 +1,8 @@
+// A comparison with a C float operand (random() is one): C converts the other operand to float as well, so
+// 16777217 compares equal to itself rounded to 16777216.
+scchart ProbeFloatCompare {
+  input int n
+  output bool b = false
+  initial state A
+    do b = (random() * 0 + n) == n go to A
+}

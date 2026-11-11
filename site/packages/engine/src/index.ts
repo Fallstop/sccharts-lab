@@ -20,6 +20,7 @@ import { parseProgram, parseStandalone, type StandaloneMode } from './parser/par
 import { resolveProgram, type ModelIndex } from './parser/resolve'
 import { LineMap } from './parser/source'
 import { validateProgram } from './parser/validate'
+import { importTargets } from './parser/imports'
 import { kielerSyntaxWording } from './parser/kielerWording'
 import { compileChart, type CompiledChart } from './sim/compile'
 import { rememberImports } from './sim/describe'
@@ -199,13 +200,6 @@ export function compile(source: string, options: CompileOptions = {}): CompileRe
 
 // ----- Imported files with errors ---------------------------------------------------------------------------------
 
-/** The files an `import` names (S-20): `"beep"` and `"beep.sctx"` the file, `"dir/*"` every .sctx file in it. */
-function importTargets(name: string, files: string[]): string[] {
-    if (name.endsWith('*')) return files.filter(f => f.startsWith(name.slice(0, -1)) && f.endsWith('.sctx'))
-    const want = name.endsWith('.sctx') ? name : `${name}.sctx`
-    return files.filter(f => f === want || f.endsWith('/' + want))
-}
-
 /**
  * KIELER does not compile a chart while a file it imports has errors (its own, or those of a file that one imports);
  * SCCharts Lab says so on the import: "The imported file counter.sctx has errors. Line 5: Couldn't resolve reference
@@ -229,7 +223,7 @@ function importErrors(program: Program, files: Record<string, string>): Diagnost
         stack.add(name)
         const text = files[name]
         const parsed = parseOnly(text)
-        const targets = parsed.program.imports.map(i => importTargets(i, names))
+        const targets = parsed.program.imports.map(i => importTargets(i, name, names))
         const { index, diagnostics: linking } = resolveProgram(parsed.program, { externalCharts: targets.flat().filter(t => t !== name).flatMap(charts) })
         const own = [...parsed.syntax, ...linking, ...validateProgram(parsed.program, index, text, { files })].filter(d => d.severity === 'error')
         let first: Found | undefined
@@ -250,7 +244,7 @@ function importErrors(program: Program, files: Record<string, string>): Diagnost
     }
     const out: Diagnostic[] = []
     program.imports.forEach((name, i) => {
-        for (const t of importTargets(name, names)) {
+        for (const t of importTargets(name, '', names)) {
             const e = firstError(t, new Set())
             if (!e) continue
             // The file with the error, and the imports it came through (SCCharts Lab's words for an import of an import).

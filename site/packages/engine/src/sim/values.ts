@@ -100,7 +100,17 @@ export function printfValue(v: RValue, type: CType | 'hex'): string {
     if (Array.isArray(v)) return '?'
     switch (type) {
         case 'bool': return (v >>> 0).toString(16)
-        case 'float': return v.toFixed(6)
+        case 'float': return cFixed(v)
         default: return String(v | 0)
     }
+}
+
+/** C's `%f` of a double, as glibc prints it: `inf`, `-nan` (the NaN x86 makes, 0.0/0.0, has its sign bit set),
+ *  `-0.000000`, and every digit of a large value (never an exponent, as toFixed has from 1e21). */
+function cFixed(v: number): string {
+    if (Number.isNaN(v)) return '-nan'
+    if (!Number.isFinite(v)) return v > 0 ? 'inf' : '-inf'
+    if (Object.is(v, -0)) return '-0.000000'
+    if (Math.abs(v) >= 1e21) return `${BigInt(v)}.000000`
+    return v.toFixed(6)
 }

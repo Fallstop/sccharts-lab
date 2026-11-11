@@ -1,0 +1,6 @@
+// import "dir/*" loads the files directly in dir: a broken file in a subfolder of it is not imported, so it does not
+// stop this chart.
+import "probe-folder/*"
+scchart ProbeImportFolderNested {
+  initial state A is ProbeImportFolderChild
+}

@@ -46,7 +46,7 @@ for (const r of roots) {
         const scenario = JSON.parse(fs.readFileSync(file, 'utf8'))
         const model = fs.readFileSync(chart, 'utf8')
         // Imported charts: "imports": ["other.sctx"] relative to the chart.
-        const imports = Object.fromEntries((scenario.imports ?? []).map(f => [path.basename(f), fs.readFileSync(path.join(path.dirname(chart), f), 'utf8')]))
+        const imports = Object.fromEntries((scenario.imports ?? []).map(f => [f, fs.readFileSync(path.join(path.dirname(chart), f), 'utf8')]))
         const hash = scenarioHash(model, { ...scenario, imports: scenario.imports ? imports : undefined })
         const out = `${base}.oracle.json`
         const previous = fs.existsSync(out) ? JSON.parse(fs.readFileSync(out, 'utf8')) : undefined

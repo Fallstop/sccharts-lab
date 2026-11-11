@@ -1,0 +1,66 @@
+{
+  "hash": "8b9971bca6c1d4880c2688180de884a94f7be80b",
+  "chart": "tests/engine/kieler/codegen/probe-float-compare.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 16777217
+      },
+      "values": {
+        "n": 16777217,
+        "b": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 16777217
+      },
+      "values": {
+        "n": 16777217,
+        "b": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 16777219
+      },
+      "values": {
+        "n": 16777219,
+        "b": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

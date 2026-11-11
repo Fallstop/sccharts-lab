@@ -1,0 +1,6 @@
+// print of a float is C's %f: inf, -nan (the NaN of 0.0/0.0 has its sign bit set on x86), -0.000000.
+scchart ProbePrintFloatSpecial {
+  output float f = 0
+  initial state A
+    do f = 1 / 0.0; print(f); f = 0.0 / 0.0; print(f); f = -0.0; print(f) go to A
+}

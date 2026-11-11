@@ -130,7 +130,8 @@ function run(c: Case): { skip?: string; problems: string[] } {
 
     const source = fs.readFileSync(c.chart, 'utf8')
     const files: Record<string, string> = {}
-    for (const f of scenario.imports ?? []) files[path.basename(f)] = fs.readFileSync(path.join(path.dirname(c.chart), f), 'utf8')
+    // By their path relative to the chart (an import of a folder, `dir/*`, needs it).
+    for (const f of scenario.imports ?? []) files[f] = fs.readFileSync(path.join(path.dirname(c.chart), f), 'utf8')
     const result = compile(source, { files })
     const errors = result.diagnostics.filter(d => d.severity === 'error')
     const unsupported = result.diagnostics.find(d => d.code === 'unsupported')
