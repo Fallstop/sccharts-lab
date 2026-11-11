@@ -24,7 +24,8 @@ export const rejected = (list) => list.filter((r) => !r.ok).length
 Every example in this guide is run through KIELER's compiler, and the page's simulation of it is tested
 against that run, tick for tick. KIELER is the baseline, not an oracle: where it crashes, varies from run
 to run or gets a result wrong by its own rules, the guide says so. This page explains how the checks
-work, where they stop, and what the notices you will see on a few examples mean.
+work, how the playground's C code is checked, where the checks stop, and what the notices you will see
+on a few examples mean.
 
 ## Every example is run through KIELER
 
@@ -83,7 +84,8 @@ A few constructs are beyond the engine, and an example that uses them shows a no
 simulation controls. Its diagram and code are still there, and SCCharts Lab and KIELER run it as usual:
 
 - **Host code**: C code in backticks, `extern` functions, and host classes and enums. Running them takes
-  a C compiler, which a browser does not have.
+  a C compiler, which a browser does not have. The playground's C code tab still gives their C, ready to
+  build ([below](#the-c-code)).
 - **User-written schedules** (`schedule`) and `ode` actions.
 - **A few rare combinations**, such as a chart that `extends` another with bindings or generic
   parameters, recursive methods, arrays of class instances, and an abort region in a state that is left
@@ -147,6 +149,28 @@ Most examples carry no notice at all. These are the ones you may meet, and what 
   KIELER [swallows](/advanced/annotations/#an-empty--swallows-the-next-line) into an empty `//` comment
   on the line above.
 
+## The C code
+
+The playground's [C code tab](/reference/playground/#c-code) turns a chart into C in the form of
+KIELER's netlist-based compilation. The C is generated from the same compiled chart that the engine
+simulates, and a program checks it with gcc:
+
+- **Every recording.** Each recorded chart that KIELER accepts, examples and test charts alike, is turned
+  into C, compiled with gcc as KIELER's simulation compiles it, and run on the recorded inputs. In every
+  tick, the value of every variable, the printed text, the transitions that fired and the termination
+  are compared with KIELER's recording and with the engine.
+- **Host code.** Charts with host code, which the engine cannot run, are among them, so their C is
+  compared with KIELER's run directly. Where KIELER's own C does not compile, because the host code
+  is wrong, gcc rejects this C too.
+- **Random charts.** Random charts from the program [below](#random-charts-compared-with-kieler) are
+  turned into C and run for 14 ticks each, and compared with the engine, tick by tick.
+
+In November 2026, 944 recorded charts went through gcc, 8 of them with host code. In their 5,083
+recorded ticks the C agreed with KIELER in every value, except in three charts that show one of KIELER's
+known bugs ([Notices on examples](#notices-on-examples)), where it computes the intended result, as the
+guide's engine does. Of 5,400 random charts, the 1,816 that are valid charts went through gcc too, with
+no difference from the engine in any of their 25,424 ticks.
+
 ## Random numbers
 
 In KIELER's C simulation `random()` is C's `rand()`, divided to give a number between 0 and 1, and the
@@ -195,14 +219,15 @@ KIELER's warnings were compared too, each at its place in the chart.
 
 ## Who made this
 
-This guide is independent of Kiel University's KIELER team, who created SCCharts and KIELER. Its author
-also makes SCCharts Lab, the VS Code extension the guide recommends, which is independent of the KIELER
-team too. Where SCCharts Lab and official KIELER differ, the guide follows KIELER's sources and says
-what official KIELER does ([Official KIELER and SCCharts Lab](#official-kieler-and-sccharts-lab)).
+SCCharts and KIELER are the work of Kiel University's KIELER team. This guide is independent of them.
+It is part of SCCharts Lab, which is this site with its playground and an extension for VS Code, all by
+the same author and all independent of the KIELER team; the language they work with is SCCharts. Where
+the SCCharts Lab extension and official KIELER differ, the guide follows KIELER's sources and says what
+official KIELER does ([Official KIELER and SCCharts Lab](#official-kieler-and-sccharts-lab)).
 
-The source of the guide and of SCCharts Lab is in one repository on
-[GitHub](https://github.com/Fallstop/sccharts-lab). The guide's pages, its engine and every recording
-are under `site/`.
+The source of all of SCCharts Lab, this guide included, is in one repository on
+[GitHub](https://github.com/Fallstop/sccharts-lab). The guide's pages, the playground, the engine and
+every recording are under `site/`.
 
 The guide explains the language and its tools. It contains no solutions to any course's assignments.
 
@@ -224,7 +249,7 @@ The guide explains the language and its tools. It contains no solutions to any c
 These help most:
 
 - the page and the example (its name is at the top of its frame);
-- the inputs, tick by tick, or for your own chart the playground's **Copy link**, which carries the
-  chart in the link;
+- the inputs, tick by tick, or for your own chart the playground's **Copy link to this run**, which
+  carries the chart and the inputs of every tick in the link;
 - what you expected, and what you saw;
 - what SCCharts Lab or KIELER does with the same chart and inputs, and which version you used.

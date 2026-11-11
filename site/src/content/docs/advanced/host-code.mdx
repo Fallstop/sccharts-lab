@@ -1,6 +1,6 @@
 ---
 title: "Host code"
-description: "Calling C or Java from a chart: text in backticks, extern functions, #hostcode and its relatives, host types, and what host code means for the simulation."
+description: "Calling C or Java from a chart: text in backticks, extern functions, #hostcode and its relatives, host types, and where a chart with host code can run."
 sidebar:
   order: 9.5
 ---
@@ -15,10 +15,11 @@ the target language, the *host language*, C or Java, that KIELER copies into the
 
 <Aside type="note" title="What runs where">
 KIELER and SCCharts Lab simulate a chart by compiling it to C (with gcc) or to Java, so host code runs
-there. This site's simulator runs in your browser and has no C compiler: it draws charts with host code
-but cannot run them, so this page shows KIELER's results as tables. When a
-[method](/advanced/methods/) can do the job, prefer it: methods run wherever the chart runs, this site
-included.
+there. The playground runs in your browser, which has no C compiler: it draws charts with host code but
+cannot simulate them, so this page shows KIELER's results as tables. Its **C code** tab does give their
+C, host code included, with a `main.c` to build and run it with gcc
+([The playground](/reference/playground/#c-code)). When a [method](/advanced/methods/) can do the job,
+prefer it: methods run wherever the chart runs, the browser included.
 </Aside>
 
 ## Host code in backticks
@@ -114,6 +115,10 @@ for `#include` lines and type definitions, but a function defined there is defin
 | 3 | −7 | 0 |
 | 4 | 42 | 42 |
 
+Open `Gauge` in the playground and its **C code** tab shows `clamp` at the top of `Gauge.c`, and not in
+`Gauge.h`. The `.zip` it downloads builds with gcc: set `d.reading` in its `main.c` to the readings
+above, and it prints the same values of `needle`.
+
 Since `#hostcode` text also lands in the Java file, a C `#include` there breaks the Java version of the
 chart. If a chart must work in both languages, use `#hostcode-c` and `#hostcode-java`.
 
@@ -157,7 +162,7 @@ compare values (see [chapter 5](/learn/variables/#strings-compare-as-pointers)).
 ## Try it
 
 <TryIt example="advanced/host-code/gauge" solution="advanced/host-code/gauge-method" title="Clamp it yourself">
-`Gauge` calls a C function, `clamp`, so it runs only where KIELER can compile C, and not on this site.
+`Gauge` calls a C function, `clamp`, so it runs only as C, and the playground cannot simulate it.
 Replace the `#hostcode-c` line and the `extern` declaration with a method of the chart that does the
 same, so that `Gauge` behaves exactly as before and also runs in the playground. Test it with readings
 above 100 and below 0.
@@ -186,8 +191,9 @@ without call syntax and generates the code anyway, and then gcc fails:
 </Quiz>
 
 <KeyIdeas>
-- Host code is C or Java text that KIELER copies into the generated program. It needs a real compiler,
-  so this site can draw such charts but not run them. Prefer a method when one can do the job.
+- Host code is C or Java text that KIELER copies into the generated program. It needs a C compiler, so
+  the playground draws such a chart and gives its C code, but cannot run it. Prefer a method when one
+  can do the job.
 - The compiler does not look inside backticks, so it cannot see what they read or write.
 - Declare host functions with `extern "name" localName` and call them with parentheses.
 - `#hostcode` text goes into every generated file, function definitions into `#hostcode-c`, and

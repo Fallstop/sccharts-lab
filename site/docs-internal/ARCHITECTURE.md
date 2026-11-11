@@ -1,9 +1,11 @@
-# SCCharts Guide: architecture
+# SCCharts Lab site: architecture
 
-The site at sccharts.jmw.nz is a beginner-friendly, comprehensive and interactive introduction to the
-SCCharts language. Its examples run in the browser: a TypeScript engine parses SCTX, draws the chart the way
-KIELER does and simulates it tick by tick. Every example is checked against the real KIELER compiler (the
-"oracle"), so what a reader sees in the guide is what the official tools do.
+The site at sccharts.jmw.nz is SCCharts Lab on the web: a beginner-friendly, comprehensive and interactive
+guide to the SCCharts language, the playground (an in-browser IDE at `/playground/`), and embeds of live charts
+for other sites (`/embed/`, `/embed.js`). Its examples run in the browser: a TypeScript engine parses SCTX,
+draws the chart the way KIELER does, simulates it tick by tick and generates C. Every example is checked
+against the real KIELER compiler (the "oracle"), so what a reader sees in the guide is what the official tools
+do. SCCharts and KIELER are Kiel University's; the language is always "SCCharts", the tools "SCCharts Lab".
 
 Everything lives in `site/` of the `site` branch (worktree `../sccharts-lab-site`). Astro 7 with Starlight
 for the shell, Svelte 5 for the interactive islands, vitest for the tests.
@@ -31,16 +33,20 @@ for the shell, Svelte 5 for the interactive islands, vitest for the tests.
 | --- | --- | --- |
 | `packages/engine/src/` | engine | Parser (`parser/`), simulator (`sim/`), C code generator (`codegen/`), KIELER's label serialisers (`format.ts`), data contract (`types.ts`), public API (`index.ts`) |
 | `packages/diagram/src/` | playground + diagram | ELK layout and SVG rendering in KIELER's notation (`README.md`) |
-| `src/components/` (except `playground/`) | widgets | `Chart`, `Sim`, `Compare`, `Predict`, `Quiz`, `TryIt`, `KeyIdeas`, `Playground` (Astro), the simulation panel (`sim/`, Svelte), the widget frame (`frame/`), landing and Starlight overrides |
-| `src/components/playground/`, `src/pages/playground.astro` | playground + diagram | The playground IDE and the inline `<Playground>` (`README.md`) |
+| `packages/trace/src/` | playground | Simulation traces as the VS Code extension writes them (KTrace, CSV, JSON, XML), replay and comparison, ported from `keith-vscode/src/simulation/trace-*.ts` (`README.md`) |
+| `packages/embed/src/` | embed | `<sccharts-lab-chart>`, the embed's options and its postMessage protocol (`README.md`) |
+| `src/components/` (except `playground/`, `embed/`) | widgets | `Chart`, `Sim`, `Compare`, `Predict`, `Quiz`, `TryIt`, `KeyIdeas`, `Playground` (Astro), the simulation panel (`sim/`, Svelte), the widget frame (`frame/`), landing and Starlight overrides |
+| `src/components/playground/`, `src/pages/playground.astro` | playground + diagram | The playground IDE (projects, the bottom panel's tabs: simulation, problems, console, trace, C code) and the inline `<Playground>` (`README.md`) |
+| `src/components/embed/`, `src/pages/embed.astro`, `src/pages/embed.js.ts` | embed | The page in an embed's iframe (the playground's parts in 'embed' mode), its side of the protocol, the app bar's Embed dialog, `/embed.js` (built from `packages/embed/src/loader.ts`) |
 | `src/styles/`, `astro.config.mjs`, `ec.config.mjs`, `src/content/docs/design/**`, `404.mdx` | widgets | Site shell, theme, code blocks, design specimen and widget test bench |
 | `src/content/docs/**` | content editors | Guide pages (MDX) |
 | `src/examples/**` | content editors | Example charts (`.sctx`), scenarios (`.scenario.json`) and their KIELER recordings (`.oracle.json`) |
 | `docs-internal/semantics/`, this file | semantics-docs | The semantics specs (numbered rules) |
-| `packages/README.md`, `packages/*/package.json` and `README.md`, `tools/packages/`, `.github/workflows/packages.yml` | packages | Publishing the three packages to npm: build to `dist/`, curated entry points, consumer smoke test, release workflow |
+| `packages/README.md`, `packages/*/package.json` and `README.md`, `tools/packages/`, `.github/workflows/packages.yml` | packages | Publishing the packages to npm (engine, diagram, trace; embed is not set up yet): build to `dist/`, curated entry points, consumer smoke test, release workflow |
 | `tests/conformance/<area>/` | semantics-docs | Probe charts, scenarios and oracle recordings that define correct behaviour |
 | `tests/conformance/engine*`, `tests/engine/`, `tests/corpus/`, `tests/codegen/`, `tools/fuzz/`, `tools/oracle/`, `tools/cgen/` | engine | Engine vs KIELER, engine unit tests, parser corpus, generated C vs engine and KIELER, differential fuzzer, the oracle harness |
-| `tests/diagram/`, `tests/playground/`, `tools/diagram-*.mjs` | playground + diagram | Diagram and playground tests and tools |
+| `tests/diagram/`, `tests/playground/`, `tests/trace/`, `tools/diagram-*.mjs` | playground + diagram | Diagram, playground and trace tests and tools |
+| `tests/embed/` | embed | The embed's options, protocol, element, bridge and snippet; `e2e.test.ts` (opt-in) in Chromium |
 | `tests/widgets/`, `tests/design/`, `tools/screenshot.mjs`, `tools/contrast.mjs` | widgets | Widget and design tests and tools |
 | `tools/qa/`, `docs-internal/QA.md` | QA | Production checks of the built site (links, axe, console, keyboard walks, phone width, no-JS, performance, meta, search) |
 | `docs-internal/CONTENT-PLAN.md`, `DESIGN.md` | coordinator / widgets | Audience, voice, page anatomy, component props (widgets own the component section); visual design and writing conventions |
@@ -56,7 +62,9 @@ for the shell, Svelte 5 for the interactive islands, vitest for the tests.
   For interaction checks write small Playwright scripts; `tools/chromium.mjs` (`launchChromium`) finds the
   installed Chromium.
 - **Tests.** `pnpm exec vitest run <paths>` (not `pnpm test -- <path>`); the whole suite is
-  `pnpm exec vitest run`. Don't run several full suites at once.
+  `pnpm exec vitest run`. Don't run several full suites at once. `vitest.config.ts` has two projects: `site`
+  (every test but one) and `perf` (`tests/engine/performance.test.ts`, the engine's timing targets), which runs
+  alone after the rest, since inside the parallel suite its numbers would measure the machine's load.
 - **Vite's dependency cache.** Tools that start their own Vite server rooted at `site/` (`tools/diagram-gallery.mjs`,
   vitest with a custom root) share `node_modules/.vite` with the dev server and can leave it serving outdated
   dependencies (every page answers 504 "Outdated Optimize Dep"). Restart the dev server then.
@@ -187,7 +195,9 @@ interface GeneratedC {
   header: string; source: string               // the two file names
   names: CNaming                                // { tick, reset, logic, struct }
   variables: CVariable[]                        // each chart variable's struct member, C type, dims, input/output, pool key
+  instances: { name, member, ctype, pool? }[]   // class, struct and chart-as-class instances: member and typedef
   hostCode: boolean                             // host code carried through (backticks, extern, #hostcode)
+  simulated: boolean                            // the engine runs the chart too (false: host code, recursive methods)
   takenTransitions?: string[]                   // the counters' transition ids (takenTransitions option)
 }
 ```
@@ -221,8 +231,13 @@ interface GeneratedC {
   (sim/exec.ts's node table), in the shape of KIELER's netlist C: the `TickData` struct with KIELER's member names
   (`S`, `S_val`, `S_curval`, `_<Chart>_local_<name>` for inner locals, class typedefs `<Chart>_<Class>`), guards
   `_g<n>`, condition guards `_cg<n>`, registers `_pg<n>`, `_GO`, `_TERM`, and `reset`/`logic`/`tick` with KIELER's
-  signatures. Host code (backticks, `extern`, `#hostcode*`, `@hostcode`) is carried into the C code. `tools/cgen`
-  proves it: every recorded scenario and thousands of fuzz charts through gcc, compared with the engine and KIELER.
+  signatures. Host code (backticks, `extern`, `#hostcode*`, `@hostcode`) is carried into the C code, so a chart the
+  engine cannot simulate still has its C (`simulated: false`). `naming: 'default'` means KIELER's names and overrides
+  the chart's `#code.naming`; only `naming` left out reads the pragma. `tools/cgen` proves it: every recorded
+  scenario (compared with the engine and KIELER's recording; host-code charts with the recording alone) and fuzz
+  charts (`--fuzz N`, compared with the engine) through gcc. Last run (November 2026, `--fuzz 300 --seed 1`): 1,254
+  recorded charts, 944 through gcc (8 with host code) with no mismatch; 5,400 fuzz charts, 1,816 through gcc with
+  no mismatch. `reference/about.mdx` ("The C code") quotes these numbers; update both together.
 - The engine is pure TypeScript with no DOM access: it runs in Node (tests, build-time rendering) and in the
   browser. Internals: `packages/engine/src/sim/README.md` (pipeline, adding a pass, reproduced KIELER defects) and
   `packages/engine/src/sim/STATUS.md` (coverage, API details).
@@ -236,7 +251,10 @@ in the relative specifiers), `pnpm packages:smoke` checks the packed tarballs in
 `packages-v<version>` tag publishes them (`.github/workflows/packages.yml`). Only the published entry points (each
 package's `publishConfig.exports`) are public; the site's deep imports (`@sccharts-lab/engine/sim/compile`, ...)
 work only in the workspace. The diagram package ships its fonts (`@sccharts-lab/diagram/fonts.css`), since the
-layout measures text in them.
+layout measures text in them. `packages/embed` (`@sccharts-lab/embed`) is a workspace package too, but not in the
+publish set yet (no `publishConfig`, not in `PACKAGES` of tools/packages/build.mjs): the site builds its loader into
+`/embed.js` (`src/pages/embed.js.ts`, Vite's library build) and imports its element on `reference/embed`. None of
+the packages is on npm yet.
 
 ## Diagrams (`packages/diagram/src/`)
 
@@ -272,13 +290,22 @@ and dark mode. Fidelity to KIELER's synthesis is tested against KIELER's own dia
   diagram's states, regions and transitions are one more (arrow keys, Home/End, each named with its simulation
   marks: `enableDiagramKeys` in `src/components/sim/link.ts`), Space and Enter step, and the trace has a
   screen-reader table. `tools/qa/keyboard.mjs` walks them.
-- **Playground.** `/playground` and the inline `<Playground example="…">` are the only places that lay out in
-  the browser: `layoutChart` runs with ELK in a Web Worker (`layout-service.ts`, elk-api + elk-worker), latest
-  request wins. CodeMirror 6 editor, live diagnostics (for a guide example opened as it is, paired with KIELER's
-  recorded words), the same `SimPanel` with a variables strip, share links for the chart and for a whole run
-  (`&run=`, replayed as a tour; a link pasted into an open tab, and Back and Forward, open their chart too), the
-  comparison with model solutions and, for an exercise link (`&solution=`), a banner with the exercise's task,
-  a Watch expression and Run until, every example in its menu (`src/components/playground/README.md`).
+- **Playground.** `/playground` is a full-window IDE: projects of several `.sctx` files (a files sidebar, tabs,
+  KIELER's `import` rules; saved to IndexedDB as the reader types; a folder on disk through the File System Access
+  API in Chromium, saved with Ctrl/⌘+S; `.zip` import and export; `#code=` and `#project=` links), a CodeMirror 6
+  editor with live diagnostics (for a guide example opened as it is, paired with KIELER's recorded words), the
+  diagram, and a bottom panel whose tabs are a registry (`panel-tabs.ts`): Simulation (the same `SimPanel`, with
+  Variables, Watch and Run until, and `&run=` links replayed as a tour), Problems, Console (`print` output), Trace
+  (save, replay and compare with `@sccharts-lab/trace`, the extension's files byte for byte) and C code
+  (`generateC`, naming options, the interface table, a `.zip` with a `main.c`). Exercise links (`&solution=`) add
+  the task banner and the comparison with the model solution. The playground, the inline
+  `<Playground example="…">` and the embed are the only places that lay out in the browser: `layoutChart` runs
+  with ELK in a Web Worker (`layout-service.ts`, elk-api + elk-worker), latest request wins. Details:
+  `src/components/playground/README.md`.
+- **Embed.** `/embed/` runs the playground's parts in 'embed' mode inside an iframe (`src/components/embed/`), driven
+  by the options in its address and a postMessage protocol; `/embed.js` defines `<sccharts-lab-chart>`, which makes
+  that iframe. The app bar's Embed dialog writes the code. Readers' documentation: `reference/embed.mdx`; internals:
+  `packages/embed/README.md`.
 - **Examples.** `src/examples/<section>/<page>/<name>.sctx` with `<name>.scenario.json` (per-tick inputs and
   notes, `expect`, `errorIncludes`, `imports`) and the recording `<name>.oracle.json`; format in
   `CONTENT-PLAN.md`. The first `scchart` in a file is the one simulated, everywhere.
@@ -289,12 +316,14 @@ and dark mode. Fidelity to KIELER's synthesis is tested against KIELER's own dia
 | --- | --- |
 | `tests/conformance/engine.test.ts` | Every oracle recording under `tests/conformance`, `src/examples` and `tests/engine/kieler` replayed in the engine and compared tick by tick (pool, `taken`, termination tick); rejected charts must be rejected. Skips other systems, `needs` the engine does not emulate, `kieler-bug` scenarios and `unsupported` charts; known failures in `engine-expected-failures.json` (remove entries as they pass) |
 | `tests/conformance/<area>/*.test.ts` | Integrity of each conformance suite and the spec's claimed values |
-| `tests/engine/` | Engine unit tests (API, diagnostics, describe, semantics, preemption, structure, performance); `kieler/`: probe charts of KIELER defects with recordings (part of the conformance run) |
+| `tests/engine/` | Engine unit tests (API, diagnostics, describe, semantics, preemption, structure); `performance.test.ts`, the timing targets, runs alone after the rest (the `perf` project); `kieler/`: probe charts of KIELER defects with recordings (part of the conformance run) |
 | `packages/engine/src/**/*.test.ts` | Parser, resolver and validator unit tests |
 | `tests/corpus/` | Parser corpus (wiki, lab fixtures, probes) against KIELER's recorded diagnostics; `kieler-diff.test.ts` is an opt-in differential run against the live server |
 | `tests/diagram/` | Layout and rendering, highlight, KIELER label and diagram comparisons |
 | `tests/widgets/`, `tests/design/` | Widget models (timeline, inputs, trace), `prepare`, frame helpers, contrast; `browser.test.ts` drives the dev server's widget test bench in Chromium (skipped without the dev server) |
-| `tests/playground/` | Playground language, features, share links; `e2e.test.ts` (opt-in) against the dev server |
+| `tests/playground/` | Playground language, features, projects and imports, share links, the watch, problems, traces, the C code's `.zip` (built with gcc and run against the engine; skipped without gcc); `e2e.test.ts` (opt-in) against the dev server |
+| `tests/trace/` | The engine's runs as traces against every recorded scenario: the four formats byte for byte as the extension writes them, read back, replayed without a mismatch; `server-traces.test.ts` (opt-in, `TRACE_SERVER=1`) against the language server |
+| `tests/embed/` | The embed's options, protocol, element, bridge and snippet; `e2e.test.ts` (opt-in, `EMBED_E2E=1`) in Chromium with a host page on another origin |
 | `tools/fuzz/` | Differential fuzzer: random charts through the engine and the oracle, a reducer for disagreements and a re-checker (not part of vitest; `tools/fuzz/README.md`); its findings become probes in `tests/engine/kieler/` |
 | `tests/codegen/`, `tools/cgen/` | Generated C: `shape.test.ts` compares the struct, signatures, `reset`, printf and host code placement with real KIELER output (`tests/codegen/kieler/`); `check.test.ts` runs a slice of `pnpm cgen:check` (skipped without gcc). `pnpm cgen:check [--fuzz N --seed S]` compiles the generated C of every recorded scenario (and of N fuzz charts per profile) with gcc, runs it in a harness that feeds the scenario's inputs as KIELER's simulation does, and compares every tick's data pool, printed text, taken counters and termination with the engine and with KIELER's recording (no JVM) |
 | `tools/qa/` | Production QA of the built site (not part of vitest; `docs-internal/QA.md`) |

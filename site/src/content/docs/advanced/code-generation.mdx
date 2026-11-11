@@ -6,7 +6,7 @@ sidebar:
 ---
 
 import { Chart, Sim, Predict, Quiz, TryIt, KeyIdeas } from '~components/guide'
-import { Aside, Steps } from '@astrojs/starlight/components'
+import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components'
 
 A simulator is where a chart is developed; a device is where it runs. There the chart is ordinary code:
 KIELER compiles it into a handful of C functions (or a Java class) that your program calls once per
@@ -15,9 +15,12 @@ microcontroller drives it, and compares KIELER's two code generators.
 
 ## Getting the code
 
+<Tabs>
+<TabItem label="SCCharts Lab for VS Code">
+
 <Steps>
 
-1. In SCCharts Lab, open the chart and press **Code** in the toolbar above the diagram preview (or use
+1. Open the chart and press **Code** in the toolbar above the diagram preview (or use
    **SCCharts: Generate Code...** from the Command Palette, or the icon in the editor's title bar).
 2. Choose **C**, **Java**, or **C and Java**. The generated files open as read-only tabs.
 3. Keep them with **Save Generated File As...** for one file, or **Save All Generated Files...** for
@@ -25,10 +28,29 @@ microcontroller drives it, and compares KIELER's two code generators.
 
 </Steps>
 
-The **Code** button uses KIELER's netlist-based compiler, the compiler behind the netlist-based
-simulation that this guide uses throughout. It generates source code only: compiling it, and linking it
-with the rest of your program, is up to your own build. In the KIELER tools, compiling the chart with
-the system "Netlist-based Compilation (C)" gives the same files.
+</TabItem>
+<TabItem label="The playground">
+
+<Steps>
+
+1. Open the chart in the [playground](/playground/): each chart on this page has an **Open in the
+   playground** link.
+2. Show the **C code** tab in the panel under the editor. It shows the header and the C file, and
+   **Interface** lists which field of the struct is which variable of the chart.
+3. **Download .zip** gives both files and a `main.c` that runs the chart; its first comment is the
+   gcc command that builds it.
+
+</Steps>
+
+</TabItem>
+</Tabs>
+
+Both use KIELER's netlist-based compilation, the compiler behind the netlist-based simulation that this
+guide uses throughout. They generate source code only: compiling it, and linking it with the rest of
+your program, is up to your own build, for which the playground's `main.c` is a start. In the KIELER
+tools, compiling the chart with the system "Netlist-based Compilation (C)" gives the same files as
+SCCharts Lab's **Code** button. The playground generates C only, not Java; how it is checked against
+KIELER is in [How this guide is checked](/reference/about/#the-c-code).
 
 ## What the compiler generates
 
@@ -40,7 +62,8 @@ KIELER generates a header and a C file. This is its output for this chart, witho
 at the top of each file that says KIELER generated it, and without the header's include guard
 (`#ifndef TOGGLE_H` ... `#endif`). SCCharts Lab and the KIELER VS Code extension generate exactly
 this code for it, and so do the other listings on this page; for other charts the numbers in the `_g`
-names may differ:
+names may differ. The playground's code computes the same values with the same fields and functions,
+but numbers its guards and orders some statements in its own way:
 
 ```c
 /* Toggle.h */
@@ -280,9 +303,9 @@ compare pointers in C and text in Java.
 
 KIELER has two code generators for SCCharts, and they do not accept the same charts.
 
-The **netlist-based** compiler is the default: the simulation, the **Code** button and every recording
-in this guide use it ([How this guide is checked](/reference/about/)). It produces straight-line code like the code above, which needs nothing but
-plain C. The price is that a tick can never go round a loop: every cycle of immediate transitions is
+The **netlist-based** compiler is the default: the simulation, the **Code** button, the playground's C
+code and every recording in this guide use it ([How this guide is checked](/reference/about/)). It
+produces straight-line code like the code above, which needs nothing but plain C. The price is that a tick can never go round a loop: every cycle of immediate transitions is
 rejected, even one whose guard always ends it.
 
 <Chart example="advanced/code-generation/burst" caption="Each pass round the loop adds a shot, and the guard `shots < 3` ends it after three. The netlist compiler rejects it anyway." />
@@ -336,7 +359,7 @@ fails compiles too, but then `tick` never returns.
 
 | What differs | Netlist-based | Priority-based |
 | --- | --- | --- |
-| Used by | simulation (default), **Code** button | on request |
+| Used by | simulation (default), **Code** button, the playground | on request |
 | Generated code | straight-line, no loops | labels, `goto`, `pause`, runtime library |
 | Cycles of immediate transitions | always rejected | accepted, run at run time |
 | Write–write conflicts, dataflow cycles | rejected | rejected (`The SCG is not IASC-schedulable!`) |
@@ -366,6 +389,9 @@ names. Each of these lines is one choice; for the chart `Toggle` they give:
 // your own names, in the order tick, reset, logic, struct:
 #code.naming "step", "init", "logic", "ToggleData"
 ```
+
+In the playground, **Names** in the C code tab chooses between KIELER's own names and the prefix and
+suffix forms.
 
 ## Try it
 
@@ -420,8 +446,9 @@ whatever its guards. The priority-based compiler accepts it and goes round the l
   which `tick` calls).
 - Call `reset` once, then for every tick: write all inputs, call `tick`, read the outputs.
 - The struct keeps its values between ticks; that is why inputs persist in KIELER's simulator.
-- The netlist compiler (the default, and SCCharts Lab's **Code** button) produces straight-line code
-  and rejects every cycle of immediate transitions; the priority-based compiler accepts guarded cycles.
+- The netlist compiler (the default, SCCharts Lab's **Code** button and the playground's **C code**
+  tab) produces straight-line code and rejects every cycle of immediate transitions; the priority-based
+  compiler accepts guarded cycles.
 - `#code.naming` renames the generated functions so that several charts fit into one program.
 </KeyIdeas>
 

@@ -6,6 +6,9 @@
 | [@sccharts-lab/diagram](./diagram/README.md) | Diagrams in KIELER's notation: ELK layout and SVG rendering, with highlighting for simulations |
 | [@sccharts-lab/trace](./trace/README.md) | Simulation traces: KTrace, CSV, JSON and XML files, replay and comparison |
 
+A fourth workspace package, [@sccharts-lab/embed](./embed/README.md) (`<sccharts-lab-chart>` and the embed's
+postMessage protocol), is not set up for npm yet: the site builds it into `/embed.js`. None of them is on npm yet.
+
 The site imports them as TypeScript sources (each `package.json`'s `exports` points into `src/`), so the dev server and
 the tests need no build. What npm gets is built: `publishConfig` (applied by `pnpm pack`) replaces `exports`, `main`
 and `types` with `dist/` and turns the `workspace:*` versions into the release's version.

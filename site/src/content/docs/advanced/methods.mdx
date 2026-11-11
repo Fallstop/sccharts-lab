@@ -211,9 +211,10 @@ KIELER turns `print("level is", level)` into a C `printf` with one conversion pe
   as it is;
 - a `\n` inside a print string breaks the generated C (`missing terminating " character`).
 
-`print` changes no variable, so its text never appears in the trace. This site's simulator lists it in
-its description of each tick. KIELER prints it to the console of the simulation process; the
-language-server tools, KIELER's VS Code extension and SCCharts Lab among them, do not show it.
+`print` changes no variable, so its text never appears in the trace. This site's simulations list it in
+their description of each tick, and the playground's **Console** tab shows every line with the tick that
+printed it. SCCharts Lab shows it in the trace drawer and in its **SCCharts Printed** output. KIELER
+prints it to the console of the simulation process, which KIELER's VS Code extension does not show.
 
 ## Random numbers
 

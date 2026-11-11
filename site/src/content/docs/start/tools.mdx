@@ -1,6 +1,6 @@
 ---
 title: "Getting SCCharts"
-description: "The SCCharts Lab extension for VS Code, the official KIELER tools, and this site’s playground: what each is good for."
+description: "SCCharts Lab for VS Code, its playground in the browser, and the official KIELER tools: what each is good for."
 sidebar:
   order: 3
 ---
@@ -8,20 +8,21 @@ sidebar:
 import { Aside, Steps } from '@astrojs/starlight/components'
 
 You can read this whole guide, and run every example in it, without installing anything. To write
-charts of your own you will want a proper editor: one that shows the diagram as you type, runs
-KIELER's compiler, and lets you simulate tick by tick. There are three ways to get one, and they all
-read and write the same `.sctx` files.
+charts of your own you need an editor that shows the diagram as you type, checks the chart as KIELER
+does, and simulates it tick by tick. There are three, and they all read and write the same `.sctx`
+files.
 
 | Tool | What it is | Best for |
 | --- | --- | --- |
-| [SCCharts Lab](#sccharts-lab-for-vs-code) | A VS Code extension, built on KIELER's compiler | Writing and debugging your own charts. Recommended. |
+| [SCCharts Lab for VS Code](#sccharts-lab-for-vs-code) | A VS Code extension that runs KIELER's own compiler | Charts kept in files next to the rest of your code; charts with host code |
+| [The playground](#the-playground) | SCCharts Lab in the browser, on this site | Writing, running and sharing charts with nothing to install; C code to download |
 | [KIELER](#the-official-kieler-tools) | Kiel University's own tools: a VS Code extension and an Eclipse application | Features beyond SCCharts, such as model checking and Esterel |
-| [The playground](#this-sites-playground) | This site's editor and simulator, in the browser | Trying things out, with nothing to install |
 
-About that recommendation: the author of this guide also makes SCCharts Lab
-([who made this](/reference/about/#who-made-this)). It is recommended because it runs KIELER's own
-compiler, fixes a number of its crashes, and adds a simulation view and clearer messages; the `.sctx`
-files are the same in both.
+The first two are SCCharts Lab, made by the author of this guide
+([who made this](/reference/about/#who-made-this)). The extension runs KIELER's own compiler, fixes a
+number of its crashes, and adds a simulation view and clearer messages. The playground runs this
+guide's engine, which is tested against KIELER on every example and on thousands of random charts. In
+the rest of this guide, *SCCharts Lab* on its own means the extension.
 
 ## SCCharts Lab for VS Code
 
@@ -138,6 +139,23 @@ If the simulation does not start, **SCCharts Lab: Show Java runtime and C compil
 what the extension found, and [Setup problems](/reference/troubleshooting/#setup-problems) goes
 through the usual causes.
 
+## The playground
+
+The [playground](/playground/) is SCCharts Lab in your browser: an editor, the diagram as you type,
+and the same simulation as the guide's examples. A project can have several files that import each
+other. Your projects are saved in the browser as you edit, and in Chrome or Edge the playground can work on
+a folder of your computer and save back into it. **Copy link** puts your chart into the link itself, so
+you can share it without an account. The panel under the editor also lists the problems, shows what
+the chart prints, saves and replays traces in the extension's formats, and gives the chart's C code,
+with a `main.c` that builds it.
+
+Every chart and simulation in the guide has an **Open in the playground** link that starts you from that
+chart, and every exercise opens its starter there, with the task above it and **Compare with the model
+solution** to check your answer. The playground runs this guide's engine, a reimplementation of KIELER's
+compiler and simulator in TypeScript ([How this guide is checked](/reference/about/)). A browser has no
+C compiler, so the playground cannot run charts with host code; their C code is there to download and
+build. [The playground](/reference/playground/) describes it part by part.
+
 ## The official KIELER tools
 
 KIELER is the modelling environment from Kiel University in which SCCharts was developed. Its
@@ -180,31 +198,18 @@ removed before it will start).
 The same release also contains command-line compilers (`kico` and the smaller `scc`), for building
 charts in scripts and makefiles.
 
-## This site's playground
-
-The [playground](/playground/) is an editor, a live diagram and a simulator in your browser. It starts
-with one of this guide's examples (pick any of them from its list), shows errors as you type, and runs
-your chart with the same controls as the simulations in the guide. **Copy link** puts your chart into
-the link itself, so you can share it without an account or a server. Every chart and simulation in the
-guide has an **Open in the playground** link that starts you from that chart. Every exercise opens its
-starter chart there, with the task above it and **Compare with the model solution** to check your
-answer.
-
-The playground runs this guide's own engine: a reimplementation of KIELER's compiler checks and
-simulator, written in TypeScript so it can run in a web page. It is tested against KIELER on every
-example in the guide and on thousands of generated charts, and where it knowingly differs from KIELER
-it says so ([How this guide is checked](/reference/about/) explains how). It does not run host code or
-generate C, so for those you need SCCharts Lab or KIELER.
-
 ## Which one should I use?
 
 - **Learning with this guide:** nothing to install. Run the examples in the page and experiment in the
-  [playground](/playground/). Install SCCharts Lab when you start writing charts of your own.
-- **Writing and building charts:** SCCharts Lab. It keeps your charts in files, generates C for a
-  device, runs host code, and its diagnostics explain more of what goes wrong. If you need the official
-  KIELER tools, your `.sctx` files work in both.
+  [playground](/playground/).
+- **Writing charts of your own:** either form of SCCharts Lab. The playground needs nothing installed
+  and works in any browser; it saves your projects as you work, and its C code tab gives the C for a
+  device. The extension keeps your charts in files in VS Code, next to the rest of your code, runs
+  KIELER's own compiler, and generates C or Java. A trace saved in one opens in the other.
+- **Host code:** the extension (or KIELER). Its simulation compiles the chart with gcc, so host code
+  runs; the playground gives such a chart's C code but cannot run it.
 - **Beyond SCCharts:** KIELER for Eclipse, if you need model checking, the simulation visualisation,
-  or KIELER's Esterel and Lustre support.
+  or KIELER's Esterel and Lustre support. Your `.sctx` files work in all of these tools.
 
 Whichever you choose, the language is the same, and so is everything this guide teaches. Next:
 [Thinking in ticks](/learn/ticks/).

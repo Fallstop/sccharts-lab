@@ -1,0 +1,254 @@
+---
+title: "The playground"
+description: "SCCharts Lab in your browser: projects of several files, saving and links, and the panel's simulation, problems, console, traces and C code."
+sidebar:
+  order: 7.5
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+The [playground](/playground/) is SCCharts Lab in your browser: an editor, the chart's diagram as you
+type, and a simulator, with projects of several files, traces you can save and replay, and the chart's C
+code, ready to build. There is nothing to install and no account. It runs on the same engine as every
+example in this guide, which is tested against KIELER ([How this guide is checked](/reference/about/)).
+
+The window has four parts. Along the top, the app bar: the project's name (its menu), **Examples**,
+**Embed**, **Copy link**, the guide's search and the help (`?`). Under it, the files, the editor and the
+diagram side by side, and at the bottom a panel with five tabs: **Simulation**, **Problems**,
+**Console**, **Trace** and **C code**. On a phone the playground shows one part at a time, under the tabs
+Code, Diagram and Simulate.
+
+Keys on this page are written for Windows and Linux; on a Mac, `⌘` takes the place of `Ctrl`.
+
+## Projects and files
+
+A **project** is a set of `.sctx` files. The file in the editor is the one that is drawn and simulated:
+its first chart, as in KIELER, or the chart you pick by name above the diagram when the file holds
+several.
+
+The files button at the left of the editor's tabs shows the project's files. There, **+** adds a file, a
+double click (or `F2`) renames one, and a file can be deleted, with Undo. A name with a slash, such as
+`lib/beep.sctx`, puts the file in a folder. Closing a tab only closes the tab; the file stays in the
+project.
+
+The project's name in the app bar opens its menu: the name, to rename the project, then **New chart**,
+**New file**, **Open files…**, **Open folder…**, **Download**, **Download as .zip** and, once you have
+edited something you loaded, **Revert**. Under them, **Recent in this browser** lists your projects.
+
+### Imports
+
+A file uses the charts of another after `import "name"`, as in KIELER: the name is the other file's,
+relative to the folder of the importing file, and `import "lib/*"` takes every file in `lib`. The
+playground compiles the file in the editor together with the files it imports, and the files those
+import. A chart in a file that is not imported stays out of sight, as it does in KIELER.
+[Charts in other files](/advanced/references/#charts-in-other-files-import) explains imports, and
+[`HallLights`](/playground/?example=advanced/references/import-main), an example from that chapter, opens
+as a project of both its files.
+
+### Saving
+
+Every edit is saved a moment after you stop typing, in your browser. The address bar holds the chart too,
+so a reload never loses work, and the project menu keeps your 40 most recent projects. Opening an
+example or a link saves nothing until you edit it, so it never overwrites your own work, and the project
+you had open stays in the list. When you open another chart, a toast offers Undo.
+
+Your charts stay in this browser, on this device: the playground has no server that stores them.
+Clearing the site's data removes them, and another browser does not see them. To keep a chart for good,
+download it or work on a folder.
+
+### Files on your computer
+
+**Open folder…** works on a folder of your computer. It needs a Chromium browser, such as Chrome or
+Edge; in other browsers the item is not shown. The playground reads the folder's `.sctx` files, two
+levels of folders deep (at most 200 files, none over 2 MB). A dot marks a file with changes not yet
+written; `Ctrl+S`, or **Save** in the folder's bar over the files, writes them, and removes the files
+you deleted or renamed. After a reload the bar offers **Reconnect**, and the browser asks for permission
+again.
+
+In any browser, **Open files…** (`Ctrl+O`) opens `.sctx` files, or a `.zip` of a project, and you can
+drop them on the editor. **Download** gives the chart's `.sctx` file, or a project of several files as a
+`.zip`; **Download as .zip** always gives the `.zip`. Without a folder, `Ctrl+S` downloads.
+
+### Links
+
+**Copy link** (`Ctrl+Shift+S`) puts the chart itself into the link: `#code=` for a file, `#project=`
+for a project of several, with every file and the project's name. No server keeps a copy: the chart
+travels in the link, and whoever opens it gets a copy of their own. Other links you will meet:
+
+| Link | Opens |
+| --- | --- |
+| `/playground/?example=learn/pre/edges` | an example of the guide, with its guided tour where it has one |
+| `…#code=…&run=…` | a chart and a run: **Copy link to this run** in the Simulation tab |
+| `…?example=…&solution=…` | an exercise: its starter, the task and **Compare with the model solution** |
+
+A link pasted into the address bar of an open playground opens its chart, and Back returns to the chart
+you had.
+
+## The bottom panel
+
+### Simulation
+
+The Simulation tab is the simulation of the guide's widgets: **Step** (`Ctrl+Enter`), Back, Reset and
+Run, the inputs (each keeps its value until you change it), and the timing diagram
+([How this guide works](/start/welcome/#how-this-guide-works)). An example with a scenario offers its
+**Guided tour**; **Free play** is yours.
+
+Until the first step the simulation follows your edits. After that an edit shows **Rebuild**
+(`Ctrl+Shift+Enter`), which replays the inputs you have given so far on the new version, as long as its
+inputs and outputs are unchanged, and starts again otherwise. A run belongs to its file: show another
+file and the run stays; **Rebuild** starts the file in the editor.
+
+- **Variables** chooses what the timing diagram shows: inputs, outputs and locals, also the locals of
+  inner states, the members of struct and class instances, clocks, `deltaT` and `sleepT`.
+- **Watch**, under the variables, shows the value of an expression in the tick shown:
+  `count >= 3 && !done`, `pre(x) != x`, `val(level) / 2`. It means what it would mean in the chart.
+  **Run until** steps until the watch holds or a state you choose is active, for up to 1000 ticks.
+- **Copy link to this run** copies a link that carries the chart and the inputs of every tick you ran.
+  Opening it replays the run as a tour, at the tick you were looking at.
+
+A chart with host code shows why the browser cannot run it, in place of the controls; its C code is in
+the [C code](#c-code) tab.
+
+### Problems
+
+The bar under the editor counts the problems and shows the first; a click on it opens the Problems
+tab, which lists them all. `F8` goes to the next one in the editor. Each problem says what is wrong in
+plain words, with a hint, and quotes KIELER's wording; **About this message** opens its entry in
+[Compiler messages](/reference/errors/). For a guide example you have not edited, the problems are what
+KIELER said about that very chart.
+
+### Console
+
+The Console shows what the chart prints with `print(...)` ([`print`](/advanced/methods/#print)), each
+line with the tick that printed it. It follows the simulation: after Back, the lines of later ticks are
+dimmed. **Clear** hides the lines so far, and **Copy** copies the lines shown, with their ticks.
+
+### Trace
+
+A **trace** is a run written down, tick by tick. The Trace tab saves the run in the simulation, replays a
+trace on the chart, and compares runs.
+
+**Save this run** writes the ticks you have run as KTrace (KIELER's own format), CSV, JSON or XML, the
+whole run or, with **Inputs only**, its inputs as an input sequence. **Download** gives
+`<Chart>-run.ktrace` (or `.csv`, `.json`, `.xml`); in a folder project, **Save in folder** writes it into
+the folder. The SCCharts Lab extension for VS Code writes the same files, byte for byte, for the same
+run, so a trace saved in one opens in the other. A KTrace file has a line per tick with the inputs and,
+after `=>`, the outputs, each written only when its value changes:
+
+```text title="ABRO-run.ktrace"
+// abro.sctx: 6 ticks, saved by SCCharts Lab
+A = false B = false R = false => O = false;
+A = true;
+A = false B = true => O = true;
+B = false => O = false;
+R = true;
+R = false;
+```
+
+**Replay…** (or a trace file dropped on the tab, or one listed from your folder) drives the chart with
+the file's inputs, tick by tick, and checks its outputs against the file's after every tick. A grid shows
+the file's ticks: its inputs, the outputs as the chart computed them, and each cell that differs, marked,
+with the file's value. **Previous**, **Next** and **Run** step through it; **Run** stops at the first tick
+that differs. When the file spells a name another way, the tab offers to read it as the chart's
+(`Read LEVEL as level`), and it lists the inputs the chart does not have and those the file never sets.
+Save a run once, as a test, and replay it after every change to the chart.
+
+**Compare…** sets one or more trace files beside the run in the simulation and writes a report: for each
+variable, the ticks that differ, the first difference, and whether the values change in the same order.
+The report downloads as `.md` or `.csv`.
+
+### C code
+
+The C code tab shows the chart in the editor as C, in the form of KIELER's netlist-based compilation:
+the header `<Chart>.h` with the `TickData` struct and the functions' prototypes, and `<Chart>.c` with
+`logic`, `reset` and `tick`. [From chart to C](/advanced/code-generation/) explains every part, and how
+a main loop on a device drives it. The code follows the chart while the tab is shown.
+
+- **Names** chooses the names of the functions and the struct: KIELER's own (`tick`, `reset`,
+  `TickData`), or the chart's name as a prefix (`ABROtick`) or a suffix (`tickABRO`), as
+  [`#code.naming`](/advanced/code-generation/#naming-the-generated-functions) does. Prefixed names let
+  several charts share one program.
+- **Source comments** adds comments that name the state, transition or action each part of the code
+  comes from.
+- **Interface** shows which member of the struct is which variable of the chart, its C type, and
+  whether it is an input, an output or a local.
+- **Download .zip** gives a folder named after the chart with the two files and a `main.c`.
+
+The `main.c` resets the chart, runs ten ticks, prints the outputs after each, and stops when the chart
+terminates. Set the inputs where its comment says. Its first comment is the command that builds and runs
+it, gcc with the options KIELER's own simulation uses:
+
+```c title="main.c"
+/*
+ * main.c: runs ABRO for 10 ticks and prints its outputs after each tick.
+ * Build and run it next to the generated files:
+ *
+ *   gcc -std=c99 -Wall -o ABRO main.c ABRO.c -lm && ./ABRO
+ *
+ * The chart's variables are the members of TickData (ABRO.h): set the inputs before a tick,
+ * call tick(), then read the outputs. What the chart prints with print(...) appears during the tick.
+ */
+#include <stdio.h>
+
+#include "ABRO.h"
+
+static TickData d;
+
+int main(void) {
+  reset(&d);
+  for (int t = 1; t <= 10; t++) {
+    /* Set the inputs of this tick here:
+     *   d.A (0 or 1)
+     *   d.B (0 or 1)
+     *   d.R (0 or 1)
+     */
+    printf("tick %d: ", t);
+    tick(&d);
+    printf("\n  O = %d\n", d.O);
+    if (d._TERM) {
+      printf("terminated\n");
+      break;
+    }
+  }
+  return 0;
+}
+```
+
+A chart with errors has no C code; the tab says so and offers the Problems tab. A chart with
+[host code](/advanced/host-code/) has its C code here like any other, with the host code where KIELER
+puts it: the browser cannot run that chart, but its C builds and runs with gcc.
+[How this guide is checked](/reference/about/#the-c-code) says how the C code is compared with
+KIELER's.
+
+## The diagram
+
+The diagram is drawn as KIELER draws it and follows your typing. Drag it to pan; `Ctrl` and the mouse
+wheel, or a pinch, zoom. The buttons above it zoom, fit the chart to the pane, show the chart as an
+outline (for the keyboard and screen readers) and download the diagram as an SVG file. A click on a
+state or a transition selects its source, and the element under the editor's cursor is marked in the
+diagram. While the source has a syntax error, the last good diagram stays, dimmed.
+
+## Examples and exercises
+
+**Examples** lists the guide's charts, page by page (the exercises' solutions apart), and a few larger
+ones: ABRO, an adder, a stopwatch and a level crossing. Each **Open in the playground** link in the guide opens its chart, and each exercise
+opens its starter with the task above the editor and **Compare with the model solution**: your chart
+runs on the exercise's inputs, and the panel says in which tick an output first differs from the model
+solution's, and offers to show that tick in the simulation.
+
+## Embedding a chart
+
+**Embed**, in the app bar, writes the code that puts the chart on another page, live: a course page, a
+blog, your project's documentation. [Embedding charts](/reference/embed/) describes the options and how a
+page can drive the chart.
+
+## Keyboard shortcuts
+
+`?`, pressed outside the editor, or the help button at the right end of the app bar, lists every
+shortcut, with notes on the diagram and the panel. `Escape` and then `Tab` leave the editor, where `Tab`
+alone indents.
+
+<Aside type="tip" title="When a chart misbehaves">
+[My chart does not do what I expect](/reference/troubleshooting/) goes from what you see to its cause,
+and [Compiler messages](/reference/errors/) explains each error and warning.
+</Aside>
