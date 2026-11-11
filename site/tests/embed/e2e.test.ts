@@ -295,7 +295,7 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
             const again = await el.ready
             const missing = document.createElement('sccharts-lab-chart') as Chart
             missing.setAttribute('src', '/nothing-here.sctx')
-            const failed = new Promise(resolve => missing.addEventListener('error', e => resolve((e as CustomEvent<{ message: string }>).detail.message)))
+            const failed = new Promise(resolve => missing.addEventListener('error', e => resolve((e as unknown as CustomEvent<{ message: string }>).detail.message)))
             document.body.append(missing)
             return { ready: ready.compiled.chart, first: first.tick, renewed: before !== el.ready, again: again.compiled.chart, failed: await failed, alert: missing.shadowRoot?.querySelector('[role="alert"]')?.textContent }
         })
