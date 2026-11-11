@@ -1,0 +1,8 @@
+// x max= e and x min= e are KIELER's conditionals `x = (x > e) ? x : e`: when e wins it is evaluated again, so a
+// random() in it is drawn twice (the value assigned is the second draw, and later draws move on by two).
+scchart ProbeMinmaxTwice {
+  output int hi = 0, lo = 100
+  output float g = 0
+  initial state X
+    do hi max= random() * 100; lo min= random() * 100; g = random() go to X
+}

@@ -1,0 +1,7 @@
+// The same for a valued signal combined with max: each emission is a max= of its value.
+scchart ProbeMinmaxTwiceSignal {
+  output signal int V combine max
+  output float g = 0
+  initial state X
+    do V(random() * 100); g = random() go to X
+}

@@ -591,11 +591,21 @@ function compileAssign(f: Extract<CEffect, { k: 'assign' }>, ec: ExprCompiler): 
     // precision and truncates the sum (KIELER's simulation: -5 + 0.84 gives -4), not the operand.
     const single = rhs.type === 'f32' && !castRhs && ttype !== 'float'
     const compute = compoundOperator(f.op, ttype, castRhs || rtype === 'int' || rtype === 'bool' ? 'int' : rtype, f.o.span, ec.divisorName(rhsExpr), single)
+    const read = (rt: Runtime) => (castRhs || (ttype === 'int' && rtype !== 'float') ? rhsInt(rt) : num(rhsFn(rt)))
+    // KIELER writes `x min= e` as `x = (x < e) ? x : e`: e is evaluated for the comparison and, when it wins, once
+    // more for the value (a random() in it is drawn twice; probes tests/engine/kieler/codegen/probe-minmax-twice*).
+    const minmax = f.op === 'min=' || f.op === 'max='
     return rt => {
         const path = index?.(rt)
         const old = get(rt, path) as number
-        const operand = castRhs || (ttype === 'int' && rtype !== 'float') ? rhsInt(rt) : num(rhsFn(rt))
-        const value = compute(old, operand)
+        const operand = read(rt)
+        let value: number
+        if (!minmax) value = compute(old, operand)
+        else if (f.op === 'min=' ? old < operand : old > operand) value = compute(old, old)
+        else {
+            const again = read(rt)
+            value = compute(again, again)
+        }
         set(rt, path, value)
         return { v: vref, value, index: shown(path) }
     }

@@ -1,0 +1,134 @@
+{
+  "hash": "5556af4f59564df05a49d1370374ecc7a4d2ca37",
+  "chart": "tests/engine/kieler/codegen/probe-minmax-twice-signal.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Min or max combine operators are currently not supported.",
+      "line": 3,
+      "column": 21
+    }
+  ],
+  "interface": {
+    "V": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "V_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "g": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "V_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "V": false,
+        "V_val": 0,
+        "g": 0,
+        "V_curval": -2147483648
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "V": true,
+        "V_val": 39,
+        "g": 0.7830992341041565,
+        "V_curval": 39
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "V": true,
+        "V_val": 91,
+        "g": 0.19755136966705322,
+        "V_curval": 91
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "V": true,
+        "V_val": 76,
+        "g": 0.27777472138404846,
+        "V_curval": 76
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "V": true,
+        "V_val": 47,
+        "g": 0.6288709044456482,
+        "V_curval": 47
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "V": true,
+        "V_val": 51,
+        "g": 0.9522297382354736,
+        "V_curval": 51
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}
