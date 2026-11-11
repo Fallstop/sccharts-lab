@@ -33,9 +33,9 @@ p { font-size: 26px; line-height: 1.45; color: #283246; margin: 26px 0 0 }
 .taken .line{stroke:#1769d6;stroke-width:3}.taken .head{fill:#1769d6}.taken .lab{fill:#1769d6;font-weight:800}.tglow{fill:none;stroke:rgba(23,105,214,.26);stroke-width:10;stroke-linecap:round}
 </style></head><body><div class="ruler"></div>
 <div class="copy">
- <div class="brand"><svg viewBox="0 0 32 32" width="44" height="44"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8f9fd"/><stop offset="1" stop-color="#cddcf3"/></linearGradient></defs><rect x="2" y="6" width="28" height="20" rx="10" fill="url(#g)" stroke="#111a2c" stroke-width="3"/><path d="M7.5 20.5 H12.25 V11.5 H19.75 V20.5 H24.5" fill="none" stroke="#7a1452" stroke-width="2.75" stroke-linejoin="round" stroke-linecap="round"/></svg>SCCharts</div>
+ <div class="brand"><svg viewBox="0 0 32 32" width="44" height="44"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8f9fd"/><stop offset="1" stop-color="#cddcf3"/></linearGradient></defs><rect x="2" y="6" width="28" height="20" rx="10" fill="url(#g)" stroke="#111a2c" stroke-width="3"/><path d="M7.5 20.5 H12.25 V11.5 H19.75 V20.5 H24.5" fill="none" stroke="#7a1452" stroke-width="2.75" stroke-linejoin="round" stroke-linecap="round"/></svg>SCCharts Lab</div>
  <h1>Statecharts, one tick at a time</h1>
- <p>An interactive guide to SCCharts: learn the language by running charts tick by tick.</p>
+ <p>An interactive guide and playground for SCCharts: learn the language, write charts and run them tick by tick.</p>
 </div>
 <div class="url">sccharts.jmw.nz</div>
 <div class="chart"><svg viewBox="0 0 380 232" width="464">

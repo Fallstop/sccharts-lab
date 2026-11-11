@@ -92,9 +92,9 @@ export default defineConfig({
     devToolbar: { enabled: false },
     integrations: [
         starlight({
-            title: 'SCCharts',
+            title: 'SCCharts Lab',
             description:
-                'A beginner-friendly, interactive guide to SCCharts, the synchronous statechart language from Kiel University’s KIELER project.',
+                'SCCharts Lab: a beginner-friendly, interactive guide to SCCharts, the synchronous statechart language from Kiel University’s KIELER project, and an in-browser IDE to write, run and export charts.',
             favicon: '/favicon.svg',
             head: [
                 { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
@@ -102,7 +102,7 @@ export default defineConfig({
                 { tag: 'meta', attrs: { property: 'og:image', content: 'https://sccharts.jmw.nz/og.png' } },
                 { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
                 { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
-                { tag: 'meta', attrs: { property: 'og:image:alt', content: 'SCCharts: an interactive guide. A statechart with the states Off and On.' } },
+                { tag: 'meta', attrs: { property: 'og:image:alt', content: 'SCCharts Lab: an interactive guide and playground for SCCharts. A statechart with the states Off and On.' } },
                 { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://sccharts.jmw.nz/og.png' } },
                 { tag: 'meta', attrs: { name: 'theme-color', content: '#f8f9fd', media: '(prefers-color-scheme: light)' } },
                 { tag: 'meta', attrs: { name: 'theme-color', content: '#0f141e', media: '(prefers-color-scheme: dark)' } },

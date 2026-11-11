@@ -1,4 +1,4 @@
-# SCCharts: an interactive guide
+# SCCharts Lab: an interactive guide and playground for SCCharts
 
 The source of [sccharts.jmw.nz](https://sccharts.jmw.nz): a beginner-friendly, comprehensive guide to the
 SCCharts language whose examples run in the browser. A TypeScript engine parses SCTX, draws charts in
