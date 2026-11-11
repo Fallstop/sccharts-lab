@@ -109,7 +109,7 @@ describe.skipIf(!up)('widgets in the browser', () => {
         await next.click()
         expect(await tickOf(f)).toBe(2)
         expect(await f.locator('[data-id="Toggle.On"]').getAttribute('class')).toContain('is-active')
-        await expect.poll(() => f.locator('.sc-tour__note').textContent()).toContain('fires')
+        await expect.poll(() => f.locator('.sc-tour .sc-tour__note').textContent()).toContain('fires')
         await f.getByRole('button', { name: 'Back one tick' }).click()
         expect(await tickOf(f)).toBe(1)
         expect(await f.locator('[data-id="Toggle.Off"]').getAttribute('class')).toContain('is-active')
@@ -205,11 +205,13 @@ describe.skipIf(!up)('widgets in the browser', () => {
         await f.locator('[data-input="d"] input').fill('0')
         await f.locator('[data-input="d"] input').press('Tab')
         await f.getByRole('button', { name: 'Step' }).click()
-        await expect.poll(() => f.locator('.sc-what__item.is-error').count()).toBe(1)
+        // The details are folded: the error is said under the summary line, with Restart.
+        await expect.poll(() => f.locator('.sc-sim__halted-error').count()).toBe(1)
         expect(await f.locator('.wv-error').count()).toBe(1)
         // The field keeps what the reader typed: the failed tick was not applied.
         expect(await f.locator('[data-input="d"] input').inputValue()).toBe('0')
-        expect(await f.locator('.sc-what__item.is-error').textContent()).toMatch(/^The simulation stopped in tick 2: /)
+        expect(await f.locator('.sc-sim__halted-error').textContent()).toMatch(/^The simulation stopped in tick 2: /)
+        expect(await f.locator('.sc-what__summary').textContent()).toMatch(/^Tick 2: the simulation stopped: /)
     })
 
     it('Sim: after a run-time error Step and Run are off and Restart is offered, with the focus kept', async () => {
@@ -230,7 +232,7 @@ describe.skipIf(!up)('widgets in the browser', () => {
         await step.focus()
         await page.keyboard.press('Enter')
         await expect.poll(() => page.evaluate(() => document.activeElement?.classList.contains('sc-sim__restart'))).toBe(true)
-        expect(await f.locator('.sc-what__item.is-error').textContent()).toMatch(/^The simulation stopped in tick 2: /)
+        expect(await f.locator('.sc-sim__halted-error').textContent()).toMatch(/^The simulation stopped in tick 2: /)
         // Restart: tick 0, the controls back, the focus on Step.
         await page.keyboard.press('Enter')
         await expect.poll(() => tickOf(f)).toBe(0)
@@ -245,8 +247,12 @@ describe.skipIf(!up)('widgets in the browser', () => {
         const f = frame('sim', 'Countdown')
         for (let i = 0; i < 5; i++) await f.getByRole('button', { name: 'Next' }).click()
         expect(await f.locator('.wv-term').count()).toBe(1)
-        expect(await f.locator('.sc-tour__note').textContent()).toMatch(/terminates/)
+        expect(await f.locator('.sc-tour .sc-tour__note').textContent()).toMatch(/terminates/)
         expect(await f.locator('[data-id="Countdown.Finished"]').getAttribute('class')).toContain('is-active')
+        // The last tick: the label says it is the end, and so does the announcement.
+        await f.getByRole('button', { name: 'Next' }).click()
+        expect(await f.locator('.sc-sim .sc-tour__label').textContent()).toBe('Guided tour, tick 6 of 6: the end')
+        await expect.poll(() => f.locator('.sc-sim > [aria-live]').textContent()).toMatch(/End of the guided tour: take over to try your own inputs, or Step to keep going\.$/)
     })
 
     it('Compare: the guided tour plays the scenario on both charts, with its notes', async () => {
@@ -256,7 +262,7 @@ describe.skipIf(!up)('widgets in the browser', () => {
         await next.click()
         await next.click()
         expect(await tickOf(f)).toBe(2)
-        expect(await f.locator('.sc-tour__note').textContent()).toContain('fires')
+        expect(await f.locator('.sc-tour .sc-tour__note').textContent()).toContain('fires')
         // The switches show the inputs of the tick shown.
         expect(await f.getByRole('switch', { name: 'button' }).isChecked()).toBe(true)
         expect(await f.locator('.sc-diagram .sc-state.is-active:not(.sc-root)').count()).toBe(2)
@@ -379,6 +385,8 @@ describe.skipIf(!up)('widgets in the browser', () => {
     it('Compare: a "What happened" line marks its elements on its own chart\'s diagram', async () => {
         const f = frame('compare', 'Toggle and ToggleEdge')
         await f.getByRole('tab', { name: 'Diagrams' }).click()
+        // Each chart's story is under Details.
+        await f.getByRole('button', { name: 'Details' }).click()
         const [left, right] = [f.locator('svg.sc-diagram').nth(0), f.locator('svg.sc-diagram').nth(1)]
         const line = f.locator('.sc-compare__what .sc-what').nth(1).locator('li[data-linked]').first()
         await line.hover()
@@ -391,6 +399,46 @@ describe.skipIf(!up)('widgets in the browser', () => {
         await expect.poll(() => right.locator('.is-focus').count()).toBeGreaterThan(0)
         await line.blur()
         await expect.poll(() => right.locator('.is-focus').count()).toBe(0)
+        await f.getByRole('button', { name: 'Details' }).click()
+    })
+
+    it('Sim: stepping keeps the foot\'s height; Details unfolds the story, by keyboard too, and the choice is remembered', async () => {
+        const f = frame('sim', 'ABRO')
+        const foot = f.locator('.sc-sim .sc-sim__foot')
+        const height = async () => (await foot.boundingBox())!.height
+        // One height in the tour (its longest note), another in free play (no room kept for the notes).
+        const tour = await height()
+        const next = f.getByRole('button', { name: 'Next' })
+        for (let i = 0; i < 3 && (await next.isEnabled()); i++) {
+            await next.click()
+            expect(await height()).toBe(tour)
+        }
+        await f.getByRole('button', { name: 'Take over' }).click()
+        const h = await height()
+        expect(h).toBeLessThan(tour)
+        for (let i = 0; i < 2; i++) {
+            await f.getByRole('button', { name: 'Step' }).click()
+            expect(await height()).toBe(h)
+        }
+        expect(await f.locator('.sc-what__summary').textContent()).toMatch(/^Tick \d+: /)
+        // Folded: one line; unfolded: the story and "Explain this tick", taller.
+        const details = f.getByRole('button', { name: 'Details' })
+        expect(await details.getAttribute('aria-expanded')).toBe('false')
+        expect(await f.locator('.sc-what__list').count()).toBe(0)
+        await details.focus()
+        await page.keyboard.press('Enter')
+        expect(await details.getAttribute('aria-expanded')).toBe('true')
+        expect(await f.locator('.sc-what__item').count()).toBeGreaterThan(0)
+        expect(await f.locator('details.sc-explain').count()).toBe(1)
+        expect(await height()).toBeGreaterThan(h)
+        expect(await page.evaluate(() => localStorage.getItem('sc-sim-details'))).toBe('open')
+        // Unfolded, stepping back never shrinks it.
+        const open = await height()
+        await f.getByRole('button', { name: 'Back one tick' }).click()
+        expect(await height()).toBeGreaterThanOrEqual(open)
+        await details.click()
+        expect(await page.evaluate(() => localStorage.getItem('sc-sim-details'))).toBe('folded')
+        expect(await height()).toBe(h)
     })
 
     it('Keyboard: a diagram is one tab stop; the arrows walk its elements in source order and link their lines', async () => {
@@ -714,7 +762,8 @@ describe.skipIf(!up)('widgets with motion', () => {
         expect(await hero.locator('.sc-simctl__tick b').textContent()).toBe('7')
         await page.waitForTimeout(800)
         await expect.poll(() => hero.locator('.sc-simctl__tick b').textContent(), { timeout: 10000 }).toBe('7')
-        await expect.poll(() => hero.locator('.sc-what__handover').count(), { timeout: 10000 }).toBe(1)
+        // The handover's room is kept during the replay; it shows once the reader has the chart.
+        await expect.poll(() => hero.locator('.sc-what__handover:not(.is-off)').count(), { timeout: 10000 }).toBe(1)
         await browser.close()
     }, 60000)
 })

@@ -140,6 +140,27 @@ export function describeTick(tick: TickResult, prev: TickResult | undefined, ctx
     return { summary, items }
 }
 
+/**
+ * The tick in one short line, for the folded foot: "Tick 7: `Off` went to `On`." Says the chart starting, the
+ * transitions that fired (without their reasons) and termination, or the run-time error; else the first sentence.
+ * Inline Markdown. The whole story is in the unfolded view.
+ */
+export function tickSummary(story: TickStory, tick: number): string {
+    const short = (s: string) => s.replace(/ (because|without checking) .*$/, '').replace(/\.$/, '')
+    const items = story.items
+    const error = items.find((i) => i.kind === 'error')
+    const parts = error
+        ? [short(error.text).replace(/^The simulation stopped in tick \d+:/, 'the simulation stopped:')]
+        : items.filter((i) => i.kind === 'enter' || i.kind === 'take').map((i) => short(i.text))
+    const term = error ? undefined : items.find((i) => i.kind === 'term')
+    if (term) parts.push(/^Every top-level region/.test(term.text) ? 'the chart terminated' : /^The chart has terminated/.test(term.text) ? 'the chart has terminated' : short(term.text))
+    if (!parts.length && items[0]) parts.push(short(items[0].text))
+    if (!parts.length) return `Tick ${tick}: nothing happened.`
+    const text = parts.join('; ')
+    // A sentence that starts with a plain word goes on in lower case; a name in code stays as it is.
+    return `Tick ${tick}: ${text.replace(/^[A-Z](?=[a-z])/, (c) => c.toLowerCase())}.`
+}
+
 /** One line per micro-step of the tick, in execution order ("Explain this tick"). */
 export function explainTick(tick: TickResult, ctx: DescribeContext): { text: string; ids: string[]; kind: TraceEvent['kind'] }[] {
     const { info, source } = ctx

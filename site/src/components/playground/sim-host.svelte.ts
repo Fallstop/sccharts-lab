@@ -86,6 +86,8 @@ export async function mountSim(
         /** What the tour is called ("Guided tour", "Test run", "Shared run"; SimPanel's `tourName`). */
         tourName?: string
         show?: string[]; verdict?: Verdict
+        /** How a tick's details start (SimPanel's `details`): unfolded in the playground, folded on guide pages. */
+        details?: 'folded' | 'open'
     } = {},
 ): Promise<SimHost | null> {
     let compiled = $state.raw(initial)
@@ -121,6 +123,7 @@ export async function mountSim(
         intro: options.intro,
         handover: options.handover,
         tourName: options.tourName,
+        details: options.details,
     }
     const instance = mount(SimPanel, { target, props }) as unknown as PanelExports
     const call = (name: 'step' | 'back' | 'reset' | 'run' | 'pause' | 'takeOver' | 'restartTour') => () => instance[name]?.()

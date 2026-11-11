@@ -12,14 +12,16 @@
 	import { icons } from '../frame/icons'
 	import { errorLink } from '../frame/error-links'
 	import { inlineCode, inlineMd, withoutLinkTo } from '../frame/inline-md'
-	import { describeTick, explainTick, type DescribeContext } from './describe'
+	import { describeTick, explainTick, tickSummary, type DescribeContext } from './describe'
 	import { createSimulation, traceableVariables, type CompileResult } from './engine'
 	import { controlsFor, initialInputs, type InputState } from './inputs'
 	import Inputs from './Inputs.svelte'
 	import { elementsOf, errorClasses, errorLines, lineMap, tickLines, type LineMap } from './lines'
 	import { keepFocus, keepTickInView, reducedMotion, roving } from './link'
+	import { Fold, type FoldStart } from './fold.svelte'
+	import Stack from './Stack.svelte'
 	import { Timeline } from './timeline'
-	import { forCopiesIn, hasSuspension, lanesFor, traceSvg, type ForCopies } from './trace'
+	import { forCopiesIn, hasSuspension, lanesFor, mightSuspend, traceSvg, type ForCopies } from './trace'
 
 	export interface SimView {
 		cursor: number
@@ -58,6 +60,9 @@
 		/** What the tour is called in its label, the inputs' legend and the restart button (the playground's test
 		 *  run and shared runs have their own names). */
 		tourName?: string
+		/** How a tick's details ("What happened", "Explain this tick") start: folded under a one-line summary (the
+		 *  guide's widgets) or unfolded (the playground, whose panel scrolls inside). The reader's own choice wins. */
+		details?: FoldStart
 	}
 
 	let {
@@ -80,6 +85,7 @@
 		handover,
 		verdict = 'engine',
 		tourName = 'Guided tour',
+		details = 'folded',
 	}: Props = $props()
 	const tourWords = $derived(tourName.charAt(0).toLowerCase() + tourName.slice(1))
 	const autoId = $props.id()
@@ -101,6 +107,7 @@
 	let traceWidth = $state(640)
 	let live = $state('')
 	let explainOpen = $state(false)
+	const fold = new Fold(untrack(() => details))
 
 	let timeline: Timeline | undefined
 	let built: CompileResult | undefined
@@ -158,6 +165,7 @@
 		// A new compiled result from the host (the playground edits the source).
 		if (compiled !== built) {
 			untrack(() => build(compiled))
+			fold.reset()
 			rev++
 			announce()
 		}
@@ -206,7 +214,8 @@
 	const traceable = $derived(show?.some((n) => !compiled.interface.some((v) => v.name === n)) ? traceableVariables(compiled) : undefined)
 	const lanes = $derived(lanesFor(compiled.interface, chart, show, regions, staticCopies ?? forCopiesIn(snap.history), traceable))
 	const traceHtml = $derived(ok ? traceSvg(lanes, { history: snap.history, cursor: snap.cursor, width: traceWidth }, `Timing diagram of ${name}`) : '')
-	const suspension = $derived(ok && hasSuspension(lanes, snap.history))
+	// Shown from the start for a chart that can suspend, so the first hatched tick does not add it under the trace.
+	const suspension = $derived(ok && (mightSuspend(compiled.program) || hasSuspension(lanes, snap.history)))
 	const terminated = $derived(!!snap.shown?.terminated)
 	/** The last tick computed stopped with a run-time error, and it is shown. KIELER's simulation stays stopped
 	 *  after one (later steps only repeat the error), so Step, Run, Next and the inputs are off and the foot
@@ -261,7 +270,8 @@
 			return
 		}
 		const text = story?.summary ?? `Tick ${s.cursor}.`
-		live = s.cursor < s.end ? `Showing ${text}` : halted ? `${text} ${HALTED}` : text
+		const end = s.tour && s.cursor >= s.tourLength && !halted ? ` End of the ${tourWords}: take over to try your own inputs, or Step to keep going.` : ''
+		live = (s.cursor < s.end ? `Showing ${text}` : halted ? `${text} ${HALTED}` : text) + end
 	}
 
 	const HALTED = 'Step and Run are off: restart the simulation, or go back a tick and change an input.'
@@ -335,6 +345,7 @@
 		userAction()
 		timeline.reset()
 		failure = undefined
+		fold.reset()
 		changed()
 	}
 
@@ -345,6 +356,7 @@
 		if (!timeline) return
 		userAction()
 		timeline.reset(true)
+		fold.reset()
 		changed()
 	}
 
@@ -498,6 +510,7 @@
 
 	onMount(() => {
 		mounted = true
+		fold.restore()
 		try {
 			const saved = Number(localStorage.getItem('sc-sim-speed'))
 			if (SPEEDS.some((s) => s.ms === saved)) speed = saved
@@ -537,6 +550,7 @@
 		autoplayed = true
 		autoplayingNow = true
 		timeline.reset(true)
+		fold.reset()
 		changed()
 		const total = Math.min(initialTicks || tour.ticks.length, tour.ticks.length)
 		let i = 0
@@ -569,7 +583,72 @@
 				? `KIELER rejects this chart, so it cannot run${problems}`
 				: `The guide's checker found ${errors.length > 1 ? `${errors.length} problems` : 'a problem'} in this chart, so it cannot run`,
 	)
+
+	// ----- The foot -----------------------------------------------------------------------------------------------
+	//
+	// Stepping never changes its height (README, "The foot"). Its first line is the tour's label or what the tick did
+	// (`tickSummary`), one line, with *Details* (the whole story, opened and closed only by the reader) at its end.
+	// Each mode keeps its own height: in the tour, its intro and notes are stacked under that line (as tall as the
+	// longest), then Previous / Next / Take over; in free play, only the idle line or *Restart the tour*. So the height
+	// changes once, when the reader leaves the tour or restarts it. The compact panel (the landing chart, whose
+	// replay hands over without moving anything) stacks the idle line, every note and the summary line together.
+
+	type Entry = { kind: 'intro' | 'idle' | 'free' } | { kind: 'note'; k: number }
+	const full = $derived(variant === 'full')
+	/** The tour's texts (the full panel while the tour is in control), or everything the compact panel shows. */
+	const entries: Entry[] = $derived(
+		full
+			? [{ kind: 'intro' }, ...(tour?.ticks.map((_, i) => ({ kind: 'note', k: i + 1 }) as const) ?? [])]
+			: [{ kind: 'idle' }, ...(tour?.ticks.map((_, i) => ({ kind: 'note', k: i + 1 }) as const) ?? []), { kind: 'free' }],
+	)
+	const current: Entry = $derived.by(() => {
+		const c = snap.cursor
+		if (full) return c === 0 ? { kind: 'intro' } : { kind: 'note', k: c }
+		if (c === 0 || !snap.shown) return { kind: 'idle' }
+		return snap.note ? { kind: 'note', k: c } : { kind: 'free' }
+	})
+	const shownEntry = $derived(entries.findIndex((e) => e.kind === current.kind && (e.kind !== 'note' || (current.kind === 'note' && e.k === current.k))))
+	const tourShown = $derived(full && snap.tour)
+	/** The tour has shown its last tick: Take over and Step are right there, so the label says it. */
+	const tourEnd = $derived(snap.tour && snap.cursor > 0 && snap.cursor >= snap.tourLength && !halted)
+	const tourLabel = $derived(`${tourName}, ${snap.cursor === 0 ? `${snap.tourLength} ${snap.tourLength === 1 ? 'tick' : 'ticks'}` : `tick ${snap.cursor} of ${snap.tourLength}${tourEnd ? ': the end' : ''}`}`)
+	const summary = $derived(snap.shown && story ? tickSummary(story, snap.cursor) : 'Tick 0: nothing has run yet.')
+	const idleText = $derived(intro && !tour ? intro : controls.length ? 'Set the inputs, then press **Step** to run tick 1.' : 'Press **Step** to run tick 1.')
+	/** The details are open and have something to show, or keep their height for the ticks to come. */
+	const showDetails = $derived(fold.open && (snap.cursor > 0 || fold.min > 0))
+	const stepButton = () => root?.querySelector<HTMLButtonElement>('.sc-simctl__step')
 </script>
+
+{#snippet head()}
+	{#if tourShown}
+		<span class="sc-foot__head sc-tour__label">{tourLabel}</span>
+	{:else}
+		<span class="sc-foot__head sc-what__summary" class:is-idle={snap.cursor === 0}>{@html inlineMd(summary)}</span>
+	{/if}
+{/snippet}
+
+{#snippet entry(e: Entry, on: boolean)}
+	<div class="sc-foot__entry" class:sc-tour={on && tourShown}>
+		{#if e.kind === 'idle'}
+			<p class="sc-what__idle">{@html inlineMd(idleText)}</p>
+		{:else if e.kind === 'free'}
+			<!-- The compact panel's summary line (the full one has it above). -->
+			{#if on}{@render head()}{:else}<span class="sc-foot__head">&nbsp;</span>{/if}
+		{:else if e.kind === 'intro'}
+			<p class="sc-tour__note">{@html inlineMd(intro ?? 'Press **Next** to run tick 1, or **Take over** to set the inputs yourself.')}</p>
+		{:else if tour?.ticks[e.k - 1]?.note}
+			<p class="sc-tour__note">{@html inlineMd(tour.ticks[e.k - 1].note!)}</p>
+		{/if}
+	</div>
+{/snippet}
+
+{#snippet freePlay(k: string)}
+	{#if k === 'idle'}
+		<p class="sc-what__idle">{@html inlineMd(idleText)}</p>
+	{:else if k === 'restart'}
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__restart" disabled={disabled} onclick={restartTour}>Restart the {tourWords}</button>
+	{/if}
+{/snippet}
 
 <div class="sc-sim" class:is-compact={variant === 'compact'} data-state={ok && !failure ? 'ready' : 'rejected'} bind:this={root} role="group" aria-label={label ?? `Simulation of ${name}`}>
 	{#if !ok}
@@ -597,7 +676,7 @@
 				<div class="sc-simctl__buttons" role="group" aria-label="Simulation controls">
 					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-btn--icon" aria-label="Reset" use:keepFocus title="Reset (R)" disabled={disabled || (snap.end === 0 && !snap.dirty)} onclick={reset}>{@html icons.reset}</button>
 					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-btn--icon" aria-label="Back one tick" use:keepFocus title="Back one tick (Backspace or Left)" disabled={disabled || snap.cursor === 0} onclick={back}>{@html icons.back}</button>
-					<button type="button" class="sc-btn sc-btn--sm sc-btn--initial sc-simctl__step" use:keepFocus={restartButton} title={halted ? 'The simulation stopped at a run-time error' : snap.canReplay ? `Replay tick ${snap.cursor + 1} (Space)` : 'Run one tick (Space)'} disabled={disabled || halted} onclick={step}>{@html icons.step}Step</button>
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--initial sc-simctl__step" use:keepFocus={restartButton} title={halted ? 'The simulation stopped at a run-time error' : snap.canReplay ? `Replay tick ${snap.cursor + 1} (Space)` : snap.edited ? `Run a new tick ${snap.cursor + 1} in place of the later ones (Space)` : 'Run one tick (Space)'} disabled={disabled || halted} onclick={step}>{@html icons.step}Step</button>
 					{#if variant === 'full'}
 						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-btn--icon" use:keepFocus={restartButton} aria-label={running ? 'Pause' : 'Run'} aria-pressed={running} title={running ? 'Pause' : 'Run: step automatically'} disabled={disabled || (halted && !running)} onclick={() => (running ? pause() : run())}>{@html running ? icons.pause : icons.play}</button>
 						<label class="sc-simctl__speed">
@@ -628,64 +707,64 @@
 			{#if failure}
 				<p class="sc-sim__failure" role="alert">The guide's simulator failed on this chart: {failure}</p>
 			{/if}
-			{#if snap.tour && variant === 'full'}
-				<div class="sc-tour">
-					<span class="sc-tour__label">{tourName}, {snap.cursor === 0 ? `${snap.tourLength} ${snap.tourLength === 1 ? 'tick' : 'ticks'}` : `tick ${snap.cursor} of ${snap.tourLength}`}</span>
-					{#if snap.cursor === 0}
-						<span class="sc-tour__note">{@html inlineMd(intro ?? `Press **Next** to run tick 1, or **Take over** to set the inputs yourself.`)}</span>
-					{:else if snap.note}
-						<span class="sc-tour__note">{@html inlineMd(snap.note)}</span>
-					{/if}
-					{#if snap.cursor >= snap.tourLength && snap.cursor > 0 && !halted}
-						<span class="sc-tour__end">That is the end of the {tourWords}. Take over to try your own inputs, or press Step to keep going.</span>
-					{/if}
-					<div class="sc-tour__nav">
-						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus disabled={disabled || snap.cursor === 0} onclick={back}>Previous</button>
-						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus={restartButton} disabled={disabled || halted || snap.cursor >= snap.tourLength} onclick={step}>Next</button>
-						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__take" disabled={disabled} onclick={() => takeOver(true)}>Take over</button>
-					</div>
-				</div>
-			{:else if snap.shown && story}
-				<div class="sc-what">
-					{#if variant === 'full'}
-						<p class="sc-what__head">What happened in tick {snap.cursor}</p>
-						{#if snap.canReplay}
-							<p class="sc-what__replay">Showing an earlier tick. Step replays tick {snap.cursor + 1} as it was; change an input to try something else from here.</p>
-						{:else if snap.edited}
-							<p class="sc-what__replay">You changed an input: Step runs a new tick {snap.cursor + 1}{snap.end > snap.cursor + 1 ? ` and replaces ticks ${snap.cursor + 1} to ${snap.end}` : ' in place of the old one'}.</p>
-						{/if}
-					{/if}
-					{#if snap.note}
-						<p class="sc-what__note">{@html inlineMd(snap.note)}</p>
-					{/if}
-					{#if variant === 'full' || !snap.note}
-						<!-- Lines that name elements mark them on the diagram when pointed at or focused (Up and Down move). -->
-						<ul class="sc-what__list" class:is-quiet={!!snap.note} use:roving={'li[data-linked]'}>
-							{#each story.items as item, i (i)}
-								<li class={`sc-what__item is-${item.kind}`} data-linked={item.ids.length ? '' : undefined} onpointerenter={() => onfocus?.(item.ids)} onpointerleave={() => onfocus?.([])} onfocus={() => onfocus?.(item.ids)} onblur={() => onfocus?.([])}>{@html inlineMd(item.text)}</li>
-							{/each}
-						</ul>
-					{/if}
-					{#if variant === 'full' && snap.shown.log.length}
-						<details class="sc-explain" bind:open={explainOpen}>
-							<summary>Explain this tick</summary>
-							<ol class="sc-explain__list" use:roving={'li[data-linked]'}>
-								{#each explained as line, i (i)}
-									<li class={`is-${line.kind}`} data-linked={line.ids.length ? '' : undefined} onpointerenter={() => onfocus?.(line.ids)} onpointerleave={() => onfocus?.([])} onfocus={() => onfocus?.(line.ids)} onblur={() => onfocus?.([])}>{@html inlineMd(line.text)}</li>
+			<div class="sc-foot__top">
+				{#if full}
+					{@render head()}
+				{:else}
+					<Stack items={entries} shown={shownEntry} item={entry} class="sc-foot__text" />
+				{/if}
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-foot__toggle" aria-expanded={fold.open} aria-controls={`${id}-details`} title={fold.open ? 'Fold the details of the tick' : 'What happened in the tick, line by line'} disabled={snap.cursor === 0} use:keepFocus={stepButton} onclick={() => fold.toggle()}>{@html icons.chevron}<span>Details</span></button>
+			</div>
+			<div class="sc-foot__details" id={`${id}-details`} hidden={!showDetails} style:min-height={fold.min ? `${fold.min}px` : undefined}>
+				{#if showDetails}
+					<div class="sc-foot__detail" use:fold.ratchet>
+						{#if snap.shown && story}
+							<!-- In free play, what the tour said of this tick and what Step does from an earlier one. -->
+							{#if !tourShown && full && snap.edited}
+								<p class="sc-what__replay">You changed an input: Step runs a new tick {snap.cursor + 1} in place of ticks {snap.cursor + 1} to {snap.end}.</p>
+							{:else if !tourShown && full && snap.canReplay}
+								<p class="sc-what__replay">Showing an earlier tick. Step replays tick {snap.cursor + 1} as it was; change an input to try something else from here.</p>
+							{/if}
+							{#if !tourShown && full && snap.note}
+								<p class="sc-tour__note">{@html inlineMd(snap.note)}</p>
+							{/if}
+							<!-- Lines that name elements mark them on the diagram when pointed at or focused (Up and Down move). -->
+							<ul class="sc-what__list" class:is-quiet={!!snap.note} use:roving={'li[data-linked]'}>
+								{#each story.items as item, i (i)}
+									<li class={`sc-what__item is-${item.kind}`} data-linked={item.ids.length ? '' : undefined} onpointerenter={() => onfocus?.(item.ids)} onpointerleave={() => onfocus?.([])} onfocus={() => onfocus?.(item.ids)} onblur={() => onfocus?.([])}>{@html inlineMd(item.text)}</li>
 								{/each}
-							</ol>
-						</details>
-					{/if}
+							</ul>
+							{#if full && snap.shown.log.length}
+								<details class="sc-explain" bind:open={explainOpen} ontoggle={() => fold.reset()}>
+									<summary>Explain this tick</summary>
+									<ol class="sc-explain__list" use:roving={'li[data-linked]'}>
+										{#each explained as line, i (i)}
+											<li class={`is-${line.kind}`} data-linked={line.ids.length ? '' : undefined} onpointerenter={() => onfocus?.(line.ids)} onpointerleave={() => onfocus?.([])} onfocus={() => onfocus?.(line.ids)} onblur={() => onfocus?.([])}>{@html inlineMd(line.text)}</li>
+										{/each}
+									</ol>
+								</details>
+							{/if}
+						{/if}
+					</div>
+				{/if}
+			</div>
+			{#if tourShown}
+				<Stack items={entries} shown={shownEntry} item={entry} class="sc-foot__text" />
+				<div class="sc-tour__nav">
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus disabled={disabled || snap.cursor === 0} onclick={back}>Previous</button>
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus={restartButton} disabled={disabled || halted || snap.cursor >= snap.tourLength} onclick={step}>Next</button>
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__take" disabled={disabled} onclick={() => takeOver(true)}>Take over</button>
 				</div>
-			{:else}
-				<p class="sc-what__idle">{@html inlineMd(intro && !tour ? intro : controls.length ? 'Set the inputs, then press **Step** to run tick 1.' : 'Press **Step** to run tick 1.')}</p>
+			{:else if full}
+				<!-- Free play: the idle line before the first tick, then Restart the tour (or nothing), in one cell. -->
+				<Stack items={tour ? ['idle', 'restart'] : ['idle', 'none']} shown={snap.cursor === 0 ? 0 : 1} item={freePlay} class="sc-foot__slot" />
 			{/if}
 			{#if halted}
 				<!-- A run-time error stopped the simulation (as in KIELER): Step, Run and the inputs are off. Focus moves
 				     here from Step, Run or Next when they turn off under it (keepFocus). -->
 				<div class="sc-sim__halted">
-					{#if snap.tour || (variant !== 'full' && snap.note)}
-						<!-- The foot shows no "What happened" here (the tour's note instead): say what stopped it. -->
+					{#if !showDetails}
+						<!-- The details are folded: say what stopped it. -->
 						{#each story?.items.filter((item) => item.kind === 'error') ?? [] as item, i (i)}
 							<p class="sc-sim__halted-error">{@html inlineMd(item.text)}</p>
 						{/each}
@@ -694,11 +773,9 @@
 					<button type="button" class="sc-btn sc-btn--sm sc-btn--initial sc-sim__restart" title="Restart (R)" onclick={reset}>{@html icons.reset}Restart</button>
 				</div>
 			{/if}
-			{#if handover && !snap.tour && !autoplayingNow}
-				<p class="sc-what__handover">{@html inlineMd(handover)}</p>
-			{/if}
-			{#if tour && !snap.tour && variant === 'full'}
-				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__restart" disabled={disabled} onclick={restartTour}>Restart the {tourWords}</button>
+			{#if handover && (!full || !snap.tour)}
+				<!-- The compact panel keeps its room while the opening plays, so it appears without moving anything. -->
+				<p class="sc-what__handover" class:is-off={snap.tour || autoplayingNow} aria-hidden={snap.tour || autoplayingNow ? 'true' : undefined}>{@html inlineMd(handover)}</p>
 			{/if}
 		</div>
 	{/if}

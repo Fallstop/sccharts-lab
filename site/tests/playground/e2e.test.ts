@@ -693,7 +693,7 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         await other.waitForFunction(() => !!document.querySelector('[data-pg-stage] svg.sc-pg-svg [data-id].is-active'))
         expect((await diagramIds(other, '.is-active')).sort()).toEqual(there)
         // The note says what changed and where the other inputs stand.
-        expect(await other.textContent('[data-pg-sim] .sc-tour__note')).toBe('In this tick A is absent and B is present; R stays absent.')
+        expect(await other.textContent('[data-pg-sim] .sc-stack__item:not([aria-hidden]) .sc-tour__note')).toBe('In this tick A is absent and B is present; R stays absent.')
         // Take over, in the toast that says what the link does.
         await other.waitForFunction(() => /replays a run of 4 ticks, shown at tick 3/.test(document.querySelector('[data-pg-toast]')?.textContent ?? ''))
         await other.click('[data-pg-toast] .sc-pg-toast__action')
@@ -960,7 +960,7 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         expect(await page.textContent('[data-panel-tab="trace"] [data-pg-badge-count]')).toBe('1')
         // The simulation panel's note for the tick names the difference too.
         await page.click('[data-pg-panel-tabs] [data-panel-tab="sim"]')
-        expect(await page.textContent('[data-pg-sim] .sc-tour__note')).toBe('display is 2; the file has 99.')
+        expect(await page.textContent('[data-pg-sim] .sc-stack__item:not([aria-hidden]) .sc-tour__note')).toBe('display is 2; the file has 99.')
         // Compare: the run against both files, as a report; downloads as .md and .csv.
         await page.click('[data-pg-panel-tabs] [data-panel-tab="trace"]')
         const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('.sc-pg-trace__group button:has-text("Compare…")')])

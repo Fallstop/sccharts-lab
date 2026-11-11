@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { compile, createSimulation } from '@sccharts-lab/engine'
 import type { TickResult } from '@sccharts-lab/engine/types'
-import { describeTick, explainTick } from '../../src/components/sim/describe'
+import { describeTick, explainTick, tickSummary } from '../../src/components/sim/describe'
 import { elementsOf, errorClasses, lineMap, stateName, tickLines, transitionName } from '../../src/components/sim/lines'
 import { lanesFor, regionLanes, traceSvg, traceWindow } from '../../src/components/sim/trace'
 
@@ -157,6 +157,31 @@ describe('describeTick (the engine\'s sentences, marked up)', () => {
         const s = describeTick(t2, t1, { info: elementsOf(cc.chart!), source: src, iface: cc.interface, program: cc.program })
         expect(s.items.map((i) => i.text)).toContain('`now` is now `6` and `before` is now `5`.')
         expect(s.items.find((i) => i.kind === 'value')?.ids).toContain('Previous$now')
+    })
+
+    it('sums a tick up in one line for the folded foot: the start, the transitions without their reasons, termination', () => {
+        const sim = createSimulation(c)
+        const t1 = sim.step({ button: false })
+        const t2 = sim.step({ button: true })
+        const t3 = sim.step({ button: true })
+        expect(tickSummary(describeTick(t1, undefined, ctx), 1)).toBe('Tick 1: the chart starts in `Off`.')
+        expect(tickSummary(describeTick(t2, t1, ctx), 2)).toBe('Tick 2: `Off` went to `On`.')
+        expect(tickSummary(describeTick(t3, t2, ctx), 3)).toBe('Tick 3: `On` went to `Off`.')
+        const src = read('design/widgets-test/countdown')
+        const cc = compile(src)
+        const cs = createSimulation(cc)
+        const cctx = { info: elementsOf(cc.chart!), source: src, iface: cc.interface, program: cc.program }
+        for (const i of [{ start: false }, { start: true }, {}, {}] as Record<string, boolean>[]) cs.step(i)
+        expect(tickSummary(describeTick(cs.step({}), cs.history[3], cctx), 5)).toMatch(/^Tick 5: `\w+` went to `\w+`; the chart terminated\.$/)
+        expect(tickSummary(describeTick(cs.step({}), cs.history[4], cctx), 6)).toBe('Tick 6: the chart has terminated.')
+    })
+
+    it('sums up a tick that stopped at a run-time error, and one where nothing fired', () => {
+        const stuck = tickSummary({ summary: '', items: [{ kind: 'stay', text: 'No transition fired: `Off` waits for `button`.', ids: [] }] }, 4)
+        expect(stuck).toBe('Tick 4: no transition fired: `Off` waits for `button`.')
+        const failed = tickSummary({ summary: '', items: [{ kind: 'error', text: 'The simulation stopped in tick 2: Division by zero (line 7).', ids: [] }, { kind: 'note', text: 'Check `d`.', ids: [] }] }, 2)
+        expect(failed).toBe('Tick 2: the simulation stopped: Division by zero (line 7).')
+        expect(tickSummary({ summary: '', items: [] }, 3)).toBe('Tick 3: nothing happened.')
     })
 
     it('names the elements of a reference copy by the reference in "Explain this tick"', () => {

@@ -1,7 +1,7 @@
 // The timing diagram of a simulation: which lanes to draw (inputs, outputs, chosen locals, one lane per
 // region with its active state) and their values in each tick. Pure; renderWave draws the result.
 
-import type { Region, State, TickResult, Value, VariableInfo } from '@sccharts-lab/engine/types'
+import type { Program, Region, State, TickResult, Value, VariableInfo } from '@sccharts-lab/engine/types'
 // Types only: link.ts (a page script, before any island) imports this module, and must not pull in the engine.
 import type { TraceableVariable } from '@sccharts-lab/engine'
 import { labelWidthFor, renderWave, waveText, type SignalSample, type WaveRow, type WaveValue } from '../frame/wave'
@@ -139,6 +139,13 @@ function suspendedIn(t: TickResult, region: string): boolean {
 /** Some region lane is suspended in some tick of the run (the trace then shows its legend). */
 export function hasSuspension(lanes: Lane[], history: TickResult[]): boolean {
     return lanes.some((l) => l.suspended && history.some((t) => l.suspended!(t)))
+}
+
+/** A chart of the program has a `suspend` action: its trace can get hatched spans. */
+export function mightSuspend(program: Program | undefined): boolean {
+    const suspends = (actions: { kind: string }[]) => actions.some((a) => a.kind === 'suspend')
+    const visit = (s: State): boolean => suspends(s.actions) || s.regions.some((r) => suspends(r.actions) || r.states.some(visit))
+    return !!program?.charts.some(visit)
 }
 
 const scalar = (v: Value | undefined): WaveValue => (Array.isArray(v) ? formatValue(v) : (v as WaveValue))

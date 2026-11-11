@@ -21,6 +21,8 @@
 }
 /* The tick counter: tabular figures, so it does not jitter while running. */
 .sc-simctl__tick {
+	/* Room for "Tick 12 of 12", so the bar does not wrap anew when "of 12" comes or goes while stepping. */
+	min-width: 6em;
 	font-size: var(--text-sm);
 	color: var(--c-muted);
 	font-variant-numeric: tabular-nums;
@@ -190,8 +192,10 @@
 	font-size: var(--text-sm);
 	font-variant-numeric: tabular-nums;
 }
-/* Timed charts: "Advance by sleepT" sits right after the deltaT field. */
+/* Timed charts: "Advance by sleepT" sits right after the deltaT field. Room for a five-figure sleepT, so the bar
+ * does not wrap anew when the value comes or changes while stepping. */
 .sc-input__advance {
+	min-width: 16.25em;
 	margin-inline-start: -0.25rem;
 	font-variant-numeric: tabular-nums;
 }
@@ -235,6 +239,7 @@
 	color: var(--c-muted);
 }
 .sc-tour__note {
+	margin: 0;
 	color: var(--c-text);
 	max-width: var(--measure);
 }
@@ -635,11 +640,11 @@ svg .sc-focus-ring {
 	height: 0.5rem;
 }
 .sc-what__idle,
-.sc-what__term,
-.sc-tour__end {
+.sc-what__term {
 	margin: 0;
 	color: var(--c-muted);
 }
+.sc-sim__foot code,
 .sc-what code,
 .sc-tour code,
 .sc-explain code,
@@ -649,6 +654,7 @@ svg .sc-focus-ring {
 	color: var(--c-ink);
 	overflow-wrap: anywhere;
 }
+.sc-sim__foot strong,
 .sc-what strong,
 .sc-explain strong,
 .sc-tour strong {
@@ -691,6 +697,96 @@ svg .sc-focus-ring {
 .sc-explain__list li:hover {
 	background-color: var(--c-accent-soft);
 	border-radius: var(--radius-xs);
+}
+
+/* ----- The foot's layout (SimPanel, CompareSim): stepping never changes its height -----
+ * The first line is the tour's label or what the tick did (`.sc-foot__head`, cut off with an ellipsis), *Details*
+ * at its end; the texts known in advance are stacked in one grid cell (Stack.svelte: the others hidden, so the cell
+ * is as tall as the tallest). Every entry has the same layout whichever is shown, or the hidden ones would not
+ * measure it. */
+.sc-stack {
+	display: grid;
+	min-width: 0;
+}
+.sc-stack > .sc-stack__item {
+	grid-area: 1 / 1;
+	min-width: 0;
+	/* No transition, not even the near-zero one theme.css gives everything under reduced motion: visibility
+	 * would lag a frame behind the entry shown. */
+	transition-property: none;
+}
+.sc-stack > .sc-stack__item[aria-hidden='true'] {
+	visibility: hidden;
+}
+/* The compact panel has no first line: its stack sits beside Details. */
+.sc-foot__top {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	column-gap: 0.75rem;
+	align-items: start;
+}
+.sc-foot__entry {
+	display: grid;
+	gap: 0.25rem;
+	align-content: start;
+	min-width: 0;
+}
+.sc-foot__head {
+	display: block;
+	height: 1.75rem;
+	line-height: 1.75rem;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.sc-what__summary {
+	color: var(--c-ink);
+}
+.sc-what__summary.is-idle {
+	color: var(--c-muted);
+}
+.sc-foot__toggle {
+	gap: 0.25rem;
+	min-height: 1.75rem;
+	padding: 0 0.625rem 0 0.375rem;
+	font-size: var(--text-xs);
+}
+.sc-foot__toggle svg {
+	transition: transform 160ms ease-out;
+}
+.sc-foot__toggle[aria-expanded='true'] svg {
+	transform: rotate(180deg);
+}
+/* Before the first tick there is nothing to detail; the button keeps its room. */
+.sc-foot__toggle:disabled {
+	visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+	.sc-foot__toggle svg {
+		transition: none;
+	}
+}
+.sc-foot__details[hidden] {
+	display: none;
+}
+.sc-foot__detail {
+	display: grid;
+	gap: 0.25rem;
+	max-width: var(--measure);
+}
+.sc-foot__detail .sc-explain {
+	margin-top: 0;
+}
+/* Compare: the two charts' stories side by side. */
+.sc-foot__detail--wide {
+	max-width: none;
+}
+/* A line of a tick's own text in an entry (Compare's differences): one line, the whole of it under Details. */
+.sc-foot__line {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .sc-tour__nav {
@@ -928,6 +1024,11 @@ svg .sc-focus-ring {
 	color: var(--c-ink);
 	font-weight: 600;
 }
+.sc-compare__diff-all {
+	margin: 0;
+	max-width: var(--measure);
+	color: var(--c-ink);
+}
 .sc-sim--compare .sc-sim__foot {
 	container-type: inline-size;
 }
@@ -1014,6 +1115,11 @@ svg .sc-focus-ring {
 	color: var(--c-muted);
 	font-size: var(--text-xs);
 	max-width: var(--measure);
+	/* As .sc-stack__item: its visibility must not lag a frame. */
+	transition-property: none;
+}
+.sc-what__handover.is-off {
+	visibility: hidden;
 }
 .sc-what__handover code {
 	font-family: var(--font-mono);
