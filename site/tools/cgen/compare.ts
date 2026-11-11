@@ -108,9 +108,9 @@ export async function checkCase(c: Case, options: { keep?: string } = {}): Promi
         return { ...base, verdict: unsupported ? 'skipped' : 'mismatch', reason: unsupported ? `unsupported: ${unsupported.message}` : undefined, problems: unsupported ? [] : [`no C code: ${why}`] }
     }
 
-    // The engine's run (none for host code, which the simulator cannot run).
+    // The engine's run (none for host code and recursive methods, which the simulator cannot run).
     const engine: { tick: SimTickResult; taken: number[] }[] = []
-    const sim = gen.hostCode ? undefined : createSimulation(result)
+    const sim = gen.simulated ? createSimulation(result) : undefined
     if (sim) for (const given of c.inputs) { const t = sim.step(given); engine.push({ tick: t, taken: sim.takenCounts(t) }) }
     let run = await compileAndRun(gen.files, harness(gen, c.inputs), options)
     // A machine busy with other work can stall a run: try once more, with more time, before reporting it.

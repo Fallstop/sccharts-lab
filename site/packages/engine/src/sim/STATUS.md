@@ -26,6 +26,8 @@ if (result.ok) {
   float expression of its own type inference, B-27), `print` of a calculation is printf's `%X` (upper-case hex), and a
   string as a whole condition is rejected (`c-string-condition`: gcc refuses KIELER's `char` guard). Also confirmed:
   after the chart terminated KIELER's simulation stops stepping (no condition is computed any more), as the simulator.
+  A chart that calls a recursive method is rejected (`kieler-crash`, "The compiler ran out of stack space during
+  Dependency."; was `unsupported`); a recursive method that is never called is harmless and the chart runs.
 - **Final polish (engine-5), for widgets-E and playground-5:**
   - `describeTick(result, program, previous?, { markdown: true })` gives the same sentences as inline Markdown, with
     state, variable, signal and chart names, triggers and values in code spans ("Inside `Left` (a copy of
@@ -535,7 +537,7 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 
 User-written schedules (`schedule` declarations and `schedule s 1` clauses), `ode` actions, `extends` with bindings
 or generic parameters and inner states that extend, chart instances in dataflow regions that call methods, dataflow
-reference calls `A(x, y)`, recursive methods, @DeviationOutput and @Logical clocks, arrays of class instances and
+reference calls `A(x, y)`, @DeviationOutput and @Logical clocks, arrays of class instances and
 classes inside classes, abort regions in a state that is left and entered again in the same tick (KIELER's thread
 reincarnation guards). Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".

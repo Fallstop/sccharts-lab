@@ -1,0 +1,52 @@
+{
+  "hash": "78a09837c0cd9335473be588faf33e9800a8388b",
+  "chart": "tests/engine/kieler/codegen/probe-recursive-uncalled.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "f": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "f": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

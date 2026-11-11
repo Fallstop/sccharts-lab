@@ -1,0 +1,16 @@
+// A recursive method: KIELER's dependency analysis follows the calls into the method and never stops ("The compiler
+// ran out of stack space during Dependency."): KIELER rejects the chart.
+scchart ProbeRecursiveMethod {
+  input int n
+  output int f = 0
+
+  method int fact(int k) {
+    if (k <= 1) {
+      return 1
+    }
+    return k * fact(k - 1)
+  }
+
+  initial state A
+    do f = fact(n) go to A
+}

@@ -65,8 +65,13 @@ export interface GeneratedC {
     variables: CVariable[]
     /** Why there is no code (errors), or what to know about it (warnings, infos). */
     diagnostics: Diagnostic[]
-    /** The chart uses host code (backticks, `extern`, `#hostcode`): the C code carries it as written. */
+    /** The chart uses host code (backticks, `extern`, host types, `#hostcode`): the C code carries it as written. */
     hostCode: boolean
+    /**
+     * The guide's simulator runs the chart too, and the code computes what the simulation shows (tools/cgen checks
+     * that). False for host code and recursive methods, which only C can run (checked against KIELER's recordings).
+     */
+    simulated: boolean
     /** `_taken_transitions` has this many counters (takenTransitions option), in Taken Transition Signaling order. */
     takenTransitions?: string[]
 }

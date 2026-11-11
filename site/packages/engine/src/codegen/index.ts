@@ -9,7 +9,7 @@ import type { Diagnostic, State } from '../types'
 import { compileChart, type CompiledChart } from '../sim/compile'
 import { ExecutableChart } from '../sim/exec'
 import { elementName } from '../sim/describe'
-import { allScopes, type CVar } from '../sim/model'
+import { allScopes, walkExpr, type CExpr, type CStmt, type CVar } from '../sim/model'
 import type { SNode } from '../sim/scg'
 import { effect, type ExprEnv } from './expr'
 import { Layout, readVars, referencedVars } from './layout'
@@ -40,13 +40,13 @@ function namingOf(result: CompileResult, chart: string, option: GenerateCOptions
 }
 
 function failure(chart: string, names: CNaming, diagnostics: Diagnostic[]): GeneratedC {
-    return { ok: false, chart, files: {}, header: `${chart}.h`, source: `${chart}.c`, names, variables: [], diagnostics, hostCode: false }
+    return { ok: false, chart, files: {}, header: `${chart}.h`, source: `${chart}.c`, names, variables: [], diagnostics, hostCode: false, simulated: false }
 }
 
 /** The compiled chart to generate from: the simulator's, or, for host code, one compiled with host code on. */
-function compiledFor(result: CompileResult, chart: State): { compiled?: CompiledChart; hostCode: boolean; problem?: Diagnostic } {
+function compiledFor(result: CompileResult, chart: State): { compiled?: CompiledChart; simulated: boolean; problem?: Diagnostic } {
     const sim = result.sim
-    if (sim?.runnable) return { compiled: sim, hostCode: false }
+    if (sim?.runnable) return { compiled: sim, simulated: true }
     const unsupported = sim?.diagnostics.find(d => d.code === 'unsupported')
     const again = compileChart(chart, result.index, { hostCode: true })
     const still = again.diagnostics.find(d => d.code === 'unsupported')
@@ -56,7 +56,7 @@ function compiledFor(result: CompileResult, chart: State): { compiled?: Compiled
         // "The guide's simulator cannot run X yet": the generator works from the simulator's compiled chart.
         const what = d?.message.replace(/^The guide's simulator cannot run /, '').replace(/ yet$/, '')
         return {
-            hostCode: true,
+            simulated: false,
             problem: {
                 severity: 'error', code: 'unsupported', span: d?.span, related: d?.related,
                 message: what && what !== d?.message ? `SCCharts Lab cannot generate C code for ${what} yet` : `SCCharts Lab cannot generate C code for this chart: ${d?.message ?? 'it does not compile'}`,
@@ -64,7 +64,7 @@ function compiledFor(result: CompileResult, chart: State): { compiled?: Compiled
             },
         }
     }
-    return { compiled: again, hostCode: true }
+    return { compiled: again, simulated: false }
 }
 
 export function generateC(result: CompileResult, options: GenerateCOptions = {}): GeneratedC {
@@ -73,7 +73,7 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
     const names = namingOf(result, chartName, options.naming)
     if (!chart) return failure(chartName, names, [{ severity: 'error', code: 'no-chart', message: 'There is no scchart to generate code for' }])
     if (!result.ok) return failure(chartName, names, result.diagnostics.filter(d => d.severity === 'error'))
-    const { compiled, hostCode, problem } = compiledFor(result, chart)
+    const { compiled, simulated, problem } = compiledFor(result, chart)
     if (!compiled) return failure(chartName, names, problem ? [problem] : [])
 
     const diagnostics: Diagnostic[] = []
@@ -182,9 +182,33 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
     return {
         ok: true, chart: chartName, header: `${fileName}.h`, source: `${fileName}.c`,
         files: { [`${fileName}.h`]: header, [`${fileName}.c`]: source },
-        names, variables: layout.variables, diagnostics, hostCode,
+        names, variables: layout.variables, diagnostics, simulated,
+        hostCode: usesHostCode(compiled, exe, functions.length ? methods : [], chart, result),
         takenTransitions: options.takenTransitions ? compiled.lowered.takenOrder : undefined,
     }
+}
+
+/** Backticks, extern calls, host types or `#hostcode`/`@hostcode` text in the generated code. */
+function usesHostCode(compiled: CompiledChart, exe: ExecutableChart, methods: CVar[], chart: State, result: CompileResult): boolean {
+    if ([...(result.program?.pragmas ?? []), ...chart.annotations].some(p => /^hostcode/i.test(p.name))) return true
+    if (allScopes(compiled.core).some(sc => sc.decls.some(v => v.type === 'host' && !v.declKind && !v.member))) return true
+    let found = false
+    const visit = (e: CExpr) => { if (e.k === 'host' || (e.k === 'call' && (e.extern || e.target?.v.extern))) found = true }
+    for (const x of exe.nodes) {
+        walkExpr(x.src.expr, visit)
+        for (const e of effectExprsOf(x.src)) walkExpr(e, visit)
+        if (x.src.effect?.k === 'host') found = true
+    }
+    for (const m of methods) {
+        for (const e of bodyExprs(m.method!.body)) walkExpr(e, visit)
+        if (hasHostStatement(m.method!.body)) found = true
+    }
+    return found
+}
+
+function hasHostStatement(list: CStmt[]): boolean {
+    return list.some(s => (s.k === 'do' && s.f.k === 'host') || (s.k === 'if' && (hasHostStatement(s.then) || hasHostStatement(s.else ?? [])))
+        || ((s.k === 'while' || s.k === 'for') && hasHostStatement(s.body)))
 }
 
 function effectExprsOf(n: SNode) {

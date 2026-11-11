@@ -1,0 +1,21 @@
+// Two methods calling each other, called from a transition: KIELER rejects the chart as for a method calling itself.
+scchart ProbeRecursiveMutual {
+  input int n
+  output bool even = false
+
+  method bool isEven(int k) {
+    if (k == 0) {
+      return true
+    }
+    return isOdd(k - 1)
+  }
+  method bool isOdd(int k) {
+    if (k == 0) {
+      return false
+    }
+    return isEven(k - 1)
+  }
+
+  initial state A
+    do even = isEven(n) go to A
+}

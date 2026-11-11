@@ -328,7 +328,7 @@ describe('methods and code effects', () => {
         expect([ticks[1].values.y, ticks[1].values.count]).toEqual([10, 1])
     })
 
-    it('does not run recursive methods', () => {
+    it('rejects calls of recursive methods as KIELER does (its dependency analysis never returns)', () => {
         const r = compile(`scchart R {
   output int y = 0
   method int f(int n) {
@@ -340,8 +340,8 @@ describe('methods and code effects', () => {
   initial state S
   do y = f(4) go to S
 }`)
-        expect(r.ok).toBe(true)
-        expect(r.diagnostics.find(d => d.code === 'unsupported')?.message).toContain('recursive methods')
+        expect(r.ok).toBe(false)
+        expect(r.diagnostics.find(d => d.code === 'kieler-crash')?.kieler).toBe('The compiler ran out of stack space during Dependency.')
     })
 })
 

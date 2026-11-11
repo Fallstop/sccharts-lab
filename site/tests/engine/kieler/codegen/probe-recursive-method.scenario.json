@@ -1,0 +1,18 @@
+{
+ "ticks": [
+  {
+   "inputs": {
+    "n": 3
+   },
+   "note": "Rejected: KIELER's compiler runs out of stack space following the recursion."
+  },
+  {
+   "inputs": {
+    "n": 5
+   },
+   "note": "Next tick."
+  }
+ ],
+ "expect": "error",
+ "errorIncludes": "stack space"
+}
