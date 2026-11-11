@@ -251,10 +251,11 @@ accepts is rejected by the lab, values agree except for string inputs, and 0.4.3
 crashes the lab reports. Checks: `pnpm exec vitest run` (6494 passed, 84 skipped: the opt-in browser, e2e and
 Java suites), `pnpm check` (0 errors, 0 warnings, 12 hints), `pnpm build`, links (7142 links, no problems).
 
-- **Content**: the guide treats 0.4.3 as the official extension (`start/tools`, `reference/about`, `errors`,
-  `troubleshooting`, `first-chart`, `variables`, `operators`, `methods`, `data-types`, `code-generation`,
-  `cheatsheet`, `patterns/abro`); 0.3.0's differences are kept as "if you still have 0.3.0". Eclipse KIELER is
-  1.6.1, Java 21.
+- **Content**: the guide names no KIELER version. "Official KIELER" and "the KIELER VS Code extension" mean the
+  current release, and only differences that hold for it are described; everything about 0.3.0 is gone from the
+  pages (it stays in the specs as evidence). Claims written against 0.3.0 that 0.4.3 contradicts were corrected
+  (`'bool'` wording, `output const`, extra call arguments, `b = a` on enums, a `for` bound that is a name now never
+  answers, `weak suspend` without `if` never answers). Eclipse KIELER needs Java 21.
 - **Engine**: the S-71 `kieler-divergence` warning on a called `^` method is gone; 0.4.3 compiles that chart.
 
 ## Not fixed (for the owners)

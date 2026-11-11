@@ -156,13 +156,11 @@ KIELER view in the side bar. During a simulation the current state is marked red
 taken blue, as in this guide.
 
 The [VS Code page of the KIELER wiki](https://github.com/kieler/semantics/wiki/VS-Code-Extensions) walks
-through it, and links to both extensions. At the time of writing (November 2026), the latest release is
-0.4.3, from October 2026. It runs KIELER 1.6.1, built from the same KIELER sources as SCCharts Lab. If you
-still have 0.3.0, from May 2024, update it: its compiler is older and accepts slightly different charts
-([Official KIELER and SCCharts Lab](/reference/about/#official-kieler-and-sccharts-lab)). Remember that
-the extension cannot be enabled at the same time as SCCharts Lab.
+through it, and links to both extensions. Its compiler is built from the same KIELER sources as
+SCCharts Lab's ([Official KIELER and SCCharts Lab](/reference/about/#official-kieler-and-sccharts-lab)).
+Remember that the extension cannot be enabled at the same time as SCCharts Lab.
 
-One trap in every version so far: a chart with certain syntax errors, such as a keyword used as a name
+One trap: a chart with certain syntax errors, such as a keyword used as a name
 (`input bool reset`), never finishes compiling, and no message says so. If a simulation does not start,
 fix the errors the editor marks first ([The simulation never starts](/reference/troubleshooting/#the-simulation-never-starts)).
 
@@ -170,9 +168,9 @@ fix the errors the editor marks first ([The simulation never starts](/reference/
 
 The original KIELER is an application built on Eclipse. Besides the SCCharts editor, compiler and
 simulator, it offers model checking, a simulation visualisation, and compilers for Esterel and Lustre.
-Download it from the [KIELER releases on GitHub](https://github.com/kieler/semantics/releases). At the
-time of writing, the latest is 1.6.1, from October 2026, with builds for Windows, Linux and macOS (Intel and
-Apple Silicon). It needs Java 21 or newer, and GCC on your PATH for the default C simulation. Unpack it and start the KIELER executable;
+Download it from the [KIELER releases on GitHub](https://github.com/kieler/semantics/releases), which
+have builds for Windows, Linux and macOS (Intel and Apple Silicon). It needs Java 21 or newer, and GCC
+on your PATH for the default C simulation. Unpack it and start the KIELER executable;
 *File → New → SCChart* creates a chart, the diagram updates when you save, and the diagram view's toolbar
 starts a simulation. The [quick start guide](https://github.com/kieler/semantics/wiki/Quick-Start-Guide)
 has screenshots of every step, and the [downloads page](https://github.com/kieler/semantics/wiki/Downloads)

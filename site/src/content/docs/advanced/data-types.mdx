@@ -42,8 +42,7 @@ ref Speed speed = Speed.OFF
   (`Couldn't resolve reference to EObject 'Speed'.`).
 - `ref Speed speed` declares a variable of that type. The `ref` is required: `Speed speed` is a syntax
   error (`no viable alternative at input 'Speed'`). Without an initial value it starts at the first
-  value, `Speed.OFF`. Since KIELER 1.6 it can also be an `input` or an `output`
-  (see [KIELER versions](#kieler-versions)).
+  value, `Speed.OFF`. It can also be an `input` or an `output`.
 - A value is always written with its type in front, `Speed.LOW`. `LOW` on its own is not found.
 - Compare values with `==` and `!=`.
 
@@ -51,8 +50,8 @@ KIELER checks what you assign to an enum variable: only values of its own enum.
 
 <Chart example="advanced/data-types/fan-wrong" caption="`speed = 1` is rejected: 1 is an `int`, not a `Speed`." />
 
-The same message comes for `speed = speed + 1` and for a value of another enum. KIELER 1.6 also
-accepts another variable of the same enum (`b = a`). The other direction is allowed: `level = speed`
+The same message comes for `speed = speed + 1` and for a value of another enum. Another
+variable of the same enum (`b = a`) is fine. The other direction is allowed: `level = speed`
 stores the value in an `int`.
 
 ### What the simulator shows
@@ -66,7 +65,7 @@ The names exist only in your source, so keep the declaration at hand when you re
 Comparisons are not checked, so the numbers show through there. `speed > Speed.LOW` compiles and
 compares positions; so does `speed == 1`; and so does a comparison between values of two *different*
 enums, `speed == light`, which is true whenever the positions happen to be equal. An enum input
-(KIELER 1.6) arrives as a number, and any number is accepted: with 5 the chart sees a value that
+arrives as a number, and any number is accepted: with 5 the chart sees a value that
 matches none of the names. Don't rely on any of these.
 
 ## Structs: variables that belong together
@@ -159,7 +158,7 @@ and methods: `scchart Lamp extends Blink { … }` inherits what `Blink` declares
 inputs and outputs can even serve as a class, through `ref Blink b`. This guide does not go further;
 the KIELER wiki's
 [Object Orientation](https://github.com/kieler/semantics/wiki/Syntax:-Object-Orientation) page
-describes both. Overriding *methods* (`override method`) works only since KIELER 1.6.
+describes both. Methods can be overridden too (`override method`).
 </Aside>
 
 ## In the simulation
@@ -263,34 +262,6 @@ Structs and classes:
 After a name it cannot resolve, KIELER usually adds `The required feature 'valuedObject' of '…' must
 be set`. That one follows from the first message and goes away with it (see
 [Fix the first message first](/reference/errors/#fix-the-first-message-first)).
-
-## KIELER versions
-
-Enums, structs and classes work the same in SCCharts Lab and in the KIELER VS Code extension 0.4.3
-(KIELER 1.6.1). The older extension 0.3.0, from May 2024, differs in these:
-
-- **Enum inputs and outputs.** In KIELER 1.6, `input ref Speed wanted` and
-  `output ref Speed speed` make an enum input and output (numbers, like every enum variable). 0.3.0
-  rejects the output with a syntax error at `ref`, `no viable alternative at input 'ref'`, followed by
-
-  ```text wrap
-  Pure types are only allowed if used in combination with signals.
-  ```
-
-  It accepts the input but drops the word `input` without a message: `wanted` becomes a local that the
-  simulation cannot set, so it keeps its first value whatever you enter. This chapter keeps its enum
-  variables local, which works in both; to report one, copy it into an `int` output
-  (`level = speed`).
-- **Copying an enum variable.** `b = a` between two variables of one enum is accepted by KIELER 1.6
-  only; 0.3.0 says `Cannot assign enum value of an incompatible type.`
-- **Struct and class outputs.** Both versions reject them; 0.3.0 says
-  `no viable alternative at input 'struct'` and adds the `Pure types` message above.
-- **Calls.** 0.3.0 accepts a call with too many arguments and ignores the extra ones.
-- **Unresolved names.** For a name it cannot resolve in an assignment (`speed = Speed.MEDIUM`,
-  `speed = LOW`) or a private member, 0.3.0 adds a series of Java exceptions
-  (`java.lang.NullPointerException` and others) to the message. For one in an initial value,
-  `ref Speed speed = OFF`, and for a call of a private method, its compilation never finishes and no
-  message appears at all. KIELER 1.6 gives the message alone.
 
 ## Try it
 

@@ -228,9 +228,7 @@ tick.) With the GNU C library, which Linux
 uses, they are 0.840, 0.394, 0.783, ..., and this site's simulator produces the same sequence. Other
 systems' C libraries have their own `rand()`, so in SCCharts Lab on Windows or a Mac the numbers may
 well differ ([How this guide is checked](/reference/about/#random-numbers)). Either way, the sequence
-makes simulations reproducible, which is useful for testing, but it is not randomness. SCCharts Lab and
-the KIELER VS Code extension 0.4.3 add the include `random()` needs themselves; in the older extension
-0.3.0 the chart above also needs `#hostcode "#include <stdlib.h>"`, or gcc fails.
+makes simulations reproducible, which is useful for testing, but it is not randomness.
 
 `randomize()` is meant to seed the generator from the time of day, so that runs differ. In what KIELER
 runs unconditionally in tick 1 (an entry action of the chart or of an initial state, or an immediate
@@ -238,8 +236,8 @@ transition without a trigger taken then) it does not even compile: KIELER's netl
 into the reset code and writes it out as `null`, and gcc reports
 `‘null’ undeclared (first use in this function)`. Anywhere else, even on a triggered transition in
 tick 1 (`immediate if start do randomize()`), it seeds the generator, and the runs are no longer
-reproducible, provided gcc knows `srand`: the automatic `<stdlib.h>` comes only with `random()`, and not
-at all in the KIELER VS Code extension. Without it, gcc 14 and later reject the generated code with
+reproducible, provided gcc knows `srand`: KIELER includes `<stdlib.h>` itself only for
+`random()`. Without it, gcc 14 and later reject the generated code with
 `implicit declaration of function ‘srand’`; older versions only warn, and the chart runs.
 Either way, `#hostcode "#include <stdlib.h>"` fixes it.
 

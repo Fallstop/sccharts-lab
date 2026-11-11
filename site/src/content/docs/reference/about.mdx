@@ -95,10 +95,9 @@ those.
 
 ## Official KIELER and SCCharts Lab
 
-The official *KIELER VS Code* extension is at version 0.4.3, from October 2026. It runs KIELER 1.6.1,
-which is built from the same KIELER sources as SCCharts Lab. In November 2026 every chart of this guide
-and its test collection, over 1,200 runs, went through both. Wherever both compiled a chart, the values
-agreed tick for tick, except for string inputs. The differences:
+The official *KIELER VS Code* extension is built from the same KIELER sources as SCCharts Lab. Every
+chart of this guide and its test collection, over 1,200 runs, went through both. Wherever both compiled
+a chart, the values agreed tick for tick, except for string inputs. The differences:
 
 - **String inputs.** In the extension, a `string` input does not get the text you send: the
   simulation of [`Greeting`](/learn/variables/) shows `name` as `nameIsHi` in every tick.
@@ -120,18 +119,6 @@ agreed tick for tick, except for string inputs. The differences:
   of an action. No chart compiled in the extension that SCCharts Lab rejects.
 - **Wording.** SCCharts Lab rewrites some of KIELER's messages in plainer English and adds a few of its
   own. [Compiler messages](/reference/errors/) quotes both where they differ.
-
-If you still have the extension's older version 0.3.0, from May 2024, update it. Its compiler predates
-these sources, and besides the differences above:
-
-- **`random()`** compiles in 0.3.0 only if the file starts with `#hostcode "#include <stdlib.h>"`.
-  KIELER 1.6.1, and so SCCharts Lab, includes `<stdlib.h>` in the generated C code itself whenever a
-  chart calls `random()`; your file stays as it is. `randomize()` needs the line in both, unless the
-  chart also calls `random()`.
-- **`const` with `input` or `output`.** 0.3.0 accepts `const output int M` and 1.6.1
-  `output const int M`; each rejects the other order. Leave `const` off inputs and outputs.
-- **Enums, structs and classes.** 0.3.0 rejects enum outputs, cannot compile method overrides, and
-  differs in a few other details ([KIELER versions](/advanced/data-types/#kieler-versions)).
 
 ## Notices on examples
 
