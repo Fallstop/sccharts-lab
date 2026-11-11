@@ -10,7 +10,7 @@ import type { EditorState } from '@codemirror/state'
 import { mount } from 'svelte'
 import { $, type ProjectSpec } from './app-types'
 import { stateFor } from './editor'
-import { listFiles, permitted, readFolder, readText, removeFile, writeFile } from './folder'
+import { listFiles, mergeFolder, permitted, readFolder, readText, saveFolder, writeFile } from './folder'
 import type { ProjectFolder } from './panel-tabs'
 import { baseOf, checkName, freeName, hasFile, importedFiles, makeProject, sameFiles, sortedPaths } from './project'
 import { newProjectId, putProject, setCurrent, type StoredProject } from './project-store'
@@ -312,8 +312,9 @@ export class ProjectControl {
         history.replaceState(history.state, '', next)
     }
 
-    /** Writes the files that differ from the folder (and removes those deleted since), asking for permission once. */
-    async saveToFolder() {
+    /** Writes the files that differ from the folder (and removes those deleted since), asking for permission once. A
+     *  file the folder changed meanwhile is left as it is, unless the reader chooses Overwrite (`force`). */
+    async saveToFolder(force = false) {
         const pg = this.pg
         const folder = this.folder
         if (!folder?.handle) return
@@ -323,22 +324,28 @@ export class ProjectControl {
         }
         folder.connected = true
         this.syncActive()
-        const files = this.texts()
-        const write = Object.keys(files).filter(p => folder.disk[p] !== files[p])
-        const gone = Object.keys(folder.disk).filter(p => !(p in files))
-        try {
-            for (const p of write) await writeFile(folder.handle, p, files[p])
-            for (const p of gone) await removeFile(folder.handle, p)
-        } catch (e) {
-            pg.toast(`Saving to ${folder.name} failed: ${(e as Error).message}`)
-            return
-        }
-        folder.disk = { ...files }
+        const saved = await saveFolder(folder.handle, folder.disk, this.texts(), force)
+        // Only what reached the disk counts as saved (a conflict, or what a failure stopped, stays unsaved).
+        folder.disk = saved.disk
         this.pending = true
         this.flush(false)
         this.publish()
-        const n = write.length + gone.length
-        pg.toast(n ? `Saved ${n === 1 ? (write[0] ?? `the removal of ${gone[0]}`) : `${n} files`} to ${folder.name}.` : `Everything is saved in ${folder.name}.`)
+        if (saved.error) {
+            pg.toast(`Saving to ${folder.name} failed: ${saved.error}`)
+            return
+        }
+        const { written, removed, conflicts } = saved
+        if (conflicts.length) {
+            const one = conflicts.length === 1
+            const which = one ? conflicts[0] : `${conflicts.length} files (${conflicts.join(', ')})`
+            pg.toast(`${which} changed in the folder since the playground read ${one ? 'it' : 'them'}, so the folder keeps ${one ? 'that version' : 'those versions'}. Overwrite saves the text here instead.`, {
+                label: 'Overwrite',
+                run: () => void this.saveToFolder(true),
+            })
+            return
+        }
+        const n = written.length + removed.length
+        pg.toast(n ? `Saved ${n === 1 ? (written[0] ?? `the removal of ${removed[0]}`) : `${n} files`} to ${folder.name}.` : `Everything is saved in ${folder.name}.`)
     }
 
     /** The project's folder for the panel's tabs (a trace saved there, the trace files in it), once permitted. */
@@ -374,18 +381,15 @@ export class ProjectControl {
             this.publish()
             return
         }
+        const merged = mergeFolder(this.texts(), folder.disk, read.files)
         let changed = false
-        for (const [p, text] of Object.entries(read.files)) {
-            const mine = this.text(p)
-            const untouched = !(p in this.files) || mine === folder.disk[p]
-            if (untouched && mine !== text) {
-                this.files[p] = text
-                this.states.delete(p)
-                if (p === this.active) this.pg.view.setState(stateFor(this.pg.view, text))
-                changed = true
-            }
+        for (const [p, text] of Object.entries(merged.take)) {
+            this.files[p] = text
+            this.states.delete(p)
+            if (p === this.active) this.pg.view.setState(stateFor(this.pg.view, text))
+            changed = true
         }
-        folder.disk = read.files
+        folder.disk = merged.disk
         this.publish()
         if (changed) this.pg.fileSwitched()
         if (ask) this.pg.toast(`Connected to ${folder.name}.`)

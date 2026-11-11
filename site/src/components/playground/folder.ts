@@ -99,6 +99,8 @@ export async function permitted(handle: FileSystemDirectoryHandle, ask: boolean)
 }
 
 async function dirFor(root: FileSystemDirectoryHandle, path: string, create: boolean): Promise<{ dir: FileSystemDirectoryHandle; name: string }> {
+    // Only a path inside the folder, as the project keeps them (`a/../b`, `../x`, `/x` never reach the disk).
+    if (!path || normalisePath(path) !== path) throw new Error(`${path} is not a path inside the folder.`)
     const parts = path.split('/')
     let dir = root
     for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part, { create })
@@ -122,6 +124,100 @@ export async function removeFile(root: FileSystemDirectoryHandle, path: string):
     } catch (e) {
         if ((e as DOMException)?.name !== 'NotFoundError') throw e
     }
+}
+
+/** A file of the folder as text; undefined when there is none. */
+async function textOrNone(root: FileSystemDirectoryHandle, path: string): Promise<string | undefined> {
+    try {
+        return await readText(root, path)
+    } catch (e) {
+        const name = (e as DOMException)?.name
+        if (name === 'NotFoundError' || name === 'TypeMismatchError') return undefined
+        throw e
+    }
+}
+
+export interface FolderSave {
+    /** The texts the folder holds now, as far as the playground knows: the next save's starting point. */
+    disk: Record<string, string>
+    written: string[]
+    removed: string[]
+    /** Files changed in the folder since they were read (another editor, `git checkout`), or there already under a
+     *  name made here: left as they are. */
+    conflicts: string[]
+    /** Why the save stopped (what was done before is in `disk`). */
+    error?: string
+}
+
+/**
+ * Saves `files` into the folder, which held `disk` when the playground last read or saved it: the files that differ
+ * are written, and those no longer in `files` (deleted or renamed here) removed. Each is read first: one the folder
+ * changed since is a conflict and left alone, unless `force`. Nothing else in the folder is touched.
+ */
+export async function saveFolder(root: FileSystemDirectoryHandle, disk: Record<string, string>, files: Record<string, string>, force = false): Promise<FolderSave> {
+    const has = (o: Record<string, string>, p: string) => Object.hasOwn(o, p)
+    const write = Object.keys(files).filter(p => !has(disk, p) || disk[p] !== files[p])
+    const gone = Object.keys(disk).filter(p => !has(files, p))
+    // A rename that changes only the case (`abc.sctx` to `ABC.sctx`): on a disk that ignores case (macOS, Windows) both
+    // names are one file, so the old name goes first; written first, then removed, the file would be lost.
+    const recased = new Map<string, string>()
+    for (const p of gone) {
+        const q = write.find(w => !has(disk, w) && w.toLowerCase() === p.toLowerCase())
+        if (q) recased.set(q, p)
+    }
+    const conflicts: string[] = []
+    const next = { ...disk }
+    const written: string[] = []
+    const removed: string[] = []
+    const remove = async (p: string) => {
+        await removeFile(root, p)
+        delete next[p]
+        removed.push(p)
+    }
+    try {
+        if (!force) {
+            for (const p of [...write, ...gone]) {
+                const now = await textOrNone(root, p)
+                const base = has(disk, p) ? disk[p] : undefined
+                const ok = now === base || (has(files, p) && now === files[p]) || (!has(files, p) && now === undefined) || (recased.has(p) && now === disk[recased.get(p)!])
+                if (!ok) conflicts.push(p)
+            }
+        }
+        const skip = new Set(conflicts)
+        for (const [q, p] of recased) if (!skip.has(p) && !skip.has(q)) await remove(p)
+        for (const p of write) {
+            if (skip.has(p)) continue
+            await writeFile(root, p, files[p])
+            next[p] = files[p]
+            written.push(p)
+        }
+        for (const p of gone) if (!skip.has(p) && has(next, p)) await remove(p)
+    } catch (e) {
+        return { disk: next, written, removed, conflicts, error: (e as Error).message }
+    }
+    return { disk: next, written, removed, conflicts }
+}
+
+/**
+ * The folder read again (Reconnect, a reload) against the project: `take`, the files that take the folder's text (those
+ * not edited here, and files new in the folder, empty ones too), and the folder's texts to save against next. A file
+ * edited here keeps its text and the text it was edited from, and a file deleted or renamed here stays so, so that a
+ * change in the folder meanwhile is a conflict when saving, not lost.
+ */
+export function mergeFolder(mine: Record<string, string>, disk: Record<string, string>, read: Record<string, string>): { take: Record<string, string>; disk: Record<string, string> } {
+    const has = (o: Record<string, string>, p: string) => Object.hasOwn(o, p)
+    const take: Record<string, string> = {}
+    const next: Record<string, string> = {}
+    for (const [p, text] of Object.entries(read)) {
+        const known = has(disk, p)
+        const edited = has(mine, p) ? !known || mine[p] !== disk[p] : known
+        if (!edited) {
+            if (!has(mine, p) || mine[p] !== text) take[p] = text
+            next[p] = text
+        } else if (has(mine, p) && mine[p] === text) next[p] = text
+        else if (known) next[p] = disk[p]
+    }
+    return { take, disk: next }
 }
 
 // ----- Without folder access: several files, and .zip ----------------------------------------------------------
