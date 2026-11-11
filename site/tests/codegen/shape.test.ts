@@ -1,6 +1,6 @@
 // The generated C has KIELER's shape: compared with real output of KIELER's "Netlist-based Compilation (C)"
-// (de.cau.cs.kieler.sccharts.netlist, dumped from the lab server, kieler/*.h|.c; kieler/tts/ is the simulation chain
-// with Taken Transition Signaling). The struct's members for the chart's variables (names, types, order), the
+// (de.cau.cs.kieler.sccharts.netlist, kieler/*.h|.c, dumped from the lab server's jar with tools/oracle/dump/dumpc.sh;
+// kieler/tts/ is the simulation chain with Taken Transition Signaling). The struct's members for the chart's variables (names, types, order), the
 // functions' signatures, reset()'s initial values, tick()'s shape, printf formats, class typedefs and host code
 // placement must be KIELER's, so a main.c written against KIELER's code compiles against ours unchanged. The guards
 // (`_g...`) are numbered differently and are not compared.
