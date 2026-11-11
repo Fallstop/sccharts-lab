@@ -1,14 +1,15 @@
 // Compiling and running generated C: gcc as KIELER's simulation calls it (kicool/deploy/processor/CCompiler.xtend:
-// -std=c99 -Wall, -lm) plus -fwrapv, so int overflow wraps as on every target KIELER's simulation ran on (and as the
-// simulator computes), and -O1, which with -fwrapv changes nothing else. Jobs run in parallel, in temporary
-// directories that are removed afterwards.
+// -std=c99 -Wall, no optimisation, -lm) plus -fwrapv, which makes the int overflow that unoptimised code shows anyway
+// defined. Unoptimised matters: an index outside an array reads and writes its neighbour in the struct
+// (basics.md B-28), which the optimiser may assume never happens. Jobs run in parallel, in temporary directories that
+// are removed afterwards.
 
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-export const GCC_FLAGS = ['-std=c99', '-Wall', '-O1', '-fwrapv']
+export const GCC_FLAGS = ['-std=c99', '-Wall', '-O0', '-fwrapv']
 
 export interface RunResult {
     /** gcc failed (its output), or the program was not built. */

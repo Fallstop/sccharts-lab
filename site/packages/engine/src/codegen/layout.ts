@@ -16,8 +16,8 @@ export interface Slot {
     member: string
 }
 
-/** C's keywords and the names the generated code uses itself (KIELER rejects charts using them: codegen.ts). */
-const RESERVED = new Set(['d', 'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum',
+/** C's keywords (KIELER rejects charts using them: sim/codegen.ts). A member `d` is fine: `d->d`. */
+const RESERVED = new Set(['auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum',
     'extern', 'float', 'for', 'goto', 'if', 'int', 'long', 'register', 'return', 'short', 'signed', 'sizeof', 'static',
     'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', 'inline', 'restrict', 'bool'])
 
