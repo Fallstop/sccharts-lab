@@ -338,7 +338,8 @@ export class SimControl {
             btn.hidden = !stale
             const ok = !!pg.latest?.result.ok
             btn.setAttribute('aria-disabled', String(!ok))
-            btn.title = ok ? `Compile the edited chart and continue (${MOD}+Shift+Enter)` : 'The edited chart has errors; fix them to rebuild'
+            const other = !!this.analysed && this.analysed.file !== pg.project.active
+            btn.title = !ok ? 'The edited chart has errors; fix them to rebuild' : other ? `Simulate ${pg.project.active} instead (${MOD}+Shift+Enter)` : `Compile the edited chart and continue (${MOD}+Shift+Enter)`
         }
         if (note) {
             note.hidden = !stale
