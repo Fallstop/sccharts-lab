@@ -46,6 +46,9 @@ export function baseOf(path: string): string {
     return path.slice(path.lastIndexOf('/') + 1)
 }
 
+/** Whether `files` has a file at `path` (its own: `toString` or `__proto__` is no file). */
+export const hasFile = (files: Record<string, string>, path: string): boolean => Object.hasOwn(files, path)
+
 /** `a/./b/../c` → `a/c`; null when it climbs out of the project. */
 export function normalisePath(path: string): string | null {
     const out: string[] = []
@@ -57,6 +60,12 @@ export function normalisePath(path: string): string | null {
         } else out.push(part)
     }
     return out.join('/')
+}
+
+/** A path from outside (a link, a .zip, a page): normalised, a `.sctx` file, inside the project; else null. */
+export function projectPath(path: string): string | null {
+    const p = normalisePath(path)
+    return p && /\.sctx$/i.test(p) && baseOf(p) !== EXT ? p : null
 }
 
 /**
@@ -154,8 +163,8 @@ export function singleFile(path: string, text: string, name: string): ProjectDat
 /** The project with `files`, `active` among them (else the first), `open` cleaned up. */
 export function makeProject(name: string, files: Record<string, string>, active?: string, open?: string[]): ProjectData {
     const paths = Object.keys(files)
-    const act = active && active in files ? active : sortedPaths(paths)[0] ?? ''
-    const tabs = (open ?? [act]).filter((p, i, all) => p in files && all.indexOf(p) === i)
+    const act = active && hasFile(files, active) ? active : sortedPaths(paths)[0] ?? ''
+    const tabs = (open ?? [act]).filter((p, i, all) => hasFile(files, p) && all.indexOf(p) === i)
     if (act && !tabs.includes(act)) tabs.push(act)
     return { name, files, active: act, open: tabs }
 }
@@ -163,5 +172,5 @@ export function makeProject(name: string, files: Record<string, string>, active?
 /** Whether two file maps hold the same files with the same texts. */
 export function sameFiles(a: Record<string, string>, b: Record<string, string>): boolean {
     const ka = Object.keys(a)
-    return ka.length === Object.keys(b).length && ka.every(k => k in b && a[k] === b[k])
+    return ka.length === Object.keys(b).length && ka.every(k => hasFile(b, k) && a[k] === b[k])
 }

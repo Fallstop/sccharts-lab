@@ -4,6 +4,9 @@ import { describe, expect, test } from 'vitest'
 import { compile } from '@sccharts-lab/engine'
 import { checkName, exampleFile, exampleProject, freeName, importedFiles, importsOf, makeProject, normalisePath, relativeTo, resolveImport, sameFiles, sortedPaths } from '../../src/components/playground/project'
 import { decodeProject, encodeProject, hashForProject, projectFromHash, runUrl, sourceFromHash } from '../../src/components/playground/share'
+import { readFiles, zipFiles } from '../../src/components/playground/folder'
+import LZString from 'lz-string'
+import { strToU8, unzipSync, zipSync } from 'fflate'
 
 const beep = 'scchart Beep {\n  input bool on\n  output bool tone = false\n  initial state Quiet\n    if on do tone = true go to Loud\n  state Loud\n}\n'
 const main = (imp: string) => `${imp}\n\nscchart Main {\n  input bool b\n  output bool t\n  initial state S is Beep(b to on, t to tone)\n}\n`
@@ -103,6 +106,45 @@ describe('share links of projects', () => {
         expect(projectFromHash('#project=')).toBeNull()
         const odd = decodeProject(encodeProject({ ...project, active: 'gone.sctx' }))
         expect(odd?.active).toBe('main.sctx')
+    })
+
+    /** A `#project=` payload as anyone can write one. */
+    const raw = (data: unknown) => LZString.compressToEncodedURIComponent(JSON.stringify(data))
+
+    test("a link's active file is one of its files, whatever it names (not Object's own keys)", () => {
+        for (const a of ['toString', '__proto__', 'constructor', 'hasOwnProperty']) {
+            const p = decodeProject(raw({ v: 1, n: 'x', a, f: [['main.sctx', 'scchart A {}']] }))
+            expect(p?.active).toBe('main.sctx')
+            expect(typeof p!.files[p!.active]).toBe('string')
+        }
+        // The project the playground opens from it, too.
+        const made = makeProject('x', { 'main.sctx': 'scchart A {}' }, 'toString', ['valueOf', 'main.sctx'])
+        expect(made.active).toBe('main.sctx')
+        expect(made.open).toEqual(['main.sctx'])
+    })
+
+    test("a link's paths stay inside the project: no file climbs out, none is lost to a prototype key", () => {
+        const p = decodeProject(raw({ v: 1, n: 'x', a: '../../evil.sctx', f: [['../../evil.sctx', 'a'], ['lib/../b.sctx', 'b'], ['/abs.sctx', 'c'], ['__proto__', 'd'], ['ok.sctx', 'e']] }))
+        expect(p).not.toBeNull()
+        for (const path of Object.keys(p!.files)) expect(normalisePath(path)).toBe(path)
+        expect(Object.values(p!.files).sort()).toEqual(['b', 'c', 'e'])
+        expect(p!.active in p!.files && Object.hasOwn(p!.files, p!.active)).toBe(true)
+        // Nothing usable: a damaged link, not a project without files.
+        expect(decodeProject(raw({ v: 1, n: 'x', a: '__proto__', f: [['__proto__', 'x']] }))).toBeNull()
+        expect(decodeProject(raw({ v: 1, n: 'x', f: [['../x.sctx', 'x']] }))).toBeNull()
+    })
+
+    test('a project downloaded as a .zip keeps every file inside its folder', async () => {
+        const zip = await zipFiles('p', { '../../evil.sctx': 'a', 'lib/../ok.sctx': 'b', 'main.sctx': 'c' })
+        const names = Object.keys(unzipSync(new Uint8Array(await zip.arrayBuffer())))
+        for (const n of names) expect(n.startsWith('p/') && !n.split('/').includes('..')).toBe(true)
+    })
+
+    test('a .zip opened keeps its files inside the project', async () => {
+        const zip = zipSync({ 'p/main.sctx': strToU8('scchart A {}'), 'p/../../evil.sctx': strToU8('x'), 'p/lib/../b.sctx': strToU8('y') })
+        const { files } = await readFiles([new File([zip as Uint8Array<ArrayBuffer>], 'p.zip')])
+        for (const path of Object.keys(files)) expect(normalisePath(path)).toBe(path)
+        expect(files['main.sctx']).toBe('scchart A {}')
     })
 
     test('a run of a project carries the project', () => {

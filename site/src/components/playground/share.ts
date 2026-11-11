@@ -5,6 +5,7 @@
 
 import LZString from 'lz-string'
 import type { Value } from '@sccharts-lab/engine/types'
+import { hasFile, projectPath } from './project'
 
 const PREFIX = 'code='
 
@@ -72,11 +73,17 @@ export function decodeProject(encoded: string): SharedProject | null {
         const data = JSON.parse(text) as { v?: unknown; n?: unknown; a?: unknown; f?: unknown }
         if (data?.v !== 1 || !Array.isArray(data.f) || !data.f.length) return null
         const files: Record<string, string> = {}
+        let active: string | undefined
         for (const entry of data.f) {
             if (!Array.isArray(entry) || typeof entry[0] !== 'string' || typeof entry[1] !== 'string' || !entry[0]) return null
-            files[entry[0]] = entry[1]
+            // Anyone can write a link: a path that is not a .sctx file inside the project is left out.
+            const path = projectPath(entry[0])
+            if (!path || hasFile(files, path)) continue
+            files[path] = entry[1]
+            if (entry[0] === data.a) active = path
         }
-        const active = typeof data.a === 'string' && data.a in files ? data.a : Object.keys(files)[0]
+        if (!Object.keys(files).length) return null
+        active ??= typeof data.a === 'string' && hasFile(files, data.a) ? data.a : Object.keys(files)[0]
         return { name: typeof data.n === 'string' && data.n.trim() ? data.n : 'Shared project', files, active }
     } catch {
         return null

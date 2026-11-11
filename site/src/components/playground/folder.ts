@@ -3,7 +3,7 @@
 // as a .zip (fflate, loaded on demand). Everything here is guarded: a refusal or an unsupported browser is an
 // answer, never a crash.
 
-import { EXT, sortedPaths } from './project'
+import { EXT, normalisePath, projectPath, sortedPaths } from './project'
 
 /** The parts of the File System Access API the playground uses (not all of it is in TypeScript's DOM library). */
 type Permission = 'granted' | 'denied' | 'prompt'
@@ -138,7 +138,11 @@ export async function readFiles(list: Iterable<File>): Promise<{ files: Record<s
                 // A .zip of a folder has that folder as the first part of every path: drop it.
                 const names = Object.keys(entries).filter(n => !n.startsWith('__MACOSX/'))
                 const top = names.length && names.every(n => n.includes('/') && n.split('/')[0] === names[0].split('/')[0]) ? names[0].split('/')[0].length + 1 : 0
-                for (const n of names) files[n.slice(top)] = strFromU8(entries[n])
+                for (const n of names) {
+                    // An entry named to climb out of the folder (`../x.sctx`) is left out.
+                    const path = projectPath(n.slice(top))
+                    if (path) files[path] = strFromU8(entries[n])
+                }
             } catch {
                 skipped.push(file.name)
             }
@@ -156,7 +160,10 @@ export async function zipFiles(name: string, files: Record<string, string>): Pro
     const { zipSync, strToU8 } = await import('fflate')
     const folder = name.replace(/[^\w .-]+/g, '').trim() || 'project'
     const entries: Record<string, Uint8Array> = {}
-    for (const [path, text] of Object.entries(files)) entries[`${folder}/${path}`] = strToU8(text)
+    for (const [path, text] of Object.entries(files)) {
+        const inside = normalisePath(path)
+        if (inside) entries[`${folder}/${inside}`] = strToU8(text)
+    }
     return new Blob([zipSync(entries, { level: 6 }) as Uint8Array<ArrayBuffer>], { type: 'application/zip' })
 }
 

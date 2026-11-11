@@ -12,7 +12,7 @@ import { $, type ProjectSpec } from './app-types'
 import { stateFor } from './editor'
 import { listFiles, permitted, readFolder, readText, removeFile, writeFile } from './folder'
 import type { ProjectFolder } from './panel-tabs'
-import { baseOf, checkName, freeName, importedFiles, makeProject, sameFiles, sortedPaths } from './project'
+import { baseOf, checkName, freeName, hasFile, importedFiles, makeProject, sameFiles, sortedPaths } from './project'
 import { newProjectId, putProject, setCurrent, type StoredProject } from './project-store'
 import { hashForProject, SCRATCH_KEY, storageSet } from './share'
 import { pgIcons } from './icons'
@@ -160,7 +160,7 @@ export class ProjectControl {
     /** Shows another file in the editor (its own state: undo history, selection, scroll). */
     switchTo(path: string, focus = true) {
         const pg = this.pg
-        if (!(path in this.files)) return
+        if (!hasFile(this.files, path)) return
         if (path !== this.active) {
             this.states.set(this.active, pg.view.state)
             this.syncActive()
@@ -226,7 +226,7 @@ export class ProjectControl {
 
     remove(path: string) {
         const paths = this.paths
-        if (paths.length < 2 || !(path in this.files)) return
+        if (paths.length < 2 || !hasFile(this.files, path)) return
         const text = this.text(path)
         const before = { files: { ...this.texts() }, open: [...this.open], active: this.active }
         delete this.files[path]
@@ -249,7 +249,7 @@ export class ProjectControl {
             icon: pgIcons.undo,
             run: () => {
                 this.files = { ...this.texts(), [path]: before.files[path] ?? text }
-                this.open = before.open.filter(p => p in this.files)
+                this.open = before.open.filter(p => hasFile(this.files, p))
                 this.publish()
                 this.switchTo(before.active)
                 this.edit()
