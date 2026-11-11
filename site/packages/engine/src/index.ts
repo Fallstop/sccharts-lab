@@ -212,10 +212,28 @@ function importErrors(program: Program, files: Record<string, string>): Diagnost
     // A file's first error: the file it is in (the file itself, or one it imports, perhaps through others), its line.
     type Found = { file: string; through: string[]; line: number; message: string; kieler: string }
     const memo = new Map<string, Found | undefined>()
+    const programs = new Map<string, Program>()
     const charts = (name: string) => {
-        const p = parseOnly(files[name]).program
-        resolveProgram(p)
+        let p = programs.get(name)
+        if (!p) {
+            p = parseOnly(files[name]).program
+            resolveProgram(p)
+            programs.set(name, p)
+        }
         return p.charts
+    }
+    // What a file sees: the charts of the files it imports, and of those they import in turn (KIELER's imports are
+    // transitive: probe tests/engine/kieler/imports/probe-import-transitive).
+    const visible = (name: string): string[] => {
+        const seen = new Set([name])
+        const queue = [name]
+        while (queue.length) {
+            const f = queue.shift()!
+            charts(f)
+            for (const i of programs.get(f)!.imports) for (const t of importTargets(i, f, names)) if (!seen.has(t)) (seen.add(t), queue.push(t))
+        }
+        seen.delete(name)
+        return [...seen]
     }
     const firstError = (name: string, stack: Set<string>): Found | undefined => {
         if (memo.has(name)) return memo.get(name)
@@ -224,7 +242,7 @@ function importErrors(program: Program, files: Record<string, string>): Diagnost
         const text = files[name]
         const parsed = parseOnly(text)
         const targets = parsed.program.imports.map(i => importTargets(i, name, names))
-        const { index, diagnostics: linking } = resolveProgram(parsed.program, { externalCharts: targets.flat().filter(t => t !== name).flatMap(charts) })
+        const { index, diagnostics: linking } = resolveProgram(parsed.program, { externalCharts: visible(name).flatMap(charts) })
         const own = [...parsed.syntax, ...linking, ...validateProgram(parsed.program, index, text, { files })].filter(d => d.severity === 'error')
         let first: Found | undefined
         const take = (f: Found, at: number) => { if (!first || at < first.line) first = f }

@@ -93,9 +93,29 @@ export function freeName(stem: string, taken: Iterable<string>): string {
     }
 }
 
-/** The names of a source's `import "…"` lines (comments ignored). */
+/** The names of a source's `import "…"` lines. Comments are skipped as the lexer reads them, strings first: the `/*`
+ *  in `import "lib/*"` starts no comment. */
 export function importsOf(source: string): string[] {
-    const text = source.replace(/\/\*[\s\S]*?\*\//g, m => m.replace(/[^\n]/g, ' ')).replace(/\/\/[^\n]*/g, '')
+    let text = ''
+    for (let i = 0; i < source.length; ) {
+        const c = source[i]
+        if (c === '"') {
+            let j = i + 1
+            while (j < source.length && source[j] !== '"' && source[j] !== '\n') j += source[j] === '\\' ? 2 : 1
+            text += source.slice(i, j + 1)
+            i = j + 1
+        } else if (c === '/' && source[i + 1] === '/') {
+            while (i < source.length && source[i] !== '\n') i++
+        } else if (c === '/' && source[i + 1] === '*') {
+            const end = source.indexOf('*/', i + 2)
+            const stop = end < 0 ? source.length : end + 2
+            text += source.slice(i, stop).replace(/[^\n]/g, ' ')
+            i = stop
+        } else {
+            text += c
+            i++
+        }
+    }
     return [...text.matchAll(/^\s*import\s+"([^"]*)"/gm)].map(m => m[1])
 }
 

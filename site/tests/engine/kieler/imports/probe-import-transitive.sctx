@@ -1,0 +1,6 @@
+// Imports are transitive: lib/a imports other/*, other/b imports deep/c, and lib/a uses deep/c's chart, which it
+// sees through other/b. KIELER compiles it.
+import "probe-transitive/lib/a"
+scchart ProbeImportTransitive {
+  initial state M is ProbeTransA
+}

@@ -153,3 +153,11 @@ describe('share links of projects', () => {
         expect(projectFromHash(new URL(url).hash)).toEqual(project)
     })
 })
+
+describe('the imports a file names', () => {
+    test('comments are skipped as the lexer skips them: strings first, so `import "lib/*"` and a block comment after it both count right', () => {
+        expect(importsOf('import "lib/*"\n/* Library charts */\nscchart Main { initial state S is Child }\n')).toEqual(['lib/*'])
+        expect(importsOf('/* import "no" */\nimport "a" // and "b"\n// import "c"\nimport "d/*"\n')).toEqual(['a', 'd/*'])
+        expect(importedFiles({ 'main.sctx': 'import "lib/*"\n/* Library charts */\nscchart Main { initial state S is Child }\n', 'lib/child.sctx': 'scchart Child { initial state S }\n' }, 'main.sctx')).toEqual({ 'lib/child.sctx': 'scchart Child { initial state S }\n' })
+    })
+})
