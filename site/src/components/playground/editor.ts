@@ -286,7 +286,17 @@ export function createEditor(parent: HTMLElement, options: EditorOptions): Edito
         EditorView.contentAttributes.of({ 'aria-label': options.label, spellcheck: 'false', autocapitalize: 'off', autocorrect: 'off', tabindex: '0' }),
         EditorView.updateListener.of(options.onUpdate),
     ]
-    return new EditorView({ state: EditorState.create({ doc: options.doc, extensions }), parent })
+    const view = new EditorView({ state: EditorState.create({ doc: options.doc, extensions }), parent })
+    extensionsOf.set(view, extensions)
+    return view
+}
+
+const extensionsOf = new WeakMap<EditorView, Extension[]>()
+
+/** A fresh state for another file in the same editor (each file keeps its own state: its undo history, its
+ *  selection), with the editor's extensions. */
+export function stateFor(view: EditorView, doc: string): EditorState {
+    return EditorState.create({ doc, extensions: extensionsOf.get(view) ?? [] })
 }
 
 function foldMarker(open: boolean): HTMLElement {
@@ -328,4 +338,32 @@ export function replaceText(view: EditorView, text: string, userEvent = 'input.l
         scrollIntoView: true,
         userEvent,
     })
+}
+
+/** How long an inline editor focused without a pointer lets Tab move on, unless the reader presses another key first. */
+const TAB_THROUGH_MS = 10 * 60_000
+
+/**
+ * In a page, a reader tabbing past an inline editor must not end up indenting it: when the editor gets the focus other
+ * than by a pointer (Tab, or the build-time code's focus handed over when the app starts), Tab and Shift+Tab move on,
+ * as everywhere else on the page, until the reader presses another key or clicks into the code (CodeMirror's
+ * tab-focus mode). /playground keeps the editor's own Tab, with Escape then Tab to leave.
+ */
+export function tabThrough(view: EditorView) {
+    const content = view.contentDOM
+    let pointer = false
+    let passing = false
+    const pass = (on: boolean) => {
+        view.setTabFocusMode(on ? TAB_THROUGH_MS : false)
+        passing = on
+    }
+    content.addEventListener('pointerdown', () => {
+        pointer = true
+        if (passing) pass(false)
+    }, { capture: true })
+    content.addEventListener('focus', () => {
+        if (!pointer) pass(true)
+        pointer = false
+    })
+    if (document.activeElement === content) pass(true)
 }

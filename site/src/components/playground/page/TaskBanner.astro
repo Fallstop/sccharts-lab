@@ -1,0 +1,56 @@
+---
+/**
+ * The exercise's task (a TryIt link, `&solution=`): under the app bar, folding to its title. Filled in while the
+ * page is parsed, so nothing moves when the app comes (exercise.ts, showTask, does the same later; exerciseFor in
+ * exercises.ts). The exercises are the build-time JSON before it.
+ */
+import type { Exercise } from '../exercises'
+import { pgIcons } from '../icons'
+
+interface Props {
+	exercises: Exercise[]
+}
+const json = (v: unknown) => JSON.stringify(v).replace(/</g, '\\u003c')
+const data = json(Astro.props.exercises)
+---
+
+<script type="application/json" data-pg-exercises set:html={data} />
+<section class="sc-pg-task" data-pg-task aria-labelledby="sc-pg-task-title" hidden>
+	<h2 class="sc-pg-task__head">
+		<button type="button" class="sc-pg-task__toggle" id="sc-pg-task-title" data-pg-task-toggle aria-expanded="true" aria-controls="sc-pg-task-body">
+			<Fragment set:html={pgIcons.chevron} /><span class="sc-pg-task__kind">Exercise</span><span class="sc-pg-task__title" data-pg-task-title></span>
+		</button>
+	</h2>
+	<p class="sc-pg-task__starter" data-pg-task-starter hidden>This is still the starter</p>
+	<a class="sc-pg-task__back" data-pg-task-back>Back to <span data-pg-task-page></span></a>
+	<div class="sc-pg-task__body" id="sc-pg-task-body" role="group" aria-labelledby="sc-pg-task-title" data-pg-task-text></div>
+</section>
+<script is:inline>
+	;(() => {
+		const box = document.currentScript.previousElementSibling
+		try {
+			const q = new URLSearchParams(location.search)
+			const id = (s) => (s || '').trim().replace(/^\/+/, '').replace(/^src\/examples\//, '').replace(/\.sctx$/, '')
+			const sol = id(q.get('solution'))
+			if (!sol) return
+			const all = JSON.parse(box.previousElementSibling.textContent)
+			const e = all.find((x) => x.starter === id(q.get('example')) && x.solution === sol) || all.find((x) => x.solution === sol)
+			if (!e) return
+			const $ = (k) => box.querySelector(`[data-pg-task-${k}]`)
+			$('title').textContent = e.title
+			$('text').innerHTML = e.task
+			$('page').textContent = e.page
+			$('back').href = e.href
+			let open = !matchMedia('(max-width: 40rem)').matches
+			try {
+				const saved = localStorage.getItem('sccharts-guide:playground:task-open')
+				if (saved) open = saved === 'open'
+			} catch {}
+			$('toggle').setAttribute('aria-expanded', String(open))
+			box.classList.toggle('is-open', open)
+			$('text').hidden = !open
+			box.hidden = false
+			if (e.compare) box.closest('[data-sc-playground]').querySelector('[data-pg-compare]').hidden = false
+		} catch {}
+	})()
+</script>

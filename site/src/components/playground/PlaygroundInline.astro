@@ -23,7 +23,7 @@ import { chartToSvg } from '@sccharts-lab/diagram'
 import { nextId } from '../frame/ids'
 import { defaultShow, variableChoices } from './variables'
 import '@sccharts-lab/diagram/diagram.css'
-import './playground.css'
+import './styles/embed.css'
 
 interface Props {
 	example?: string
@@ -106,7 +106,7 @@ const json = (v: unknown) => JSON.stringify(v).replace(/</g, '\\u003c')
 </WidgetFrame>
 
 <script>
-	import { bootInline } from './boot'
+	import { bootInline } from './boot-inline'
 	bootInline()
 	document.addEventListener('astro:page-load', bootInline)
 </script>

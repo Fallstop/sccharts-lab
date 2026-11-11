@@ -1,22 +1,27 @@
-// The playground's first script: small and eager. It decides which chart to open (a shared link, ?example=, the
-// scratch buffer or the default), shows its source at once with the editor's highlighting, wires the menus, and
-// then loads the editor, the compiler and the diagram (app.ts) without blocking the first paint, fetching the
-// example's scenario (its guided tour) meanwhile. An exercise's &solution=<id> is handed to the app (Compare).
-// Later, a link opened in the same tab (a pasted #code= or #run=, Back and Forward) opens its chart the same way.
+// The playground's first script: small and eager. It decides which project to open (a shared link, ?example=, the
+// reader's last project in this browser, the scratch buffer, or the default), shows its active file at once with
+// the editor's highlighting, wires the menus, the phone tabs and the guide's menu, and then loads the editor, the
+// compiler and the diagram (app.ts) without blocking the first paint, fetching the example's scenario (its guided
+// tour) meanwhile. An exercise's &solution=<id> is handed to the app (Compare). Later, a link opened in the same tab
+// (a pasted #code= or #run=, Back and Forward) opens its project the same way.
 
 import { highlightLines } from './static-highlight'
-import { chartFromHash, hasRun, runFromHash, SCRATCH_KEY, sourceFromHash, storageGet, type SharedRun } from './share'
+import { chartFromHash, hasRun, hasSharedChart, projectFromHash, runFromHash, SCRATCH_KEY, sourceFromHash, storageGet, type SharedRun } from './share'
 import { firstChartName } from './catalogue'
-import type { LinkTarget, Origin, Playground } from './app'
+import type { LinkTarget, Origin, Playground, ProjectSpec } from './app'
 import { setupTabs } from './tabs'
 import { createDiagramView } from './diagram-view'
+import { baseOf, exampleFile, sortedPaths } from './project'
+import { currentProject } from './project-store'
+import { loadFailed, one } from './boot-inline'
 
 interface PageData {
     defaultId: string
     defaultSource: string
+    defaultFile: string
 }
 
-/** What the toolbar says about an example: its title and its guide page, from the example menu. */
+/** What the app bar says about an example: its title and its guide page, from the example menu. */
 function describeFrom(root: HTMLElement, id: string): Origin | undefined {
     const a = root.querySelector<HTMLAnchorElement>(`a[data-example="${CSS.escape(id)}"]`)
     if (!a) return undefined
@@ -29,19 +34,29 @@ function describeFrom(root: HTMLElement, id: string): Origin | undefined {
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
 
-function renderStatic(host: HTMLElement | null, source: string) {
-    const pre = host?.querySelector('[data-pg-static] code')
-    if (!pre) return
-    pre.innerHTML = highlightLines(source)
-        .map((l, i) => `<span class="sc-pg-static__line"><span class="sc-pg-static__no" aria-hidden="true">${i + 1}</span><span class="sc-pg-static__text">${l || ' '}</span></span>`)
-        .join('')
-}
+const fileFor = (text: string) => `${(firstChartName(text) ?? 'chart').replace(/[^\w.-]+/g, '') || 'chart'}.sctx`
 
-/** The editor did not load (offline, a blocked script): say so where the compiler's status would be. */
-function loadFailed(root: HTMLElement) {
-    const summary = root.querySelector('[data-pg-problems-summary]')
-    if (summary) summary.textContent = 'The editor could not be loaded. Reload the page to try again.'
-    root.querySelector('[data-pg-problems]')?.setAttribute('data-state', 'error')
+/** The build-time code, files and tabs show the project's active file until the editor takes over. */
+function renderStatic(root: HTMLElement, project: ProjectSpec) {
+    const pre = root.querySelector('[data-pg-editor] [data-pg-static] code')
+    if (pre) {
+        pre.innerHTML = highlightLines(project.files[project.active] ?? '')
+            .map((l, i) => `<span class="sc-pg-static__line"><span class="sc-pg-static__no" aria-hidden="true">${i + 1}</span><span class="sc-pg-static__text">${l || ' '}</span></span>`)
+            .join('')
+    }
+    for (const el of root.querySelectorAll('[data-pg-static-file]')) el.textContent = baseOf(project.active)
+    const list = root.querySelector('[data-pg-files-tree] ul')
+    if (list) {
+        list.replaceChildren(
+            ...sortedPaths(Object.keys(project.files)).map(p => {
+                const li = document.createElement('li')
+                li.className = `sc-pg-files__item${p === project.active ? ' is-active' : ''}`
+                li.innerHTML = '<span class="sc-pg-file"><span class="sc-pg-file__glyph" aria-hidden="true"></span><span class="sc-pg-file__name"></span></span>'
+                li.querySelector('.sc-pg-file__name')!.textContent = p
+                return li
+            }),
+        )
+    }
 }
 
 /** `<details>` popovers: one open at a time, closed by Escape and by a click elsewhere. */
@@ -66,6 +81,26 @@ function setupPopovers(root: HTMLElement) {
     if (isMac) for (const k of root.querySelectorAll('kbd[data-mod]')) k.textContent = '⌘'
 }
 
+/**
+ * The guide's menu: Starlight's sidebar, as a popover at every width (Starlight makes it one only on phones; here it
+ * is a drawer under the app bar, opened by the Guide button, closed by Escape or a click elsewhere).
+ */
+function setupGuide() {
+    const pane = document.getElementById('starlight__sidebar')
+    if (!pane) return
+    const keep = () => {
+        if (pane.getAttribute('popover') !== 'auto') pane.setAttribute('popover', 'auto')
+    }
+    keep()
+    void customElements.whenDefined('sl-sidebar-pane').then(keep)
+    matchMedia('(min-width: 50em)').addEventListener('change', () => queueMicrotask(keep))
+    // A page of the guide chosen in it is left for: nothing to restore.
+    pane.addEventListener('toggle', e => {
+        const open = (e as ToggleEvent).newState === 'open'
+        document.querySelector('[data-pg-guide]')?.setAttribute('aria-expanded', String(open))
+        if (open) pane.querySelector<HTMLElement>('[aria-current="page"], a')?.focus()
+    })
+}
 function setupExamples(root: HTMLElement, open: (id: string) => boolean, current: () => string | undefined) {
     const menu = root.querySelector<HTMLDetailsElement>('[data-pg-examples]')
     if (!menu) return
@@ -126,14 +161,17 @@ function setupExamples(root: HTMLElement, open: (id: string) => boolean, current
     })
 }
 
-/** What a playground address opens: a shared chart (`#code=`), an example (`?example=`), either with a shared run
- *  (`&run=`, `&chart=`), and an exercise's model solution (`&solution=`); `notice` says what could not be read.
- *  Without a chart in the address, `source` is undefined (boot then opens the scratch buffer or the default). */
+/** What a playground address opens: a shared project (`#project=`) or chart (`#code=`), an example (`?example=`, with
+ *  the files it imports), any of them with a shared run (`&run=`, `&chart=`), and an exercise's model solution
+ *  (`&solution=`); `notice` says what could not be read. Without a chart in the address, `project` is undefined
+ *  (boot then opens the reader's last project or the default). */
 async function linkTarget(loc: Location, describe: (id: string) => Origin | undefined): Promise<Partial<LinkTarget> & { notice?: string; param?: string }> {
-    let source: string | undefined
+    let project: ProjectSpec | undefined
     let origin: Origin | undefined
+    let scenario: LinkTarget['scenario']
     let notice: string | undefined
-    const shared = sourceFromHash(loc.hash)
+    const shared = projectFromHash(loc.hash)
+    const code = shared ? null : sourceFromHash(loc.hash)
     // A shared run (`&run=`): the inputs of every tick, replayed as a tour through them.
     const run = runFromHash(loc.hash) ?? undefined
     if (!run && hasRun(loc.hash)) notice = 'This link is damaged: its run could not be read. Here is the chart without it.'
@@ -144,25 +182,48 @@ async function linkTarget(loc: Location, describe: (id: string) => Origin | unde
     // The example library's loaders, only when the address names an example.
     const lib = param || solutionParam ? await import('./sources') : undefined
     if (shared) {
-        source = shared
+        project = { name: shared.name, files: shared.files, active: shared.active }
+        origin = { kind: 'shared', title: shared.name }
+    } else if (code) {
+        project = one('Shared chart', fileFor(code), code)
         origin = { kind: 'shared', title: 'Shared chart' }
     } else if (param && lib) {
-        const { loadExampleSource, normaliseId } = lib
-        const id = normaliseId(param)
-        const text = await loadExampleSource(id)
+        const id = lib.normaliseId(param)
+        const [text, sc] = await Promise.all([lib.loadExampleSource(id), lib.loadScenario(id)])
         if (text !== undefined) {
-            source = text
             // Exercise solutions are not in the menu; name them after their chart.
             origin = describe(id) ?? { kind: 'example', id, title: firstChartName(text) ?? id }
+            const imports = await lib.loadImports(id, text, sc)
+            const main = exampleFile(id)
+            project = { name: origin.title, files: { [main]: text, ...imports }, active: main }
+            scenario = sc
         } else {
             notice = `There is no example called ${id}. Here is the default chart instead.`
         }
-    } else if (loc.hash.startsWith('#code=')) {
+    } else if (hasSharedChart(loc.hash)) {
         notice = 'This link is damaged: its chart could not be read. Here is the default chart instead.'
     }
     // A run without its chart (a damaged link) is not replayed on another chart.
-    const replay: SharedRun | undefined = run && source !== undefined ? run : undefined
-    return { source, origin, notice, param, run: replay, chart: replay ? chartFromHash(loc.hash) : undefined, solution: solutionParam && lib ? lib.normaliseId(solutionParam) : undefined }
+    const replay: SharedRun | undefined = run && project ? run : undefined
+    return { project, origin, scenario, notice, param, run: replay, chart: replay ? chartFromHash(loc.hash) : undefined, solution: solutionParam && lib ? lib.normaliseId(solutionParam) : undefined }
+}
+
+/** Without a chart in the address: the reader's last project in this browser, else the scratch buffer (the last
+ *  chart edited, in local storage), else the default chart. */
+async function lastProject(data: PageData, describe: (id: string) => Origin | undefined): Promise<{ project: ProjectSpec; origin: Origin }> {
+    const stored = await currentProject()
+    if (stored && Object.keys(stored.files).length) {
+        const origin: Origin = stored.folder ? { kind: 'folder', title: stored.name } : { kind: 'scratch', title: stored.name }
+        return { project: { name: stored.name, files: stored.files, active: stored.active, open: stored.open, id: stored.id, folder: stored.folder }, origin }
+    }
+    const saved = storageGet(SCRATCH_KEY)
+    if (saved?.trim() && saved !== data.defaultSource) return { project: one('Your last chart', fileFor(saved), saved), origin: { kind: 'scratch', title: 'Your last chart' } }
+    return defaultProject(data, describe)
+}
+
+function defaultProject(data: PageData, describe: (id: string) => Origin | undefined): { project: ProjectSpec; origin: Origin } {
+    const origin = describe(data.defaultId) ?? { kind: 'default' as const, id: data.defaultId, title: 'ABRO' }
+    return { project: one(origin.title, data.defaultFile, data.defaultSource), origin }
 }
 
 export async function bootPage() {
@@ -173,11 +234,7 @@ export async function bootPage() {
     const describe = (id: string) => describeFrom(root, id)
     setupPopovers(root)
     setupTabs(root)
-    // The app fills the first screen below the page title.
-    const measure = () => root.style.setProperty('--pg-top', `${Math.max(0, Math.round(root.getBoundingClientRect().top + window.scrollY))}px`)
-    measure()
-    window.addEventListener('resize', measure)
-    void document.fonts?.ready.then(measure)
+    setupGuide()
 
     let app: Playground | undefined
     setupExamples(
@@ -190,49 +247,38 @@ export async function bootPage() {
         () => app?.currentExample,
     )
 
-    // Which chart to open.
+    // Which project to open.
     const target = await linkTarget(location, describe)
-    let { source, origin } = target
     const { notice, param, run: replay, solution } = target
-    if (source === undefined && !param && !location.hash.startsWith('#code=')) {
-        const saved = storageGet(SCRATCH_KEY)
-        if (saved && saved.trim() && saved !== data.defaultSource) {
-            source = saved
-            origin = { kind: 'scratch', title: 'Your last chart' }
-        }
-    }
-    if (source === undefined) {
-        source = data.defaultSource
-        origin = describe(data.defaultId) ?? { kind: 'default', title: 'ABRO' }
-    }
-    if (source !== data.defaultSource) {
-        renderStatic(root.querySelector('[data-pg-editor]'), source)
+    let { project, origin } = target
+    // A link that names a chart it cannot give (a damaged one, an example that is not there) opens the default chart.
+    if (!project || !origin) ({ project, origin } = param || hasSharedChart(location.hash) ? defaultProject(data, describe) : await lastProject(data, describe))
+    if (project.files[project.active] !== data.defaultSource || Object.keys(project.files).length > 1) {
+        renderStatic(root, project)
         root.querySelector<HTMLElement>('[data-pg-static-diagram]')?.setAttribute('hidden', '')
         const name = root.querySelector('[data-pg-title-name]')
-        if (name) {
-            name.textContent = origin!.title
-            name.classList.toggle('is-prose', origin!.kind === 'shared' || origin!.kind === 'scratch')
-        }
+        if (name) name.textContent = project.name
     }
 
     // The diagram stage works at once (fitted, pan and zoom) with the build-time diagram.
     const diagram = createDiagramView(root, 'page')
     let mod: typeof import('./app')
     // The example's guided tour (its scenario), fetched while the app loads.
-    const exampleId = origin!.kind === 'example' || origin!.kind === 'default' ? origin!.id ?? data.defaultId : undefined
-    const scenario = exampleId ? import('./sources').then(m => m.loadScenario(exampleId)).catch(() => undefined) : Promise.resolve(undefined)
+    const exampleId = origin.kind === 'example' || origin.kind === 'default' ? origin.id ?? data.defaultId : undefined
+    const scenario = target.scenario
+        ? Promise.resolve(target.scenario)
+        : exampleId ? import('./sources').then(m => m.loadScenario(exampleId)).catch(() => undefined) : Promise.resolve(undefined)
     try {
         mod = await import('./app')
     } catch {
         loadFailed(root)
         return
     }
-    app = new mod.Playground({ root, mode: 'page', source, origin: origin!, describe, diagram, scenario: await scenario, solution, run: replay, chart: target.chart })
-    requestAnimationFrame(measure)
+    app = new mod.Playground({ root, mode: 'page', project, origin, describe, diagram, scenario: await scenario, solution, run: replay, chart: target.chart })
     if (notice) app.toast(notice)
 
     // A link opened in this tab later (a #code= or #run= pasted into the address bar, Back and Forward between
-    // them): only the hash changes, so the page does not load again. Open its chart as above. The app's own address
+    // them): only the hash changes, so the page does not load again. Open its project as above. The app's own address
     // updates replace the entry and fire neither event; the two events of one navigation are handled once.
     let handled = location.href
     const follow = async () => {
@@ -240,168 +286,16 @@ export async function bootPage() {
         handled = location.href
         const next = await linkTarget(location, describe)
         if (location.href !== handled) return
-        if (next.source === undefined && !next.param && !location.hash.startsWith('#code=')) {
-            // An address without a chart (Back to the bare /playground/): the reader's last chart, as on load.
-            const saved = storageGet(SCRATCH_KEY)
-            if (saved?.trim() && saved !== data.defaultSource) {
-                next.source = saved
-                next.origin = { kind: 'scratch', title: 'Your last chart' }
-            } else {
-                next.source = data.defaultSource
-                next.origin = describe(data.defaultId) ?? { kind: 'default', title: 'ABRO' }
-            }
-        }
-        if (next.source === undefined || !next.origin) {
+        if (!next.project && !next.param && !hasSharedChart(location.hash)) Object.assign(next, await lastProject(data, describe))
+        if (!next.project || !next.origin) {
             if (next.notice) app.toast(next.notice.replace(/ Here is the default chart instead\.$/, ''))
             return
         }
         const id = next.origin.kind === 'example' || next.origin.kind === 'default' ? next.origin.id ?? data.defaultId : undefined
-        const tour = id ? await import('./sources').then(m => m.loadScenario(id)).catch(() => undefined) : undefined
+        const tour = next.scenario ?? (id ? await import('./sources').then(m => m.loadScenario(id)).catch(() => undefined) : undefined)
         if (location.href !== handled) return
-        app.openLink({ source: next.source, origin: next.origin, scenario: tour, run: next.run, chart: next.chart, solution: next.solution }, next.notice)
+        app.openLink({ project: next.project, origin: next.origin, scenario: tour, run: next.run, chart: next.chart, solution: next.solution }, next.notice)
     }
     window.addEventListener('hashchange', () => void follow())
     window.addEventListener('popstate', () => void follow())
-}
-
-/** Inline playgrounds on guide pages: each starts when it comes near the viewport. */
-export function bootInline() {
-    const els = [...document.querySelectorAll<HTMLElement>('[data-sc-playground-inline]:not([data-pg-booted])')]
-    for (const el of els) bootOneInline(el)
-}
-
-/** The way from `root` down to `el`, as indices among element children (undefined when `el` is not inside). */
-function pathTo(root: Element, el: Element): number[] | undefined {
-    const path: number[] = []
-    for (let n: Element = el; n !== root; ) {
-        const parent = n.parentElement
-        if (!parent) return undefined
-        path.unshift([...parent.children].indexOf(n))
-        n = parent
-    }
-    return path
-}
-
-/** The element at the end of `path` under `root`. */
-function atPath(root: Element, path: number[]): HTMLElement | undefined {
-    let n: Element | undefined = root
-    for (const i of path) n = n?.children[i]
-    return n instanceof HTMLElement ? n : undefined
-}
-
-/** A press under way ends at the latest after this long (a pointer let go outside the window, say). */
-const PRESS_LIMIT = 1500
-
-/**
- * One inline playground. As the widgets' client:engage (src/components/sim/engage.ts), the app starts when the reader
- * engages with the frame (a click, a touch, a key, focus inside it), so a reader who only scrolls past loads none of
- * it; the pointer over the frame fetches the code ahead. The page already shows everything at its final size
- * (PlaygroundInline.astro renders the simulation panel too), so nothing moves when it starts. A click into the code
- * puts the cursor in the editor once it is there.
- *
- * The build-time panel looks ready: a click on one of its controls (Step, an input's switch) is held and made again
- * on the same control of the live panel, which the app mounts in its place (the two have the same shape), and
- * keyboard focus in the panel moves with it. The app takes over only once no press is under way in the panel
- * (between a pointer or a key going down and its click), so that no click lands on a control that is gone.
- */
-function bootOneInline(el: HTMLElement) {
-    // Once (bootInline runs again after a client-side navigation).
-    if (el.dataset.pgArmed !== undefined) return
-    el.dataset.pgArmed = ''
-    const zone = el.closest<HTMLElement>('[data-sc-frame]') ?? el
-    const sim = zone.querySelector<HTMLElement>('[data-pg-sim]')
-    const TRIGGERS = ['pointerdown', 'touchstart', 'keydown', 'focusin'] as const
-    let live = false
-    let held: number[] | undefined
-    let pressing = false
-    let released: (() => void) | undefined
-    const release = () => {
-        if (!pressing) return
-        pressing = false
-        // After the click that ends the press has been dispatched.
-        setTimeout(() => released?.())
-    }
-    const press = (e: Event) => {
-        if (!live && sim?.contains(e.target as Node)) pressing = true
-    }
-    const idle = () =>
-        pressing
-            ? new Promise<void>(resolve => {
-                  released = resolve
-                  setTimeout(resolve, PRESS_LIMIT)
-              })
-            : Promise.resolve()
-    const hold = (e: MouseEvent) => {
-        if (live || !sim) return
-        const control = e.target instanceof Element ? e.target.closest('button, label, input[type="checkbox"]') : null
-        if (control && sim.contains(control)) {
-            e.preventDefault()
-            e.stopImmediatePropagation()
-            held ??= pathTo(sim, control)
-            go(e)
-        }
-        release()
-    }
-    const letGo = () => setTimeout(release, 50)
-    const listen = (on: boolean) => {
-        const method = on ? 'addEventListener' : 'removeEventListener'
-        zone[method]('pointerdown', press, { capture: true })
-        zone[method]('keydown', press, { capture: true })
-        zone[method]('click', hold as EventListener, { capture: true })
-        // A pointer or a key let go anywhere (without a click: a drag off the control) ends the press too.
-        for (const t of ['pointerup', 'pointercancel', 'keyup'] as const) window[method](t, letGo, { capture: true })
-    }
-    const start = async () => {
-        if (el.dataset.pgBooted !== undefined) return
-        el.dataset.pgBooted = ''
-        const source = JSON.parse(el.querySelector('[data-pg-source]')?.textContent ?? '""') as string
-        const id = el.dataset.example
-        let Playground: typeof import('./app').Playground
-        try {
-            ;({ Playground } = await import('./app'))
-        } catch {
-            loadFailed(el)
-            listen(false)
-            return
-        }
-        await idle()
-        const focused = document.activeElement
-        const focusPath = sim && focused && sim.contains(focused) ? pathTo(sim, focused) : undefined
-        const inCode = !!focused && !!el.querySelector('[data-pg-editor]')?.contains(focused)
-        // The whole widget frame is the app's root: the simulation sits in the frame's panel slot.
-        const app = new Playground({ root: zone, mode: 'embed', source, origin: { kind: id ? 'example' : 'new', id, title: id ?? 'Chart' } })
-        // Keyboard focus on the build-time code goes to the editor that took its place.
-        if (inCode && !zone.contains(document.activeElement)) zone.querySelector<HTMLElement>('.cm-content')?.focus()
-        await app.simulationReady()
-        live = true
-        listen(false)
-        if (sim && focusPath && !zone.contains(document.activeElement)) atPath(sim, focusPath)?.focus()
-        if (sim && held) atPath(sim, held)?.click()
-    }
-    const prefetch = () => {
-        zone.removeEventListener('pointerover', prefetch)
-        void import('./app').catch(() => undefined)
-    }
-    let going = false
-    function go(e: Event) {
-        if (going) return
-        going = true
-        for (const t of TRIGGERS) zone.removeEventListener(t, go)
-        zone.removeEventListener('pointerover', prefetch)
-        const target = e.target instanceof Element ? e.target : null
-        const intoEditor = e.type !== 'keydown' && e.type !== 'focusin' && !!target?.closest('[data-pg-editor]')
-        void start().then(() => {
-            if (!intoEditor) return
-            let tries = 0
-            const focus = () => {
-                const content = zone.querySelector<HTMLElement>('.cm-content')
-                if (content) content.focus()
-                else if (++tries < 120) requestAnimationFrame(focus)
-            }
-            focus()
-        })
-    }
-    zone.addEventListener('pointerover', prefetch, { passive: true })
-    listen(true)
-    for (const t of TRIGGERS) zone.addEventListener(t, go, { passive: true })
 }

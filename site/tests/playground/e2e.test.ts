@@ -8,7 +8,7 @@
 //
 //
 //   PLAYGROUND_E2E=1 pnpm exec vitest run tests/playground/e2e.test.ts
-//   PLAYGROUND_URL=http://127.0.0.1:4321 ...   (default)
+//   PLAYGROUND_URL=http://127.0.0.1:4321 ...   (default; another dev server: PORT=4341 tools/dev-server.sh)
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import type { Browser, Page } from 'playwright'
 import { launchChromium } from '../../tools/chromium.mjs'
@@ -420,9 +420,11 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         // Lane labels end with the lane's name (after its <title>).
         const lanes = await page.$$eval('[data-pg-sim] .sc-sim__trace svg text', els => els.map(e => e.textContent ?? ''))
         for (const name of ['A', 'B', 'R', 'O', 'state', 'ABO', 'HandleA', 'HandleB']) expect(lanes.some(l => l.endsWith(name)), name).toBe(true)
-        // The editor and the diagram open with 62 % of the first screen below the toolbar (and at least 18rem).
+        // A full-window app: no page scroll; the editor and the diagram keep at least 16rem above the panel.
+        expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(900)
         const main = await page.$eval('[data-pg-diagram]', el => el.getBoundingClientRect())
-        expect(main.height).toBeGreaterThanOrEqual(Math.max(18 * 16, 0.62 * (900 - main.top - 12)) - 2)
+        expect(main.height).toBeGreaterThanOrEqual(16 * 16)
+        expect(await page.$eval('[data-pg-panel]', el => el.getBoundingClientRect().bottom)).toBeLessThanOrEqual(900)
         // The diagram opens whole, fitted in both dimensions, at a zoom whose text can be read (at least 50 %).
         const zoom = Number((await page.textContent('[data-pg-zoom]'))!.replace(/\D/g, ''))
         expect(zoom).toBeGreaterThanOrEqual(50)
@@ -764,6 +766,138 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         expect(await frame.locator('[data-pg-stage] [data-sc-nav][tabindex="0"]').count()).toBe(1)
         expect(await frame.locator('[data-pg-stage] svg').getAttribute('role')).toBe('graphics-document')
         await inline.close()
+    }, 120000)
+
+    const files = (page: Page) => page.$$eval('[data-pg-files] button.sc-pg-file', bs => bs.map(b => (b as HTMLElement).dataset.path))
+
+    test('a project of several files: an example with its imports, tabs, rename, new file, a link, the browser keeps it', async () => {
+        const page = await open('/playground/?example=advanced/references/import-main', 1440)
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'HallLights')
+        expect(await files(page)).toEqual(['import-main.sctx', 'push-switch.sctx'])
+        expect(await page.getAttribute('[data-sc-playground]', 'data-files')).toBe('open')
+        await page.waitForFunction(() => document.querySelector('[data-pg-problems]')?.getAttribute('data-state') === 'ok')
+        // The imported file in a tab of its own: its chart is drawn; its edits keep their own undo history.
+        await page.click('[data-pg-files] button.sc-pg-file[data-path="push-switch.sctx"]')
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'ImportedSwitch')
+        expect(await page.locator('[data-pg-file-tabs] .sc-pg-tab').count()).toBe(2)
+        // Renamed into a folder, the import no longer finds it (as in KIELER): the main file has a problem.
+        await page.focus('[data-pg-files] button.sc-pg-file[data-path="push-switch.sctx"]')
+        await page.keyboard.press('F2')
+        await page.keyboard.press('Control+a')
+        await page.keyboard.type('lib/switch')
+        await page.keyboard.press('Enter')
+        await page.waitForSelector('[data-pg-files] button.sc-pg-file[data-path="lib/switch.sctx"]')
+        await page.click('[data-pg-files] button.sc-pg-file[data-path="import-main.sctx"]')
+        await page.waitForFunction(() => /error|warning/.test(document.querySelector('[data-pg-problems]')?.getAttribute('data-state') ?? ''))
+        // A new file; a name that is taken is refused.
+        await page.click('[data-pg-files] [data-new-file]')
+        await page.keyboard.press('Control+a')
+        await page.keyboard.type('helper')
+        await page.keyboard.press('Enter')
+        await page.waitForSelector('[data-pg-files] button.sc-pg-file[data-path="helper.sctx"][aria-current="true"]')
+        await page.click('[data-pg-files] [data-new-file]')
+        await page.keyboard.press('Control+a')
+        await page.keyboard.type('Helper')
+        await page.keyboard.press('Enter')
+        expect(await page.textContent('.sc-pg-files__error')).toBe('There is already a file called Helper.sctx.')
+        await page.keyboard.press('Escape')
+        // Copy link: the whole project, opened in another tab.
+        await page.click('[data-action="share"]')
+        const link = await page.evaluate(() => navigator.clipboard.readText())
+        expect(link).toMatch(/\/playground\/#project=/)
+        const other = await open(new URL(link).pathname + new URL(link).hash, 1440)
+        expect(await files(other)).toEqual(['helper.sctx', 'import-main.sctx', 'lib/switch.sctx'])
+        await other.context().close()
+        // The browser keeps it: the bare address opens it again.
+        await page.waitForTimeout(600)
+        await page.goto(BASE + '/playground/', { waitUntil: 'commit' })
+        await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+        expect(await files(page)).toEqual(['helper.sctx', 'import-main.sctx', 'lib/switch.sctx'])
+        await page.context().close()
+    }, 120000)
+
+    test('the bottom panel: Problems from the status bar, the console with each line\'s tick', async () => {
+        const page = await open('/playground/?example=advanced/methods/report')
+        await page.click('[data-pg-mode] [data-mode="free"]')
+        for (let i = 0; i < 3; i++) await page.click('[data-pg-sim] .sc-simctl__step')
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="console"]')
+        await page.waitForSelector('.sc-pg-console__lines li')
+        expect(await page.$$eval('.sc-pg-console__lines li', ls => ls.map(l => l.textContent!.replace(/\s+/g, ' ').trim()))).toEqual(['2 Tick 2: level is 0', '3 Tick 3: level is 0'])
+        await page.waitForFunction(() => document.querySelector('[data-panel-tab="console"] [data-pg-badge-count]')?.textContent === '2')
+        // Back one tick: the line of tick 3 is after the tick shown.
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="sim"]')
+        await page.click('[data-pg-sim] button[aria-label="Back one tick"]')
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="console"]')
+        await page.waitForSelector('.sc-pg-console__lines li.is-later')
+        // Clear, then Copy has nothing to copy.
+        await page.click('[data-pg-panel-tools="console"] button:first-child')
+        await page.waitForSelector('.sc-pg-console__empty')
+        // A typo: the status bar says so and opens the Problems tab; Ctrl+Enter goes back to the simulation.
+        await page.locator('.cm-line', { hasText: 'initial state Watch' }).click()
+        await page.keyboard.press('End')
+        await page.keyboard.type('X')
+        await page.waitForFunction(() => document.querySelector('[data-pg-problems]')?.getAttribute('data-state') === 'error')
+        await page.click('[data-pg-problems-toggle]')
+        expect(await page.getAttribute('[data-panel-tab="problems"]', 'aria-selected')).toBe('true')
+        await page.waitForFunction(() => document.querySelector('[data-panel-tab="problems"] [data-pg-badge-count]')?.textContent === '1')
+        await page.locator('.cm-content').click()
+        await page.keyboard.press('Control+Enter')
+        expect(await page.getAttribute('[data-panel-tab="sim"]', 'aria-selected')).toBe('true')
+        await page.context().close()
+    }, 120000)
+
+    test('a folder on disk: its .sctx files, Save writes them back, renames and deletions too', async () => {
+        const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' })
+        const page = await ctx.newPage()
+        page.on('pageerror', e => errors.push(`folder: ${e.message}`))
+        // The origin-private file system stands in for a folder the reader picks.
+        await page.addInitScript(() => {
+            ;(window as unknown as { showDirectoryPicker: () => Promise<FileSystemDirectoryHandle> }).showDirectoryPicker = async () =>
+                (await navigator.storage.getDirectory()).getDirectoryHandle('e2e-folder', { create: true })
+        })
+        await page.goto(BASE + '/playground/', { waitUntil: 'commit', timeout: 60000 })
+        await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+        await page.evaluate(async () => {
+            const root = await navigator.storage.getDirectory()
+            await root.removeEntry('e2e-folder', { recursive: true }).catch(() => undefined)
+            const dir = await root.getDirectoryHandle('e2e-folder', { create: true })
+            const put = async (name: string, text: string) => {
+                const w = await (await dir.getFileHandle(name, { create: true })).createWritable()
+                await w.write(text)
+                await w.close()
+            }
+            await put('main.sctx', 'scchart Main {\n  initial state A\n}\n')
+            await put('lamp.sctx', 'scchart Lamp {\n  initial state Off\n}\n')
+            await put('notes.txt', 'not a chart')
+        })
+        const disk = (name: string) =>
+            page.evaluate(async n => {
+                const dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('e2e-folder')
+                return (await dir.getFileHandle(n).then(h => h.getFile()).then(f => f.text()).catch(() => null)) as string | null
+            }, name)
+        await page.click('[data-pg-project] > summary')
+        await page.click('[data-action="open-folder"]')
+        await page.waitForSelector('.sc-pg-files__folder')
+        expect(await files(page)).toEqual(['lamp.sctx', 'main.sctx'])
+        await page.click('[data-pg-files] button.sc-pg-file[data-path="main.sctx"]')
+        await page.locator('.cm-content').click()
+        await page.keyboard.press('Control+End')
+        await page.keyboard.type('// saved')
+        await page.waitForSelector('[data-pg-files] .is-active .sc-pg-file__dot')
+        await page.keyboard.press('Control+s')
+        await page.waitForFunction(() => /^Saved/.test(document.querySelector('[data-pg-toast]')?.textContent ?? ''))
+        expect(await disk('main.sctx')).toContain('// saved')
+        await page.focus('[data-pg-files] button.sc-pg-file[data-path="lamp.sctx"]')
+        await page.keyboard.press('F2')
+        await page.keyboard.press('Control+a')
+        await page.keyboard.type('light')
+        await page.keyboard.press('Enter')
+        await page.click('.sc-pg-files__folder .sc-btn')
+        await page.waitForFunction(() => /^Saved/.test(document.querySelector('[data-pg-toast]')?.textContent ?? ''))
+        expect(await disk('light.sctx')).not.toBeNull()
+        expect(await disk('lamp.sctx')).toBeNull()
+        expect(await disk('notes.txt')).toBe('not a chart')
+        await ctx.close()
     }, 120000)
 
     test('no console errors', () => {

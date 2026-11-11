@@ -1,0 +1,312 @@
+/* The diagram: its head (the chart, the zoom and the tools), the stage (pan and zoom on a graticule), the badges
+ * over it, and the outline. */
+
+
+.sc-pg__chart {
+	margin-inline-start: 0;
+	color: var(--c-ink);
+	font-weight: 700;
+}
+.sc-pg__chart[hidden],
+.sc-pg__chart-select[hidden] {
+	display: none;
+}
+.sc-pg__chart-select {
+	min-height: 1.875rem;
+	max-width: 12rem;
+	padding: 0 0.5rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+}
+.sc-pg__zoom {
+	display: flex;
+	align-items: center;
+	gap: 0.125rem;
+	margin-inline-start: auto;
+}
+.sc-pg__tool {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2rem;
+	min-height: 2rem;
+	padding: 0 0.375rem;
+	border: 0;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-muted);
+	font: inherit;
+	font-size: var(--text-2xs);
+	font-variant-numeric: tabular-nums;
+	cursor: pointer;
+}
+.sc-pg__tool:hover {
+	background-color: var(--c-accent-soft);
+	color: var(--c-ink);
+}
+.sc-pg__tool[aria-expanded='true'] {
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+.sc-pg__zoom-level {
+	min-width: 3.25rem;
+}
+@media (max-width: 30rem) {
+	/* On a phone the diagram's head is the chart's name and the six tools, at their full size: "Diagram" is the tab
+	 * above (and the Simulate tab's diagram sits above the simulation), so it is said only to screen readers, and
+	 * the name gets the room ("Seatbelts" whole at 390 px; a longer name ends in an ellipsis, its title whole).
+	 * Without JavaScript there are no tabs and no tools: the head keeps its "Diagram". */
+	.sc-pg__panel--diagram > .sc-pg__head {
+		gap: 0.5rem;
+		padding-inline-start: 0.75rem;
+	}
+	.sc-pg[data-pg-js] .sc-pg__panel--diagram > .sc-pg__head > h2 {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+	.sc-pg__panel--diagram .sc-pg__chart,
+	.sc-pg__panel--diagram .sc-pg__chart-select {
+		flex: 0 1 auto;
+		min-width: 0;
+	}
+}
+@media (max-width: 30rem) {
+	/* Simulate tab: the diagram is there to watch, so its zoom read-out goes (1 still resets) and the chart's name
+	 * keeps its room instead of shrinking to a letter. */
+	.sc-pg[data-pg-js][data-tab='sim'] .sc-pg__panel--diagram .sc-pg__zoom-level {
+		display: none;
+	}
+	.sc-pg__panel--diagram .sc-pg__chart {
+		min-width: min(5.5rem, 30%);
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+@media (max-width: 23.99rem) {
+	/* Narrower still (360 px): the zoom read-out goes (Fit and the zoom buttons stay; 0 and 1 work from the keyboard). */
+	.sc-pg__panel--diagram .sc-pg__zoom-level {
+		display: none;
+	}
+}
+.sc-pg__stage {
+	overflow: hidden;
+	background-color: var(--c-inset);
+	background-image: radial-gradient(circle at 1px 1px, var(--c-rule-strong) 1px, transparent 0);
+	background-size: 16px 16px;
+	background-position: 8px 8px;
+	cursor: grab;
+	touch-action: none;
+	user-select: none;
+	-webkit-user-select: none;
+}
+.sc-pg__stage:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: -2px;
+}
+.sc-pg__stage.is-panning {
+	cursor: grabbing;
+}
+.sc-pg-canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform-origin: 0 0;
+}
+.sc-pg-svg {
+	display: block;
+	overflow: visible;
+}
+.sc-pg-svg [data-id] {
+	cursor: pointer;
+}
+.sc-pg-svg .sc-root,
+.sc-pg-svg .sc-region {
+	cursor: inherit;
+}
+.sc-pg__static-diagram {
+	display: grid;
+	place-items: start center;
+	height: 100%;
+	padding: 1rem;
+	overflow: auto;
+}
+.sc-pg__static-diagram svg {
+	max-width: 100%;
+}
+.sc-pg__static-diagram[hidden] {
+	display: none;
+}
+.is-stale .sc-pg-canvas {
+	opacity: 0.45;
+	filter: saturate(0.4);
+	transition: opacity 0.2s;
+}
+.sc-pg__badge {
+	position: absolute;
+	z-index: 2;
+	left: 0.75rem;
+	bottom: 0.75rem;
+	max-width: calc(100% - 1.5rem);
+	margin: 0;
+	padding: 0.25rem 0.75rem 0.25rem 0.625rem;
+	border: 1px solid var(--c-caution-rule);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-size: var(--text-xs);
+	font-weight: 600;
+	pointer-events: none;
+}
+.sc-pg__badge[hidden] {
+	display: none;
+}
+.sc-pg__busy,
+.sc-pg__empty {
+	position: absolute;
+	z-index: 2;
+	margin: 0;
+	pointer-events: none;
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+}
+.sc-pg__busy {
+	top: 0.625rem;
+	left: 0.75rem;
+	padding: 0.125rem 0.625rem;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+}
+.sc-pg__empty {
+	inset: 0;
+	display: grid;
+	place-items: center;
+	font-size: var(--text-sm);
+}
+.sc-pg__empty code {
+	font-family: var(--font-mono);
+	color: var(--c-ink);
+}
+.sc-pg__badge::before {
+	content: '';
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	margin-inline-end: 0.5rem;
+	border-radius: 1px;
+	background-color: var(--c-caution-rule);
+	transform: rotate(45deg) translateY(-1px);
+}
+
+/* ----- Outline: the chart as a list (keyboard and screen readers) ----- */
+
+.sc-pg__panel--diagram {
+	position: relative;
+}
+.sc-pg-outline {
+	position: absolute;
+	z-index: 5;
+	top: var(--pg-head-h, 2.625rem);
+	right: 0;
+	bottom: 0;
+	width: min(21rem, 85%);
+	overflow: auto;
+	overscroll-behavior: contain;
+	padding: 0.5rem 0 0.75rem;
+	border-inline-start: 1px solid var(--c-rule-strong);
+	background-color: var(--c-sheet);
+	box-shadow: var(--shadow-pop);
+	font-size: var(--text-sm);
+}
+.sc-pg-outline[hidden] {
+	display: none;
+}
+.sc-pg-outline ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.sc-pg-outline ul ul {
+	margin-inline-start: 0.875rem;
+	border-inline-start: 1px solid var(--c-rule);
+}
+.sc-pg-outline__region {
+	display: block;
+	padding: 0.375rem 0.75rem 0.125rem;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-pg-outline button {
+	display: flex;
+	gap: 0.5rem;
+	align-items: baseline;
+	width: 100%;
+	min-height: 1.75rem;
+	padding: 0.1875rem 0.75rem;
+	border: 0;
+	background: none;
+	color: var(--c-text);
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+.sc-pg-outline button:hover,
+.sc-pg-outline button:focus-visible {
+	background-color: var(--c-accent-soft);
+	color: var(--c-ink);
+	outline: none;
+}
+.sc-pg-outline button:focus-visible {
+	box-shadow: inset 3px 0 0 var(--c-accent-bright);
+}
+.sc-pg-outline__name {
+	font-family: var(--font-mono);
+	font-weight: 700;
+}
+.sc-pg-outline__kind,
+.sc-pg-outline__label {
+	min-width: 0;
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+}
+.sc-pg-outline__label {
+	font-family: var(--font-mono);
+	overflow-wrap: anywhere;
+}
+/* What the simulation marks in the diagram, marked here too (never by colour alone). */
+.sc-pg-outline button.is-active .sc-pg-outline__name::before {
+	content: '';
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	margin-inline-end: 0.375rem;
+	border: 2px solid var(--sc-active-stroke);
+	border-radius: 50%;
+	background-color: var(--sc-active-fill);
+}
+.sc-pg-outline button.is-taken .sc-pg-outline__name {
+	text-decoration: underline 2px var(--sc-taken);
+	text-underline-offset: 3px;
+}
+/* A for-region's state: the number of copies it is active in, as the diagram's badge says it. */
+.sc-pg-outline__copies {
+	align-self: center;
+	padding: 0 0.375rem;
+	border-radius: var(--radius-capsule);
+	background-color: var(--sc-active-stroke);
+	color: var(--sc-region-fill, var(--c-paper));
+	font-size: var(--text-2xs);
+	font-weight: 800;
+	line-height: 1.5;
+	font-variant-numeric: tabular-nums;
+}

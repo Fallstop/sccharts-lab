@@ -1,0 +1,179 @@
+/* ----- Compare with the model solution (exercises) ----- */
+
+.sc-pg-pop--compare[hidden] {
+	display: none;
+}
+.sc-pg__compare {
+	border-color: var(--c-go);
+}
+.sc-pg__compare-short {
+	display: none;
+}
+@media (max-width: 47.99rem) {
+	.sc-pg__compare-long {
+		display: none;
+	}
+	.sc-pg__compare-short {
+		display: inline;
+	}
+}
+.sc-pg-pop--compare .sc-pg-pop__panel {
+	width: min(34rem, calc(100vw - 2rem));
+	max-height: min(40rem, 75dvh);
+	padding: 0.875rem 1rem 1rem;
+}
+.sc-pg-compare {
+	display: grid;
+	gap: 0.75rem;
+	font-size: var(--text-sm);
+	color: var(--c-text);
+}
+.sc-pg-compare p {
+	margin: 0;
+}
+.sc-pg-compare__lead,
+.sc-pg-compare__note {
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+	line-height: var(--leading-snug);
+}
+.sc-pg-compare__result {
+	padding: 0.625rem 0.75rem;
+	border: 1px solid var(--c-rule-strong);
+	border-inline-start-width: 3px;
+	border-radius: var(--radius-xs);
+	background-color: var(--c-rail);
+	color: var(--c-ink);
+	line-height: var(--leading-snug);
+}
+.sc-pg-compare__result.is-match {
+	border-color: var(--c-tip-rule);
+	background-color: var(--c-tip-bg);
+	color: var(--c-tip-ink);
+}
+.sc-pg-compare__result.is-differs {
+	border-color: var(--c-caution-rule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+}
+.sc-pg-compare__result.is-starter {
+	border-color: var(--c-note-rule);
+	background-color: var(--c-note-bg);
+	color: var(--c-note-ink);
+}
+.sc-pg-compare__result.is-cannot {
+	border-color: var(--c-danger-rule);
+	background-color: var(--c-danger-bg);
+	color: var(--c-danger-ink);
+}
+/* KIELER runs the chart, the guide's simulator cannot: a caution, as the simulation panel says it, not an error. */
+.sc-pg-compare__result.is-unsupported {
+	border-color: var(--c-caution-rule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+}
+.sc-pg-compare__subhead {
+	font-size: var(--text-xs);
+	font-weight: 800;
+	color: var(--c-ink);
+}
+.sc-pg-compare ul {
+	display: grid;
+	gap: 0.25rem;
+	margin: 0;
+	padding-inline-start: 1.25rem;
+	line-height: var(--leading-snug);
+}
+.sc-pg-compare__where {
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+	font-variant-numeric: tabular-nums;
+}
+/* One cell per tick: the same outputs (a thin border), different (a heavy border and bold, not only a colour),
+ * not run (dashed: after a run-time error). */
+.sc-pg-compare__ticks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 3px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.sc-pg-compare__ticks li {
+	display: grid;
+	place-items: center;
+	min-width: 1.75rem;
+	height: 1.5rem;
+	padding: 0 0.25rem;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-muted);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	font-variant-numeric: tabular-nums;
+}
+.sc-pg-compare__ticks li.is-same {
+	border-color: var(--c-tip-rule);
+	background-color: var(--c-tip-bg);
+	color: var(--c-tip-ink);
+}
+.sc-pg-compare__ticks li.is-different {
+	border: 2px solid var(--c-caution-rule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-weight: 800;
+}
+.sc-pg-compare__ticks li.is-not-run {
+	border-style: dashed;
+	opacity: 0.7;
+}
+.sc-pg-compare__table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--text-xs);
+}
+.sc-pg-compare__table caption {
+	margin-bottom: 0.25rem;
+	text-align: start;
+	font-weight: 800;
+	color: var(--c-ink);
+}
+.sc-pg-compare__table th,
+.sc-pg-compare__table td {
+	padding: 0.25rem 0.5rem;
+	border-bottom: 1px solid var(--c-rule);
+	text-align: start;
+	font-family: var(--font-mono);
+}
+.sc-pg-compare__table thead th {
+	font-family: var(--font-text);
+	color: var(--c-muted);
+	font-weight: 700;
+}
+.sc-pg-compare__table tr.is-different td,
+.sc-pg-compare__table tr.is-different th {
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-weight: 700;
+}
+.sc-pg-compare__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+.sc-pg-compare__solution {
+	display: grid;
+	gap: 0.375rem;
+}
+.sc-pg-compare__solution .sc-pg-static {
+	max-height: 18rem;
+	padding: 0.625rem 0.75rem;
+	border: 1px solid var(--c-rule);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-code-bg);
+	font-size: 0.8125rem;
+}
+.sc-pg-compare__open {
+	font-size: var(--text-xs);
+}
