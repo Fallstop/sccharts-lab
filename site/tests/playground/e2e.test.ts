@@ -1032,6 +1032,10 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         await page.waitForSelector('.sc-pg-c__empty button')
         await page.click('.sc-pg-c__empty button')
         expect(await page.getAttribute('[data-panel-tab="problems"]', 'aria-selected')).toBe('true')
+        // Fixed again: the C tab shows the code again (its pane came back, with the code in it).
+        await page.keyboard.press('Control+z')
+        await page.click('[data-pg-panel-tabs] [data-panel-tab="c"]')
+        await page.waitForFunction(() => /void tick\(TickData\* d\)/.test(document.querySelector('.sc-pg-c__code .cm-content')?.textContent ?? ''), undefined, { timeout: 10000 })
         await page.context().close()
     }, 120000)
 

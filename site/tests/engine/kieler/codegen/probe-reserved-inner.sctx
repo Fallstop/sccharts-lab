@@ -1,0 +1,10 @@
+scchart ProbeReservedInner {
+  output int y
+  initial state A {
+    int _g0 = 3
+    int _TERM = 1
+    initial state X
+    do y = _g0 + _TERM go to Y
+    state Y
+  }
+}

@@ -8,7 +8,7 @@ import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { unzipSync, strFromU8 } from 'fflate'
 import { compile, createSimulation, generateC, type GeneratedC } from '@sccharts-lab/engine'
-import { buildCommand, cProjectFiles, interfaceRows, mainC } from '../../src/components/playground/c-project'
+import { buildCommand, cProjectFiles, interfaceRows, mainC, mainFile } from '../../src/components/playground/c-project'
 import { zipFiles } from '../../src/components/playground/folder'
 import { hasGcc } from '../../tools/cgen/gcc'
 
@@ -50,7 +50,7 @@ function buildAndRun(files: Record<string, string>, g: GeneratedC): { built: boo
     try {
         for (const [name, text] of Object.entries(files)) fs.writeFileSync(path.join(dir, name), text)
         const command = buildCommand(g)
-        expect(files['main.c']).toContain(command)
+        expect(files[mainFile(g)]).toContain(command)
         const out = spawnSync('sh', ['-c', command], { cwd: dir, encoding: 'utf8', timeout: 60_000 })
         return { built: out.status === 0, stderr: out.stderr, stdout: out.stdout }
     } finally {
@@ -93,6 +93,17 @@ describe('the C code tab: main.c and the .zip', () => {
             { name: 'start', member: 'd->start', ctype: 'char', role: 'input' },
             { name: 'n', member: 'd->n', ctype: 'int', role: 'output' },
         ])
+    })
+
+    test('a chart named main (or Main): its own main.c stays, the program is in run.c, and it builds', async () => {
+        for (const name of ['main', 'Main']) {
+            const g = generateC(compile(`scchart ${name} {\n  output int x = 1\n  initial state A\n  do x = 2 go to B\n  state B\n}\n`))
+            expect(g.ok).toBe(true)
+            const files = cProjectFiles(g)
+            expect(Object.keys(files).sort()).toEqual([`${name}.c`, `${name}.h`, 'run.c'])
+            expect(files[`${name}.c`]).toBe(g.files[`${name}.c`])
+            if (gcc) expect(buildAndRun(files, g).built).toBe(true)
+        }
     })
 
     test('the .zip holds the header, the C file and main.c', async () => {

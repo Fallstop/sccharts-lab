@@ -129,6 +129,11 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
 
     beforeAll(async () => {
         server = http.createServer((req, res) => {
+            // A file that takes its time: the element's attributes change while it is on its way.
+            if (new URL(req.url ?? '/', HOST).pathname === '/slow.sctx') {
+                setTimeout(() => res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' }).end('scchart Slow {\n  initial state S\n}\n'), 800)
+                return
+            }
             const body = PAGES[new URL(req.url ?? '/', HOST).pathname]
             if (!body) {
                 res.writeHead(404).end()
@@ -297,7 +302,22 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
             missing.setAttribute('src', '/nothing-here.sctx')
             const failed = new Promise(resolve => missing.addEventListener('error', e => resolve((e as unknown as CustomEvent<{ message: string }>).detail.message)))
             document.body.append(missing)
-            return { ready: ready.compiled.chart, first: first.tick, renewed: before !== el.ready, again: again.compiled.chart, failed: await failed, alert: missing.shadowRoot?.querySelector('[role="alert"]')?.textContent }
+            const failure = await failed
+            const alert = missing.shadowRoot?.querySelector('[role="alert"]')?.textContent
+            // A new address after the failure: the element tries again.
+            missing.setAttribute('example', 'showcase/abro')
+            const recovered = (await missing.ready).compiled.chart
+            const alertAfter = missing.shadowRoot?.querySelector('[role="alert"]') ?? null
+            // An attribute changed while the file is fetched: the frame has it.
+            const slow = document.createElement('sccharts-lab-chart') as Chart
+            slow.setAttribute('src', '/slow.sctx')
+            slow.setAttribute('loading', 'eager')
+            document.body.append(slow)
+            await new Promise(r => setTimeout(r, 100))
+            slow.setAttribute('view', 'diagram')
+            const slowChart = (await slow.ready).compiled.chart
+            const slowView = new URL(slow.shadowRoot!.querySelector('iframe')!.src).searchParams.get('view')
+            return { ready: ready.compiled.chart, first: first.tick, renewed: before !== el.ready, again: again.compiled.chart, failed: failure, alert, recovered, alertAfter, slowChart, slowView }
         })
         expect(result).toEqual({
             ready: 'ABRO',
@@ -306,6 +326,10 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
             again: 'Dimmer',
             failed: 'The chart /nothing-here.sctx could not be loaded (404 Not Found).',
             alert: 'The chart /nothing-here.sctx could not be loaded (404 Not Found).',
+            recovered: 'ABRO',
+            alertAfter: null,
+            slowChart: 'Slow',
+            slowView: 'diagram',
         })
         await context.close()
     }, 120000)

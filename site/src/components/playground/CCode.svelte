@@ -8,7 +8,7 @@
 <script lang="ts">
     import { onDestroy } from 'svelte'
     import { generateC, type GeneratedC } from '@sccharts-lab/engine'
-    import { cProjectFiles, interfaceRows, buildCommand } from './c-project'
+    import { cProjectFiles, interfaceRows, buildCommand, mainFile } from './c-project'
     import { createCView, type CView } from './c-view'
     import { downloadBlob, zipFiles } from './folder'
     import { recall, remember } from './app-types'
@@ -37,6 +37,8 @@
     let broken = $state(false)
     let host = $state<HTMLDivElement>()
     let view: CView | undefined
+    /** The element the view is in: an error between two good charts replaces it. */
+    let viewHost: HTMLElement | undefined
     let timer: ReturnType<typeof setTimeout> | undefined
     let stale = true
 
@@ -75,7 +77,12 @@
 
     $effect(() => {
         if (!host || !generated?.ok) return
+        if (view && viewHost !== host) {
+            view.destroy()
+            view = undefined
+        }
         view ??= createCView(host)
+        viewHost = host
         view.show(text, name)
     })
     onDestroy(() => view?.destroy())
@@ -95,7 +102,7 @@
         if (!g?.ok) return
         const file = `${g.chart}-c.zip`
         downloadBlob(await zipFiles(g.chart, cProjectFiles(g)), file)
-        ctx.toast(`Downloaded ${file}: ${g.header}, ${g.source} and main.c. ${buildCommand(g).split(' && ')[0]} builds it.`)
+        ctx.toast(`Downloaded ${file}: ${g.header}, ${g.source} and ${mainFile(g)}. ${buildCommand(g).split(' && ')[0]} builds it.`)
     }
 </script>
 
@@ -161,7 +168,7 @@
                             {/each}
                         </tbody>
                     </table>
-                    <p>Set the inputs, call <code>{generated.names.tick}(d)</code> (after <code>{generated.names.reset}(d)</code> once), read the outputs. The .zip's main.c does that.</p>
+                    <p>Set the inputs, call <code>{generated.names.tick}(d)</code> (after <code>{generated.names.reset}(d)</code> once), read the outputs. The .zip's {mainFile(generated)} does that.</p>
                 </section>
             {/if}
         </div>

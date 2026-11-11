@@ -110,13 +110,16 @@ export class SCChartsLabChart extends Base {
     }
 
     attributeChangedCallback(name: string, old: string | null, value: string | null) {
-        if (old === value || !this.isConnected || !this.frame) return
+        // Before the first render (the element being made or upgraded, its inline code perhaps not parsed yet) the
+        // render reads every attribute; after it, a change renders again, also while a chart is fetched or after a
+        // fetch failed (render's generation drops the fetch it replaces).
+        if (old === value || !this.isConnected || !this.generation) return
         if (ADDRESS.includes(name)) {
             this.invalidate()
             this.scheduleRender()
         }
         else if (name === 'label') this.updateTitle()
-        else if (name === 'loading') this.frame.loading = value === 'eager' ? 'eager' : 'lazy'
+        else if (name === 'loading' && this.frame) this.frame.loading = value === 'eager' ? 'eager' : 'lazy'
     }
 
     private scheduleRender() {

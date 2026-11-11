@@ -5,10 +5,16 @@
 
 import type { CVariable, GeneratedC } from '@sccharts-lab/engine'
 
+/** The file with `main()`: main.c, unless the chart's own C file has that name (a chart named `main`, or `Main` on a
+ *  disk that ignores case). */
+export function mainFile(g: Pick<GeneratedC, 'source'>): string {
+    return g.source.toLowerCase() === 'main.c' ? 'run.c' : 'main.c'
+}
+
 /** gcc as KIELER's simulation compiles C (kicool's CCompiler: -std=c99 -Wall, -lm). */
 export function buildCommand(g: Pick<GeneratedC, 'chart' | 'source'>): string {
     const program = g.chart.replace(/[^\w.-]+/g, '') || 'chart'
-    return `gcc -std=c99 -Wall -o ${program} main.c ${g.source} -lm && ./${program}`
+    return `gcc -std=c99 -Wall -o ${program} ${mainFile(g)} ${g.source} -lm && ./${program}`
 }
 
 /** How main.c prints a variable's value, or undefined when it does not (arrays, host types). */
@@ -83,7 +89,7 @@ export function mainC(g: GeneratedC, ticks = 10): string {
 
 /** What the .zip holds: the header, the C file and main.c. */
 export function cProjectFiles(g: GeneratedC): Record<string, string> {
-    return { [g.header]: g.files[g.header], [g.source]: g.files[g.source], 'main.c': mainC(g) }
+    return { [g.header]: g.files[g.header], [g.source]: g.files[g.source], [mainFile(g)]: mainC(g) }
 }
 
 /** The interface table's rows: each chart variable, its struct member, C type and direction. */

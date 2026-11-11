@@ -60,6 +60,36 @@ export function checkCodegen(root: CState): Diagnostic[] {
         }
     }
 
+    // Names of KIELER's own: a chart-level variable named `_GO` or `_TERM` is a second member of that name in the tick
+    // data, and one starting with `_g` (KIELER's guard prefix) that something writes, an initial value or an
+    // assignment, is dropped with the guards nothing uses (CleanupValuedObjects) while the write still names it.
+    // Inputs, signals, and `_g` variables only read are fine (probes tests/engine/kieler/codegen/probe-reserved-*).
+    const written = new Set<CVar>()
+    for (const site of allActionSites(root)) {
+        for (const f of (site.transition ?? site.action!).effects) if (f.k === 'assign') written.add(f.ref.v)
+    }
+    for (const v of root.decls) {
+        // A signal is a variable by now (the Signal processor ran): its presence keeps role 'presence'.
+        if (v.const || v.declKind || v.generated || v.signal || v.role === 'presence') continue
+        if (v.name === '_GO' || v.name === '_TERM') {
+            add({
+                severity: 'error', code: 'c-reserved-name', span: v.span,
+                message: `\`${v.name}\` is a name KIELER's generated C code uses for itself, so a variable of that name does not compile`,
+                kieler: `duplicate member ‘${v.name}’\n${GCC_FAILED}`,
+                hint: `Rename \`${v.name}\` (names starting with \`_\` are best left to KIELER).`,
+                related: v.decl ? [v.decl] : undefined,
+            })
+        } else if (v.name.startsWith('_g') && !v.input && (v.init !== undefined || written.has(v))) {
+            add({
+                severity: 'error', code: 'c-reserved-name', span: v.span,
+                message: `\`${v.name}\` starts with \`_g\`, the prefix of KIELER's guard variables: KIELER drops it from its generated C code, which still writes it, so the code does not compile`,
+                kieler: `‘TickData’ has no member named ‘${v.name}’\n${GCC_FAILED}`,
+                hint: `Rename \`${v.name}\` (names starting with \`_\` are best left to KIELER).`,
+                related: v.decl ? [v.decl] : undefined,
+            })
+        }
+    }
+
     out.push(...cNames(root))
     for (const d of cText(root)) add(d)
 

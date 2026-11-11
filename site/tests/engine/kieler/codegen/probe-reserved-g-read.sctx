@@ -1,0 +1,7 @@
+scchart ProbeReservedGRead {
+  int _g0
+  output int y
+  initial state A
+  if _g0 == 0 do y = 1 go to B
+  state B
+}
