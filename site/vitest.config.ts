@@ -1,9 +1,9 @@
 import { configDefaults, defineConfig } from 'vitest/config'
 import { fileURLToPath } from 'node:url'
 
-// The engine's timing targets run alone, after everything else: inside the parallel suite (one worker per core)
+// The engine's and the diagram's timing targets run alone, after everything else: inside the parallel suite (one worker per core)
 // their numbers measure the machine's load, not the engine.
-const PERF = 'tests/engine/performance.test.ts'
+const PERF = ['tests/engine/performance.test.ts', 'tests/diagram/speed.test.ts']
 
 export default defineConfig({
     resolve: {
@@ -21,10 +21,10 @@ export default defineConfig({
                 test: {
                     name: 'site',
                     include: ['src/**/*.test.ts', 'packages/*/src/**/*.test.ts', 'tests/**/*.test.ts'],
-                    exclude: [...configDefaults.exclude, PERF],
+                    exclude: [...configDefaults.exclude, ...PERF],
                 },
             },
-            { extends: true, test: { name: 'perf', include: [PERF], sequence: { groupOrder: 1 } } },
+            { extends: true, test: { name: 'perf', include: PERF, sequence: { groupOrder: 1 } } },
         ],
     },
 })
