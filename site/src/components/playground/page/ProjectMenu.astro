@@ -1,0 +1,52 @@
+---
+/**
+ * The app bar's project: its name (the button), "edited" while it differs from what was loaded, and a menu with the
+ * name to rename it, the file actions (`[data-action]`, file-actions.ts) and the reader's recent projects in this
+ * browser (project-menu.ts fills the list).
+ */
+import { pgIcons } from '../icons'
+
+interface Props {
+	name: string
+}
+const { name } = Astro.props
+const item = (action: string, icon: string, label: string, title: string, hidden = false) => ({ action, icon, label, title, hidden })
+const actions = [
+	item('new', pgIcons.new, 'New chart', 'Start a new project with one chart'),
+	item('new-file', pgIcons.plus, 'New file', 'Add a file to this project'),
+	item('open', pgIcons.open, 'Open files…', 'Open .sctx files, or a .zip of a project'),
+	item('open-folder', pgIcons.folder, 'Open folder…', 'Work on a folder of your computer and save back into it', true),
+	item('download', pgIcons.download, 'Download', 'Download the chart (a project of several files as a .zip)'),
+	item('download-zip', pgIcons.zip, 'Download as .zip', 'Download every file of the project in a .zip'),
+	item('restore', pgIcons.undo, 'Revert', 'Go back to the project as it was loaded', true),
+]
+---
+
+<details class="sc-pg-pop sc-pg-pop--project" data-pg-project>
+	<summary class="sc-pg-appbar__project" data-pg-title title="The project: its files, open and save, recent projects">
+		<span class="sc-pg__title-name" data-pg-title-name>{name}</span>
+		<span class="sc-pg__edited" data-pg-title-edited hidden>edited</span>
+		<Fragment set:html={pgIcons.chevron} />
+	</summary>
+	<div class="sc-pg-pop__panel sc-pg-project">
+		<label class="sc-pg-project__name">
+			<span>Project</span>
+			<input type="text" data-pg-project-name value={name} spellcheck="false" autocomplete="off" />
+		</label>
+		<ul class="sc-pg-project__actions" role="list">
+			{
+				actions.map((a) => (
+					<li>
+						<button type="button" class="sc-pg-menu__item" data-action={a.action} title={a.title} hidden={a.hidden}>
+							<Fragment set:html={a.icon} />
+							<span>{a.label}</span>
+						</button>
+					</li>
+				))
+			}
+		</ul>
+		<input type="file" accept=".sctx,.sct,.zip,text/plain,application/zip" multiple data-pg-file hidden />
+		<h2 class="sc-pg-project__head" data-pg-recent-head hidden>Recent in this browser</h2>
+		<ul class="sc-pg-recent" data-pg-recent role="list" hidden></ul>
+	</div>
+</details>

@@ -1,0 +1,99 @@
+/* ===== Inline playground (inside a widget frame) ==================================================== */
+
+.sc-pg-inline-host {
+	--pg-code-size: 0.8125rem;
+}
+.sc-pg-inline-host .sc-pg-inline__editor {
+	display: flex;
+	flex-direction: column;
+	min-height: 14rem;
+	max-height: 24rem;
+	background-color: var(--c-code-bg);
+}
+.sc-pg-inline-host .sc-pg__body--editor {
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+.sc-pg-inline-host .sc-pg__body--editor .cm-editor {
+	max-height: 100%;
+}
+/* The diagram is as tall as the chart drawn as wide as the stage allows, at most at 100 % (the build-time
+ * `--pg-nat-w`, `--pg-nat-h` and `--pg-ratio` of PlaygroundInline.astro), with DiagramView's room around it in
+ * embed mode (48 px above, for the tools; 16 px on the other sides), between 14rem and 24rem. The build-time
+ * picture is drawn where DiagramView's first fit puts it, so nothing moves when the playground starts. */
+.sc-pg-inline-host .sc-pg-inline__diagram {
+	--pg-dw: 100cqw;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-height: clamp(14rem, calc(64px + min(var(--pg-nat-h, 10rem), var(--pg-ratio, 0.5) * (var(--pg-dw) - 32px))), 24rem);
+	max-height: 24rem;
+}
+@container (min-width: 56rem) {
+	.sc-pg-inline-host .sc-pg-inline__diagram {
+		--pg-dw: calc(50cqw - 1px);
+	}
+}
+.sc-pg-inline-host .sc-pg__stage {
+	flex: 1;
+	min-height: 0;
+	cursor: grab;
+}
+.sc-pg-inline-host .sc-pg__static-diagram {
+	position: absolute;
+	inset: 48px 16px 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: auto;
+	padding: 0;
+	overflow: hidden;
+}
+/* As wide as the room allows up to its natural size (its own style), and no taller than the room: the drawing keeps
+ * its proportions inside (preserveAspectRatio), centred, as DiagramView fits it. */
+.sc-pg-inline-host .sc-pg__static-diagram svg {
+	max-height: 100%;
+}
+/* Without JavaScript (PlaygroundInline.astro's noscript): a note where the simulation's controls would be. */
+.sc-pg-inline__nojs {
+	margin: 0;
+	padding: 0.75rem var(--frame-pad, 1rem);
+	border-top: 1px solid var(--c-rule);
+	color: var(--c-muted);
+	font-size: var(--text-sm);
+}
+.sc-pg-inline-host .sc-pg__problems-toggle {
+	padding-inline: 0.75rem;
+}
+.sc-pg-inline__tools {
+	position: absolute;
+	z-index: 3;
+	top: 0.375rem;
+	right: 0.375rem;
+	display: flex;
+	gap: 0.125rem;
+	padding: 2px;
+	border: 1px solid var(--c-rule);
+	border-radius: var(--radius-capsule);
+	background-color: color-mix(in srgb, var(--c-sheet) 88%, transparent);
+}
+.sc-pg-inline__simbar .sc-pg__sim-note {
+	margin: 0;
+}
+.sc-pg-inline__simbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem 1rem;
+	padding: 0.5rem var(--frame-pad, 1rem);
+	border-top: 1px solid var(--c-rule);
+	background-color: var(--c-caution-bg);
+}
+.sc-pg-inline__simbar .sc-pg__sim-note {
+	white-space: normal;
+}
+.sc-pg-inline-host .sc-pg__sim {
+	overflow: visible;
+}

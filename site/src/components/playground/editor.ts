@@ -286,7 +286,17 @@ export function createEditor(parent: HTMLElement, options: EditorOptions): Edito
         EditorView.contentAttributes.of({ 'aria-label': options.label, spellcheck: 'false', autocapitalize: 'off', autocorrect: 'off', tabindex: '0' }),
         EditorView.updateListener.of(options.onUpdate),
     ]
-    return new EditorView({ state: EditorState.create({ doc: options.doc, extensions }), parent })
+    const view = new EditorView({ state: EditorState.create({ doc: options.doc, extensions }), parent })
+    extensionsOf.set(view, extensions)
+    return view
+}
+
+const extensionsOf = new WeakMap<EditorView, Extension[]>()
+
+/** A fresh state for another file in the same editor (each file keeps its own state: its undo history, its
+ *  selection), with the editor's extensions. */
+export function stateFor(view: EditorView, doc: string): EditorState {
+    return EditorState.create({ doc, extensions: extensionsOf.get(view) ?? [] })
 }
 
 function foldMarker(open: boolean): HTMLElement {

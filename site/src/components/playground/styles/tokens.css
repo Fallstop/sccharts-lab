@@ -1,0 +1,73 @@
+/*
+ * The playground's own tokens, on top of the site's (src/styles/tokens.css): the IDE's surfaces and the editor's
+ * colours. Every colour of the playground's CSS comes from these or from the site's --c-* and --sc-* tokens, so a
+ * dark theme is a second set of values here (light only for now).
+ */
+
+.sc-pg,
+.sc-pg-inline-host {
+	/* Editor colours beyond the syntax ones (selection and gutters are in code-colours.ts). */
+	--pg-active-line: color-mix(in srgb, var(--c-trace) 7%, transparent);
+	--pg-gutter-fg: var(--c-muted);
+	--pg-bracket-bg: color-mix(in srgb, var(--c-accent-bright) 16%, transparent);
+	--pg-bracket-ring: color-mix(in srgb, var(--c-accent-bright) 55%, transparent);
+	--pg-match-bg: color-mix(in srgb, var(--c-trace) 14%, transparent);
+	--pg-search-bg: color-mix(in srgb, var(--c-caution-rule) 30%, transparent);
+	--pg-search-ring: var(--c-caution-rule);
+	--pg-search-sel: color-mix(in srgb, var(--c-caution-rule) 55%, transparent);
+}
+
+.sc-pg {
+	/* Surfaces: the app's ground, the bars and heads, the panes, the sidebar. */
+	--pg-ground: var(--c-paper);
+	--pg-bar: var(--c-sheet);
+	--pg-head: var(--c-rail);
+	--pg-pane: var(--c-sheet);
+	--pg-side: var(--c-rail);
+	/* Hairlines between panes, and the stronger edge of a bar. */
+	--pg-line: var(--c-rule);
+	--pg-line-strong: var(--c-rule-strong);
+	/* Pointer over, and the selected or current item (a tab, a file). */
+	--pg-hover: color-mix(in srgb, var(--c-ink) 6%, transparent);
+	--pg-selected: var(--c-accent-soft);
+	--pg-current: var(--c-accent-bright);
+	/* Unsaved files. */
+	--pg-unsaved: var(--c-caution-rule);
+	/* Sizes: the app bar, every pane's head (tabs, the diagram's tools, the panel's tabs), the editor's status. */
+	--pg-bar-h: 3rem;
+	--pg-head-h: 2.375rem;
+	--pg-status-h: 1.875rem;
+	--pg-files-w: 13.5rem;
+}
+
+/* Several parts set `display`; `hidden` must still hide them. */
+.sc-pg [hidden],
+.sc-pg-inline-host [hidden] {
+	display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sc-pg *,
+	.sc-pg *::after {
+		transition: none !important;
+	}
+}
+
+/* Links in the playground's own text (outside Starlight's content styles): the guide's link colour. */
+.sc-pg__title-page[href],
+.sc-pg-about,
+.sc-pg-compare__open,
+.sc-pg-help a {
+	color: var(--c-accent);
+	text-underline-offset: 0.15em;
+}
+.sc-pg__title-page[href]:hover,
+.sc-pg-about:hover,
+.sc-pg-compare__open:hover,
+.sc-pg-help a:hover {
+	color: var(--c-accent-strong);
+}
+.sc-pg-vars__scope {
+	font-size: var(--text-2xs);
+	color: var(--c-muted);
+}

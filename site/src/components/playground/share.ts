@@ -47,6 +47,57 @@ export function shareUrl(playground: string | URL, source: string): string {
     return url.toString()
 }
 
+// ----- A project of several files (`#project=<compressed>`) -----------------------------------------------------
+//
+// `{ v: 1, n: name, a: active path, f: [[path, text], ...] }`, lz-compressed like `#code=`. A project of one file
+// is shared as `#code=` (shorter, and what older playgrounds open).
+
+const PROJECT = 'project='
+
+export interface SharedProject {
+    name: string
+    files: Record<string, string>
+    active: string
+}
+
+export function encodeProject(p: SharedProject): string {
+    return LZString.compressToEncodedURIComponent(JSON.stringify({ v: 1, n: p.name, a: p.active, f: Object.entries(p.files) }))
+}
+
+export function decodeProject(encoded: string): SharedProject | null {
+    if (!encoded) return null
+    try {
+        const text = LZString.decompressFromEncodedURIComponent(encoded.replace(/ /g, '+'))
+        if (!text) return null
+        const data = JSON.parse(text) as { v?: unknown; n?: unknown; a?: unknown; f?: unknown }
+        if (data?.v !== 1 || !Array.isArray(data.f) || !data.f.length) return null
+        const files: Record<string, string> = {}
+        for (const entry of data.f) {
+            if (!Array.isArray(entry) || typeof entry[0] !== 'string' || typeof entry[1] !== 'string' || !entry[0]) return null
+            files[entry[0]] = entry[1]
+        }
+        const active = typeof data.a === 'string' && data.a in files ? data.a : Object.keys(files)[0]
+        return { name: typeof data.n === 'string' && data.n.trim() ? data.n : 'Shared project', files, active }
+    } catch {
+        return null
+    }
+}
+
+/** The project stored in a location hash (`#project=...`), or null. */
+export function projectFromHash(hash: string): SharedProject | null {
+    for (const part of hash.replace(/^#/, '').split('&')) if (part.startsWith(PROJECT)) return decodeProject(part.slice(PROJECT.length))
+    return null
+}
+
+/** The hash that carries a project: `#code=` for one file, else `#project=`. */
+export function hashForProject(p: SharedProject): string {
+    const paths = Object.keys(p.files)
+    return paths.length === 1 ? hashForSource(p.files[paths[0]]) : `#${PROJECT}${encodeProject(p)}`
+}
+
+/** The address has a chart or a project in its hash (`#code=`, `#project=`), readable or not. */
+export const hasSharedChart = (hash: string): boolean => /^#(?:code|project)=/.test(hash)
+
 // ----- A run: the inputs of every tick (`&run=<compressed>`) -----------------------------------------------------
 //
 // "Copy link to this run" puts the inputs each tick ran with next to the chart, so whoever opens the link sees the
@@ -142,11 +193,12 @@ export const hasRun = (hash: string): boolean => hash.replace(/^#/, '').split('&
  * its title and the files it imports), else with the source in the hash (`#code=...&run=...`). `name`: the chart
  * of the file that ran, when it is not the first (`&chart=<name>`).
  */
-export function runUrl(playground: string | URL, run: SharedRun, chart: ({ example: string } | { source: string }) & { name?: string }): string {
+export function runUrl(playground: string | URL, run: SharedRun, chart: ({ example: string } | { source: string } | { project: SharedProject }) & { name?: string }): string {
     const url = new URL(playground.toString())
     url.search = 'example' in chart ? `?example=${encodeURIComponent(chart.example).replace(/%2F/g, '/')}` : ''
     const which = chart.name ? `&chart=${encodeURIComponent(chart.name)}` : ''
-    url.hash = 'example' in chart ? `#${RUN}${encodeRun(run)}${which}` : `${hashForSource(chart.source)}&${RUN}${encodeRun(run)}${which}`
+    const where = 'example' in chart ? '#' : `${'source' in chart ? hashForSource(chart.source) : hashForProject(chart.project)}&`
+    url.hash = `${where}${RUN}${encodeRun(run)}${which}`
     return url.toString()
 }
 

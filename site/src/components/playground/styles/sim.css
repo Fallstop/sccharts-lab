@@ -1,0 +1,340 @@
+/* The simulation: SimPanel inside the playground, the Guided tour | Free play switch, the tools (Variables, Copy
+ * link to this run), the variables strip, the watch and Run until. */
+
+.sc-pg__sim-note {
+	min-width: 0;
+	margin: 0 0 0 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: var(--text-xs);
+	color: var(--c-caution-ink);
+}
+.sc-pg__sim-note[hidden],
+.sc-pg__rebuild[hidden] {
+	display: none;
+}
+.sc-pg__rebuild {
+	flex: none;
+	background: var(--c-caution-bg);
+	border-color: var(--c-caution-rule);
+	color: var(--c-caution-ink);
+}
+.sc-pg__rebuild:hover {
+	color: var(--c-caution-ink);
+}
+.sc-pg__rebuild[aria-disabled='true'] {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+.sc-pg__sim {
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+	overscroll-behavior: contain;
+	scrollbar-width: thin;
+}
+/* SimPanel's three blocks: the controls on top; the trace and "What happened" side by side when there is room. */
+.sc-pg__sim {
+	container-type: inline-size;
+}
+@container (min-width: 52rem) {
+	.sc-pg__sim .sc-sim[data-state='ready'] {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(16rem, 26rem);
+		grid-template-areas: 'controls controls' 'trace foot';
+		align-items: start;
+	}
+	.sc-pg__sim .sc-sim[data-state='ready'] > .sc-sim__controls {
+		grid-area: controls;
+	}
+	.sc-pg__sim .sc-sim[data-state='ready'] > .sc-sim__trace {
+		grid-area: trace;
+		border-top: 0;
+	}
+	.sc-pg__sim .sc-sim[data-state='ready'] > .sc-sim__foot {
+		grid-area: foot;
+		align-self: stretch;
+		align-content: start;
+		border-top: 0;
+		border-inline-start: 1px solid var(--c-rule);
+	}
+}
+.sc-pg__sim .sc-sim__controls {
+	border-top: 0;
+	border-bottom: 1px solid var(--c-rule);
+}
+.sc-pg__sim .sc-sim__trace {
+	border-top: 0;
+}
+.sc-pg__sim .sc-sim__errors {
+	border-top: 0;
+}
+.sc-pg__sim-placeholder {
+	padding: 0.625rem 1rem;
+	border-bottom: 1px solid var(--c-rule);
+	background-color: var(--c-rail);
+}
+
+/* ----- Guided tour | Free play (examples with a scenario) ----- */
+
+.sc-pg__mode {
+	display: inline-flex;
+	flex: none;
+	padding: 2px;
+	border: 1px solid var(--c-control);
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-sheet);
+}
+.sc-pg__mode[hidden] {
+	display: none;
+}
+.sc-pg__mode button {
+	min-height: 1.75rem;
+	padding: 0 0.75rem;
+	border: 0;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-muted);
+	font: inherit;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.sc-pg__mode button:hover {
+	color: var(--c-ink);
+}
+.sc-pg__mode button[aria-pressed='true'] {
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+.sc-pg__mode button:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 1px;
+}
+
+/* ----- Simulation tools in the head: Variables, Copy link to this run ----- */
+
+.sc-pg__simtools {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 0.25rem;
+	margin-inline-start: auto;
+}
+/* The "source changed" note takes the free room when it is there. */
+.sc-pg-panel__tools:has(> .sc-pg__sim-note:not([hidden])) > .sc-pg__simtools {
+	margin-inline-start: 0;
+}
+.sc-pg__simtool {
+	gap: 0.375rem;
+	min-height: 1.875rem;
+	padding-inline: 0.625rem;
+	font-size: var(--text-xs);
+}
+.sc-pg__simtool[aria-expanded='true'] {
+	border-color: var(--c-ink);
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+.sc-pg__simtool[aria-disabled='true'] {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+.sc-pg__vars-count {
+	font-family: var(--font-mono);
+	font-size: var(--text-2xs);
+	font-variant-numeric: tabular-nums;
+	opacity: 0.8;
+}
+.sc-pg__vars-count:empty {
+	display: none;
+}
+@media (max-width: 47.99rem) {
+	/* Icon-only on phones, as the toolbar; the label stays for screen readers. */
+	.sc-pg__simtool {
+		width: 2.25rem;
+		min-height: 2.25rem;
+		padding-inline: 0;
+	}
+	.sc-pg__simtool-label,
+	.sc-pg__vars-count {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+}
+
+/* ----- The variables strip (under the simulation's head) ----- */
+
+.sc-pg-vars {
+	display: grid;
+	gap: 0.5rem;
+	padding: 0.625rem 1rem;
+	border-bottom: 1px solid var(--c-rule);
+	background-color: var(--c-sheet);
+	font-size: var(--text-xs);
+}
+.sc-pg-vars__groups {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.25rem;
+}
+.sc-pg-vars__group {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.375rem;
+	min-width: 0;
+}
+.sc-pg-vars__title {
+	font-weight: 700;
+	color: var(--c-muted);
+	margin-inline-end: 0.125rem;
+}
+.sc-pg-vars__item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	min-height: 1.875rem;
+	padding: 0 0.625rem 0 0.4375rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	cursor: pointer;
+}
+.sc-pg-vars__item:hover {
+	border-color: var(--c-accent-bright);
+}
+.sc-pg-vars__item:has(input:focus-visible) {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 1px;
+}
+.sc-pg-vars__item:has(input:not(:checked)) {
+	border-style: dashed;
+	color: var(--c-muted);
+}
+.sc-pg-vars__item input {
+	width: 0.875rem;
+	height: 0.875rem;
+	margin: 0;
+	accent-color: var(--c-ink);
+}
+.sc-pg-vars__item input:focus-visible {
+	outline: none;
+}
+.sc-pg-vars__item code {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	background: none;
+	padding: 0;
+	color: inherit;
+}
+.sc-pg-vars__foot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 0.375rem;
+}
+.sc-pg-vars__note {
+	margin-inline-end: auto;
+	color: var(--c-muted);
+}
+.sc-pg-vars__buttons {
+	display: inline-flex;
+	gap: 0.375rem;
+}
+.sc-pg-vars__foot .sc-btn {
+	min-height: 1.75rem;
+	padding-inline: 0.625rem;
+	font-size: var(--text-2xs);
+}
+.sc-pg-vars__none {
+	margin: 0;
+	color: var(--c-muted);
+}
+.sc-pg-vars__list {
+	display: grid;
+	gap: 0.5rem;
+}
+
+/* ----- Watch and Run until (in the variables strip) ----- */
+
+.sc-pg-watch {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.375rem 0.625rem;
+	padding-top: 0.5rem;
+	border-top: 1px dashed var(--c-rule);
+}
+.sc-pg-watch__label,
+.sc-pg-watch__until label {
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-pg-watch__input {
+	flex: 1 1 14rem;
+	max-width: 24rem;
+	min-width: 0;
+	min-height: 1.875rem;
+	padding: 0.125rem 0.5rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+}
+.sc-pg-watch__input[aria-invalid='true'] {
+	border-color: var(--c-danger-rule);
+}
+.sc-pg-watch__value {
+	flex: 1 1 10rem;
+	min-width: 0;
+	color: var(--c-muted);
+}
+.sc-pg-watch__value code {
+	padding: 0.05em 0.3em;
+	border-radius: var(--radius-xs);
+	background-color: var(--sl-color-bg-inline-code);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+}
+.sc-pg-watch__value.is-true code {
+	background-color: var(--c-tip-bg);
+	color: var(--c-tip-ink);
+}
+.sc-pg-watch__value.is-error {
+	color: var(--c-danger-ink);
+}
+.sc-pg-watch__until {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.375rem;
+	margin-inline-start: auto;
+}
+.sc-pg-watch__until select {
+	min-height: 1.875rem;
+	max-width: 16rem;
+	padding: 0 0.375rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font: inherit;
+}
+.sc-pg-watch__until .sc-btn {
+	min-height: 1.875rem;
+	font-size: var(--text-2xs);
+}
+.sc-pg-watch__until .sc-btn[aria-disabled='true'] {
+	opacity: 0.55;
+	cursor: not-allowed;
+}

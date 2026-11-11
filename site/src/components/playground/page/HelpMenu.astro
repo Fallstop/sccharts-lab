@@ -1,0 +1,56 @@
+---
+/** The app bar's help: keyboard shortcuts, the diagram, the simulation, projects, and where to go when a chart
+ *  misbehaves. `?` opens it (outside the editor). */
+import { pgIcons } from '../icons'
+
+const shortcuts: [string[], string][] = [
+	[['Mod', 'Enter'], 'Step one tick'],
+	[['Mod', 'Shift', 'Enter'], 'Rebuild the simulation after an edit'],
+	[['Ctrl', 'Space'], 'Complete a name, a keyword or a target state'],
+	[['F12'], 'Go to the declaration of the name under the cursor (or Ctrl-click or ⌘-click it)'],
+	[['Mod', '/'], 'Comment or uncomment the selected lines'],
+	[['Mod', 'F'], 'Find and replace'],
+	[['F8'], 'Go to the next problem (with Shift: the previous one)'],
+	[['Mod', 'S'], 'Save: into the folder you opened, else download the chart (a project of several files as a .zip)'],
+	[['Mod', 'O'], 'Open .sctx files or a .zip (or drop them on the editor)'],
+	[['Mod', 'Shift', 'S'], 'Copy a link to this chart (every file of the project is in it)'],
+	[['Mod', 'K'], 'Search the guide'],
+	[['Esc', 'Tab'], 'Leave the editor (Tab alone indents)'],
+	[['?'], 'Show this help (outside the editor)'],
+]
+---
+
+<details class="sc-pg-pop sc-pg-pop--help" data-pg-help>
+	<summary class="sc-pg-appbar__btn sc-pg-appbar__btn--icon" aria-label="Help and keyboard shortcuts" title="Help and keyboard shortcuts (?)">
+		<Fragment set:html={pgIcons.help} />
+	</summary>
+	<div class="sc-pg-pop__panel sc-pg-help">
+		<h2>Keyboard shortcuts</h2>
+		<dl>
+			{
+				shortcuts.map(([keys, what]) => (
+					<div>
+						<dt>
+							{keys.map((k, n) => (
+								<>
+									{n > 0 && <span class="sc-pg-help__join">{keys[0] === 'Esc' ? 'then' : '+'}</span>}
+									<kbd data-mod={k === 'Mod' ? '' : undefined}>{k === 'Mod' ? 'Ctrl' : k}</kbd>
+								</>
+							))}
+						</dt>
+						<dd>{what}</dd>
+					</div>
+				))
+			}
+		</dl>
+		<h2>Projects and files</h2>
+		<p>A project is a set of <code>.sctx</code> files. The one in the editor is drawn and simulated; it uses the charts of another file after <code class="sc-nobr">import "name"</code>, as in KIELER. The files button beside the tabs shows them: add, rename and delete files there. The playground keeps your projects in this browser (the project's name opens the list), so a reload never loses work. <b>Open folder</b> works on a folder of your computer and saves back into it.</p>
+		<h2>In the diagram</h2>
+		<p>Drag to pan; Ctrl and the mouse wheel, or a pinch, zoom. With the diagram focused: the arrow keys pan, <kbd>+</kbd> and <kbd>−</kbd> zoom, <kbd>0</kbd> fits, <kbd>1</kbd> shows it at 100 %. The picture button downloads the diagram as an SVG file, for a report or a slide.</p>
+		<p>Press <kbd>Tab</kbd> once more to reach the chart's states and transitions: the arrow keys move between them in the order they are written, and <kbd>Enter</kbd> finds one in the source. The list button shows the chart as an outline, for the keyboard and screen readers.</p>
+		<h2>In the panel</h2>
+		<p><b>Variables</b> chooses what the timing diagram shows; under it, <b>Watch</b> shows the value of an expression in the tick shown (<code class="sc-nobr">count &gt;= 3 &amp;&amp; !done</code>, <code class="sc-nobr">pre(x) != x</code>), and <b>Run until</b> steps until it holds or a state is active. <b>Copy link to this run</b> copies a link that replays the ticks you ran. <b>Problems</b> lists what the compiler says; <b>Console</b> shows what the chart prints with <code class="sc-nobr">print(…)</code>, tick by tick.</p>
+		<h2>When a chart misbehaves</h2>
+		<p><a href="/reference/troubleshooting/">Troubleshooting</a> goes from what you see to its cause and the fix; <a href="/reference/errors/">Compiler messages</a> explains each error and warning. <a href="/reference/about/">About the simulator</a></p>
+	</div>
+</details>

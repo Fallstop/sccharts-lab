@@ -1,0 +1,82 @@
+---
+/**
+ * The bottom panel: a tab per entry of PANEL_TABS (panel-tabs.ts), each with a slot for its tools in the head and a
+ * panel (panel.ts switches them). The Simulation tab is rendered here (its tools, the variables strip, and the
+ * panel's build-time placeholder until SimPanel mounts); the Problems tab holds the list (problems.ts); the others
+ * are empty until their content is mounted.
+ */
+import SimControls from '../../frame/SimControls.astro'
+import { PANEL_TABS } from '../panel-tabs'
+import { pgIcons } from '../icons'
+
+interface Props {
+	inputs: { name: string; direction: 'input'; type: string }[]
+}
+const { inputs } = Astro.props
+---
+
+<section class="sc-pg-panel" data-pg-panel data-panel-tab="sim" aria-label="Simulation and output">
+	<div class="sc-pg-panel__head">
+		<div class="sc-pg-panel__tabs" role="tablist" aria-label="Panel" data-pg-panel-tabs>
+			{
+				PANEL_TABS.map((t, i) => (
+					<button type="button" role="tab" id={`sc-pg-tab-${t.id}`} data-panel-tab={t.id} aria-selected={String(i === 0)} aria-controls={`sc-pg-panel-${t.id}`} tabindex={i === 0 ? 0 : -1}>
+						{t.id === 'sim' && <span class="sc-pg__glyph is-sim" aria-hidden="true" />}
+						<span>{t.label}</span>
+						<span class="sc-pg-panel__badge" data-pg-badge-count hidden />
+						<span class="sc-visually-hidden" data-pg-badge-words />
+					</button>
+				))
+			}
+		</div>
+		<div class="sc-pg-panel__tools" data-pg-panel-tools="sim">
+			<div class="sc-pg__mode" role="group" aria-label="How to run the example" data-pg-mode hidden>
+				<button type="button" data-mode="tour" aria-pressed="false" title="Step through the example's scripted inputs, with notes">Guided tour</button>
+				<button type="button" data-mode="free" aria-pressed="true" title="Set the inputs yourself">Free play</button>
+			</div>
+			<p class="sc-pg__sim-note" data-pg-sim-note hidden></p>
+			<button type="button" class="sc-btn sc-btn--sm sc-pg__rebuild" data-action="rebuild" hidden>
+				<Fragment set:html={pgIcons.rebuild} /><span>Rebuild</span>
+			</button>
+			<div class="sc-pg__simtools" role="group" aria-label="Simulation tools">
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-pg__simtool" data-pg-vars-toggle aria-expanded="false" aria-controls="sc-pg-vars" title="Choose the variables the timing diagram shows; watch an expression and run until it holds">
+					<Fragment set:html={pgIcons.variables} /><span class="sc-pg__simtool-label">Variables</span><span class="sc-pg__vars-count" data-pg-vars-count></span><span class="sc-visually-hidden"> shown in the timing diagram</span>
+				</button>
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-pg__simtool" data-action="share-run" aria-disabled="true" title="Run the chart first: the link replays the ticks you run">
+					<Fragment set:html={pgIcons.link} /><span class="sc-pg__simtool-label">Copy link to this run</span>
+				</button>
+			</div>
+		</div>
+		{PANEL_TABS.filter((t) => t.id !== 'sim').map((t) => <div class="sc-pg-panel__tools" data-pg-panel-tools={t.id} hidden />)}
+	</div>
+	<div class="sc-pg-panel__body" role="tabpanel" id="sc-pg-panel-sim" aria-labelledby="sc-pg-tab-sim" data-pg-panel-body="sim" data-pg-sim-panel>
+		<div class="sc-pg-vars" id="sc-pg-vars" data-pg-vars hidden>
+			<div class="sc-pg-vars__list" data-pg-vars-list role="group" aria-label="Variables in the timing diagram"></div>
+			<div class="sc-pg-watch" role="group" aria-label="Watch and run until">
+				<label class="sc-pg-watch__label" for="sc-pg-watch-input">Watch</label>
+				<input class="sc-pg-watch__input" id="sc-pg-watch-input" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="an expression, e.g. count >= 3" aria-describedby="sc-pg-watch-value" data-pg-watch-input />
+				<span class="sc-pg-watch__value" id="sc-pg-watch-value" data-pg-watch-value></span>
+				<span class="sc-pg-watch__until">
+					<label for="sc-pg-until">Run until</label>
+					<select id="sc-pg-until" data-pg-until></select>
+					<button type="button" class="sc-btn sc-btn--sm" data-pg-until-run>Run</button>
+				</span>
+			</div>
+		</div>
+		<div class="sc-pg__sim" data-pg-sim>
+			<div class="sc-pg__sim-placeholder">
+				<SimControls inputs={inputs} note="" />
+				<p class="sc-simctl__note"><span class="sc-pg__if-js">Loading the simulator.</span><span class="sc-pg__if-nojs">Turn on JavaScript to run the chart.</span></p>
+			</div>
+		</div>
+	</div>
+	<div class="sc-pg-panel__body" role="tabpanel" id="sc-pg-panel-problems" aria-labelledby="sc-pg-tab-problems" data-pg-panel-body="problems" hidden>
+		<p class="sc-pg-panel__empty" data-pg-problems-empty>No problems.</p>
+		<ul class="sc-pg__problems-list" data-pg-problems-list></ul>
+	</div>
+	{
+		PANEL_TABS.filter((t) => !t.builtin).map((t) => (
+			<div class="sc-pg-panel__body" role="tabpanel" id={`sc-pg-panel-${t.id}`} aria-labelledby={`sc-pg-tab-${t.id}`} data-pg-panel-body={t.id} hidden />
+		))
+	}
+</section>

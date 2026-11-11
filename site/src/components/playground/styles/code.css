@@ -1,0 +1,249 @@
+/* The editor (CodeMirror) and the build-time code that stands in for it: syntax colours, the static rendering
+ * (the editor's own metrics, so nothing moves when it takes over), the lines the simulation marks, hover cards and
+ * the editor's diagnostics. */
+
+/* A pane's body: the editor's host, the diagram's stage. */
+.sc-pg__body {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+}
+
+.sc-tok-kw {
+	color: var(--pg-tok-kw);
+	font-weight: 700;
+}
+.sc-tok-str,
+.sc-tok-host {
+	color: var(--pg-tok-str);
+}
+.sc-tok-num {
+	color: var(--pg-tok-num);
+}
+.sc-tok-com {
+	color: var(--pg-tok-com);
+}
+.sc-tok-ann {
+	color: var(--pg-tok-ann);
+}
+.sc-tok-op {
+	color: var(--pg-tok-op);
+}
+.sc-tok-bad {
+	color: var(--pg-tok-bad);
+	text-decoration: wavy underline;
+	text-decoration-skip-ink: none;
+}
+
+
+.sc-pg__body--editor {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--c-code-bg);
+}
+.sc-pg__body--editor > .cm-editor {
+	flex: 1;
+	min-height: 0;
+}
+.sc-pg__body--editor.is-drop {
+	outline: 2px dashed var(--c-accent-bright);
+	outline-offset: -6px;
+}
+/* The static rendering mirrors the editor's metrics, so nothing moves when CodeMirror takes over. */
+.sc-pg-static {
+	flex: 1;
+	margin: 0;
+	padding: 0.75rem 0;
+	overflow: auto;
+	background: none;
+	border: 0;
+	color: var(--pg-code-fg);
+	font-family: var(--font-mono);
+	font-size: var(--pg-code-size, 0.875rem);
+	line-height: 1.6;
+	tab-size: 4;
+}
+.sc-pg-static code {
+	display: block;
+	font: inherit;
+	background: none;
+	padding: 0;
+	color: inherit;
+}
+.sc-pg-static__line {
+	display: flex;
+}
+.sc-pg-static__no {
+	/* CodeMirror's gutters: line numbers (2.375rem), folding (22px, not in the inline playground), lint (1.4em),
+	 * then the gutters' border and the line's own padding. */
+	--pg-fold-w: 22px;
+	flex: none;
+	box-sizing: content-box;
+	width: calc(2.375rem - 1.25rem);
+	padding: 0 calc(0.5rem + var(--pg-fold-w) + 1.4em) 0 0.75rem;
+	margin-right: 0.75rem;
+	border-right: 1px solid var(--c-rule);
+	color: var(--pg-gutter-fg);
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	user-select: none;
+}
+.sc-pg-inline-host .sc-pg-static__no {
+	/* No fold gutter; the line numbers are CodeMirror's 2.25rem (its min-width, padding included). */
+	--pg-fold-w: 0px;
+	width: calc(2.25rem - 1.25rem);
+}
+.sc-pg-static__text {
+	white-space: pre;
+	padding-right: 1rem;
+}
+.sc-pg__body--editor .cm-scroller {
+	scrollbar-width: thin;
+	scrollbar-color: var(--c-rule-strong) transparent;
+}
+@media (max-width: 30rem) {
+	/* Narrow gutters on phones. */
+	.sc-pg .cm-editor .cm-lineNumbers .cm-gutterElement {
+		min-width: 1.5rem;
+		padding: 0 0.25rem 0 0.375rem;
+	}
+	.sc-pg .cm-editor .cm-foldGutter .cm-gutterElement {
+		padding: 0 0.125rem;
+	}
+	.sc-pg .cm-editor .cm-line {
+		padding-left: 0.5rem;
+	}
+	/* The page's editor (the inline playground keeps its gutters, and its build-time code matches them). */
+	.sc-pg .sc-pg-static__no {
+		--pg-fold-w: 18px;
+		width: calc(28px - 0.625rem);
+		padding: 0 calc(0.25rem + var(--pg-fold-w) + 1.4em) 0 0.375rem;
+		margin-right: 0.5rem;
+	}
+}
+.sc-pg-fold {
+	display: inline-flex;
+	align-items: center;
+	height: 100%;
+}
+/* Lines the simulation marks: the header of each active state, each line of a fired transition. */
+.cm-line.sc-pg-cm-active {
+	box-shadow: inset 3px 0 0 var(--sc-active-stroke);
+	background-color: color-mix(in srgb, var(--sc-active-stroke) 7%, transparent);
+}
+.cm-line.sc-pg-cm-taken {
+	box-shadow: inset 3px 0 0 var(--sc-taken);
+	background-color: color-mix(in srgb, var(--sc-taken) 8%, transparent);
+}
+.cm-line.sc-pg-cm-active.sc-pg-cm-taken {
+	box-shadow: inset 3px 0 0 var(--sc-active-stroke), inset 6px 0 0 var(--sc-taken);
+}
+.sc-pg-cm-focus {
+	background-color: color-mix(in srgb, var(--sc-keyword) 12%, transparent);
+	border-radius: 2px;
+}
+.cm-completionIcon-state::after {
+	content: '';
+	display: inline-block;
+	width: 0.875em;
+	height: 0.55em;
+	border: 1.5px solid currentColor;
+	border-radius: 999px;
+}
+.cm-completionIcon-signal::after {
+	content: '⎍';
+}
+.cm-completionIcon-snippet::after {
+	content: '…';
+}
+
+/* Hover cards and diagnostics */
+.sc-pg-info,
+.sc-pg-diag {
+	display: grid;
+	gap: 0.3125rem;
+	max-width: 26rem;
+	line-height: var(--leading-snug);
+}
+.sc-pg-info p,
+.sc-pg-diag p {
+	margin: 0;
+}
+.sc-pg-decl {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	color: var(--c-ink);
+	background: none;
+	padding: 0;
+	white-space: pre-wrap;
+}
+.sc-pg-info__where {
+	color: var(--c-muted);
+}
+.sc-pg-info__doc {
+	color: var(--c-text);
+	white-space: pre-line;
+}
+.sc-pg-info__value {
+	color: var(--c-text);
+}
+.sc-pg-info code,
+.sc-pg-diag code {
+	font-family: var(--font-mono);
+	font-size: 0.95em;
+	color: var(--c-ink);
+	background: none;
+	padding: 0;
+}
+.sc-pg-diag__msg {
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sc-pg-diag__hint {
+	color: var(--c-text);
+}
+.sc-pg-diag__kieler {
+	color: var(--c-muted);
+}
+.sc-pg-diag__kieler q {
+	font-family: var(--font-mono);
+	font-size: 0.95em;
+	quotes: none;
+	white-space: pre-line;
+}
+
+/* ----- What only KIELER reports (an example's recording) ----- */
+
+.sc-pg-diag__kieler-only {
+	font-weight: 400;
+}
+.sc-pg-diag__kieler-only q {
+	font-family: var(--font-mono);
+	font-size: 0.95em;
+	font-weight: 700;
+	quotes: none;
+	white-space: pre-line;
+}
+.sc-pg-diag__kieler-only .sc-pg-diag__label {
+	color: var(--c-muted);
+}
+
+/* "About this message": the error reference's section (problems list and the editor's lint cards). */
+.sc-pg-about {
+	font-size: var(--text-2xs);
+	font-weight: 600;
+	text-underline-offset: 0.15em;
+}
+/* A target of its own (WCAG 2.2 target size): at least 24 px high. */
+.sc-pg-problem > .sc-pg-about,
+.sc-pg-diag__about > .sc-pg-about {
+	display: inline-flex;
+	align-items: center;
+	min-height: 1.5rem;
+}
+.sc-pg-problem > .sc-pg-about {
+	margin: -0.375rem 0 0.25rem calc(0.875rem + 3px);
+}
+.sc-pg-diag__about {
+	margin: 0;
+}

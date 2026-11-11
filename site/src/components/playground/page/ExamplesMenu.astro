@@ -1,0 +1,54 @@
+---
+/**
+ * The app bar's example menu: every chart of the guide, grouped by section and page, as links (they work without
+ * JavaScript; boot.ts opens them in place once the editor has loaded), with a filter.
+ */
+import type { CatalogueGroup, CatalogueItem } from '../catalogue'
+import { pgIcons } from '../icons'
+
+interface Props {
+	groups: CatalogueGroup[]
+	count: number
+}
+const { groups, count } = Astro.props
+const tag = (i: CatalogueItem) => (i.starter ? 'Exercise' : i.rejected ? 'Rejected' : undefined)
+---
+
+<details class="sc-pg-pop sc-pg-pop--examples" data-pg-examples>
+	<summary class="sc-pg-appbar__btn" title="Every chart of the guide">
+		<Fragment set:html={pgIcons.examples} /><span class="sc-pg-appbar__label">Examples</span><Fragment set:html={pgIcons.chevron} />
+	</summary>
+	<div class="sc-pg-pop__panel sc-pg-examples" role="group" aria-label="Examples">
+		<label class="sc-pg-examples__filter">
+			<Fragment set:html={pgIcons.search} />
+			<span class="sc-visually-hidden">Filter the examples</span>
+			<input type="search" placeholder={`Filter ${count} charts`} data-pg-filter autocomplete="off" spellcheck="false" />
+		</label>
+		<div class="sc-pg-examples__list" data-pg-list>
+			{
+				groups.map((g) => (
+					<section class="sc-pg-examples__group" data-group={g.id}>
+						<h2>{g.label}</h2>
+						{g.pages.map((p) => (
+							<div class="sc-pg-examples__page" data-page-title={p.slug ? p.title : g.id === 'showcase' ? 'Showcase' : undefined} data-page-href={p.href}>
+								{p.slug && <h3>{p.title}</h3>}
+								<ul>
+									{p.items.map((i) => (
+										<li>
+											<a href={`/playground/?example=${i.id}`} data-example={i.id}>
+												<span class="sc-pg-examples__name">{i.title}</span>
+												{i.blurb ? <span class="sc-pg-examples__blurb">{i.blurb}</span> : <span class="sc-pg-examples__file">{i.file}.sctx</span>}
+												{tag(i) && <span class={`sc-pg-examples__tag is-${tag(i)!.toLowerCase()}`}>{tag(i)}</span>}
+											</a>
+										</li>
+									))}
+								</ul>
+							</div>
+						))}
+					</section>
+				))
+			}
+			<p class="sc-pg-examples__none" data-pg-none hidden>No chart matches.</p>
+		</div>
+	</div>
+</details>

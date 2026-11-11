@@ -1,0 +1,136 @@
+/* ----- The exercise's task (a TryIt link, &solution=): under the toolbar, folding to its title ----- */
+
+.sc-pg-task {
+	order: 5;
+	flex: 1 0 100%;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	align-items: center;
+	column-gap: 0.75rem;
+	min-width: 0;
+	padding: 0.1875rem 0.875rem 0.1875rem 0.25rem;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-md);
+	background-color: var(--c-sheet);
+	/* A straight accent bar (an inset rule, not a 4px border bent round the corner) and the frames' hard bottom edge. */
+	box-shadow: inset 3px 0 0 var(--c-accent-bright), 0 1.5px 0 var(--c-rule-strong);
+}
+.sc-pg-task__head {
+	min-width: 0;
+	margin: 0;
+	font-size: var(--text-sm);
+	line-height: var(--leading-snug);
+}
+.sc-pg-task__toggle {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	min-height: 2rem;
+	padding: 0 0.5rem;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--c-ink);
+	font: inherit;
+	font-weight: 700;
+	text-align: start;
+	cursor: pointer;
+}
+.sc-pg-task__toggle svg {
+	flex: none;
+	width: 1rem;
+	height: 1rem;
+	transform: rotate(-90deg);
+	transition: transform 0.15s;
+}
+.sc-pg-task.is-open .sc-pg-task__toggle svg {
+	transform: none;
+}
+.sc-pg-task__kind {
+	flex: none;
+	font-size: var(--text-2xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+.sc-pg-task__title {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.sc-pg-task__starter {
+	margin: 0;
+	padding: 0.0625rem 0.5rem;
+	border-radius: var(--radius-capsule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-size: var(--text-2xs);
+	font-weight: 700;
+	white-space: nowrap;
+}
+.sc-pg-task__back {
+	font-size: var(--text-xs);
+	white-space: nowrap;
+	color: var(--c-accent);
+}
+.sc-pg-task__body {
+	grid-column: 1 / -1;
+	max-height: 10.5rem;
+	overflow: auto;
+	overscroll-behavior: contain;
+	padding: 0.125rem 0.5rem 0.5rem 2rem;
+	font-size: var(--text-sm);
+	line-height: var(--leading-snug);
+	color: var(--c-text);
+}
+.sc-pg-task__body > * {
+	max-width: 52rem;
+	margin: 0;
+}
+.sc-pg-task__body > * + * {
+	margin-top: 0.5rem;
+}
+.sc-pg-task__body ul {
+	padding-inline-start: 1.25rem;
+}
+.sc-pg-task__body li + li {
+	margin-top: 0.25rem;
+}
+.sc-pg-task__body code {
+	padding: 0.05em 0.3em;
+	border-radius: var(--radius-xs);
+	background-color: var(--sl-color-bg-inline-code);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: 0.9em;
+}
+@media (max-width: 47.99rem) {
+	/* On a phone the parts wrap: the title row, "This is still the starter" when it does not fit beside it, the
+	 * link back (while the task is open), the task. */
+	.sc-pg-task {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.125rem 0.75rem;
+		padding-bottom: 0.3125rem;
+	}
+	.sc-pg-task__head {
+		flex: 1 1 15rem;
+	}
+	.sc-pg-task__title {
+		white-space: normal;
+	}
+	.sc-pg-task__starter {
+		margin-inline-start: 2rem;
+	}
+	.sc-pg-task__back {
+		flex-basis: 100%;
+		margin-inline-start: 2rem;
+	}
+	.sc-pg-task:not(.is-open) .sc-pg-task__back {
+		display: none;
+	}
+	.sc-pg-task__body {
+		flex-basis: 100%;
+		padding-left: 0.5rem;
+	}
+}

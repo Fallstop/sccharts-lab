@@ -1,0 +1,304 @@
+/*
+ * /playground's shell: the page gives way to the app (Starlight's header, title and footer are hidden; its sidebar
+ * is the Guide drawer), the app bar, the workspace grid (files | editor | diagram, the panel underneath) with its
+ * splitters, and one pane at a time on phones.
+ */
+
+/* ===== The page ==================================================================================== */
+
+/* The Guide drawer (Starlight's sidebar) opens under the app bar, and its close button sits in the app bar. */
+:root:has([data-sc-playground]) {
+	--sl-nav-height: 3rem;
+}
+html:has([data-sc-playground] [data-pg-js]),
+html:has([data-sc-playground][data-pg-js]) {
+	overflow: hidden;
+}
+:root:has([data-sc-playground]) header.header,
+:root:has([data-sc-playground]) .main-frame footer:not([data-sc-playground] footer) {
+	display: none;
+}
+/* The page's title stays for screen readers (and the skip link), under the app. */
+main:has([data-sc-playground]) .content-panel:first-of-type {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+/* The guide's menu: a drawer at every width, shown only while open. */
+:root:has([data-sc-playground]) #starlight__sidebar:not(:popover-open) {
+	display: none;
+}
+@media (min-width: 50rem) {
+	:root:has([data-sc-playground]) #starlight__sidebar:popover-open {
+		width: min(20rem, 100vw);
+		box-shadow: var(--shadow-pop);
+	}
+}
+/* Starlight's menu button only closes the drawer on a phone (the Guide button opens it). */
+:root:has([data-sc-playground]) .sl-menu-button:not(:has(~ :popover-open)) {
+	display: none;
+}
+
+/* Without JavaScript: the source, the build-time diagram and the example links; no tools that cannot work. */
+.sc-pg:not([data-pg-js]) .sc-pg__if-js,
+.sc-pg[data-pg-js] .sc-pg__if-nojs,
+.sc-pg:not([data-pg-js]) :is(.sc-pg-appbar__btn--share, .sc-pg-appbar__search, .sc-pg-pop--project, .sc-pg__zoom, .sc-pg-panel__tools, .sc-pg__split, .sc-pg__hsplit, .sc-pg__fsplit, .sc-pg-files, .sc-pg__sim-placeholder > .sc-simctl),
+.sc-pg:not([data-pg-js]) .sc-pg-panel__tabs [role='tab']:not(:first-child) {
+	display: none !important;
+}
+
+/* ===== The app ===================================================================================== */
+
+.sc-pg {
+	position: fixed;
+	z-index: 1;
+	inset: 0;
+	/* Not the markdown content's spacing: the app is the whole window. */
+	margin: 0 !important;
+	display: grid;
+	grid-template-rows: auto auto auto minmax(0, 1fr);
+	min-width: 0;
+	background-color: var(--pg-ground);
+	color: var(--c-text);
+	font-size: var(--text-sm);
+}
+
+/* Its rows: the app bar, the exercise's task, the phone tabs, the workspace (a hidden one keeps its row). */
+.sc-pg-appbar {
+	grid-row: 1;
+}
+.sc-pg-task {
+	grid-row: 2;
+}
+.sc-pg__tabs {
+	grid-row: 3;
+}
+.sc-pg__work {
+	grid-row: 4;
+}
+
+/* ----- The phone tabs (Code, Diagram, Simulate) ----- */
+
+.sc-pg__tabs {
+	display: none;
+}
+
+/* ===== The workspace =============================================================================== */
+
+.sc-pg__work {
+	display: grid;
+	grid-template-columns: var(--pg-files-w) 0.3125rem minmax(0, 1fr);
+	min-height: 0;
+	min-width: 0;
+}
+.sc-pg[data-files='closed'] .sc-pg__work {
+	grid-template-columns: minmax(0, 1fr);
+}
+.sc-pg[data-files='closed'] :is(.sc-pg-files, .sc-pg__fsplit) {
+	display: none;
+}
+.sc-pg__grid {
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) 0.3125rem var(--pg-sim-h, minmax(11rem, 40%));
+	min-height: 0;
+	min-width: 0;
+}
+.sc-pg__top {
+	--pg-split: 50%;
+	display: grid;
+	grid-template-columns: minmax(14rem, var(--pg-split)) 0.3125rem minmax(14rem, 1fr);
+	min-height: 0;
+	min-width: 0;
+}
+.sc-pg__panel {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
+	background-color: var(--pg-pane);
+}
+/* Their content (a long source, a large chart) scrolls or pans inside; it never makes the row taller. */
+.sc-pg[data-pg-js] .sc-pg__panel {
+	contain: size;
+}
+.sc-pg__head {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 0.5rem;
+	flex: none;
+	height: var(--pg-head-h);
+	padding: 0 0.375rem 0 0.875rem;
+	border-bottom: 1px solid var(--pg-line);
+	background-color: var(--pg-head);
+}
+.sc-pg__head h2 {
+	margin: 0;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+	white-space: nowrap;
+}
+.sc-pg__meta {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+	font-variant-numeric: tabular-nums;
+}
+.sc-pg__glyph {
+	flex: none;
+	width: 1rem;
+	height: 0.6875rem;
+	border-radius: var(--radius-capsule);
+	border: 1.5px solid var(--sc-state-stroke);
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+}
+.sc-pg__glyph.is-sim {
+	border-color: var(--sc-active-stroke);
+	box-shadow: 0 0 0 2px var(--sc-active-glow);
+}
+
+/* ----- Splitters: a hairline between panes, a handle under the pointer ----- */
+
+.sc-pg__split,
+.sc-pg__hsplit,
+.sc-pg__fsplit {
+	position: relative;
+	z-index: 4;
+	touch-action: none;
+	background-color: var(--pg-ground);
+}
+.sc-pg__split,
+.sc-pg__fsplit {
+	cursor: col-resize;
+}
+.sc-pg__hsplit {
+	cursor: row-resize;
+}
+.sc-pg__split::after,
+.sc-pg__hsplit::after,
+.sc-pg__fsplit::after {
+	content: '';
+	position: absolute;
+	background-color: var(--pg-line-strong);
+	transition: background-color 0.15s, inset 0.15s;
+}
+.sc-pg__split::after,
+.sc-pg__fsplit::after {
+	inset: 0 calc(50% - 0.5px);
+}
+.sc-pg__hsplit::after {
+	inset: calc(50% - 0.5px) 0;
+}
+.sc-pg__split:is(:hover, :focus-visible)::after,
+.sc-pg__fsplit:is(:hover, :focus-visible)::after,
+.is-resizing-x > :is(.sc-pg__split, .sc-pg__fsplit)::after {
+	inset: 0 calc(50% - 1.5px);
+	background-color: var(--c-accent-bright);
+}
+.sc-pg__hsplit:is(:hover, :focus-visible)::after,
+.is-resizing-y > .sc-pg__hsplit::after {
+	inset: calc(50% - 1.5px) 0;
+	background-color: var(--c-accent-bright);
+}
+.sc-pg__split:focus-visible,
+.sc-pg__hsplit:focus-visible,
+.sc-pg__fsplit:focus-visible {
+	outline: none;
+}
+.is-resizing-x {
+	cursor: col-resize;
+	user-select: none;
+}
+.is-resizing-y {
+	cursor: row-resize;
+	user-select: none;
+}
+
+/* ===== Phones and narrow windows: one pane at a time ================================================ */
+
+@media (max-width: 59.99rem) {
+	.sc-pg__work,
+	.sc-pg[data-files='closed'] .sc-pg__work {
+		position: relative;
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.sc-pg__fsplit,
+	.sc-pg__split,
+	.sc-pg__hsplit {
+		display: none;
+	}
+	.sc-pg__grid {
+		grid-template-rows: minmax(0, 1fr);
+	}
+	.sc-pg__top {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.sc-pg[data-pg-js] .sc-pg__tabs {
+		display: flex;
+		margin: 0.375rem 0.625rem;
+		padding: 2px;
+		border: 1px solid var(--c-control);
+		border-radius: var(--radius-capsule);
+		background-color: var(--c-sheet);
+	}
+	.sc-pg__tabs button {
+		flex: 1;
+		min-height: 2.125rem;
+		border: 0;
+		border-radius: var(--radius-capsule);
+		background: none;
+		color: var(--c-muted);
+		font: inherit;
+		font-size: var(--text-sm);
+		font-weight: 700;
+		cursor: pointer;
+	}
+	.sc-pg__tabs button[aria-selected='true'] {
+		background-color: var(--c-ink);
+		color: var(--c-paper);
+	}
+	/* Code: the editor. Diagram: the diagram. Simulate: the diagram above, to watch the active states, and the
+	 * panel (the simulation, problems, console) below. */
+	.sc-pg[data-pg-js][data-tab='code'] :is(.sc-pg__panel--diagram, .sc-pg-panel),
+	.sc-pg[data-pg-js][data-tab='diagram'] :is(.sc-pg__panel--editor, .sc-pg-panel),
+	.sc-pg[data-pg-js][data-tab='sim'] .sc-pg__panel--editor {
+		display: none;
+	}
+	.sc-pg[data-pg-js][data-tab='sim'] .sc-pg__grid {
+		grid-template-rows: clamp(11rem, 34dvh, 20rem) minmax(0, 1fr);
+	}
+	.sc-pg[data-pg-js][data-tab='sim'] .sc-pg-panel {
+		border-top: 1px solid var(--pg-line-strong);
+	}
+	/* The files: a sheet over the editor. */
+	.sc-pg[data-pg-js] .sc-pg-files {
+		position: absolute;
+		z-index: 12;
+		inset: 0 auto 0 0;
+		width: min(19rem, 86vw);
+		box-shadow: var(--shadow-pop);
+	}
+	/* Without JavaScript everything is shown, one after the other, and the page scrolls. */
+	.sc-pg:not([data-pg-js]) {
+		position: static;
+		display: block;
+	}
+	.sc-pg:not([data-pg-js]) .sc-pg__top {
+		display: block;
+	}
+	.sc-pg:not([data-pg-js]) .sc-pg__body--editor {
+		max-height: 24rem;
+	}
+	.sc-pg:not([data-pg-js]) .sc-pg__stage {
+		min-height: 16rem;
+	}
+}

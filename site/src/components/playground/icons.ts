@@ -31,4 +31,22 @@ export const pgIcons = {
     // An i in a circle.
     info: svg('<circle cx="8" cy="8" r="6"/><path d="M8 7.25v4M8 4.9h.01"/>'),
     image: svg('<rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="m2.5 11.5 3.5-3.5 2.5 2.5 2-2 3 3"/><circle cx="10.75" cy="5.75" r="1"/>'),
+    copy: svg('<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 3.5V3A1.5 1.5 0 0 0 9 1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5"/>'),
+    // A circle struck through.
+    clear: svg('<circle cx="8" cy="8" r="5.5"/><path d="m4.25 11.75 7.5-7.5"/>'),
+    // The site's menu.
+    menu: svg('<path d="M2.5 4h11M2.5 8h11M2.5 12h11"/>'),
+    // A sidebar: a pane with a column at its left.
+    sidebar: svg('<rect x="1.75" y="2.5" width="12.5" height="11" rx="1.5"/><path d="M6 2.5v11"/>'),
+    // A file with a turned corner.
+    file: svg('<path d="M9 1.75H4.25a1.5 1.5 0 0 0-1.5 1.5v9.5a1.5 1.5 0 0 0 1.5 1.5h7.5a1.5 1.5 0 0 0 1.5-1.5V6z"/><path d="M9 1.75V6h4.25"/>'),
+    folder: svg('<path d="M1.75 12.25v-8.5a1.5 1.5 0 0 1 1.5-1.5h2.5l1.5 1.5h5.5a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-9.5a1.5 1.5 0 0 1-1.5-1.5z"/>'),
+    plus: svg('<path d="M8 3v10M3 8h10"/>'),
+    pencil: svg('<path d="m10.5 2.5 3 3L6 13H3v-3z"/><path d="m9 4 3 3"/>'),
+    trash: svg('<path d="M2.5 4.25h11M6.25 4.25V2.75h3.5v1.5M4 4.25l.75 9.25h6.5L12 4.25"/>'),
+    save: svg('<path d="M3.25 2h7.5L14 5.25v7.25A1.5 1.5 0 0 1 12.5 14h-9A1.5 1.5 0 0 1 2 12.5v-9A1.25 1.25 0 0 1 3.25 2z"/><path d="M5 2v3.5h5V2M4.75 14V9.5h6.5V14"/>'),
+    zip: svg('<path d="M9 1.75H4.25a1.5 1.5 0 0 0-1.5 1.5v9.5a1.5 1.5 0 0 0 1.5 1.5h7.5a1.5 1.5 0 0 0 1.5-1.5V6z"/><path d="M9 1.75V6h4.25M6.5 3.5h1M6.5 5.5h1M6.5 7.5h1M6 9.5h2v2H6z"/>'),
+    // The guide: an open book.
+    book: svg('<path d="M8 4.25C6.75 3 4.75 2.5 2 2.75v9.5c2.75-.25 4.75.25 6 1.5 1.25-1.25 3.25-1.75 6-1.5v-9.5c-2.75-.25-4.75.25-6 1.5zM8 4.25v9.5"/>'),
+    history: svg('<path d="M2.75 8a5.25 5.25 0 1 0 1.5-3.7"/><path d="M2.5 2.25v2.5H5M8 5v3.25l2 1.25"/>'),
 }

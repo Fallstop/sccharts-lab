@@ -8,7 +8,7 @@
 //
 //
 //   PLAYGROUND_E2E=1 pnpm exec vitest run tests/playground/e2e.test.ts
-//   PLAYGROUND_URL=http://127.0.0.1:4321 ...   (default)
+//   PLAYGROUND_URL=http://127.0.0.1:4321 ...   (default; another dev server: PORT=4341 tools/dev-server.sh)
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import type { Browser, Page } from 'playwright'
 import { launchChromium } from '../../tools/chromium.mjs'
@@ -420,9 +420,11 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         // Lane labels end with the lane's name (after its <title>).
         const lanes = await page.$$eval('[data-pg-sim] .sc-sim__trace svg text', els => els.map(e => e.textContent ?? ''))
         for (const name of ['A', 'B', 'R', 'O', 'state', 'ABO', 'HandleA', 'HandleB']) expect(lanes.some(l => l.endsWith(name)), name).toBe(true)
-        // The editor and the diagram open with 62 % of the first screen below the toolbar (and at least 18rem).
+        // A full-window app: no page scroll; the editor and the diagram keep at least 16rem above the panel.
+        expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(900)
         const main = await page.$eval('[data-pg-diagram]', el => el.getBoundingClientRect())
-        expect(main.height).toBeGreaterThanOrEqual(Math.max(18 * 16, 0.62 * (900 - main.top - 12)) - 2)
+        expect(main.height).toBeGreaterThanOrEqual(16 * 16)
+        expect(await page.$eval('[data-pg-panel]', el => el.getBoundingClientRect().bottom)).toBeLessThanOrEqual(900)
         // The diagram opens whole, fitted in both dimensions, at a zoom whose text can be read (at least 50 %).
         const zoom = Number((await page.textContent('[data-pg-zoom]'))!.replace(/\D/g, ''))
         expect(zoom).toBeGreaterThanOrEqual(50)

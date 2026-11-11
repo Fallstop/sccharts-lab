@@ -1,0 +1,209 @@
+/* /playground's app bar: the mark (home), the guide's menu, the project, Examples, Copy link, search, help. */
+
+.sc-pg-appbar {
+	position: relative;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	min-width: 0;
+	height: var(--pg-bar-h);
+	padding: 0 0.625rem 2px 0.875rem;
+	background-color: var(--pg-bar);
+}
+/* Its bottom edge is the guide's tick ruler (theme.css, the header): a time axis. */
+.sc-pg-appbar::after {
+	content: '';
+	position: absolute;
+	inset-inline: 0;
+	bottom: 0;
+	height: 6px;
+	pointer-events: none;
+	background:
+		linear-gradient(var(--c-rule-strong), var(--c-rule-strong)) bottom / 100% 1px no-repeat,
+		repeating-linear-gradient(to right, var(--c-rule-strong) 0 1px, transparent 1px calc(var(--tick, 8px) * 8)) bottom / 100% 6px no-repeat,
+		repeating-linear-gradient(to right, var(--c-rule) 0 1px, transparent 1px var(--tick, 8px)) bottom / 100% 3px no-repeat;
+}
+.sc-pg-appbar__home {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 0.5rem;
+	margin-inline-end: 0.5rem;
+	color: var(--c-ink);
+	text-decoration: none;
+	white-space: nowrap;
+}
+.sc-pg-appbar__brand {
+	font-family: var(--font-display);
+	font-stretch: var(--display-stretch);
+	font-weight: 650;
+	font-size: 1.0625rem;
+	letter-spacing: -0.01em;
+	line-height: 1;
+}
+.sc-pg-appbar__home:hover .sc-pg-appbar__brand {
+	color: var(--c-accent);
+	text-decoration: underline 2px;
+	text-underline-offset: 0.3em;
+}
+.sc-pg-appbar__rule {
+	flex: none;
+	width: 1px;
+	height: 1.25rem;
+	margin-inline: 0.375rem;
+	background-color: var(--pg-line-strong);
+}
+.sc-pg-appbar__fill {
+	flex: 1;
+	min-width: 0.25rem;
+}
+/* Quiet buttons (a state's capsule on hover); Copy link is a state, the app bar's one primary action. */
+.sc-pg-appbar__btn,
+.sc-pg-appbar__project {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 0.375rem;
+	min-height: 2rem;
+	padding: 0 0.625rem;
+	border: 1px solid transparent;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-ink);
+	font: inherit;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	white-space: nowrap;
+	cursor: pointer;
+	list-style: none;
+}
+.sc-pg-appbar__btn:hover,
+.sc-pg-appbar__project:hover,
+.sc-pg-pop[open] > .sc-pg-appbar__btn,
+.sc-pg-pop[open] > .sc-pg-appbar__project,
+.sc-pg-appbar__btn[aria-expanded='true'] {
+	border-color: var(--c-control);
+	background-color: var(--c-sheet);
+}
+.sc-pg-appbar__btn--icon {
+	width: 2rem;
+	padding: 0;
+	justify-content: center;
+}
+.sc-pg-appbar__btn--share {
+	border: 1.5px solid var(--sc-state-stroke);
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	color: var(--sc-state-text);
+}
+.sc-pg-appbar__btn--share:hover {
+	border-color: var(--sc-state-stroke);
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	box-shadow: 0 0 0 3px var(--c-accent-soft);
+}
+.sc-pg-appbar svg {
+	flex: none;
+}
+/* The project: its name, monospaced when it is an identifier; long names end in an ellipsis. */
+.sc-pg-appbar__project {
+	max-width: min(22rem, 34vw);
+	font-size: var(--text-sm);
+}
+.sc-pg-appbar__project::-webkit-details-marker {
+	display: none;
+}
+.sc-pg__title-name {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-family: var(--font-mono);
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sc-pg__title-name.is-prose {
+	font-family: var(--font-text);
+}
+.sc-pg__edited {
+	flex: none;
+	padding: 0 0.4375rem;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-capsule);
+	font-size: var(--text-2xs);
+	font-weight: 600;
+	color: var(--c-muted);
+}
+.sc-pg__title-page {
+	flex: 0 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: var(--text-xs);
+}
+.sc-pg__title-page:not([href]) {
+	color: var(--c-muted);
+	text-decoration: none;
+}
+/* Starlight's search, moved here: an icon button that opens its dialog (Ctrl+K). */
+.sc-pg-appbar__search {
+	display: inline-flex;
+	flex: none;
+	min-width: 2rem;
+}
+.sc-pg-appbar__search site-search button[data-open-modal] {
+	width: 2rem;
+	min-height: 2rem;
+	height: 2rem;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: var(--radius-capsule);
+	background: none;
+	box-shadow: none;
+	color: var(--c-ink);
+}
+.sc-pg-appbar__search site-search button[data-open-modal]:hover {
+	border-color: var(--c-control);
+	background-color: var(--c-sheet);
+}
+.sc-pg-appbar__search site-search button[data-open-modal] > :not(svg) {
+	display: none !important;
+}
+
+@media (max-width: 47.99rem) {
+	/* Icons only in the app bar; the labels stay for screen readers. */
+	.sc-pg-appbar {
+		gap: 0.125rem;
+		padding-inline: 0.5rem 0.375rem;
+	}
+	.sc-pg-appbar__brand,
+	.sc-pg-appbar__label,
+	.sc-pg-appbar__rule,
+	.sc-pg__title-page {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+	.sc-pg-appbar__home {
+		margin-inline-end: 0.125rem;
+	}
+	.sc-pg-appbar__btn:not(.sc-pg-appbar__btn--share) {
+		padding-inline: 0.375rem;
+	}
+	.sc-pg-appbar__btn > svg:last-child:not(:first-child) {
+		display: none;
+	}
+	.sc-pg-appbar__btn--share {
+		width: 2rem;
+		padding: 0;
+		justify-content: center;
+	}
+	.sc-pg-appbar__project {
+		flex: 0 1 auto;
+		max-width: none;
+		min-width: 3rem;
+		padding-inline: 0.5rem;
+	}
+}
