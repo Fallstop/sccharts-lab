@@ -6,6 +6,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-11-11
+
+This is the first stable release since 0.9.10. It includes 0.10.0, which was a pre-release, and 0.10.1,
+which was never published on its own: see their notes below.
+
 - `deep`, as in `deep deferred`, is highlighted as a keyword.
 - **Superstate names stay visible with Smart Zoom on.** Zoomed out, a superstate's title showed
   its background but no name. This is KIELER 1.6.1's fix, ported to the server. With it, the
