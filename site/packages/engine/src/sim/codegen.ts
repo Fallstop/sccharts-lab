@@ -61,12 +61,17 @@ export function checkCodegen(root: CState): Diagnostic[] {
     }
 
     // Names of KIELER's own: a chart-level variable named `_GO` or `_TERM` is a second member of that name in the tick
-    // data, and one starting with `_g` (KIELER's guard prefix) that something writes, an initial value or an
-    // assignment, is dropped with the guards nothing uses (CleanupValuedObjects) while the write still names it.
-    // Inputs, signals, and `_g` variables only read are fine (probes tests/engine/kieler/codegen/probe-reserved-*).
+    // data. One starting with `_g` (KIELER's guard prefix) that something writes, an initial value or an assignment,
+    // is dropped with the guards KIELER finds unused (CleanupValuedObjects) while the write still names it: unless a
+    // trigger tests it (a read in an effect is optimised away first, and `_g0`, KIELER's own first guard, goes
+    // whatever reads it). Inputs, signals, and `_g` variables nothing writes are fine (probes
+    // tests/engine/kieler/codegen/probe-reserved-*).
     const written = new Set<CVar>()
+    const tested = new Set<CVar>()
     for (const site of allActionSites(root)) {
-        for (const f of (site.transition ?? site.action!).effects) if (f.k === 'assign') written.add(f.ref.v)
+        const holder = site.transition ?? site.action!
+        for (const f of holder.effects) if (f.k === 'assign') written.add(f.ref.v)
+        walkExpr(holder.trigger, x => { if (x.k === 'ref') tested.add(x.v) })
     }
     for (const v of root.decls) {
         // A signal is a variable by now (the Signal processor ran): its presence keeps role 'presence'.
@@ -79,7 +84,7 @@ export function checkCodegen(root: CState): Diagnostic[] {
                 hint: `Rename \`${v.name}\` (names starting with \`_\` are best left to KIELER).`,
                 related: v.decl ? [v.decl] : undefined,
             })
-        } else if (v.name.startsWith('_g') && !v.input && (v.init !== undefined || written.has(v))) {
+        } else if (v.name.startsWith('_g') && !v.input && (v.init !== undefined || written.has(v)) && (v.name === '_g0' || !tested.has(v))) {
             add({
                 severity: 'error', code: 'c-reserved-name', span: v.span,
                 message: `\`${v.name}\` starts with \`_g\`, the prefix of KIELER's guard variables: KIELER drops it from its generated C code, which still writes it, so the code does not compile`,

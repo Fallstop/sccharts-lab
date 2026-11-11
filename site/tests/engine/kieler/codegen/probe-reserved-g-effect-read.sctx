@@ -1,0 +1,7 @@
+scchart ProbeReservedGEffectRead {
+  output int _gate = 3
+  output int y = 0
+  initial state A
+    do y = _gate go to B
+  state B
+}

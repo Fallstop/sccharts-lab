@@ -1,7 +1,7 @@
 // The diagram's data: options and the laid-out diagram that renderSvg draws. Plain JSON, so a layout can be
 // computed in a Web Worker or at build time and cached.
 
-import type { ElkNode } from 'elkjs/lib/elk-api.js'
+import type { ElkNode } from './elk-types'
 import type { FormatContext, TextFormat } from '@sccharts-lab/engine/format'
 import type { Program, Span, State } from '@sccharts-lab/engine/types'
 import type { TextMeasurer } from './measure'

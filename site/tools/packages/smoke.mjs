@@ -291,13 +291,10 @@ async function main() {
         } catch (error) {
             output = `${error.stdout}${error.stderr}`
         }
-        // Errors in other packages' declarations are theirs (elkjs's elk-api.d.ts fails strict mode); ours and the
-        // consumer's must be none.
-        const errors = output.split('\n').filter(line => /error TS\d+/.test(line))
-        const foreign = errors.filter(line => line.startsWith('node_modules/') && !line.startsWith('node_modules/@sccharts-lab/'))
-        const own = errors.filter(line => !foreign.includes(line))
-        if (own.length || (!errors.length && output.trim())) throw new Error(`${config}:\n${output}`)
-        console.log(`${config}: no errors in @sccharts-lab's declarations or the consumer${foreign.length ? ` (${foreign.length} in other packages': ${foreign.join('; ')})` : ''}`)
+        // No errors at all, other packages' declarations included: a consumer's default tsc (skipLibCheck off) checks
+        // what ours load (the diagram's types are its own, not elkjs's, whose elk-api.d.ts does not type-check).
+        if (output.trim()) throw new Error(`${config}:\n${output}`)
+        console.log(`${config}: no errors`)
     }
 
     step('(c) Browser: Vite bundle in headless Chromium')

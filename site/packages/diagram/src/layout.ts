@@ -10,7 +10,7 @@
 //   - sizes and paddings are KIELER's (simple states 34 px minimum with 10/8 px text padding, superstate title
 //     rows, 20 px region headers, ...). Text is measured with the guide's diagram font instead of KIELER's.
 
-import type { ElkExtendedEdge, ElkLabel, ElkNode } from 'elkjs/lib/elk-api.js'
+import type { ElkExtendedEdge, ElkLabel, ElkNode } from './elk-types'
 import {
     actionSegments, createFormatContext, declarationLines, formatEquation, formatExpression, isImplicitlyImmediate, mergeComponents,
     regionLabelSegments, stateDisplayName, stateTitleSegments, transitionLabelLines,

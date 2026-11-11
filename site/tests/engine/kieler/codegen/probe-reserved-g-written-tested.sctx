@@ -1,0 +1,9 @@
+scchart ProbeReservedGWrittenTested {
+  output int _gate
+  output bool done = false
+  initial state A
+    do _gate = 4 go to B
+  state B
+    if _gate == 4 do done = true go to C
+  state C
+}

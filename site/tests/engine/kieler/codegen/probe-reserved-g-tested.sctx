@@ -1,0 +1,6 @@
+scchart ProbeReservedGTested {
+  output int _gate = 3
+  initial state A
+    if _gate == 3 go to B
+  state B
+}
