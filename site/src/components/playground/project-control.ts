@@ -13,7 +13,7 @@ import { stateFor } from './editor'
 import { createFile, listFiles, mergeFolder, permitted, readFolder, readText, saveFolder } from './folder'
 import type { ProjectFolder } from './panel-tabs'
 import { baseOf, checkName, freeName, hasFile, importedFiles, makeProject, sameFiles, sortedPaths } from './project'
-import { forgetTab, newProjectId, putProject, rememberSave, setCurrent, type StoredProject } from './project-store'
+import { forgetTab, newProjectId, putProject, rememberSave, setCurrent, settled, type StoredProject } from './project-store'
 import { hashForProject, SCRATCH_KEY, storageSet } from './share'
 import { pgIcons } from './icons'
 import FileTree from './FileTree.svelte'
@@ -341,6 +341,7 @@ export class ProjectControl {
             stored.id = this.copies.get(was) ?? was
             const at = await putProject(stored, this.revs.has(stored.id) ? this.revs.get(stored.id) : undefined)
             if (!at) return
+            settled(was, at.rev)
             this.revs.set(at.id, at.rev)
             if (at.id === stored.id) return
             this.copies.set(was, at.id)

@@ -199,10 +199,12 @@ compact single-file widget). Owner: the playground workstream.
   without it; the 40 most recent projects, and every folder project whose edits are not in its folder yet), in the
   scratch buffer of local storage (the active file's text; boot falls back to it without IndexedDB), and in the
   address bar (`#code=` for one file, `#project=` for several; `history.replaceState`), so a reload never loses work.
-  IndexedDB saves asynchronously and a page going away may not finish, and a reload loads the address as it was
-  before the last save updated it: so each save is also kept at once in session storage (this tab's) and local
-  storage (the last save), and boot opens that copy when the address is one this tab saved it at, or when the store
-  is a save behind (`tabProject`, `lastSaved`). Each stored project has a version (`rev`), checked in the
+  IndexedDB saves asynchronously and a page going away does not finish (Back, then a reload, aborts the save Back
+  started), and a reload loads the address as it was before the last save updated it: so each save is also kept at
+  once in local storage under its project's id until the store has that version (`settled`), and in session storage
+  as this tab's project. Every start of the page first writes the copies the store never got into it
+  (`recoverSaves`), then opens this tab's project when the address is one this tab saved it at (`tabProject`). A slow
+  first opening of the store holds a save up for 1.5 s at most, and the next save uses it once open. Each stored project has a version (`rev`), checked in the
   transaction that saves it: a tab whose version is stale (another tab saved the project meanwhile) saves its edits
   as a copy, and says so. A project is saved under an id only once the reader edits it: loading an example, a link or
   a file saves nothing, so it never overwrites the reader's work, and the project before it stays in the recent list.
