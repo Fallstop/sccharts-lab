@@ -1,7 +1,7 @@
 // Highlighting a rendered diagram: from a simulation tick to classes, and toggling them on the SVG without
 // re-rendering. The DOM helpers only use standard DOM APIs (no framework).
 
-import type { Span, TickResult } from '../engine/types'
+import type { Span, TickResult } from '@sccharts-lab/engine/types'
 import type { DiagramLayout, RegionLayout, StateLayout } from './types'
 
 /** The classes this module manages; `applyClasses` removes them before adding the new ones. */

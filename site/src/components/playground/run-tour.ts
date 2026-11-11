@@ -4,8 +4,8 @@
 // the others stand ("In this tick `A` is absent and `B` is present; `R` stays absent."). Pure (the engine runs in
 // memory).
 
-import { createSimulation, type CompileResult } from '../../engine/index'
-import type { TickResult, Value, VariableInfo } from '../../engine/types'
+import { createSimulation, type CompileResult } from '@sccharts-lab/engine'
+import type { TickResult, Value, VariableInfo } from '@sccharts-lab/engine/types'
 import type { Scenario } from '../frame/examples'
 import { controlsFor, formatValue, initialInputs, type InputControl } from '../sim/inputs'
 import type { SharedRun } from './share'

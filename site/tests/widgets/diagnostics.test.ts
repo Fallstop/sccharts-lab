@@ -2,7 +2,7 @@
 // in hints (inlineCode, withoutLinkTo), and the error mark of a transition KIELER cannot draw (errorClasses).
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { compile } from '../../src/engine/index'
+import { compile } from '@sccharts-lab/engine'
 import { allSame, diagnosticKind, groupWarnings, itemHead, warningSummary, type ListedDiagnostic } from '../../src/components/frame/diagnostics'
 import { inlineCode, withoutLinkTo } from '../../src/components/frame/inline-md'
 import { errorClasses, lineMap } from '../../src/components/sim/lines'

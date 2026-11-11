@@ -1,9 +1,9 @@
 // The timing diagram of a simulation: which lanes to draw (inputs, outputs, chosen locals, one lane per
 // region with its active state) and their values in each tick. Pure; renderWave draws the result.
 
-import type { Region, State, TickResult, Value, VariableInfo } from '~engine/types'
+import type { Region, State, TickResult, Value, VariableInfo } from '@sccharts-lab/engine/types'
 // Types only: link.ts (a page script, before any island) imports this module, and must not pull in the engine.
-import type { TraceableVariable } from '~engine/index'
+import type { TraceableVariable } from '@sccharts-lab/engine'
 import { labelWidthFor, renderWave, waveText, type SignalSample, type WaveRow, type WaveValue } from '../frame/wave'
 import { formatValue } from './inputs'
 import { stateName } from './lines'

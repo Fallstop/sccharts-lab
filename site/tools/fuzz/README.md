@@ -1,6 +1,6 @@
 # Differential fuzzer (engine vs KIELER)
 
-Random charts are compiled and simulated by the guide's engine (`src/engine`) and by real KIELER (the oracle,
+Random charts are compiled and simulated by the guide's engine (`packages/engine/src`) and by real KIELER (the oracle,
 `tools/oracle/oracle.mjs`), and compared tick by tick: acceptance, KIELER's data pool, the taken-transition counters
 and the termination tick (exactly what `tests/conformance/engine.test.ts` compares for recorded charts). A
 disagreement is shrunk to a small chart, which becomes a recorded probe in `tests/engine/kieler/<area>/`.
@@ -80,7 +80,7 @@ every input (`a`..`d` bool, `n` int, `deltaT` for timed charts), so KIELER's inp
 - `engine-accepts`, `engine-rejects`, `behaviour`, `engine-crash`, `diagnostics`: disagreements (written to
   `mismatches/`).
 - `nondeterministic`: the engine rejects with `kieler-nondeterministic` (KIELER's verdict changes from run to
-  run, src/engine/sim/README.md "Chance"); not counted as a disagreement.
+  run, packages/engine/src/sim/README.md "Chance"); not counted as a disagreement.
 - `unsupported`: the engine cannot simulate the chart (info `unsupported`).
 - `syntax`: the engine's front end rejects the chart with a syntax error (a generator bug, or a parser difference).
 - `oracle-failure`: KIELER did not finish (timeout) or its server failed.

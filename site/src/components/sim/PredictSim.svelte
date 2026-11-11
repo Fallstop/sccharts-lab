@@ -5,8 +5,8 @@
 -->
 <script lang="ts">
 	import { onMount, untrack } from 'svelte'
-	import { tickClasses } from '~diagram/highlight'
-	import type { TickResult, VariableInfo } from '~engine/types'
+	import { tickClasses } from '@sccharts-lab/diagram/highlight'
+	import type { TickResult, VariableInfo } from '@sccharts-lab/engine/types'
 	import type { Scenario } from '../frame/examples'
 	import { icons } from '../frame/icons'
 	import { inlineCode } from '../frame/inline-md'

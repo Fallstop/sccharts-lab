@@ -1,6 +1,6 @@
 // Deterministic mutations of SCTX texts, for robustness tests (parse must never throw) and for differential
 // testing against KIELER (accept/reject must agree).
-import { lex } from '../../src/engine/parser/lexer'
+import { lex } from '@sccharts-lab/engine/parser/lexer'
 
 /** Small seeded PRNG (mulberry32). */
 export function rng(seed: number) {

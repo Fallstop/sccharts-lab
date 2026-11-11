@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { compile, SIMULATOR_CODES } from '../../src/engine/index'
+import { compile, SIMULATOR_CODES } from '@sccharts-lab/engine'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const site = path.resolve(here, '../..')

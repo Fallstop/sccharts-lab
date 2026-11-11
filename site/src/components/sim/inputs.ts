@@ -5,7 +5,7 @@
 // Input names follow KIELER's data pool, as the scenarios do: a bool or a pure signal `A` is `A`; a valued
 // input signal `V` is `V` (presence) and `V_val` (value).
 
-import type { Value, ValueType, VariableInfo } from '~engine/types'
+import type { Value, ValueType, VariableInfo } from '@sccharts-lab/engine/types'
 
 export type ControlKind = 'bool' | 'number' | 'string' | 'array'
 

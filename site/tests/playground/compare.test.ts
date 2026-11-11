@@ -3,13 +3,13 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, test, vi } from 'vitest'
-import { compile, createSimulation, type CompileResult, type Simulation } from '../../src/engine/index'
+import { compile, createSimulation, type CompileResult, type Simulation } from '@sccharts-lab/engine'
 import { compareWithSolution, summary, tickList } from '../../src/components/playground/compare'
 
 // A simulation can be replaced for one compile result (a construct the simulator meets only when a tick reaches it).
 const fakes = vi.hoisted(() => new Map<unknown, unknown>())
-vi.mock('../../src/engine/index', async importOriginal => {
-    const actual = await importOriginal<typeof import('../../src/engine/index')>()
+vi.mock('@sccharts-lab/engine', async importOriginal => {
+    const actual = await importOriginal<typeof import('@sccharts-lab/engine')>()
     return { ...actual, createSimulation: (r: CompileResult) => (fakes.get(r) as Simulation | undefined) ?? actual.createSimulation(r) }
 })
 

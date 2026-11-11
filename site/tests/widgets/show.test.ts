@@ -3,7 +3,7 @@
 // `SimTickResult.trace`; and the build-time check that names a typo.
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation, traceableVariables } from '../../src/engine/index'
+import { compile, createSimulation, traceableVariables } from '@sccharts-lab/engine'
 import { lanesFor, qualifiedName, resolveShow, traceRows, traceSvg } from '../../src/components/sim/trace'
 import { showProblems } from '../../src/components/frame/show'
 

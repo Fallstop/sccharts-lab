@@ -4,7 +4,7 @@
 // fed the way the panel feeds them (inputs persist; a tick sends only what the reader changed).
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
+import { compile, createSimulation } from '@sccharts-lab/engine'
 import { initialInputs } from '../../src/components/sim/inputs'
 import { Timeline } from '../../src/components/sim/timeline'
 

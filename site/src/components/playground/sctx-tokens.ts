@@ -2,7 +2,7 @@
 // static, build-time rendering of the playground's starter source (static-highlight.ts) both use it, so the page
 // looks the same before and after the editor loads.
 //
-// It follows the terminals of the engine's lexer (src/engine/parser/lexer.ts, which reproduces KIELER's), including
+// It follows the terminals of the engine's lexer (packages/engine/src/parser/lexer.ts, which reproduces KIELER's), including
 // the quirks a reader should *see*: strings and host code may span lines, `/**` starts a doc comment even in
 // `/**/`, and an empty `//` at the end of a line also comments out the next line (KIELER's SL_COMMENT consumes the
 // line break as the "first character" of the comment). Keywords are the engine's keyword set, so `scope` or
@@ -10,7 +10,7 @@
 //
 // The interface is the subset of CodeMirror's StringStream the tokenizer needs, so it runs without CodeMirror.
 
-import { KEYWORDS } from '../../engine/parser/lexer'
+import { KEYWORDS } from '@sccharts-lab/engine/parser/lexer'
 
 export type TokenType =
     | 'keyword'

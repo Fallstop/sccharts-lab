@@ -8,7 +8,7 @@ import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { ANCHORS, CODES, ERRORS_PAGE, MESSAGES, errorAnchor, errorLink } from '../../src/components/frame/error-links'
-import { compile } from '~engine/index'
+import { compile } from '@sccharts-lab/engine'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const page = readFileSync(join(root, 'src/content/docs/reference/errors.mdx'), 'utf8')

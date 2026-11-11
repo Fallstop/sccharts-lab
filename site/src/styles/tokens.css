@@ -4,7 +4,7 @@
  * Three layers:
  *   1. Site tokens (--c-*, --text-*, --space-*, ...): what the guide's own CSS and components use.
  *   2. Starlight's variables (--sl-*), mapped onto the site tokens so the built-in UI matches.
- *   3. Diagram and simulation tokens (--sc-*): the contract with the diagram renderer (src/diagram) and
+ *   3. Diagram and simulation tokens (--sc-*): the contract with the diagram renderer (packages/diagram/src) and
  *      the simulation widgets. They read exactly these names via var(--sc-..., fallback); keep them stable.
  *
  * Starlight's convention: :root holds the dark theme, :root[data-theme='light'] the light one. The light

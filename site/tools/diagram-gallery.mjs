@@ -120,7 +120,7 @@ try {
     })
 
     const themes = themeBlocks()
-    const css = fs.readFileSync(path.join(root, 'src/diagram/diagram.css'), 'utf8')
+    const css = fs.readFileSync(path.join(root, 'packages/diagram/src/diagram.css'), 'utf8')
     const rel = p => path.relative(outDir, path.join(root, p)).split(path.sep).join('/')
     const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;')
     const figure = (s, i, theme) => `<figure id="${theme}-${i}" class="chart"><figcaption>${esc(s.name)} <span>${s.layout ? `${Math.round(s.layout.width)}×${Math.round(s.layout.height)}, ${s.ms.toFixed(0)} ms` : ''}</span></figcaption>${s.svg}</figure>`

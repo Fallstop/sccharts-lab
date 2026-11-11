@@ -1,7 +1,7 @@
 # Simulator status
 
 Updated by the simulator workstream as features land. The API shape is the one in
-`docs-internal/ARCHITECTURE.md` and `src/engine/types.ts`; additions are listed under "API". Architecture and
+`docs-internal/ARCHITECTURE.md` and `packages/engine/src/types.ts`; additions are listed under "API". Architecture and
 how to add a feature: `README.md`. The differential fuzzer that keeps this honest: `tools/fuzz/README.md`.
 
 ## API

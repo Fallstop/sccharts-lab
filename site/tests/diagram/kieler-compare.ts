@@ -2,10 +2,10 @@
 // texts, line styles, decorators, region directions and the arrangement of states.
 
 import { describe, expect, it } from 'vitest'
-import { layoutChart } from '../../src/diagram'
-import type { DiagramLayout, RegionLayout, StateLayout, TextLine, TransitionLayout } from '../../src/diagram'
-import { transitionLabel, transitionLabelLines } from '../../src/engine/format'
-import type { State, Transition } from '../../src/engine/types'
+import { layoutChart } from '@sccharts-lab/diagram'
+import type { DiagramLayout, RegionLayout, StateLayout, TextLine, TransitionLayout } from '@sccharts-lab/diagram'
+import { transitionLabel, transitionLabelLines } from '@sccharts-lab/engine/format'
+import type { State, Transition } from '@sccharts-lab/engine/types'
 import { chartOf } from './support'
 
 export interface KielerLabels {

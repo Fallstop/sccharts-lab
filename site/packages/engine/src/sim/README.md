@@ -1,4 +1,4 @@
-# The simulator (`src/engine/sim`)
+# The simulator (`packages/engine/src/sim`)
 
 The guide's simulator runs SCCharts exactly as KIELER's netlist-based C simulation
 (`de.cau.cs.kieler.sccharts.simulation.tts.netlist.c`) does: it rewrites the chart into core SCCharts with

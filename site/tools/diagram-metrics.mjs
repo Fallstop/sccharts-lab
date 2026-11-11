@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Measures the diagram fonts in chromium and writes src/diagram/font-metrics.ts: the advance width of every
+// Measures the diagram fonts in chromium and writes packages/diagram/src/font-metrics.ts: the advance width of every
 // character the diagrams are likely to show, for the regular and bold weights of the sans font and for the
 // mono font, plus the vertical metrics. The diagram layout measures text with this table, so build-time
 // (Node) and in-browser layouts are identical. The renderer switches kerning and ligatures off, which makes
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url'
 import { launchChromium } from './chromium.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const out = path.join(root, 'src/diagram/font-metrics.ts')
+const out = path.join(root, 'packages/diagram/src/font-metrics.ts')
 
 const SANS = {
     family: 'Atkinson Hyperlegible Next Variable',

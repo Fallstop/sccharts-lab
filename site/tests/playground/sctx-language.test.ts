@@ -5,7 +5,7 @@ import { foldable, getIndentation, indentUnit } from '@codemirror/language'
 import { tokenizeLines, type TokenType } from '../../src/components/playground/sctx-tokens'
 import { highlightLines } from '../../src/components/playground/static-highlight'
 import { sctx, openBraces } from '../../src/components/playground/sctx-language'
-import { lex } from '../../src/engine/parser/lexer'
+import { lex } from '@sccharts-lab/engine/parser/lexer'
 
 /** Non-blank tokens of a source as [type, text] pairs. */
 const toks = (src: string): [TokenType | null, string][] =>

@@ -2,7 +2,7 @@
 // (diagram -> code), which element a source line belongs to (code -> diagram), and short display names for
 // states and transitions ("Off", "Off → On"). Pure; used at build time (Chart) and in the browser (Sim).
 
-import type { Diagnostic, Program, Region, Span, State, TickResult, Transition } from '~engine/types'
+import type { Diagnostic, Program, Region, Span, State, TickResult, Transition } from '@sccharts-lab/engine/types'
 
 /** Lines are 1-based and inclusive. */
 export interface LineMap {

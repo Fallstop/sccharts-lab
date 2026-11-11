@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { applyClasses, elementsAt, layoutChart, mergeClasses, renderSvg, spanOf, tickClasses } from '../../src/diagram'
+import { applyClasses, elementsAt, layoutChart, mergeClasses, renderSvg, spanOf, tickClasses } from '@sccharts-lab/diagram'
 import { chartOf } from './support'
 
 const here = path.dirname(new URL(import.meta.url).pathname)

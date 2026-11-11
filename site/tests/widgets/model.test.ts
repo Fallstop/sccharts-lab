@@ -1,8 +1,8 @@
 // Line maps, timing-diagram lanes and "What happened", on real charts compiled by the guide's engine.
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
-import type { TickResult } from '../../src/engine/types'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import type { TickResult } from '@sccharts-lab/engine/types'
 import { describeTick, explainTick } from '../../src/components/sim/describe'
 import { elementsOf, errorClasses, lineMap, stateName, tickLines, transitionName } from '../../src/components/sim/lines'
 import { lanesFor, regionLanes, traceSvg, traceWindow } from '../../src/components/sim/trace'
@@ -130,7 +130,7 @@ describe('describeTick (the engine\'s sentences, marked up)', () => {
         expect(describeTick(t1, undefined, ctx).items[0]).toEqual({ kind: 'enter', text: 'The chart starts in `Off`.', ids: ['Toggle.Off'] })
         const s = describeTick(t2, t1, ctx)
         expect(s.items[0].kind).toBe('take')
-        // A trigger that is one variable is said plainly (src/engine/sim/describe.ts).
+        // A trigger that is one variable is said plainly (packages/engine/src/sim/describe.ts).
         expect(s.items[0].text).toBe('`Off` went to `On` because `button` was `true`.')
         expect(s.items[0].ids.sort()).toEqual(['Toggle$button', 'Toggle.Off', 'Toggle.Off->1', 'Toggle.On'])
         expect(s.summary).toMatch(/^Tick 2\. Off went to On because button was true/)

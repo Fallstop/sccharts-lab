@@ -3,8 +3,8 @@
 // the trace's hidden table that must not widen the scroll area.
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
-import type { TickResult } from '../../src/engine/types'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import type { TickResult } from '@sccharts-lab/engine/types'
 import { hatchPath, renderWave } from '../../src/components/frame/wave'
 import { columnWidthFor, columnWidthForTrace, compareSvg, forCopiesIn, hasSuspension, lanesFor, regionLanes, terminationText, traceRows, traceSvg, type CopyState } from '../../src/components/sim/trace'
 

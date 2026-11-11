@@ -1,7 +1,7 @@
 // Build-time checks of `show` (<Sim>, <Compare>): every name must be one the timing diagram can trace, so a typo
 // fails the build instead of leaving a lane out.
 
-import { traceableVariables, type CompileResult } from '~engine/index'
+import { traceableVariables, type CompileResult } from '@sccharts-lab/engine'
 import { qualifiedName, resolveShow } from '../sim/trace'
 
 /**

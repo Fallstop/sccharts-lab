@@ -22,8 +22,8 @@ Deploying: `pnpm build && pnpm dlx wrangler deploy` (Cloudflare static assets, `
 | --- | --- |
 | `src/content/docs/` | the guide's pages (MDX) |
 | `src/examples/` | every chart used on a page, with its scenario and KIELER recording |
-| `src/engine/` | parser, resolver, validator, simulator |
-| `src/diagram/` | ELK layout and SVG rendering in KIELER's notation |
+| `packages/engine/src/` | parser, resolver, validator, simulator |
+| `packages/diagram/src/` | ELK layout and SVG rendering in KIELER's notation |
 | `src/components/` | the interactive widgets and the playground |
 | `tests/conformance/` | probe charts that pin down KIELER's semantics, with recordings |
 | `docs-internal/` | architecture, semantics specs, design system, content plan |

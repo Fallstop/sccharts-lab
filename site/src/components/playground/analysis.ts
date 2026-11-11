@@ -2,8 +2,8 @@
 // which states a transition being typed can go to, and what the name under the mouse refers to (hover). Pure
 // functions over the engine's AST and model index; offsets are offsets into the compiled source.
 
-import type { CompileResult, VOEntry } from '../../engine/index'
-import type { Declaration, Program, Region, Span, State, Transition, ValuedObject } from '../../engine/types'
+import type { CompileResult, VOEntry } from '@sccharts-lab/engine'
+import type { Declaration, Program, Region, Span, State, Transition, ValuedObject } from '@sccharts-lab/engine/types'
 
 const inside = (span: Span | undefined, offset: number) => !!span && span.start <= offset && offset <= span.end
 

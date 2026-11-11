@@ -6,7 +6,7 @@ export type { ClassMap, HighlightClass } from './highlight'
 export type { TextMeasurer, TextStyle } from './measure'
 export type * from './types'
 
-import type { State } from '../engine/types'
+import type { State } from '@sccharts-lab/engine/types'
 import { layoutChart as layoutWithElk } from './layout'
 import { renderSvg } from './render'
 import type { DiagramLayout, ElkLike, LayoutOptions, RenderOptions } from './types'

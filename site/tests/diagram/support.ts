@@ -1,10 +1,10 @@
 // Test support for the diagram: parse SCTX into charts with element ids.
 //
-// Uses the engine's parse() when src/engine/index.ts provides it; otherwise the bare parser plus a minimal
-// id assignment and name resolution following the id convention in src/engine/types.ts (only where the
+// Uses the engine's parse() when packages/engine/src/index.ts provides it; otherwise the bare parser plus a minimal
+// id assignment and name resolution following the id convention in packages/engine/src/types.ts (only where the
 // parser left ids empty), so the diagram can be tested before the resolver lands.
 
-import type { Declaration, Effect, Expression, Program, Reference, Region, State } from '../../src/engine/types'
+import type { Declaration, Effect, Expression, Program, Reference, Region, State } from '@sccharts-lab/engine/types'
 
 type ParseFn = (source: string) => { program?: Program; diagnostics: { severity: string; message: string }[] }
 
@@ -13,12 +13,12 @@ let parseImpl: ParseFn | undefined
 async function getParse(): Promise<ParseFn> {
     if (parseImpl) return parseImpl
     try {
-        const engine = (await import('../../src/engine/index')) as { parse?: ParseFn }
+        const engine = (await import('@sccharts-lab/engine')) as { parse?: ParseFn }
         if (typeof engine.parse === 'function') return (parseImpl = engine.parse)
     } catch {
         // index.ts not there yet
     }
-    const parser = (await import('../../src/engine/parser/parser')) as { parseProgram: ParseFn }
+    const parser = (await import('@sccharts-lab/engine/parser/parser')) as { parseProgram: ParseFn }
     return (parseImpl = parser.parseProgram)
 }
 

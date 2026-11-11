@@ -4,7 +4,7 @@
 // same text, else the same line and severity), and what only KIELER reports is listed too, in KIELER's words,
 // as the widgets do (src/components/frame/prepare.ts, explain()). Pure.
 
-import type { Diagnostic, Severity, Span } from '../../engine/types'
+import type { Diagnostic, Severity, Span } from '@sccharts-lab/engine/types'
 import type { OracleRecording } from '../frame/examples'
 
 /** A problem of the problems list: the engine's diagnostic, or one only KIELER's recording has (`kielerOnly`:

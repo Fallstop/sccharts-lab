@@ -5,9 +5,9 @@
 -->
 <script lang="ts">
 	import { onMount, tick as nextFrame, untrack } from 'svelte'
-	import type { ClassMap } from '~diagram/highlight'
-	import { tickClasses } from '~diagram/highlight'
-	import type { TickResult } from '~engine/types'
+	import type { ClassMap } from '@sccharts-lab/diagram/highlight'
+	import { tickClasses } from '@sccharts-lab/diagram/highlight'
+	import type { TickResult } from '@sccharts-lab/engine/types'
 	import type { Scenario } from '../frame/examples'
 	import { icons } from '../frame/icons'
 	import { errorLink } from '../frame/error-links'

@@ -99,7 +99,7 @@ notice border reach 3:1.
 
 ## Diagram and simulation tokens (the `--sc-*` contract)
 
-The diagram renderer (`src/diagram`) and the widgets read exactly these names, always with a fallback:
+The diagram renderer (`packages/diagram/src`) and the widgets read exactly these names, always with a fallback:
 `var(--sc-state-fill, #f8f9fd)`. KIELER's look stays recognisable: blue-grey gradient states, black
 outlines on initial and final states, grey outlines on the others, plum declaration keywords, red
 strong-abort dots, green termination triangles, yellow comments, red current states and blue traversed
@@ -141,7 +141,7 @@ a tint of it that fades; an element a compiler message is about, a solid `--sc-e
 and a marker, a small `--sc-error` disc with a "!" (`markErrors` in `src/components/sim/link.ts`, called by
 `markDiagram` and by DiagramView for errors drawn at build time). Only `is-focus` (pointer and keyboard)
 outlines a state with dashes; a focused transition stays solid. The landing chart (`src/components/landing/HeroChart.astro`) is the reference
-implementation; the diagram renderer's `src/diagram/diagram.css` follows the same rules.
+implementation; the diagram renderer's `packages/diagram/src/diagram.css` follows the same rules.
 
 Two tokens were added beyond the original list, for the diagram workstream to adopt:
 `--sc-state-outline` (KIELER draws simple states and superstates with a grey outline; with

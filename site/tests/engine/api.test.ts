@@ -1,7 +1,7 @@
-// The Simulation API (docs-internal/ARCHITECTURE.md, src/engine/sim/STATUS.md): stepping, inputs, history,
+// The Simulation API (docs-internal/ARCHITECTURE.md, packages/engine/src/sim/STATUS.md): stepping, inputs, history,
 // rewind and reset, and that every TickResult field is filled in source terms.
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation, describeTick, traceableVariables } from '../../src/engine/index'
+import { compile, createSimulation, describeTick, traceableVariables } from '@sccharts-lab/engine'
 
 const toggle = `scchart Toggle {
   input bool button

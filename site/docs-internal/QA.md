@@ -213,7 +213,7 @@ corpus test reads where they are, never copied). No file in the site has the con
   the causality chapter's description.
 - **Docs**: ARCHITECTURE.md (the Engine API's `forCopies`, `copies`, `ranWith`, an error's tick, `suggestion`; the
   playground's exercise banner, Watch and Run until and links in an open tab; Vite's dependency cache shared with
-  the dev server); DESIGN.md (a historical sentence); `src/engine/sim/STATUS.md` (the new codes).
+  the dev server); DESIGN.md (a historical sentence); `packages/engine/src/sim/STATUS.md` (the new codes).
 - **QA tools**: `keyboard.mjs` drives a *How KIELER reads it* frame (a trap, then typing).
 
 ## 11 November 2026

@@ -18,8 +18,8 @@ import { afterAll, describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { compile, createSimulation, type PoolValue } from '../../src/engine/index'
-import type { Value } from '../../src/engine/types'
+import { compile, createSimulation, type PoolValue } from '@sccharts-lab/engine'
+import type { Value } from '@sccharts-lab/engine/types'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const site = path.resolve(here, '../..')

@@ -1,11 +1,11 @@
 // "What happened" and "Explain this tick": a tick's result in words. The sentences are the engine's
-// (describeTick in src/engine/sim/describe.ts, in its inline Markdown form: state names, identifiers, triggers
+// (describeTick in packages/engine/src/sim/describe.ts, in its inline Markdown form: state names, identifiers, triggers
 // and values as code) for the foot of a simulation; this module finds the model elements each sentence is
 // about, so hovering a sentence marks them on the diagram. It also turns the tick's log into
 // the numbered steps of "Explain this tick". Pure.
 
-import { stateDisplayName } from '~engine/format'
-import type { Program, TickResult, TraceEvent, VariableInfo } from '~engine/types'
+import { stateDisplayName } from '@sccharts-lab/engine/format'
+import type { Program, TickResult, TraceEvent, VariableInfo } from '@sccharts-lab/engine/types'
 import { describeTick as engineDescribe, elementName } from './engine'
 import { formatValue } from './inputs'
 import { sourceText, stateName, transitionName, type ElementInfo } from './lines'

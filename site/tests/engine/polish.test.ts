@@ -3,8 +3,8 @@
 // clock, indices outside an array), and the names describeTick, elementName and traceableVariables give.
 
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation, describeTick, elementName, traceableVariables } from '../../src/engine/index'
-import type { Diagnostic } from '../../src/engine/types'
+import { compile, createSimulation, describeTick, elementName, traceableVariables } from '@sccharts-lab/engine'
+import type { Diagnostic } from '@sccharts-lab/engine/types'
 
 const diagnostics = (source: string, files?: Record<string, string>) => compile(source, files ? { files } : undefined).diagnostics
 const byCode = (list: Diagnostic[], code: string) => list.filter(d => d.code === code)

@@ -1,4 +1,4 @@
-// Unit tests of the pretty-printer (src/engine/format.ts) on hand-built ASTs, independent of the parser.
+// Unit tests of the pretty-printer (packages/engine/src/format.ts) on hand-built ASTs, independent of the parser.
 // The KIELER-recorded comparisons are in kieler-labels.test.ts.
 
 import { describe, expect, it } from 'vitest'
@@ -7,10 +7,10 @@ import {
     formatDeclaration, formatEffect, formatEffects, formatEquation, formatExpression, formatExpressionPlain,
     formatFloat, formatTransition, isImplicitlyImmediate, mergeComponents, regionLabelSegments, stateTitleSegments,
     transitionLabel, transitionLabelLines,
-} from '../../src/engine/format'
+} from '@sccharts-lab/engine/format'
 import type {
     Declaration, Effect, Expression, LocalAction, OperatorType, Reference, Region, Span, State, Transition,
-} from '../../src/engine/types'
+} from '@sccharts-lab/engine/types'
 
 const span: Span = { start: 0, end: 0, line: 1, col: 1, endLine: 1, endCol: 1 }
 const ref = (name: string, ...indices: Expression[]): Reference => ({ kind: 'ref', name, indices, span })

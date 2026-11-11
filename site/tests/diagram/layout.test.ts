@@ -4,10 +4,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { layoutChart, renderSvg } from '../../src/diagram'
-import type { Box, RegionLayout, StateLayout } from '../../src/diagram'
-import { flatten } from '../../src/diagram/geometry'
-import type { State } from '../../src/engine/types'
+import { layoutChart, renderSvg } from '@sccharts-lab/diagram'
+import type { Box, RegionLayout, StateLayout } from '@sccharts-lab/diagram'
+import { flatten } from '@sccharts-lab/diagram/geometry'
+import type { State } from '@sccharts-lab/engine/types'
 import { chartOf } from './support'
 
 const here = path.dirname(new URL(import.meta.url).pathname)

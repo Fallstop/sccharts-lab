@@ -5,8 +5,8 @@
 // It is a comparison, not a grade: another chart can solve an exercise its own way, and one run of inputs cannot
 // show that a chart is right. The wording says so.
 
-import { createSimulation, type CompileResult } from '../../engine/index'
-import type { Diagnostic, Value, VariableInfo } from '../../engine/types'
+import { createSimulation, type CompileResult } from '@sccharts-lab/engine'
+import type { Diagnostic, Value, VariableInfo } from '@sccharts-lab/engine/types'
 import type { Scenario } from '../frame/examples'
 import type { Recording } from './sources'
 

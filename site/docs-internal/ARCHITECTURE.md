@@ -29,8 +29,8 @@ for the shell, Svelte 5 for the interactive islands, vitest for the tests.
 
 | Path | Owner | What |
 | --- | --- | --- |
-| `src/engine/` | engine | Parser (`parser/`), simulator (`sim/`), KIELER's label serialisers (`format.ts`), data contract (`types.ts`), public API (`index.ts`) |
-| `src/diagram/` | playground + diagram | ELK layout and SVG rendering in KIELER's notation (`README.md`) |
+| `packages/engine/src/` | engine | Parser (`parser/`), simulator (`sim/`), KIELER's label serialisers (`format.ts`), data contract (`types.ts`), public API (`index.ts`) |
+| `packages/diagram/src/` | playground + diagram | ELK layout and SVG rendering in KIELER's notation (`README.md`) |
 | `src/components/` (except `playground/`) | widgets | `Chart`, `Sim`, `Compare`, `Predict`, `Quiz`, `TryIt`, `KeyIdeas`, `Playground` (Astro), the simulation panel (`sim/`, Svelte), the widget frame (`frame/`), landing and Starlight overrides |
 | `src/components/playground/`, `src/pages/playground.astro` | playground + diagram | The playground IDE and the inline `<Playground>` (`README.md`) |
 | `src/styles/`, `astro.config.mjs`, `ec.config.mjs`, `src/content/docs/design/**`, `404.mdx` | widgets | Site shell, theme, code blocks, design specimen and widget test bench |
@@ -134,7 +134,7 @@ and PRE). Rule ids belong in internal docs, tests and code comments, not on guid
 `*.test.ts` in `tests/conformance/<area>/` checks the suite's integrity (current recordings, `expect`, notes,
 tick-1 inputs) and, for basics and structure, the tick values the spec claims.
 
-## Engine API (`src/engine/index.ts`)
+## Engine API (`packages/engine/src/index.ts`)
 
 ```ts
 parse(source: string): ParseResult        // syntax (plus name resolution, for diagrams); never throws
@@ -199,10 +199,10 @@ formatExpressionParenthesised(expression, options?): string   // how KIELER grou
     fails on the chart, SCCharts Lab and the guide compile it; `kieler-loop-warning` (info): KIELER's
     "Instantaneous loop detected!" on a chart that works.
 - The engine is pure TypeScript with no DOM access: it runs in Node (tests, build-time rendering) and in the
-  browser. Internals: `src/engine/sim/README.md` (pipeline, adding a pass, reproduced KIELER defects) and
-  `src/engine/sim/STATUS.md` (coverage, API details).
+  browser. Internals: `packages/engine/src/sim/README.md` (pipeline, adding a pass, reproduced KIELER defects) and
+  `packages/engine/src/sim/STATUS.md` (coverage, API details).
 
-## Diagrams (`src/diagram/`)
+## Diagrams (`packages/diagram/src/`)
 
 ```ts
 layoutChart(chart: State, options?): Promise<DiagramLayout>     // elkjs; Node or browser
@@ -214,7 +214,7 @@ applyClasses(svg, classes), tickClasses(tick)                     // ~diagram/hi
 Every rendered state, region and transition carries `data-id="<element id>"` (ids in `types.ts`), so a
 simulation highlights by toggling classes (`HIGHLIGHT_CLASSES`: `is-active`, `is-entered`, `is-exited`,
 `is-taken`, `is-focus`, `is-error`, `is-dimmed`) without re-layout. Colours come from CSS custom properties (`--sc-*`), so the theme controls light
-and dark mode. Fidelity to KIELER's synthesis is tested against KIELER's own diagrams (`src/diagram/README.md`).
+and dark mode. Fidelity to KIELER's synthesis is tested against KIELER's own diagrams (`packages/diagram/src/README.md`).
 
 ## Widgets and pages
 
@@ -254,7 +254,7 @@ and dark mode. Fidelity to KIELER's synthesis is tested against KIELER's own dia
 | `tests/conformance/engine.test.ts` | Every oracle recording under `tests/conformance`, `src/examples` and `tests/engine/kieler` replayed in the engine and compared tick by tick (pool, `taken`, termination tick); rejected charts must be rejected. Skips other systems, `needs` the engine does not emulate, `kieler-bug` scenarios and `unsupported` charts; known failures in `engine-expected-failures.json` (remove entries as they pass) |
 | `tests/conformance/<area>/*.test.ts` | Integrity of each conformance suite and the spec's claimed values |
 | `tests/engine/` | Engine unit tests (API, diagnostics, describe, semantics, preemption, structure, performance); `kieler/`: probe charts of KIELER defects with recordings (part of the conformance run) |
-| `src/engine/**/*.test.ts` | Parser, resolver and validator unit tests |
+| `packages/engine/src/**/*.test.ts` | Parser, resolver and validator unit tests |
 | `tests/corpus/` | Parser corpus (wiki, lab fixtures, probes) against KIELER's recorded diagnostics; `kieler-diff.test.ts` is an opt-in differential run against the live server |
 | `tests/diagram/` | Layout and rendering, highlight, KIELER label and diagram comparisons |
 | `tests/widgets/`, `tests/design/` | Widget models (timeline, inputs, trace), `prepare`, frame helpers, contrast; `browser.test.ts` drives the dev server's widget test bench in Chromium (skipped without the dev server) |

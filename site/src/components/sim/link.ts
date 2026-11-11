@@ -2,8 +2,8 @@
 // transitions that fire), line classes on Expressive Code's source view, and hover / focus linking between
 // diagram elements and source lines. Plain DOM, no framework; nothing here imports the layout (elkjs).
 
-import { applyClasses, type ClassMap } from '~diagram/highlight'
-import type { TickResult } from '~engine/types'
+import { applyClasses, type ClassMap } from '@sccharts-lab/diagram/highlight'
+import type { TickResult } from '@sccharts-lab/engine/types'
 import type { LineMap } from './lines'
 import { copyMarks, copyPhrase } from './trace'
 

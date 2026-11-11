@@ -1,6 +1,6 @@
 // A deterministic fake of the engine's Simulation for testing the widgets' logic without the engine: each
 // tick reports its inputs as values and counts in `n`. rewind() replays the recorded inputs, as the engine's.
-import type { TickResult, Value, VariableInfo } from '../../src/engine/types'
+import type { TickResult, Value, VariableInfo } from '@sccharts-lab/engine/types'
 import type { Stepper } from '../../src/components/sim/timeline'
 
 export function fakeSim(iface: VariableInfo[] = []): Stepper & { calls: string[]; interface: VariableInfo[] } {

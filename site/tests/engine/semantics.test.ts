@@ -1,10 +1,10 @@
 // The C semantics of KIELER's netlist simulation (docs-internal/semantics/basics.md B-20..B-30), checked on small
 // charts. The oracle recordings in tests/conformance cover the same rules against KIELER itself.
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
-import type { Value } from '../../src/engine/types'
-import { newRandState, rand, random } from '../../src/engine/sim/random'
-import { doubleToInt, toChar } from '../../src/engine/sim/values'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import type { Value } from '@sccharts-lab/engine/types'
+import { newRandState, rand, random } from '@sccharts-lab/engine/sim/random'
+import { doubleToInt, toChar } from '@sccharts-lab/engine/sim/values'
 
 /** Runs `effects` once in tick 2 (a delayed self-loop) and returns the outputs. */
 function after(decls: string, effects: string, inputs: Record<string, Value> = {}): Record<string, Value> {

@@ -7,10 +7,10 @@
 // chart without a recording, when the engine does, or its scenario says "expect": "error"). A chart KIELER
 // accepts that the engine cannot run is "cannotRun": its diagram is shown, its simulation is not.
 
-import { compile, type CompileResult } from '~engine/index'
-import { layoutChart, renderSvg } from '~diagram/index'
-import type { DiagramLayout } from '~diagram/types'
-import type { Diagnostic, State } from '~engine/types'
+import { compile, type CompileResult } from '@sccharts-lab/engine'
+import { layoutChart, renderSvg } from '@sccharts-lab/diagram'
+import type { DiagramLayout } from '@sccharts-lab/diagram/types'
+import type { Diagnostic, State } from '@sccharts-lab/engine/types'
 import { errorClasses, errorLines, lineMap, type LineMap } from '../sim/lines'
 import type { Example, OracleRecording } from './examples'
 

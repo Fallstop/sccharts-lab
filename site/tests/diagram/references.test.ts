@@ -1,5 +1,5 @@
 // Expanded references and the simulator agree on ids: the engine reports the states, transitions and actions of a
-// referenced chart's instance as `<reference state id>/<id in the referenced chart>` (src/engine/sim/STATUS.md), and
+// referenced chart's instance as `<reference state id>/<id in the referenced chart>` (packages/engine/src/sim/STATUS.md), and
 // a diagram laid out with `references: 'expanded'` draws exactly those elements with exactly those data-ids. Every
 // chart with a reference state among the examples and the conformance probes is simulated with its scenario, and
 // every id of every tick must be in the expanded diagram (so <Chart>/<Sim> can highlight an instance's inner states).
@@ -7,9 +7,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
-import { layoutChart, renderSvg, tickClasses } from '../../src/diagram'
-import type { Value } from '../../src/engine/types'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import { layoutChart, renderSvg, tickClasses } from '@sccharts-lab/diagram'
+import type { Value } from '@sccharts-lab/engine/types'
 
 const site = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..')
 

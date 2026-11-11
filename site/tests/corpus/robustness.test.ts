@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
-import { SIMULATOR_CODES, compile, parse } from '../../src/engine'
+import { SIMULATOR_CODES, compile, parse } from '@sccharts-lab/engine'
 import { mutate, randomExpressionCase, randomSnippet, rng } from './mutate'
 
 const here = path.dirname(new URL(import.meta.url).pathname)

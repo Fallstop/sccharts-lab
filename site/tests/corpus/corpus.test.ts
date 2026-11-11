@@ -13,8 +13,8 @@
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
-import { compile, parse, SIMULATOR_CODES } from '../../src/engine'
-import type { Diagnostic } from '../../src/engine/types'
+import { compile, parse, SIMULATOR_CODES } from '@sccharts-lab/engine'
+import type { Diagnostic } from '@sccharts-lab/engine/types'
 
 const here = path.dirname(new URL(import.meta.url).pathname)
 const CS303 = '/home/fallstop/Documents/projects/CS303'

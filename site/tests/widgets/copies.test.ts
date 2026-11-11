@@ -2,8 +2,8 @@
 // accessible name says it (copyPhrase), checked on the guide's Seatbelts against the copies the engine reports.
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
-import type { TickResult } from '../../src/engine/types'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import type { TickResult } from '@sccharts-lab/engine/types'
 import { copyMarks, copyPhrase, type CopyMarks } from '../../src/components/sim/trace'
 import { copyCounters } from '../../src/components/sim/link'
 

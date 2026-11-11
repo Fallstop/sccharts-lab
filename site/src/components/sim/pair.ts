@@ -1,7 +1,7 @@
 // Two simulations stepped together with the same inputs (<Compare>): each chart gets the inputs it declares,
 // and after a tick the controls read each chart's own inputs from its own data pool. Pure (no DOM, no Svelte).
 
-import type { TickResult, Value, VariableInfo } from '~engine/types'
+import type { TickResult, Value, VariableInfo } from '@sccharts-lab/engine/types'
 import { initialInputs } from './inputs'
 import type { PoolReader, Stepper } from './timeline'
 

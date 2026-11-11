@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { compile, createSimulation, formatEffectParenthesised, formatExpressionParenthesised, parseExpression } from '../../src/engine/index'
+import { compile, createSimulation, formatEffectParenthesised, formatExpressionParenthesised, parseExpression } from '@sccharts-lab/engine'
 
 function grouped(source: string, nary?: 'flat' | 'left'): string {
     const r = parseExpression(source)

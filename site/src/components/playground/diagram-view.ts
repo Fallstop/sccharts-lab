@@ -8,7 +8,7 @@
 //
 // Zooming resizes the SVG instead of scaling it with a CSS transform, so text stays crisp at every zoom.
 
-import { applyClasses, type ClassMap } from '../../diagram/highlight'
+import { applyClasses, type ClassMap } from '@sccharts-lab/diagram/highlight'
 
 export interface DiagramViewOptions {
     /** The stage element (position: relative; overflow: hidden). */

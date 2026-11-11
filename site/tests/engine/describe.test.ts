@@ -1,9 +1,9 @@
-// describeTick's reasons (src/engine/sim/reasons.ts): the values a trigger read when it was checked, not the
+// describeTick's reasons (packages/engine/src/sim/reasons.ts): the values a trigger read when it was checked, not the
 // values after the tick, in the log (`check`, `take`, `suspend` events) and in the sentences.
 
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation, describeTick } from '../../src/engine/index'
-import type { TickResult } from '../../src/engine/types'
+import { compile, createSimulation, describeTick } from '@sccharts-lab/engine'
+import type { TickResult } from '@sccharts-lab/engine/types'
 
 const run = (source: string, inputs: Record<string, unknown>[]) => {
     const r = compile(source)

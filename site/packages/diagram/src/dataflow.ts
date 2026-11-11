@@ -5,8 +5,8 @@
 // constraints, skins) is richer; this covers the equations the guide teaches.
 
 import type { ElkExtendedEdge, ElkLabel, ElkNode, ElkPort } from 'elkjs/lib/elk-api'
-import { formatExpression, type FormatContext } from '../engine/format'
-import type { Expression, Reference, Region, State } from '../engine/types'
+import { formatExpression, type FormatContext } from '@sccharts-lab/engine/format'
+import type { Expression, Reference, Region, State } from '@sccharts-lab/engine/types'
 import { r2 } from './geometry'
 import { lineMetrics, type TextMeasurer, type TextStyle } from './measure'
 import type { DataflowLayout, DataflowNodeLayout, Point, TextLine } from './types'

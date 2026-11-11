@@ -1,8 +1,8 @@
 // The simulation's watch (watch.ts): an expression over the chart's data pool, evaluated by the engine for the tick
 // shown, as the chart itself would evaluate it.
 import { describe, expect, test } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
-import type { Value } from '../../src/engine/types'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import type { Value } from '@sccharts-lab/engine/types'
 import { compileWatch, holds, type Watch, type WatchTick } from '../../src/components/playground/watch'
 import fs from 'node:fs'
 

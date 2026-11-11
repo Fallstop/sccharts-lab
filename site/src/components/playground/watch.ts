@@ -13,8 +13,8 @@
 // S-57). A `pre` needs the ticks before, so `pre(x)` has no value in tick 1 here; and strings cannot be read (C
 // compares them as pointers).
 
-import { compile, createSimulation, parseExpression, traceableVariables, type CompileResult, type Simulation, type TraceableVariable } from '../../engine/index'
-import type { Expression, Reference, Value, VariableInfo } from '../../engine/types'
+import { compile, createSimulation, parseExpression, traceableVariables, type CompileResult, type Simulation, type TraceableVariable } from '@sccharts-lab/engine'
+import type { Expression, Reference, Value, VariableInfo } from '@sccharts-lab/engine/types'
 import { qualifiedName } from '../sim/trace'
 
 /** The value of the watch in a tick, or why it has none. */

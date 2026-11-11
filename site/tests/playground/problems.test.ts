@@ -2,7 +2,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, describe, expect, test, vi } from 'vitest'
-import { compile } from '../../src/engine/index'
+import { compile } from '@sccharts-lab/engine'
 import { defaultShow, isDefault, loadChoice, resolveShow, saveChoice, variableChoices } from '../../src/components/playground/variables'
 import { spanAt, withRecording } from '../../src/components/playground/recorded'
 import { errorLink } from '../../src/components/frame/error-links'

@@ -1,15 +1,15 @@
 // Diagram layout off the main thread: layoutChart builds the ELK graph (cheap) and ELK itself runs in a Web
-// Worker (elkjs's elk-worker), as src/diagram/README.md describes. Requests are latest-wins: while one layout
+// Worker (elkjs's elk-worker), as packages/diagram/src/README.md describes. Requests are latest-wins: while one layout
 // runs, only the newest request waits; older ones are dropped. A layout that hangs is cut off and the worker
 // replaced.
 
 import ELK from 'elkjs/lib/elk-api.js'
 import elkWorkerUrl from 'elkjs/lib/elk-worker.min.js?url'
 // Not ../../diagram/index: that one falls back to elkjs's 1.4 MB bundled build. These modules need the worker.
-import { layoutChart } from '../../diagram/layout'
-import { renderSvg } from '../../diagram/render'
-import type { DiagramLayout, ElkLike, LayoutOptions } from '../../diagram/types'
-import type { Program, State } from '../../engine/types'
+import { layoutChart } from '@sccharts-lab/diagram/layout'
+import { renderSvg } from '@sccharts-lab/diagram/render'
+import type { DiagramLayout, ElkLike, LayoutOptions } from '@sccharts-lab/diagram/types'
+import type { Program, State } from '@sccharts-lab/engine/types'
 
 export interface LayoutJob {
     chart: State

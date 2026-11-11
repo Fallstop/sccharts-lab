@@ -2,8 +2,8 @@
 // slide), with the diagram's stylesheet inside so it looks the same in any viewer. Highlights from the simulation and
 // the editor are left out.
 
-import diagramCss from '../../diagram/diagram.css?raw'
-import { HIGHLIGHT_CLASSES } from '../../diagram/highlight'
+import diagramCss from '@sccharts-lab/diagram/diagram.css?raw'
+import { HIGHLIGHT_CLASSES } from '@sccharts-lab/diagram/highlight'
 import sansUrl from '@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2?url'
 import monoUrl from '@fontsource-variable/atkinson-hyperlegible-mono/files/atkinson-hyperlegible-mono-latin-wght-normal.woff2?url'
 

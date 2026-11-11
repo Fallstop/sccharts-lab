@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { compile, parse } from '../../src/engine'
+import { compile, parse } from '@sccharts-lab/engine'
 import { mutate, randomExpressionCase, randomSnippet, rng } from './mutate'
 // @ts-ignore plain JS module (typed by inference under allowJs, untyped elsewhere)
 import { checkAll } from './kieler-check.mjs'

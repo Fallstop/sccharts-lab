@@ -1,8 +1,8 @@
 // "How KIELER reads it" (HowKielerReads.svelte): an expression, effect or trigger as KIELER's grammar groups it,
 // fully parenthesised and as a tree, or the syntax error. Pure: the engine's parser does the reading
 // (parseExpression, formatExpressionParenthesised; the chart parser for a trigger with a count delay).
-import { compile, formatEffectParenthesised, formatExpressionParenthesised, parseExpression } from '~engine/index'
-import type { Diagnostic, Effect, Expression, OperatorType } from '~engine/types'
+import { compile, formatEffectParenthesised, formatExpressionParenthesised, parseExpression } from '@sccharts-lab/engine'
+import type { Diagnostic, Effect, Expression, OperatorType } from '@sccharts-lab/engine/types'
 
 /** 'auto': an expression (as in a trigger without count delay, or an initial value) or else an effect (after
  *  `do`); 'trigger': the text after `if`, where a leading number is a count delay. */

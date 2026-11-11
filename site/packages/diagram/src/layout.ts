@@ -15,8 +15,8 @@ import {
     actionSegments, createFormatContext, declarationLines, formatEquation, formatExpression, isImplicitlyImmediate, mergeComponents,
     regionLabelSegments, stateDisplayName, stateTitleSegments, transitionLabelLines,
     type FormatContext, type TextSegment,
-} from '../engine/format'
-import type { Annotation, Declaration, Region, State, Transition } from '../engine/types'
+} from '@sccharts-lab/engine/format'
+import type { Annotation, Declaration, Region, State, Transition } from '@sccharts-lab/engine/types'
 import { buildCircuit, type CircuitBuild } from './dataflow'
 import { flatten, nearest, r2 } from './geometry'
 import { lineMetrics, measureWithTable, type TextMeasurer, type TextStyle } from './measure'
@@ -886,7 +886,7 @@ export async function layoutChart(chart: State, givenOptions: LayoutOptions = {}
         edges: rootComments.map(commentEdge),
     })
     const elk = options.elk
-    if (!elk) throw new Error('layoutChart needs an ELK instance (options.elk); src/diagram/index.ts supplies elkjs\'s bundled build')
+    if (!elk) throw new Error('layoutChart needs an ELK instance (options.elk); packages/diagram/src/index.ts supplies elkjs\'s bundled build')
     let result = await elk.layout(graph(new Set()))
     // Self-loops on four sides whose labels collide: once more, with those loops on two sides.
     const crowded = crowdedLoops(result)

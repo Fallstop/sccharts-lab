@@ -6,7 +6,7 @@
 // reader's choice is remembered per chart (by name) in local storage, guarded: without storage the default applies.
 // Pure apart from the storage helpers.
 
-import { traceableVariables, type CompileResult, type TraceableVariable } from '../../engine/index'
+import { traceableVariables, type CompileResult, type TraceableVariable } from '@sccharts-lab/engine'
 import { lanesFor } from '../sim/trace'
 import { storageGet, storageSet } from './share'
 

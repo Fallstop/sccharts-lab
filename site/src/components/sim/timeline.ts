@@ -12,7 +12,7 @@
 // cursor and runs the new inputs). Previous goes back through the tour, and changing an input (or Take over)
 // hands control to the reader.
 
-import type { TickResult, Value } from '~engine/types'
+import type { TickResult, Value } from '@sccharts-lab/engine/types'
 import { effectiveInputs, sameInputs, type InputState } from './inputs'
 
 /** What the timeline needs from the engine's Simulation (Compare passes a pair of simulations). */

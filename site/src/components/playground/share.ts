@@ -4,7 +4,7 @@
 // playground works the same with storage blocked.
 
 import LZString from 'lz-string'
-import type { Value } from '../../engine/types'
+import type { Value } from '@sccharts-lab/engine/types'
 
 const PREFIX = 'code='
 

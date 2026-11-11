@@ -4,7 +4,7 @@
 // generated elements), diagnostics (codes, KIELER's texts) and the plain-English descriptions.
 
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation, describeTick } from '../../src/engine/index'
+import { compile, createSimulation, describeTick } from '@sccharts-lab/engine'
 
 const run = (source: string, inputs: Record<string, unknown>[], files?: Record<string, string>) => {
     const r = compile(source, { files })

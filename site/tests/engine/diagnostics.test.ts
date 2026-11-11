@@ -1,8 +1,8 @@
 // What the simulator says when KIELER rejects a chart (or warns about one): the code, a message that names the
 // variable and the accesses, a hint, the related element ids for the diagram, and KIELER's own words.
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
-import type { Diagnostic } from '../../src/engine/types'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import type { Diagnostic } from '@sccharts-lab/engine/types'
 
 function errors(source: string): Diagnostic[] {
     return compile(source).diagnostics.filter(d => d.severity === 'error')

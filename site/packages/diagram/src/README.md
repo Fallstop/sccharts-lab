@@ -21,7 +21,7 @@ state in the first layer; directions alternate with depth (KIELER's "HV" default
 the next level top to bottom, and so on). Sizes and paddings are KIELER's (simple states at least 34 px with
 10/8 px text padding and 17 px corners, final states with a second border 3 px inside (4 for initial ones),
 initial states with a 3 px border, superstate title rows and declaration blocks, 20 px region headers,
-connectors 10 px, ...). Labels are KIELER's: `src/engine/format.ts` reproduces its serialisers, including
+connectors 10 px, ...). Labels are KIELER's: `packages/engine/src/format.ts` reproduces its serialisers, including
 quirks (a valued emission prints its value with the plain serialiser, `V((x + 1))`; `x - (y - z)` prints as
 `x - y - z`; host code prints without its backticks, so `` do `a = 1;`; x = 2 `` reads `/ a = 1;; x = 2`; a code effect ends
 every statement with `;` but a declaration with nothing, so one that declares `int t = a` and then runs
@@ -63,7 +63,7 @@ all (a chart with unresolved names), this renderer still draws what it can.
 
 | option | default | |
 | --- | --- | --- |
-| `elk` | from `src/diagram/index`: a shared `elkjs/lib/elk.bundled.js` instance, loaded on first use; `src/diagram/layout` needs it | any `{ layout(graph) }`, e.g. `new ELK({ workerFactory })` from `elkjs/lib/elk-api.js` to lay out off the main thread. Browser code imports `layoutChart` from `./layout` (and `renderSvg` from `./render`), so its bundle never contains the 1.4 MB bundled build |
+| `elk` | from `packages/diagram/src/index`: a shared `elkjs/lib/elk.bundled.js` instance, loaded on first use; `packages/diagram/src/layout` needs it | any `{ layout(graph) }`, e.g. `new ELK({ workerFactory })` from `elkjs/lib/elk-api.js` to lay out off the main thread. Browser code imports `layoutChart` from `./layout` (and `renderSvg` from `./render`), so its bundle never contains the 1.4 MB bundled build |
 | `measure` | generated width table (`font-metrics.ts`) | `(text, { size, bold, mono }) => width`; the table makes Node and browser layouts identical, a canvas measurer would not |
 | `program` | none | the parsed program: other charts give referenced instances (dataflow) their ports and can be expanded inside reference states; its declarations and pragmas feed the formatter |
 | `format` | built from `program`, else the chart | an explicit `createFormatContext(...)` |
@@ -114,7 +114,7 @@ cursor offset, innermost first (for `is-focus`); `spanOf(layout, id)` the span o
 
 ## DOM contract
 
-Every model element is an element with `data-id="<id>"` (ids as in `src/engine/types.ts`):
+Every model element is an element with `data-id="<id>"` (ids as in `packages/engine/src/types.ts`):
 
 | element | markup | classes |
 | --- | --- | --- |

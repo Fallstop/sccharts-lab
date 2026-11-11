@@ -164,8 +164,8 @@ export default defineConfig({
         },
         resolve: {
             alias: {
-                '~engine': fileURLToPath(new URL('./src/engine', import.meta.url)),
-                '~diagram': fileURLToPath(new URL('./src/diagram', import.meta.url)),
+                '~engine': fileURLToPath(new URL('./packages/engine/src', import.meta.url)),
+                '~diagram': fileURLToPath(new URL('./packages/diagram/src', import.meta.url)),
                 '~components': fileURLToPath(new URL('./src/components', import.meta.url)),
                 '~examples': fileURLToPath(new URL('./src/examples', import.meta.url)),
             },

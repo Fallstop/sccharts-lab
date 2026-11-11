@@ -4,7 +4,7 @@
 	decides what it means (the next Step uses it).
 -->
 <script lang="ts">
-	import type { Value } from '~engine/types'
+	import type { Value } from '@sccharts-lab/engine/types'
 	import { formatValue, parseArray, parseNumber, type InputControl, type InputState } from './inputs'
 
 	interface Props {

@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
-import { parse } from '../../src/engine'
+import { parse } from '@sccharts-lab/engine'
 
 const here = path.dirname(new URL(import.meta.url).pathname)
 const probes: { text: string; kieler: 'accept' | 'reject'; first?: string; source?: string }[] = JSON.parse(fs.readFileSync(path.join(here, 'syntax-probes.json'), 'utf8'))

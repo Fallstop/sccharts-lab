@@ -10,7 +10,7 @@ of guide pages (`src/components/Playground.astro` renders `PlaygroundInline.astr
   via `code-colours.ts`), indentation that knows SCTX (braces, transitions under their state), brace folding, bracket
   matching and closing, comment toggling, search, lint squiggles and gutter marks, a problems list, completion and
   hover cards (`editor-features.ts`, `analysis.ts`, `keyword-docs.ts`), go to declaration (F12, Ctrl/⌘-click).
-- **Diagram** (`diagram-view.ts`, `layout-service.ts`): `layoutChart` (from `src/diagram/layout`, never the bundled
+- **Diagram** (`diagram-view.ts`, `layout-service.ts`): `layoutChart` (from `packages/diagram/src/layout`, never the bundled
   ELK) with ELK in a Web Worker (elk-api + elk-worker), latest request wins; pan (drag, wheel, arrows), zoom (Ctrl/⌘ +
   wheel, pinch, + and −). A chart opens whole, fitted to the stage in both dimensions, as long as that is at least
   50 % (KIELER's names at about 7 px; every chart of the guide up to ABRO's size fits at 1280 × 900); one that would

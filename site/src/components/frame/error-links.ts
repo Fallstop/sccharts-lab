@@ -111,7 +111,7 @@ const A = {
 /** Every anchor this module can return (the test checks that the page has each). */
 export const ANCHORS: readonly string[] = Object.values(A)
 
-/** Engine diagnostic codes (src/engine) and the section about them. Codes not listed here are matched by their
+/** Engine diagnostic codes (packages/engine/src) and the section about them. Codes not listed here are matched by their
  *  KIELER wording, or get no link: the guide's own notes (`kieler-quirk`, `kieler-divergence`, `unsupported`,
  *  `ternary-grouping`, ...) are not compiler messages. `parse` is matched by its message, else the syntax errors
  *  section. Some codes stand for more than one of KIELER's messages and go by their words on purpose: `static-access`

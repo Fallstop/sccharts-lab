@@ -4,9 +4,9 @@
 
 import { flushSync, mount, unmount } from 'svelte'
 import SimPanel from '../sim/SimPanel.svelte'
-import type { CompileResult } from '../../engine/index'
-import type { ClassMap } from '../../diagram/highlight'
-import type { TickResult } from '../../engine/types'
+import type { CompileResult } from '@sccharts-lab/engine'
+import type { ClassMap } from '@sccharts-lab/diagram/highlight'
+import type { TickResult } from '@sccharts-lab/engine/types'
 import type { Scenario } from '../frame/examples'
 
 /** What SimPanel reports with each highlight (README, "SimView"). */

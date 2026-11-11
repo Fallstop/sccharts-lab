@@ -2,8 +2,8 @@
 // 10,000 ticks per second, and the static analysis of a 50-state chart takes under 20 ms. Measured as medians;
 // the assertions allow for a loaded machine (several agents and test runs share it), the log shows the numbers.
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation } from '../../src/engine/index'
-import { compileChart } from '../../src/engine/sim/compile'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import { compileChart } from '@sccharts-lab/engine/sim/compile'
 
 const SLACK = Number(process.env.ENGINE_PERF_SLACK ?? 3)
 

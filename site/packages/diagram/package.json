@@ -1,0 +1,17 @@
+{
+  "name": "@sccharts-lab/diagram",
+  "version": "0.1.0",
+  "description": "SCCharts Lab's diagrams of SCCharts in KIELER's notation: ELK layout and SVG rendering",
+  "license": "EPL-2.0",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./diagram.css": "./src/diagram.css",
+    "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "@sccharts-lab/engine": "workspace:*",
+    "elkjs": "0.12.0"
+  }
+}

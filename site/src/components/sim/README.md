@@ -16,7 +16,7 @@ trace.ts            pure: timing-diagram rows (inputs, outputs, valued signals, 
 describe.ts         pure: "What happened" and "Explain this tick" text from a TickResult
 lines.ts            pure: source lines of model elements, from the AST spans
 link.ts             DOM: diagram highlight (with the firing pulse), code-line highlight, hover linking, keyboard access
-engine.ts           the seam to src/engine (compile + createSimulation)
+engine.ts           the seam to packages/engine/src (compile + createSimulation)
 engage.ts           the `client:engage` directive: an island hydrates when the reader first engages with its widget
 ```
 

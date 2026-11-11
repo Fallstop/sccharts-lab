@@ -1,8 +1,8 @@
 // Compares the engine with one oracle result (tools/oracle/oracle.mjs): acceptance, KIELER's data pool, the
 // taken-transition counters and the termination tick, tick by tick (as tests/conformance/engine.test.ts does).
 
-import { compile, createSimulation, SIMULATOR_CODES, type PoolValue } from '../../src/engine/index'
-import type { Value } from '../../src/engine/types'
+import { compile, createSimulation, SIMULATOR_CODES, type PoolValue } from '@sccharts-lab/engine'
+import type { Value } from '@sccharts-lab/engine/types'
 
 export interface OracleResult {
     ok: boolean

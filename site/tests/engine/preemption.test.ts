@@ -1,10 +1,10 @@
-// The preemption passes (src/engine/sim/passes: history, suspend, countDelay, weakSuspend, deferred, finalRegion,
+// The preemption passes (packages/engine/src/sim/passes: history, suspend, countDelay, weakSuspend, deferred, finalRegion,
 // abortRegion) seen through the simulator's API: the source-level configuration (active, entered, exited), the
 // log and describeTick, provenance, and the diagnostics. Values per tick are checked against KIELER's recordings
 // in tests/conformance/preemption (engine.test.ts); the expectations here follow those recordings.
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation, describeTick, type CompileResult } from '../../src/engine/index'
-import type { TickResult, Value } from '../../src/engine/types'
+import { compile, createSimulation, describeTick, type CompileResult } from '@sccharts-lab/engine'
+import type { TickResult, Value } from '@sccharts-lab/engine/types'
 
 function run(source: string, ticks: Record<string, Value>[]): { result: CompileResult; ticks: TickResult[] } {
     const result = compile(source)

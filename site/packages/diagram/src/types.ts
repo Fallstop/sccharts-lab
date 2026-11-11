@@ -2,8 +2,8 @@
 // computed in a Web Worker or at build time and cached.
 
 import type { ElkNode } from 'elkjs/lib/elk-api'
-import type { FormatContext, TextFormat } from '../engine/format'
-import type { Program, Span, State } from '../engine/types'
+import type { FormatContext, TextFormat } from '@sccharts-lab/engine/format'
+import type { Program, Span, State } from '@sccharts-lab/engine/types'
 import type { TextMeasurer } from './measure'
 
 export interface Point {
@@ -171,8 +171,8 @@ export interface ElkLike {
 }
 
 export interface LayoutOptions {
-    /** The ELK instance. `layoutChart` from `src/diagram/index` defaults to a shared `elkjs/lib/elk.bundled.js`
-     *  instance (loaded on first use); the one in `src/diagram/layout` needs it (the playground passes elk-api
+    /** The ELK instance. `layoutChart` from `packages/diagram/src/index` defaults to a shared `elkjs/lib/elk.bundled.js`
+     *  instance (loaded on first use); the one in `packages/diagram/src/layout` needs it (the playground passes elk-api
      *  backed by a Web Worker, so its bundle never contains the bundled build). */
     elk?: ElkLike
     /** Text measurement. Default: the generated width table of the diagram font (identical in Node and the
