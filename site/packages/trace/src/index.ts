@@ -49,3 +49,5 @@ export { compareRuns, initialValue, poolVariables, traceColumns, traceFromRun } 
 export type { EngineRun, PoolVariable, TraceOptions } from './engine'
 export { replayTargets, replayTrace, SimulationReplay } from './engine-replay'
 export type { EngineReplayOptions, ReplayOutcome, ReplayStep } from './engine-replay'
+export { runOnSequence, runOnTimedSequence } from './engine-sequence'
+export type { SequenceRun } from './engine-sequence'

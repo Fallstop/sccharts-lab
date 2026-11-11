@@ -7,7 +7,8 @@ are the same file, apart from the model's file name you pass.
 
 The format code, comparison, replay matching, timed sequences and renames are ported from
 `keith-vscode/src/simulation/trace-*.ts` (with the extension's tests, `src/*.test.ts`); `engine.ts` and
-`engine-replay.ts` are new and connect them to the engine. No DOM, no Node APIs: it runs in the browser and in Node.
+`engine-replay.ts` and
+`engine-sequence.ts` are new and connect them to the engine. No DOM, no Node APIs: it runs in the browser and in Node.
 
 ## Use
 
@@ -54,6 +55,7 @@ const report = comparisonMarkdown(comparison)        // comparisonCsv(comparison
 | `SimulationReplay` | Step by step, for a UI: `step()` (one tick: `{ tick, inputs, mismatches, pause }`), `run(stop?)`, `rewindTo(tick)`, `state()`, `done`, `error`; `replay` is the underlying `TraceReplay` (`driven`, `ignored`, `unset`, `checked`, `mismatchesOf(name)`) |
 | `replayTargets(result)` | The model's variables as `TraceReplay` targets |
 | `suggestRenames(fileVariables, traceColumns(result), aliases?)` | Names spelled alike (`NS_Green` and `nsGreen`) or matched before; `renameTrace`, `rememberAliases`, `forgetAliases`, `couldMatch`, `unmatched`, `describeRenames` |
+| `runOnSequence(result, sequence, ticks, { label?, model? })` / `runOnTimedSequence(result, sequence, until, { mode? })` | The extension's "Run models on a sequence" without its dialogs: a fresh simulation on an input sequence for a number of ticks, or on a timed sequence for a number of seconds (a model with `deltaT` as its clock asks, another one as `mode` says); the trace and the notes for the report |
 | `compareTraces(named)` / `compareRuns(runs)` | Tick by tick, or moment by moment when the traces have times; value changes lined up with their shift; printed lines too |
 | `comparisonMarkdown(comparison, { maxRows?, preamble? })` / `comparisonCsv(comparison)` | The extension's reports |
 | `TimedSchedule`, `timedEvents` | Ticks of a run on a timed sequence (a CSV with a `time` column and no `deltaT`): `clock`, `timer` or `events` |
