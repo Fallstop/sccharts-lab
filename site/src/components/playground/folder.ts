@@ -229,14 +229,21 @@ export async function saveFolder(root: FileSystemDirectoryHandle, disk: Record<s
 
 /**
  * The folder read again (Reconnect, a reload) against the project: `take`, the files that take the folder's text (those
- * not edited here, and files new in the folder, empty ones too), and the folder's texts to save against next. A file
- * edited here keeps its text and the text it was edited from, and a file deleted or renamed here stays so, so that a
- * change in the folder meanwhile is a conflict when saving, not lost.
+ * not edited here, and files new in the folder, empty ones too), `drop`, the files the folder deleted that were not
+ * edited here, and the folder's texts to save against next. A file edited here keeps its text and the text it was
+ * edited from (also when the folder deleted it), and a file deleted or renamed here stays so, so that a change in the
+ * folder meanwhile is a conflict when saving, not lost.
  */
-export function mergeFolder(mine: Record<string, string>, disk: Record<string, string>, read: Record<string, string>): { take: Record<string, string>; disk: Record<string, string> } {
+export function mergeFolder(mine: Record<string, string>, disk: Record<string, string>, read: Record<string, string>): { take: Record<string, string>; drop: string[]; disk: Record<string, string> } {
     const has = (o: Record<string, string>, p: string) => Object.hasOwn(o, p)
     const take: Record<string, string> = {}
+    const drop: string[] = []
     const next: Record<string, string> = {}
+    for (const p of Object.keys(disk)) {
+        if (has(read, p) || !has(mine, p)) continue
+        if (mine[p] === disk[p]) drop.push(p)
+        else next[p] = disk[p]
+    }
     for (const [p, text] of Object.entries(read)) {
         const known = has(disk, p)
         const edited = has(mine, p) ? !known || mine[p] !== disk[p] : known
@@ -246,7 +253,7 @@ export function mergeFolder(mine: Record<string, string>, disk: Record<string, s
         } else if (has(mine, p) && mine[p] === text) next[p] = text
         else if (known) next[p] = disk[p]
     }
-    return { take, disk: next }
+    return { take, drop, disk: next }
 }
 
 // ----- Without folder access: several files, and .zip ----------------------------------------------------------

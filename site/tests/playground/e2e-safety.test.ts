@@ -499,6 +499,70 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await ctx.close()
     }, 120000)
 
+    test('a Save waiting for the browser\'s permission never writes another project into the folder', async () => {
+        const ctx = await context()
+        await ctx.addInitScript({ path: new URL('./fixtures/mock-folder.js', import.meta.url).pathname })
+        await ctx.addInitScript(() => {
+            const w = window as unknown as { mockFolder: (f: Record<string, string>, o: object) => unknown; theFolder: unknown; showDirectoryPicker: () => Promise<unknown> }
+            w.theFolder = w.mockFolder({ 'a.sctx': 'scchart Ay {\n  initial state A\n}\n' }, { name: 'mine' })
+            w.showDirectoryPicker = async () => w.theFolder
+        })
+        const page = await open(ctx, '/playground/')
+        await openFolder(page)
+        await typeAtEnd(page, 'a.sctx', '// edited')
+        // The browser asks, and the reader opens another chart before answering.
+        await page.evaluate(() => {
+            const w = window as unknown as { theFolder: Record<string, unknown>; grant?: () => void }
+            w.theFolder.queryPermission = async () => 'prompt'
+            w.theFolder.requestPermission = () => new Promise(resolve => (w.grant = () => resolve('granted')))
+        })
+        await page.click('.sc-pg-files__folder .sc-btn')
+        await page.waitForFunction(() => typeof (window as unknown as { grant?: unknown }).grant === 'function')
+        await page.evaluate(h => (location.hash = h), hashForSource('scchart Other {\n  initial state O\n}\n').slice(1))
+        await page.waitForFunction(() => /scchart Other/.test((document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString()))
+        await page.evaluate(() => (window as unknown as { grant: () => void }).grant())
+        await page.waitForTimeout(500)
+        const disk = await page.evaluate(() => (window as unknown as { theFolder: { files(): Record<string, string> } }).theFolder.files())
+        expect(disk).toEqual({ 'a.sctx': 'scchart Ay {\n  initial state A\n}\n' })
+        await ctx.close()
+    }, 120000)
+
+    test('a folder read as the page starts never goes into a chart opened meanwhile', async () => {
+        const ctx = await context()
+        await withOpfs(ctx)
+        // Reading a folder waits for the test while sessionStorage says so (it survives the reload).
+        await ctx.addInitScript(() => {
+            if (!sessionStorage.getItem('gate-reads')) return
+            const w = window as unknown as { release?: () => void }
+            const gate = new Promise<void>(resolve => (w.release = resolve))
+            const proto = FileSystemDirectoryHandle.prototype as unknown as { values: () => AsyncIterable<unknown> }
+            const values = proto.values
+            proto.values = async function* (this: FileSystemDirectoryHandle) {
+                await gate
+                yield* values.call(this)
+            } as unknown as () => AsyncIterable<unknown>
+        })
+        const page = await opfsFolder(ctx, 'safety-late-read', { 'main.sctx': MAIN, 'only-here.sctx': LAMP })
+        await typeAtEnd(page, 'main.sctx', '// edited')
+        await page.waitForTimeout(800)
+        // The folder gains a file while the page is away: read at start, it would come into the project.
+        await changeOpfs(page, 'safety-late-read', 'new-there.sctx', LAMP)
+        await page.evaluate(() => sessionStorage.setItem('gate-reads', '1'))
+        await page.reload({ waitUntil: 'commit' })
+        await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+        await page.waitForFunction(() => typeof (window as unknown as { release?: unknown }).release === 'function')
+        const OTHER = 'scchart Other {\n  initial state O\n}\n'
+        await page.evaluate(h => (location.hash = h), hashForSource(OTHER).slice(1))
+        await page.waitForFunction(() => /scchart Other/.test((document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString()))
+        await page.evaluate(() => (window as unknown as { release: () => void }).release())
+        await page.waitForTimeout(500)
+        expect(await editorText(page)).toBe(OTHER)
+        const paths = await page.evaluate(() => (document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { project: { texts(): Record<string, string> } } }).playground.project.texts())
+        expect(Object.keys(paths)).not.toContain('only-here.sctx')
+        expect(Object.keys(paths)).not.toContain('new-there.sctx')
+        await ctx.close()
+    }, 120000)
+
     test("the Trace tab's Save in folder never writes over a file there, however many the folder holds", async () => {
         const ctx = await context()
         await ctx.addInitScript({ path: new URL('./fixtures/mock-folder.js', import.meta.url).pathname })

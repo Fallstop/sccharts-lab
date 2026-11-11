@@ -364,14 +364,18 @@ export class ProjectControl {
             pg.toast(`The browser did not allow writing to ${folder.name}.`)
             return
         }
+        // Another project opened while the browser asked: its files must never go into this folder.
+        if (this.folder !== folder) return
         folder.connected = true
         this.syncActive()
         const saved = await saveFolder(folder.handle, folder.disk, this.texts(), force)
         // Only what reached the disk counts as saved (a conflict, or what a failure stopped, stays unsaved).
         folder.disk = saved.disk
-        this.pending = true
-        this.flush(false)
-        this.publish()
+        if (this.folder === folder) {
+            this.pending = true
+            this.flush(false)
+            this.publish()
+        }
         if (saved.error) {
             pg.toast(`Saving to ${folder.name} failed: ${saved.error}`)
             return
@@ -409,7 +413,10 @@ export class ProjectControl {
     async checkFolder(ask: boolean) {
         const folder = this.folder
         if (!folder?.handle) return
-        if (!(await permitted(folder.handle, ask))) {
+        const allowed = await permitted(folder.handle, ask)
+        // Another project opened meanwhile (the folder is read as the page starts): this folder is not its business.
+        if (this.folder !== folder) return
+        if (!allowed) {
             folder.connected = false
             this.publish()
             if (ask) this.pg.toast(`The browser did not allow access to ${folder.name}.`)
@@ -420,9 +427,10 @@ export class ProjectControl {
         try {
             read = await readFolder(folder.handle)
         } catch {
-            this.publish()
+            if (this.folder === folder) this.publish()
             return
         }
+        if (this.folder !== folder) return
         const merged = mergeFolder(this.texts(), folder.disk, read.files)
         let changed = false
         for (const [p, text] of Object.entries(merged.take)) {
@@ -431,7 +439,25 @@ export class ProjectControl {
             if (p === this.active) this.pg.view.setState(stateFor(this.pg.view, text))
             changed = true
         }
-        folder.disk = merged.disk
+        // Files the folder deleted that were not edited here go too (a project keeps at least one file: the last one
+        // stays, and saving it is then a conflict the reader decides).
+        const disk = { ...merged.disk }
+        for (const p of merged.drop) {
+            if (this.paths.length < 2) {
+                disk[p] = folder.disk[p]
+                continue
+            }
+            delete this.files[p]
+            this.states.delete(p)
+            this.open = this.open.filter(o => o !== p)
+            if (this.active === p) {
+                this.active = this.open[0] ?? this.paths[0]
+                if (!this.open.includes(this.active)) this.open.push(this.active)
+                this.pg.view.setState(this.states.get(this.active) ?? stateFor(this.pg.view, this.files[this.active]))
+            }
+            changed = true
+        }
+        folder.disk = disk
         this.publish()
         if (changed) this.pg.fileSwitched()
         if (ask) this.pg.toast(`Connected to ${folder.name}.`)

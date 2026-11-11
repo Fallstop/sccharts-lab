@@ -119,8 +119,24 @@ describe('the folder read again (Reconnect, a reload)', () => {
         folder.put('a.sctx', 'theirs')
         const mine = { 'a.sctx': 'mine' }
         const merged = mergeFolder(mine, disk, (await readFolder(folder)).files)
-        expect(merged).toEqual({ take: {}, disk: { 'a.sctx': A } })
+        expect(merged).toEqual({ take: {}, drop: [], disk: { 'a.sctx': A } })
         expect((await saveFolder(folder, merged.disk, mine)).conflicts).toEqual(['a.sctx'])
+    })
+
+    test('a file the folder deleted leaves the project unless edited here; an edited one is a conflict, never written back unasked', async () => {
+        const { folder, disk } = await opened({ 'a.sctx': A, 'b.sctx': B, 'c.sctx': A })
+        folder.remove('a.sctx')
+        folder.remove('c.sctx')
+        const mine = { 'a.sctx': A, 'b.sctx': B, 'c.sctx': 'mine' }
+        const merged = mergeFolder(mine, disk, (await readFolder(folder)).files)
+        expect(merged.drop).toEqual(['a.sctx'])
+        expect(merged.take).toEqual({})
+        // The project as Reconnect leaves it: without the file the folder deleted.
+        const saved = await saveFolder(folder, merged.disk, { 'b.sctx': B, 'c.sctx': 'mine' })
+        expect(saved.conflicts).toEqual(['c.sctx'])
+        expect(folder.files()).toEqual({ 'b.sctx': B })
+        // Overwrite, the reader's choice, writes it back.
+        expect((await saveFolder(folder, merged.disk, { 'b.sctx': B, 'c.sctx': 'mine' }, true)).written).toEqual(['c.sctx'])
     })
 
     test('a file deleted or renamed here stays so; changed in the folder meanwhile, Save keeps it', async () => {
