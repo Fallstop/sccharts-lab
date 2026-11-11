@@ -10,8 +10,8 @@
 // then locals. Values are the pool after each tick; a name missing from a tick's pool keeps its value.
 
 import type { CompileResult, Simulation, SimTickResult } from '@sccharts-lab/engine'
-import { allScopes } from '@sccharts-lab/engine/sim/model'
-import type { CVar } from '@sccharts-lab/engine/sim/model'
+import { allScopes } from '@sccharts-lab/engine/internal'
+import type { CVar } from '@sccharts-lab/engine/internal'
 import type { Declaration, Value } from '@sccharts-lab/engine/types'
 import { compareTraces } from './trace-compare'
 import type { TraceComparison } from './trace-compare'

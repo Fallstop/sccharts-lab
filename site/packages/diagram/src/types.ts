@@ -1,7 +1,7 @@
 // The diagram's data: options and the laid-out diagram that renderSvg draws. Plain JSON, so a layout can be
 // computed in a Web Worker or at build time and cached.
 
-import type { ElkNode } from 'elkjs/lib/elk-api'
+import type { ElkNode } from 'elkjs/lib/elk-api.js'
 import type { FormatContext, TextFormat } from '@sccharts-lab/engine/format'
 import type { Program, Span, State } from '@sccharts-lab/engine/types'
 import type { TextMeasurer } from './measure'
@@ -171,9 +171,10 @@ export interface ElkLike {
 }
 
 export interface LayoutOptions {
-    /** The ELK instance. `layoutChart` from `packages/diagram/src/index` defaults to a shared `elkjs/lib/elk.bundled.js`
-     *  instance (loaded on first use); the one in `packages/diagram/src/layout` needs it (the playground passes elk-api
-     *  backed by a Web Worker, so its bundle never contains the bundled build). */
+    /** The ELK instance: elkjs's `ELK`, e.g. `new ELK({ workerFactory })` from `elkjs/lib/elk-api.js` to lay out in a Web
+     *  Worker. `layoutChart` from `@sccharts-lab/diagram` defaults to a shared `elkjs/lib/elk.bundled.js` instance (on
+     *  the calling thread, loaded on first use); the one from `@sccharts-lab/diagram/layout` needs it, so a bundle that
+     *  only imports that never contains the 1.4 MB bundled build. */
     elk?: ElkLike
     /** Text measurement. Default: the generated width table of the diagram font (identical in Node and the
      *  browser). */
@@ -233,4 +234,7 @@ export interface RenderOptions {
     regionCorner?: boolean
     /** Draw state shadows (default true). */
     shadows?: boolean
+    /** CSS to embed in the SVG as a `<style>` element: diagram.css's text makes a standalone .svg file that looks the
+     *  same in any viewer. Leave it out for an SVG inside a page that loads diagram.css. */
+    stylesheet?: string
 }

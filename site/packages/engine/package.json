@@ -1,12 +1,38 @@
 {
   "name": "@sccharts-lab/engine",
   "version": "0.1.0",
-  "description": "SCCharts Lab's SCCharts compiler and simulator in TypeScript: parse SCTX, check it as KIELER does, run it tick by tick, generate C",
+  "description": "SCCharts compiler, simulator and C code generator in TypeScript, verified against KIELER: parse SCTX, check it as KIELER does, run it tick by tick, generate C",
+  "keywords": ["sccharts", "sctx", "kieler", "synchronous-languages", "statecharts", "compiler", "simulator", "code-generation", "embedded", "reactive-systems"],
+  "homepage": "https://sccharts.jmw.nz",
+  "bugs": "https://github.com/Fallstop/sccharts-lab/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fallstop/sccharts-lab.git",
+    "directory": "site/packages/engine"
+  },
   "license": "EPL-2.0",
   "type": "module",
   "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
   "exports": {
     ".": "./src/index.ts",
+    "./lexer": "./src/parser/lexer.ts",
     "./*": "./src/*.ts"
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+      "./types": { "types": "./dist/types.d.ts", "default": "./dist/types.js" },
+      "./format": { "types": "./dist/format.d.ts", "default": "./dist/format.js" },
+      "./lexer": { "types": "./dist/parser/lexer.d.ts", "default": "./dist/parser/lexer.js" },
+      "./internal": { "types": "./dist/internal.d.ts", "default": "./dist/internal.js" },
+      "./package.json": "./package.json"
+    }
   }
 }

@@ -12,7 +12,10 @@
     "test": "vitest run",
     "oracle": "node tools/oracle/oracle.mjs",
     "oracle:record": "node tools/oracle/record.mjs",
-    "cgen:check": "node --experimental-transform-types --no-warnings --import ./tools/fuzz/register.mjs tools/cgen/check.ts"
+    "cgen:check": "node --experimental-transform-types --no-warnings --import ./tools/fuzz/register.mjs tools/cgen/check.ts",
+    "packages:build": "node tools/packages/build.mjs",
+    "packages:pack": "node tools/packages/pack.mjs",
+    "packages:smoke": "node tools/packages/smoke.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.6",

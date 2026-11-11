@@ -42,7 +42,8 @@ export interface CompiledChart {
     shared: Record<string, unknown>
 }
 
-const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now())
+// No DOM types in the engine: performance is global in browsers and Node, and optional here.
+const now = () => (globalThis as { performance?: { now(): number } }).performance?.now() ?? Date.now()
 
 /**
  * `hostCode`: compile charts with host code, extern calls and recursive methods on instead of stopping at the simulator's
