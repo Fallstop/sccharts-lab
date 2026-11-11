@@ -26,6 +26,7 @@ compact single-file widget). Owner: the playground workstream.
   with Ctrl+K); the **project** (its name, "edited", the menu: rename, New chart, New file, Open files, Open folder,
   Download, Download as .zip, Revert, the recent projects in this browser; `page/ProjectMenu.astro`,
   `project-menu.ts`); the example's guide page; **Compare with the model solution** (exercises); **Examples**;
+  **Embed** (a dialog that writes the code to put the chart on another page, `src/components/embed/dialog.ts`);
   **Copy link** (the whole project); search; **help** (`?`, `page/HelpMenu.astro`: shortcuts, projects, the diagram,
   the panel, where to go when a chart misbehaves, About the simulator, Report a mistake). On phones the bar keeps its
   icons (the labels stay for screen readers).
@@ -263,6 +264,7 @@ tab-focus mode, `app.ts`); /playground keeps the editor's own Tab (Escape, then 
 | `FileTree.svelte`, `FileTabs.svelte` | the files sidebar, the editor's tabs |
 | `workspace.ts`, `tabs.ts`, `file-actions.ts`, `toast.ts` | splitters and heights; the phone tabs; actions and keys; the toast |
 | `page/*.astro` | the page's parts: app bar menus, the task banner, the bottom panel |
+| `../embed/` | the embed (`/embed/`, `src/pages/embed.astro`): these parts in 'embed' mode in an iframe, its postMessage API, and the app bar's Embed dialog (`packages/embed/README.md`) |
 | `styles/page.css`, `styles/embed.css` | the two entry points (/playground, the inline playground), importing `styles/*.css` by area; `tokens.css` holds the playground's own tokens (surfaces, lines, sizes), so a dark theme is one more set of values |
 
 ## The bottom panel's tabs: adding one

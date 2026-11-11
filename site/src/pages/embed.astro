@@ -1,0 +1,140 @@
+---
+/**
+ * /embed/: one chart of SCCharts Lab, made to sit in an iframe on another site (a course page, a blog, docs). No site
+ * chrome: a head with the chart's name and "Open in SCCharts Lab", then the view chosen in the address (`view=`:
+ * the diagram; the diagram and the simulation; the editor and the diagram; all three). The playground's own parts run
+ * it (src/components/playground: the editor, the live diagram, SimPanel), in the inline playground's 'embed' mode;
+ * src/components/embed/boot.ts reads the options and the chart from the address and answers the framing page
+ * (bridge.ts, the postMessage protocol of packages/embed). How to embed: /reference/embed/.
+ *
+ * Isolated from the reader's own work on this site: the first script below swaps local and session storage for
+ * in-memory ones and hides IndexedDB before any other script runs, so nothing here reads or writes the reader's
+ * projects, scratch buffer or settings, whoever frames the page. Links open in a new tab (<base target>).
+ * public/_headers lets any origin frame this page.
+ */
+import { codeColourCss } from '../components/playground/code-colours'
+import { pgIcons } from '../components/playground/icons'
+import '@fontsource-variable/atkinson-hyperlegible-next/wght.css'
+import '@fontsource-variable/atkinson-hyperlegible-mono/wght.css'
+import '../styles/tokens.css'
+import '../styles/theme.css'
+import '../styles/widgets.css'
+import '../styles/wave.css'
+import '@sccharts-lab/diagram/diagram.css'
+import '../components/playground/styles/embed.css'
+import '../components/playground/styles/toast.css'
+import '../components/embed/styles/embed-page.css'
+
+const openIcon =
+	'<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8a1.5 1.5 0 0 0 1.5-1.5V10M9 2h5v5M14 2 7.5 8.5" /></svg>'
+const outlineTool = pgIcons.outline
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex" />
+		<meta name="color-scheme" content="light" />
+		<title>SCCharts Lab</title>
+		<base target="_blank" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<script is:inline>
+			// Before any other script: this page's storage is its own, in memory (the reader's own work stays untouched).
+			;(() => {
+				const memory = () => {
+					const m = new Map()
+					return {
+						get length() { return m.size },
+						key: (i) => [...m.keys()][i] ?? null,
+						getItem: (k) => (m.has(String(k)) ? m.get(String(k)) : null),
+						setItem: (k, v) => void m.set(String(k), String(v)),
+						removeItem: (k) => void m.delete(String(k)),
+						clear: () => m.clear(),
+					}
+				}
+				for (const name of ['localStorage', 'sessionStorage']) {
+					try { Object.defineProperty(window, name, { value: memory(), configurable: true }) } catch {}
+				}
+				try { Object.defineProperty(window, 'indexedDB', { value: undefined, configurable: true }) } catch {}
+			})()
+		</script>
+		<Fragment set:html={`<style>${codeColourCss()}</style>`} />
+	</head>
+	<body class="sc-embed-page">
+		<main class="sc-embed sc-pg-inline-host" data-sc-embed data-sc-frame data-view="sim" data-height="fill" aria-label="SCCharts Lab">
+			<script is:inline>
+				// The view and the height from the address before the first paint (boot.ts applies them again, the same).
+				;(() => {
+					const root = document.currentScript.parentElement
+					const q = new URLSearchParams(location.search)
+					const view = (q.get('view') || '').trim().toLowerCase()
+					if (['diagram', 'sim', 'editor', 'full'].includes(view)) root.dataset.view = view
+					const h = (q.get('height') || '').trim().toLowerCase()
+					const px = /^(\d{2,4})(px)?$/.exec(h)
+					const mode = h === 'auto' ? 'auto' : px ? 'fixed' : 'fill'
+					root.dataset.height = mode
+					if (px) root.style.setProperty('--embed-h', `${Math.max(120, Math.min(4000, Number(px[1])))}px`)
+					if (/^(0|false|no|off|none)$/i.test((q.get('controls') || '').trim())) root.dataset.controls = 'off'
+					document.documentElement.dataset.embedHeight = mode
+					document.documentElement.dataset.js = ''
+				})()
+			</script>
+			<header class="sc-embed__head">
+				<span class="sc-embed__glyph" aria-hidden="true"></span>
+				<p class="sc-embed__name" data-pg-chart-name>Chart</p>
+				<select class="sc-pg__chart-select sc-embed__select" data-pg-chart hidden aria-label="The chart to show and simulate"></select>
+				<a class="sc-embed__open" data-embed-open href="/playground/" rel="noopener">
+					<Fragment set:html={openIcon} /><span class="sc-embed__open-label">Open in SCCharts Lab</span><span class="sc-visually-hidden"> (opens in a new tab)</span>
+				</a>
+			</header>
+			<p class="sc-embed__notice" data-embed-notice role="status" hidden></p>
+
+			<div class="sc-embed__body">
+				<div class="sc-embed__work">
+					<section class="sc-embed__editor" data-embed-part="editor" aria-label="Editor" hidden>
+						<div class="sc-pg__body sc-pg__body--editor" data-pg-editor></div>
+						<footer class="sc-pg__problems" data-pg-problems data-state="pending">
+							<button type="button" class="sc-pg__problems-toggle" data-pg-problems-toggle aria-expanded="false" aria-controls="sc-embed-problems" aria-disabled="true">
+								<span class="sc-pg__problems-dot" aria-hidden="true"></span>
+								<span class="sc-pg__problems-summary" data-pg-problems-summary>Loading the compiler</span>
+							</button>
+							<ul class="sc-pg__problems-list" id="sc-embed-problems" data-pg-problems-list hidden></ul>
+						</footer>
+					</section>
+
+					<div class="sc-embed__diagram" data-pg-diagram>
+						<div class="sc-pg-inline__tools sc-embed__tools" role="group" aria-label="Diagram tools">
+							<button type="button" class="sc-pg__tool sc-embed__restore" data-action="restore" hidden title="Go back to the original chart"><Fragment set:html={pgIcons.undo} /><span class="sc-visually-hidden">Revert</span></button>
+							<button type="button" class="sc-pg__tool" data-action="zoom-out" aria-label="Zoom out" title="Zoom out (−)"><Fragment set:html={pgIcons.zoomOut} /></button>
+							<button type="button" class="sc-pg__tool" data-action="zoom-in" aria-label="Zoom in" title="Zoom in (+)"><Fragment set:html={pgIcons.zoomIn} /></button>
+							<button type="button" class="sc-pg__tool" data-action="fit" aria-label="Fit the whole diagram" title="Fit the whole diagram (0)"><Fragment set:html={pgIcons.fit} /></button>
+							<button type="button" class="sc-pg__tool" data-action="outline" aria-label="Outline of the chart" title="Outline: the chart as a list" aria-expanded="false" aria-controls="sc-embed-outline"><Fragment set:html={outlineTool} /></button>
+						</div>
+						<nav class="sc-pg-outline sc-embed__outline" id="sc-embed-outline" data-pg-outline aria-label="Outline of the chart" hidden></nav>
+						<div class="sc-pg__body sc-pg__stage" data-pg-stage role="region" aria-roledescription="diagram" aria-label="Diagram. Arrow keys pan, plus and minus zoom, 0 fits it; drag to pan, Ctrl and the mouse wheel or a pinch zoom. The outline button lists its elements.">
+							<span class="sc-pg__keys" id="sc-embed-keys" data-pg-diagram-keys hidden>Use the arrow keys to move between its states and transitions.</span>
+						</div>
+						<p class="sc-pg__badge" data-pg-badge hidden>Showing the last diagram that parsed</p>
+						<p class="sc-pg__busy" data-pg-busy hidden>Drawing the diagram</p>
+						<p class="sc-pg__empty" data-pg-empty hidden><span>There is no <code>scchart</code> to draw yet.</span></p>
+						<p class="sc-embed__loading" data-embed-loading><span class="sc-embed__if-js">Loading the chart</span><span class="sc-embed__if-nojs">This chart needs JavaScript to run.</span></p>
+					</div>
+				</div>
+
+				<div class="sc-embed__sim" data-embed-part="sim">
+					<div class="sc-pg-inline__simbar" data-pg-simbar hidden>
+						<p class="sc-pg__sim-note" data-pg-sim-note hidden></p>
+						<button type="button" class="sc-btn sc-btn--sm sc-pg__rebuild" data-action="rebuild" hidden><Fragment set:html={pgIcons.rebuild} /><span>Rebuild</span></button>
+					</div>
+					<div class="sc-pg__sim" data-pg-sim></div>
+				</div>
+			</div>
+			<div class="sc-pg__toast" data-pg-toast role="status" hidden></div>
+		</main>
+		<script>
+			import '../components/embed/boot'
+		</script>
+	</body>
+</html>

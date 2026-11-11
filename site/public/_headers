@@ -10,3 +10,16 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=31536000
+
+# The embed (src/pages/embed.astro) is made to be framed by any page: no framing policy, whatever the rule above may
+# set one day (a site-wide X-Frame-Options or frame-ancestors would break every embed). No `frame-ancestors *` either:
+# it would turn away pages with no web origin (a file:// page, an LMS's sandboxed frame). The rest of the site sets no
+# framing policy.
+/embed/*
+  ! X-Frame-Options
+  ! Content-Security-Policy
+
+# The loader of <sccharts-lab-chart>: any page may load it (also as a module or with crossorigin); cached for an hour.
+/embed.js
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600

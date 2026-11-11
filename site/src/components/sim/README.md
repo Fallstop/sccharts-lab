@@ -101,7 +101,8 @@ transition that fired, the lines of diagnostics). The playground can feed it to 
 
 `step()`, `back()`, `forward()`, `reset()`, `goto(tick: number)`, `run()` / `pause()`, `takeOver()`
 (leave the tour, keep the current tick), `restartTour()`, `advance()` (a timed chart: set `deltaT` to the
-`sleepT` of the tick shown and step). All are no-ops while the chart is rejected; `step()`, `run()` and `advance()`
+`sleepT` of the tick shown and step), `setInputs(values)` (inputs by KIELER's names, as if the reader had set them;
+returns why not, if it cannot: the embed's postMessage API). All are no-ops while the chart is rejected; `step()`, `run()` and `advance()`
 also while the simulation is stopped at a run-time error (below).
 
 A timed chart (an input `deltaT` and an output `sleepT` in `compiled.interface`, structure.md S-35) gets an

@@ -1,0 +1,373 @@
+/*
+ * The embed (src/pages/embed.astro): one chart in a frame of its own, the guide's widget frame drawn to the iframe's
+ * edges. The view (`data-view`) decides the parts; the height (`data-height`) whether they fill the frame (`fill`, a
+ * fixed height) or take what their content needs (`auto`, reported to the page, which sizes the frame).
+ *
+ *   head      the chart's name (or a picker of the file's charts) · Open in SCCharts Lab
+ *   work      editor | diagram (side by side from 36rem, stacked below)
+ *   sim       SimPanel: controls, timing diagram, what happened
+ */
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+}
+:root[data-embed-height='fill'],
+:root[data-embed-height='fill'] body,
+:root[data-embed-height='fixed'],
+:root[data-embed-height='fixed'] body {
+	height: 100%;
+}
+/* Auto: the page sizes the frame to the content, so the frame never scrolls (and never gains a scrollbar that would
+ * change the width and so the height). */
+:root[data-embed-height='auto'] {
+	overflow: hidden;
+}
+.sc-embed-page {
+	font-family: var(--font-text);
+	font-size: 1rem;
+	line-height: 1.5;
+	color: var(--c-text);
+	-webkit-text-size-adjust: 100%;
+}
+
+.sc-embed {
+	--frame-pad: 0.875rem;
+	--embed-head-h: 2.625rem;
+	/* The diagram's room for its floating tools (DiagramView's 'embed' padding) and the outline under them. */
+	--pg-head-h: 2.75rem;
+	--embed-dw: 100cqw;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	min-width: 0;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-md);
+	background-color: var(--c-sheet);
+	overflow: hidden;
+	container: sc-embed / inline-size;
+}
+.sc-embed[data-height='fill'] {
+	height: 100%;
+}
+.sc-embed[data-height='fixed'] {
+	height: var(--embed-h, 100%);
+}
+.sc-embed *,
+.sc-embed *::before,
+.sc-embed *::after {
+	box-sizing: border-box;
+}
+/* The parts a view leaves out (the script also sets `hidden` on them). */
+.sc-embed[data-view='diagram'] :is([data-embed-part='editor'], [data-embed-part='sim']),
+.sc-embed[data-view='sim'] [data-embed-part='editor'],
+.sc-embed[data-view='editor'] [data-embed-part='sim'] {
+	display: none !important;
+}
+/* Revert belongs with the editor. */
+.sc-embed:is([data-view='diagram'], [data-view='sim']) .sc-embed__restore {
+	display: none !important;
+}
+/* `controls=0`: the page drives the chart (postMessage); the trace and what happened stay. */
+.sc-embed[data-controls='off'] :is(.sc-sim__controls, .sc-embed__tools) {
+	display: none !important;
+}
+:root:not([data-js]) .sc-embed__if-js,
+:root[data-js] .sc-embed__if-nojs {
+	display: none;
+}
+
+/* ----- Head ----- */
+
+.sc-embed__head {
+	flex: none;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: var(--embed-head-h);
+	padding: 0.25rem 0.3125rem 0.25rem var(--frame-pad);
+	border-bottom: 1px solid var(--c-rule);
+	background-color: var(--c-rail);
+}
+/* A live chart's badge, as the guide's playground frames have: an active state. */
+.sc-embed__glyph {
+	flex: none;
+	width: 1.125rem;
+	height: 0.75rem;
+	margin-inline-end: 0.3125rem;
+	border: 1.75px solid var(--sc-active-stroke);
+	border-radius: var(--radius-capsule);
+	background: linear-gradient(180deg, var(--sc-state-fill), var(--sc-state-fill-end));
+	box-shadow: 0 0 0 2.5px var(--sc-active-glow);
+}
+.sc-embed__name {
+	flex: 0 1 auto;
+	min-width: 0;
+	margin: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	font-weight: 700;
+	line-height: 1.4;
+	color: var(--c-ink);
+}
+.sc-embed__name[hidden] {
+	display: none;
+}
+.sc-embed__select {
+	flex: 0 1 auto;
+	min-width: 0;
+}
+.sc-embed__open {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	min-height: 2rem;
+	margin-inline-start: auto;
+	padding: 0.25rem 0.625rem;
+	border-radius: var(--radius-sm);
+	color: var(--c-accent);
+	font-size: var(--text-xs);
+	font-weight: 700;
+	text-decoration: none;
+	white-space: nowrap;
+}
+.sc-embed__open:hover {
+	background-color: var(--c-accent-soft);
+	color: var(--c-accent);
+}
+.sc-embed__open:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: -2px;
+}
+.sc-embed__open svg {
+	flex: none;
+}
+@container sc-embed (max-width: 21rem) {
+	.sc-embed__open {
+		padding-inline: 0.5rem;
+	}
+	.sc-embed__open-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+}
+
+/* Something about the address (an example that does not exist, a damaged link): it stays until the page reloads. */
+.sc-embed__notice {
+	flex: none;
+	margin: 0;
+	padding: 0.375rem var(--frame-pad);
+	border-bottom: 1px solid var(--c-caution-rule);
+	background-color: var(--c-caution-bg);
+	color: var(--c-caution-ink);
+	font-size: var(--text-xs);
+	line-height: 1.45;
+}
+.sc-embed__notice[hidden] {
+	display: none;
+}
+
+/* ----- Body: the work (editor | diagram), then the simulation ----- */
+
+.sc-embed__body {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+.sc-embed__work {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+.sc-embed__editor {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+	background-color: var(--c-code-bg);
+}
+.sc-embed__editor .sc-pg__body--editor {
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+.sc-embed__editor .sc-pg__body--editor .cm-editor {
+	max-height: 100%;
+}
+.sc-embed__editor .sc-pg__problems-toggle {
+	padding-inline: 0.75rem;
+}
+.sc-embed__diagram {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+}
+.sc-embed__diagram .sc-pg__stage {
+	flex: 1;
+	min-height: 0;
+}
+.sc-embed__outline {
+	top: var(--pg-head-h);
+	border-top: 1px solid var(--c-rule-strong);
+}
+.sc-embed__loading {
+	position: absolute;
+	z-index: 1;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	margin: 0;
+	padding: 1rem;
+	color: var(--c-muted);
+	font-size: var(--text-sm);
+	text-align: center;
+	pointer-events: none;
+}
+.sc-embed__loading[hidden] {
+	display: none;
+}
+.sc-embed__sim {
+	min-width: 0;
+	border-top: 1px solid var(--c-rule);
+}
+.sc-embed .sc-pg__sim {
+	flex: none;
+	overflow: visible;
+}
+.sc-embed .sc-pg__sim .sc-sim__controls {
+	border-bottom: 1px solid var(--c-rule);
+}
+/* A narrow column (a phone, the simulation beside the diagram): the buttons and the speed closer together, so that
+ * they stay on one row down to 20rem; narrower still, the speed goes under them rather than out of view. */
+.sc-embed .sc-simctl__buttons {
+	flex-wrap: wrap;
+}
+@container (max-width: 22.5rem) {
+	.sc-embed .sc-pg__sim .sc-sim__controls {
+		padding-inline: 0.625rem;
+	}
+	.sc-embed .sc-simctl__buttons {
+		gap: 0.25rem;
+	}
+	.sc-embed .sc-simctl__step {
+		min-width: 0;
+		padding-inline: 0.875rem;
+	}
+}
+
+/* Editor and diagram side by side when there is room. */
+@container sc-embed (min-width: 36rem) {
+	.sc-embed:is([data-view='editor'], [data-view='full']) .sc-embed__work {
+		--embed-dw: calc(50cqw - 1px);
+		flex-direction: row;
+	}
+	.sc-embed:is([data-view='editor'], [data-view='full']) .sc-embed__work > :is(.sc-embed__editor, .sc-embed__diagram) {
+		flex: 1 1 0;
+	}
+	.sc-embed:is([data-view='editor'], [data-view='full']) .sc-embed__editor {
+		border-inline-end: 1px solid var(--c-rule);
+	}
+}
+@container sc-embed (max-width: 35.99rem) {
+	.sc-embed:is([data-view='editor'], [data-view='full']) .sc-embed__editor {
+		border-bottom: 1px solid var(--c-rule);
+	}
+}
+
+/* ----- Filling the frame (no height given, or a number of pixels) ----- */
+
+.sc-embed:not([data-height='auto']) .sc-embed__diagram {
+	flex: 1 1 0;
+	min-height: 9rem;
+}
+.sc-embed:not([data-height='auto']) .sc-embed__editor {
+	flex: 1 1 0;
+	min-height: 8rem;
+}
+/* The simulation takes what it needs, up to about half the frame, and scrolls past that. */
+.sc-embed:not([data-height='auto']) .sc-embed__sim {
+	flex: 0 1 auto;
+	max-height: 58%;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	scrollbar-width: thin;
+}
+.sc-embed:not([data-height='auto'])[data-view='sim'] .sc-embed__sim {
+	max-height: 56%;
+}
+/* A low, wide frame (a blog's column): the simulation beside the diagram rather than under it. */
+@media (min-width: 40rem) and (max-height: 32rem) {
+	.sc-embed:not([data-height='auto'])[data-view='sim'] .sc-embed__body {
+		flex-direction: row;
+	}
+	.sc-embed:not([data-height='auto'])[data-view='sim'] .sc-embed__work {
+		flex: 1 1 55%;
+	}
+	.sc-embed:not([data-height='auto'])[data-view='sim'] .sc-embed__sim {
+		flex: 0 0 clamp(20rem, 46%, 30rem);
+		max-height: none;
+		border-top: 0;
+		border-inline-start: 1px solid var(--c-rule);
+	}
+}
+/* Too low for both the editor and the simulation: the whole embed scrolls under its head. */
+@media (max-height: 30rem) {
+	.sc-embed:not([data-height='auto'])[data-view='full'] .sc-embed__body {
+		overflow-y: auto;
+		scrollbar-width: thin;
+	}
+	.sc-embed:not([data-height='auto'])[data-view='full'] .sc-embed__work {
+		flex: none;
+		height: max(14rem, 70vh);
+	}
+	.sc-embed:not([data-height='auto'])[data-view='full'] .sc-embed__sim {
+		flex: none;
+		max-height: none;
+		overflow: visible;
+	}
+}
+
+/* ----- Auto height: each part as tall as its content ----- */
+
+/* The diagram: as tall as the chart drawn as wide as the stage allows, at most at 100 %, with DiagramView's room
+ * around it (48 px above for the tools, 16 px on the other sides), between 11rem and 24rem. */
+.sc-embed[data-height='auto'] .sc-embed__diagram {
+	flex: none;
+	height: clamp(11rem, calc(64px + min(var(--embed-nat-h, 12rem), var(--embed-ratio, 0.5) * (var(--embed-dw) - 32px))), 24rem);
+}
+.sc-embed[data-height='auto'] .sc-embed__editor {
+	flex: none;
+	min-height: 9rem;
+	max-height: 24rem;
+}
+@container sc-embed (min-width: 36rem) {
+	.sc-embed[data-height='auto']:is([data-view='editor'], [data-view='full']) .sc-embed__diagram,
+	.sc-embed[data-height='auto']:is([data-view='editor'], [data-view='full']) .sc-embed__editor {
+		flex: 1 1 50%;
+		height: auto;
+		min-height: clamp(11rem, calc(64px + min(var(--embed-nat-h, 12rem), var(--embed-ratio, 0.5) * (var(--embed-dw) - 32px))), 24rem);
+	}
+}
+
+/* ----- Narrow frames ----- */
+
+@container sc-embed (max-width: 30rem) {
+	.sc-embed > * {
+		--frame-pad: 0.75rem;
+	}
+}

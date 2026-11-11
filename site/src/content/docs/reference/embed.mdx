@@ -1,0 +1,181 @@
+---
+title: "Embedding charts"
+description: "Put a live SCCharts chart on your own page, course page, blog or docs: the web component, the iframe, their options, and the postMessage API that lets your page step the chart."
+sidebar:
+  order: 8
+---
+
+import EmbedDemo from '~components/embed/EmbedDemo.astro'
+import { Aside } from '@astrojs/starlight/components'
+
+Any chart of SCCharts Lab can go on another page: a course page in Canvas or Moodle, a blog post, your
+project's documentation. It stays live there: the diagram, the simulation and, if you like, the editor,
+the same as in the [playground](/playground/). This page shows the two ways to embed a chart, their
+options, and how your page can drive the chart.
+
+The quickest way is the playground's **Embed** button, next to **Copy link**: choose what to show and
+how tall it is, look at the preview, and copy the code.
+
+<EmbedDemo example="learn/first-chart/dimmer" caption="The dimmer of “Your first SCChart”, embedded: the whole of it is the one element in the first code block below." />
+
+## The web component
+
+Load the script once per page, then put a `<sccharts-lab-chart>` wherever a chart should go. The element
+takes the height its content needs and follows it as the reader works:
+
+```html
+<script src="https://sccharts.jmw.nz/embed.js" async></script>
+
+<sccharts-lab-chart example="learn/first-chart/dimmer"></sccharts-lab-chart>
+```
+
+The chart can be a guide example (`example`), a `.sctx` file next to your page (`src`), or code written
+inside the element. Write it in a `<pre>`: before the script runs, and in a browser without
+JavaScript, your readers still see the code.
+
+```html
+<sccharts-lab-chart view="full">
+<pre>
+scchart Toggle {
+  input bool button
+  output bool on = false
+
+  initial state Off
+    if button do on = true go to On
+
+  state On
+    if button do on = false go to Off
+}
+</pre>
+</sccharts-lab-chart>
+
+<sccharts-lab-chart src="charts/dimmer.sctx" view="sim"></sccharts-lab-chart>
+```
+
+In a `<pre>`, write `<` and `&` as `&lt;` and `&amp;` (the Embed button does it for you); a
+`<script type="text/sctx">` takes the code as it is, but shows nothing without JavaScript. Several
+blocks with `data-file="lib/beep.sctx"` make a project of several files; the first one is the chart
+shown. A file named in `src` is fetched by your reader's browser, so it must be on your site (or allow
+other sites to read it).
+
+## An iframe
+
+Where a page cannot load scripts, as in the editors of most course platforms, use an iframe. It keeps
+the height you give it; the chart fills it.
+
+```html
+<iframe src="https://sccharts.jmw.nz/embed/?example=learn/concurrency/abro&view=sim"
+        title="ABRO in SCCharts Lab" width="100%" height="560" style="border: 0" loading="lazy"></iframe>
+```
+
+The address takes the chart as playground links do: `?example=<id>`, or the chart itself in the part
+after `#`, which the Embed button writes for your own charts (`#code=`, `#project=` for several files,
+and `&run=` for a run to replay). Copy a playground link and change `/playground/` to `/embed/`: it
+opens the same chart.
+
+## Options
+
+The same options go into the iframe's address (`?view=sim&height=auto`) and onto the element
+(`view="sim"`).
+
+| Option | Values | What it does |
+| --- | --- | --- |
+| `view` | `diagram`, `sim`, `editor`, `full` | The diagram alone; the diagram and the simulation (the default); the editor and the diagram; all three. |
+| `height` | `auto`, or pixels | `auto`: as tall as the content (the element's default). Pixels: that tall. An iframe without it fills its frame. |
+| `tour` | on or off | Start in the example's guided tour: its inputs tick by tick, with notes. Off by default. |
+| `tick` | a number | Start at this tick: of the run in the address, of the tour, else run that many ticks with the inputs as they are. |
+| `controls` | `false` | Hide the simulation's buttons and inputs and the diagram's tools, for a page that steps the chart itself. |
+| `chart` | a chart's name | Show and simulate this chart of the file, when it has several. |
+| `source` | `parent` | Iframe only: wait for the chart from the page (`setSource` or `setFiles`, below). |
+
+The element also takes `src` and its own code (above), `run` (the `run=` part of a playground link),
+`label` (what screen readers call the frame; by default the chart's name), and `loading="eager"` to
+load before it scrolls into view. A flag such as `tour` is on when present: `<sccharts-lab-chart tour>`,
+`?tour`.
+
+Every embed has a small **Open in SCCharts Lab** link: it opens the chart, as the reader has left it,
+in the playground, in a new tab.
+
+## Driving the chart from your page
+
+Your page can set the chart, step it with inputs, rewind it, and follow what happens. The buttons
+below are part of this page, not of the chart: each runs one tick with one input present.
+
+<EmbedDemo example="showcase/abro" view="diagram" api={['A', 'B', 'R']} height={340} caption="The page steps ABRO: press A, then B, and O is emitted. R starts it again." />
+
+With the element, these are methods and events:
+
+```html
+<sccharts-lab-chart id="abro" example="showcase/abro" view="diagram" controls="false"></sccharts-lab-chart>
+
+<script type="module">
+  const chart = document.getElementById('abro')
+  await customElements.whenDefined('sccharts-lab-chart')
+  chart.addEventListener('tick', (e) => console.log(`tick ${e.detail.tick}: O is ${e.detail.values.O}`))
+  await chart.ready
+  await chart.step()                         // tick 1
+  await chart.step({ A: true })              // tick 2: A present
+  const t = await chart.step({ A: false, B: true })
+  console.log(t.values.O)                    // true: both have happened
+</script>
+```
+
+| Method | Resolves with | What it does |
+| --- | --- | --- |
+| `step(inputs?)` | the tick | Sets these inputs, then runs one tick. |
+| `setInputs(inputs)` | the tick shown | Sets inputs for the next tick without running it. |
+| `reset()` | tick 0 | Back to before the first tick. |
+| `rewind(tick)` | that tick | Shows an earlier tick; the later ones stay, and the next step replays them. |
+| `setSource(text)` | the compile | Replaces the chart; the simulation starts again on it. |
+| `setFiles(files, active?)` | the compile | Opens a project of several files: `{ "main.sctx": "...", "lib/beep.sctx": "..." }`. |
+| `selectChart(name)` | the compile | Shows and simulates another chart of the file. |
+| `getState()` | `{ compiled, tick }` | What the chart shows now. |
+
+`ready` resolves once the chart is live; `compiled` and `tick` hold the latest. The events, with what
+they carry in `event.detail`:
+
+| Event | When | `detail` |
+| --- | --- | --- |
+| `ready` | the chart is live | `view`, `compiled`, `tick` |
+| `compiled` | the chart was compiled again (it was edited or replaced) | `ok`, `chart`, `charts`, `diagnostics` (`severity`, `message`, `line`, `column`), `inputs`, `outputs` |
+| `tick` | the tick shown changed (a step, Back, Reset, a new chart) | `tick`, `ticks` (computed), `values`, `present`, `active` and `entered` (state ids), `taken` (transition ids), `printed`, `terminated`, `error` |
+| `resize` | the content's height changed | `height` |
+| `error` | a command could not run | `message` |
+
+Inputs keep their values from tick to tick, as in KIELER: `step({ A: true })` leaves `A` present until
+you set it to `false`. Values use KIELER's names: a valued signal `V` is `V` (present or not) and
+`V_val` (its value). A name that is not an input, or a value of the wrong type, is refused with a
+message, and nothing runs.
+
+### The messages themselves
+
+Without the element, talk to the iframe with `postMessage`. Every message, both ways, is an object in
+one envelope, `{ type: 'sccharts-lab', version: 1, ... }`: your page sends a `command`, the embed answers
+with an `event`. A command with an `id` gets a `reply` event with the same `id`, `ok`, and the `result`
+(or an `error`). The embed ignores every message that is not a command in this envelope, and it only
+listens to the page that frames it.
+
+```js
+const frame = document.querySelector('iframe')
+const send = (command, fields = {}) =>
+  frame.contentWindow.postMessage({ type: 'sccharts-lab', version: 1, command, ...fields }, 'https://sccharts.jmw.nz')
+
+addEventListener('message', (e) => {
+  if (e.source !== frame.contentWindow || e.data?.type !== 'sccharts-lab') return
+  const m = e.data
+  if (m.event === 'ready') send('step', { inputs: { A: true }, id: 1 })
+  if (m.event === 'reply' && m.id === 1) console.log('tick', m.result.tick)
+  if (m.event === 'resize') frame.style.height = `${m.height}px`   // with ?height=auto
+})
+```
+
+The commands are those of the element: `step` (`inputs`), `setInputs` (`inputs`), `reset`, `rewind`
+(`tick`), `setSource` (`source`), `setFiles` (`files`, `active`, `name`), `selectChart` (`chart`) and
+`getState`. Commands sent before `ready` wait until the chart is live. With `?source=parent` the embed
+waits for your `setSource` or `setFiles` before it shows anything: send it when the iframe has loaded.
+
+<Aside title="Your readers' own work stays theirs">
+An embed keeps to itself. It does not read or change what readers keep in SCCharts Lab on their
+browser (their projects, their last chart, their settings), even on this site, and what it shows goes
+only to the page it is on. It loads nothing from other sites.
+</Aside>

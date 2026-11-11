@@ -21,6 +21,9 @@ export interface DiagramViewOptions {
     maxFit?: number
     /** Room to keep free above the chart when fitting (for controls that float over the stage). */
     padTop?: number
+    /** Another rule for the view a chart opens with: whole down to this zoom, and below it at this zoom from its top
+     *  left (the embed: small, where the whole chart matters more than its labels at a readable size). */
+    fitMin?: number
 }
 
 const MIN = 0.1
@@ -148,7 +151,8 @@ export class DiagramView {
         const { width: W, height: H } = this.stage.getBoundingClientRect()
         if (!this.natural.w || !W || !H) return
         const k = this.fitScale(W, H)
-        this.place(k >= FIT_MIN ? k : k >= NEARLY ? FIT_MIN : READABLE, W, H)
+        const min = this.opts.fitMin
+        this.place(min !== undefined ? Math.max(k, min) : k >= FIT_MIN ? k : k >= NEARLY ? FIT_MIN : READABLE, W, H)
     }
 
     /** Zoom k; centred where the chart fits, else from its top (and its left). */

@@ -6,7 +6,7 @@ import { flushSync, mount, unmount } from 'svelte'
 import SimPanel from '../sim/SimPanel.svelte'
 import type { CompileResult } from '@sccharts-lab/engine'
 import type { ClassMap } from '@sccharts-lab/diagram/highlight'
-import type { TickResult } from '@sccharts-lab/engine/types'
+import type { TickResult, Value } from '@sccharts-lab/engine/types'
 import type { Scenario } from '../frame/examples'
 
 /** What SimPanel reports with each highlight (README, "SimView"). */
@@ -40,8 +40,12 @@ export interface SimHost {
     /** Draws the tick the quiet steps reached: `onhighlight` has reported it when this returns. */
     settle(): void
     back(): void
-    /** Shows a tick of the run (one computed already). */
+    /** Shows tick `tick` of the ticks computed (0: before the first), as a click in the trace does. */
     goto(tick: number): void
+    /** Sets inputs as the reader would (the embed's API): undefined, or why not (an unknown name, a stopped run). */
+    setInputs(values: Record<string, Value>): string | undefined
+    /** Runs the panel's pending updates now, so that `onhighlight` has reported what the last call did. */
+    flush(): void
     reset(): void
     run(): void
     pause(): void
@@ -62,6 +66,7 @@ interface PanelExports {
     settle?: () => void
     back?: () => void
     goto?: (tick: number) => void
+    setInputs?: (values: Record<string, Value>) => string | undefined
     reset?: () => void
     run?: () => void
     pause?: () => void
@@ -118,7 +123,7 @@ export async function mountSim(
         tourName: options.tourName,
     }
     const instance = mount(SimPanel, { target, props }) as unknown as PanelExports
-    const call = (name: Exclude<keyof PanelExports, 'goto' | 'stepQuietly'>) => () => void instance[name]?.()
+    const call = (name: 'step' | 'back' | 'reset' | 'run' | 'pause' | 'takeOver' | 'restartTour') => () => instance[name]?.()
     return {
         setCompiled(result, text, mode) {
             recompile = mode
@@ -142,6 +147,12 @@ export async function mountSim(
         back: call('back'),
         goto(tick) {
             instance.goto?.(tick)
+        },
+        setInputs(values) {
+            return instance.setInputs ? instance.setInputs(values) : 'The simulation panel cannot set inputs.'
+        },
+        flush() {
+            flushSync()
         },
         reset: call('reset'),
         run: call('run'),

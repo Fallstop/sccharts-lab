@@ -30,6 +30,7 @@ import HelpMenu from '../components/playground/page/HelpMenu.astro'
 import ProjectMenu from '../components/playground/page/ProjectMenu.astro'
 import TaskBanner from '../components/playground/page/TaskBanner.astro'
 import BottomPanel from '../components/playground/page/BottomPanel.astro'
+import { embedIcon } from '../components/embed/embed-button'
 import { compile } from '@sccharts-lab/engine'
 import { chartToSvg } from '@sccharts-lab/diagram'
 import '@sccharts-lab/diagram/diagram.css'
@@ -117,6 +118,9 @@ const data = json({ defaultId: DEFAULT_ID, defaultSource, defaultFile })
 				<div class="sc-pg-pop__panel sc-pg-compare" role="group" aria-label="Comparison with the model solution" data-pg-compare-panel></div>
 			</details>
 			<ExamplesMenu groups={groups} count={items.length} />
+			<button type="button" class="sc-pg-appbar__btn" data-pg-embed aria-haspopup="dialog" title="Put this chart on your own page: a web component or an iframe">
+				<Fragment set:html={embedIcon} /><span class="sc-pg-appbar__label">Embed</span>
+			</button>
 			<button type="button" class="sc-pg-appbar__btn sc-pg-appbar__btn--share" data-action="share" title="Copy a link that contains this chart (every file of the project)">
 				<Fragment set:html={pgIcons.link} /><span class="sc-pg-appbar__label">Copy link</span>
 			</button>
@@ -205,5 +209,7 @@ const data = json({ defaultId: DEFAULT_ID, defaultSource, defaultFile })
 
 <script>
 	import { bootPage } from '../components/playground/boot'
+	import { wireEmbedButton } from '../components/embed/embed-button'
 	bootPage()
+	wireEmbedButton()
 </script>

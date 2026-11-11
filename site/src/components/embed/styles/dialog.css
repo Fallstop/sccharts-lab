@@ -1,0 +1,250 @@
+/* The playground's Embed dialog (dialog.ts): options and the preview side by side from 52rem, the code under them. */
+
+.sc-embed-dialog {
+	position: fixed;
+	inset: 0;
+	margin: auto;
+	width: min(60rem, calc(100vw - 2rem));
+	max-width: none;
+	max-height: calc(100dvh - 2rem);
+	padding: 0;
+	border: 1px solid var(--c-rule-strong);
+	border-radius: var(--radius-md);
+	background-color: var(--c-sheet);
+	color: var(--c-text);
+	box-shadow: var(--shadow-pop);
+	font-size: var(--text-sm);
+	line-height: 1.5;
+}
+.sc-embed-dialog::backdrop {
+	background-color: color-mix(in srgb, var(--c-ink) 38%, transparent);
+}
+.sc-embed-dialog__head {
+	position: sticky;
+	z-index: 2;
+	top: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.5rem 0.5rem 0.5rem 1.125rem;
+	border-bottom: 1px solid var(--c-rule);
+	background-color: var(--c-rail);
+}
+.sc-embed-dialog__head h2 {
+	flex: 1;
+	margin: 0;
+	font-size: var(--text-md, 1rem);
+	font-weight: 700;
+	color: var(--c-ink);
+}
+.sc-embed-dialog__close {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	border: 1px solid transparent;
+	border-radius: var(--radius-capsule);
+	background: none;
+	color: var(--c-ink);
+	cursor: pointer;
+}
+.sc-embed-dialog__close:hover {
+	border-color: var(--c-control);
+	background-color: var(--c-sheet);
+}
+.sc-embed-dialog__body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	/* On a phone the code comes before the preview: it is what the reader came for. */
+	grid-template-areas: 'options' 'code' 'preview';
+	gap: 1rem 1.25rem;
+	padding: 1rem 1.125rem 1.125rem;
+}
+@media (min-width: 52rem) {
+	.sc-embed-dialog__body {
+		grid-template-columns: minmax(17rem, 21rem) minmax(0, 1fr);
+		grid-template-areas: 'options preview' 'code code';
+	}
+}
+.sc-embed-dialog__options {
+	grid-area: options;
+	display: grid;
+	align-content: start;
+	gap: 0.875rem;
+}
+.sc-embed-dialog__what {
+	margin: 0;
+	color: var(--c-text);
+}
+.sc-embed-dialog__what b {
+	font-family: var(--font-mono);
+	color: var(--c-ink);
+}
+.sc-embed-dialog fieldset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-width: 0;
+}
+.sc-embed-dialog legend {
+	margin-bottom: 0.375rem;
+	padding: 0;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+/* A segmented bar of radio buttons, as the widget frame's view switch. */
+.sc-embed-dialog__seg {
+	display: inline-flex;
+	flex-wrap: wrap;
+	padding: 2px;
+	border: 1px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+}
+.sc-embed-dialog__seg label {
+	position: relative;
+	display: inline-flex;
+}
+.sc-embed-dialog__seg input {
+	position: absolute;
+	opacity: 0;
+	inset: 0;
+	margin: 0;
+	cursor: pointer;
+}
+.sc-embed-dialog__seg span {
+	display: inline-flex;
+	align-items: center;
+	min-height: 1.875rem;
+	padding: 0.125rem 0.75rem;
+	border-radius: var(--radius-xs, 3px);
+	color: var(--c-muted);
+	font-size: var(--text-xs);
+	font-weight: 700;
+	white-space: nowrap;
+}
+.sc-embed-dialog__seg label:hover span {
+	color: var(--c-ink);
+}
+.sc-embed-dialog__seg input:checked + span {
+	background-color: var(--c-ink);
+	color: var(--c-paper);
+}
+.sc-embed-dialog__seg input:focus-visible + span {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 1px;
+}
+.sc-embed-dialog__height {
+	display: grid;
+	gap: 0.25rem;
+}
+.sc-embed-dialog__height label,
+.sc-embed-dialog__check {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--c-text);
+}
+.sc-embed-dialog__check[hidden] {
+	display: none;
+}
+.sc-embed-dialog input[type='radio']:not(.sc-embed-dialog__seg input),
+.sc-embed-dialog input[type='checkbox'] {
+	width: 1rem;
+	height: 1rem;
+	margin: 0;
+	accent-color: var(--c-accent);
+}
+.sc-embed-dialog__px input[type='number'] {
+	width: 5.5rem;
+	min-height: 2rem;
+	padding: 0.125rem 0.5rem;
+	border: 1.5px solid var(--c-control);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-sheet);
+	color: var(--c-ink);
+	font: inherit;
+	font-variant-numeric: tabular-nums;
+}
+.sc-embed-dialog__muted {
+	color: var(--c-muted);
+}
+.sc-embed-dialog__preview {
+	grid-area: preview;
+	margin: 0;
+	min-width: 0;
+}
+.sc-embed-dialog__preview figcaption {
+	margin-bottom: 0.375rem;
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--c-muted);
+}
+/* The page the embed goes into: a light ground with a dot grid, so the embed's own frame shows. */
+.sc-embed-dialog__frame {
+	max-height: min(30rem, 52dvh);
+	overflow: auto;
+	padding: 0.75rem;
+	border: 1px dashed var(--c-rule-strong);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-paper);
+}
+.sc-embed-dialog__frame iframe {
+	display: block;
+	width: 100%;
+	height: 320px;
+	border: 0;
+	background: transparent;
+}
+.sc-embed-dialog__code {
+	grid-area: code;
+	display: grid;
+	gap: 0.5rem;
+	min-width: 0;
+}
+.sc-embed-dialog__codehead {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+.sc-embed-dialog__snippet {
+	max-height: 13rem;
+	margin: 0;
+	padding: 0.75rem 0.875rem;
+	overflow: auto;
+	border: 1px solid var(--c-rule);
+	border-radius: var(--radius-sm);
+	background-color: var(--c-code-bg);
+	color: var(--c-ink);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: 1.55;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+.sc-embed-dialog__snippet:focus-visible {
+	outline: 2px solid var(--c-accent-bright);
+	outline-offset: 1px;
+}
+.sc-embed-dialog__note,
+.sc-embed-dialog__status {
+	margin: 0;
+	font-size: var(--text-xs);
+	color: var(--c-muted);
+}
+.sc-embed-dialog__status:empty {
+	display: none;
+}
+@media (max-width: 30rem) {
+	.sc-embed-dialog {
+		width: calc(100vw - 1rem);
+		max-height: calc(100dvh - 1rem);
+	}
+	.sc-embed-dialog__body {
+		padding: 0.875rem;
+	}
+}

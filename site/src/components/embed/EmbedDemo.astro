@@ -1,0 +1,89 @@
+---
+/**
+ * The live examples of /reference/embed/: <sccharts-lab-chart> as another site would use it (the element from
+ * packages/embed, registered for this site), and, with `api`, a diagram stepped by buttons of this page through the
+ * element's methods and `tick` events (the postMessage API).
+ */
+interface Props {
+	example: string
+	view?: 'diagram' | 'sim' | 'editor' | 'full'
+	/** Buttons of the page drive the chart: one per input, each a one-tick pulse. */
+	api?: string[]
+	height?: number
+	caption?: string
+}
+const { example, view, api, height, caption } = Astro.props
+const id = `sc-embed-demo-${example.replace(/\W+/g, '-')}${api ? '-api' : ''}`
+---
+
+<figure class="sc-embed-demo not-content" data-embed-demo>
+	<sccharts-lab-chart id={id} example={example} view={view} height={height} controls={api ? 'false' : undefined}></sccharts-lab-chart>
+	{
+		api && (
+			<div class="sc-embed-demo__api" role="group" aria-label="Buttons of this page that drive the chart" data-api={api.join(' ')} data-for={id}>
+				{api.map((name) => (
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" data-input={name}>
+						Step with <code>{name}</code>
+					</button>
+				))}
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" data-input="">Step</button>
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" data-reset>Reset</button>
+				<output class="sc-embed-demo__out" aria-live="polite" data-out>Waiting for the chart</output>
+			</div>
+		)
+	}
+	{caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+	import { define } from '@sccharts-lab/embed/element'
+	import type { TickInfo } from '@sccharts-lab/embed/protocol'
+
+	define(`${location.origin}/`)
+	for (const box of document.querySelectorAll<HTMLElement>('[data-api]')) {
+		const chart = document.getElementById(box.dataset.for!) as HTMLElementTagNameMap['sccharts-lab-chart'] | null
+		const out = box.querySelector<HTMLOutputElement>('[data-out]')!
+		const inputs = box.dataset.api!.split(' ')
+		if (!chart) continue
+		const say = (t: TickInfo) => {
+			const outputs = Object.entries(t.present).filter(([k, on]) => on && !inputs.includes(k)).map(([k]) => k)
+			out.textContent = t.tick ? `Tick ${t.tick}: ${outputs.length ? `${outputs.join(', ')} present` : 'no output'}` : 'Tick 0: nothing has run yet'
+		}
+		chart.addEventListener('ready', () => say(chart.tick!))
+		chart.addEventListener('tick', (e) => say((e as CustomEvent<TickInfo>).detail))
+		box.addEventListener('click', (e) => {
+			const b = (e.target as Element).closest<HTMLButtonElement>('button')
+			if (!b) return
+			// Each button is a pulse: its input present in this tick, the others absent.
+			const done = b.hasAttribute('data-reset') ? chart.reset() : chart.step(Object.fromEntries(inputs.map((n) => [n, n === b.dataset.input])))
+			done.catch((error: Error) => (out.textContent = error.message))
+		})
+	}
+</script>
+
+<style>
+	.sc-embed-demo {
+		margin-block: 1.75rem;
+	}
+	.sc-embed-demo__api {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.75rem;
+	}
+	.sc-embed-demo__api code {
+		font-family: var(--font-mono);
+	}
+	.sc-embed-demo__out {
+		margin-inline-start: 0.25rem;
+		font-size: var(--text-sm);
+		color: var(--c-muted);
+		font-variant-numeric: tabular-nums;
+	}
+	figcaption {
+		margin-top: 0.625rem;
+		font-size: var(--text-sm);
+		color: var(--c-muted);
+	}
+</style>
