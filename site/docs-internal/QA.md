@@ -35,7 +35,9 @@ widget engaged on every page: 192 page loads, no problems. After the last fixes 
 weight, the causality description) nine pages were run again in all four configurations (36 loads, no problems).
 `tests/widgets/browser.test.ts` and `PLAYGROUND_E2E=1 pnpm exec vitest run tests/playground/e2e.test.ts` need the
 shared dev server (`tools/dev-server.sh`); both pass (42 and 20 tests). `browser.test.ts` also runs in the whole
-suite whenever the dev server is up.
+suite whenever the dev server is up. `FOOT_E2E=1 pnpm exec vitest run tests/widgets/foot.test.ts --silent=false` (the dev server
+too, about 17 minutes) steps every simulation widget of the landing page and the guide at 1280 and 390 and checks
+that stepping never changes the height of its foot or of the page (`src/components/sim/README.md`, "The foot").
 
 ## 1. Tests, types, build
 

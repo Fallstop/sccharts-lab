@@ -387,9 +387,16 @@ Simulation look (styles in `widgets.css`, `wave.css`, `diagram.css`):
 - **Code.** Line numbers in the gutter; the line of each active state gets a solid red bar, the lines of a
   transition that fired a double blue bar, the element under the pointer a dashed plum bar, a diagnostic a
   dotted bar (never colour alone).
-- **Foot.** In the tour: the tick's note, Previous / Next / Take over. In free play: "What happened" (one
-  line per fact, each marked with a small piece of notation) and *Explain this tick* (the engine's log in
-  order); hovering a line marks its elements on the diagram.
+- **Foot.** Stepping never changes its height, so the page never moves under a widget being stepped (only the
+  reader's click on *Details* does). In the tour: the tour's label, the tick's note, Previous / Next / Take over.
+  In free play: one line saying what the tick did ("Tick 7: `Off` went to `On`.", cut off with an ellipsis), and
+  under it the tick's note while the run follows the script. The texts known in advance (intro, notes, the end of
+  the tour, the idle line, the notices) are stacked in one cell, so the foot is as tall as the tallest of them.
+  *Details* (a quiet small button with a chevron at the end of the first line, `aria-expanded`) unfolds "What
+  happened" (one line per fact, each marked with a small piece of notation) and *Explain this tick* (the engine's
+  log in order); hovering a line marks its elements on the diagram. Folded on guide pages, unfolded in the
+  playground; the reader's choice is remembered. Unfolded, the details keep the height of the tallest tick shown
+  until Restart (`src/components/sim/README.md`, "The foot").
 - **Timed charts.** *Advance by sleepT (300)* (a quiet small button right after the `deltaT` field, the value
   muted and monospaced) sets `deltaT` to the `sleepT` of the tick shown and steps; disabled before tick 1.
 

@@ -222,6 +222,8 @@ export class SimControl {
                   : undefined,
             show: this.vars.show,
             verdict: pg.problems.verdictFor(a),
+            // The page's panel scrolls inside, so the details cannot move anything; inline, as a guide widget.
+            details: pg.mode === 'page' ? 'open' : 'folded',
         }).then(host => {
             if (generation !== this.generation) {
                 host?.destroy()

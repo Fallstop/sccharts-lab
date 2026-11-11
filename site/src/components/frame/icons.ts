@@ -11,4 +11,5 @@ export const icons = {
     check: svg('<path d="m3 8.5 3.25 3.25L13 4.75"/>'),
     cross: svg('<path d="m4 4 8 8M12 4l-8 8"/>'),
     open: svg('<path d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8a1.5 1.5 0 0 0 1.5-1.5V10M9 2h5v5M14 2 7.5 8.5"/>'),
+    chevron: svg('<path d="m4 6 4 4 4-4"/>'),
 }

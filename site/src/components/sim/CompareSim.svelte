@@ -19,9 +19,11 @@
 	import { controlsFor, formatValue, initialInputs, type InputState } from './inputs'
 	import { elementsOf, lineMap, tickLines } from './lines'
 	import { copyCounters, focusElements, keepFocus, keepTickInView, markCode, markDiagram, pulseTransitions, reducedMotion, roving } from './link'
+	import { Fold } from './fold.svelte'
 	import { pairStepper, unionInputs } from './pair'
+	import Stack from './Stack.svelte'
 	import { Timeline } from './timeline'
-	import { compareSvg, differences, forCopiesIn, hasSuspension, lanesFor, resolveShow, terminationText, type ComparedChart, type ForCopies } from './trace'
+	import { compareSvg, differences, forCopiesIn, hasSuspension, lanesFor, mightSuspend, resolveShow, terminationText, type ComparedChart, type ForCopies } from './trace'
 
 	interface Side {
 		source: string
@@ -91,6 +93,7 @@
 	let runTimer: ReturnType<typeof setTimeout> | undefined
 	let traceEl: HTMLElement | undefined = $state()
 	let root: HTMLElement | undefined = $state()
+	const fold = new Fold('folded')
 
 	const snap = $derived.by(() => {
 		void rev
@@ -120,7 +123,8 @@
 	const lanesB = $derived(lanesFor(cb.interface, cb.chart, showB, true, staticCopies(cb) ?? forCopiesIn(snap.hb), traceableB))
 	const sideA: ComparedChart = $derived({ name: nameA, lanes: lanesA, history: snap.ha })
 	const sideB: ComparedChart = $derived({ name: nameB, lanes: lanesB, history: snap.hb })
-	const suspension = $derived(ok && (hasSuspension(lanesA, snap.ha) || hasSuspension(lanesB, snap.hb)))
+	// Shown from the start when a chart can suspend, so the first hatched tick does not add it under the trace.
+	const suspension = $derived(ok && (mightSuspend(ca.program) || mightSuspend(cb.program) || hasSuspension(lanesA, snap.ha) || hasSuspension(lanesB, snap.hb)))
 	const traceHtml = $derived(ok ? compareSvg(inputLanes, snap.ha.map((t, i) => merged(t, snap.hb[i])), sideA, sideB, { cursor: snap.cursor, width }) : '')
 	const storyA = $derived(snap.ta && ctxA ? describeTick(snap.ta, snap.cursor > 1 ? snap.ha[snap.cursor - 2] : undefined, ctxA) : undefined)
 	const storyB = $derived(snap.tb && ctxB ? describeTick(snap.tb, snap.cursor > 1 ? snap.hb[snap.cursor - 2] : undefined, ctxB) : undefined)
@@ -230,10 +234,10 @@
 	}
 	const step = () => (stop(), halted || guard(() => void timeline!.step(), true))
 	const back = () => (stop(), guard(() => timeline!.back()))
-	const reset = () => (stop(), guard(() => void timeline!.reset()))
+	const reset = () => (stop(), fold.reset(), guard(() => void timeline!.reset()))
 	const goto = (n: number) => (stop(), guard(() => timeline!.goto(n)))
 	const takeOver = () => (stop(), guard(() => void timeline!.takeOver(true)))
-	const restartTour = () => (stop(), guard(() => void timeline!.reset(true)))
+	const restartTour = () => (stop(), fold.reset(), guard(() => void timeline!.reset(true)))
 
 	function stop() {
 		running = false
@@ -297,6 +301,7 @@
 
 	onMount(() => {
 		mounted = true
+		fold.restore()
 		const frame = frameEl()
 		if (frame) {
 			svgA = frame.querySelector(`[data-sc-diagram="${CSS.escape(a.link)}"] svg.sc-diagram`)
@@ -323,7 +328,56 @@
 
 	// Not tied to `mounted`: a click made before hydration is replayed once the island is live (engage.ts).
 	const disabled = $derived(!timeline)
+
+	// ----- The foot: stepping never changes its height (as SimPanel's: a first line with Details at its end, the
+	// known texts stacked under it, the tick's differences one line, both charts' stories behind Details) -------
+
+	type Entry = { kind: 'intro' | 'end' | 'idle' | 'free' } | { kind: 'note'; k: number }
+	const entries: Entry[] = [
+		...(tour ? [{ kind: 'intro' } as const, ...tour.ticks.map((_, i) => ({ kind: 'note', k: i + 1 }) as const), { kind: 'end' } as const] : []),
+		{ kind: 'idle' },
+		{ kind: 'free' },
+	]
+	const current: Entry = $derived.by(() => {
+		const c = snap.cursor
+		if (snap.tour) return c === 0 ? { kind: 'intro' } : c >= snap.tourLength && !halted ? { kind: 'end' } : { kind: 'note', k: c }
+		if (c === 0) return { kind: 'idle' }
+		return snap.note ? { kind: 'note', k: c } : { kind: 'free' }
+	})
+	const shownEntry = $derived(entries.findIndex((e) => e.kind === current.kind && (e.kind !== 'note' || (current.kind === 'note' && e.k === current.k))))
+	const noteOf = (e: Entry) => tour?.ticks[(e.kind === 'note' ? e.k : tour.ticks.length) - 1]?.note
+	const showDetails = $derived(fold.open && (snap.cursor > 0 || fold.min > 0))
+	const stepButton = () => root?.querySelector<HTMLButtonElement>('.sc-simctl__step')
 </script>
+
+{#snippet entry(e: Entry, on: boolean)}
+	<div class="sc-foot__entry" class:sc-tour={on && snap.tour}>
+		{#if e.kind === 'idle'}
+			<p class="sc-what__idle">Both charts get the same inputs. Set them, then press <b>Step</b>; outputs that differ are marked in the timing diagram.</p>
+		{:else}
+			{#if e.kind === 'intro'}
+				<p class="sc-tour__note">{@html inlineMd('Both charts get the same inputs. Press **Next** to run tick 1, or **Take over** to set the inputs yourself.')}</p>
+			{:else}
+				<!-- The tick's differences: one line, the whole of it under Details. -->
+				{#if on}<span class="sc-foot__line sc-compare__diff">{@html inlineMd(diffText)}</span>{:else}<span class="sc-foot__line">&nbsp;</span>{/if}
+				{#if e.kind !== 'free' && noteOf(e)}<p class="sc-tour__note">{@html inlineMd(noteOf(e)!)}</p>{/if}
+				{#if e.kind === 'end'}<p class="sc-tour__end">That is the end of the tour. Take over to try your own inputs, or press Step to keep going.</p>{/if}
+			{/if}
+		{/if}
+	</div>
+{/snippet}
+
+{#snippet nav(k: string)}
+	{#if k === 'nav'}
+		<div class="sc-tour__nav">
+			<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus disabled={disabled || snap.cursor === 0} onclick={back}>Previous</button>
+			<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus={restartButton} disabled={disabled || halted || snap.cursor >= snap.tourLength} onclick={step}>Next</button>
+			<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__take" {disabled} onclick={takeOver}>Take over</button>
+		</div>
+	{:else}
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__restart" {disabled} onclick={restartTour}>Restart the guided tour</button>
+	{/if}
+{/snippet}
 
 <div class="sc-sim sc-sim--compare" data-state={ok && !failure ? 'ready' : 'rejected'} bind:this={root} role="group" aria-label={`${nameA} and ${nameB}, stepped together`}>
 	{#if !ok || failure}
@@ -368,50 +422,43 @@
 			{#if failure}
 				<p class="sc-sim__failure" role="alert">The guide's simulator failed: {failure}</p>
 			{/if}
-			{#if snap.tour}
-				<div class="sc-tour">
-					<span class="sc-tour__label">Guided tour, {snap.cursor === 0 ? `${snap.tourLength} ${snap.tourLength === 1 ? 'tick' : 'ticks'}` : `tick ${snap.cursor} of ${snap.tourLength}`}</span>
-					{#if snap.cursor === 0}
-						<span class="sc-tour__note">{@html inlineMd('Both charts get the same inputs. Press **Next** to run tick 1, or **Take over** to set the inputs yourself.')}</span>
-					{:else if snap.note}
-						<span class="sc-tour__note">{@html inlineMd(snap.note)}</span>
-					{/if}
-					{#if snap.cursor > 0}
-						<span class="sc-compare__diff">{@html inlineMd(diffText)}</span>
-					{/if}
-					{#if snap.cursor >= snap.tourLength && snap.cursor > 0 && !halted}
-						<span class="sc-tour__end">That is the end of the tour. Take over to try your own inputs, or press Step to keep going.</span>
-					{/if}
-					<div class="sc-tour__nav">
-						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus disabled={disabled || snap.cursor === 0} onclick={back}>Previous</button>
-						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus={restartButton} disabled={disabled || halted || snap.cursor >= snap.tourLength} onclick={step}>Next</button>
-						<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__take" {disabled} onclick={takeOver}>Take over</button>
-					</div>
-				</div>
-			{:else if snap.cursor === 0}
-				<p class="sc-what__idle">Both charts get the same inputs. Set them, then press <b>Step</b>; outputs that differ are marked in the timing diagram.</p>
-			{:else}
-				{#if snap.note}
-					<p class="sc-what__note">{@html inlineMd(snap.note)}</p>
+			<div class="sc-foot__top">
+				{#if snap.tour}
+					<span class="sc-foot__head sc-tour__label">Guided tour, {snap.cursor === 0 ? `${snap.tourLength} ${snap.tourLength === 1 ? 'tick' : 'ticks'}` : `tick ${snap.cursor} of ${snap.tourLength}`}</span>
+				{:else}
+					<span class="sc-foot__head sc-what__head">{snap.cursor === 0 ? 'Tick 0: nothing has run yet.' : `What happened in tick ${snap.cursor}`}</span>
 				{/if}
-				<p class="sc-compare__diff">{@html inlineMd(diffText)}</p>
-				<div class="sc-compare__what">
-					{#each [{ n: nameA, s: storyA }, { n: nameB, s: storyB }] as side, i (i)}
-						<div class="sc-what">
-							<p class="sc-what__head">{side.n}</p>
-							<ul class="sc-what__list" use:roving={'li[data-linked]'}>
-								{#each side.s?.items ?? [] as item, j (j)}
-									<li class={`sc-what__item is-${item.kind}`} data-linked={item.ids.length ? '' : undefined} onpointerenter={() => focusSide(i, item.ids)} onpointerleave={() => focusSide(i, [])} onfocus={() => focusSide(i, item.ids)} onblur={() => focusSide(i, [])}>{@html inlineMd(item.text)}</li>
+				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-foot__toggle" aria-expanded={fold.open} aria-controls={`${id}-details`} title={fold.open ? 'Fold the details of the tick' : 'What happened in each chart, line by line'} disabled={snap.cursor === 0} use:keepFocus={stepButton} onclick={() => fold.toggle()}>{@html icons.chevron}<span>Details</span></button>
+			</div>
+			<div class="sc-foot__details" id={`${id}-details`} hidden={!showDetails} style:min-height={fold.min ? `${fold.min}px` : undefined}>
+				{#if showDetails}
+					<div class="sc-foot__detail sc-foot__detail--wide" use:fold.ratchet>
+						{#if snap.cursor > 0}
+							<p class="sc-compare__diff-all">{@html inlineMd(diffText)}</p>
+							<div class="sc-compare__what">
+								{#each [{ n: nameA, s: storyA }, { n: nameB, s: storyB }] as side, i (i)}
+									<div class="sc-what">
+										<p class="sc-what__head">{side.n}</p>
+										<ul class="sc-what__list" use:roving={'li[data-linked]'}>
+											{#each side.s?.items ?? [] as item, j (j)}
+												<li class={`sc-what__item is-${item.kind}`} data-linked={item.ids.length ? '' : undefined} onpointerenter={() => focusSide(i, item.ids)} onpointerleave={() => focusSide(i, [])} onfocus={() => focusSide(i, item.ids)} onblur={() => focusSide(i, [])}>{@html inlineMd(item.text)}</li>
+											{/each}
+										</ul>
+									</div>
 								{/each}
-							</ul>
-						</div>
-					{/each}
-				</div>
+							</div>
+						{/if}
+					</div>
+				{/if}
+			</div>
+			<Stack items={entries} shown={shownEntry} item={entry} class="sc-foot__text" />
+			{#if tour}
+				<Stack items={['nav', 'restart']} shown={snap.tour ? 0 : 1} item={nav} class="sc-foot__nav" />
 			{/if}
 			{#if halted}
 				<!-- A run-time error stopped the run (as in KIELER): Step, Run and the inputs are off (keepFocus sends focus here). -->
 				<div class="sc-sim__halted">
-					{#if snap.tour}
+					{#if !showDetails}
 						{#each [{ n: nameA, s: storyA }, { n: nameB, s: storyB }] as side, i (i)}
 							{#each side.s?.items.filter((item) => item.kind === 'error') ?? [] as item, j (j)}
 								<p class="sc-sim__halted-error">{@html inlineMd(`\`${side.n}\`: ${item.text}`)}</p>
@@ -421,9 +468,6 @@
 					<p class="sc-sim__halted-text">Like KIELER's, this simulation stops at a run-time error, so Step and Run are off. Restart it, or go back a tick and change an input.</p>
 					<button type="button" class="sc-btn sc-btn--sm sc-btn--initial sc-sim__restart" title="Restart (R)" onclick={reset}>{@html icons.reset}Restart</button>
 				</div>
-			{/if}
-			{#if tour && !snap.tour}
-				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__restart" {disabled} onclick={restartTour}>Restart the guided tour</button>
 			{/if}
 		</div>
 	{/if}
