@@ -202,8 +202,36 @@
 	}
 	.sc-pg-appbar__project {
 		flex: 0 1 auto;
-		max-width: none;
-		min-width: 3rem;
+		max-width: 100%;
+		min-width: 0;
 		padding-inline: 0.5rem;
+	}
+	/* The project gives way to the app bar's controls: its name ends in an ellipsis however long (the <details> around
+	   it is the flex item that has to shrink). */
+	.sc-pg-pop--project {
+		flex: 0 1 auto;
+		min-width: 0;
+	}
+	/* "edited" is a dot beside the name; the word stays for screen readers ("ABRO, edited"). */
+	.sc-pg__edited {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		border: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+	.sc-pg-appbar__project:has(.sc-pg__edited:not([hidden]))::after {
+		content: '';
+		flex: none;
+		width: 0.4375rem;
+		height: 0.4375rem;
+		border-radius: 50%;
+		background-color: var(--c-accent);
+	}
+	.sc-pg-appbar__project > svg {
+		order: 1;
 	}
 }

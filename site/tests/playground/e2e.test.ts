@@ -284,6 +284,20 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         expect(bar.right).toBeLessThanOrEqual(bar.width)
         expect(bar.name).toBe('Compare with the model solution')
         await ex.context().close()
+        // A longer name, edited: the name gives way (an ellipsis, "edited" a dot), every control stays on screen.
+        const th = await open('/playground/?example=learn/transitions/thermostat&solution=learn/transitions/thermostat-window', 390)
+        await th.waitForSelector('[data-pg-compare]:not([hidden])')
+        await th.locator('.cm-content').click()
+        await th.keyboard.press('Control+Home')
+        await th.keyboard.type('// My solution\n')
+        await th.waitForSelector('[data-pg-title-edited]:not([hidden])', { state: 'attached' })
+        const edited = await th.evaluate(() => {
+            const right = Math.max(...[...document.querySelectorAll('.sc-pg-appbar > *, .sc-pg-appbar summary, .sc-pg-appbar button')].map(e => e.getBoundingClientRect().right))
+            return { right, width: document.documentElement.clientWidth, name: document.querySelector('[data-pg-title]')!.textContent!.replace(/\s+/g, ' ').trim() }
+        })
+        expect(edited.right).toBeLessThanOrEqual(edited.width)
+        expect(edited.name).toContain('edited')
+        await th.context().close()
     })
 
     test('phones: tabs, no sideways scrolling', async () => {
