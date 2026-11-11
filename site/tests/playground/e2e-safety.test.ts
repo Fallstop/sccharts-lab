@@ -128,6 +128,80 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await ctx.close()
     }, 120000)
 
+    test('New, an example, a link or a file opened at once over edits: the edits are saved first, and Undo brings them back', async () => {
+        const ctx = await context()
+        const page = await open(ctx, '/playground/')
+        const typeNow = async (text: string) => {
+            await page.locator('.cm-content').click()
+            await page.keyboard.press('Control+End')
+            await page.keyboard.type(text)
+        }
+        const undo = async (text: string) => {
+            await page.click('[data-pg-toast] .sc-pg-toast__action')
+            await page.waitForFunction(t => (document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString().includes(t), text)
+        }
+        // New, right after typing (before the pause that saves).
+        await typeNow('// before new')
+        await page.click('[data-pg-project] > summary')
+        await page.click('[data-action="new"]')
+        await storedWith(page, '// before new')
+        await undo('// before new')
+        // An example from the menu.
+        await typeNow(' // before example')
+        await page.click('[data-pg-examples] summary')
+        await page.fill('[data-pg-filter]', 'adder')
+        await page.keyboard.press('Enter')
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'Adder')
+        await storedWith(page, '// before example')
+        await undo('// before example')
+        // A link pasted into the address bar.
+        await typeNow(' // before link')
+        await page.evaluate(h => (location.hash = h), hashForSource('scchart Linked {\n  initial state L\n}\n').slice(1))
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'Linked')
+        await storedWith(page, '// before link')
+        await undo('// before link')
+        // A file opened.
+        await typeNow(' // before file')
+        await page.setInputFiles('[data-pg-file]', { name: 'opened.sctx', mimeType: 'text/plain', buffer: Buffer.from('scchart Opened {\n  initial state O\n}\n') })
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'Opened')
+        await storedWith(page, '// before file')
+        await undo('// before file')
+        await ctx.close()
+    }, 120000)
+
+    test('a file deleted in the sidebar comes back with Undo, its text as it was', async () => {
+        const ctx = await context()
+        const page = await open(ctx, `/playground/${projectHash({ v: 1, n: 'Two', a: 'a.sctx', f: [['a.sctx', 'scchart A {\n  initial state S\n}\n'], ['b.sctx', 'scchart B {\n  initial state T\n}\n']] })}`)
+        await typeAtEnd(page, 'b.sctx', '// edited b')
+        await page.hover('[data-pg-files] button.sc-pg-file[data-path="b.sctx"]')
+        await page.click('[data-pg-files] button[aria-label="Delete b.sctx"]')
+        expect(await files(page)).toEqual(['a.sctx'])
+        await page.click('[data-pg-toast] .sc-pg-toast__action')
+        expect(await files(page)).toEqual(['a.sctx', 'b.sctx'])
+        await page.click('[data-pg-files] button.sc-pg-file[data-path="b.sctx"]')
+        expect(await editorText(page)).toContain('// edited b')
+        await ctx.close()
+    }, 120000)
+
+    test('with storage blocked the playground works, and a reload after a pause keeps the edits (in the address)', async () => {
+        const ctx = await context()
+        await ctx.addInitScript(() => {
+            const blocked = () => {
+                throw new DOMException('Storage is blocked.', 'SecurityError')
+            }
+            for (const name of ['localStorage', 'sessionStorage', 'indexedDB']) Object.defineProperty(window, name, { get: blocked, configurable: true })
+        })
+        const page = await open(ctx, '/playground/')
+        await page.locator('.cm-content').click()
+        await page.keyboard.press('Control+End')
+        await page.keyboard.type('// no storage')
+        await page.waitForTimeout(800)
+        await page.reload({ waitUntil: 'commit' })
+        await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+        expect(await editorText(page)).toContain('// no storage')
+        await ctx.close()
+    }, 120000)
+
     test("two tabs of one project: each tab's edits are kept, neither saves over the other's", async () => {
         const ctx = await context()
         const one = await open(ctx, '/playground/')
@@ -278,6 +352,7 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         const page = await opfsFolder(ctx, 'safety-rename', { 'main.sctx': MAIN, 'lamp.sctx': LAMP })
         await rename(page, 'lamp.sctx', 'light')
         await page.click('[data-pg-files] button.sc-pg-file[data-path="main.sctx"]')
+        await page.hover('[data-pg-files] button.sc-pg-file[data-path="main.sctx"]')
         await page.click('[data-pg-files] button[aria-label="Delete main.sctx"]')
         await changeOpfs(page, 'safety-rename', 'lamp.sctx', `${LAMP}// theirs\n`)
         await changeOpfs(page, 'safety-rename', 'main.sctx', `${MAIN}// theirs\n`)
@@ -373,6 +448,41 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await save(page)
         const disk = await page.evaluate(() => (window as unknown as { theFolder: { files(): Record<string, string> } }).theFolder.files())
         expect(Object.values(disk)).toEqual(['scchart Abc {\n  initial state A\n}\n'])
+        await ctx.close()
+    }, 120000)
+
+    // ----- Text from outside stays text ----------------------------------------------------------------------
+
+    test("a chart from a link: its labels, comments, strings and what it prints are shown as text everywhere", async () => {
+        const ctx = await context()
+        const bad = (n: number) => `<img src=x data-pwn onerror=window.__pwned=${n}>`
+        const chart = [
+            `/** ${bad(1)} [x](javascript:window.__pwned=2) */`,
+            'scchart Evil {',
+            '  input bool press',
+            `  output string s = "${bad(3)}"`,
+            `  initial state A "${bad(4)}"`,
+            `    if press do s = "\`</code>${bad(5)}"; print("${bad(6)}") go to B label "${bad(7)}"`,
+            `  state B "</title></text></svg>${bad(8)}"`,
+            '}',
+            '',
+        ].join('\n')
+        const page = await open(ctx, `/playground/${hashForSource(chart)}`)
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'Evil')
+        await page.click('[data-pg-sim] .sc-simctl__step')
+        await page.locator('[data-pg-sim] .sc-input--bool', { hasText: 'press' }).locator('input').check()
+        await page.click('[data-pg-sim] .sc-simctl__step')
+        await page.waitForFunction(() => /Tick\s*2/.test(document.querySelector('[data-pg-sim] .sc-simctl__tick')?.textContent ?? ''))
+        await page.click('[data-action="outline"]')
+        for (const tab of ['console', 'c', 'problems', 'trace']) {
+            await page.click(`[data-pg-panel-tabs] [data-panel-tab="${tab}"]`)
+            await page.waitForTimeout(300)
+        }
+        await page.waitForFunction(() => /Evil/.test(document.querySelector('.sc-pg-c__code .cm-content')?.textContent ?? ''))
+        expect(await page.locator('.sc-pg-console__lines li').first().textContent()).toContain(bad(6))
+        await page.waitForTimeout(300)
+        expect(await page.evaluate(() => (window as unknown as { __pwned?: number }).__pwned)).toBeUndefined()
+        expect(await page.locator('[data-pwn]').count()).toBe(0)
         await ctx.close()
     }, 120000)
 

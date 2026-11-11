@@ -54,6 +54,15 @@ describe('the web component', () => {
         expect(s.endsWith('}\n</pre>\n</sccharts-lab-chart>')).toBe(true)
     })
 
+    test('a chart or a file name that is HTML stays text: nothing closes the <pre> or the element, no attribute breaks', () => {
+        const evil = 'scchart X "</pre></sccharts-lab-chart><script>alert(1)</script>" {\n  initial state S "<img src=x onerror=alert(1)>"\n}\n'
+        const s = elementSnippet({ ...own, chart: { name: 'X', files: { 'x.sctx': evil, 'a"><img src=x onerror=alert(1)>.sctx': 'scchart Y {}' }, active: 'x.sctx' } })
+        const tags = [...s.matchAll(/<\/?([a-z-]+)/gi)].map(m => m[0].toLowerCase())
+        expect(tags).toEqual(['<script', '</script', '<sccharts-lab-chart', '<pre', '</pre', '<pre', '</pre', '</sccharts-lab-chart'])
+        expect(s).toContain('data-file="a&quot;>&lt;img src=x onerror=alert(1)>.sctx"')
+        expect(iframeSnippet({ ...own, title: '"><script>alert(1)</script>' })).not.toMatch(/<script/)
+    })
+
     test('several files: the active one first, each named', () => {
         const s = elementSnippet({ ...own, chart: { name: 'P', files: { 'b.sctx': 'scchart B {}', 'main.sctx': 'import "b"\nscchart M {}' }, active: 'main.sctx' } })
         expect(s.indexOf('data-file="main.sctx"')).toBeLessThan(s.indexOf('data-file="b.sctx"'))
