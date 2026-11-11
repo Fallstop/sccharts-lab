@@ -116,7 +116,7 @@ export function poolVariables(result: Compiled): PoolVariable[] {
         const type = typeName(v.type, v.hostType)
         const dims = info?.dims ?? []
         // An unset string is null, which the pool leaves out; KIELER's reset() sets constant initial values.
-        const late = type === 'string' && dims.length === 0 && (v.role !== undefined || info?.initialValue == null)
+        const late = type === 'string' && dims.length === 0 && info?.initialValue == null
         add({ name: v.name, input: v.input, output: v.output, type, dims, late })
     }
     const instances = (compiled.core.ext.emptyInstances as string[] | undefined) ?? []
@@ -200,7 +200,7 @@ export function traceFromRun(result: Compiled, run: EngineRun, options: TraceOpt
     const values = ticks.map((tick) => {
         const row: Record<string, unknown> = {}
         for (const { name, role } of variables) {
-            const value = read && role === 'input' ? (tick.ranWith?.[name] ?? undefined) : tick.pool[name]
+            const value = read && role === 'input' ? tick.ranWith?.[name] : tick.pool[name]
             if (value !== undefined && value !== null) last[name] = kielerValue(value)
             row[name] = last[name]
         }

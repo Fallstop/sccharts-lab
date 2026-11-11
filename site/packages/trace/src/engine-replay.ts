@@ -18,7 +18,7 @@ import type { Renames } from './trace-rename'
 import { TraceReplay } from './trace-replay'
 import type { ReplayMismatch, ReplayTarget } from './trace-replay'
 
-type Compiled = Pick<CompileResult, 'sim' | 'chart' | 'interface'>
+type Compiled = Pick<CompileResult, 'sim' | 'chart' | 'interface' | 'index'>
 
 export interface EngineReplayOptions {
     /** How the replay names the file, e.g. its file name (ReplayState.label). Default `trace`. */
