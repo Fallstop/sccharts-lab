@@ -175,6 +175,8 @@ export interface HarnessTick {
 /** Reads the harness's output: the ticks that finished, and whether the program died in the tick after them. */
 export function parseOutput(stdout: string): { ticks: HarnessTick[]; diedIn?: number } {
     const ticks: HarnessTick[] = []
+    // What reset() printed (KIELER moves tick 1's prints there) belongs to tick 1.
+    const early = stdout.slice(0, Math.max(0, stdout.indexOf('\n@@BEGIN 1\n')))
     const re = /\n@@BEGIN (\d+)\n([\s\S]*?)\n@@END \1 (.*)\n/g
     let m: RegExpExecArray | null
     let last = 0
@@ -185,7 +187,7 @@ export function parseOutput(stdout: string): { ticks: HarnessTick[]; diedIn?: nu
         delete json['#taken']
         const term = json['#term'] === 1
         delete json['#term']
-        ticks.push({ tick: Number(m[1]), printed: m[2], pool: json, terminated: term, taken: total?.map((t, i) => t - (previous?.[i] ?? 0)) })
+        ticks.push({ tick: Number(m[1]), printed: (m[1] === '1' ? early : '') + m[2], pool: json, terminated: term, taken: total?.map((t, i) => t - (previous?.[i] ?? 0)) })
         previous = total
         last = re.lastIndex
     }

@@ -54,8 +54,11 @@ function and(t: Term): string {
     if (t.some(x => x === '0')) return '0'
     const parts = t.filter(x => x !== '1')
     if (!parts.length) return '1'
-    return parts.map(p => (isAtomic(p) || p.startsWith('(') && balanced(p) ? p : `(${p})`)).join(' && ')
+    return parts.map(p => (grouped(p) ? p : `(${p})`)).join(' && ')
 }
+
+/** An operand that needs no parentheses: a name, a negated name, `(...)` or `!(...)`. */
+const grouped = (s: string) => isAtomic(s) || (s.startsWith('(') && balanced(s)) || (s.startsWith('!(') && balanced(s.slice(1)))
 
 /** `(a) && (b)` is not one parenthesised group: true only when the outer parentheses enclose everything. */
 function balanced(s: string): boolean {
@@ -72,7 +75,7 @@ function or(terms: Term[]): string {
     if (parts.includes('1')) return '1'
     if (!parts.length) return '0'
     if (parts.length === 1) return parts[0]
-    return parts.map(p => (isAtomic(p) ? p : `(${p})`)).join(' || ')
+    return parts.map(p => (grouped(p) ? p : `(${p})`)).join(' || ')
 }
 
 const not = (s: string) => (s === '0' ? '1' : s === '1' ? '0' : isAtomic(s) ? (s.startsWith('!') ? s.slice(1) : `!${s}`) : `!(${s})`)

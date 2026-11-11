@@ -199,7 +199,8 @@ export function effect(f: CEffect, env: ExprEnv): string[] {
         case 'print': {
             env.includes.add('<stdio.h>')
             const formats = f.args.map(printFormat).join(' ')
-            const args = f.args.map(a => expr(a, env).text)
+            // KIELER's serialize (not serializeHR) of parameters: an operation in parentheses.
+            const args = f.args.map(a => { const o = expr(a, env); return o.prec < ATOM && o.prec > 0 ? `(${o.text})` : o.text })
             return [`printf(${[stringLiteral(formats), ...args].join(', ')});`]
         }
         case 'call': return [`${call(f.call, env)};`]

@@ -60,7 +60,11 @@ export class Layout {
     private readonly used = new Set<string>()
     private readonly maxSuffix = new Map<string, number>()
 
-    constructor(readonly compiled: CompiledChart, readonly chartName: string, takenCount: number | undefined, extra: CVar[]) {
+    /**
+     * `declarationOf`: the source declaration of a variable, so that instances declared together share a line
+     * (`Counter home, away;`).
+     */
+    constructor(readonly compiled: CompiledChart, readonly chartName: string, takenCount: number | undefined, extra: CVar[], declarationOf: (v: CVar) => object | undefined = () => undefined) {
         const core = compiled.core
         const rootDecls = core.decls
         // The leading source declarations (not signals): `_taken_transitions` comes right after them (memory.ts).
@@ -77,16 +81,16 @@ export class Layout {
             if (v.const || v.extern || v.declKind === 'method' || v.declKind === 'enum' || v.member) continue
             if (v.generated || v.role === 'presence' || v.role === 'value' || v.role === 'curval') placeTaken()
             if (v.declKind === 'class' || v.declKind === 'struct') {
-                // Consecutive instances of one class share a line, as KIELER declares them (`Counter home, away;`).
+                if (this.slots.has(v)) continue
+                // Instances of one declaration share a line, as KIELER declares them (`Counter home, away;`).
                 const type = this.classType(v, rootDecls, classes)
-                const names = [this.unique(identifier(v.name))]
-                this.instance(v, names[0], rootDecls)
-                while (i + 1 < rootDecls.length && rootDecls[i + 1].declKind === v.declKind && this.classType(rootDecls[i + 1], rootDecls, classes) === type) {
-                    const w = rootDecls[++i]
+                const decl = declarationOf(v)
+                const group = [v, ...(decl ? rootDecls.slice(i + 1).filter(w => w.declKind === v.declKind && declarationOf(w) === decl) : [])]
+                const names = group.map(w => {
                     const n = this.unique(identifier(w.name))
-                    names.push(n)
                     this.instance(w, n, rootDecls)
-                }
+                    return n
+                })
                 this.lines.push(`${type} ${names.join(', ')};`)
                 continue
             }

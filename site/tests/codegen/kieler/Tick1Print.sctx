@@ -1,0 +1,9 @@
+scchart Tick1Print {
+  input int k = 3
+  output int a = 1
+  initial state A {
+    entry do print("start", a); a = k + 1
+  }
+  go to B
+  state B
+}

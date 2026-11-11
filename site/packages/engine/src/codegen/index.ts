@@ -86,7 +86,7 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
         const f = x.src.effect
         if (f?.k === 'assign' && f.ref.v.const && !read.has(f.ref.v)) constInits.add(i)
     })
-    const layout = new Layout(compiled, chartName, taken, extra.filter(v => !frames.has(v) && (!v.const || read.has(v))))
+    const layout = new Layout(compiled, chartName, taken, extra.filter(v => !frames.has(v) && (!v.const || read.has(v))), v => (v.decl ? result.index?.vos.get(v.decl)?.decl : undefined))
 
     const includes = new Set<string>()
     const problems: string[] = []
@@ -133,7 +133,8 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
     }
 
     // The struct: the chart's variables, then the netlist's guards in KIELER's order.
-    const members = [...layout.lines, ...logic.guards.map(g => `char ${g};`), 'char _GO;', ...logic.conditions.map(c => `char ${c};`),
+    const byNumber = (a: string, b: string) => (Number(/\d+/.exec(a)?.[0] ?? 0) - Number(/\d+/.exec(b)?.[0] ?? 0)) || a.localeCompare(b)
+    const members = [...layout.lines, ...[...logic.guards].sort(byNumber).map(g => `char ${g};`), 'char _GO;', ...logic.conditions.map(c => `char ${c};`),
         'char _TERM;', ...logic.registers.map(r => `char ${r.register};`)]
     const reset = [
         'd->_GO = 1;', 'd->_TERM = 0;', ...resetBody,

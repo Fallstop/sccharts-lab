@@ -1,0 +1,26 @@
+/*
+ * Automatically generated C code by
+ * KIELER SCCharts - The Key to Efficient Modeling
+ *
+ * http://rtsys.informatik.uni-kiel.de/kieler
+ */
+
+#include "Limits.h"
+
+void logic(TickData* d) {
+  if (!d->_GO) {
+    d->volume += d->flow - d->drain;
+  }
+}
+
+void reset(TickData* d) {
+  d->_GO = 1;
+  d->_TERM = 0;
+  d->volume = 0;
+}
+
+void tick(TickData* d) {
+  logic(d);
+
+  d->_GO = 0;
+}
