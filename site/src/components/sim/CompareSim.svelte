@@ -221,6 +221,7 @@
 		live = snap.cursor
 			? `Tick ${snap.cursor}. ${snap.note ? `${snap.note.replace(/[`*\\]/g, '')} ` : ''}${nameA}: ${storyA?.summary.replace(/^Tick \d+\. /, '') ?? ''} ${nameB}: ${storyB?.summary.replace(/^Tick \d+\. /, '') ?? ''} ${diffText.replace(/[`*]/g, '')}${halted ? ' Step and Run are off: restart the simulation, or go back a tick and change an input.' : ''}`
 			: 'Tick 0: nothing has run yet.'
+		if (snap.tour && snap.cursor >= snap.tourLength && !halted) live += ' End of the guided tour: take over to try your own inputs, or Step to keep going.'
 	}
 
 	function guard(fn: () => boolean | void, fire = false) {
@@ -329,52 +330,35 @@
 	// Not tied to `mounted`: a click made before hydration is replayed once the island is live (engage.ts).
 	const disabled = $derived(!timeline)
 
-	// ----- The foot: stepping never changes its height (as SimPanel's: a first line with Details at its end, the
-	// known texts stacked under it, the tick's differences one line, both charts' stories behind Details) -------
+	// ----- The foot: as SimPanel's (README, "The foot"): a first line with Details at its end, and each mode its own
+	// height. In the tour, its label, then its intro and notes stacked (each note under the tick's differences, one
+	// line), then Previous / Next / Take over; in free play, the differences are the first line, then the idle line
+	// or Restart the guided tour. Both charts' stories are behind Details. ------------------------------------------
 
-	type Entry = { kind: 'intro' | 'end' | 'idle' | 'free' } | { kind: 'note'; k: number }
-	const entries: Entry[] = [
-		...(tour ? [{ kind: 'intro' } as const, ...tour.ticks.map((_, i) => ({ kind: 'note', k: i + 1 }) as const), { kind: 'end' } as const] : []),
-		{ kind: 'idle' },
-		{ kind: 'free' },
-	]
-	const current: Entry = $derived.by(() => {
-		const c = snap.cursor
-		if (snap.tour) return c === 0 ? { kind: 'intro' } : c >= snap.tourLength && !halted ? { kind: 'end' } : { kind: 'note', k: c }
-		if (c === 0) return { kind: 'idle' }
-		return snap.note ? { kind: 'note', k: c } : { kind: 'free' }
-	})
-	const shownEntry = $derived(entries.findIndex((e) => e.kind === current.kind && (e.kind !== 'note' || (current.kind === 'note' && e.k === current.k))))
-	const noteOf = (e: Entry) => tour?.ticks[(e.kind === 'note' ? e.k : tour.ticks.length) - 1]?.note
+	type Entry = { kind: 'intro' } | { kind: 'note'; k: number }
+	const entries: Entry[] = tour ? [{ kind: 'intro' }, ...tour.ticks.map((_, i) => ({ kind: 'note', k: i + 1 }) as const)] : []
+	const shownEntry = $derived(snap.cursor === 0 ? 0 : snap.cursor)
+	const tourEnd = $derived(snap.tour && snap.cursor > 0 && snap.cursor >= snap.tourLength && !halted)
 	const showDetails = $derived(fold.open && (snap.cursor > 0 || fold.min > 0))
 	const stepButton = () => root?.querySelector<HTMLButtonElement>('.sc-simctl__step')
 </script>
 
 {#snippet entry(e: Entry, on: boolean)}
-	<div class="sc-foot__entry" class:sc-tour={on && snap.tour}>
-		{#if e.kind === 'idle'}
-			<p class="sc-what__idle">Both charts get the same inputs. Set them, then press <b>Step</b>; outputs that differ are marked in the timing diagram.</p>
+	<div class="sc-foot__entry" class:sc-tour={on}>
+		{#if e.kind === 'intro'}
+			<p class="sc-tour__note">{@html inlineMd('Both charts get the same inputs. Press **Next** to run tick 1, or **Take over** to set the inputs yourself.')}</p>
 		{:else}
-			{#if e.kind === 'intro'}
-				<p class="sc-tour__note">{@html inlineMd('Both charts get the same inputs. Press **Next** to run tick 1, or **Take over** to set the inputs yourself.')}</p>
-			{:else}
-				<!-- The tick's differences: one line, the whole of it under Details. -->
-				{#if on}<span class="sc-foot__line sc-compare__diff">{@html inlineMd(diffText)}</span>{:else}<span class="sc-foot__line">&nbsp;</span>{/if}
-				{#if e.kind !== 'free' && noteOf(e)}<p class="sc-tour__note">{@html inlineMd(noteOf(e)!)}</p>{/if}
-				{#if e.kind === 'end'}<p class="sc-tour__end">That is the end of the tour. Take over to try your own inputs, or press Step to keep going.</p>{/if}
-			{/if}
+			<!-- The tick's differences: one line, the whole of it under Details. -->
+			{#if on}<span class="sc-foot__line sc-compare__diff">{@html inlineMd(diffText)}</span>{:else}<span class="sc-foot__line">&nbsp;</span>{/if}
+			{#if tour?.ticks[e.k - 1]?.note}<p class="sc-tour__note">{@html inlineMd(tour.ticks[e.k - 1].note!)}</p>{/if}
 		{/if}
 	</div>
 {/snippet}
 
-{#snippet nav(k: string)}
-	{#if k === 'nav'}
-		<div class="sc-tour__nav">
-			<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus disabled={disabled || snap.cursor === 0} onclick={back}>Previous</button>
-			<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus={restartButton} disabled={disabled || halted || snap.cursor >= snap.tourLength} onclick={step}>Next</button>
-			<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__take" {disabled} onclick={takeOver}>Take over</button>
-		</div>
-	{:else}
+{#snippet freePlay(k: string)}
+	{#if k === 'idle'}
+		<p class="sc-what__idle">Both charts get the same inputs. Set them, then press <b>Step</b>; outputs that differ are marked in the timing diagram.</p>
+	{:else if k === 'restart'}
 		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__restart" {disabled} onclick={restartTour}>Restart the guided tour</button>
 	{/if}
 {/snippet}
@@ -424,9 +408,11 @@
 			{/if}
 			<div class="sc-foot__top">
 				{#if snap.tour}
-					<span class="sc-foot__head sc-tour__label">Guided tour, {snap.cursor === 0 ? `${snap.tourLength} ${snap.tourLength === 1 ? 'tick' : 'ticks'}` : `tick ${snap.cursor} of ${snap.tourLength}`}</span>
+					<span class="sc-foot__head sc-tour__label">Guided tour, {snap.cursor === 0 ? `${snap.tourLength} ${snap.tourLength === 1 ? 'tick' : 'ticks'}` : `tick ${snap.cursor} of ${snap.tourLength}${tourEnd ? ': the end' : ''}`}</span>
+				{:else if snap.cursor === 0}
+					<span class="sc-foot__head sc-what__summary is-idle">Tick 0: nothing has run yet.</span>
 				{:else}
-					<span class="sc-foot__head sc-what__head">{snap.cursor === 0 ? 'Tick 0: nothing has run yet.' : `What happened in tick ${snap.cursor}`}</span>
+					<span class="sc-foot__head sc-what__summary sc-compare__diff">{@html inlineMd(diffText)}</span>
 				{/if}
 				<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-foot__toggle" aria-expanded={fold.open} aria-controls={`${id}-details`} title={fold.open ? 'Fold the details of the tick' : 'What happened in each chart, line by line'} disabled={snap.cursor === 0} use:keepFocus={stepButton} onclick={() => fold.toggle()}>{@html icons.chevron}<span>Details</span></button>
 			</div>
@@ -435,6 +421,9 @@
 					<div class="sc-foot__detail sc-foot__detail--wide" use:fold.ratchet>
 						{#if snap.cursor > 0}
 							<p class="sc-compare__diff-all">{@html inlineMd(diffText)}</p>
+							{#if !snap.tour && snap.note}
+								<p class="sc-tour__note">{@html inlineMd(snap.note)}</p>
+							{/if}
 							<div class="sc-compare__what">
 								{#each [{ n: nameA, s: storyA }, { n: nameB, s: storyB }] as side, i (i)}
 									<div class="sc-what">
@@ -451,9 +440,16 @@
 					</div>
 				{/if}
 			</div>
-			<Stack items={entries} shown={shownEntry} item={entry} class="sc-foot__text" />
-			{#if tour}
-				<Stack items={['nav', 'restart']} shown={snap.tour ? 0 : 1} item={nav} class="sc-foot__nav" />
+			{#if snap.tour}
+				<Stack items={entries} shown={shownEntry} item={entry} class="sc-foot__text" />
+				<div class="sc-tour__nav">
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus disabled={disabled || snap.cursor === 0} onclick={back}>Previous</button>
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus={restartButton} disabled={disabled || halted || snap.cursor >= snap.tourLength} onclick={step}>Next</button>
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__take" {disabled} onclick={takeOver}>Take over</button>
+				</div>
+			{:else}
+				<!-- Free play: the idle line before the first tick, then Restart the tour (or nothing), in one cell. -->
+				<Stack items={tour ? ['idle', 'restart'] : ['idle', 'none']} shown={snap.cursor === 0 ? 0 : 1} item={freePlay} class="sc-foot__slot" />
 			{/if}
 			{#if halted}
 				<!-- A run-time error stopped the run (as in KIELER): Step, Run and the inputs are off (keepFocus sends focus here). -->

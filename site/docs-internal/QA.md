@@ -37,7 +37,8 @@ weight, the causality description) nine pages were run again in all four configu
 shared dev server (`tools/dev-server.sh`); both pass (42 and 20 tests). `browser.test.ts` also runs in the whole
 suite whenever the dev server is up. `FOOT_E2E=1 pnpm exec vitest run tests/widgets/foot.test.ts --silent=false` (the dev server
 too, about 17 minutes) steps every simulation widget of the landing page and the guide at 1280 and 390 and checks
-that stepping never changes the height of its foot or of the page (`src/components/sim/README.md`, "The foot").
+that stepping never changes the height of its foot or of the page: one height in the tour, one in free play
+(`src/components/sim/README.md`, "The foot").
 
 ## 1. Tests, types, build
 

@@ -1,8 +1,11 @@
 // The foot of every simulation widget keeps its height while the reader steps (src/components/sim/README.md, "The
 // foot"): on the landing page (its chart replays its opening and hands over) and on every guide page with a
 // simulation, each widget is engaged and stepped through its whole tour, then in free play (Step, Back, a replay,
-// clicks in the timing diagram, Restart the tour, Previous, Take over, Run, Reset). Folded, neither the foot's height
-// nor the page's may change. Then the details are unfolded once: stepping may make them taller, never shorter.
+// clicks in the timing diagram, Restart the tour, Previous, Take over, Run, Reset). Folded, the foot's height and the
+// page's are one in the tour and one in free play: they may change only when the reader leaves the tour (Take over,
+// Step past its end) or restarts it, never while stepping. The landing chart has one height throughout (its replay
+// hands over without moving anything). Then the details are unfolded once: stepping may make them taller, never
+// shorter.
 //
 // Opt-in, because it needs the shared dev server (tools/dev-server.sh) and takes a few minutes:
 //
@@ -53,12 +56,13 @@ const noHmr = () => {
     ;(window as unknown as { WebSocket: unknown }).WebSocket = Quiet
 }
 
-/** One measurement: after `what`, the foot's height, the page's, and whether a run-time error (which may add its
- *  alert) is showing. */
+/** One measurement: after `what`, the foot's height, the page's, whether the guided tour is in control, and whether a
+ *  run-time error (which may add its alert) is showing. */
 interface Sample {
     what: string
     foot: number
     doc: number
+    tour: boolean
     exceptional: boolean
 }
 interface Drive {
@@ -85,7 +89,7 @@ async function drive({ index, run }: { index: number; run: boolean }): Promise<D
     let into = out.folded
     const measure = async (what: string) => {
         await settle()
-        into.push({ what, foot: foot().getBoundingClientRect().height, doc: document.documentElement.scrollHeight, exceptional: !!sim()!.querySelector('.sc-sim__halted, .sc-sim__failure') })
+        into.push({ what, foot: foot().getBoundingClientRect().height, doc: document.documentElement.scrollHeight, tour: !!sim()!.querySelector('.sc-tour'), exceptional: !!sim()!.querySelector('.sc-sim__halted, .sc-sim__failure') })
     }
     const press = async (b: HTMLButtonElement | undefined, what: string) => {
         if (!shown(b)) return false
@@ -167,17 +171,37 @@ async function engage(page: Page, index: number) {
 const same = (a: number, b: number) => Math.abs(a - b) < 0.5
 
 function check(d: Drive, where: string) {
+    // Folded: one height per mode (the tour, free play), so the only changes are where the mode changes.
     const folded = d.folded.filter((s) => !s.exceptional)
-    const changes = folded.filter((s) => !same(s.foot, folded[0].foot) || !same(s.doc, folded[0].doc))
-    expect(changes.map((s) => `${s.what}: foot ${folded[0].foot} -> ${s.foot}, page ${folded[0].doc} -> ${s.doc}`), `${where} ${d.name}, folded`).toEqual([])
+    const off: string[] = []
+    for (const tour of [true, false]) {
+        const mode = folded.filter((s) => s.tour === tour)
+        for (const s of mode) {
+            if (!same(s.foot, mode[0].foot) || !same(s.doc, mode[0].doc)) off.push(`${tour ? 'tour' : 'free play'}, ${s.what}: foot ${mode[0].foot} -> ${s.foot}, page ${mode[0].doc} -> ${s.doc}`)
+        }
+    }
+    folded.forEach((s, i) => {
+        const before = folded[i - 1]
+        if (before && before.tour === s.tour && (!same(s.foot, before.foot) || !same(s.doc, before.doc))) off.push(`${s.what}: moved without leaving or restarting the tour`)
+    })
+    expect(off, `${where} ${d.name}, folded`).toEqual([])
+    // Unfolded: the details may grow while stepping, never shrink (a change of mode excepted).
     const shrinks: string[] = []
     const unfolded = d.unfolded.filter((s) => !s.exceptional)
     unfolded.forEach((s, i) => {
         const before = unfolded[i - 1]
-        if (before && (s.foot < before.foot - 0.5 || s.doc < before.doc - 0.5)) shrinks.push(`${s.what}: foot ${before.foot} -> ${s.foot}, page ${before.doc} -> ${s.doc}`)
+        if (before && before.tour === s.tour && (s.foot < before.foot - 0.5 || s.doc < before.doc - 0.5)) shrinks.push(`${s.what}: foot ${before.foot} -> ${s.foot}, page ${before.doc} -> ${s.doc}`)
     })
     expect(shrinks, `${where} ${d.name}, unfolded`).toEqual([])
 }
+
+/** The heights a drive saw, per mode, for the record: "tour 199 / free 87". */
+const perMode = (d: Drive) =>
+    [true, false]
+        .map((tour) => d.folded.filter((s) => s.tour === tour && !s.exceptional).map((s) => s.foot))
+        .map((h, i) => (h.length ? `${i === 0 ? 'tour' : 'free'} ${Math.round(h[0] * 10) / 10}` : ''))
+        .filter(Boolean)
+        .join(' / ')
 
 describe.skipIf(!enabled)('the foot of every simulation keeps its height while stepping', () => {
     let browser: Browser
@@ -245,7 +269,10 @@ describe.skipIf(!enabled)('the foot of every simulation keeps its height while s
                 const index = await page.evaluate(() => [...document.querySelectorAll('figure.sc-frame')].indexOf(document.querySelector('.sc-hero-chart')!))
                 const d = await page.evaluate(drive, { index, run: false })
                 check(d, `/ at ${width}`)
-                covered.push(`/ at ${width}: ${d.name} (opening replay, ${d.folded.length} moves folded, ${d.unfolded.length} unfolded)`)
+                // The landing chart: one height for its replay, the handover and free play.
+                expect(new Set(d.folded.filter((s) => !s.exceptional).map((s) => Math.round(s.foot * 2))).size, 'the landing chart, folded').toBe(1)
+                expect(feet[0].foot, 'the replay and free play').toBeCloseTo(d.folded[0].foot, 0)
+                covered.push(`/ at ${width}: ${d.name} (opening replay, ${d.folded.length} moves folded, ${d.unfolded.length} unfolded; ${perMode(d)})`)
                 await page.close()
             }, 120000)
         }
@@ -265,7 +292,7 @@ describe.skipIf(!enabled)('the foot of every simulation keeps its height while s
                             continue
                         }
                         check(d, `${route} at ${width}`)
-                        covered.push(`${route} at ${width}: ${d.name} (${d.folded.length} moves folded, ${d.unfolded.length} unfolded)`)
+                        covered.push(`${route} at ${width}: ${d.name} (${d.folded.length} moves folded, ${d.unfolded.length} unfolded; ${perMode(d)})`)
                     } else if (kind === 'predict') {
                         await engage(page, i)
                         const heights = await page.evaluate(async (index) => {
@@ -295,7 +322,7 @@ describe.skipIf(!enabled)('the foot of every simulation keeps its height while s
                         await page.waitForTimeout(1500)
                         const d = await page.evaluate(drive, { index: i, run: true })
                         check(d, `${route} at ${width}`)
-                        covered.push(`${route} at ${width}: ${d.name} (${d.folded.length} moves folded, ${d.unfolded.length} unfolded)`)
+                        covered.push(`${route} at ${width}: ${d.name} (${d.folded.length} moves folded, ${d.unfolded.length} unfolded; ${perMode(d)})`)
                     }
                 }
                 await page.close()

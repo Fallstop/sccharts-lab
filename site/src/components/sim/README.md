@@ -74,11 +74,11 @@ ES module: loaded once per page however many widgets it has), Svelte's runtime 1
 | `regions` | `boolean` | `true` | one timing-diagram lane per region with its active state |
 | `recompile` | `'reset' \| 'replay'` | `'reset'` | what a new `compiled` does: `'reset'` starts again at tick 0 and keeps the input controls' values; `'replay'` replays the recorded inputs on the new chart up to the same tick (live editing) |
 | `keys` | `HTMLElement \| null` | the panel's own controls | the element that gets the keyboard shortcuts while focus is inside it (Space / Enter / Right step, which replays a later tick after Back; Backspace / Left back; R reset). `<Sim>` passes its frame. Keys typed into a text or number field are left alone, and Space / Enter on a button keep their usual meaning. |
-| `variant` | `'full' \| 'compact'` | `'full'` | `'compact'` drops Run and the speed control and shortens the foot (the landing chart): no tour label, Previous / Next or notices; a scripted tick shows its note alone, any other its summary line |
+| `variant` | `'full' \| 'compact'` | `'full'` | `'compact'` drops Run and the speed control and shortens the foot (the landing chart): no tour label or Previous / Next; a scripted tick shows its note, any other its summary line, at one height throughout |
 | `autoplay` | `number` | none | replay the scenario automatically, this many ms per tick, the first time the panel is visible (skipped under reduced motion; any reader action stops it) |
 | `initialTicks` | `number` | `0` | run this many scripted ticks at once (also during server rendering, so the page shows them without JavaScript) |
 | `intro` | `string` | | inline Markdown shown in the foot before the first tick |
-| `handover` | `string` | | inline Markdown shown in the foot once the reader has control (after the tour or the autoplay); its room is kept while they play, so it appears without moving anything |
+| `handover` | `string` | | inline Markdown shown in the foot once the reader has control (after the tour or the autoplay); in the compact panel its room is kept while the opening plays, so it appears without moving anything |
 | `details` | `'folded' \| 'open'` | `'folded'` | how a tick's details ("What happened", "Explain this tick") start: folded under the summary line (the guide's widgets, the inline playground, the embed) or unfolded (the playground's page, whose panel scrolls inside). The reader's own choice wins and is remembered (below) |
 | `label` | `string` | chart name | accessible name of the control group ("Simulation of Toggle") |
 | `id` | `string` | `$props.id()` | prefix for element ids inside the panel (unique per panel, stable between server and client) |
@@ -148,11 +148,12 @@ div.sc-sim                                  role=group; data-state="ready" | "re
                                             (.sc-what__summary), one line; the compact panel has its stack here
       button.sc-foot__toggle                Details (aria-expanded, aria-controls); hidden before tick 1
     div.sc-foot__details                    the unfolded details: ul.sc-what__list, details.sc-explain
-    div.sc-stack.sc-foot__text              the known texts, one shown: div.sc-foot__entry each (.sc-tour on the
-                                            one shown while the tour is in control)
-    div.sc-stack.sc-foot__nav               Previous / Next / Take over, or "Restart the guided tour" (with a tour)
+    div.sc-stack.sc-foot__text              in the tour: its intro and notes, one shown (div.sc-foot__entry,
+                                            .sc-tour on the one shown)
+    div.sc-tour__nav                        in the tour: Previous / Next / Take over
+    div.sc-stack.sc-foot__slot              in free play: the idle line, then "Restart the guided tour"
     div.sc-sim__halted                      a run-time error stopped the run: what, and Restart
-    p.sc-what__handover                     `handover` (.is-off: hidden, its room kept)
+    p.sc-what__handover                     `handover` (compact: .is-off while the opening plays, its room kept)
   div.sc-visually-hidden[aria-live=polite]  one sentence per tick for screen readers
 ```
 
@@ -185,26 +186,31 @@ Inputs, from `compiled.interface` (`input` variables; `const` ones are skipped):
 
 ### The foot
 
-Stepping, Next and Previous, Run, the autoplay, Back and a click on a tick never change the foot's height; only the
-reader's click on *Details* does. So the page under a widget never moves while the reader steps it.
+Stepping, Next and Previous, Run, the autoplay, Back and a click on a tick never change the foot's height. The tour
+and free play each have their own height, so it changes only when the reader leaves the tour (Take over, or Step past
+its end) or restarts it, and when the reader folds or unfolds *Details*. So the page under a widget never moves while
+the reader steps it.
 
 - **The first line is one line** (`.sc-foot__head`, cut off with an ellipsis): the tour's label while the tour is
-  in control, else what the tick did, `tickSummary` in `describe.ts`: "Tick 7: `Off` went to `On`." (the start, the
-  transitions that fired without their reasons, termination, or the run-time error; "Tick 0: nothing has run yet."
-  before the first). *Details* (`button.sc-foot__toggle`, `aria-expanded`) at its end unfolds the whole story under
-  it: the "What happened" list and *Explain this tick*. It starts folded on guide pages (`details`), and the
-  reader's choice is remembered for every widget of the site (`fold.svelte.ts`: read when a panel starts, never
-  pushed to panels already running, so a click in one widget never moves another).
-- **Known texts are stacked** (`Stack.svelte`) under it: every text the foot can show that is known in advance is
-  laid out in one grid cell, and all but the current one are hidden (`visibility: hidden`, `aria-hidden`, `inert`).
-  The cell is as tall as the tallest of them at the current width, with no measuring in script. They are the tour's
-  intro, each scripted tick's note (in the tour, and in free play while the run follows the script), the last note
-  with the end of the tour, the idle line ("Set the inputs, then press **Step** ..."), and in free play the notice of
-  an earlier tick ("Step replays the next one ...") or of a changed input ("Step runs a new tick from here ..."); a
-  note wins over the replay notice, the changed input over a note. Entries render the same whichever is shown, or
-  the hidden ones would not measure the shown one. The nav row is a stack too (Previous / Next / Take over, or
-  *Restart the guided tour*), so Step at the end of a tour, which leaves it, moves nothing. The compact panel (no tour
-  label, no notices) stacks the idle line, the notes and the summary line, beside *Details*.
+  in control ("Guided tour, tick 5 of 5: the end" on its last tick, with Take over and Step right there; the live
+  region adds "End of the guided tour: take over to try your own inputs, or Step to keep going"), else what the
+  tick did, `tickSummary` in `describe.ts`: "Tick 7: `Off` went to `On`." (the start, the transitions that fired
+  without their reasons, termination, or the run-time error; "Tick 0: nothing has run yet." before the first).
+  *Details* (`button.sc-foot__toggle`, `aria-expanded`) at its end unfolds the whole story under it: the "What
+  happened" list and *Explain this tick*, and in free play the tour's note of a scripted tick and what Step does
+  from an earlier tick or after a changed input. It starts folded on guide pages (`details`), and the reader's
+  choice is remembered for every widget of the site (`fold.svelte.ts`: read when a panel starts, never pushed to
+  panels already running, so a click in one widget never moves another).
+- **In the tour, its texts are stacked** (`Stack.svelte`) under that line: the intro and every tick's note are laid
+  out in one grid cell, and all but the current one are hidden (`visibility: hidden`, `aria-hidden`, `inert`). The
+  cell is as tall as the longest at the current width, with no measuring in script. Entries render the same whichever
+  is shown, or the hidden ones would not measure the shown one. Previous / Next / Take over follow.
+- **In free play, nothing is kept for the tour**: under the first line, one cell holds the idle line ("Set the
+  inputs, then press **Step** ...") before the first tick and *Restart the guided tour* (or nothing, without a
+  tour) after it.
+- **The compact panel** (the landing chart) has no first line: the idle line, every note and the summary line are
+  stacked beside *Details*, and the handover's room is kept while the opening replays, so its replay, the handover
+  and free play have one height.
 - **Unfolded, the details only grow** while the reader steps: their box keeps the height of the tallest tick shown
   so far (`Fold.min`, a ResizeObserver on the content), until Restart, Reset, the autoplay starting over, a new
   chart or a fold inside them (*Explain this tick*); a new width starts it again.
@@ -215,7 +221,8 @@ reader's click on *Details* does. So the page under a widget never moves while t
   suspend (`mightSuspend` in `trace.ts`).
 
 `tests/widgets/foot.test.ts` (opt-in, `FOOT_E2E=1`) steps every widget of the landing page and the guide through its
-tour and free play at 1280 and 390 px and checks that neither the foot nor the page changes height.
+tour and free play at 1280 and 390 px and checks that the foot and the page have one height in the tour and one in
+free play (the landing chart one in all), changing only where the reader leaves or restarts the tour.
 
 ### Inputs and KIELER
 
@@ -237,8 +244,8 @@ Props: `a`, `b` (`{ source, link, files? }`: the chart's source, the key of its 
 the frame, its imported files), `scenario` (a guided tour: the same scripted inputs on both charts, each getting
 the ones it declares; notes, Previous / Next / Take over and "Restart the guided tour" as in SimPanel), `show`
 (the variables to trace, as SimPanel's: each chart traces the names it declares; a local both charts have is
-compared like an output). Its foot works as SimPanel's ("The foot"): the first line is the tour's label or "What
-happened in tick n", the stacked entries start with the tick's difference line (`.sc-compare__diff`, one line), and
+compared like an output). Its foot works as SimPanel's ("The foot"): in the tour, its label, then each note under
+the tick's difference line (`.sc-compare__diff`, one line); in free play, the difference line is the first line;
 *Details* unfolds the whole difference and each chart's "What happened". The difference line also says how the charts' termination differs
 (`terminationText` in `trace.ts`), and each chart's termination is a triangle in its caption row of the trace. The
 two simulations are one `Stepper` (`pair.ts`); after a tick the controls read each chart's own inputs from its

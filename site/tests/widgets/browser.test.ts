@@ -249,6 +249,10 @@ describe.skipIf(!up)('widgets in the browser', () => {
         expect(await f.locator('.wv-term').count()).toBe(1)
         expect(await f.locator('.sc-tour .sc-tour__note').textContent()).toMatch(/terminates/)
         expect(await f.locator('[data-id="Countdown.Finished"]').getAttribute('class')).toContain('is-active')
+        // The last tick: the label says it is the end, and so does the announcement.
+        await f.getByRole('button', { name: 'Next' }).click()
+        expect(await f.locator('.sc-sim .sc-tour__label').textContent()).toBe('Guided tour, tick 6 of 6: the end')
+        await expect.poll(() => f.locator('.sc-sim > [aria-live]').textContent()).toMatch(/End of the guided tour: take over to try your own inputs, or Step to keep going\.$/)
     })
 
     it('Compare: the guided tour plays the scenario on both charts, with its notes', async () => {
@@ -402,13 +406,16 @@ describe.skipIf(!up)('widgets in the browser', () => {
         const f = frame('sim', 'ABRO')
         const foot = f.locator('.sc-sim .sc-sim__foot')
         const height = async () => (await foot.boundingBox())!.height
-        const h = await height()
+        // One height in the tour (its longest note), another in free play (no room kept for the notes).
+        const tour = await height()
         const next = f.getByRole('button', { name: 'Next' })
         for (let i = 0; i < 3 && (await next.isEnabled()); i++) {
             await next.click()
-            expect(await height()).toBe(h)
+            expect(await height()).toBe(tour)
         }
         await f.getByRole('button', { name: 'Take over' }).click()
+        const h = await height()
+        expect(h).toBeLessThan(tour)
         for (let i = 0; i < 2; i++) {
             await f.getByRole('button', { name: 'Step' }).click()
             expect(await height()).toBe(h)
