@@ -165,7 +165,7 @@ function setupExamples(root: HTMLElement, open: (id: string) => boolean, current
  *  the files it imports), any of them with a shared run (`&run=`, `&chart=`), and an exercise's model solution
  *  (`&solution=`); `notice` says what could not be read. Without a chart in the address, `project` is undefined
  *  (boot then opens the reader's last project or the default). */
-async function linkTarget(loc: Location, describe: (id: string) => Origin | undefined): Promise<Partial<LinkTarget> & { notice?: string; param?: string }> {
+export async function linkTarget(loc: Location, describe: (id: string) => Origin | undefined): Promise<Partial<LinkTarget> & { notice?: string; param?: string }> {
     let project: ProjectSpec | undefined
     let origin: Origin | undefined
     let scenario: LinkTarget['scenario']

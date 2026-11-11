@@ -7,7 +7,7 @@
 	import { onMount, tick as nextFrame, untrack } from 'svelte'
 	import type { ClassMap } from '@sccharts-lab/diagram/highlight'
 	import { tickClasses } from '@sccharts-lab/diagram/highlight'
-	import type { TickResult } from '@sccharts-lab/engine/types'
+	import type { TickResult, Value } from '@sccharts-lab/engine/types'
 	import type { Scenario } from '../frame/examples'
 	import { icons } from '../frame/icons'
 	import { errorLink } from '../frame/error-links'
@@ -393,6 +393,18 @@
 		userAction()
 		timeline.edit(next)
 		rev++
+	}
+
+	/** Sets inputs by KIELER's names (`A`, `V`, `V_val`), as if the reader had set them: the next Step runs with them
+	 *  (the playground's embed API). Returns why not, if it cannot: a name that is not an input, a stopped run. */
+	export function setInputs(values: Record<string, Value>): string | undefined {
+		if (!timeline) return 'The chart cannot run.'
+		if (halted) return 'The simulation stopped at a run-time error: reset it, or go back a tick first.'
+		const known = Object.keys(initial.levels)
+		const unknown = Object.keys(values).filter((k) => !known.includes(k))
+		if (unknown.length) return `${unknown.join(', ')} ${unknown.length === 1 ? 'is not an input' : 'are not inputs'} of ${name}${known.length ? ` (its inputs: ${known.join(', ')})` : ', which has no inputs'}.`
+		edit({ levels: { ...timeline.controls().levels, ...values }, pulses: timeline.controls().pulses })
+		return undefined
 	}
 
 	/** The sleepT of the tick shown (a timed chart), for "Advance by sleepT". */

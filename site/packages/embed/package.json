@@ -1,0 +1,14 @@
+{
+  "name": "@sccharts-lab/embed",
+  "version": "0.1.0",
+  "description": "SCCharts Lab's embeds: the <sccharts-lab-chart> element, the embed's options and its postMessage protocol",
+  "license": "EPL-2.0",
+  "type": "module",
+  "sideEffects": [
+    "./src/loader.ts"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  }
+}
