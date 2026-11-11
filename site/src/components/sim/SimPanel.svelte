@@ -360,6 +360,19 @@
 		changed()
 	}
 
+	/** The button pressed (Take over, Restart the tour) goes with the mode it ends: focus moves where the reader goes
+	 *  next, the first of `selectors` there is, unless it has gone somewhere of its own. */
+	async function refocus(selectors: string[]) {
+		const had = !!root?.contains(document.activeElement)
+		await nextFrame()
+		const a = document.activeElement as HTMLElement | null
+		if (!had || (a && a !== document.body && root?.contains(a) && !a.closest('[inert]'))) return
+		for (const s of selectors) {
+			const el = root?.querySelector<HTMLElement>(s)
+			if (el) return el.focus()
+		}
+	}
+
 	/** `keepShown`: the reader pressed Take over, so the inputs shown before tick 1 stay (Timeline.takeOver). */
 	export function takeOver(keepShown = false) {
 		if (!timeline) return
@@ -648,7 +661,7 @@
 	{#if k === 'idle'}
 		<p class="sc-what__idle">{@html inlineMd(idleText)}</p>
 	{:else if k === 'restart'}
-		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__restart" disabled={disabled} onclick={restartTour}>Restart the {tourWords}</button>
+		<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__restart" disabled={disabled} onclick={() => (restartTour(), void refocus(['.sc-tour__next:not(:disabled)', '.sc-simctl__step']))}>Restart the {tourWords}</button>
 	{/if}
 {/snippet}
 
@@ -754,8 +767,8 @@
 				<Stack items={entries} shown={shownEntry} item={entry} class="sc-foot__text" />
 				<div class="sc-tour__nav">
 					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus disabled={disabled || snap.cursor === 0} onclick={back}>Previous</button>
-					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet" use:keepFocus={restartButton} disabled={disabled || halted || snap.cursor >= snap.tourLength} onclick={step}>Next</button>
-					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__take" disabled={disabled} onclick={() => takeOver(true)}>Take over</button>
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__next" use:keepFocus={restartButton} disabled={disabled || halted || snap.cursor >= snap.tourLength} onclick={step}>Next</button>
+					<button type="button" class="sc-btn sc-btn--sm sc-btn--quiet sc-tour__take" disabled={disabled} onclick={() => (takeOver(true), void refocus(['.sc-simctl__inputs :is(input, select):not(:disabled)', '.sc-simctl__step']))}>Take over</button>
 				</div>
 			{:else if full}
 				<!-- Free play: the idle line before the first tick, then Restart the tour (or nothing), in one cell. -->

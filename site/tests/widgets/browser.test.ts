@@ -127,6 +127,26 @@ describe.skipIf(!up)('widgets in the browser', () => {
         await f.getByRole('tab', { name: 'Diagram' }).click()
     })
 
+    it('Sim: Take over and Restart the tour hand the keyboard focus on (the inputs, Next), never to the page', async () => {
+        // A page of its own (the reviewer's route), so that what earlier tests did to the bench's widgets does not count.
+        const lesson = await browser.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' })
+        await lesson.goto(`${BASE}/learn/ticks/`, { waitUntil: 'networkidle' })
+        await lesson.evaluate(engageAll)
+        const f = lesson.locator('figure.sc-frame--sim').first()
+        await lesson.waitForFunction(() => !document.querySelector('figure.sc-frame--sim astro-island')?.hasAttribute('ssr'), null, { timeout: 20000 })
+        await f.locator('.sc-tour__next').click()
+        const active = () => lesson.evaluate(() => document.activeElement?.matches('.sc-simctl__inputs input') ? 'input' : document.activeElement?.matches('.sc-tour__next') ? 'next' : document.activeElement?.tagName ?? '')
+        await f.locator('.sc-tour__take').focus()
+        await lesson.keyboard.press('Enter')
+        await expect.poll(active).toBe('input')
+        await lesson.keyboard.press('Space')
+        await f.getByRole('button', { name: 'Step' }).click()
+        await f.locator('.sc-tour__restart').focus()
+        await lesson.keyboard.press('Enter')
+        await expect.poll(active).toBe('next')
+        await lesson.close()
+    })
+
     it('Sim: keyboard: Space steps, Backspace goes back, R resets', async () => {
         const f = frame('sim', 'Toggle')
         await f.getByRole('button', { name: 'Take over' }).click()
