@@ -1,7 +1,10 @@
 // Builds the packages and packs each into a tarball, as `pnpm publish` would (publishConfig applied, workspace:
 // versions replaced), then checks what each tarball holds. The release workflow publishes exactly these files.
 //
-//   node tools/packages/pack.mjs [--out <dir>] [--no-build]      (pnpm packages:pack; default out: packages/tarballs)
+//   node tools/packages/pack.mjs [--out <dir>] [--no-build] [--version <x.y.z>]
+//
+// (pnpm packages:pack; default out: packages/tarballs). --version fails unless every package has that version (the
+// release workflow passes its tag's).
 
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -57,8 +60,17 @@ function checkTarball(name, dir, tarball, files) {
     return { name, file: tarball, files: paths.length, packed, unpacked, manifest }
 }
 
+/** The packages are released together: one version for all (the peer dependencies on the engine pin it exactly). */
+export function checkVersions(expected) {
+    const versions = PACKAGES.map(name => JSON.parse(fs.readFileSync(path.join(site, 'packages', name, 'package.json'), 'utf8')).version)
+    if (new Set(versions).size !== 1) fail(`the packages have different versions: ${PACKAGES.map((n, i) => `${n} ${versions[i]}`).join(', ')}`)
+    if (expected !== undefined && versions[0] !== expected) fail(`the packages are at ${versions[0]}, not ${expected}`)
+    return versions[0]
+}
+
 /** Packs every package into `out`; returns per package: tarball path, file count, sizes, packed manifest. */
-export function pack({ out = path.join(site, 'packages/tarballs'), skipBuild = false } = {}) {
+export function pack({ out = path.join(site, 'packages/tarballs'), skipBuild = false, version } = {}) {
+    checkVersions(version)
     if (!skipBuild) build()
     fs.mkdirSync(out, { recursive: true })
     const results = []
@@ -78,9 +90,10 @@ export function kB(bytes) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const args = process.argv.slice(2)
-    const outIndex = args.indexOf('--out')
+    const option = name => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined)
     try {
-        const results = pack({ out: outIndex >= 0 ? path.resolve(args[outIndex + 1]) : undefined, skipBuild: args.includes('--no-build') })
+        const out = option('--out')
+        const results = pack({ out: out && path.resolve(out), skipBuild: args.includes('--no-build'), version: option('--version') })
         for (const r of results) console.log(`${r.name}@${r.manifest.version}: ${r.files} files, ${kB(r.packed)} packed, ${kB(r.unpacked)} unpacked -> ${r.file}`)
     } catch (error) {
         console.error(error.message)

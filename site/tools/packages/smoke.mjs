@@ -8,7 +8,9 @@
 //       the layout measured it, and log no console errors;
 // then reports the minified and gzipped size of each package's main entry in a bundle.
 //
-//   node tools/packages/smoke.mjs [--dir <dir>] [--no-build]       (pnpm packages:smoke)
+//   node tools/packages/smoke.mjs [--dir <dir>] [--no-build] [--version <x.y.z>]       (pnpm packages:smoke)
+//
+// The tarballs stay in <dir>/tarballs: the release workflow publishes those.
 //
 // Needs the npm registry (the project installs elkjs, TypeScript and Vite), gcc for the C check (skipped without it)
 // and Playwright's Chromium (tools/chromium.mjs). The project stays in <dir> (default: a new temporary directory).
@@ -160,7 +162,8 @@ function sizes() {
 
 async function main() {
     step(`Pack (into ${path.join(dir, 'tarballs')})`)
-    const tarballs = pack({ out: path.join(dir, 'tarballs'), skipBuild: args.includes('--no-build') })
+    const version = args.includes('--version') ? args[args.indexOf('--version') + 1] : undefined
+    const tarballs = pack({ out: path.join(dir, 'tarballs'), skipBuild: args.includes('--no-build'), version })
     for (const t of tarballs) console.log(`${t.name}@${t.manifest.version}: ${t.files} files, ${kB(t.packed)} packed, ${kB(t.unpacked)} unpacked`)
 
     step(`npm install in ${consumer}`)
