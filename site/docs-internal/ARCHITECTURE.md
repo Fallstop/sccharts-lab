@@ -29,7 +29,7 @@ for the shell, Svelte 5 for the interactive islands, vitest for the tests.
 
 | Path | Owner | What |
 | --- | --- | --- |
-| `packages/engine/src/` | engine | Parser (`parser/`), simulator (`sim/`), KIELER's label serialisers (`format.ts`), data contract (`types.ts`), public API (`index.ts`) |
+| `packages/engine/src/` | engine | Parser (`parser/`), simulator (`sim/`), C code generator (`codegen/`), KIELER's label serialisers (`format.ts`), data contract (`types.ts`), public API (`index.ts`) |
 | `packages/diagram/src/` | playground + diagram | ELK layout and SVG rendering in KIELER's notation (`README.md`) |
 | `src/components/` (except `playground/`) | widgets | `Chart`, `Sim`, `Compare`, `Predict`, `Quiz`, `TryIt`, `KeyIdeas`, `Playground` (Astro), the simulation panel (`sim/`, Svelte), the widget frame (`frame/`), landing and Starlight overrides |
 | `src/components/playground/`, `src/pages/playground.astro` | playground + diagram | The playground IDE and the inline `<Playground>` (`README.md`) |
@@ -38,7 +38,7 @@ for the shell, Svelte 5 for the interactive islands, vitest for the tests.
 | `src/examples/**` | content editors | Example charts (`.sctx`), scenarios (`.scenario.json`) and their KIELER recordings (`.oracle.json`) |
 | `docs-internal/semantics/`, this file | semantics-docs | The semantics specs (numbered rules) |
 | `tests/conformance/<area>/` | semantics-docs | Probe charts, scenarios and oracle recordings that define correct behaviour |
-| `tests/conformance/engine*`, `tests/engine/`, `tests/corpus/`, `tools/fuzz/`, `tools/oracle/` | engine | Engine vs KIELER, engine unit tests, parser corpus, differential fuzzer, the oracle harness |
+| `tests/conformance/engine*`, `tests/engine/`, `tests/corpus/`, `tests/codegen/`, `tools/fuzz/`, `tools/oracle/`, `tools/cgen/` | engine | Engine vs KIELER, engine unit tests, parser corpus, generated C vs engine and KIELER, differential fuzzer, the oracle harness |
 | `tests/diagram/`, `tests/playground/`, `tools/diagram-*.mjs` | playground + diagram | Diagram and playground tests and tools |
 | `tests/widgets/`, `tests/design/`, `tools/screenshot.mjs`, `tools/contrast.mjs` | widgets | Widget and design tests and tools |
 | `tools/qa/`, `docs-internal/QA.md` | QA | Production checks of the built site (links, axe, console, keyboard walks, phone width, no-JS, performance, meta, search) |
@@ -171,6 +171,22 @@ elementName(id, program, { markdown? }): { name: string; within?: string } | und
 SIMULATOR_CODES: ReadonlySet<string>            // diagnostic codes added by the simulator's compilation stage
 parseExpression(source, { as?: 'auto' | 'expression' | 'effect' }): ExpressionParseResult   // one expression or effect
 formatExpressionParenthesised(expression, options?): string   // how KIELER grouped it (the operators page)
+generateC(result: CompileResult, options?: GenerateCOptions): GeneratedC   // C code in the shape of KIELER's
+interface GenerateCOptions {                    // netlist C ("Netlist-based Compilation (C)")
+  naming?: 'default' | 'prefix' | 'suffix' | Partial<CNaming>   // default: the chart's #code.naming, else tick/reset/logic/TickData
+  takenTransitions?: boolean                    // int _taken_transitions[n] as KIELER's simulation chain (off: plain chain)
+  comments?: boolean                            // comments naming source transitions and actions (default true)
+  fileName?: string                             // default: the chart's name
+}
+interface GeneratedC {
+  ok: boolean; chart: string; diagnostics: Diagnostic[]  // !ok: why (KIELER rejects the chart, or a construct not translated yet)
+  files: Record<string, string>                 // '<Chart>.h' (TickData, prototypes), '<Chart>.c' (logic, reset, tick)
+  header: string; source: string               // the two file names
+  names: CNaming                                // { tick, reset, logic, struct }
+  variables: CVariable[]                        // each chart variable's struct member, C type, dims, input/output, pool key
+  hostCode: boolean                             // host code carried through (backticks, extern, #hostcode)
+  takenTransitions?: string[]                   // the counters' transition ids (takenTransitions option)
+}
 ```
 
 - **Lazy compilation.** `compile()` runs the front end (parse, resolve, validate) at once; the simulator's
@@ -198,6 +214,12 @@ formatExpressionParenthesised(expression, options?): string   // how KIELER grou
     the guide shows the intended result (netlist bugs B-34, B-35); `kieler-divergence` (warning): official KIELER
     fails on the chart, SCCharts Lab and the guide compile it; `kieler-loop-warning` (info): KIELER's
     "Instantaneous loop detected!" on a chart that works.
+- **C code** (`generateC`, `packages/engine/src/codegen/`): emitted from the same scheduled graph the simulator runs
+  (sim/exec.ts's node table), in the shape of KIELER's netlist C: the `TickData` struct with KIELER's member names
+  (`S`, `S_val`, `S_curval`, `_<Chart>_local_<name>` for inner locals, class typedefs `<Chart>_<Class>`), guards
+  `_g<n>`, condition guards `_cg<n>`, registers `_pg<n>`, `_GO`, `_TERM`, and `reset`/`logic`/`tick` with KIELER's
+  signatures. Host code (backticks, `extern`, `#hostcode*`, `@hostcode`) is carried into the C code. `tools/cgen`
+  proves it: every recorded scenario and thousands of fuzz charts through gcc, compared with the engine and KIELER.
 - The engine is pure TypeScript with no DOM access: it runs in Node (tests, build-time rendering) and in the
   browser. Internals: `packages/engine/src/sim/README.md` (pipeline, adding a pass, reproduced KIELER defects) and
   `packages/engine/src/sim/STATUS.md` (coverage, API details).
@@ -260,4 +282,5 @@ and dark mode. Fidelity to KIELER's synthesis is tested against KIELER's own dia
 | `tests/widgets/`, `tests/design/` | Widget models (timeline, inputs, trace), `prepare`, frame helpers, contrast; `browser.test.ts` drives the dev server's widget test bench in Chromium (skipped without the dev server) |
 | `tests/playground/` | Playground language, features, share links; `e2e.test.ts` (opt-in) against the dev server |
 | `tools/fuzz/` | Differential fuzzer: random charts through the engine and the oracle, a reducer for disagreements and a re-checker (not part of vitest; `tools/fuzz/README.md`); its findings become probes in `tests/engine/kieler/` |
+| `tests/codegen/`, `tools/cgen/` | Generated C: `shape.test.ts` compares the struct, signatures, `reset`, printf and host code placement with real KIELER output (`tests/codegen/kieler/`); `check.test.ts` runs a slice of `pnpm cgen:check` (skipped without gcc). `pnpm cgen:check [--fuzz N --seed S]` compiles the generated C of every recorded scenario (and of N fuzz charts per profile) with gcc, runs it in a harness that feeds the scenario's inputs as KIELER's simulation does, and compares every tick's data pool, printed text, taken counters and termination with the engine and with KIELER's recording (no JVM) |
 | `tools/qa/` | Production QA of the built site (not part of vitest; `docs-internal/QA.md`) |

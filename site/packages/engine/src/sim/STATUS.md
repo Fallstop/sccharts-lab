@@ -17,6 +17,15 @@ if (result.ok) {
 }
 ```
 
+- **C code (cgen), for the playground's C code panel:** `generateC(result, options?)` (`../codegen/`, docs-internal/
+  ARCHITECTURE.md "Engine API") gives `<Chart>.h` and `<Chart>.c` in the shape of KIELER's "Netlist-based Compilation
+  (C)" for every chart the simulator runs, and for charts with host code (compiled once more with host code on:
+  `compileChart(chart, index, { hostCode: true })`; `compile()` itself is unchanged). `pnpm cgen:check` proves it with gcc
+  (tools/cgen). The checks found three things the simulator did differently from KIELER's C, now fixed and recorded
+  (tests/engine/kieler/codegen/): `x += random()` on an int adds in float and truncates the sum (KIELER casts only a
+  float expression of its own type inference, B-27), `print` of a calculation is printf's `%X` (upper-case hex), and a
+  string as a whole condition is rejected (`c-string-condition`: gcc refuses KIELER's `char` guard). Also confirmed:
+  after the chart terminated KIELER's simulation stops stepping (no condition is computed any more), as the simulator.
 - **Final polish (engine-5), for widgets-E and playground-5:**
   - `describeTick(result, program, previous?, { markdown: true })` gives the same sentences as inline Markdown, with
     state, variable, signal and chart names, triggers and values in code spans ("Inside `Left` (a copy of
@@ -245,7 +254,7 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `string-arithmetic`, `val-not-signal`, `duplicate-declaration`, `c-keyword`, `c-name` (a primed name `x'` or a kept
   `^` in a name that reaches the C code, S-71, and a variable `d` in a method kept as a C function, S-72; gcc's first
   error in `kieler`), `c-string` (a line break or a quote in a string literal, S-72), `c-float-modulo` (`%` on a float,
-  S-72), `extern-not-called` (an `extern` function named without parentheses, S-72), `static-access` (a
+  S-72), `c-string-condition` (a string as a whole condition: KIELER's `char` guard), `extern-not-called` (an `extern` function named without parentheses, S-72), `static-access` (a
   `scchart(C).X` that KIELER cannot copy, S-70), `unsupported-combine`,
   `randomize-tick1`, `randomize-stdlib`, `region-action-final`, `pre-placement`, `empty-method` (a method with
   parameters and an empty body), `for-outer-counter` (a `for` counter that is a chart variable), `method-twice`,

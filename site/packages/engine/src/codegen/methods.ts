@@ -129,14 +129,24 @@ function block(list: CStmt[], depth: number, outer: { list: CStmt[]; at: number 
                 block(s.body, depth + 1, here, lines, env, end, targets)
                 lines.push(`${pad}}`)
                 break
-            case 'for':
-                // init; while (cond) { body; update } (SCL has no `continue`).
-                block(s.init, depth, outer, lines, env, end, targets)
-                lines.push(`${pad}while (${s.cond ? expr(s.cond, env).text : '1'}) {`)
-                block(s.body, depth + 1, here, lines, env, end, targets)
-                block(s.update, depth + 1, here, lines, env, end, targets)
+            case 'for': {
+                const cond = s.cond ? expr(s.cond, env).text : ''
+                const init = header(s.init, env)
+                const update = header(s.update, env)
+                if (init !== undefined && update !== undefined) {
+                    // KIELER's `for (i = 1; i < n; i++)`.
+                    lines.push(`${pad}for (${init}; ${cond}; ${update}) {`)
+                    block(s.body, depth + 1, here, lines, env, end, targets)
+                } else {
+                    // init; while (cond) { body; update } (SCL has no `continue`).
+                    block(s.init, depth, outer, lines, env, end, targets)
+                    lines.push(`${pad}while (${cond || '1'}) {`)
+                    block(s.body, depth + 1, here, lines, env, end, targets)
+                    block(s.update, depth + 1, here, lines, env, end, targets)
+                }
                 lines.push(`${pad}}`)
                 break
+            }
             case 'label':
                 // Only the labels C jumps to (the others have no code in KIELER's structured C either).
                 if (targets.has(s.name)) lines.push(`${pad.slice(2)}${s.name}: ;`)
@@ -149,6 +159,16 @@ function block(list: CStmt[], depth: number, outer: { list: CStmt[]; at: number 
                 break
         }
     })
+}
+
+/** A for loop's init or update as one C expression (one simple effect), or undefined. */
+function header(list: CStmt[], env: ExprEnv): string | undefined {
+    if (list.length > 1) return undefined
+    if (!list.length) return ''
+    const s = list[0]
+    if (s.k !== 'do' || (s.f.k !== 'assign' && s.f.k !== 'call')) return undefined
+    const code = effect(s.f, env)
+    return code.length === 1 && !code[0].includes(' ? ') ? code[0].replace(/;$/, '') : undefined
 }
 
 /** The labels of a body that some `goto` jumps forward to. */

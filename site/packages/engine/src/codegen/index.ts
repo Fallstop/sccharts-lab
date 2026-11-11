@@ -9,7 +9,7 @@ import type { Diagnostic, State } from '../types'
 import { compileChart, type CompiledChart } from '../sim/compile'
 import { ExecutableChart } from '../sim/exec'
 import { elementName } from '../sim/describe'
-import type { CVar } from '../sim/model'
+import { allScopes, type CVar } from '../sim/model'
 import type { SNode } from '../sim/scg'
 import { effect, type ExprEnv } from './expr'
 import { Layout, readVars, referencedVars } from './layout'
@@ -53,7 +53,16 @@ function compiledFor(result: CompileResult, chart: State): { compiled?: Compiled
     const error = again.diagnostics.find(d => d.severity === 'error')
     if (still || error || !again.runnable) {
         const d = still ?? error ?? unsupported
-        return { hostCode: true, problem: { severity: 'error', code: 'unsupported', message: `The C code generator cannot translate this chart: ${d?.message ?? 'it cannot be compiled'}`, span: d?.span, related: d?.related } }
+        // "The guide's simulator cannot run X yet": the generator works from the simulator's compiled chart.
+        const what = d?.message.replace(/^The guide's simulator cannot run /, '').replace(/ yet$/, '')
+        return {
+            hostCode: true,
+            problem: {
+                severity: 'error', code: 'unsupported', span: d?.span, related: d?.related,
+                message: what && what !== d?.message ? `SCCharts Lab cannot generate C code for ${what} yet` : `SCCharts Lab cannot generate C code for this chart: ${d?.message ?? 'it does not compile'}`,
+                hint: 'KIELER\'s own compiler (SCCharts Lab\'s Code button, or KIELER) generates C code for it.',
+            },
+        }
     }
     return { compiled: again, hostCode: true }
 }
@@ -75,7 +84,10 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
 
     // Methods the code calls stay C functions; the frames of inlined ones get a place in the struct.
     const nodeExprs = exe.nodes.flatMap(x => [...(x.src.expr ? [x.src.expr] : []), ...effectExprsOf(x.src)])
-    const methods = calledMethods(nodeExprs)
+    // In declaration order (KIELER's SCGraphs: the chart's methods, then the code blocks' `_effect<n>`).
+    const declared = allScopes(compiled.core).flatMap(sc => sc.decls)
+    const rank = (v: CVar) => (v.generated ? declared.length : 0) + Math.max(0, declared.indexOf(v))
+    const methods = calledMethods(nodeExprs).sort((a, b) => rank(a) - rank(b))
     const extra = referencedVars(exe.nodes.map(x => x.src), methods.map(m => m.method!.body))
     const frames = new Set(methods.flatMap(m => [...m.method!.params, ...m.method!.locals]))
     // KIELER's Const processor removes constants: their initialisations have no code (a constant still read after

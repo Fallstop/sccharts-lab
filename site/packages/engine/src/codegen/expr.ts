@@ -131,11 +131,14 @@ export function ref(r: CRef, env: ExprEnv): string {
 }
 
 function call(e: Extract<CExpr, { k: 'call' }>, env: ExprEnv): string {
-    const args = e.args.map(a => expr(a, env).text)
+    // KIELER's serialize (not serializeHR) of parameters: an operation in parentheses.
+    const args = e.args.map(a => parameter(expr(a, env)))
     const target = e.target?.v
     if (e.extern || target?.extern || !target?.method) return `${env.externCode(e.name, target)}(${args.join(', ')})`
     return `${env.method(target)}(${[env.structArg, ...args].filter(Boolean).join(', ')})`
 }
+
+const parameter = (o: Out) => (o.prec < ATOM && o.prec > 0 && o.op ? `(${o.text})` : o.text)
 
 function op(o: string, args: CExpr[], env: ExprEnv): Out {
     const parts = args.map(a => expr(a, env))
@@ -197,8 +200,7 @@ export function effect(f: CEffect, env: ExprEnv): string[] {
         case 'print': {
             env.includes.add('<stdio.h>')
             const formats = f.args.map(printFormat).join(' ')
-            // KIELER's serialize (not serializeHR) of parameters: an operation in parentheses.
-            const args = f.args.map(a => { const o = expr(a, env); return o.prec < ATOM && o.prec > 0 ? `(${o.text})` : o.text })
+            const args = f.args.map(a => parameter(expr(a, env)))
             return [`printf(${[stringLiteral(formats), ...args].join(', ')});`]
         }
         case 'call': return [`${call(f.call, env)};`]

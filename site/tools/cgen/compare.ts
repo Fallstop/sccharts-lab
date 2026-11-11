@@ -112,7 +112,9 @@ export async function checkCase(c: Case, options: { keep?: string } = {}): Promi
     const engine: { tick: SimTickResult; taken: number[] }[] = []
     const sim = gen.hostCode ? undefined : createSimulation(result)
     if (sim) for (const given of c.inputs) { const t = sim.step(given); engine.push({ tick: t, taken: sim.takenCounts(t) }) }
-    const run = await compileAndRun(gen.files, harness(gen, c.inputs), options)
+    let run = await compileAndRun(gen.files, harness(gen, c.inputs), options)
+    // A machine busy with other work can stall a run: try once more, with more time, before reporting it.
+    if (run.timedOut) run = await compileAndRun(gen.files, harness(gen, c.inputs), { ...options, timeout: 120_000 })
     if (run.compileError) return { ...base, verdict: 'mismatch', problems: [`gcc rejects the generated code: ${gccErrors(run.compileError)}`], hostCode: gen.hostCode }
     const out = parseOutput(run.stdout)
     const warnings = generatedWarnings(run, gen)

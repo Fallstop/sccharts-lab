@@ -205,9 +205,13 @@ export function generateLogic(input: LogicInput): LogicOutput {
         if (x.src.kind !== 'join' || !x.join?.kill) continue
         const j = state[nodes.indexOf(x)].value
         if (!j || j === '0') continue
+        let first = true
         for (const k of x.join.kill) {
             const reg = out.registers.find(r => `${D}${r.guard}` === state[k].value)
-            if (reg) emit(`${D}${reg.guard} = ${D}${reg.guard} && ${not(j)};`)
+            if (!reg) continue
+            if (first && input.comment) emit('/* a region of a state with abort regions finished: the other regions stop */')
+            first = false
+            emit(`${D}${reg.guard} = ${D}${reg.guard} && ${not(j)};`)
         }
     }
     flush()
