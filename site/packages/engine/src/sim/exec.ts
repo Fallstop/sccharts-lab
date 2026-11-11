@@ -42,9 +42,11 @@ export interface SimTickResult extends TickResult {
     trace: Record<string, Value>
 }
 
-const enum K { Entry, Exit, Assign, Cond, Fork, Join, Surface, Depth }
+/** Node kinds of the executable schedule (also read by the C code generator, ../codegen). */
+export const enum K { Entry, Exit, Assign, Cond, Fork, Join, Surface, Depth }
 
-interface XNode {
+/** One node of the schedule, in the executor's terms (../codegen walks the same table to emit C). */
+export interface XNode {
     kind: K
     src: SNode
     next: number
@@ -75,7 +77,7 @@ interface XNode {
     char?: boolean
 }
 
-interface JoinGuard {
+export interface JoinGuard {
     sync: JoinInfo['sync']
     /** Counted threads: exit node index and the indices of their surfaces (surface sync) or depths (depth sync). */
     threads: { exit: number; watch: number[]; region?: string }[]

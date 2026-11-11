@@ -73,6 +73,8 @@ export const hostCode: Pass = {
     name: 'Methods and host code',
     owner: 'structure',
     run(ctx: PassContext) {
+        // The C code generator compiles such charts on: its C code carries the host code and calls C functions.
+        if (ctx.config.hostCode) return
         const uses = hostUses(ctx.root)
         if (uses.length) {
             ctx.report({

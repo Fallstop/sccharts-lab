@@ -43,7 +43,11 @@ export interface CompiledChart {
 
 const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now())
 
-export function compileChart(chart: State, index: ModelIndex | undefined): CompiledChart {
+/**
+ * `hostCode`: compile charts with host code, extern calls and recursive methods on instead of stopping at the simulator's
+ * `unsupported` info (the C code generator, ../codegen, carries them into C). Such a result is not for the simulator.
+ */
+export function compileChart(chart: State, index: ModelIndex | undefined, options: { hostCode?: boolean } = {}): CompiledChart {
     const diagnostics: Diagnostic[] = []
     const t0 = now()
     const lowered = lowerChart(chart, index)
@@ -55,7 +59,7 @@ export function compileChart(chart: State, index: ModelIndex | undefined): Compi
 
     const ctx: PassContext = {
         root: lowered.root,
-        config: { finalRegions: false },
+        config: { finalRegions: false, hostCode: options.hostCode },
         vars: lowered.vars,
         report: d => diagnostics.push(d),
         // The resolved model of every file (the Reference pass instantiates other charts).

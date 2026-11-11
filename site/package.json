@@ -11,7 +11,8 @@
     "check": "astro check",
     "test": "vitest run",
     "oracle": "node tools/oracle/oracle.mjs",
-    "oracle:record": "node tools/oracle/record.mjs"
+    "oracle:record": "node tools/oracle/record.mjs",
+    "cgen:check": "node --experimental-transform-types --no-warnings --import ./tools/fuzz/register.mjs tools/cgen/check.ts"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.6",

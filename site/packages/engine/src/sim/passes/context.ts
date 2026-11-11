@@ -19,6 +19,8 @@ export interface PassContext {
     readonly config: {
         /** de.cau.cs.kieler.sccharts.finalRegion.supported (false in the netlist system). */
         finalRegions: boolean
+        /** Compile host code and extern calls on (for the C code generator, which carries them into the C code). */
+        hostCode?: boolean
     }
     /** Source variables by ValuedObject id. */
     readonly vars: Map<string, CVar>
