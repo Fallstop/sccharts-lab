@@ -25,7 +25,13 @@ export function startSizing(root: HTMLElement, report: (height: number) => void)
             report(h)
         }
     }
-    const ro = new ResizeObserver(measure)
-    ro.observe(root)
+    new ResizeObserver(measure).observe(root)
+    // A browser renders a cross-origin frame out of view lazily (no ResizeObserver then): changes to the content are
+    // measured anyway, so that an embed further down the page has its height before the reader scrolls to it.
+    let timer: ReturnType<typeof setTimeout> | undefined
+    new MutationObserver(() => {
+        clearTimeout(timer)
+        timer = setTimeout(measure, 120)
+    }).observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'style', 'open'] })
     measure()
 }

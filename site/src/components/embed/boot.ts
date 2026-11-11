@@ -95,10 +95,10 @@ async function boot() {
         $('[data-embed-loading]')?.setAttribute('hidden', '')
         return
     }
-    // The stage as the inline playground's, but a chart opens whole down to a smaller zoom: an embed is often small,
-    // and the whole chart, its active states marked, matters more there than its labels at a readable size.
+    // The stage as the inline playground's, but a chart opens whole down to a fifth of its size: an embed is often
+    // small, and the whole chart, its active states marked, matters more there than its labels at a readable size.
     const stage = $('[data-pg-stage]')!
-    const diagram = new DiagramView({ stage, maxFit: 1, padTop: 48, fitMin: 0.3 })
+    const diagram = new DiagramView({ stage, maxFit: 1, padTop: 48, fitMin: 0.2 })
     const app = new mod.Playground({ root, mode: 'embed', project: target.project, origin: target.origin, scenario: tour, run, chart: options.chart ?? target.chart, diagram })
     // `tour`: open in the guided tour, the showcase's charts too (the playground opens those in free play).
     if (tour && app.sim.originTour) {
@@ -118,7 +118,27 @@ async function boot() {
     }
     const open = $<HTMLAnchorElement>('[data-embed-open]')
     if (open) wireOpenLink(open, app)
+    // `ready` once the page shows the chart: its first layout is drawn (or failed, or there is nothing to draw).
+    await drawn()
     bridge.attach(app, watchMod.watch)
+}
+
+/** Resolves once the diagram's layout is no longer under way (at most a few seconds: a huge chart still says ready). */
+function drawn(): Promise<void> {
+    return new Promise(resolve => {
+        const done = () => root.dataset.layout !== 'busy'
+        if (done()) return resolve()
+        const mo = new MutationObserver(() => {
+            if (!done()) return
+            mo.disconnect()
+            resolve()
+        })
+        mo.observe(root, { attributes: true, attributeFilter: ['data-layout'] })
+        setTimeout(() => {
+            mo.disconnect()
+            resolve()
+        }, 8000)
+    })
 }
 
 void boot()

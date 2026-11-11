@@ -4,7 +4,7 @@
  * fixed height) or take what their content needs (`auto`, reported to the page, which sizes the frame).
  *
  *   head      the chart's name (or a picker of the file's charts) · Open in SCCharts Lab
- *   work      editor | diagram (side by side from 40rem, stacked below)
+ *   work      editor | diagram (side by side from 36rem, stacked below)
  *   sim       SimPanel: controls, timing diagram, what happened
  */
 
@@ -252,14 +252,26 @@ body {
 .sc-embed .sc-pg__sim .sc-sim__controls {
 	border-bottom: 1px solid var(--c-rule);
 }
-/* A narrow column (the simulation beside the diagram, a phone): the speed goes under the buttons rather than out of
- * view. */
+/* A narrow column (a phone, the simulation beside the diagram): the buttons and the speed closer together, so that
+ * they stay on one row down to 20rem; narrower still, the speed goes under them rather than out of view. */
 .sc-embed .sc-simctl__buttons {
 	flex-wrap: wrap;
 }
+@container (max-width: 22.5rem) {
+	.sc-embed .sc-pg__sim .sc-sim__controls {
+		padding-inline: 0.625rem;
+	}
+	.sc-embed .sc-simctl__buttons {
+		gap: 0.25rem;
+	}
+	.sc-embed .sc-simctl__step {
+		min-width: 0;
+		padding-inline: 0.875rem;
+	}
+}
 
 /* Editor and diagram side by side when there is room. */
-@container sc-embed (min-width: 40rem) {
+@container sc-embed (min-width: 36rem) {
 	.sc-embed:is([data-view='editor'], [data-view='full']) .sc-embed__work {
 		--embed-dw: calc(50cqw - 1px);
 		flex-direction: row;
@@ -271,7 +283,7 @@ body {
 		border-inline-end: 1px solid var(--c-rule);
 	}
 }
-@container sc-embed (max-width: 39.99rem) {
+@container sc-embed (max-width: 35.99rem) {
 	.sc-embed:is([data-view='editor'], [data-view='full']) .sc-embed__editor {
 		border-bottom: 1px solid var(--c-rule);
 	}
@@ -343,7 +355,7 @@ body {
 	min-height: 9rem;
 	max-height: 24rem;
 }
-@container sc-embed (min-width: 40rem) {
+@container sc-embed (min-width: 36rem) {
 	.sc-embed[data-height='auto']:is([data-view='editor'], [data-view='full']) .sc-embed__diagram,
 	.sc-embed[data-height='auto']:is([data-view='editor'], [data-view='full']) .sc-embed__editor {
 		flex: 1 1 50%;
