@@ -12,7 +12,7 @@ import type { LinkTarget, Origin, Playground, ProjectSpec } from './app'
 import { setupTabs } from './tabs'
 import { createDiagramView } from './diagram-view'
 import { baseOf, exampleFile, sortedPaths } from './project'
-import { lastSaved, tabProject, type Newest } from './project-store'
+import { lastSaved, recoverSaves, tabProject, type Newest } from './project-store'
 import { loadFailed, one } from './boot-inline'
 
 interface PageData {
@@ -250,6 +250,8 @@ export async function bootPage() {
         () => app?.currentExample,
     )
 
+    // Saves a page that went away did not finish (a reload right after typing, after Back), into the store first.
+    await recoverSaves()
     // Which project to open. This tab's own project first, when the address is one it saved it at: a reload right
     // after typing loads the address as it was before the last save.
     const tab = await tabProject(location.href)

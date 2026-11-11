@@ -109,24 +109,40 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await ctx.close()
     }, 120000)
 
-    test('Back to another link right after typing, then a reload: the reload opens that link, the edits stay in the browser', async () => {
+    test('Back to another link right after typing, then a reload, at any moment: the edits are always stored by the time the page is back', async () => {
         const ctx = await context()
         const B = 'scchart Bee {\n  initial state B\n}\n'
         const A = 'scchart Ay {\n  initial state A\n}\n'
+        const shows = (page: Page, text: string) =>
+            page.waitForFunction(t => (document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString().includes(t), text)
+        const has = async (page: Page, text: string) => (await stored(page)).some(p => Object.values(p.files).some(t => t.includes(text)))
         const page = await open(ctx, `/playground/${hashForSource(B)}`)
-        await page.evaluate(h => (location.hash = h), hashForSource(A).slice(1))
-        await page.waitForFunction(() => /scchart Ay/.test((document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString()))
-        await page.locator('.cm-content').click()
-        await page.keyboard.press('Control+End')
-        await page.keyboard.type('// edited A')
-        await page.goBack({ waitUntil: 'commit' })
-        await page.waitForFunction(() => /scchart Bee/.test((document.querySelector('[data-sc-playground]') as HTMLElement & { playground: { view: { state: { doc: { toString(): string } } } } }).playground.view.state.doc.toString()))
-        await page.reload({ waitUntil: 'commit' })
-        await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
-        expect(await editorText(page)).toContain('scchart Bee')
-        await storedWith(page, '// edited A')
+        // Back and the reload come at once, during the save Back starts, and after the pause in typing that saves.
+        // `waitForB`: the reload comes once the page shows B, or as soon as Back has happened.
+        const pauses = [0, 30, 120, 450]
+        const runs = [...pauses.flatMap(back => pauses.map(reload => ({ back, reload, waitForB: true }))), ...pauses.map(back => ({ back, reload: 0, waitForB: false }))]
+        for (const [n, { back, reload, waitForB }] of runs.entries()) {
+            const mark = `// edited A ${n}`
+            await page.evaluate(h => (location.hash = h), hashForSource(A).slice(1))
+            await shows(page, 'scchart Ay')
+            await page.locator('.cm-content').click()
+            await page.keyboard.press('Control+End')
+            await page.keyboard.type(mark)
+            await page.waitForTimeout(back)
+            await page.goBack({ waitUntil: 'commit' })
+            if (waitForB) await shows(page, 'scchart Bee')
+            await page.waitForTimeout(reload)
+            await page.reload({ waitUntil: 'commit' })
+            await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
+            const where = `run ${n} (${back} ms to Back, ${waitForB ? `B shown, ${reload} ms` : 'at once'} to the reload)`
+            // No waiting: the page's start has put every save a page going away left unfinished into the store.
+            expect(await has(page, mark), where).toBe(true)
+            // Once B was shown, the reload opens B; before then it may open A as it was on the screen.
+            const text = await editorText(page)
+            expect(waitForB ? text.includes('scchart Bee') : text.includes('scchart Bee') || text.includes(mark), where).toBe(true)
+        }
         await ctx.close()
-    }, 120000)
+    }, 300000)
 
     test('New, an example, a link or a file opened at once over edits: the edits are saved first, and Undo brings them back', async () => {
         const ctx = await context()
@@ -199,6 +215,38 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await page.reload({ waitUntil: 'commit' })
         await page.waitForSelector('[data-pg-ready] .cm-content', { timeout: 60000 })
         expect(await editorText(page)).toContain('// no storage')
+        await ctx.close()
+    }, 120000)
+
+    test('a browser store that is slow to open (a busy machine) still gets every save of the page', async () => {
+        const ctx = await context()
+        // The page's first opening of the store answers after 2.5 s.
+        await ctx.addInitScript(() => {
+            const open = IDBFactory.prototype.open
+            let first = true
+            IDBFactory.prototype.open = function (this: IDBFactory, ...args: Parameters<IDBFactory['open']>) {
+                const req = open.apply(this, args)
+                if (!first) return req
+                first = false
+                const late: Record<string, ((e: Event) => void) | null> = {}
+                const listen = (type: 'success' | 'error') =>
+                    req.addEventListener(type, e => {
+                        e.stopImmediatePropagation()
+                        setTimeout(() => late[type]?.call(req, e), 2500)
+                    })
+                listen('success')
+                listen('error')
+                for (const type of ['success', 'error'] as const) Object.defineProperty(req, `on${type}`, { set: f => (late[type] = f), get: () => late[type], configurable: true })
+                return req
+            }
+        })
+        const page = await open(ctx, '/playground/')
+        await page.locator('.cm-content').click()
+        await page.keyboard.press('Control+End')
+        await page.keyboard.type('// slow store')
+        await page.waitForTimeout(3500)
+        await page.keyboard.type(' and later')
+        await storedWith(page, '// slow store and later')
         await ctx.close()
     }, 120000)
 
