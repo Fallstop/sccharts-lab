@@ -53,6 +53,9 @@ importers:
       '@sccharts-lab/engine':
         specifier: workspace:*
         version: link:packages/engine
+      '@sccharts-lab/trace':
+        specifier: workspace:*
+        version: link:packages/trace
       astro:
         specifier: 7.3.8
         version: 7.3.8(@types/node@26.6.5)(yaml@2.9.1)
@@ -101,6 +104,12 @@ importers:
         version: 0.12.0
 
   packages/engine: {}
+
+  packages/trace:
+    dependencies:
+      '@sccharts-lab/engine':
+        specifier: workspace:*
+        version: link:../engine
 
 packages:
 
