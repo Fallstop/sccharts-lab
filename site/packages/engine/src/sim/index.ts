@@ -29,6 +29,8 @@ export const SIMULATOR_CODES: ReadonlySet<string> = new Set([
     'suspend-without-trigger', 'abort-region-order', 'abort-region-alone', 'abort-region-loop',
     // Final polish (engine-5).
     'conditional-without-else', 'index-out-of-range', 'c-array-address',
+    // Found by the C code generator's checks (tools/cgen).
+    'c-string-condition',
 ])
 
 /** The engine's Simulation (docs-internal/ARCHITECTURE.md). */

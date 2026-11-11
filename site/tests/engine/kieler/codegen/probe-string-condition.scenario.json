@@ -1,0 +1,8 @@
+{
+ "ticks": [
+  { "inputs": { "a": true }, "note": "Rejected by gcc: assignment to ‘char’ from ‘char *’ makes integer from pointer without a cast." },
+  { "inputs": {}, "note": "Next tick." }
+ ],
+ "expect": "error",
+ "errorIncludes": "makes integer from pointer"
+}

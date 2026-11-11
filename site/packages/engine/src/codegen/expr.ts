@@ -97,9 +97,8 @@ export function expr(e: CExpr, env: ExprEnv): Out {
                     const v = e.v as number
                     return v < 0 || Object.is(v, -0) ? { text: floatLiteral(v), prec: UNARY } : atom(floatLiteral(v))
                 }
-                case 'string': return atom(stringLiteral(e.v as string))
+                default: return atom(stringLiteral(e.v as string))
             }
-            break
         case 'null':
             env.usesNull = true
             return atom('NULL')
@@ -120,7 +119,6 @@ export function expr(e: CExpr, env: ExprEnv): Out {
             env.fail(`${e.what}`)
             return atom('0')
     }
-    return atom('0')
 }
 
 /** A reference: `d->x`, `d->a[i][j]`; in a condition, an array whose index KIELER drops is its address. */

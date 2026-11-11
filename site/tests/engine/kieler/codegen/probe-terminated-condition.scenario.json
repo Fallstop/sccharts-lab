@@ -1,0 +1,9 @@
+{
+ "ticks": [
+  { "inputs": { "k": 1 }, "note": "Tick 1." },
+  { "inputs": { "k": 1 }, "note": "0 < 10: B is entered, the chart terminates." },
+  { "inputs": { "k": 0 }, "note": "Terminated: nothing is computed, so 10 / 0 does not crash." },
+  { "inputs": { "k": 0 }, "note": "Next tick." }
+ ],
+ "expect": "ok"
+}

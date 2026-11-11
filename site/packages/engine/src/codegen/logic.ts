@@ -117,6 +117,7 @@ export function generateLogic(input: LogicInput): LogicOutput {
 
     // Effects under one guard are grouped into one `if`.
     let group: { guard: string; body: string[] } | undefined
+    let lastNote: string | undefined
     const flush = () => {
         if (group && group.body.length) {
             if (group.guard === '1') out.lines.push(...group.body.map(l => `  ${l}`))
@@ -188,7 +189,9 @@ export function generateLogic(input: LogicInput): LogicOutput {
                     const note = body.length && input.comment?.(x.src)
                     if (group?.guard !== s.value) flush()
                     if (!group) group = { guard: s.value, body: [] }
-                    if (note && group.body[group.body.length - 1] !== note && !group.body.includes(note)) body = [note, ...body]
+                    // A comment where the source transition or action changes.
+                    if (note && note !== lastNote) body = [note, ...body]
+                    if (note) lastNote = note
                     group.body.push(...body)
                 }
                 pass(x.next, [s.value])

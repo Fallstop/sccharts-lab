@@ -468,11 +468,24 @@ export function compileEffect(f: CEffect, ec: ExprCompiler): EffectFn {
     }
 }
 
-/** printf conversions (B-30): string literal %s, int literal %d, float literal %f, variables by type; else %X. */
-function printFormat(e: CExpr): CType {
+/**
+ * printf conversions (B-30): string literal %s, int literal %d, float literal %f, bool literal %x, a variable or a
+ * method call by its declared type; anything else (a calculation, a host type) %X, upper-case hex (KIELER's
+ * CCodeSerializeHRExtensions: `printf("%X", (d->n + 1))`).
+ */
+function printFormat(e: CExpr): CType | 'hex' {
     if (e.k === 'lit') return e.t === 'string' ? 'string' : e.t === 'float' ? 'float' : e.t === 'bool' ? 'bool' : 'int'
-    if (e.k === 'ref') return ctypeOf(e.v.type)
-    return 'int'
+    let r = e.k === 'ref' ? e : e.k === 'call' && !e.extern ? e.target : undefined
+    if (!r) return 'hex'
+    while (r.sub) r = r.sub
+    const type = r.v.method ? r.v.method.returnType : r.v.type
+    switch (type) {
+        case 'bool': case 'pure': return 'bool'
+        case 'int': return 'int'
+        case 'float': return 'float'
+        case 'string': return 'string'
+        default: return 'hex'
+    }
 }
 
 function compileAssign(f: Extract<CEffect, { k: 'assign' }>, ec: ExprCompiler): EffectFn {
@@ -557,11 +570,14 @@ function compileAssign(f: Extract<CEffect, { k: 'assign' }>, ec: ExprCompiler): 
         }
     }
 
-    const compute = compoundOperator(f.op, ttype, castRhs || rtype === 'int' || rtype === 'bool' ? 'int' : rtype, f.o.span, ec.divisorName(rhsExpr))
+    // Without KIELER's cast C applies the usual arithmetic conversions: `x += random()` on an int adds in single
+    // precision and truncates the sum (KIELER's simulation: -5 + 0.84 gives -4), not the operand.
+    const single = rhs.type === 'f32' && !castRhs && ttype !== 'float'
+    const compute = compoundOperator(f.op, ttype, castRhs || rtype === 'int' || rtype === 'bool' ? 'int' : rtype, f.o.span, ec.divisorName(rhsExpr), single)
     return rt => {
         const path = index?.(rt)
         const old = get(rt, path) as number
-        const operand = ttype === 'int' || (ttype === 'bool' && castRhs) ? rhsInt(rt) : num(rhsFn(rt))
+        const operand = castRhs || (ttype === 'int' && rtype !== 'float') ? rhsInt(rt) : num(rhsFn(rt))
         const value = compute(old, operand)
         set(rt, path, value)
         return { v: vref, value, index: shown(path) }
@@ -569,15 +585,17 @@ function compileAssign(f: Extract<CEffect, { k: 'assign' }>, ec: ExprCompiler): 
 }
 
 /** x op= e for numeric targets; `rtype` is the (possibly cast) operand's type. */
-function compoundOperator(o: string, ttype: CType, rtype: CType, span?: Span, divisor?: string): (x: number, y: number) => number {
+function compoundOperator(o: string, ttype: CType, rtype: CType, span?: Span, divisor?: string, single = false): (x: number, y: number) => number {
     const floatOp = ttype === 'float' || rtype === 'float'
-    const store = (v: number): number => (ttype === 'float' ? v : ttype === 'bool' ? toChar(v, floatOp) : floatOp ? doubleToInt(v) : v | 0)
+    // `single`: a C float operand (random()) with an int or char target: the operation is in single precision.
+    const f = single ? Math.fround : (v: number) => v
+    const store = (v: number): number => (ttype === 'float' ? v : ttype === 'bool' ? toChar(f(v), floatOp) : floatOp ? doubleToInt(f(v)) : v | 0)
     switch (o) {
-        case '+=': return (x, y) => store(floatOp ? x + y : (x + y) | 0)
-        case '-=': return (x, y) => store(floatOp ? x - y : (x - y) | 0)
-        case '*=': return (x, y) => store(floatOp ? x * y : Math.imul(x, y))
+        case '+=': return (x, y) => store(floatOp ? f(x) + y : (x + y) | 0)
+        case '-=': return (x, y) => store(floatOp ? f(x) - y : (x - y) | 0)
+        case '*=': return (x, y) => store(floatOp ? f(x) * y : Math.imul(x, y))
         case '/=': return (x, y) => {
-            if (floatOp) return store(x / y)
+            if (floatOp) return store(f(x) / y)
             if (y === 0) throw divisionByZero(span, divisor)
             if (x === INT_MIN && y === -1) throw overflowTrap(span)
             return store((x / y) | 0)

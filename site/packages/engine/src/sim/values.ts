@@ -92,8 +92,9 @@ export function ctypeOf(type: string | undefined): CType {
     }
 }
 
-/** printf of one print() argument (B-30): int %d, bool %x, float %f, string %s. */
-export function printfValue(v: RValue, type: CType): string {
+/** printf of one print() argument (B-30): int %d, bool %x, float %f, string %s, anything else %X ('hex'). */
+export function printfValue(v: RValue, type: CType | 'hex'): string {
+    if (type === 'hex' && typeof v === 'number') return (doubleToInt(v) >>> 0).toString(16).toUpperCase()
     if (v === null) return '(null)'
     if (isCString(v)) return v.s
     if (Array.isArray(v)) return '?'

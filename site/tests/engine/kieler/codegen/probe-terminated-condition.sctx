@@ -1,0 +1,11 @@
+// After the chart terminated, KIELER's simulation does not step its program any more: the condition `x < 10 / k`,
+// which the netlist code computes in every tick, does not divide by zero when k becomes 0 (no crash), and _TERM stays
+// set.
+scchart ProbeTerminatedCondition {
+  input int k
+  output int x = 0
+
+  initial state A
+    if x < 10 / k go to B
+  final state B
+}

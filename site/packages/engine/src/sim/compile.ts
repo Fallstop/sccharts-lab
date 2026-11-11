@@ -16,6 +16,7 @@ import { constantIndexWarnings } from './memory'
 import { droppedIndexDiagnostics, droppedIndexRefs } from './guardIndices'
 import { inlineMethods, isInlined } from './structure/methods'
 import { goBlock, goBlockDiagnostics, type GoBlock } from './goblock'
+import { stringConditions } from './stringConditions'
 import { formatExpression } from '../format'
 import { allActionSites, allScopes, allStates, effectExprs, readableName, walkExpr, type CEffect, type CExpr, type CState, type CStmt, type CVar } from './model'
 
@@ -142,6 +143,7 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     diagnostics.push(...crashingClashes(clashes, scg, lowered.root))
     diagnostics.push(...conditionalWithoutElse(scg.nodes))
     diagnostics.push(...conditionKeepsResult(scg))
+    diagnostics.push(...stringConditions(scg))
     diagnostics.push(...droppedIndices(scg))
     diagnostics.push(...orderDependentUpdates(scg))
     const go = goBlock(scg)

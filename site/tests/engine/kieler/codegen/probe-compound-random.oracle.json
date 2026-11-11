@@ -1,0 +1,103 @@
+{
+  "hash": "4662f86c3c1c0a13eb927ec503de4bcf18a69286",
+  "chart": "tests/engine/kieler/codegen/probe-compound-random.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads y, so the compiler treats it as an update of y (a relative write, as in the deprecated old SC syntax).\nWrite it as y += random() * 3 to say so. In one region it means the same.\nIt only matters when another region also writes y in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 9,
+      "column": 23
+    }
+  ],
+  "interface": {
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "f": 0,
+        "x": -5,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "f": 1,
+        "x": -4,
+        "y": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "f": 2,
+        "x": -3,
+        "y": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "f": 3,
+        "x": -2,
+        "y": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "f": 4,
+        "x": -1,
+        "y": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

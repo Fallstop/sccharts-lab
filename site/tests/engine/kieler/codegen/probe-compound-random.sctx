@@ -1,0 +1,10 @@
+// `x += random()` on an int: no cast (random() is not a float expression to KIELER's type inference), so C adds in
+// float and truncates the sum: -5 + 0.84 is -4. `y = y + random() * 3` converts the float result.
+scchart ProbeCompoundRandom {
+  output int x = -5
+  output int y = 0
+  output float f = 0
+
+  initial state A
+    do x += random(); y = y + random() * 3; f += 1 go to A
+}

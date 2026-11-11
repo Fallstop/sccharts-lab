@@ -142,7 +142,9 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
     ]
     const tick = [`${names.logic}(d);`, '', ...logic.registers.filter(r => r.guard).map(r => `d->${r.register} = d->${r.guard};`), 'd->_GO = 0;']
 
-    const hostcode = (kinds: string[]) => (result.program?.pragmas ?? []).filter(p => kinds.includes(p.name.toLowerCase())).map(p => p.values[0] ?? '')
+    // `#hostcode` pragmas, then `@hostcode` annotations of the chart (CCodeGeneratorModule.hostcodeAdditions).
+    const hostcode = (kinds: string[]) => [...(result.program?.pragmas ?? []), ...chart.annotations]
+        .filter(p => kinds.includes(p.name.toLowerCase())).map(p => p.values[0] ?? '')
     const banner = '/*\n * Automatically generated C code by SCCharts Lab\n * (the shape of KIELER\'s netlist-based compilation)\n */\n\n'
     const guard = `${fileName}.h`.toUpperCase().replace(/\W/g, '_')
     const headerExtras = [...hostcode(['hostcode', 'hostcode-c-header']), ...(env.usesNull ? ['#ifndef NULL\n#define NULL 0\n#endif'] : [])]

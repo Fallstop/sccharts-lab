@@ -1,0 +1,9 @@
+// A string as a whole condition: KIELER keeps the condition in a char guard (`_cg = d->t`), which gcc rejects.
+scchart ProbeStringCondition {
+  input bool a
+  output string t = "x"
+  output int n = 0
+
+  initial state A
+    if t do n++ go to A
+}

@@ -1,0 +1,80 @@
+{
+  "hash": "abbd56bd3fddd9cdbf83a3d521b7bd5ff5c2f299",
+  "chart": "tests/engine/kieler/codegen/probe-terminated-condition.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "k": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "k": 1
+      },
+      "values": {
+        "k": 1,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "k": 1
+      },
+      "values": {
+        "k": 1,
+        "x": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "k": 0
+      },
+      "values": {
+        "k": 0,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": true
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "k": 0
+      },
+      "values": {
+        "k": 0,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": true
+    }
+  ]
+}

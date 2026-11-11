@@ -113,7 +113,7 @@ export async function checkCase(c: Case, options: { keep?: string } = {}): Promi
     const sim = gen.hostCode ? undefined : createSimulation(result)
     if (sim) for (const given of c.inputs) { const t = sim.step(given); engine.push({ tick: t, taken: sim.takenCounts(t) }) }
     const run = await compileAndRun(gen.files, harness(gen, c.inputs), options)
-    if (run.compileError) return { ...base, verdict: 'mismatch', problems: [`gcc rejects the generated code: ${run.compileError.split('\n').slice(0, 6).join(' | ')}`], hostCode: gen.hostCode }
+    if (run.compileError) return { ...base, verdict: 'mismatch', problems: [`gcc rejects the generated code: ${gccErrors(run.compileError)}`], hostCode: gen.hostCode }
     const out = parseOutput(run.stdout)
     const warnings = generatedWarnings(run, gen)
     const r: CaseResult = { ...base, verdict: 'match', warnings, hostCode: gen.hostCode }
@@ -121,6 +121,12 @@ export async function checkCase(c: Case, options: { keep?: string } = {}): Promi
     if (rec) compareWithKieler(r, c, gen, rec, out, run)
     if (r.problems.length) r.verdict = 'mismatch'
     return r
+}
+
+/** gcc's first errors. */
+function gccErrors(stderr: string): string {
+    const errors = stderr.split('\n').filter(l => /error/.test(l))
+    return (errors.length ? errors : stderr.split('\n')).slice(0, 4).join(' | ')
 }
 
 /** gcc's warnings about the generated files (main.c is the harness's). */
@@ -164,7 +170,7 @@ function compareWithEngine(r: CaseResult, gen: GeneratedC, engine: { tick: SimTi
         if (printed !== ct.printed) r.problems.push(`engine: tick ${tick}: printed ${JSON.stringify(ct.printed)} in C, ${JSON.stringify(printed)} in the engine`)
         const taken = engine[i].taken
         if (ct.taken && !same(ct.taken.slice(0, taken.length), taken)) r.problems.push(`engine: tick ${tick}: taken ${JSON.stringify(ct.taken)} in C, ${JSON.stringify(taken)} in the engine`)
-        if (ct.terminated !== e.terminatedNow) r.problems.push(`engine: tick ${tick}: _TERM is ${ct.terminated} in C, terminated ${e.terminatedNow} in the engine`)
+        if (ct.terminated !== e.terminated) r.problems.push(`engine: tick ${tick}: _TERM is ${ct.terminated} in C, terminated ${e.terminated} in the engine`)
         if (r.problems.length > before + 8) return
     }
 }

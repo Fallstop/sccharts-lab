@@ -1,7 +1,9 @@
 // The test environment for generated C code: a main.c that does what KIELER's simulation does around the
 // generated functions (simulation/processor/CSimulationTemplateGenerator.xtend): one zeroed global TickData, reset()
 // once, then per tick: write the inputs the scenario gives (the struct keeps the others: inputs persist), call
-// tick(), report the data pool as JSON. Like KIELER's environment, string inputs are fresh pointers every tick.
+// tick() unless the chart terminated (KIELER's simulation then stops stepping: `_TERM` stays set and no condition is
+// computed any more), report the data pool as JSON. Like KIELER's environment, string inputs are fresh pointers
+// every tick.
 // Output: for tick n, `@@BEGIN n` and `@@END n <json>` lines around what the chart printed (printf, no newline).
 
 import type { CVariable, GeneratedC, PoolValue } from '@sccharts-lab/engine'
@@ -158,7 +160,8 @@ export function harness(gen: GeneratedC, ticks: Record<string, Value>[]): string
     ticks.forEach((given, i) => {
         lines.push(`  /* tick ${i + 1} */`)
         for (const s of inputCode(gen, given)) lines.push(`  ${s}`)
-        lines.push(`  printf("\\n@@BEGIN ${i + 1}\\n");`, `  ${gen.names.tick}(&d);`, `  printf("\\n@@END ${i + 1} ");`, '  pool();', '  putchar(\'\\n\');')
+        // KIELER's simulation stops stepping the program once it terminated (its data pool still takes the inputs).
+        lines.push(`  printf("\\n@@BEGIN ${i + 1}\\n");`, `  if (!d._TERM) ${gen.names.tick}(&d);`, `  printf("\\n@@END ${i + 1} ");`, '  pool();', '  putchar(\'\\n\');')
     })
     lines.push('  return 0;', '}', '')
     return lines.join('\n')
