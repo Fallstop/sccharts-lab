@@ -9,6 +9,7 @@
 //   EMBED_E2E=1 pnpm exec vitest run tests/embed/e2e.test.ts
 //   EMBED_URL=http://127.0.0.1:4351 ...        (the dev server; default PLAYGROUND_URL, else :4321)
 //   EMBED_HOST_PORT=4352 ...                   (the other origin's port)
+import fs from 'node:fs'
 import http from 'node:http'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import type { Browser, BrowserContext, Frame, Page } from 'playwright'
@@ -53,6 +54,9 @@ const TOGGLE = `scchart Toggle {
     if button do on = false go to Off
 }
 `
+const EXAMPLES = new URL('../../src/examples/advanced/references/', import.meta.url)
+const MAIN = fs.readFileSync(new URL('import-main.sctx', EXAMPLES), 'utf8')
+const SWITCH = fs.readFileSync(new URL('push-switch.sctx', EXAMPLES), 'utf8')
 const LAMP = 'scchart Lamp {\n  input bool press\n  output bool lit = false\n  initial state Dark\n    if press do lit = true go to Lit\n  state Lit\n}\n'
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -208,6 +212,18 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
         const bad = await call('setSource', { source: 'scchart Bad {\n  initial state S\n    if x go to S\n}\n' })
         expect(bad.result).toMatchObject({ ok: false, chart: 'Bad', diagnostics: expect.arrayContaining([expect.objectContaining({ severity: 'error', line: 3 })]) })
         expect(await call('step')).toMatchObject({ ok: false, error: expect.stringMatching(/cannot run/) })
+        // A file of two charts: the first is shown; selectChart picks the other.
+        const two = `${TOGGLE}\n${LAMP}`
+        expect((await call('setSource', { source: two })).result).toMatchObject({ chart: 'Toggle', charts: ['Toggle', 'Lamp'] })
+        const lamp = await call('selectChart', { chart: 'Lamp' })
+        expect(lamp.result).toMatchObject({ ok: true, chart: 'Lamp', inputs: [{ name: 'press' }] })
+        expect(await frame.$eval('[data-pg-chart]', el => (el as HTMLSelectElement).value)).toBe('Lamp')
+        expect(await call('selectChart', { chart: 'Nope' })).toMatchObject({ ok: false, error: expect.stringMatching(/no chart `Nope`.*Toggle, Lamp/) })
+        // A project of two files, one importing the other (KIELER's import rules).
+        const project = await call('setFiles', { files: { 'main.sctx': MAIN, 'push-switch.sctx': SWITCH }, active: 'main.sctx' })
+        expect(project.result).toMatchObject({ ok: true, file: 'main.sctx', chart: 'HallLights' })
+        await call('step', { inputs: { switchA: false } })
+        expect((await call('step', { inputs: { switchA: true } })).result).toMatchObject({ tick: 2, values: { hall: true } })
         await call('setSource', { source: ABRO })
 
         // The frame takes the content's height, reported by `resize`.

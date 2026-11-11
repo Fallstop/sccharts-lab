@@ -1,6 +1,7 @@
 // The playground's Embed dialog (the app bar's Embed, wired by embed-button.ts): what the embed shows, how tall it is,
 // the guided tour or the run so far, a live preview (the embed itself) and the code to paste, as the web component or
-// an iframe. The chart is the example as it is (`example=`), else the project's text as it is now.
+// an iframe. The chart is the example as it is (`example=`), else the project's text as it is now. The preview comes
+// last in the dialog's order (the keyboard reaches the code first: the preview has many stops of its own).
 
 import { MAX_HEIGHT, MIN_HEIGHT, embedUrl, type EmbedTarget, type EmbedView } from '@sccharts-lab/embed/options'
 import { parseEvent } from '@sccharts-lab/embed/protocol'
@@ -77,10 +78,6 @@ export function openEmbedDialog(app: Playground) {
                 <label class="sc-embed-dialog__check" data-if-tour><input type="checkbox" data-tour> Start in the guided tour</label>
                 <label class="sc-embed-dialog__check" data-if-run><input type="checkbox" data-run> Replay this run <span class="sc-embed-dialog__muted" data-run-words></span></label>
             </div>
-            <figure class="sc-embed-dialog__preview">
-                <figcaption>Preview</figcaption>
-                <div class="sc-embed-dialog__frame"><iframe data-preview loading="eager"></iframe></div>
-            </figure>
             <div class="sc-embed-dialog__code">
                 <div class="sc-embed-dialog__codehead">
                     <fieldset class="sc-embed-dialog__kinds">
@@ -96,6 +93,10 @@ export function openEmbedDialog(app: Playground) {
                 <p class="sc-embed-dialog__note" data-note></p>
                 <p class="sc-embed-dialog__status" role="status" data-status></p>
             </div>
+            <figure class="sc-embed-dialog__preview">
+                <figcaption id="sc-embed-dialog-preview">Preview</figcaption>
+                <div class="sc-embed-dialog__frame" role="region" aria-labelledby="sc-embed-dialog-preview" tabindex="0"><iframe data-preview loading="eager"></iframe></div>
+            </figure>
         </div>`
 
     const $ = <T extends Element = HTMLElement>(sel: string) => dialog.querySelector(sel) as T

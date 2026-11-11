@@ -83,7 +83,7 @@ const outlineTool = pgIcons.outline
 			</script>
 			<header class="sc-embed__head">
 				<span class="sc-embed__glyph" aria-hidden="true"></span>
-				<h1 class="sc-embed__name" data-pg-chart-name>Chart</h1>
+				<p class="sc-embed__name" data-pg-chart-name>Chart</p>
 				<select class="sc-pg__chart-select sc-embed__select" data-pg-chart hidden aria-label="The chart to show and simulate"></select>
 				<a class="sc-embed__open" data-embed-open href="/playground/" rel="noopener">
 					<Fragment set:html={openIcon} /><span class="sc-embed__open-label">Open in SCCharts Lab</span><span class="sc-visually-hidden"> (opens in a new tab)</span>
@@ -104,7 +104,7 @@ const outlineTool = pgIcons.outline
 						</footer>
 					</section>
 
-					<section class="sc-embed__diagram" data-pg-diagram aria-label="Diagram">
+					<div class="sc-embed__diagram" data-pg-diagram>
 						<div class="sc-pg-inline__tools sc-embed__tools" role="group" aria-label="Diagram tools">
 							<button type="button" class="sc-pg__tool sc-embed__restore" data-action="restore" hidden title="Go back to the original chart"><Fragment set:html={pgIcons.undo} /><span class="sc-visually-hidden">Revert</span></button>
 							<button type="button" class="sc-pg__tool" data-action="zoom-out" aria-label="Zoom out" title="Zoom out (−)"><Fragment set:html={pgIcons.zoomOut} /></button>
@@ -120,16 +120,16 @@ const outlineTool = pgIcons.outline
 						<p class="sc-pg__busy" data-pg-busy hidden>Drawing the diagram</p>
 						<p class="sc-pg__empty" data-pg-empty hidden><span>There is no <code>scchart</code> to draw yet.</span></p>
 						<p class="sc-embed__loading" data-embed-loading><span class="sc-embed__if-js">Loading the chart</span><span class="sc-embed__if-nojs">This chart needs JavaScript to run.</span></p>
-					</section>
+					</div>
 				</div>
 
-				<section class="sc-embed__sim" data-embed-part="sim" aria-label="Simulation">
+				<div class="sc-embed__sim" data-embed-part="sim">
 					<div class="sc-pg-inline__simbar" data-pg-simbar hidden>
 						<p class="sc-pg__sim-note" data-pg-sim-note hidden></p>
 						<button type="button" class="sc-btn sc-btn--sm sc-pg__rebuild" data-action="rebuild" hidden><Fragment set:html={pgIcons.rebuild} /><span>Rebuild</span></button>
 					</div>
 					<div class="sc-pg__sim" data-pg-sim></div>
-				</section>
+				</div>
 			</div>
 			<div class="sc-pg__toast" data-pg-toast role="status" hidden></div>
 		</main>

@@ -118,6 +118,16 @@ async function boot() {
     }
     const open = $<HTMLAnchorElement>('[data-embed-open]')
     if (open) wireOpenLink(open, app)
+    // The page's title and the stage's name follow the chart (a new one from the page, another chart of the file).
+    const stageLabel = stage.getAttribute('aria-label') ?? ''
+    watchMod.watch(
+        () => app.model.compiled?.result.chart?.name,
+        name => {
+            if (!name) return
+            document.title = `${name} · SCCharts Lab`
+            stage.setAttribute('aria-label', stageLabel.replace(/^Diagram\./, `Diagram of ${name}.`))
+        },
+    )
     // `ready` once the page shows the chart: its first layout is drawn (or failed, or there is nothing to draw).
     await drawn()
     bridge.attach(app, watchMod.watch)
