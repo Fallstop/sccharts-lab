@@ -1,10 +1,11 @@
 # Production QA
 
 The checks the site passes before it is deployed, how to run each one again, and what the last run found. Last
-run: 14 October 2026 (the final round after engine-4, widgets-D, playground-4, content-D and the editors), on the
+full run: 14 October 2026 (the final round after engine-4, widgets-D, playground-4, content-D and the editors), on the
 production build of the `site` branch: 48 pages, that is the landing page and 45 guide pages, the playground and the
-404 page. Re-run all of it after a change to the shell, the widgets or the build, and the relevant parts after
-content changes.
+404 page. Partly re-run on 11 November 2026 (see "11 November 2026" below). Re-run all of it after a change to the
+shell, the widgets or the build, and the relevant parts after content changes. The site is light-only for now
+(27 October), so the dark configurations no longer apply.
 
 Most checks need a build and a server for it. The tools in `tools/qa/` start their own `astro preview` of `dist/`
 when they get no `--url`; to run several, start one and pass it:
@@ -183,7 +184,7 @@ in these docs, and `tests/corpus/expectations.cs303.json`, which is git-ignored 
 corpus test reads where they are, never copied). No file in the site has the content of a file in the CS303 folder
 (SHA-1 of every file; the only match is the empty probe `tests/corpus/probes/empty-file.sctx`).
 
-## Fixed in this round (from the workstreams' open requests and the reviews)
+## Fixed on 14 October 2026 (from the workstreams' open requests and the reviews)
 
 - **Engine, KIELER's verdict**: five kinds of chart the engine accepted and KIELER rejects in gcc are rejected now,
   with gcc's first message (21 new probes in `tests/engine/kieler/rare/`, recorded with the lab server; official
@@ -215,32 +216,40 @@ corpus test reads where they are, never copied). No file in the site has the con
   the dev server); DESIGN.md (a historical sentence); `src/engine/sim/STATUS.md` (the new codes).
 - **QA tools**: `keyboard.mjs` drives a *How KIELER reads it* frame (a trap, then typing).
 
+## 11 November 2026
+
+Checks run on the production build: tests, types and build (6540 passed, 38 skipped; 0 errors, 0 warnings, 12
+hints, as before the changes; no build warnings); links without `--external` (7135 links on 48 pages, 7011
+internal: no problems); meta (no problems); search (every term finds its page first); `pages.mjs` in light-1280
+and light-390 (96 page loads, no problems; `/start/tools/` and the 404 page CLS 0); the playground e2e suite
+(`PLAYGROUND_E2E=1`, 23 passed); `/start/tools/` and the 404 page looked at, at 1280 and 390.
+
+- **Engine**: `parseExpression` gives KIELER's words for 68 % of broken texts (was 61 %): new rules in
+  `kielerWording.ts` (`recovered`), checked on 1500 fresh texts recorded with the oracle and added to
+  `tests/engine/kieler/expressions/wording.json` (3119 texts; none worded wrongly). See STATUS.md.
+- **Corpus**: the four CS303 files edited after their recording are recorded again, so no CS303 verdict is
+  skipped. They now import charts next to them; the recorder opens each file alone, as the engine sees it, and the
+  lab server words that broken import differently from KIELER (`Broken import: there is no X.sctx next to this
+  file.`), which the corpus test maps to KIELER's wording. Official KIELER 0.3.0 hangs compiling such a chart, so
+  it cannot record these.
+- **Oracle**: finds a full JDK 21 itself (`tools/oracle/java.mjs`: `SCCHARTS_JAVA`, else the extension build's
+  runtime cache, else `java`); the old default on `/mnt` is gone.
+- **Playground**: Run until runs its ticks without drawing them (`SimHost.stepQuietly`) and draws every 100 ms and at
+  the end (`settle`): 1000 ticks take about 0.1 s instead of 3 to 4 s. The e2e test covers a goal never reached.
+- **Content**: `start/tools` has a screenshot of SCCharts Lab 0.10.0 (`public/images/sccharts-lab.webp`, the Washer
+  from `learn/hierarchy` after four ticks; it links to the full-size image). The 404 page no longer shows
+  "Report a mistake on this page" (its own text asks for a broken link to be reported).
+- **Extension**: the SCCharts Lab grammar (`keith-vscode/syntaxes/sctx.tmLanguage.json`, main branch) highlights
+  `deep`, under Unreleased in its CHANGELOG.
+
 ## Not fixed (for the owners)
 
-- **Engine**: `parseExpression` has KIELER's wording for 61 % of broken texts (the rest keep the guide's own); validation
-  after a syntax error stays withheld on purpose (STATUS.md). The oracle cannot run on this machine at the moment
-  (its default Java, a Minecraft runtime, is gone after the drive move, and the JetBrains runtime lacks
-  `jdk.unsupported`): set `SCCHARTS_JAVA` to a full JDK 21 to record; until then the CS303 verdicts of files edited
-  after their recording are skipped by the corpus test (re-record them with `tests/corpus/record.mjs`). Done this
-  round (with recorded probes in `tests/engine/kieler/rare`): backward `goto`s in inlined blocks rejected, a trigger's
-  `?` without `else`, `pre(x)` next to `pre(x, c)`, out-of-range constant indices, readable names in copies, no
-  method `if`s logged as checks, stopped simulation after a run-time error.
+- **Engine**: the remaining 32 % of broken texts keep the guide's own message only; what is left is the shape where
+  KIELER backtracks to an earlier operator by precedence, which no simple rule predicted without mistakes. Validation
+  after a syntax error stays withheld on purpose (STATUS.md).
 - **Widgets** (by choice, not bugs): inline code over 12 characters (16 without spaces) in prose, captions and
   phone tables may break at its spaces (the best that fits at 390 without scrolling); `advanced/time` keeps five
-  collapsed loop-warning lines, one per widget. Checked done this round: after a run-time error Step, Run, Next and
-  the inputs are off, the foot names the tick and offers Restart (focus moves from Step to Restart, then back to
-  Step), `.sc-source`'s cap has the fade and the "Show all n lines" button, the guide's lints count as notes, and a
-  copy state's name says which copy it left (`markCopies` with `prev`).
-- **Playground**: Run until takes about 4 s for 1000 ticks (each tick renders the panel, `SimHost.stepNow`); charts
-  that fit only below 40 % open at 70 % from their top left, by choice (readable; Fit shows the whole). Checked done
-  this round: the inline playground starts at its final size with its diagram below the zoom buttons and, without
-  JavaScript, a note in place of the panel; the Simulate tab's head at 390 keeps the name whole (its zoom read-out
-  goes); shared-run notes give the whole input of a chart with up to six inputs, and `runInputs` uses `ranWith`; the
-  watch reads inner locals and members from the trace; for-region copy badges and names on the diagram; an
-  unsupported chart is not compared ("cannot run in the browser").
-- **Content**: the 404 hero's right two thirds stay empty at 1280.
-- **Owner decisions**: the report channel (`REPORT_URL` in `src/components/site.ts` is unset, issues are off on
-  Fallstop/sccharts-lab, and `reference/about` points to the Marketplace Q&A meanwhile); the upstream SCCharts Lab
-  grammar lacks `deep` (the site's copy has it); a real screenshot of SCCharts Lab for `start/tools`.
-- **Commit**: nothing of this round is committed. engine-4's `forCopies`/`copies` work, widgets-D's lanes and badges
-  (with `tests/widgets/trace-extras.test.ts`) and the for-regions page that describes them belong in one commit.
+  collapsed loop-warning lines, one per widget.
+- **Playground** (by choice): charts that fit only below 40 % open at 70 % from their top left (readable; Fit shows
+  the whole).
+- **Owner decisions**: dark mode stays off until it gets a design pass.

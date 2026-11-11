@@ -70,7 +70,8 @@ of guide pages (`src/components/Playground.astro` renders `PlaygroundInline.astr
   pointers, B-26). **Run until**
   steps, as Step does with the inputs as they are set, until the watch holds or a chosen state is active (at most
   1000 ticks; the button stops it), and stops where the chart terminates, fails, or the guided tour ends; a toast
-  says where and why. It steps the panel with `SimHost.stepNow` (step, then Svelte's `flushSync`). The choice is remembered per chart name in local
+  says where and why. It steps with `SimHost.stepQuietly`, which runs a tick without
+  re-rendering, and draws with `SimHost.settle` every 100 ms and at the end (1000 ticks take about 0.1 s). The choice is remembered per chart name in local
   storage (guarded; the default is not stored; a variable added since gets its default). Escape closes the strip.
 - **Copy link to this run** (in the simulation's head): the link carries the inputs of every tick computed
   (`share.ts`, `&run=`, lz-compressed, only the changes per tick) and the tick shown, next to the chart (the example

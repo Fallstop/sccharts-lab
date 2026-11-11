@@ -519,6 +519,14 @@ kbd {
 .sl-markdown-content figure:not(:where(.not-content *)) {
 	margin-inline: 0;
 }
+.sl-markdown-content figure:not(:where(.not-content *)) > img,
+.sl-markdown-content figure:not(:where(.not-content *)) > .sc-figure-link > img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--radius-md);
+}
 .sl-markdown-content figcaption:not(:where(.not-content *)) {
 	margin-top: var(--space-2);
 	font-size: var(--text-sm);

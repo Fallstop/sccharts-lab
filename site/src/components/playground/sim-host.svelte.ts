@@ -35,8 +35,10 @@ export interface SimHost {
     /** Whether KIELER's recording backs the chart ('recorded') or only the guide's engine ('engine'). */
     setVerdict(verdict: Verdict): void
     step(): void
-    /** Steps one tick and applies it at once: `onhighlight` has reported the tick when it returns (Run until). */
-    stepNow(): void
+    /** Steps one tick without drawing it (Run until); undefined before the panel has a simulation. */
+    stepQuietly(): QuietStep | undefined
+    /** Draws the tick the quiet steps reached: `onhighlight` has reported it when this returns. */
+    settle(): void
     back(): void
     reset(): void
     run(): void
@@ -49,8 +51,13 @@ export interface SimHost {
 }
 
 
+/** Where a quiet step left the simulation. */
+export type QuietStep = Pick<SimView, 'cursor' | 'tick' | 'history'>
+
 interface PanelExports {
     step?: () => void
+    stepQuietly?: () => QuietStep | undefined
+    settle?: () => void
     back?: () => void
     reset?: () => void
     run?: () => void
@@ -122,8 +129,11 @@ export async function mountSim(
             verdict = v
         },
         step: call('step'),
-        stepNow() {
-            instance.step?.()
+        stepQuietly() {
+            return instance.stepQuietly?.()
+        },
+        settle() {
+            instance.settle?.()
             flushSync()
         },
         back: call('back'),

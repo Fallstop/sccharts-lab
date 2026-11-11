@@ -106,8 +106,9 @@ chart's outcome contradicts its scenario's `expect`. Chart names must be distinc
 stays loaded in the server, and `is C` resolves against all of them (`structure.md` section 13). Recordings are
 committed, so tests run without Java.
 
-Java: `/mnt/home/fallstop/.minecraft/runtime/java-runtime-delta/linux/java-runtime-delta/bin/java`
-(override with `SCCHARTS_JAVA`). JAR: `../kieler-server-fork/server/target/sccharts-lite-server.jar`
+Java: `SCCHARTS_JAVA`, else the newest full JDK in the extension build's runtime cache
+(`../sccharts-lab/keith-vscode/out/runtime-cache/jdk-linux-x64-*/*/bin/java`, filled by `node scripts/build-server.cjs`;
+the server needs `jdk.unsupported`, so a JetBrains runtime will not do), else `java` on PATH (`tools/oracle/java.mjs`). JAR: `../kieler-server-fork/server/target/sccharts-lite-server.jar`
 (override with `SCCHARTS_SERVER_JAR`). `gcc` is on PATH. Memory is limited: run at most one oracle process at
 a time (prefer `--batch` and `oracle:record`, which reuse one JVM) and never leave one running.
 

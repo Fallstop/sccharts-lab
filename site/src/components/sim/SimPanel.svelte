@@ -290,6 +290,28 @@
 		return true
 	}
 
+	/** Step without drawing (Run until): `rev` stays, so nothing re-renders until `settle()`. A stopped
+	 *  simulation does not step (the cursor stays where it is). */
+	export function stepQuietly(): Pick<SimView, 'cursor' | 'tick' | 'history'> | undefined {
+		if (!timeline) return undefined
+		const t = timeline
+		if (!(t.shown?.error && t.cursor === t.end)) {
+			userAction()
+			try {
+				t.step()
+			} catch (error) {
+				failure = error instanceof Error ? error.message : String(error)
+				rev++
+			}
+		}
+		return { cursor: t.cursor, tick: t.shown, history: t.history }
+	}
+
+	/** Draws the tick the quiet steps reached. */
+	export function settle() {
+		changed(true)
+	}
+
 	export function back() {
 		if (!timeline) return
 		userAction()

@@ -88,10 +88,14 @@ if (result.ok) {
   or after `do` (parser/kielerWording.ts; "no viable alternative at input '=='" for `A == B == C`, "... '?'" for
   `B ? -1 : 2`, "... '+'" for `!a + b`, "... '='" for `x = = 1`). KIELER's ANTLR parser backtracks and names the
   token where a failing decision started, which is often not where the guide's parser stops; the rules give words
-  only for shapes where they agreed with KIELER on every one of 1619 recorded texts (920 to fit them, a holdout of 600
-  and 99 typical mistakes: 852 of 852 said right, 61 % of the broken texts covered;
-  tests/engine/kieler/expressions/wording.json). Elsewhere `kieler` stays empty, and a trigger that starts with a
-  number (a count delay in KIELER) gets none.
+  only for shapes where they agreed with KIELER on every one of 3119 recorded texts
+  (tests/engine/kieler/expressions/wording.json). The first rules were fitted on 920 texts and checked on 600 more and
+  99 typical mistakes (61 % of the broken texts covered). The second rules (November 2026: ANTLR's single-token
+  recovery after `print` and `pre`, one unclosed `(`, a prefix operator before something that is no value, `a[`, a
+  stray value, a call after a whole expression) took the first 1619 texts to 71 %. On 1500 fresh texts (mutated
+  random ones) they covered 64 % before two shapes that disagreed there were narrowed; 1837 of 2710 broken texts are
+  covered now (68 %), none wrongly. Elsewhere `kieler` stays empty, and a trigger that starts with a number (a count
+  delay in KIELER) gets none.
 - **Variables a reader may trace** (round 3, for the playground's variables picker and the widgets):
   `traceableVariables(result)` lists, in declaration order, the simulation interface (inputs, outputs, the chart's
   own locals, inherited ones, clocks, KIELER's `deltaT` and `sleepT`), the members of the chart's class and struct

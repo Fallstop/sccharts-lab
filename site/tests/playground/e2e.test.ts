@@ -642,6 +642,16 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         await page.click('[data-pg-sim] .sc-input--bool[data-input="stop"] .sc-input__pulse')
         await page.click('[data-pg-until-run]')
         await page.waitForFunction(() => /^Stopped in tick 7: Stopped is active/.test(document.querySelector('[data-pg-toast]')?.textContent ?? ''))
+        // A goal never reached: the ticks run without drawing, then the panel and the watch show the last one.
+        await page.fill('[data-pg-watch-input]', 'elapsed < 0')
+        await page.keyboard.press('Enter')
+        await page.selectOption('[data-pg-until]', 'watch')
+        await page.click('[data-pg-until-run]')
+        await page.waitForFunction(() => /^Not within 1000 ticks: the watch never held/.test(document.querySelector('[data-pg-toast]')?.textContent ?? ''), null, { timeout: 20000 })
+        expect(await page.textContent('[data-pg-sim] .sc-simctl__tick')).toMatch(/Tick\s*1007/)
+        expect(await value()).toBe('In tick 1007: false')
+        await page.fill('[data-pg-watch-input]', 'speed > 1')
+        await page.keyboard.press('Enter')
         // Remembered for the chart.
         expect(await page.evaluate(() => localStorage.getItem('sccharts-guide:playground:watch:Stopwatch'))).toBe('speed > 1')
         await page.evaluate(() => localStorage.removeItem('sccharts-guide:playground:watch:Stopwatch'))
