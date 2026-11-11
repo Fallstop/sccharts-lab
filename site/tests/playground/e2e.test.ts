@@ -300,6 +300,17 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         await th.context().close()
     })
 
+    test('Run until names each state so that states of one name in parallel regions can be told apart', async () => {
+        const src = 'scchart Twins {\n  region R0:\n    initial state S0\n    go to S1\n    state S1\n  region R1:\n    initial state S0\n    go to Only\n    state Only\n}\n'
+        const page = await open(`/playground/${hashForSource(src)}`, 1280)
+        await page.waitForFunction(() => document.querySelector('[data-pg-stage] svg')?.getAttribute('data-chart') === 'Twins')
+        await page.click('[data-pg-vars-toggle]')
+        await page.waitForFunction(() => (document.querySelector('[data-pg-until]') as HTMLSelectElement | null)?.options.length === 5)
+        const labels = await page.$$eval('[data-pg-until] option', os => os.map(o => o.textContent))
+        expect(labels).toEqual(['the watch holds', 'R0.S0 is active', 'S1 is active', 'R1.S0 is active', 'Only is active'])
+        await page.context().close()
+    })
+
     test('phones: tabs, no sideways scrolling', async () => {
         const page = await open('/playground/', 390)
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)

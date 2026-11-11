@@ -121,14 +121,23 @@ export class WatchStrip {
         if (!select || !run) return
         const a = this.sim.analysed
         const chart = a?.result.ok ? a.result.chart : undefined
-        const states: { id: string; label: string }[] = []
-        const visit = (st: State, path: string[]) => {
-            for (const r of st.regions) for (const c of r.states) {
-                states.push({ id: c.id, label: `${[...path, c.name].join('.')} is active` })
-                visit(c, [...path, c.name])
-            }
+        // A state by its path (Outer.Inner); where two paths are the same (states of one name in parallel regions),
+        // by its path with the regions (R0.S0 and R1.S0; an unnamed region is "region n").
+        const found: { id: string; short: string; full: string }[] = []
+        const visit = (st: State, path: string[], full: string[]) => {
+            st.regions.forEach((r, i) => {
+                const region = r.name || (st.regions.length > 1 ? `region ${i + 1}` : '')
+                for (const c of r.states) {
+                    const long = [...full, ...(region ? [region] : []), c.name]
+                    found.push({ id: c.id, short: [...path, c.name].join('.'), full: long.join('.') })
+                    visit(c, [...path, c.name], long)
+                }
+            })
         }
-        if (chart) visit(chart, [])
+        if (chart) visit(chart, [], [])
+        const uses = new Map<string, number>()
+        for (const f of found) uses.set(f.short, (uses.get(f.short) ?? 0) + 1)
+        const states = found.map(f => ({ id: f.id, label: `${(uses.get(f.short) ?? 0) > 1 ? f.full : f.short} is active` }))
         const options = [{ id: 'watch', label: 'the watch holds' }, ...states]
         const key = options.map(o => `${o.id}=${o.label}`).join('|')
         if (select.dataset.key !== key) {
