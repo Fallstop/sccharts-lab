@@ -7,6 +7,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - `deep`, as in `deep deferred`, is highlighted as a keyword.
+- **Superstate names stay visible with Smart Zoom on.** Zoomed out, a superstate's title showed
+  its background but no name. This is KIELER 1.6.1's fix, ported to the server. With it, the
+  server is built from the same KIELER sources as KIELER 1.6.1, the compiler in the official
+  KIELER VS Code extension 0.4.3, plus SCCharts Lab's own changes.
 
 ## [0.10.1] - 2026-10-19
 
