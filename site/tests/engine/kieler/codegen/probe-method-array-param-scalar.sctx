@@ -1,0 +1,9 @@
+scchart ProbeMethodArrayParamScalar {
+  output int x = 0
+  method int same(int p[2]) {
+    return p
+  }
+  initial state S {
+    entry do x = same(3)
+  }
+}

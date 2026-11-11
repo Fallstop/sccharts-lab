@@ -1,0 +1,10 @@
+scchart ProbeMethodArrayParamPassed {
+  input int a[2]
+  output int x = 0
+  method int same(int p[2]) {
+    return 5
+  }
+  initial state S {
+    entry do x = same(a)
+  }
+}

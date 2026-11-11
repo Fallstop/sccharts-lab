@@ -1,0 +1,139 @@
+{
+  "hash": "5518cdea107dc1d15d099ff173f80a04bc2d502d",
+  "chart": "tests/engine/kieler/codegen/probe-literal-shift.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "left shift count >= width of type [-Wshift-count-overflow]",
+    "right shift count >= width of type [-Wshift-count-overflow]",
+    "left shift count >= width of type [-Wshift-count-overflow]",
+    "right shift count >= width of type [-Wshift-count-overflow]",
+    "right shift count >= width of type [-Wshift-count-overflow]",
+    "left shift count is negative [-Wshift-count-negative]"
+  ],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "l32": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "l40": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "ln": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "lneg": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "r32": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "r33": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "r40": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "rn": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": 3,
+        "n": 40
+      },
+      "values": {
+        "a": 3,
+        "n": 40,
+        "l32": 0,
+        "l40": 0,
+        "ln": 768,
+        "lneg": -2147483648,
+        "r32": 3,
+        "r33": 1,
+        "r40": 0,
+        "rn": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": -8,
+        "n": 33
+      },
+      "values": {
+        "a": -8,
+        "n": 33,
+        "l32": 0,
+        "l40": 0,
+        "ln": -16,
+        "lneg": 0,
+        "r32": -8,
+        "r33": -4,
+        "r40": -1,
+        "rn": -4
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": 8,
+        "n": 32
+      },
+      "values": {
+        "a": 8,
+        "n": 32,
+        "l32": 0,
+        "l40": 0,
+        "ln": 8,
+        "lneg": 0,
+        "r32": 8,
+        "r33": 4,
+        "r40": 0,
+        "rn": 8
+      },
+      "terminated": false
+    }
+  ]
+}

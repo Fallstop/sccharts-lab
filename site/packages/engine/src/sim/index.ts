@@ -16,7 +16,7 @@ export { describeTick, elementName, rememberImports, type DescribeOptions } from
  */
 export const SIMULATOR_CODES: ReadonlySet<string> = new Set([
     'unsupported', 'causality-cycle', 'instantaneous-loop', 'kieler-crash', 'cardinality', 'unsigned-shift',
-    'array-assignment', 'vector-ignore', 'string-arithmetic', 'empty-method', 'for-outer-counter', 'val-not-signal', 'duplicate-declaration', 'c-keyword', 'c-name', 'c-string', 'c-float-modulo', 'extern-not-called', 'static-access', 'count-delay-reset',
+    'array-assignment', 'vector-ignore', 'string-arithmetic', 'empty-method', 'for-outer-counter', 'val-not-signal', 'duplicate-declaration', 'c-keyword', 'c-reserved-name', 'method-array-parameter', 'c-name', 'c-string', 'c-float-modulo', 'extern-not-called', 'static-access', 'count-delay-reset',
     'unsupported-combine', 'randomize-tick1', 'randomize-stdlib', 'region-action-final', 'kieler-quirk', 'kieler-bug', 'kieler-loop-warning',
     'kieler-nondeterministic', 'kieler-divergence', 'pre-placement',
     // The kinds of scheduling cycle (all "The SCG is NOT asc-schedulable!" in KIELER).

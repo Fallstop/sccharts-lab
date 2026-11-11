@@ -1,0 +1,16 @@
+// A method with an array parameter: KIELER's C declares the parameter as a single int, so gcc rejects the body's
+// subscript. KIELER rejects the chart.
+scchart ProbeMethodArrayParam {
+  input int a[2]
+  output int x = 0
+  method int sum(int p[2]) {
+    int r = 0
+    for (int i = 0; i < 2; i++) {
+      r += p[i]
+    }
+    return r
+  }
+  initial state S {
+    entry do x = sum(a)
+  }
+}

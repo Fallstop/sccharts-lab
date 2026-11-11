@@ -10,7 +10,7 @@
 import type { Span } from '../types'
 import type { CEffect, CExpr, CRef, CVar } from './model'
 import type { Memory } from './memory'
-import { random, type RandState } from './random'
+import { newRandState, random, type RandState } from './random'
 import { compileMethodCall } from './structure/methods'
 import {
     convert, doubleToInt, INT_MIN, isCString, literalString, printfValue, toChar,
@@ -235,11 +235,11 @@ export class ExprCompiler {
         const c = args.map(a => this.compile(a))
         // KIELER's operator expressions are n-ary (`a + b + c`, `a && b && c`): fold them from the left.
         if (c.length > 2 && o !== '?:') {
-            let acc = this.binary(o, c[0], c[1], span, this.divisorName(args[1]))
-            for (let i = 2; i < c.length; i++) acc = this.binary(o, acc, c[i], span, this.divisorName(args[i]))
+            let acc = this.binary(o, c[0], c[1], span, this.divisorName(args[1]), constantInt(args[1]))
+            for (let i = 2; i < c.length; i++) acc = this.binary(o, acc, c[i], span, this.divisorName(args[i]), constantInt(args[i]))
             return acc
         }
-        if (c.length === 2 && o !== '?:') return this.binary(o, c[0], c[1], span, this.divisorName(args[1]))
+        if (c.length === 2 && o !== '?:') return this.binary(o, c[0], c[1], span, this.divisorName(args[1]), constantInt(args[1]))
         return this.unary(o, c, span)
     }
 
@@ -249,7 +249,9 @@ export class ExprCompiler {
         return e ? sourceText(e, v => this.ctx.label(v)) : undefined
     }
 
-    private binary(o: string, a: Compiled, b: Compiled, span?: Span, divisor?: string): Compiled {
+    /** `known`: the right operand's value when gcc knows it at compile time (literals only), where gcc folds the
+     *  operation instead of leaving it to the machine (probes tests/engine/kieler/codegen/probe-literal-*). */
+    private binary(o: string, a: Compiled, b: Compiled, span?: Span, divisor?: string, known?: number): Compiled {
         switch (o) {
             case '&&': return { fn: rt => (truthy(a.fn(rt)) && truthy(b.fn(rt)) ? 1 : 0), type: 'int' }
             case '||': return { fn: rt => (truthy(a.fn(rt)) || truthy(b.fn(rt)) ? 1 : 0), type: 'int' }
@@ -268,10 +270,12 @@ export class ExprCompiler {
             case '&': return { fn: rt => num(a.fn(rt)) & num(b.fn(rt)), type: 'int' }
             case '|': return { fn: rt => num(a.fn(rt)) | num(b.fn(rt)), type: 'int' }
             case '^': return { fn: rt => num(a.fn(rt)) ^ num(b.fn(rt)), type: 'int' }
-            case '<<': return { fn: rt => num(a.fn(rt)) << num(b.fn(rt)), type: 'int' }
+            // A literal count of 32 or more: gcc folds the left shift to 0 (a count only known at run time, and every
+            // right shift, the machine masks to its low five bits, as JavaScript does).
+            case '<<': return known !== undefined && known >= 32 ? { fn: rt => (a.fn(rt), 0), type: 'int' } : { fn: rt => num(a.fn(rt)) << num(b.fn(rt)), type: 'int' }
             case '>>': return { fn: rt => num(a.fn(rt)) >> num(b.fn(rt)), type: 'int' }
             case '>>>': return { fn: rt => (num(a.fn(rt)) >>> num(b.fn(rt))) | 0, type: 'int' }
-            case '+': case '-': case '*': case '/': case '%': return this.arithmetic(o, a, b, span, divisor)
+            case '+': case '-': case '*': case '/': case '%': return this.arithmetic(o, a, b, span, divisor, known)
             default: return this.unary(o, [a, b], span)
         }
     }
@@ -304,7 +308,7 @@ export class ExprCompiler {
         }
     }
 
-    private arithmetic(o: string, a: Compiled, b: Compiled, span?: Span, divisor?: string): Compiled {
+    private arithmetic(o: string, a: Compiled, b: Compiled, span?: Span, divisor?: string, known?: number): Compiled {
         const type = binaryType(a.type, b.type)
         if (type === 'float' || type === 'f32') {
             const r = type === 'f32' ? Math.fround : (x: number) => x
@@ -322,7 +326,8 @@ export class ExprCompiler {
             case '+': return { fn: rt => (num(a.fn(rt)) + num(b.fn(rt))) | 0, type: 'int' }
             case '-': return { fn: rt => (num(a.fn(rt)) - num(b.fn(rt))) | 0, type: 'int' }
             case '*': return { fn: rt => Math.imul(num(a.fn(rt)), num(b.fn(rt))), type: 'int' }
-            case '/': return {
+            // By a literal -1, gcc negates instead of dividing (no trap: -2147483648 stays -2147483648), and `% -1` is 0.
+            case '/': return known === -1 ? { fn: rt => -num(a.fn(rt)) | 0, type: 'int' } : {
                 fn: rt => {
                     const x = num(a.fn(rt)), y = num(b.fn(rt))
                     if (y === 0) throw divisionByZero(span, divisor)
@@ -331,7 +336,7 @@ export class ExprCompiler {
                 },
                 type: 'int',
             }
-            default: return {
+            default: return known === -1 ? { fn: rt => (a.fn(rt), 0), type: 'int' } : {
                 fn: rt => {
                     const x = num(a.fn(rt)), y = num(b.fn(rt))
                     if (y === 0) throw divisionByZero(span, divisor)
@@ -618,3 +623,15 @@ function compoundOperator(o: string, ttype: CType, rtype: CType, span?: Span, di
 }
 
 export type { CString }
+
+/** The value of an int expression of literals only (gcc folds it when it compiles KIELER's C), else undefined. */
+function constantInt(e: CExpr | undefined): number | undefined {
+    const literal = (x: CExpr): boolean => (x.k === 'lit' ? x.t === 'int' : x.k === 'op' && x.op !== 'pre' && x.op !== 'val' && x.args.every(literal))
+    if (!e || !literal(e)) return undefined
+    try {
+        const v = new ExprCompiler({ info: () => { throw new Error('no variables in a literal expression') }, label: v => v.name }).compile(e).fn({ vals: [], rand: newRandState() } as never)
+        return typeof v === 'number' && Number.isInteger(v) ? v : undefined
+    } catch {
+        return undefined
+    }
+}

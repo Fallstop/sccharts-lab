@@ -174,3 +174,14 @@ test('a runtime error ends the trace; a chart that does not compile has no colum
     assert.deepEqual(traceColumns(broken), [])
     assert.deepEqual(traceFromRun(broken, createSimulation(broken)).ticks, [])
 })
+
+test('a variable may have any name, also one objects inherit (constructor): an unset one stays unset in every format', () => {
+    const result = compile('scchart Names {\n  output string constructor\n  output int toString = 1\n  initial state S\n}\n')
+    assert.equal(result.ok, true)
+    const sim = createSimulation(result)
+    sim.step()
+    const trace = traceFromRun(result, sim)
+    assert.equal(Object.hasOwn(trace.ticks[0], 'constructor') ? typeof trace.ticks[0].constructor : 'unset', 'undefined')
+    assert.equal(trace.ticks[0].toString, 1)
+    for (const format of ['ktrace', 'csv', 'json', 'xml'] as const) assert.doesNotThrow(() => writeTrace(trace, format))
+})

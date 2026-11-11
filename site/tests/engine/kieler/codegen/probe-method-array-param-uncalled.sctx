@@ -1,0 +1,9 @@
+scchart ProbeMethodArrayParamUncalled {
+  output int x = 0
+  method int first(int p[2]) {
+    return p[0]
+  }
+  initial state S {
+    entry do x = 1
+  }
+}

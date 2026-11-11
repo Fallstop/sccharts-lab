@@ -1,0 +1,60 @@
+{
+  "hash": "95e8da7bc516295c9c3ab01d0b2325dccff91cdc",
+  "chart": "tests/engine/kieler/codegen/probe-method-array-param-passed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_same_p is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": [
+          1,
+          2
+        ]
+      },
+      "values": {
+        "a": [
+          1,
+          2
+        ],
+        "x": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": [
+          1,
+          2
+        ]
+      },
+      "values": {
+        "a": [
+          1,
+          2
+        ],
+        "x": 5
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "hash": "73a3dd7315d8718d21c30c7194972ea111899132",
+  "chart": "tests/engine/kieler/codegen/probe-method-array-param.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "subscripted value is neither array nor pointer nor vector",
+    "passing argument 2 of ‘ProbeMethodArrayParam_sum’ makes integer from pointer without a cast [-Wint-conversion]",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name p is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name sum is contained in the model but not in VariableStore.",
+    "ValuedObject with name p is contained in the model but not in VariableStore."
+  ],
+  "ticks": []
+}

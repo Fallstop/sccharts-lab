@@ -93,6 +93,26 @@ export function checkCodegen(root: CState): Diagnostic[] {
     out.push(...cNames(root))
     for (const d of cText(root)) add(d)
 
+    // A method's array parameter is a single int in KIELER's C code (`int p`): a method the chart calls whose body
+    // subscripts one does not compile. Never called, or given an array it does not subscript, it compiles (probes
+    // tests/engine/kieler/codegen/probe-method-array-param*).
+    for (const m of reachingC(root).called) {
+        const method = m.method!
+        const arrays = new Set(method.params.filter(p => p.dims.length))
+        if (!arrays.size) continue
+        let subscripted: CVar | undefined
+        for (const e of bodyExprs(method.body)) walkExpr(e, x => { if (!subscripted && x.k === 'ref' && arrays.has(x.v) && x.idx.length) subscripted = x.v })
+        if (!subscripted) continue
+        const name = m.member ? m.member.name : m.name
+        add({
+            severity: 'error', code: 'method-array-parameter', span: subscripted.span ?? m.span,
+            message: `KIELER's C code for the method \`${name}\` does not compile: its parameter \`${subscripted.name}\` is an array, which KIELER's C declares as a single int`,
+            kieler: `subscripted value is neither array nor pointer nor vector\n${GCC_FAILED}`,
+            hint: `Give \`${name}\` the elements it needs as separate parameters, or let it read the chart's array directly instead of a parameter.`,
+            related: m.decl ? [m.decl] : undefined,
+        })
+    }
+
     // A method with parameters and an empty body: KIELER's C code still refers to the first parameter as a member of
     // its tick data (probes structure/probe-empty-method-*).
     for (const scope of allScopes(root)) {

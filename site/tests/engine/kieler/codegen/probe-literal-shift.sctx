@@ -1,0 +1,9 @@
+// Shifts by a literal count of 32 or more (or below 0): gcc folds them (to 0, or the sign for >> of a negative
+// value), where the machine would mask a count it only learns at run time. KIELER's C is what gcc makes of it.
+scchart ProbeLiteralShift {
+  input int a, n
+  output int l40 = 0, r40 = 0, l32 = 0, r32 = 0, r33 = 0, lneg = 0, ln = 0, rn = 0
+  initial state S {
+    immediate during do l40 = a << 40; r40 = a >> 40; l32 = a << 32; r32 = a >> 32; r33 = a >> 33; lneg = a << -1; ln = a << n; rn = a >> n
+  }
+}

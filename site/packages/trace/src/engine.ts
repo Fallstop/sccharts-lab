@@ -196,11 +196,13 @@ export function traceFromRun(result: Compiled, run: EngineRun, options: TraceOpt
     const variables = traceColumns(result)
     const ticks = completedTicks(run)
     const read = options.inputs === 'read'
-    const last: Record<string, unknown> = {}
+    // Keyed by the chart's names, which may be any identifier (`constructor`): no inherited keys.
+    const last: Record<string, unknown> = Object.create(null)
+    const own = (o: object | undefined, k: string) => (o && Object.hasOwn(o, k) ? (o as Record<string, unknown>)[k] : undefined)
     const values = ticks.map((tick) => {
         const row: Record<string, unknown> = {}
         for (const { name, role } of variables) {
-            const value = read && role === 'input' ? tick.ranWith?.[name] : tick.pool[name]
+            const value = read && role === 'input' ? own(tick.ranWith, name) : own(tick.pool, name)
             if (value !== undefined && value !== null) last[name] = kielerValue(value)
             row[name] = last[name]
         }

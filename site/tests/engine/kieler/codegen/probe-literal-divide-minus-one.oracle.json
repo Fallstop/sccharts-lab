@@ -1,0 +1,70 @@
+{
+  "hash": "cdf537b25cb52b992ddc3895d48e15745f7ea86b",
+  "chart": "tests/engine/kieler/codegen/probe-literal-divide-minus-one.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "qc": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "qe": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "r": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": -2147483648
+      },
+      "values": {
+        "a": -2147483648,
+        "q": -2147483648,
+        "qc": -2147483648,
+        "qe": -2147483648,
+        "r": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": 7
+      },
+      "values": {
+        "a": 7,
+        "q": -7,
+        "qc": -7,
+        "qe": -7,
+        "r": 0
+      },
+      "terminated": false
+    }
+  ]
+}

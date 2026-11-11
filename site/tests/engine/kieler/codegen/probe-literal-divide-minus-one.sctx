@@ -1,0 +1,10 @@
+// -2147483648 divided by a literal -1: gcc folds the division by the constant into a negation, which wraps, so
+// KIELER's C goes on (a divisor it only learns at run time traps instead: division-overflow).
+scchart ProbeLiteralDivideMinusOne {
+  const int MINUS = -1
+  input int a
+  output int q = 0, r = 0, qc = 0, qe = 0
+  initial state S {
+    immediate during do q = a / -1; r = a % -1; qc = a / MINUS; qe = a / (0 - 1)
+  }
+}
