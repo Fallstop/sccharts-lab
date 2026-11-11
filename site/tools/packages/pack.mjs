@@ -43,7 +43,8 @@ function checkTarball(name, dir, tarball, files) {
     for (const p of paths) {
         const file = path.join(dir, p)
         unpacked += fs.statSync(file).size
-        if (p.endsWith('.js') && !paths.includes(p.replace(/\.js$/, '.d.ts'))) fail(`${name}: ${p} has no declarations`)
+        // A module has declarations; a .min.js is a script for a script tag (embed.min.js).
+        if (p.endsWith('.js') && !p.endsWith('.min.js') && !paths.includes(p.replace(/\.js$/, '.d.ts'))) fail(`${name}: ${p} has no declarations`)
         if (p.endsWith('.js.map')) {
             // Source maps carry their sources: the tarball has no src/.
             const map = JSON.parse(fs.readFileSync(file, 'utf8'))
@@ -69,9 +70,9 @@ export function checkVersions(expected) {
 }
 
 /** Packs every package into `out`; returns per package: tarball path, file count, sizes, packed manifest. */
-export function pack({ out = path.join(site, 'packages/tarballs'), skipBuild = false, version } = {}) {
+export async function pack({ out = path.join(site, 'packages/tarballs'), skipBuild = false, version } = {}) {
     checkVersions(version)
-    if (!skipBuild) build()
+    if (!skipBuild) await build()
     fs.mkdirSync(out, { recursive: true })
     const results = []
     for (const name of PACKAGES) {
@@ -93,7 +94,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const option = name => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined)
     try {
         const out = option('--out')
-        const results = pack({ out: out && path.resolve(out), skipBuild: args.includes('--no-build'), version: option('--version') })
+        const results = await pack({ out: out && path.resolve(out), skipBuild: args.includes('--no-build'), version: option('--version') })
         for (const r of results) console.log(`${r.name}@${r.manifest.version}: ${r.files} files, ${kB(r.packed)} packed, ${kB(r.unpacked)} unpacked -> ${r.file}`)
     } catch (error) {
         console.error(error.message)

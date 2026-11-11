@@ -5,6 +5,7 @@
 | [@sccharts-lab/engine](./engine/README.md) | SCCharts compiler, simulator and C code generator: parse SCTX, accept and reject charts as KIELER does, run them tick by tick, generate C |
 | [@sccharts-lab/diagram](./diagram/README.md) | Diagrams in KIELER's notation: ELK layout and SVG rendering, with highlighting for simulations |
 | [@sccharts-lab/trace](./trace/README.md) | Simulation traces: KTrace, CSV, JSON and XML files, replay and comparison |
+| [@sccharts-lab/embed](./embed/README.md) | Live charts on any page: the `<sccharts-lab-chart>` element (also one script, `dist/embed.min.js`, the site's `/embed.js`), the embed's options and postMessage protocol |
 
 The site imports them as TypeScript sources (each `package.json`'s `exports` points into `src/`), so the dev server and
 the tests need no build. What npm gets is built: `publishConfig` (applied by `pnpm pack`) replaces `exports`, `main`
@@ -21,7 +22,11 @@ Chromium) is the proof that the published packages work: in a new project that i
 ABRO against KIELER's recording, its generated C through gcc, its diagram, its trace in every format and the quick
 start of each README; type-checks a consumer with `moduleResolution` `bundler` and `node16`; and bundles a page with
 Vite that it loads in headless Chromium (diagram drawn with ELK on the main thread and in a Web Worker, text as wide
-as measured, no console errors). It ends with the gzipped size of each package's main entry.
+as measured, no console errors). It loads the embed package's `dist/embed.min.js` in a host page whose
+`<sccharts-lab-chart>` frames a built site served on another origin, gets ready and steps ABRO, and checks that the
+file is the site's `/embed.js` byte for byte; that part needs `pnpm build` first (`site/dist`, or `--site <dir>`),
+and without a built site it only checks that the script registers the element and frames the right address. It ends
+with the gzipped size of each package's main entry.
 
 ## Conventions (for a new package)
 
@@ -37,10 +42,14 @@ as measured, no console errors). It ends with the gzipped size of each package's
   resolves those imports against the other package's `publishConfig.exports` and fails otherwise).
 - `tsconfig.build.json` extends `../tsconfig.build.json` (ES2022, lib ES2023: what Node 20 has; tests and fixtures
   are excluded). Add the package to `PACKAGES` in tools/packages/build.mjs, after the packages it imports, and copy
-  any non-TypeScript asset there (as the diagram's CSS and fonts are).
+  any non-TypeScript asset there (as the diagram's CSS and fonts are, and the embed's single-file script, made by
+  tools/packages/embed-bundle.mjs, the build the site's `/embed.js` uses too). An entry the build makes rather than
+  compiles goes in `GENERATED` there.
 - A `README.md` whose first `js` code block is a quick start that runs as it is (the smoke test runs it), and a copy of
   the repository's `LICENSE` (EPL-2.0; the pack checks it is identical).
 - The packages are released together, all at one version.
+- A script for a script tag (not a module) is named `*.min.js` and has no declarations; `jsdelivr` and `unpkg` point
+  at it, so `https://cdn.jsdelivr.net/npm/@sccharts-lab/<name>` serves it.
 
 ## Releasing
 
@@ -53,12 +62,13 @@ Once:
 
 Each release:
 
-1. Set the same `version` in `packages/engine`, `packages/diagram` and `packages/trace` (`package.json`).
-2. `pnpm packages:smoke` locally, then commit.
+1. Set the same `version` in the four `packages/*/package.json` (`pack.mjs` refuses different ones), and in the
+   jsDelivr address of `packages/embed/README.md` when the minor version changes.
+2. `pnpm build && pnpm packages:smoke` locally, then commit.
 3. Tag and push: `git tag packages-v0.1.0 && git push origin packages-v0.1.0`.
 
-The tag starts `.github/workflows/packages.yml`: it installs in `site/`, runs the whole test suite, runs
-`pnpm packages:smoke --version <tag's version>` and publishes the smoke test's tarballs with npm provenance (the
+The tag starts `.github/workflows/packages.yml`: it installs in `site/`, runs the whole test suite, builds the site,
+runs `pnpm packages:smoke --version <tag's version> --site dist` and publishes the smoke test's tarballs with npm provenance (the
 engine first). A pre-release version (`0.2.0-beta.1`) goes to the dist-tag `next`; a version already on npm is skipped,
 so a failed run can be re-run. The extension's own release tags (`v1.2.3`) do not start it.
 

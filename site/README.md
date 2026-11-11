@@ -26,7 +26,7 @@ Deploying: `pnpm build && pnpm dlx wrangler deploy` (Cloudflare static assets, `
 | `packages/engine/src/` | parser, resolver, validator, simulator |
 | `packages/diagram/src/` | ELK layout and SVG rendering in KIELER's notation |
 | `packages/trace/src/` | simulation traces (KTrace, CSV, JSON, XML), replay and comparison, as the VS Code extension's |
-| `packages/README.md` | the three packages on npm (`@sccharts-lab/engine`, `/diagram`, `/trace`): building, conventions, releasing |
+| `packages/README.md` | the packages on npm (`@sccharts-lab/engine`, `/diagram`, `/trace`, `/embed`): building, conventions, releasing |
 | `src/components/` | the interactive widgets and the playground |
 | `tests/conformance/` | probe charts that pin down KIELER's semantics, with recordings |
 | `docs-internal/` | architecture, semantics specs, design system, content plan |

@@ -17,6 +17,10 @@ import { comparisonMarkdown } from '@sccharts-lab/trace/comparison-report'
 import { TraceReplay } from '@sccharts-lab/trace/trace-replay'
 import { suggestRenames } from '@sccharts-lab/trace/trace-rename'
 import { TimedSchedule } from '@sccharts-lab/trace/trace-timing'
+import { define, embedUrl, envelope, SCChartsLabChart, TAG, type EmbedCommand, type EmbedTarget, type TickInfo as EmbedTick } from '@sccharts-lab/embed'
+import { parseEmbedQuery, type EmbedView } from '@sccharts-lab/embed/options'
+import { parseCommand, parseEvent, type EventMessage } from '@sccharts-lab/embed/protocol'
+import '@sccharts-lab/embed/loader'
 
 export async function check(source: string, elk: ElkLike): Promise<string> {
     const result: CompileResult = compile(source, { files: { 'Other.sctx': 'scchart Other {}' } })
@@ -64,4 +68,23 @@ export async function check(source: string, elk: ElkLike): Promise<string> {
     void [TraceReplay, suggestRenames, TimedSchedule, KEYWORDS, lex, createFormatContext, formatExpression]
     void [ok, diagnostics, inputs, notOk, plain, value, header, root, managed, mismatches, report, report2]
     return svg
+}
+
+export async function embed(): Promise<number> {
+    define('https://sccharts.jmw.nz/')
+    // The element's type comes with the tag name (HTMLElementTagNameMap).
+    const chart: SCChartsLabChart | null = document.querySelector('sccharts-lab-chart')
+    const view: EmbedView = parseEmbedQuery('?view=full').view
+    const target: EmbedTarget = { example: 'learn/concurrency/abro', view, controls: false }
+    const url: string = embedUrl('https://sccharts.jmw.nz/', target)
+    const command: EmbedCommand = { command: 'step', inputs: { A: true } }
+    // @ts-expect-error not a command of the protocol
+    const wrong: EmbedCommand = { command: 'jump' }
+    const kind: 'command' | 'invalid' | 'ignore' = parseCommand(envelope(command)).kind
+    const event: EventMessage | undefined = parseEvent(envelope({ event: 'resize', height: 1 }))
+    const tick: EmbedTick | undefined = await chart?.step({ A: true })
+    // @ts-expect-error step's inputs are values by name
+    await chart?.step(['A'])
+    void [url, wrong, kind, event, TAG]
+    return tick?.tick ?? 0
 }

@@ -1,16 +1,21 @@
 // Consumer smoke test of the publishable packages: packs them (tools/packages/pack.mjs), installs the tarballs with npm
 // into a fresh project (no workspace links), and there
-//   (a) runs a Node ES module script with all three (tools/packages/smoke/node-check.mjs: ABRO against KIELER's
+//   (a) runs a Node ES module script with engine, diagram and trace (tools/packages/smoke/node-check.mjs: ABRO against KIELER's
 //       recording, its C code through gcc, its diagram, its trace in every format);
 //   (b) type-checks a TypeScript consumer (smoke/consumer.ts) with moduleResolution bundler and node16;
 //   (c) bundles a browser app with Vite (smoke/web: engine and diagram, ELK on the main thread and in a Web Worker)
 //       and loads it in headless Chromium: it must draw, step and highlight ABRO, render text exactly as wide as
 //       the layout measured it, and log no console errors;
+//   (d) loads the embed package's dist/embed.min.js in a host page with a <sccharts-lab-chart>: with a built site
+//       (site/dist from `pnpm build`, or --site <dir>) served on another origin, the element must load the embed,
+//       get ready and step ABRO, and embed.min.js must be the site's /embed.js byte for byte; without one, only that
+//       the script registers the element and frames the right address;
 // then reports the minified and gzipped size of each package's main entry in a bundle.
 //
-//   node tools/packages/smoke.mjs [--dir <dir>] [--no-build] [--version <x.y.z>]       (pnpm packages:smoke)
+//   node tools/packages/smoke.mjs [--dir <dir>] [--no-build] [--version <x.y.z>] [--site <built site>]
 //
-// The tarballs stay in <dir>/tarballs: the release workflow publishes those.
+// (pnpm packages:smoke.) The tarballs stay in <dir>/tarballs: the release workflow publishes those. --site makes the
+// live embed check required.
 //
 // Needs the npm registry (the project installs elkjs, TypeScript and Vite), gcc for the C check (skipped without it)
 // and Playwright's Chromium (tools/chromium.mjs). The project stays in <dir> (default: a new temporary directory).
@@ -35,12 +40,16 @@ const dirIndex = args.indexOf('--dir')
 const dir = dirIndex >= 0 ? path.resolve(args[dirIndex + 1]) : fs.mkdtempSync(path.join(os.tmpdir(), 'sccharts-lab-smoke-'))
 const consumer = path.join(dir, 'consumer')
 
-// The consumer uses the site's versions of TypeScript, Vite (Astro's) and the Node types.
+// The consumer uses the site's versions of TypeScript, Vite and the Node types.
 const siteRequire = createRequire(path.join(site, 'package.json'))
-const versionOf = name => (name === 'vite' ? createRequire(siteRequire.resolve('astro/package.json')) : siteRequire)(`${name}/package.json`).version
+const versionOf = name => siteRequire(`${name}/package.json`).version
+
+// The project's commands run without the npm settings a package manager passes down to this script (pnpm run sets
+// npm_config_* variables that make npm leave out devDependencies).
+const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^npm_config_|^NODE_ENV$/i.test(key)))
 
 function run(command, commandArgs, options = {}) {
-    return execFileSync(command, commandArgs, { cwd: consumer, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...options })
+    return execFileSync(command, commandArgs, { cwd: consumer, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], env, ...options })
 }
 
 function fail(message) {
@@ -79,18 +88,33 @@ function createProject(tarballs) {
 
 // ----- (c) the browser app ------------------------------------------------------------------------------------------
 
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.svg': 'image/svg+xml' }
+const TYPES = {
+    '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
+    '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.txt': 'text/plain',
+    '.xml': 'application/xml', '.webmanifest': 'application/manifest+json', '.wasm': 'application/wasm', '.sctx': 'text/plain',
+}
 
+/** A static server for a built site: `/x/` and `/x` find `/x/index.html` (or `/x.html`), as a static host does. */
 function serve(root) {
     const server = http.createServer((request, response) => {
-        const file = path.join(root, decodeURIComponent(new URL(request.url, 'http://x').pathname).replace(/\/$/, '/index.html'))
-        if (!file.startsWith(root) || !fs.existsSync(file)) {
+        const pathname = decodeURIComponent(new URL(request.url, 'http://x').pathname)
+        const file = [pathname, path.join(pathname, 'index.html'), `${pathname}.html`]
+            .map(p => path.join(root, p))
+            .find(f => f.startsWith(root) && fs.existsSync(f) && fs.statSync(f).isFile())
+        if (!file) {
             response.writeHead(404).end()
             return
         }
         response.writeHead(200, { 'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream' }).end(fs.readFileSync(file))
     })
     return new Promise(resolve => server.listen(0, '127.0.0.1', () => resolve(server)))
+}
+
+function watch(page, problems) {
+    page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') problems.push(`console ${message.type()}: ${message.text()}`) })
+    page.on('pageerror', error => problems.push(`page error: ${error.message}`))
+    page.on('requestfailed', request => problems.push(`request failed: ${request.url()}`))
+    page.on('response', response => { if (response.status() >= 400) problems.push(`${response.status()}: ${response.url()}`) })
 }
 
 async function browserCheck() {
@@ -101,10 +125,7 @@ async function browserCheck() {
     const problems = []
     try {
         const page = await browser.newPage({ viewport: { width: 1000, height: 1400 } })
-        page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') problems.push(`console ${message.type()}: ${message.text()}`) })
-        page.on('pageerror', error => problems.push(`page error: ${error.message}`))
-        page.on('requestfailed', request => problems.push(`request failed: ${request.url()}`))
-        page.on('response', response => { if (response.status() >= 400) problems.push(`${response.status()}: ${response.url()}`) })
+        watch(page, problems)
         await page.goto(`http://127.0.0.1:${server.address().port}/`)
         await page.waitForFunction(() => window.smoke, undefined, { timeout: 60_000 })
         const smoke = await page.evaluate(() => window.smoke)
@@ -128,6 +149,79 @@ function assertBrowser({ smoke, problems }) {
     if (smoke.worstWidthError > 0.1) fail(`text renders up to ${smoke.worstWidthError} px wider or narrower than measured`)
 }
 
+// ----- (d) the embed's script tag ----------------------------------------------------------------------------------
+
+/** The built site to embed from: --site (required then), else site/dist when it has the embed. */
+function builtSite() {
+    const given = args.includes('--site') ? path.resolve(args[args.indexOf('--site') + 1]) : undefined
+    const dist = given ?? path.join(site, 'dist')
+    const complete = ['embed/index.html', 'embed.js'].every(f => fs.existsSync(path.join(dist, f)))
+    if (given && !complete) fail(`${given} is not a built site with the embed (run pnpm build)`)
+    return complete ? dist : undefined
+}
+
+async function embedCheck() {
+    const script = fs.readFileSync(path.join(consumer, 'node_modules/@sccharts-lab/embed/dist/embed.min.js'))
+    const siteDir = builtSite()
+    if (siteDir && !script.equals(fs.readFileSync(path.join(siteDir, 'embed.js')))) {
+        fail(`dist/embed.min.js differs from ${path.join(siteDir, 'embed.js')}: the site's build is older than the package (run pnpm build)`)
+    }
+    // The host page on one origin (127.0.0.1), the site on another (localhost). Without a built site, a blank page
+    // stands in for /embed/.
+    const hostRoot = path.join(consumer, 'embed-host')
+    fs.rmSync(hostRoot, { recursive: true, force: true })
+    fs.mkdirSync(path.join(hostRoot, 'vendor'), { recursive: true })
+    fs.writeFileSync(path.join(hostRoot, 'vendor/embed.min.js'), script)
+    const siteRoot = siteDir ?? path.join(consumer, 'embed-stub')
+    if (!siteDir) {
+        fs.mkdirSync(path.join(siteRoot, 'embed'), { recursive: true })
+        fs.writeFileSync(path.join(siteRoot, 'embed/index.html'), '<!doctype html><title>stub</title>')
+    }
+    const host = await serve(hostRoot)
+    const siteServer = await serve(siteRoot)
+    const base = `http://localhost:${siteServer.address().port}/`
+    // A copy of the script not named /embed.js takes its embeds from data-base (else from sccharts.jmw.nz).
+    fs.writeFileSync(path.join(hostRoot, 'index.html'), `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Host</title>
+<script src="vendor/embed.min.js" data-base="${base}"></script></head><body>
+<sccharts-lab-chart id="abro" example="learn/concurrency/abro" view="sim" loading="eager"></sccharts-lab-chart>
+<script>
+  window.embedSmoke = (async () => {
+    const chart = document.getElementById('abro')
+    // The element frames the embed once the page has loaded.
+    const frame = () => chart.shadowRoot?.querySelector('iframe')
+    for (let i = 0; i < 100 && !frame(); i++) await new Promise(resolve => setTimeout(resolve, 50))
+    const result = { defined: !!customElements.get('sccharts-lab-chart'), frame: frame()?.src }
+    if (${!!siteDir}) {
+      const ready = await chart.ready
+      const ticks = []
+      for (const inputs of [{ A: false, B: false, R: false }, { A: true }, { A: false, B: true }]) ticks.push(await chart.step(inputs))
+      Object.assign(result, { view: ready.view, ok: ready.compiled?.ok, outputs: ticks.map(t => t.values.O), active: ticks[2].active })
+    }
+    return result
+  })().catch(error => ({ error: String(error) }))
+</script></body></html>`)
+    const browser = await launchChromium()
+    const problems = []
+    try {
+        const page = await browser.newPage({ viewport: { width: 1000, height: 900 } })
+        watch(page, problems)
+        await page.goto(`http://127.0.0.1:${host.address().port}/`)
+        const result = await page.evaluate(() => window.embedSmoke)
+        if (siteDir) await page.screenshot({ path: path.join(dir, 'embed.png'), fullPage: true })
+        const bad = message => fail(`embed: ${message}\n${JSON.stringify({ result, problems }, null, 2)}`)
+        if (result.error) bad(result.error)
+        if (!result.defined) bad('embed.min.js did not register <sccharts-lab-chart>')
+        if (result.frame !== `${base}embed/?example=learn/concurrency/abro&height=auto`) bad(`the frame's address is ${result.frame}`)
+        if (problems.length) bad('console errors or failed requests')
+        if (siteDir && (!result.ok || JSON.stringify(result.outputs) !== '[false,false,true]' || !result.active.includes('ABRO.ABO.Done'))) bad('wrong ticks')
+        return { live: !!siteDir, siteDir, result }
+    } finally {
+        await browser.close()
+        host.close()
+        siteServer.close()
+    }
+}
+
 // ----- Sizes: each package's main entry, minified and gzipped, in a Vite bundle -------------------------------------
 
 const SIZE_SCRIPT = `
@@ -135,7 +229,7 @@ import { build } from 'vite'
 import zlib from 'node:zlib'
 import fs from 'node:fs'
 const out = {}
-for (const name of ['engine', 'diagram', 'trace']) {
+for (const name of ['engine', 'diagram', 'trace', 'embed']) {
     fs.mkdirSync('size', { recursive: true })
     fs.writeFileSync(\`size/\${name}.js\`, \`export * from '@sccharts-lab/\${name}'\\n\`)
     const [result] = [await build({
@@ -163,13 +257,13 @@ function sizes() {
 async function main() {
     step(`Pack (into ${path.join(dir, 'tarballs')})`)
     const version = args.includes('--version') ? args[args.indexOf('--version') + 1] : undefined
-    const tarballs = pack({ out: path.join(dir, 'tarballs'), skipBuild: args.includes('--no-build'), version })
+    const tarballs = await pack({ out: path.join(dir, 'tarballs'), skipBuild: args.includes('--no-build'), version })
     for (const t of tarballs) console.log(`${t.name}@${t.manifest.version}: ${t.files} files, ${kB(t.packed)} packed, ${kB(t.unpacked)} unpacked`)
 
     step(`npm install in ${consumer}`)
     createProject(tarballs)
     const started = Date.now()
-    run('npm', ['install', '--no-audit', '--no-fund', '--loglevel=error'])
+    run('npm', ['install', '--include=dev', '--no-audit', '--no-fund', '--loglevel=error'])
     const installed = JSON.parse(run('npm', ['ls', '--json', '--all']))
     const engineCopies = run('npm', ['ls', '@sccharts-lab/engine', '--all', '--parseable']).trim().split('\n').filter(Boolean)
     if (engineCopies.length !== 1) throw new Error(`@sccharts-lab/engine is installed ${engineCopies.length} times`)
@@ -181,13 +275,13 @@ async function main() {
     console.log(`tick 3: ${node.tick3.join(' ')}`)
 
     // The README quick starts, as published: the first js block of each package's README.
-    for (const name of ['engine', 'diagram', 'trace']) {
+    for (const name of ['engine', 'diagram', 'trace', 'embed']) {
         const readme = fs.readFileSync(path.join(consumer, 'node_modules/@sccharts-lab', name, 'README.md'), 'utf8')
         const code = /```js\n([\s\S]*?)```/.exec(readme)?.[1] ?? fail(`${name}: no js block in the README`)
         fs.writeFileSync(path.join(consumer, `readme-${name}.mjs`), code)
         run('node', [`readme-${name}.mjs`])
     }
-    console.log('the quick starts of the three READMEs run')
+    console.log('the first js block of each README runs (the embed\'s: its options and protocol, no DOM)')
 
     step('(b) TypeScript: moduleResolution bundler and node16, skipLibCheck off')
     for (const config of ['tsconfig.bundler.json', 'tsconfig.node16.json']) {
@@ -216,6 +310,14 @@ async function main() {
         return `${file} ${kB(bytes.length)} (${kB(zlibSize(bytes))} gzipped)`
     })
     console.log(`app bundle: ${assets.join('; ')}`)
+
+    step('(d) Embed: dist/embed.min.js and <sccharts-lab-chart> in a host page')
+    const embed = await embedCheck()
+    if (embed.live) {
+        console.log(`embed.min.js is ${embed.siteDir}/embed.js byte for byte; the element framed ${embed.result.frame}, got ready (view ${embed.result.view}) and stepped ABRO: O ${JSON.stringify(embed.result.outputs)}, active ${embed.result.active.join(', ')}; no console errors (screenshot: ${path.join(dir, 'embed.png')})`)
+    } else {
+        console.log(`the script registers the element, which frames ${embed.result.frame}; the live check is skipped: no built site (pnpm build, or --site <dir>)`)
+    }
 
     step('Sizes: each package\'s main entry, everything exported, minified (Vite) and gzipped; the engine external to the others')
     for (const [name, chunks] of Object.entries(sizes())) {
