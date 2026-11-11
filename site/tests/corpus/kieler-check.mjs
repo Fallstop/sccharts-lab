@@ -20,14 +20,15 @@ import os from 'node:os'
 import { spawn } from 'node:child_process'
 import { pathToFileURL, fileURLToPath } from 'node:url'
 import rpc from 'vscode-jsonrpc/node'
+import { defaultJava } from '../../tools/oracle/java.mjs'
 
 const { createMessageConnection, StreamMessageReader, StreamMessageWriter } = rpc
 const here = path.dirname(fileURLToPath(import.meta.url))
-const DEFAULT_JAVA = '/mnt/home/fallstop/.minecraft/runtime/java-runtime-delta/linux/java-runtime-delta/bin/java'
+const DEFAULT_JAVA = defaultJava()
 const DEFAULT_JAR = path.resolve(here, '../../../../kieler-server-fork/server/target/sccharts-lite-server.jar')
 const SEVERITY = { 1: 'error', 2: 'warning', 3: 'info', 4: 'info' }
 
-export async function startChecker({ java = process.env.SCCHARTS_JAVA ?? DEFAULT_JAVA, jar = process.env.SCCHARTS_SERVER_JAR ?? DEFAULT_JAR } = {}) {
+export async function startChecker({ java = DEFAULT_JAVA, jar = process.env.SCCHARTS_SERVER_JAR ?? DEFAULT_JAR } = {}) {
     if (!fs.existsSync(jar)) throw new Error(`Server JAR not found: ${jar} (set SCCHARTS_SERVER_JAR)`)
     const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'sccharts-check-'))
     const server = spawn(java, ['-Djava.awt.headless=true', '-cp', jar, 'de.cau.cs.kieler.language.server.LanguageServer'], { cwd: workspace })

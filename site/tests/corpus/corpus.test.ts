@@ -43,6 +43,10 @@ const RECOVERY_DIFFERENCES = new Set([
     'probes/state-is-with-body.sctx', 'wiki/syntax-12.sctx',
 ])
 
+/** The oracle (the lab's server) rewords KIELER's broken-import warning under the same condition; the engine quotes KIELER. */
+const kielerWording = (message: string) =>
+    /^Broken import: there is no .+ next to this file\.$/.test(message) ? 'Broken Import: There is no SCCharts model with the given name.' : message
+
 function fileOf(key: string): string {
     return key.startsWith('cs303:') ? path.join(CS303, key.slice('cs303:'.length)) : path.join(here, key)
 }
@@ -103,7 +107,7 @@ describe('corpus agrees with KIELER', () => {
                 for (const [ours, theirs] of [[errors, kielerErrors], [warnings, e.warnings]] as const) {
                     for (const d of ours) {
                         if (d.code === 'non-signal-emission' && d.severity === 'error') continue
-                        const candidates = theirs.filter(x => x.line === d.span?.line && x.col === d.span?.col).map(x => x.message)
+                        const candidates = theirs.filter(x => x.line === d.span?.line && x.col === d.span?.col).map(x => kielerWording(x.message))
                         if (candidates.length && d.kieler) expect(candidates).toContain(d.kieler)
                     }
                 }

@@ -101,8 +101,8 @@ describe('parseExpression', () => {
             if (error.kieler !== c.kieler) wrong.push(`${c.as} ${c.text}: ${error.kieler} (KIELER: ${c.kieler})`)
         }
         expect(wrong).toEqual([])
-        expect(broken).toBeGreaterThan(1300)
-        expect(said / broken).toBeGreaterThan(0.6)
+        expect(broken).toBeGreaterThan(2600)
+        expect(said / broken).toBeGreaterThan(0.66)
         // The operators page's traps.
         expect(parseExpression('A == B == C').diagnostics[0].kieler).toBe("no viable alternative at input '=='")
         expect(parseExpression('B ? -1 : 2').diagnostics[0].kieler).toBe("no viable alternative at input '?'")

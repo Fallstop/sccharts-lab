@@ -1,12 +1,14 @@
 ---
 /**
  * Starlight's Footer, with "Report a mistake on this page" above it when REPORT_URL (src/components/site.ts) is
- * set. It is not set by default, and then this is exactly Starlight's footer.
+ * set, except on the 404 page (its own text links to reporting a broken link). Without it, this is exactly
+ * Starlight's footer.
  */
 import Default from '@astrojs/starlight/components/Footer.astro'
 import { REPORT_URL, reportHref } from '../site'
 
-const href = reportHref(REPORT_URL, Astro.url.href, Astro.locals.starlightRoute.entry.data.title)
+const route = Astro.locals.starlightRoute
+const href = route.id === '404' ? undefined : reportHref(REPORT_URL, Astro.url.href, route.entry.data.title)
 ---
 
 {

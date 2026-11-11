@@ -32,10 +32,11 @@ import os from 'node:os'
 import { spawn } from 'node:child_process'
 import { pathToFileURL, fileURLToPath } from 'node:url'
 import rpc from 'vscode-jsonrpc/node'
+import { defaultJava } from './java.mjs'
 
 const { createMessageConnection, StreamMessageReader, StreamMessageWriter } = rpc
 const here = path.dirname(fileURLToPath(import.meta.url))
-const DEFAULT_JAVA = '/mnt/home/fallstop/.minecraft/runtime/java-runtime-delta/linux/java-runtime-delta/bin/java'
+const DEFAULT_JAVA = defaultJava()
 const DEFAULT_JAR = path.resolve(here, '../../../../kieler-server-fork/server/target/sccharts-lite-server.jar')
 export const SYSTEMS = {
     netlist: 'de.cau.cs.kieler.sccharts.simulation.tts.netlist.c',
@@ -50,7 +51,7 @@ function sameFile(a, b) {
 }
 
 /** Starts one language server; `run(scenario)` may be called many times, one at a time. */
-export async function startOracle({ java = process.env.SCCHARTS_JAVA ?? DEFAULT_JAVA, jar = process.env.SCCHARTS_SERVER_JAR ?? DEFAULT_JAR, log = () => {} } = {}) {
+export async function startOracle({ java = DEFAULT_JAVA, jar = process.env.SCCHARTS_SERVER_JAR ?? DEFAULT_JAR, log = () => {} } = {}) {
     if (!fs.existsSync(jar)) throw new Error(`Server JAR not found: ${jar} (set SCCHARTS_SERVER_JAR)`)
     const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'sccharts-oracle-'))
     const server = spawn(java, ['-Xmx1500m', '-Djava.awt.headless=true', '-cp', jar, 'de.cau.cs.kieler.language.server.LanguageServer'], { cwd: workspace })

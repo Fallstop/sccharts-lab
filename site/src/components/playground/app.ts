@@ -29,7 +29,7 @@ import { DocTracker, createEditor, replaceText, selectRange, setMarks, showDiagn
 import { applySuggestion, problemLink, renderDiagnostic, suggestionOf, toLintDiagnostics, type AnalysisView } from './editor-features'
 import { LayoutService, type LayoutDone } from './layout-service'
 import { fileNameFor, hashForSource, makeRun, runUrl, SCRATCH_KEY, shareUrl, storageGet, storageSet, type SharedRun } from './share'
-import { mountSim, type SimHost, type SimView, type Verdict } from './sim-host.svelte'
+import { mountSim, type QuietStep, type SimHost, type SimView, type Verdict } from './sim-host.svelte'
 import { copyCounters, enableDiagramKeys, markCopies, markErrors, pulseTransitions, refreshNames } from '../sim/link'
 import { lineMap } from '../sim/lines'
 import { loadExampleSource, loadImports, loadRecording, loadScenario, tourOf, type Recording } from './sources'
@@ -1245,6 +1245,7 @@ export class Playground {
     // terminates, fails or the guided tour ends.
 
     private static readonly UNTIL_MAX = 1000
+    private static readonly DRAW_EVERY = 100
     private watch?: Watch
     private watchError?: string
     private watchChart?: string
@@ -1387,29 +1388,28 @@ export class Playground {
         const watch = this.watch
         if (goal === 'watch' && !watch) return
         const label = select.selectedOptions[0]?.textContent ?? ''
-        const reached = () => {
-            const v = this.simView
-            if (!v?.tick) return false
-            return goal === 'watch' ? holds(watch!.at(this.watchTicks(), v.cursor)) : v.tick.active.includes(goal)
-        }
+        const reached = (v: QuietStep) => goal === 'watch' ? holds(watch!.at(v.history as WatchTick[], v.cursor)) : !!v.tick?.active.includes(goal)
         this.untilRunning = true
         this.untilStop = false
         this.renderUntil()
         let message = `Not within ${Playground.UNTIL_MAX} ticks: ${label.replace(/ is active$/, ' was never active').replace(/^the watch holds$/, 'the watch never held')}.`
+        // The ticks run without drawing; the panel and diagram catch up every DRAW_EVERY ms and at the end.
+        let drawn = performance.now()
+        let cursor = this.simView?.cursor ?? 0
         try {
             for (let i = 0; i < Playground.UNTIL_MAX; i++) {
-                const before = this.simView?.cursor ?? 0
-                host.stepNow()
-                const v = this.simView
+                const before = cursor
+                const v = host.stepQuietly()
                 if (!v?.tick || v.cursor === before) {
                     message = this.tourActive ? `The guided tour ends in tick ${before}. Take over to run further.` : `The simulation stopped in tick ${before}.`
                     break
                 }
+                cursor = v.cursor
                 if (v.tick.error) {
                     message = `Stopped in tick ${v.cursor}: ${v.tick.error.message}`
                     break
                 }
-                if (reached()) {
+                if (reached(v)) {
                     message = `Stopped in tick ${v.cursor}: ${goal === 'watch' ? `the watch holds (${watch!.text})` : label}.`
                     break
                 }
@@ -1417,15 +1417,20 @@ export class Playground {
                     message = `The chart has terminated (tick ${v.cursor}), and ${goal === 'watch' ? 'the watch has not held' : label.replace(/ is active$/, ' has not been active')}.`
                     break
                 }
-                // Let the page breathe on a long run (and the reader press Stop).
-                if (i % 20 === 19) await new Promise(r => setTimeout(r))
-                if (this.sim !== host) return
-                if (this.untilStop) {
-                    message = `Stopped in tick ${this.simView?.cursor ?? 0}, before ${goal === 'watch' ? 'the watch held' : label.replace(/ is active$/, ' was active')}.`
-                    break
+                // Show the progress, and let the page breathe (and the reader press Stop).
+                if (performance.now() - drawn > Playground.DRAW_EVERY) {
+                    host.settle()
+                    await new Promise(r => setTimeout(r))
+                    drawn = performance.now()
+                    if (this.sim !== host) return
+                    if (this.untilStop) {
+                        message = `Stopped in tick ${cursor}, before ${goal === 'watch' ? 'the watch held' : label.replace(/ is active$/, ' was active')}.`
+                        break
+                    }
                 }
             }
         } finally {
+            if (this.sim === host) host.settle()
             this.untilRunning = false
             this.renderUntil()
         }
