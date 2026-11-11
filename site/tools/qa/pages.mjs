@@ -27,8 +27,9 @@ const configs = String(opts.configs ?? 'light-1280,dark-390')
 const out = String(opts.out ?? path.join(os.tmpdir(), 'qa-pages.json'))
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']
 const gz = (buf) => zlib.gzipSync(buf, { level: 9 }).length
+// /embed/ lives in an iframe on other sites: a heading of its own would join the host page's outline, so it has none.
 const axe = async (page) =>
-    (await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations.map((v) => ({
+    (await new AxeBuilder({ page }).withTags(TAGS).disableRules(new URL(page.url()).pathname.startsWith('/embed/') ? ['page-has-heading-one'] : []).analyze()).violations.map((v) => ({
         id: v.id,
         impact: v.impact,
         help: v.help,

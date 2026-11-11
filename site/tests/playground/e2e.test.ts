@@ -986,7 +986,7 @@ describe.skipIf(!enabled)('playground in the browser', () => {
         // KIELER's #code.naming "prefix".
         await page.selectOption('.sc-pg-c__option select', 'prefix')
         await page.waitForFunction(() => /void ABROtick\(ABROTickData\* d\);/.test(document.querySelector('.sc-pg-c__code .cm-content')?.textContent ?? ''))
-        await page.selectOption('.sc-pg-c__option select', 'default')
+        await page.selectOption('.sc-pg-c__option select', 'chart')
         // The interface: which member is which variable.
         await page.click('.sc-pg-c__bar button[aria-controls="sc-pg-c-interface"]')
         expect(await page.$$eval('.sc-pg-c__interface tbody tr', rs => rs.map(r => [...(r as HTMLTableRowElement).cells].map(c => c.textContent!.trim()).join(' ')))).toEqual(['A d->A char input', 'B d->B char input', 'R d->R char input', 'O d->O char output'])
