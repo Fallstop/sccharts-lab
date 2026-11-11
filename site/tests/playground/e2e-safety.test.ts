@@ -57,6 +57,62 @@ describe.skipIf(!enabled)("the reader's work in the browser", () => {
         await ctx.close()
     }, 120000)
 
+    // ----- The browser's projects ------------------------------------------------------------------------------
+
+    /** Every project stored in this browser (IndexedDB), read directly. */
+    const stored = (page: Page) =>
+        page.evaluate(
+            () =>
+                new Promise<{ id: string; name: string; files: Record<string, string>; updated: number; folder?: { disk: Record<string, string> } }[]>(resolve => {
+                    const req = indexedDB.open('sccharts-lab-playground')
+                    // Not there yet: never make it here (the playground makes it with its store).
+                    req.onupgradeneeded = () => req.transaction!.abort()
+                    req.onerror = () => resolve([])
+                    req.onsuccess = () => {
+                        const db = req.result
+                        if (!db.objectStoreNames.contains('projects')) return resolve([])
+                        const all = db.transaction('projects').objectStore('projects').getAll()
+                        all.onsuccess = () => resolve(all.result)
+                        db.close()
+                    }
+                })
+        )
+    /** Waits until some stored project holds `text`. */
+    async function storedWith(page: Page, text: string) {
+        for (let i = 0; i < 50; i++) {
+            if ((await stored(page)).some(p => Object.values(p.files).some(t => t.includes(text)))) return
+            await page.waitForTimeout(100)
+        }
+        throw new Error(`No stored project holds ${text}`)
+    }
+
+    test("two tabs of one project: each tab's edits are kept, neither saves over the other's", async () => {
+        const ctx = await context()
+        const one = await open(ctx, '/playground/')
+        await one.locator('.cm-content').click()
+        await one.keyboard.press('Control+End')
+        await one.keyboard.type('// start')
+        await storedWith(one, '// start')
+        // A second tab on the bare address opens the same project, the reader's last.
+        const two = await open(ctx, '/playground/')
+        expect(await editorText(two)).toContain('// start')
+        await one.keyboard.type(' one')
+        await storedWith(one, '// start one')
+        await two.locator('.cm-content').click()
+        await two.keyboard.press('Control+End')
+        await two.keyboard.type(' two')
+        await storedWith(two, '// start two')
+        expect(await toast(two)).toMatch(/also changed in another tab/)
+        await one.keyboard.type(' more')
+        await storedWith(one, '// start one more')
+        const texts = (await stored(one)).flatMap(p => Object.values(p.files))
+        expect(texts.some(t => t.includes('// start one more'))).toBe(true)
+        expect(texts.some(t => t.includes('// start two'))).toBe(true)
+        // The project and the copy: a tab's own saves, one after another, never make copies.
+        expect(texts).toHaveLength(2)
+        await ctx.close()
+    }, 120000)
+
     // ----- A folder on disk -------------------------------------------------------------------------------------
 
     /** A page whose Open folder picks `name` in the origin-private file system, filled with `files`. */

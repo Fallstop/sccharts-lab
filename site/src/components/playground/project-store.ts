@@ -20,6 +20,8 @@ export interface StoredProject extends ProjectData {
     origin?: StoredOrigin
     /** A project backed by a folder on the reader's disk (File System Access): its handle and the texts on disk. */
     folder?: { name: string; handle?: FileSystemDirectoryHandle; disk: Record<string, string> }
+    /** New with every save: a tab saves over the project only while it is the version that tab opened or saved. */
+    rev?: string
 }
 
 const DB = 'sccharts-lab-playground'
@@ -75,8 +77,13 @@ export async function getProject(id: string): Promise<StoredProject | undefined>
     return run<StoredProject>('readonly', s => s.get(id))
 }
 
-/** Saves the project (a copy) and drops the oldest beyond KEEP. Resolves to whether it was stored. */
-export async function putProject(p: StoredProject): Promise<boolean> {
+/**
+ * Saves the project (a copy) and drops the oldest beyond KEEP. `base`: the version (`rev`) this tab opened or last
+ * saved (null: one saved before versions; undefined: not checked). When another tab has saved the project since, it
+ * is saved as a new project instead, so that neither tab's edits are lost. Resolves to where it was stored, else
+ * undefined.
+ */
+export async function putProject(p: StoredProject, base?: string | null): Promise<{ id: string; rev: string } | undefined> {
     let copy: StoredProject
     try {
         copy = structuredClone({ ...p, files: { ...p.files }, open: [...p.open] })
@@ -84,9 +91,30 @@ export async function putProject(p: StoredProject): Promise<boolean> {
         // A handle that cannot be cloned (an older browser): the project without its folder's handle.
         copy = { ...p, files: { ...p.files }, open: [...p.open], folder: p.folder ? { name: p.folder.name, disk: { ...p.folder.disk } } : undefined }
     }
-    const ok = (await run('readwrite', s => s.put(copy))) !== undefined
-    if (ok) void trim()
-    return ok
+    // A record put back as it was (Undo of a removal) keeps its version.
+    copy.rev = base === undefined && p.rev ? p.rev : newProjectId()
+    const db = await openDb()
+    const done = await new Promise<boolean>(resolve => {
+        if (!db) return resolve(false)
+        try {
+            const tx = db.transaction(STORE, 'readwrite')
+            const store = tx.objectStore(STORE)
+            // Read and written in one transaction: no other tab's save comes between.
+            const now = store.get(copy.id)
+            now.onsuccess = () => {
+                const other = now.result as StoredProject | undefined
+                if (base !== undefined && other && (other.rev ?? null) !== base) copy.id = newProjectId()
+                store.put(copy)
+            }
+            tx.oncomplete = () => resolve(true)
+            tx.onerror = tx.onabort = () => resolve(false)
+        } catch {
+            resolve(false)
+        }
+    })
+    if (!done) return undefined
+    void trim()
+    return { id: copy.id, rev: copy.rev }
 }
 
 export async function deleteProject(id: string): Promise<void> {

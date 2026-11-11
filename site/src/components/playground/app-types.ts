@@ -27,6 +27,8 @@ export interface ProjectSpec {
     active: string
     open?: string[]
     id?: string
+    /** The stored version opened (`StoredProject.rev`; null: stored before versions). */
+    rev?: string | null
     folder?: StoredProject['folder']
 }
 

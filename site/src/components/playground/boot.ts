@@ -214,7 +214,7 @@ async function lastProject(data: PageData, describe: (id: string) => Origin | un
     const stored = await currentProject()
     if (stored && Object.keys(stored.files).length) {
         const origin: Origin = stored.folder ? { kind: 'folder', title: stored.name } : { kind: 'scratch', title: stored.name }
-        return { project: { name: stored.name, files: stored.files, active: stored.active, open: stored.open, id: stored.id, folder: stored.folder }, origin }
+        return { project: { name: stored.name, files: stored.files, active: stored.active, open: stored.open, id: stored.id, rev: stored.rev ?? null, folder: stored.folder }, origin }
     }
     const saved = storageGet(SCRATCH_KEY)
     if (saved?.trim() && saved !== data.defaultSource) return { project: one('Your last chart', fileFor(saved), saved), origin: { kind: 'scratch', title: 'Your last chart' } }

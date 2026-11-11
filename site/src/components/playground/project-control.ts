@@ -38,6 +38,12 @@ export class ProjectControl {
     private saveTimer?: ReturnType<typeof setTimeout>
     private publishTimer?: ReturnType<typeof setTimeout>
     private pending = false
+    /** The version (`rev`) of each stored project this tab opened or saved: it saves over that version only. */
+    private revs = new Map<string, string | null>()
+    /** A project another tab saved meanwhile, saved by this tab as a copy: its id to the copy's. */
+    private copies = new Map<string, string>()
+    /** The saves to the browser, one after another (each needs the version the one before stored). */
+    private saving: Promise<void> = Promise.resolve()
 
     constructor(private pg: Playground, spec: ProjectSpec) {
         this.set(spec)
@@ -94,6 +100,7 @@ export class ProjectControl {
         this.mainFile = p.active
         this.open = p.open
         this.id = spec.id
+        if (spec.id && spec.rev !== undefined) this.revs.set(spec.id, spec.rev)
         this.loaded = { ...p.files }
         this.folder = spec.folder ? { ...spec.folder, disk: { ...spec.folder.disk }, connected: false } : undefined
         this.states.clear()
@@ -301,7 +308,7 @@ export class ProjectControl {
             origin: { kind: o.kind, id: o.id, title: o.title },
             folder: this.folder && { name: this.folder.name, handle: this.folder.handle, disk: { ...this.folder.disk } },
         }
-        void putProject(stored)
+        this.store(stored)
         if (!url || sameFiles(files, this.loaded)) return
         const next = new URL(location.href)
         // An edited exercise keeps its model solution (a reload can still compare).
@@ -310,6 +317,24 @@ export class ProjectControl {
         // A folder's files stay on the reader's disk: the address carries no copy of them.
         next.hash = this.folder ? '' : hashForProject({ name: this.name, files, active: this.active })
         history.replaceState(history.state, '', next)
+    }
+
+    /** Saves in the browser after the saves before it. When another tab saved the project meanwhile, this tab's
+     *  version is saved as a copy (a project of its own), which this tab goes on with. */
+    private store(stored: StoredProject) {
+        const was = stored.id
+        this.saving = this.saving.then(async () => {
+            stored.id = this.copies.get(was) ?? was
+            const at = await putProject(stored, this.revs.has(stored.id) ? this.revs.get(stored.id) : undefined)
+            if (!at) return
+            this.revs.set(at.id, at.rev)
+            if (at.id === stored.id) return
+            this.copies.set(was, at.id)
+            if (this.id !== stored.id) return
+            this.id = at.id
+            setCurrent(at.id)
+            this.pg.toast(`${this.name} was also changed in another tab, so the edits here are saved as a copy of it (both are in the project menu).`)
+        })
     }
 
     /** Writes the files that differ from the folder (and removes those deleted since), asking for permission once. A

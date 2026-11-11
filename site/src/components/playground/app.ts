@@ -287,7 +287,7 @@ export class Playground {
     /** A project the reader saved in this browser (the recent projects). */
     openStored(p: StoredProject) {
         const origin: Origin = p.folder ? { kind: 'folder', title: p.name } : { kind: 'scratch', title: p.name }
-        this.loadProject({ name: p.name, files: p.files, active: p.active, open: p.open, id: p.id, folder: p.folder }, origin, `Opened ${p.name}.`)
+        this.loadProject({ name: p.name, files: p.files, active: p.active, open: p.open, id: p.id, rev: p.rev ?? null, folder: p.folder }, origin, `Opened ${p.name}.`)
     }
 
     /** Back to the project as it was loaded. */
