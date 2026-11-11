@@ -4,6 +4,10 @@ All notable changes to the "keith-vscode" extension will be documented in this f
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [Unreleased]
+
+- `deep`, as in `deep deferred`, is highlighted as a keyword.
+
 ## [0.10.1] - 2026-10-19
 
 - **Run at full speed no longer freezes VS Code with the diagram open.** At a step delay of 0,
