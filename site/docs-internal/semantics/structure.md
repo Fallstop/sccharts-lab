@@ -845,6 +845,11 @@ Evidence: `67-err-clock-shared`, `68-err-clock-hierarchical`, `71-err-deltaT-wro
 - Teaching: one clock per region that tests it; nested waiting gets its own clock.
 - Implementation: a clock may be tested by the transitions of exactly one region's states (looking through
   chains of single-state wrapper regions) and not also inside one of those states.
+- "Tested" means a transition **with a trigger** that mentions the clock anywhere, its effects included: KIELER
+  searches the whole transition. A region whose only use is `if a do t = 0` owns the clock (it advances only
+  while that region is in a state); two such regions are rejected as several readers; a state with several
+  regions and none of them so mentioning the clock is rejected as "used across concurrent or nested regions",
+  an inherited region counting as one of them (`parity/probe-clock-region-by-reset`, `-two`, `-inherited`).
 
 ### S-40 Timing annotations (on the root chart)
 

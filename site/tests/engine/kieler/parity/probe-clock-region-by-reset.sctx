@@ -1,0 +1,16 @@
+// Two regions, the clock only reset in an effect of a triggered transition (if a do t = 0): KIELER's timed automata
+// give the clock to that region (it looks through the whole transition, not only the trigger).
+scchart PrClkReset {
+  input bool a
+  output int y = 0
+  clock t = 0
+  region R0 {
+    initial state A
+    if a do t = 0; y++ go to B
+    state B
+    if a go to A
+  }
+  region R1 {
+    initial state C
+  }
+}

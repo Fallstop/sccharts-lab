@@ -1,0 +1,13 @@
+// The clock reset in triggered transitions of two regions: read by several concurrent regions, rejected.
+scchart PrClkResetTwo {
+  input bool a
+  clock t = 0
+  region R0 {
+    initial state A
+    if a do t = 0 go to A
+  }
+  region R1 {
+    initial state C
+    if a do t = 0 go to C
+  }
+}

@@ -201,12 +201,13 @@ function transform(ctx: PassContext) {
                     while (test.states.length === 1 && test.states[0].out.length === 0 && controlflowRegions(test.states[0]).length === 1) {
                         test = controlflowRegions(test.states[0])[0]
                     }
-                    if (test.states.some(s => s.out.some(t => t.trigger && mentionsVar(t.trigger, clock)))) using.push(test)
+                    // KIELER looks through the whole of a triggered transition: `if y > 2 do t = 0` counts too.
+                    if (test.states.some(s => s.out.some(t => t.trigger && (mentionsVar(t.trigger, clock) || t.effects.some(f => effectMentions(f, clock)))))) using.push(test)
                 }
                 region = using[0]
                 if (using.length > 1) {
                     // At the second region's transition that tests the clock (the first is where the clock goes).
-                    const reading = using.slice(0, 2).map(r => r.states.flatMap(s => s.out).find(t => t.trigger && mentionsVar(t.trigger, clock)))
+                    const reading = using.slice(0, 2).map(r => r.states.flatMap(s => s.out).find(t => t.trigger && (mentionsVar(t.trigger, clock) || t.effects.some(f => effectMentions(f, clock)))))
                     const second = reading[1]
                     const d = sharedClock(state, clock, `Clock \`${clock.name}\` is read by several concurrent regions of \`${state.name}\`.`,
                         'Cannot handle concurrent timed automata using the same clock. Add @ClocksUseSD annotation for experimental support based on schduling directives.',
