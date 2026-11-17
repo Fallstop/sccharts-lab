@@ -1,0 +1,15 @@
+// Emissions with a schedule: the emission of V (priority 0) before the test of V (priority 1).
+scchart SchEmit {
+  input bool i
+  output signal V
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A
+    if i do V schedule s 0 go to A
+  }
+  region R2 {
+    initial state C
+    if V schedule s 1 do n++ go to C
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "hash": "09242a026e28bafed39d5f0ebe20e51883592ec0",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-emit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "i": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "V": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": false
+      },
+      "values": {
+        "i": false,
+        "V": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": true
+      },
+      "values": {
+        "i": true,
+        "V": true,
+        "n": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": true
+      },
+      "values": {
+        "i": true,
+        "V": true,
+        "n": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": false
+      },
+      "values": {
+        "i": false,
+        "V": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

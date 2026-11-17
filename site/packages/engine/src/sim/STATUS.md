@@ -536,7 +536,8 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 
 ## Not yet (charts get the `unsupported` info and cannot be simulated)
 
-User-written schedules (`schedule` declarations and `schedule s 1` clauses), `ode` actions, `extends` with bindings
+Written schedules inside code blocks and methods, on calls, methods, equations and dataflow regions, and of class
+instances (structure.md S-27a; those on effects, triggers, states and regions run), `ode` actions, `extends` with bindings
 or generic parameters and inner states that extend, chart instances in dataflow regions that call methods, dataflow
 reference calls `A(x, y)`, @DeviationOutput and @Logical clocks, arrays of class instances and
 classes inside classes, abort regions in a state that is left and entered again in the same tick (KIELER's thread

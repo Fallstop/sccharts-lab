@@ -1,0 +1,15 @@
+// A schedule on a region goes to its states' transitions.
+scchart SchRegion {
+  output int o
+  schedule s
+  region R1 schedule s 0 {
+    initial state A
+    immediate do o = 1 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 1 go to D
+    state D
+  }
+}

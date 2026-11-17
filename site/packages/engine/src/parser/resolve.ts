@@ -16,7 +16,7 @@
 // errors with KIELER's linking message in `kieler` and a beginner-oriented message and hint.
 
 import type {
-    Declaration, Diagnostic, Effect, Equation, Expression, LocalAction, Program, Reference, Region, ScopeCall, SclStatement,
+    Declaration, Diagnostic, Effect, Equation, Expression, LocalAction, Program, Reference, Region, ScheduleRef, ScopeCall, SclStatement,
     State, Transition, ValuedObject,
 } from '../types'
 import { counterId } from './ids'
@@ -327,6 +327,7 @@ class Resolver {
         this.resolveDeclarations(state.declarations, scope)
         for (const a of state.actions) this.resolveAction(a, scope)
         if (state.reference) this.resolveScopeCall(state.reference, scope, state)
+        this.resolveSchedule(state.schedule, scope)
         for (const r of state.regions) this.resolveRegion(r, state, scope)
         for (const p of state.policies ?? []) this.resolvePolicy(p, scope)
     }
@@ -415,6 +416,7 @@ class Resolver {
             for (const p of region.reference.parameters) this.resolveExpression(p.expression, scope)
         }
         this.resolveDeclarations(region.declarations, scope)
+        this.resolveSchedule(region.schedule, scope)
         for (const a of region.actions) this.resolveAction(a, scope)
         for (const eq of region.equations) this.resolveEquation(eq, scope)
         for (const s of region.states) {
@@ -448,15 +450,23 @@ class Resolver {
             this.unresolved('State', t.targetName, t.targetSpan, s && !elsewhere ? `There is no state \`${t.targetName}\` here (did you mean \`${s}\`?)` : `There is no state \`${t.targetName}\` in this region`, hint, 'unknown-state', [source.id, t.id], s && !elsewhere ? s : undefined)
         }
         if (t.trigger) this.resolveExpression(t.trigger, scope)
+        this.resolveSchedule(t.triggerSchedule, scope)
         this.resolveEffects(t.effects, scope)
     }
 
     private resolveAction(a: LocalAction, scope: Scope) {
         if (a.trigger) this.resolveExpression(a.trigger, scope)
+        this.resolveSchedule(a.triggerSchedule, scope)
         this.resolveEffects(a.effects, scope)
     }
 
+    /** `schedule s 1`: the schedule object `s` is a valued object of the scope (KIELER's ScheduleObjectReference). */
+    private resolveSchedule(list: ScheduleRef[] | undefined, scope: Scope) {
+        for (const s of list ?? []) this.resolveReference(s.ref, scope, {})
+    }
+
     private resolveEquation(eq: Equation, scope: Scope) {
+        this.resolveSchedule(eq.schedule, scope)
         if (eq.callArgs) {
             this.resolveReference(eq.target, scope, { callable: !eq.target.sub, dataflow: true })
             for (const a of eq.callArgs) this.resolveExpression(a, scope, true)
@@ -541,6 +551,7 @@ class Resolver {
         const methodScope = new Scope(scope, undefined, `method ${d.valuedObjects[0]?.name ?? ''}`)
         for (const p of d.parameters ?? []) for (const vo of p.valuedObjects) methodScope.add(vo, p)
         for (const p of d.parameters ?? []) for (const vo of p.valuedObjects) if (vo.initialValue) this.resolveExpression(vo.initialValue, methodScope)
+        this.resolveSchedule(d.schedule, scope)
         if (d.body) this.resolveBlock(d.body.declarations, d.body.statements, methodScope)
     }
 
@@ -556,8 +567,8 @@ class Resolver {
 
     private resolveStatement(s: SclStatement, scope: Scope, labels: Set<string>) {
         switch (s.kind) {
-            case 'assign': this.resolveReference(s.target, scope, {}); this.resolveExpression(s.expression, scope); break
-            case 'postfix': this.resolveReference(s.target, scope, {}); break
+            case 'assign': this.resolveReference(s.target, scope, {}); this.resolveExpression(s.expression, scope); this.resolveSchedule(s.schedule, scope); break
+            case 'postfix': this.resolveReference(s.target, scope, {}); this.resolveSchedule(s.schedule, scope); break
             case 'call': case 'print': case 'randomize': case 'hostcode': this.resolveEffect(s, scope); break
             case 'return': this.resolveExpression(s.expression, scope); break
             case 'expression': this.resolveExpression(s.expression, scope); break
@@ -575,6 +586,7 @@ class Resolver {
                 break
             case 'if':
                 this.resolveExpression(s.condition, scope)
+                this.resolveSchedule(s.conditionSchedule, scope)
                 this.resolveBlock(s.declarations, s.statements, scope, labels)
                 if (s.else) this.resolveBlock(s.else.declarations, s.else.statements, scope, labels)
                 break
@@ -604,6 +616,7 @@ class Resolver {
 
     /** Resolves an effect; returns a replacement when a valued emission is really a call. */
     private resolveEffect(e: Effect | SclStatement, scope: Scope): Effect | undefined {
+        if ('schedule' in e) this.resolveSchedule(e.schedule, scope)
         switch (e.kind) {
             case 'assign':
                 this.resolveReference(e.target, scope, {})
@@ -623,6 +636,7 @@ class Resolver {
                         if (entry.decl.declKind === 'method') this.resolveReference(e.target, scope, { callable: !e.target.sub, args: 1 })
                         const call: Effect = { kind: 'call', name: referenceName(e.target), args: [e.value], target: e.target, span: e.span }
                         if (e.annotations) call.annotations = e.annotations
+                        if (e.schedule) call.schedule = e.schedule
                         return call
                     }
                 }

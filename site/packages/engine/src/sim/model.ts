@@ -53,6 +53,8 @@ export class CVar {
     span?: Span
     /** Annotations by name (KIELER's tag annotations on valued objects, e.g. `_termination_delayed`). */
     tags = new Set<string>()
+    /** A schedule (declKind 'schedule'): the protocol of each priority, `conflicting` or `commuting`. */
+    priorities?: string[]
     /** The source declaration kind when it is not a plain variable (method, class, ...): handled by other passes. */
     declKind?: string
     /** A method (declKind 'method', or a code effect's generated `_effect<n>`): its parameters and SCL body. */
@@ -80,6 +82,18 @@ export class CVar {
 // Expressions and effects
 // ---------------------------------------------------------------------------------------------------
 
+/**
+ * A user schedule an access belongs to (KIELER's ScheduleObjectReference): accesses of one schedule object are
+ * ordered by priority instead of initialise-update-read. `group` is the schedule object: a `schedule` variable
+ * (declKind 'schedule', its protocols in `priorities`) or a dataflow sequence's group (passes/dataflow.ts).
+ */
+export interface SchedEntry {
+    group: object
+    priority: number
+    /** Where it is written, for a schedule clause naming a variable that is not a schedule (passes/userSchedule.ts). */
+    span?: Span
+}
+
 export interface CRef {
     k: 'ref'
     v: CVar
@@ -87,9 +101,13 @@ export interface CRef {
     /** `a.b`: member access. */
     sub?: CRef
     span?: Span
+    /** The schedules of this read (a trigger `if A schedule s 1`; KIELER keeps them on the reference). */
+    sched?: SchedEntry[]
 }
 
-export type CExpr =
+/** A trigger written `if a > 0 schedule s 1` keeps its schedule on the expression (KIELER's BoolScheduleExpression);
+ *  an expression built around it later does not have it. */
+export type CExpr = { sched?: SchedEntry[] } & (
     | { k: 'lit'; t: 'bool' | 'int' | 'float' | 'string'; v: boolean | number | string; span?: Span }
     | { k: 'null'; span?: Span }
     | CRef
@@ -100,7 +118,7 @@ export type CExpr =
     | { k: 'host'; text: string; span?: Span }
     | { k: 'ignore'; span?: Span }
     /** A construct the simulator does not model (yet); evaluating it is a runtime error. */
-    | { k: 'unsupported'; what: string; span?: Span }
+    | { k: 'unsupported'; what: string; span?: Span })
 
 /** Where an effect comes from, for the log and for diagnostics. */
 export interface EffectOrigin {
@@ -118,7 +136,7 @@ export interface EffectOrigin {
      * KIELER's user schedules (`schedule` priorities, passes/userSchedule.ts): accesses of one schedule object are
      * ordered by priority instead of initialise-update-read (dataflow sequences, structure.md S-27).
      */
-    schedule?: { group: object; priority: number }[]
+    schedule?: SchedEntry[]
 }
 
 /** Bookkeeping effects with no data access: they record what happened in source terms. */
@@ -655,7 +673,9 @@ export function copyExpr<E extends CExpr | undefined>(e: E): E {
 }
 
 export function copyRef(r: CRef): CRef {
-    return { k: 'ref', v: r.v, idx: r.idx.map(i => copyExpr(i)), sub: r.sub ? copyRef(r.sub) : undefined, span: r.span }
+    const c: CRef = { k: 'ref', v: r.v, idx: r.idx.map(i => copyExpr(i)), sub: r.sub ? copyRef(r.sub) : undefined, span: r.span }
+    if (r.sched) c.sched = r.sched
+    return c
 }
 
 export function copyEffect(f: CEffect): CEffect {

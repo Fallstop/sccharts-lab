@@ -1,0 +1,15 @@
+// The schedule puts the read of x (priority 0) before the write (priority 1): y sees x's value from before the
+// tick, against initialise-update-read.
+scchart SchReadFirst {
+  input int i
+  output int x = 0, y = 0
+  schedule s
+  region R1 {
+    initial state A
+    do x = i schedule s 1 go to A
+  }
+  region R2 {
+    initial state C
+    do y = x schedule s 0 go to C
+  }
+}

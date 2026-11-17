@@ -1,0 +1,13 @@
+// A schedule puts the update o += 1 (priority 0) before the absolute write o = 5 (priority 1): o ends as 5.
+scchart SchRelative {
+  output int o = 0
+  schedule s
+  region R1 {
+    initial state A
+    do o += 1 schedule s 0 go to A
+  }
+  region R2 {
+    initial state C
+    do o = 5 schedule s 1 go to C
+  }
+}

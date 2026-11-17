@@ -1,0 +1,7 @@
+// A schedule that is not declared: KIELER cannot resolve it.
+scchart SchUnknown {
+  output int o
+  initial state A
+  immediate do o = 1 schedule nope 0 go to B
+  state B
+}

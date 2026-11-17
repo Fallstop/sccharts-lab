@@ -562,6 +562,44 @@ considers commuting may share a variable, and some of those also run in textual 
   ends with `;`/`seq` (the equation after the last `;` belongs to the run). Execute a run as one sequential
   thread in textual order; runs and the other equations are concurrent with each other.
 
+### S-27a Written schedules: `schedule` declarations and `schedule s 1` clauses
+
+`schedule {conflicting, commuting} s` declares a schedule object `s` (the list gives the protocol of priorities 0,
+1, ...; a priority past the list is conflicting; `global <protocol>` and the name string change nothing in the
+compiler). A clause `schedule s 1` puts what it is written on into `s` at priority 1:
+
+- after an assignment, `x++` or `print(...)`: that effect's reads and writes;
+- after a trigger (`if x > 0 schedule s 0 go to B`, also on actions): every variable the trigger reads, as long as
+  the trigger stays the whole condition (a trigger that is a single variable keeps it on the variable);
+- on a state (`state S schedule s 1 { ... }`, `state S is C(...) schedule s 1`): the triggers and effects of its
+  outgoing transitions and, unless the state has no regions and no actions, of its actions and of everything in
+  its regions, after all other transformations (so also the regions and transitions they made);
+- on a region (`region R schedule s 1 { ... }`): the same for its actions and states.
+
+For a variable, the accesses that share a schedule object are ordered by priority instead of
+initialise-update-read: a lower priority comes first, whatever it reads or writes; at one priority a read comes
+before a write, two writes conflict unless the priority is commuting. Pairs ordered this way are left out of
+initialise-update-read. Contradictory orders (two objects, or a schedule against a data dependency) are a cycle:
+`Can't schedule from ...`. KIELER warns `ValuedObject with name s is contained in the model but not in
+VariableStore.`
+
+An emission's clause is lost: the Signal processor replaces the emission by new assignments; so is the clause of a
+trigger that is a single signal (`if V schedule s 0`), whose reference is replaced by the presence variable. A
+clause naming a variable that is not a schedule crashes the dependency analysis (`java.lang.ClassCastException:
+... VariableDeclarationImpl cannot be cast to ... ScheduleDeclaration`) as soon as it is on an effect or trigger.
+
+- Evidence: `tests/engine/kieler/schedules/probe-schedule-*` (commuting, conflicting, cycle, read-first, global,
+  referenced-state, two-objects, trigger, trigger-ref, state-body, simple-state, region, during, entry, aborts,
+  emit, relative, instances, unknown, not-a-schedule), `tests/engine/kieler/parity/probe-user-schedule*`.
+- Source: `processors/UserSchedule.xtend:85-140, 463-494`, `SCGTransformation.xtend:632-657`,
+  `AbstractDependencyAnalysis.xtend:400-500` (processDependencies, accessType), `processors/Signal.xtend:233-309`.
+- Teaching: rarely needed; data dependencies order most charts. Shows that "who goes first" is a compiler decision
+  the programmer can override.
+- Implementation: lowering keeps clauses on effects (`o.schedule`) and triggers (`sched`), states and regions
+  (`ext.userSchedule`); passes/userSchedule.ts spreads those of states and regions; deps.ts orders the accesses.
+  Not yet simulated (`unsupported`): clauses inside code blocks and methods, on calls, on methods, on equations
+  and dataflow regions, and schedules of class instances (`c.s 1`).
+
 ### S-28 Delays: `->`, `fby`, `pre`, `sfby`
 
 | Expression | First tick of the enclosing state | Later ticks |

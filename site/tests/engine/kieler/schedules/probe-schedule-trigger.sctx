@@ -1,0 +1,16 @@
+// A trigger's schedule: the test of x (priority 0) comes before x = i (priority 1), so it sees the previous value.
+scchart SchTrigger {
+  input int i
+  output int x = 0
+  output bool seen = false
+  schedule s
+  region R1 {
+    initial state A
+    do x = i schedule s 1 go to A
+  }
+  region R2 {
+    initial state C
+    if x > 0 schedule s 0 do seen = true go to D
+    state D
+  }
+}
