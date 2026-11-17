@@ -1,0 +1,7 @@
+{
+  "ticks": [
+    { "inputs": { "n": 4 }, "note": "Rejected: `fact` calls itself, and KIELER's dependency analysis follows every call into the method it calls, so it never comes to an end." }
+  ],
+  "expect": "error",
+  "errorIncludes": "stack space"
+}

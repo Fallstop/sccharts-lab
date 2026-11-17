@@ -153,7 +153,8 @@ ValuedObject with name _fn0_percent_v is contained in the model but not in Varia
 ```
 
 which KIELER lists for the parameters and local variables of methods, and for the names of `extern`
-functions. They are harmless. Two things, though, depend on how a method is compiled.
+functions. They are harmless. Two things, though, depend on how a method is compiled, and one thing no
+method can do.
 
 ### No variable called `d`
 
@@ -195,6 +196,15 @@ function and gets a copy of its argument, so there the same assignment changes n
 So whether an assignment to a parameter changes the caller's variable, breaks the compiler or does
 nothing depends on how KIELER compiles the method. Don't depend on any of it: when a method needs to
 change a value it was given, copy the parameter into a local variable first, as `countDigits` does.
+
+### No recursion
+
+A method cannot call itself, neither directly nor through another method. Before KIELER generates any
+code it works out what every transition reads and writes, and for that it follows each call into the
+method it calls. With a method that calls itself this never comes to an end: SCCharts Lab reports
+[`The compiler ran out of stack space during Dependency.`](/reference/errors/#the-compiler-ran-out-of-stack-space-during-dependency),
+and in the KIELER VS Code extension the compilation never finishes. Write the repetition as a
+[loop](#for-loops) instead. A recursive method that nothing calls is harmless.
 
 ## `print`
 

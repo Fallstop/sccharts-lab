@@ -988,6 +988,25 @@ SCCharts Lab's message for a reference that leads back to its own chart, directl
 copy it for ever. In the KIELER VS Code extension the compilation never finishes and no message
 appears. See [reusing charts](/advanced/references/#other-forms-you-may-meet).
 
+### `The compiler ran out of stack space during Dependency.`
+
+SCCharts Lab's message for a method that calls itself, directly or through other methods:
+
+```sctx {5}
+method int fact(int k) {
+  if (k <= 1) {
+    return 1
+  }
+  return k * fact(k - 1)
+}
+```
+
+KIELER's dependency analysis follows every call into the method it calls, and for a recursive method
+that never ends. In the KIELER VS Code extension the compilation never finishes and no message appears.
+Write the repetition as a loop (`for` or `while`). A recursive method that nothing calls does no harm.
+[Open `recursive-method`](/playground/?example=reference/errors/recursive-method). See
+[methods](/advanced/methods/#no-recursion).
+
 ### `The for-region range "for i : 1 to N" ends at N, which is not an integer literal.`
 
 SCCharts Lab's message for a `for` region whose bound is a name, such as a `const`. In the KIELER VS
