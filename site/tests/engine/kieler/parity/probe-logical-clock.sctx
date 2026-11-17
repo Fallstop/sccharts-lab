@@ -1,0 +1,8 @@
+// @Logical clock: after the transition, the clock is set back by the overshoot (lag).
+scchart PrLog2 {
+  output bool o
+  @Logical clock c
+  initial state A
+  if c >= 3 do o = true go to B
+  state B
+}

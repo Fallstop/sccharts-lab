@@ -1,0 +1,18 @@
+// A schedule across ticks: in tick 2 o = a + 10 (priority 1) runs before o = o * 2 (priority 2).
+scchart PrSched2 {
+  input int a
+  output int o
+  schedule {conflicting} s
+  region R1 {
+    initial state A
+    immediate do o = a schedule s 1 go to B
+    state B
+    do o = a + 10 schedule s 1 go to B
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 0 go to D
+    state D
+    do o = o * 2 schedule s 2 go to D
+  }
+}

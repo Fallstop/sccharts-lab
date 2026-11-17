@@ -1,0 +1,14 @@
+// An inner state extends a chart: it inherits its declarations and regions.
+scchart PrBaseJ {
+  int k = 0
+  region R {
+    initial state S
+    do k += 1 go to S
+  }
+}
+scchart PrInnerJ {
+  output int o
+  initial state T extends PrBaseJ {
+    during do o = k
+  }
+}

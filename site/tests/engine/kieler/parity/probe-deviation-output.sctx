@@ -1,0 +1,9 @@
+// @DeviationOutput: lag is how far the clock overshot the guard's bound in the tick the transition fires.
+@DeviationOutput
+scchart PrDev2 {
+  output bool o
+  clock c
+  initial state A
+  if c >= 3 do o = true go to B
+  state B
+}

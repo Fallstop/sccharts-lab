@@ -1,0 +1,13 @@
+// An inner state extends a chart with an output bound by name (o to p).
+scchart PrBaseL {
+  output int p
+  region R {
+    initial state S
+    do p += 1 go to S
+  }
+}
+scchart PrInnerL {
+  output int o
+  initial state T extends PrBaseL(o to p) {
+  }
+}

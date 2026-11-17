@@ -1,0 +1,7 @@
+// ode x = 2: x grows by 2 * deltaT per tick (KIELER's ODE processor, Euler step).
+scchart PrOde2 {
+  output float x = 0
+  initial state S {
+    ode x = 2
+  }
+}

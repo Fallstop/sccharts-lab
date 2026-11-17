@@ -1,0 +1,15 @@
+// A written schedule orders two conflicting writes: priority 0 (o = 2) before priority 1 (o = 1). KIELER compiles it.
+scchart PrSched {
+  output int o
+  schedule {conflicting} s
+  region R1 {
+    initial state A
+    immediate do o = 1 schedule s 1 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 0 go to D
+    state D
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "hash": "b98e0f4a90c962318bf3998f8d590a97e9c046bd",
+  "chart": "tests/engine/kieler/parity/probe-user-schedule-update.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads o, so the compiler treats it as an update of o (a relative write, as in the deprecated old SC syntax).\nWrite it as o *= 2 to say so. In one region it means the same.\nIt only matters when another region also writes o in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 16,
+      "column": 8
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": 3
+      },
+      "values": {
+        "a": 3,
+        "o": 3
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": 4
+      },
+      "values": {
+        "a": 4,
+        "o": 28
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": 5
+      },
+      "values": {
+        "a": 5,
+        "o": 30
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": 5
+      },
+      "values": {
+        "a": 5,
+        "o": 30
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+// An inner state extends a chart whose output it does not bind: KIELER rejects it.
+scchart PrBaseI {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}
+scchart PrInnerExt {
+  output int o
+  initial state T extends PrBaseI {
+  }
+}

@@ -1,0 +1,14 @@
+// An inner state extends a chart and adds an entry action.
+scchart PrBaseM {
+  region R {
+    initial state S
+    go to S2
+    state S2
+  }
+}
+scchart PrInnerM {
+  output int o
+  initial state T extends PrBaseM {
+    entry do o = 5
+  }
+}

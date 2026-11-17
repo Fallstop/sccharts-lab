@@ -1,0 +1,10 @@
+// extends with a binding (x to i): KIELER accepts it, but the binding has no effect: i stays an input of its own.
+scchart PrBaseP {
+  input int i
+  output int o
+  initial state S
+  do o = i + 1 go to S
+}
+scchart PrExtP extends PrBaseP(x to i) {
+  input int x
+}

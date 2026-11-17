@@ -1,0 +1,24 @@
+// A dataflow region with a chart instance and a method call (KIELER's OO dataflow translation).
+scchart PrCnt {
+  int n = 0
+  method int inc(int d) {
+    n += d;
+    return n
+  }
+}
+scchart PrInc2 {
+  input int i
+  output int o
+  dataflow:
+  o = i + 1
+}
+scchart PrDfOO {
+  input int x
+  output int z, w
+  ref PrCnt c
+  ref PrInc2 g
+  dataflow:
+  g = {x}
+  z = c.inc(g.o)
+  w = g.o
+}
