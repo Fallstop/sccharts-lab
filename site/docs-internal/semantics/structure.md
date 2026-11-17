@@ -384,13 +384,15 @@ from the tick the state is entered, for as long as it is active.
 - Implementation: treat it as an extra concurrent region of the declaring state containing
   `initial state _ is C(args)`.
 
-### S-19 `state S calls C(...)` does not work in the C simulation
+### S-19 `state S calls C(...)` runs as a reference
 
-`calls` (a module call) compiles to a C function call that the netlist C back end never defines (probe:
-`implicit declaration of function ‘_rSubQ1’`, `‘A’ undeclared`).
+In KIELER 1.6.1 (official 0.4.3 and the lab server) `state S calls C(...)` behaves as `state S is C(...)`: the
+same bindings (with the implicit-binding warning), the same copy of `C`, the same pool
+(`tests/engine/kieler/parity/probe-state-calls`, `probe-state-calls-input`). Official KIELER 0.3.0 compiled it
+to a C function call that its netlist back end never defined (`implicit declaration of function ‘_rSubQ1’`).
 
-- Teaching: do not teach it.
-- Implementation: report `calls` as unsupported.
+- Teaching: do not teach it; `is` says the same.
+- Implementation: expand it as a reference.
 
 ---
 
@@ -1847,7 +1849,6 @@ Exact texts as reported by the oracle (lab server). "official" marks differences
 | bool variable to signal formal | `O is an output bool variable, not a signal, so it cannot be emitted.` (lab; official crashes) | S-8 |
 | recursive reference | `Recursive reference: chart X uses itself (X -> X).` (lab; official never finishes) | S-16, `21` |
 | `region R is Chart` | `Couldn't resolve reference to NamedObject 'Chart'.` | S-17, `22` |
-| `calls` | C errors `implicit declaration of function ‘_r...’` | S-19 |
 | missing import | warning `Broken Import: There is no SCCharts model with the given name.` + link errors | S-20 |
 | link error in another chart | e.g. `Couldn't resolve reference to ValuedObject 'q'.` | S-2, `27` |
 | for-region problems | see S-24 | `33`–`37`, `94` |

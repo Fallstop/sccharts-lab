@@ -1,0 +1,107 @@
+{
+  "hash": "c6f7ff9aaedabd841e10b15cfe821123d3e52849",
+  "chart": "tests/engine/kieler/parity/probe-state-calls-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads q, so the compiler treats it as an update of q (a relative write, as in the deprecated old SC syntax).\nWrite it as q += a to say so. In one region it means the same.\nIt only matters when another region also writes q in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 6,
+      "column": 6
+    },
+    {
+      "severity": 2,
+      "message": "Valued Objects are bound implicitly!\nq, ",
+      "line": 12,
+      "column": 25,
+      "code": "Valued Objects are bound implicitly!\nq, "
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 2,
+        "stop": false
+      },
+      "values": {
+        "a": 0,
+        "q": 0,
+        "x": 2,
+        "stop": false
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3,
+        "stop": false
+      },
+      "values": {
+        "a": 0,
+        "q": 0,
+        "x": 3,
+        "stop": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 4,
+        "stop": true
+      },
+      "values": {
+        "a": 0,
+        "q": 0,
+        "x": 4,
+        "stop": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 5,
+        "stop": false
+      },
+      "values": {
+        "a": 0,
+        "q": 0,
+        "x": 5,
+        "stop": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

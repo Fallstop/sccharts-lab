@@ -1,0 +1,10 @@
+// state S calls C(...) runs as a reference in KIELER 1.6.1 (the netlist C code defines it).
+scchart PrSub {
+  output int q
+  initial state A
+  do q = 1 go to A
+}
+scchart PrCalls {
+  output int q
+  initial state S calls PrSub(q)
+}

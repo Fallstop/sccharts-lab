@@ -1,0 +1,15 @@
+// calls with an input bound by position and an output bound by name, left by a trigger.
+scchart PrSubIn {
+  input int a
+  output int q
+  initial state A
+  do q = q + a go to A
+}
+scchart PrCallsIn {
+  input int x
+  input bool stop
+  output int q
+  initial state S calls PrSubIn(x)
+  if stop go to T
+  state T
+}
