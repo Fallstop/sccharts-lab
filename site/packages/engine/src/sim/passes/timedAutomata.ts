@@ -14,7 +14,7 @@
 // overshot the sleep time asked for, `lag = deltaT > pre(sleepT) ? deltaT - pre(sleepT) : 0` (delayed). A @Logical
 // clock advances by `pre(lag) + (deltaT - lag)` instead of deltaT, and asks to sleep for `b - (t + lag)`.
 
-import type { Annotation, Diagnostic, State } from '../../types'
+import type { Annotation, Diagnostic, Region, State } from '../../types'
 import type { ModelIndex } from '../../parser/resolve'
 import type { Pass, PassContext } from './context'
 import {
@@ -46,23 +46,42 @@ export function chartAnnotations(ctx: PassContext): Annotation[] {
     const out: Annotation[] = []
     const find = (name: string) => index?.charts.find(c => c.name === name)
     const copied = new Set<State>()
+    const extenders: State[] = []
+    const recurse = (obj: Record<string, unknown>, skip?: string) => {
+        for (const [k, v] of Object.entries(obj)) if (k !== 'span' && k !== skip && v && typeof v === 'object') visit(v)
+    }
+    // KIELER's Inheritance copies into the extending state, before the timed automata: the bases' annotations after
+    // the state's own (the first @DefaultSleep wins), their declarations and actions, and the base regions no
+    // override region hides (getAllVisibleInheritedRegions); `region is super.R` brings a hidden one back.
     const visit = (value: unknown) => {
         if (Array.isArray(value)) { value.forEach(visit); return }
         if (!value || typeof value !== 'object') return
         const obj = value as Record<string, unknown>
         if (obj.kind === 'annotation') out.push(obj as unknown as Annotation)
-        if (obj.kind === 'state' && (obj as unknown as State).baseStates?.length) inheritInto(obj as unknown as State)
-        for (const [k, v] of Object.entries(obj)) if (k !== 'span' && v && typeof v === 'object') visit(v)
-    }
-    // KIELER's Inheritance copies into the extending state, before the timed automata: every base's annotations,
-    // declarations and actions, and the base regions no override region hides (getAllVisibleInheritedRegions).
-    const inheritInto = (state: State) => {
-        for (const base of allInherited(state, find)) {
-            if (copied.has(base)) continue
-            copied.add(base)
-            visit({ ...base, regions: [], baseStates: [] })
+        const state = obj.kind === 'state' ? (obj as unknown as State) : undefined
+        if (state?.baseStates?.length) {
+            const bases = allInherited(state, find)
+            visit(state.annotations)
+            for (const base of bases) visit(base.annotations)
+            extenders.push(state)
+            recurse(obj, 'annotations')
+            for (const base of bases) {
+                if (copied.has(base)) continue
+                copied.add(base)
+                visit({ ...base, annotations: [], regions: [], baseStates: [] })
+            }
+            for (const { base, region } of visibleRegions(state, find)) visit(base.regions.find(r => r.id === region))
+            extenders.pop()
+            return
         }
-        for (const { base, region } of visibleRegions(state, find)) visit(base.regions.find(r => r.id === region))
+        const call = obj.kind === 'region' ? (obj as unknown as Region).reference : undefined
+        if (call?.super) {
+            for (let i = extenders.length - 1; i >= 0; i--) {
+                const source = allInherited(extenders[i], find).flatMap(b => b.regions).find(r => r.name === call.target)
+                if (source) { visit(source); break }
+            }
+        }
+        recurse(obj)
     }
     charts.forEach(visit)
     return out

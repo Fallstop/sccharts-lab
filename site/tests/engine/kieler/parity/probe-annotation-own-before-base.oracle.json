@@ -1,0 +1,95 @@
+{
+  "hash": "19d326263f893f34a2be59bc56fa0ed4b7f31e05",
+  "chart": "tests/engine/kieler/parity/probe-annotation-own-before-base.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "c": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "deltaT": 0,
+        "sleepT": 10,
+        "c": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "deltaT": 10,
+        "sleepT": 10,
+        "c": 10
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "deltaT": 10,
+        "sleepT": 10,
+        "c": 20
+      },
+      "terminated": true
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "deltaT": 10,
+        "sleepT": 10,
+        "c": 20
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "deltaT": 10,
+        "sleepT": 10,
+        "c": 20
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "deltaT": 10,
+        "sleepT": 10,
+        "c": 20
+      },
+      "terminated": false
+    }
+  ]
+}
