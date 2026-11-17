@@ -1,0 +1,39 @@
+true [ 'Turnstile.h', 'Turnstile.c' ]
+#ifndef TURNSTILE_H
+#define TURNSTILE_H
+/*
+ * Automatically generated C code by SCCharts Lab
+ * (the shape of KIELER's netlist-based compilation)
+ */
+
+typedef struct {
+  char coin;
+  char push;
+  char unlocked;
+  int passed;
+  char _g5;
+  char _g8;
+  char _g10;
+  char _g13;
+  char _GO;
+  char _TERM;
+  char _pg5;
+  char _pg10;
+} TickData;
+
+void reset(TickData* d);
+void logic(TickData* d);
+void tick(TickData* d);
+
+#endif /* !TURNSTILE_H */
+
+[ 'gate.h', 'gate.c' ] {
+  tick: 'Turnstiletick',
+  reset: 'Turnstilereset',
+  logic: 'Turnstilelogic',
+  struct: 'TurnstileTickData'
+}
+coin -> d->coin (char)
+push -> d->push (char)
+unlocked -> d->unlocked (char)
+passed -> d->passed (int)

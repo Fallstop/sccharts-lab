@@ -6,6 +6,8 @@ for runs of the in-browser engine [@sccharts-lab/engine](https://www.npmjs.com/p
 saved here and one the extension saves for the same run on KIELER's own simulator are the same file. No DOM and no Node
 APIs: it runs in browsers and in Node 20+.
 
+**Documentation:** [guide](https://sccharts.jmw.nz/packages/trace/), [API reference](https://sccharts.jmw.nz/packages/trace/api/), [quick start](https://sccharts.jmw.nz/packages/quick-start/).
+
 ```sh
 npm install @sccharts-lab/engine @sccharts-lab/trace
 ```

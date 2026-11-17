@@ -1,0 +1,18 @@
+scchart Oven {
+  input bool start, stop, hot
+  output bool heating = false
+
+  initial state Idle
+    if start go to Cooking
+
+  state Cooking {
+    entry do heating = true
+
+    initial state Heating
+      if hot do heating = false go to Holding
+
+    state Holding
+      if !hot do heating = true go to Heating
+  }
+  if stop do heating = false abort to Idle
+}

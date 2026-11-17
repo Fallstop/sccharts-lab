@@ -8,6 +8,8 @@ TypeScript with no dependencies and no DOM access: it runs in browsers, in Web W
 It is the engine of [SCCharts Lab](https://sccharts.jmw.nz), whose interactive guide and in-browser IDE run every
 example on it.
 
+**Documentation:** [guide](https://sccharts.jmw.nz/packages/engine/), [API reference](https://sccharts.jmw.nz/packages/engine/api/), [quick start](https://sccharts.jmw.nz/packages/quick-start/).
+
 ```sh
 npm install @sccharts-lab/engine
 ```

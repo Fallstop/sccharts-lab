@@ -4,7 +4,11 @@ A live SCCharts chart on any page: its diagram, its simulation (inputs, step, ti
 editor, from [SCCharts Lab](https://sccharts.jmw.nz). The `<sccharts-lab-chart>` element makes an iframe of SCCharts
 Lab's embed, sizes it to its content, and turns its postMessage protocol into methods and DOM events. This package
 holds the element, the embed's options and the protocol, as typed ES modules and as one script for a script tag. No
-dependencies. Full guide: <https://sccharts.jmw.nz/reference/embed/>.
+dependencies.
+
+**Documentation:** [guide](https://sccharts.jmw.nz/packages/embed/),
+[API reference](https://sccharts.jmw.nz/packages/embed/api/), and for page authors
+[Embedding charts](https://sccharts.jmw.nz/reference/embed/).
 
 ## Quick start
 

@@ -120,6 +120,30 @@ problems), `glossary`, `further-reading`, `about` (how the guide, and the playgr
 against KIELER), `playground` (the IDE part by part: projects and files, saving, links, the panel's tabs),
 `embed` (the web component and the iframe, their options, the postMessage API).
 
+### Packages (`packages/`), the npm packages' documentation
+
+A section of its own, for developers who build on the packages (`@sccharts-lab/engine`, `/diagram`, `/trace`,
+`/embed`), not for learners of the language: its pages have their own sidebar (only the packages' pages and a way back
+to the guide; `src/components/overrides/packages-nav.ts`), the header says *npm packages*, and the guide's sidebar
+lists it as one collapsed group. Pages: `index` (overview: one chart and everything the packages make of it, which
+package for which job), `quick-start` (one chart through every package, script by script), and per package
+`<name>/index` (the guide: tasks, with code, output and figures) and `<name>/api` (the API reference: every export, its
+signature, its options).
+
+Its rules differ from the guide's in three ways:
+- **Code is real files.** Every code block is a file of `src/components/packages/samples/`, shown with `<Sample>`
+  (a whole file, or a `// #region`); the output under it is the `.out.txt` the tests record from running it. Never
+  write a `js` or `ts` fence in these pages, except an API page's signature fences.
+- **Figures are the packages' results.** `<Drawn>`, `<Run>` (a film strip of a run and its timing diagram),
+  `<DiagramGrid>`, `<IdExplorer>`, `<TraceFormats>`, `<CompareFigure>`, `<Outputs>` and `<LiveTurnstile>`
+  (`src/components/packages/`) compile, run and draw at build time with the calls the page documents. Prefer a figure
+  to a paragraph: show the diagram, the run, the file.
+- **API pages are checked against the source.** A `### \`name()\`` heading is an export, its first `ts` fence the
+  source's signature, a table headed *Property* the type's members with the source's types; `tests/packages-docs`
+  fails when a page and the source disagree, or an export is not on its page.
+
+The voice is the guide's (second person, plain, British spelling, no em-dashes), for a reader who programs.
+
 ### Playground (`/playground`)
 SCCharts Lab's in-browser IDE: projects of several files (imports, autosave, a folder on disk in Chromium,
 `.zip` in and out, `#project=` links), the editor, the live diagram, and a bottom panel with Simulation (tours,

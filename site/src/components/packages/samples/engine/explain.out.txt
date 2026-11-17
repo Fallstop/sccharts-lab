@@ -1,0 +1,26 @@
+[ 'Locked went to Unlocked because coin was true.' ]
+[ '`Locked` went to `Unlocked` because `coin` was `true`.' ]
+Turnstile.Locked->1 { name: 'Locked → Unlocked' }
+{
+  kind: 'check',
+  transition: 'Turnstile.Locked->1',
+  result: true,
+  reason: 'coin was true',
+  seen: [ { name: 'coin', value: true } ]
+}
+{
+  kind: 'take',
+  transition: 'Turnstile.Locked->1',
+  reason: 'coin was true',
+  seen: [ { name: 'coin', value: true } ]
+}
+{ kind: 'exit', state: 'Turnstile.Locked' }
+{ kind: 'enter', state: 'Turnstile.Unlocked' }
+{
+  kind: 'write',
+  variable: 'unlocked',
+  value: true,
+  by: 'Turnstile.Locked->1',
+  how: 'update'
+}
+{ kind: 'pause', state: 'Turnstile.Unlocked', region: 'Turnstile:0' }

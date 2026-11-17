@@ -1,0 +1,69 @@
+---
+/**
+ * <PackageFacts name="engine" />: under a package page's title, the package's name, its version, and where it
+ * lives (npm, the source, its API reference), read from its package.json.
+ */
+import { packageInfo, type PackageKey } from './packages'
+
+interface Props {
+	name: PackageKey
+	/** On the API reference itself: link to the guide instead. */
+	api?: boolean
+}
+const p = packageInfo(Astro.props.name)
+const onApi = Astro.props.api ?? false
+---
+
+<div class="not-content">
+<ul class="sc-pkg-facts" aria-label={`${p.name}: version and links`}>
+	<li class="sc-pkg-facts__name"><code translate="no">{p.name}</code></li>
+	<li>version {p.version}</li>
+	<li><a href={p.npm}>npm</a></li>
+	<li><a href={p.source}>Source</a></li>
+	<li>{onApi ? <a href={p.docs}>Guide</a> : <a href={p.api}>API reference</a>}</li>
+	<li>{p.license}</li>
+</ul>
+</div>
+
+<style>
+	.sc-pkg-facts {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 0;
+		margin: 0 0 1.75rem;
+		padding: 0.625rem 0;
+		list-style: none;
+		border-block: 1px solid var(--c-rule);
+		font-size: var(--text-sm);
+		color: var(--c-muted);
+	}
+	.sc-pkg-facts li {
+		margin: 0;
+	}
+	.sc-pkg-facts li + li::before {
+		content: '';
+		display: inline-block;
+		width: 1px;
+		height: 0.875em;
+		margin-inline: 0.75rem;
+		vertical-align: -0.0625em;
+		background-color: var(--c-rule-strong);
+	}
+	.sc-pkg-facts code {
+		font-family: var(--font-mono);
+		font-weight: 700;
+		color: var(--c-ink);
+		background: none;
+		padding: 0;
+		border: 0;
+	}
+	.sc-pkg-facts a {
+		color: var(--c-accent);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.2em;
+	}
+	.sc-pkg-facts a:hover {
+		color: var(--c-accent-strong);
+	}
+</style>

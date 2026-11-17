@@ -1,0 +1,132 @@
+---
+/**
+ * <DiagramGrid code={...} items={[{ label: "direction: 'down'", layout: { direction: 'down' } }, ...]} />: one chart
+ * drawn several ways side by side, each under its label, on a page of the packages' documentation: layout options,
+ * highlight classes, a theme. Each drawing is the diagram package's own result (see figures.ts).
+ *
+ * An item: label (code font), note (a few words under it), layout (`layoutChart`'s options), classes (highlight
+ * classes by element id), steps (inputs tick by tick: highlighted as after the last), dark (drawn on a dark ground
+ * with the colours of samples/diagram/theme.css, the stylesheet the page shows), code (another chart).
+ * Props: code, files, items, columns (at most this many across; default 3), caption.
+ */
+import { mergeClasses, tickClasses } from '@sccharts-lab/diagram'
+import '@sccharts-lab/diagram/diagram.css'
+import { inlineMd } from '../frame/inline-md'
+import darkTheme from './samples/diagram/theme.css?raw'
+import { compiled, layoutOf, run, svgOf, type FigureLayout, type Inputs } from './figures'
+
+interface Item {
+	label: string
+	note?: string
+	layout?: FigureLayout
+	classes?: Record<string, string[]>
+	steps?: Inputs[]
+	dark?: boolean
+	code?: string
+}
+interface Props {
+	code: string
+	files?: Record<string, string>
+	items: Item[]
+	columns?: 2 | 3 | 4
+	caption?: string
+}
+const { code, files, items, columns = 3, caption } = Astro.props
+
+const tiles = await Promise.all(
+	items.map(async (item) => {
+		const c = compiled(item.code ?? code, files, `<DiagramGrid> "${item.label}"`)
+		const tick = run(c, item.steps ?? [], `<DiagramGrid> "${item.label}"`).at(-1)
+		const classes = mergeClasses(tick ? tickClasses(tick) : undefined, item.classes)
+		return { ...item, svg: svgOf(await layoutOf(c, item.layout), classes, `${c.chart.name}: ${item.label}`, true) }
+	})
+)
+const anyDark = tiles.some((t) => t.dark)
+// The narrowest a tile may be before the grid takes fewer columns: few, wide drawings need more room than many
+// small ones (two columns become one on a phone, three become two).
+const narrowest = { 2: '15rem', 3: '11rem', 4: '9.5rem' }[columns]
+---
+
+{anyDark && <style is:inline set:html={darkTheme} />}
+<figure class="sc-pkg-grid not-content" style={`--columns: ${columns}; --narrowest: ${narrowest}`}>
+	<ul>
+		{
+			tiles.map((t) => (
+				<li>
+					<div class:list={['sc-pkg-grid__svg', { dark: t.dark }]} set:html={t.svg} />
+					<p class="sc-pkg-grid__label">
+						<code>{t.label}</code>
+						{t.note && <span set:html={inlineMd(t.note)} />}
+					</p>
+				</li>
+			))
+		}
+	</ul>
+	{caption && <figcaption class="sc-frame__caption" set:html={inlineMd(caption)} />}
+</figure>
+
+<style>
+	.sc-pkg-grid {
+		margin: 1.75rem 0;
+	}
+	/* Tiles draw their own hairlines, so a last row that is not full leaves plain ground; tiles in a row share
+	   their rows (drawing, label), so the labels stay level. */
+	.sc-pkg-grid ul {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--narrowest), (100% - (var(--columns) - 1) * 1px) / var(--columns))), 1fr));
+		gap: 1px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		border: 1px solid var(--c-rule-strong);
+		border-radius: var(--radius-md);
+		box-shadow: 0 1.5px 0 var(--c-rule-strong);
+		background-color: var(--c-sheet);
+		overflow: hidden;
+	}
+	.sc-pkg-grid li {
+		display: grid;
+		grid-row: span 2;
+		grid-template-rows: subgrid;
+		gap: 0;
+		margin: 0;
+		min-width: 0;
+		background-color: var(--c-sheet);
+		box-shadow: 0 0 0 1px var(--c-rule);
+	}
+	.sc-pkg-grid__svg {
+		display: grid;
+		place-items: center;
+		padding: 0.875rem;
+		background-color: var(--c-inset);
+	}
+	/* A tall, narrow drawing (a chart laid out downwards) is not left at full size beside wide ones that shrank. */
+	.sc-pkg-grid__svg :global(svg) {
+		max-height: 17rem;
+	}
+	.sc-pkg-grid__svg.dark {
+		background-color: #0c1018;
+	}
+	.sc-pkg-grid__label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+		margin: 0;
+		padding: 0.5rem 0.75rem 0.5625rem;
+		font-size: var(--text-xs);
+		line-height: 1.4;
+		color: var(--c-muted);
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-pkg-grid__label code {
+		font-family: var(--font-mono);
+		font-weight: 700;
+		color: var(--c-ink);
+		overflow-wrap: anywhere;
+	}
+	.sc-pkg-grid figcaption {
+		margin-top: 0.625rem;
+		font-size: var(--text-sm);
+		color: var(--c-muted);
+	}
+</style>

@@ -1,0 +1,262 @@
+---
+title: "Engine"
+description: "@sccharts-lab/engine: compile SCCharts with diagnostics a person can act on, run a chart tick by tick with KIELER's semantics, and generate C."
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import Drawn from '~components/packages/Drawn.astro'
+import IdExplorer from '~components/packages/IdExplorer.astro'
+import Install from '~components/packages/Install.astro'
+import Run from '~components/packages/Run.astro'
+import PackageFacts from '~components/packages/PackageFacts.astro'
+import Sample from '~components/packages/Sample.astro'
+import beeper from '~components/packages/samples/beeper.sctx?raw'
+import blinker from '~components/packages/samples/blinker.sctx?raw'
+import panel from '~components/packages/samples/panel.sctx?raw'
+import turnstile from '~components/packages/samples/quick-start/turnstile.sctx?raw'
+
+<PackageFacts name="engine" />
+
+The engine is an SCCharts compiler and simulator in TypeScript. It reads SCTX, the textual SCCharts
+language, accepts and rejects charts exactly as KIELER's compiler does, runs a chart tick by tick with
+KIELER's semantics, and generates C in the shape of KIELER's own. It has no dependencies and never touches
+the DOM, so it runs in Node, in a browser and in a Web Worker.
+
+<Install packages="@sccharts-lab/engine" />
+
+The examples on this page use the turnstile of the [quick start](/packages/quick-start/):
+
+<Sample file="quick-start/turnstile.sctx" />
+
+<Drawn code={turnstile} label="the chart on this page" />
+
+## Compile a chart
+
+`compile(source, options?)` is where everything starts. It parses the text, resolves its names, checks
+it with KIELER's rules and prepares it for simulation.
+
+<Sample file="quick-start/compile.mjs" output />
+
+What you get back, a [`CompileResult`](/packages/engine/api/#compileresult):
+
+| Property | What it holds |
+| --- | --- |
+| `ok` | `true` exactly when KIELER's compiler accepts the chart. |
+| `diagnostics` | Errors, warnings and notes, each with its place in the source. |
+| `interface` | The chart's inputs, outputs and top-level variables, with types and initial values. |
+| `program` | The parsed file: every chart in it, as a tree of states, regions and transitions. |
+| `chart` | The chart that is simulated: the first in the file, or the one you name. |
+
+Three things are worth knowing:
+
+- **It never throws.** Empty text, half a chart, a file of nonsense: each gives a result with `ok: false`
+  and diagnostics that say why.
+- **A rejected chart still has a `program` and a `chart`** whenever the text could be parsed, so you can
+  draw the diagram of a chart that does not compile and mark what is wrong in it.
+- **The expensive part runs when you ask for it.** Parsing and checking happen at once. KIELER's
+  compilation of the chart (its transformations and scheduling analysis) runs the first time you read
+  `ok` or `diagnostics`, and only once. Code that only reads `program` and `chart`, to draw a diagram while
+  someone types, stays fast.
+
+## Read the diagnostics
+
+A [`Diagnostic`](/packages/engine/api/#diagnostic) is written for the person who has to fix the chart, and
+carries what a tool needs to point at the problem:
+
+<Sample file="engine/diagnostic.mjs" output />
+
+| Property | What it is for |
+| --- | --- |
+| `severity` | `'error'` (the chart is rejected), `'warning'` or `'info'`. |
+| `code` | A stable name for the kind of problem. Test against this, not against the message. |
+| `message`, `hint` | What is wrong, and what to do about it, in plain words. |
+| `span` | Where: `start` and `end` are offsets into the source, `line` and `col` count from 1. |
+| `kieler` | KIELER's own wording for the same problem, to search for or to show beside the message. |
+| `related` | Ids of the states and transitions involved, to mark them in a diagram. |
+| `suggestion` | The name the message proposes instead, for a quick fix. |
+
+Every property but `severity` and `message` is optional. The guide's [Compiler
+messages](/reference/errors/) explains KIELER's messages one by one.
+
+`related` is what lets a tool show the problem where it is. Here the two ids it names are marked in the
+chart's diagram, which the [diagram package](/packages/diagram/#a-chart-with-errors) draws for a chart
+with errors too:
+
+<Drawn code={turnstile.replace('go to Unlocked', 'go to Unlockd')} errors label="related, marked" caption="The state `Locked`, named in `related`, carries the error mark. The transition `related` also names has no state to point at, so the diagram has no arrow for it." />
+
+## Charts in several files
+
+A file that says `import "blinker"` needs the other file. Pass the files it may import by name, with the
+paths they have beside the chart:
+
+<Sample file="blinker.sctx" />
+
+<Sample file="panel.sctx" />
+
+<Sample file="engine/files.mjs" output />
+
+<Drawn code={panel} files={{ 'blinker.sctx': blinker }} steps={[{}, { button: true }]} layout={{ references: 'expanded' }} label="after the second tick" caption="`Panel` with its reference to `Blinker` drawn open, after the tick with `button`: the four active ids are the chart, `Run`, the `Blinker` inside it, and that `Blinker`'s state `On`." />
+
+The active states show how the referenced chart is named in a run: `Panel.Run/Blinker.On` is the state
+`On` of the `Blinker` inside the state `Run`. [Element ids](#element-ids) explains the scheme.
+
+When a file holds several charts, the engine simulates the first, as KIELER does. Name another with the
+`chart` option:
+
+<Sample file="two-charts.sctx" />
+
+<Sample file="engine/chart.mjs" output />
+
+## Run it tick by tick
+
+`createSimulation(result)` gives a [`Simulation`](/packages/engine/api/#simulation). Each `step(inputs)` runs
+one tick and returns what happened in it:
+
+<Sample file="engine/tick.mjs" output />
+
+The same run, with one more tick, as pictures: the chart after each `step()`, and every variable over
+time.
+
+<Run code={turnstile} steps={[{}, { coin: true }, { coin: false, push: true }, { push: false }]} />
+
+What matters most about a simulation:
+
+- **Inputs keep their values.** `step({ coin: true })` leaves `coin` true in every later tick until a
+  `step()` sets it to `false`. KIELER's simulation works the same way.
+- **`values` has everything.** Inputs, outputs and the chart's own variables, by name, after the tick.
+- **`active`, `entered`, `exited` and `taken` are ids**, the same ids the diagram package puts on what it
+  draws. That is how a simulation is shown in a diagram.
+- **`history` keeps every tick**, so a user interface can scroll back. `rewind(tick)` returns to an
+  earlier tick and drops the later ones, and `reset()` starts again.
+
+### Signals
+
+A signal is present or absent in each tick, and a valued signal also carries a value:
+
+<Sample file="beeper.sctx" />
+
+<Sample file="engine/signals.mjs" output />
+
+<Run code={beeper} steps={[{}, { press: true }, { press: false }, { press: true }]} layout={{}} caption="Four ticks of `Beeper`. In the timing diagram a signal's lane is filled in the ticks it is present; `beep` keeps its last value, 1, while it is absent in tick 3." />
+
+`present` says which signals were present, and `values` holds a valued signal's value under the signal's
+name. `pool` is the same tick under the names KIELER's simulation uses, where the signal `beep` is two
+entries: `beep` for its presence and `beep_val` for its value. Use `pool` when your data has to match
+KIELER's, for example in a [trace file](/packages/trace/).
+
+### Catch misspelt inputs
+
+By default `step()` accepts any input name, as KIELER's simulation does, so a typo runs without
+complaint and changes nothing. In tests, turn on `strict`:
+
+<Sample file="engine/strict.mjs" output />
+
+### Run-time errors
+
+Some charts compile and then fail while running: a division by zero, an array index out of range. The
+tick that fails carries the error, and the simulation stops there, as KIELER's does:
+
+<Sample file="divide.sctx" />
+
+<Sample file="engine/runtime-error.mjs" output />
+
+A chart that does not compile can be given to `createSimulation()` too: every `step()` then returns the
+first compile error as its `error`, so code that shows a tick's error needs no special case.
+
+## Explain a tick
+
+`describeTick()` turns a tick into sentences, the ones the guide's simulations show under each tick.
+`elementName()` gives a readable name for any id, and `tick.log` lists what the engine did in the tick,
+step by step: each trigger it checked and what it saw, each transition it took, each variable it wrote.
+
+<Sample file="engine/explain.mjs" output />
+
+With `{ markdown: true }` the sentences put names and values in code spans, ready for a Markdown
+renderer.
+
+## Generate C
+
+`generateC(result)` returns a header and a C file for the chart. They have the shape KIELER's compiler
+gives its C code: a struct for the chart's data, and `reset()`, `logic()` and `tick()`.
+
+<Sample file="engine/generate-c.mjs" output />
+
+The first members of the struct are your chart's variables, under their own names. The members that
+start with `_` are the generated state of the chart: leave them alone. To run the chart, call `reset()`
+once, then for each tick set the inputs, call `tick()` and read the outputs. The quick start has a
+[complete `main.c`](/packages/quick-start/#generate-c), and the guide's [C code and the tick
+function](/advanced/code-generation/) explains the generated code line by line.
+
+Options: `naming` puts the chart's name in front of (`'prefix'`) or behind (`'suffix'`) the function and
+struct names, so that the code of two charts links into one program, or sets each name; `fileName` names
+the two files; `comments: false` leaves out the comments that name the source states; and
+`takenTransitions` adds the counters KIELER's simulation uses. `c.variables` says where each of your
+variables lives in the struct.
+
+The generated code is checked the way the simulation is: for every recorded KIELER run and for thousands
+of random charts, it is built with `gcc` and must give the values KIELER gives, tick by tick.
+
+## Parse without compiling
+
+`parse(source)` only reads the syntax. It is the cheapest call, enough for an outline, a formatter or a
+syntax check, and it gives the same tree `compile()` puts in `program`:
+
+<Sample file="engine/parse.mjs" output />
+
+A `Program` has `charts`. A chart is a `State`, and a state has `regions`, each with `states`, and
+`transitions`, in the order of their priority. Every node has a `span`. The [API
+reference](/packages/engine/api/#the-model) lists the tree.
+
+`parseExpression()` reads one expression or effect on its own, with KIELER's grammar, and
+`formatExpressionParenthesised()` shows how KIELER grouped it:
+
+<Sample file="engine/expression.mjs" output />
+
+## Element ids
+
+Every state, region, transition and variable has an id: a string that is unique in the file and stays
+the same while the text around it is edited. Ticks report them, diagnostics name them, and the diagram
+package writes them on what it draws.
+
+Point at an id to see what it names, or at a part of the diagram to see its id:
+
+<IdExplorer code={turnstile} />
+
+| Element | Id | Example |
+| --- | --- | --- |
+| Chart | its name | `Turnstile` |
+| State | parent state, `.`, name | `Turnstile.Locked` |
+| Region | parent state, `:`, its name or its position | `Turnstile:0` |
+| Transition | source state, `->`, its priority | `Turnstile.Locked->1` |
+| Variable | the state that declares it, `$`, name | `Turnstile$coin` |
+| Local action | state, `!`, its kind and position | `Lamp.On!entry0` |
+| Inside a referenced chart | reference state, `/`, the id in that chart | `Panel.Run/Blinker.On` |
+
+## Other entry points
+
+Most code imports from `@sccharts-lab/engine`. Three smaller entry points exist for tools that want one
+part without the rest:
+
+| Import | What it has |
+| --- | --- |
+| `@sccharts-lab/engine/types` | The types of the tree and of a tick, without any code. |
+| `@sccharts-lab/engine/lexer` | `lex()` and `KEYWORDS`, for a syntax highlighter, without the compiler. |
+| `@sccharts-lab/engine/format` | KIELER's labels: how its diagrams print a transition, a declaration, an expression. |
+
+The lexer gives the tokens of a text with their offsets:
+
+<Sample file="engine/lexer.mjs" output />
+
+The formatter prints parts of the tree the way KIELER's diagrams label them:
+
+<Sample file="engine/format.mjs" output />
+
+<Aside type="caution" title="Do not import from /internal">
+`@sccharts-lab/engine/internal` exists for the other `@sccharts-lab` packages. It can change in any
+release, without notice.
+</Aside>
+
+## Next
+
+The [API reference](/packages/engine/api/) lists every function, option and type. To draw what you have
+compiled, go on to the [diagram package](/packages/diagram/).

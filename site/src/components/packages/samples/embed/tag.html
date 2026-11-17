@@ -1,0 +1,24 @@
+<script
+  src="https://cdn.jsdelivr.net/npm/@sccharts-lab/embed@0.1"
+  async
+></script>
+
+<!-- An example of the guide. -->
+<sccharts-lab-chart example="learn/first-chart/dimmer">
+</sccharts-lab-chart>
+
+<!-- Your own chart, written in the page. -->
+<sccharts-lab-chart view="full">
+<pre>
+scchart Toggle {
+  input bool press
+  output bool on = false
+
+  initial state Off
+    if press do on = true go to On
+
+  state On
+    if press do on = false go to Off
+}
+</pre>
+</sccharts-lab-chart>

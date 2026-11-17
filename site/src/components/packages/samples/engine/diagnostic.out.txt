@@ -1,0 +1,11 @@
+{
+  severity: 'error',
+  code: 'unknown-state',
+  message: 'There is no state `Unlockd` here (did you mean `Unlocked`?)',
+  hint: 'Did you mean `Unlocked`?',
+  span: { start: 160, end: 167, line: 7, col: 38, endLine: 7, endCol: 45 },
+  kieler: "Couldn't resolve reference to State 'Unlockd'.",
+  related: [ 'Turnstile.Locked', 'Turnstile.Locked->1' ],
+  suggestion: 'Unlocked'
+}
+["unknown-state","unreachable-state"]

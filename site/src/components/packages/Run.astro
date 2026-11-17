@@ -1,0 +1,116 @@
+---
+/**
+ * <Run code={...} steps={[{}, { coin: true }]} />: a run as a film strip, on a page of the packages' documentation:
+ * one drawing of the chart per tick, highlighted as after that tick, with the call that ran the tick above it and
+ * what happened in words below; under the strip the same run as a timing diagram. Every part is the packages' own
+ * result for the chart (see figures.ts): `step()`, `tickClasses()`, `describeTick()`.
+ *
+ * Props: code, files, steps (inputs tick by tick), label, caption, layout (default: declarations hidden, so the
+ * frames stay small), wave (default true: the timing diagram).
+ */
+import { describeTick } from '@sccharts-lab/engine'
+import { tickClasses } from '@sccharts-lab/diagram'
+import '@sccharts-lab/diagram/diagram.css'
+import { inlineMd } from '../frame/inline-md'
+import WidgetFrame from '../frame/WidgetFrame.astro'
+import { compiled, inputsText, layoutOf, run, svgOf, waveOf, type FigureLayout, type Inputs } from './figures'
+
+interface Props {
+	code: string
+	files?: Record<string, string>
+	steps: Inputs[]
+	label?: string
+	caption?: string
+	layout?: FigureLayout
+	wave?: boolean
+}
+const { code, files, steps, label = 'tick by tick', caption, layout = { declarations: false }, wave = true } = Astro.props
+
+const c = compiled(code, files, '<Run>')
+const history = run(c, steps, '<Run>')
+const drawing = await layoutOf(c, layout)
+const frames = history.map((tick, i) => ({
+	tick: tick.tick,
+	call: `step(${inputsText(steps[i])})`,
+	svg: svgOf(drawing, tickClasses(tick), `${c.chart.name} after tick ${tick.tick}`, true),
+	says: describeTick(tick, c.result.program!, history[i - 1], { markdown: true }).join(' '),
+}))
+---
+
+<WidgetFrame kind="sim" name={c.chart.name} label={label} caption={caption}>
+	<ol class="sc-pkg-film">
+		{
+			frames.map((f) => (
+				<li>
+					<p class="sc-pkg-film__head">
+						<span class="sc-pkg-film__tick">Tick {f.tick}</span>
+						<code>{f.call}</code>
+					</p>
+					<div class="sc-pkg-film__svg" set:html={f.svg} />
+					<p class="sc-pkg-film__says" set:html={inlineMd(f.says)} />
+				</li>
+			))
+		}
+	</ol>
+	{wave && <div slot="trace" class="sc-trace" tabindex="0" role="group" aria-label={`Timing diagram of ${c.chart.name}: scrolls sideways`} set:html={waveOf(c, history)} />}
+</WidgetFrame>
+
+<style>
+	/* Frames side by side share their rows (head, drawing, words), so a head that wraps keeps the drawings level. */
+	.sc-pkg-film {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+		gap: 0 1px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		background-color: var(--c-rule);
+	}
+	.sc-pkg-film li {
+		display: grid;
+		grid-row: span 3;
+		grid-template-rows: subgrid;
+		margin: 0;
+		min-width: 0;
+		background-color: var(--c-sheet);
+		border-bottom: 1px solid var(--c-rule);
+	}
+	.sc-pkg-film__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.125rem 0.625rem;
+		margin: 0;
+		padding: 0.5rem 0.875rem;
+		font-size: var(--text-xs);
+		border-bottom: 1px solid var(--c-rule);
+	}
+	.sc-pkg-film__tick {
+		font-weight: 700;
+		color: var(--c-ink);
+		white-space: nowrap;
+	}
+	.sc-pkg-film__head code {
+		font-family: var(--font-mono);
+		color: var(--c-muted);
+		overflow-wrap: anywhere;
+	}
+	.sc-pkg-film__svg {
+		display: grid;
+		place-items: center;
+		padding: 0.875rem;
+		background-color: var(--c-inset);
+	}
+	.sc-pkg-film__says {
+		margin: 0;
+		padding: 0.5rem 0.875rem 0.625rem;
+		font-size: var(--text-xs);
+		line-height: 1.45;
+		color: var(--c-text);
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-pkg-film__says :global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.95em;
+	}
+</style>

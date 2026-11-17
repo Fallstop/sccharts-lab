@@ -1,0 +1,248 @@
+---
+title: "Diagram"
+description: "@sccharts-lab/diagram: draw a chart as SVG in KIELER's notation, in Node or the browser, and highlight a running simulation in it."
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import DiagramGrid from '~components/packages/DiagramGrid.astro'
+import Drawn from '~components/packages/Drawn.astro'
+import Install from '~components/packages/Install.astro'
+import PackageFacts from '~components/packages/PackageFacts.astro'
+import Sample from '~components/packages/Sample.astro'
+import turnstile from '~components/packages/samples/quick-start/turnstile.sctx?raw'
+import panel from '~components/packages/samples/panel.sctx?raw'
+import blinker from '~components/packages/samples/blinker.sctx?raw'
+import lamp from '~components/packages/samples/lamp.sctx?raw'
+import oven from '~components/packages/samples/oven.sctx?raw'
+
+<PackageFacts name="diagram" />
+
+The diagram package draws a chart the way KIELER does: the same notation, the same layout algorithm
+(ELK, through [elkjs](https://github.com/kieler/elkjs)), the same labels and line breaks. The result is
+plain SVG markup in which every state, region and transition carries its id, so a simulation is shown by
+switching CSS classes, without drawing anything again. Every diagram on this site is drawn by it.
+
+<Install packages="@sccharts-lab/engine @sccharts-lab/diagram" />
+
+It draws what the [engine](/packages/engine/) parses, so you need both.
+
+## Draw a chart
+
+`chartToSvg(chart, options?)` takes a chart from `compile()` or `parse()` and resolves to SVG markup.
+
+On a web page, load the two stylesheets once and put the markup into an element:
+
+<Sample file="diagram/page.ts" region="draw" />
+
+<Drawn code={turnstile} label="the result" caption="The turnstile, drawn by `chartToSvg()`." />
+
+The markup has no colours or fonts of its own. They come from `diagram.css` and `fonts.css`, so one
+drawing follows your page's theme. A file that has to stand alone needs them inside it: pass the CSS
+as `stylesheet`, as this Node script does.
+
+<Sample file="quick-start/draw.mjs" />
+
+Pass `program` whenever you have it. It is the parsed file the chart came from, and gives the diagram
+what lies outside the chart itself: the other charts it refers to, and the file's pragmas.
+
+### A chart with errors
+
+`compile()` gives a `chart` whenever the text can be parsed, also when it does not compile. Draw it, and
+mark the elements its diagnostics name with the class `is-error`:
+
+<Sample file="diagram/errors.ts" />
+
+<Drawn code={turnstile.replace('go to Unlocked', 'go to Unlockd')} errors label="go to Unlockd" caption="The turnstile with a misspelt target, `go to Unlockd`. The error names the state `Locked` and its transition, and they are marked. The transition has no state to point at, so it is not drawn as an arrow." />
+
+## Lay out once, render often
+
+`chartToSvg()` is two steps, and you can take them apart. `layoutChart()` decides where everything goes.
+It runs ELK and takes most of the time. `renderSvg()` turns a layout into markup. It is fast and has no
+dependencies.
+
+<Sample file="diagram/two-steps.mjs" output />
+
+The layout is plain JSON. Compute it on a server or at build time, store it, and render it in the browser
+with only `@sccharts-lab/diagram/render`, which never loads ELK. Or render on the server too, as this
+site does: its pages ship finished SVG.
+
+## Highlight a simulation
+
+`tickClasses(tick)` turns a tick of the engine's simulation into CSS classes by element id, and
+`applyClasses(root, classes)` sets them on a drawn diagram:
+
+<Sample file="diagram/page.ts" region="highlight" />
+
+<Drawn code={turnstile} steps={[{}, { coin: true }]} label="after applyClasses()" caption="After the tick with `coin`: `Unlocked` is active and newly entered, `Locked` was left, and the transition between them fired." />
+
+<Sample file="diagram/highlight.mjs" output />
+
+| Class | Set on | Meaning |
+| --- | --- | --- |
+| `is-active` | states | The chart is in this state after the tick. |
+| `is-entered` | states | Entered in this tick. |
+| `is-exited` | states | Left in this tick. |
+| `is-taken` | transitions | Fired in this tick. |
+| `is-focus` | anything | Yours to set: the element under the cursor, or the one a text selection is in. |
+| `is-error` | anything | Yours to set: named by a diagnostic. |
+| `is-dimmed` | anything | Yours to set: less important just now. |
+
+Each class on its own, on the state `Off` and its transition to `On`:
+
+<DiagramGrid
+	code={lamp}
+	columns={3}
+	items={[
+		{ label: '(none)', note: 'the chart as drawn' },
+		{ label: 'is-active', classes: { 'Lamp.Off': ['is-active'] } },
+		{ label: 'is-entered', classes: { 'Lamp.Off': ['is-entered'] } },
+		{ label: 'is-exited', classes: { 'Lamp.Off': ['is-exited'] } },
+		{ label: 'is-taken', classes: { 'Lamp.Off->1': ['is-taken'] } },
+		{ label: 'is-focus', classes: { 'Lamp.Off': ['is-focus'], 'Lamp.Off->1': ['is-focus'] } },
+		{ label: 'is-error', classes: { 'Lamp.Off': ['is-error'], 'Lamp.Off->1': ['is-error'] } },
+		{ label: 'is-dimmed', classes: { 'Lamp.Off': ['is-dimmed'], 'Lamp.Off->1': ['is-dimmed'] } },
+		{ label: 'a tick', note: 'what `tickClasses()` gives', steps: [{}, { press: true }] },
+	]}
+/>
+
+`diagram.css` styles all seven. No highlight relies on colour alone, and none dashes a transition, because
+in KIELER's notation a dashed transition is an immediate one. Animations stop when the reader asks for
+reduced motion.
+
+`applyClasses()` removes the seven classes from every element before it adds the new ones, so calling it
+with each tick is all a simulation view needs. To render the highlight into the markup itself, on a
+server, pass the same map to `renderSvg()` as `classes`.
+
+## Link the diagram and the text
+
+A layout remembers where each element was written. `elementsAt()` goes from a place in the source to the
+elements drawn for it, the innermost first; `spanOf()` goes from an element back to its text. An editor
+uses the first to follow the cursor and the second to jump from a click.
+
+<Sample file="diagram/link.mjs" output />
+
+## Layout options
+
+`layoutChart()` and `chartToSvg()` take the options KIELER's diagram view offers. The annotations a chart
+carries (`@layout`, `@HVLayout`, `@VHLayout`, `@diagram`, `@hide`, `@collapse`) apply as they do in KIELER.
+
+`direction` sets how states flow. `'HV'`, KIELER's default, goes left to right at the top level and
+turns with each level of nesting; `'VH'` starts downwards. `'right'` and `'down'` keep one direction at
+every level. The same chart, an oven whose `Cooking` state has two states of its own, in all four:
+
+<DiagramGrid
+	code={oven}
+	columns={2}
+	items={[
+		{ label: "direction: 'HV'", note: 'the default', layout: { direction: 'HV', declarations: false } },
+		{ label: "direction: 'VH'", layout: { direction: 'VH', declarations: false } },
+		{ label: "direction: 'right'", layout: { direction: 'right', declarations: false } },
+		{ label: "direction: 'down'", layout: { direction: 'down', declarations: false } },
+	]}
+/>
+
+The switches for what is shown, each on the same chart:
+
+<DiagramGrid
+	code={oven}
+	columns={2}
+	items={[
+		{ label: 'no options', note: 'everything shown' },
+		{ label: 'declarations: false', layout: { declarations: false } },
+		{ label: 'actions: false', note: 'the `entry` action of `Cooking` is gone', layout: { actions: false } },
+		{ label: 'both', layout: { declarations: false, actions: false } },
+	]}
+/>
+
+`references` says how a state that is an instance of another chart is drawn: `'collapsed'` (the default)
+as a closed box, `'expanded'` with the referenced chart inside. When that chart is in an imported file,
+give the diagram the imported files' charts as `charts`. The compile result has them:
+
+<Sample file="diagram/references.mjs" output />
+
+<Drawn code={panel} files={{ 'blinker.sctx': blinker }} layout={{ references: 'expanded' }} label="references: 'expanded'" caption="`Run` is an instance of `Blinker`, drawn with `Blinker` inside. Its states have ids such as `Panel.Run/Blinker.On`, the ids a simulation reports." />
+
+`comments: false` leaves out comment boxes in the same way, and `userLabels: false` shows each transition's
+trigger and effects where the chart gives it a `label`. The [API
+reference](/packages/diagram/api/#layoutoptions) lists every option.
+
+## Fonts
+
+The layout has to know how wide each piece of text is before anything is drawn. It measures with a
+built-in table of the widths of two fonts, Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, so
+the result is the same in Node and in every browser. The page must then draw the text in those fonts, or
+it will not fit its boxes.
+
+- `@sccharts-lab/diagram/fonts.css` brings them: about 80 kB of WOFF2 files in the package, loaded only
+  when a diagram is on the page.
+- A page that already loads them from `@fontsource-variable/atkinson-hyperlegible-next` and
+  `@fontsource-variable/atkinson-hyperlegible-mono` needs only `diagram.css`: the family names are the same.
+- To use another font, pass your own `measure` function to `layoutChart()` and set the CSS properties
+  `--sc-font` and `--sc-font-mono`.
+
+## Colours and themes
+
+`diagram.css` takes every colour from a CSS custom property, with KIELER's light colours as the default.
+Without any theme a diagram looks as it does in KIELER. Set the properties on the diagram or on any
+ancestor to restyle it. Because the markup itself has no colours, one drawing serves a light and a dark
+page:
+
+<Sample file="diagram/theme.css" />
+
+The same markup twice, after the same tick, without that stylesheet and with it:
+
+<DiagramGrid
+	code={turnstile}
+	columns={2}
+	items={[
+		{ label: 'the default colours', note: 'KIELER’s', steps: [{}, { coin: true }], layout: { declarations: false } },
+		{ label: '.dark', note: 'with the stylesheet above', steps: [{}, { coin: true }], layout: { declarations: false }, dark: true },
+	]}
+/>
+
+The [API reference](/packages/diagram/api/#css-custom-properties) lists every property.
+
+## Keep ELK off the main thread
+
+ELK is the one heavy part: about 1.4 MB of JavaScript, 440 kB gzipped. `layoutChart()` loads it the first
+time it is called, so a bundler puts it in a chunk of its own and a page that never draws never fetches
+it. By default it runs on the thread that called it. That is right in Node and at build time, and fine
+for the occasional diagram.
+
+For a page that lays out while someone types, run ELK in a Web Worker with `workerElk()`. Add `elkjs` to
+your own dependencies, at the version this package uses, so that your bundler finds its worker script.
+With Vite:
+
+<Sample file="diagram/worker.ts" />
+
+Importing `layoutChart` from `@sccharts-lab/diagram/layout`, as here, keeps ELK's main-thread build out
+of the bundle altogether. With another bundler, copy `node_modules/elkjs/lib/elk-worker.min.js` to your
+static files and pass its address to `workerElk()`. The layout is the same either way.
+
+## The markup
+
+The SVG is made to be worked with. Every element of the chart is a group, or for a declaration a line of
+text, with a `data-id` holding its [id](/packages/engine/#element-ids) and classes saying what it is:
+
+<Sample file="diagram/markup.mjs" output />
+
+States have `sc-state` with `sc-root`, `sc-superstate` or `sc-simple`, and `sc-initial`, `sc-final` or
+`sc-connector` where they apply. Regions have `sc-region`. Transitions have `sc-transition` with
+`sc-immediate`, `sc-strong`, `sc-termination` or `sc-history`. Use `document.querySelector('[data-id="…"]')`
+to find one, and listen for clicks on the diagram to learn which was hit.
+
+## Entry points
+
+| Import | What it has |
+| --- | --- |
+| `@sccharts-lab/diagram` | Everything. |
+| `@sccharts-lab/diagram/layout` | `layoutChart()` without the built-in ELK: you pass `elk`. |
+| `@sccharts-lab/diagram/render` | `renderSvg()` alone: no layout, no ELK. |
+| `@sccharts-lab/diagram/highlight` | The highlight helpers alone, for a page with ready-made SVG. |
+| `@sccharts-lab/diagram/types` | The types of a layout. |
+| `@sccharts-lab/diagram/diagram.css`, `@sccharts-lab/diagram/fonts.css` | The stylesheet and the fonts. |
+
+## Next
+
+The [API reference](/packages/diagram/api/) lists every option. To save what a simulation did, go on to
+the [trace package](/packages/trace/).

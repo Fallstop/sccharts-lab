@@ -254,6 +254,19 @@ site-search dialog {
 	background-color: var(--c-sheet);
 }
 
+/* The way back from the packages' documentation (/packages/) to the guide, above that section's own sidebar. */
+.sidebar-content a.sc-sidebar-back {
+	font-weight: 400;
+	color: var(--c-muted);
+}
+.sidebar-content a.sc-sidebar-back::before {
+	content: '\2190';
+	margin-inline-end: 0.5rem;
+}
+.sidebar-content a.sc-sidebar-back:hover {
+	color: var(--c-ink);
+}
+
 /* The mobile menu footer (theme select). */
 .mobile-preferences {
 	border-top-color: var(--c-rule) !important;

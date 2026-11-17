@@ -1,0 +1,89 @@
+---
+/**
+ * <PackageList />: the four packages on the overview, each with what it is for and the way to its guide and its
+ * API reference. Rows on hairlines, as the landing page's ways in.
+ */
+import { PACKAGES } from './packages'
+---
+
+<div class="not-content">
+<ul class="sc-pkg-list">
+	{
+		PACKAGES.map((p) => (
+			<li>
+				<h3 class="sc-pkg-list__name">
+					<a href={p.docs} translate="no">
+						{p.name}
+					</a>
+				</h3>
+				<p class="sc-pkg-list__text">{p.summary}</p>
+				<p class="sc-pkg-list__links">
+					<a href={p.docs}>Guide</a>
+					<a href={p.api}>API reference</a>
+					<a href={p.npm}>npm</a>
+				</p>
+			</li>
+		))
+	}
+</ul>
+</div>
+
+<style>
+	.sc-pkg-list {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0 2.5rem;
+		margin: 1.75rem 0;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid var(--c-rule);
+	}
+	@media (min-width: 50rem) {
+		.sc-pkg-list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	.sc-pkg-list li {
+		margin: 0;
+		padding: 1rem 0 1.125rem;
+		border-bottom: 1px solid var(--c-rule);
+	}
+	.sc-pkg-list__name {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: var(--text-md);
+		font-weight: 700;
+		line-height: 1.4;
+	}
+	.sc-pkg-list__name a {
+		color: var(--c-ink);
+		text-decoration: none;
+	}
+	.sc-pkg-list__name a:hover {
+		color: var(--c-accent);
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+		text-underline-offset: 0.25em;
+	}
+	.sc-pkg-list__text {
+		margin: 0.25rem 0 0.5rem;
+		font-size: var(--text-sm);
+		line-height: 1.5;
+		color: var(--c-text);
+	}
+	.sc-pkg-list__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 1.125rem;
+		margin: 0;
+		font-size: var(--text-sm);
+	}
+	.sc-pkg-list__links a {
+		color: var(--c-accent);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.2em;
+	}
+	.sc-pkg-list__links a:hover {
+		color: var(--c-accent-strong);
+	}
+</style>

@@ -6,7 +6,8 @@ component or write a chapter.
 ## Name and titles
 
 - **Site title (header, `<title>` suffix):** `SCCharts Lab`. The header lockup adds the subtitle *guide
-  and playground* from 34em up (`src/components/overrides/SiteTitle.astro`).
+  and playground* from 34em up (`src/components/overrides/SiteTitle.astro`); on the packages' documentation
+  (`/packages/`) the subtitle is *npm packages*.
 - **The site's full name:** *SCCharts Lab: an interactive guide to SCCharts*. It is the landing page's
   `<title>` and `og:title` (`src/content/docs/index.mdx`, `head` frontmatter), and the name to use when
   linking to the site from elsewhere.
@@ -537,6 +538,9 @@ the full column. Don't put prose inside widgets.
 | `src/components/frame/` | the widget frame and its parts (see above) |
 | `src/components/landing/` | `HeroChart` (the compact SimPanel on `landing/toggle`), `LearnPath`, `EntryPoints` (*Ways in*: *Start learning* across the full width, then *Short on time?* (an immediate transition, dashed, as its glyph), Playground, Cheat sheet, SCCharts Lab two by two, then *Stuck?* across the full width (a state with the error mark as its glyph) with its two links, *Look up a compiler message* and *It compiles but misbehaves*, in the same two columns), `Credits` |
 | `src/components/guide.ts` and `*.astro` | the MDX components |
+| `src/components/packages/` | the packages' documentation (`/packages/`): its figures (`Drawn`, `Run`, `DiagramGrid`, `IdExplorer`, `Outputs`, `TraceFormats`, `CompareFigure`, `LiveTurnstile`; `figures.ts` is what they share), `Sample` and `samples/` (its code, real files the tests run), `Install`, `PackageFacts`, `PackageList` |
+| `src/components/overrides/packages-nav.ts` | the packages section's own sidebar and previous / next links, and its smaller code size (13 px: a 74-character line fits the column) |
+| `src/styles/diagram-fonts.css` | what `@sccharts-lab/diagram/fonts.css` is inside the site (nothing: the site has the fonts), so the quick start's browser sample runs on its page |
 | `src/pages/playground.astro` | `/playground` |
 | `src/pages/embed.astro`, `src/pages/embed.js.ts` | `/embed/` (a chart in an iframe) and `/embed.js` (`<sccharts-lab-chart>`) |
 | `src/content/docs/design/specimen.mdx`, `widgets-test.mdx` | `/design/specimen/` (every element in the guide's styles) and `/design/widgets-test/` (every widget and its edge cases): drafts, so only the dev server has them (not in production builds, the sitemap or the search index) |

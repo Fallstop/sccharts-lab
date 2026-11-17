@@ -1,0 +1,304 @@
+---
+title: "Diagram API"
+description: "Every function, option and type of @sccharts-lab/diagram: layout, rendering, highlighting, the layout's data, and the stylesheet's custom properties."
+---
+
+import PackageFacts from '~components/packages/PackageFacts.astro'
+
+<PackageFacts name="diagram" api />
+
+Everything here is imported from `@sccharts-lab/diagram` unless a section names another entry point. The
+[guide](/packages/diagram/) shows the calls at work. The signatures and tables on this page are checked
+against the package's source.
+
+## Drawing
+
+### `chartToSvg()`
+
+```ts
+function chartToSvg(chart: State, options?: LayoutOptions & RenderOptions): Promise<string>
+```
+
+`layoutChart()`, then `renderSvg()`: a chart's diagram as SVG markup. `chart` is a root `State` from the
+engine's `compile()` or `parse()`. The options are those of both steps.
+
+### `layoutChart()`
+
+```ts
+function layoutChart(chart: State, options?: LayoutOptions): Promise<DiagramLayout>
+```
+
+Lays a chart out in KIELER's notation. Without `options.elk` it loads elkjs's bundled build on first use
+and runs it on the calling thread. The one exported by `@sccharts-lab/diagram/layout` is the same
+function without that default: `elk` is required, and ELK's bundled build stays out of your bundle.
+
+### `LayoutOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `elk?` | `ElkLike` | The ELK instance to lay out with: `workerElk()`, or elkjs's own `ELK`. |
+| `measure?` | `TextMeasurer` | How wide a text is. Default: the built-in width table of the diagram's fonts. |
+| `program?` | `Program` | The parsed file the chart belongs to: its other charts, declarations and pragmas. |
+| `charts?` | `State[]` | Charts of imported files, for references to them. |
+| `format?` | `FormatContext` | The engine's formatter context. Default: built from `program`. |
+| `userLabels?` | `boolean` | Show a transition's `label "..."` in place of its trigger and effects. Default `true`, as KIELER. |
+| `comments?` | `boolean` | Draw `/** ... */` comments as comment boxes. Default `true`. |
+| `declarations?` | `boolean` | Show declarations. Default `true`. |
+| `actions?` | `boolean` | Show entry, during, exit and suspend actions. Default `true`. |
+| `direction?` | `LayoutDirection` | Which way states flow. Default `'HV'`. |
+| `labelWidth?` | `number` | Where transition labels wrap, in diagram units. Default 200, as KIELER; 0 never wraps. |
+| `collapsed?` | `Iterable<string>` | Ids of regions to draw collapsed, besides those annotated `@collapse`. |
+| `references?` | `'collapsed' \| 'expanded' \| Iterable<string>` | Reference states: closed boxes (the default), the referenced chart drawn inside, or the ids of those to expand. |
+| `dataflowCircuit?` | `boolean` | Draw dataflow regions as a circuit (the default) or as a list of equations. |
+
+### `LayoutDirection`
+
+```ts
+type LayoutDirection = 'HV' | 'VH' | 'down' | 'right'
+```
+
+`'HV'`: left to right at the top level, alternating with depth, KIELER's default. `'VH'`: the same,
+starting downwards. `'down'` and `'right'`: one direction at every depth.
+
+### `renderSvg()`
+
+```ts
+function renderSvg(layout: DiagramLayout, options?: RenderOptions): string
+```
+
+Draws a layout: an `<svg>` element as a string. A pure function of its arguments, with no dependencies.
+Also at `@sccharts-lab/diagram/render`, alone.
+
+### `RenderOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `fit?` | `'natural' \| 'width' \| 'none'` | How the SVG sizes itself. `'natural'` (the default): as wide as its container, at most its natural width. `'width'`: always the container's width. `'none'`: its natural size, fixed. |
+| `minScale?` | `number` | With `'natural'` or `'width'`: never smaller than this fraction of the natural size, so a wide chart scrolls in its frame and stays readable. |
+| `scale?` | `number` | The natural size, relative to diagram units. Default 1.25. |
+| `idPrefix?` | `string` | Prefix of the ids inside the SVG. Must differ between the diagrams on one page. Default: from the chart's name. |
+| `title?` | `string` | The accessible name. Default: `SCChart <name>`. |
+| `className?` | `string` | More classes on the `<svg>`. |
+| `classes?` | `Record<string, string[]>` | Highlight classes by element id, drawn into the markup. |
+| `regionCorner?` | `boolean` | Draw KIELER's collapse corner on regions. Default `true`. |
+| `shadows?` | `boolean` | Draw the states' shadows. Default `true`. |
+| `stylesheet?` | `string` | CSS to put inside the SVG, for a file that stands alone. |
+
+### `workerElk()`
+
+```ts
+function workerElk(workerUrl: string | { readonly href: string }): ElkLike
+```
+
+An ELK that lays out in a Web Worker. `workerUrl` is the address of elkjs's `elk-worker.min.js`, as a
+string or a `URL`. Pass the result as `elk`. Browsers only. Also at `@sccharts-lab/diagram/layout`.
+
+### `ElkLike`
+
+What `layoutChart()` needs of ELK: elkjs's `ELK` instance fits.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `layout()` | `(graph: ElkNode) => Promise<ElkNode>` | Lays out an ELK graph. |
+
+## Highlighting
+
+Also at `@sccharts-lab/diagram/highlight`, alone, for a page whose SVG was rendered elsewhere.
+
+### `tickClasses()`
+
+```ts
+function tickClasses(tick: Pick<TickResult, 'active' | 'entered' | 'exited' | 'taken'>): ClassMap
+```
+
+The highlight classes for a tick of the engine's simulation: `is-active`, `is-entered` and `is-exited` on
+states, `is-taken` on transitions.
+
+### `mergeClasses()`
+
+```ts
+function mergeClasses(...maps: (ClassMap | undefined)[]): ClassMap
+```
+
+Several class maps as one. An element named in more than one gets the classes of each.
+
+### `applyClasses()`
+
+```ts
+function applyClasses(root: ParentNode, classes: ClassMap, managed?: readonly string[]): void
+```
+
+Sets highlight classes on a drawn diagram. `root` is the `<svg>` or any element around it. Every element
+with a `data-id` first loses the `managed` classes (default: `HIGHLIGHT_CLASSES`), then gains the ones
+listed for its id.
+
+### `ClassMap`
+
+```ts
+type ClassMap = Record<string, string[]>
+```
+
+Class names by element id.
+
+### `HIGHLIGHT_CLASSES`
+
+`['is-active', 'is-entered', 'is-exited', 'is-taken', 'is-focus', 'is-error', 'is-dimmed']`: the classes
+`diagram.css` styles and `applyClasses()` manages. `HighlightClass` is the type of one of them.
+
+### `elementsAt()`
+
+```ts
+function elementsAt(layout: DiagramLayout, offset: number): string[]
+```
+
+The ids of the elements whose source text contains `offset`, the innermost first. `offset` is a UTF-16
+index into the source, as an editor's cursor.
+
+### `spanOf()`
+
+```ts
+function spanOf(layout: DiagramLayout, id: string): Span | undefined
+```
+
+Where a state, region or transition is written in the source.
+
+## Measuring text
+
+The layout needs each text's width before it is drawn.
+
+### `TextMeasurer`
+
+```ts
+type TextMeasurer = (text: string, style: TextStyle) => number
+```
+
+The width of `text` in diagram units. Pass your own as `LayoutOptions.measure` to draw in another font.
+
+### `TextStyle`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `size` | `number` | The font size in diagram units. |
+| `bold?` | `boolean` | Bold text. |
+| `mono?` | `boolean` | The monospaced font. |
+
+### `measureWithTable`
+
+```ts
+const measureWithTable: TextMeasurer
+```
+
+The default measurer: the built-in width table of Atkinson Hyperlegible Next and Mono, without kerning.
+
+### `lineMetrics()`
+
+```ts
+function lineMetrics(style: TextStyle): LineMetrics
+```
+
+The line height and baseline (`{ lineHeight, baseline }`) the layout uses for a text style.
+
+`SANS_FAMILY` and `MONO_FAMILY` are the names of the two font families the width table was made for.
+
+## The layout's data
+
+A `DiagramLayout` is plain JSON: positions and sizes in diagram units, with the origin at the top left.
+Also at `@sccharts-lab/diagram/types`.
+
+### `DiagramLayout`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `version` | `1` | Changes when the shape of this data changes. |
+| `chart` | `string` | The chart's id and name. |
+| `width` | `number` | The diagram's width. |
+| `height` | `number` | The diagram's height. |
+| `root` | `StateLayout` | The chart itself, which holds everything else. |
+| `direction` | `LayoutDirection` | The direction it was laid out with. |
+| `shadows?` | `false` | The chart says `@diagram[shadows] false`. |
+
+### `StateLayout`
+
+A state's box (`x`, `y`, `width`, `height`, from `Box`) and what is in it.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | The state's id. |
+| `name` | `string` | Its name. |
+| `shape` | `StateShape` | `'root'`, `'superstate'`, `'simple'` or `'connector'`. |
+| `initial` | `boolean` | An initial state, drawn with a thick border. |
+| `final` | `boolean` | A final state, drawn with a double border. |
+| `reference` | `boolean` | An instance of another chart. |
+| `lines` | `TextLine[]` | Its name, or its title, declarations and actions. |
+| `regions` | `RegionLayout[]` | Its regions. |
+| `span?` | `Span` | Where it is written. |
+
+### `RegionLayout`
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | The region's id. |
+| `name?` | `string` | Its name. |
+| `dataflow` | `boolean` | A dataflow region. |
+| `collapsed` | `boolean` | Drawn closed, with only its label. |
+| `direction` | `'RIGHT' \| 'DOWN' \| 'LEFT' \| 'UP'` | The way its states flow. |
+| `states` | `StateLayout[]` | Its states. |
+| `transitions` | `TransitionLayout[]` | The transitions between them. |
+| `span?` | `Span` | Where it is written. |
+
+### `TransitionLayout`
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | The transition's id. |
+| `source` | `string` | The id of its source state. |
+| `target` | `string` | The id of its target state. |
+| `priority` | `number` | Its priority. |
+| `points` | `Point[]` | Its route: the start, Bézier control points, the end. |
+| `immediate` | `boolean` | Drawn dashed. |
+| `preemption` | `'weak' \| 'strong' \| 'termination'` | Its kind, which decides its decorators. |
+| `label?` | `TransitionLabelLayout` | Its label's box and lines. |
+| `span?` | `Span` | Where it is written. |
+
+### The other types
+
+| Type | What it is |
+| --- | --- |
+| `Box` | `x`, `y`, `width`, `height`. |
+| `Point` | `x`, `y`. |
+| `StateShape` | `'root' \| 'superstate' \| 'simple' \| 'connector'`. |
+| `TextLine` | A line of text: its place, font size, and its runs. `role` (a `TextRole`) says what it is: a title, a declaration, an action, a label. |
+| `TextRun` | A run of text on a line in one format: a keyword, or ordinary text. |
+| `TransitionLabelLayout` | A transition label's box, lines and the edge's direction at the label (a `LabelDirection`). |
+| `CommentLayout` | A comment box and the line to what it documents. |
+| `DataflowLayout`, `DataflowNodeLayout` | A dataflow region drawn as a circuit: its nodes and wires. |
+
+`REFERENCE_SEPARATOR` (from `@sccharts-lab/diagram/layout`) is `'/'`, which joins a reference state's id
+and an id inside the referenced chart: `Panel.Run/Blinker.On`.
+
+## Stylesheets
+
+| Import | What it is |
+| --- | --- |
+| `@sccharts-lab/diagram/diagram.css` | The diagram's styles. Every diagram needs it, on the page or inside the SVG. |
+| `@sccharts-lab/diagram/fonts.css` | The two font families the layout measures with, as `@font-face` rules for the WOFF2 files in the package. |
+
+### CSS custom properties
+
+`diagram.css` reads these, on the diagram or any ancestor. Each has KIELER's light colour as its default.
+
+| Property | Colours |
+| --- | --- |
+| `--sc-root-fill`, `--sc-root-stroke` | The chart's own box. |
+| `--sc-state-fill`, `--sc-state-fill-end` | A state's fill, a gradient from top to bottom. |
+| `--sc-state-stroke`, `--sc-state-outline`, `--sc-state-text` | A state's border, its outer outline, and its name. |
+| `--sc-superstate-fill`, `--sc-superstate-fill-end` | A superstate's fill. |
+| `--sc-region-fill`, `--sc-region-stroke`, `--sc-region-label` | A region's ground, frame and label. |
+| `--sc-keyword`, `--sc-decl-text`, `--sc-action-text` | Keywords, declarations, actions. |
+| `--sc-edge`, `--sc-edge-label`, `--sc-edge-label-bg` | Transitions, their labels, and the ground behind a label. |
+| `--sc-strong-abort`, `--sc-termination`, `--sc-history` | The decorators of a strong abort, a termination and a history transition. |
+| `--sc-comment-fill`, `--sc-comment-stroke`, `--sc-comment-text` | Comment boxes. |
+| `--sc-active-stroke`, `--sc-active-fill`, `--sc-active-glow` | An active state (`is-active`). |
+| `--sc-entered`, `--sc-taken` | A state just entered and a transition that fired. |
+| `--sc-error` | What a diagnostic names (`is-error`). |
+| `--sc-font`, `--sc-font-mono` | The two font stacks. |

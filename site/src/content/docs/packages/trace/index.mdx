@@ -1,0 +1,158 @@
+---
+title: "Trace"
+description: "@sccharts-lab/trace: save a simulation run as a KTrace, CSV, JSON or XML file, replay a file into a chart and check its outputs, and compare runs."
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import CompareFigure from '~components/packages/CompareFigure.astro'
+import Install from '~components/packages/Install.astro'
+import PackageFacts from '~components/packages/PackageFacts.astro'
+import Run from '~components/packages/Run.astro'
+import Sample from '~components/packages/Sample.astro'
+import TraceFormats from '~components/packages/TraceFormats.astro'
+import beeper from '~components/packages/samples/beeper.sctx?raw'
+import early from '~components/packages/samples/early-turnstile.sctx?raw'
+import turnstile from '~components/packages/samples/quick-start/turnstile.sctx?raw'
+
+<PackageFacts name="trace" />
+
+A **trace** is a run written down: every variable's value after every tick. This package turns a run of
+the [engine](/packages/engine/) into a trace, writes and reads traces in four file formats, replays a file
+into a chart while checking its outputs, and compares runs. The files are the ones the SCCharts Lab
+extension for VS Code saves, and its KTrace files are the ones KIELER's own tools load.
+
+<Install packages="@sccharts-lab/engine @sccharts-lab/trace" />
+
+Three things people do with it:
+
+- **Regression tests.** Save a run you are happy with. Replay it after every change to the chart.
+- **Marking and checking.** Run a chart on a prepared input sequence and compare what it does with a
+  reference.
+- **Moving runs between tools.** A run made in the browser opens in the VS Code extension, and one made
+  there replays here.
+
+## Save a run
+
+`traceFromRun(result, simulation)` records the run so far, and `writeTrace(trace, format)` gives the text
+of a file:
+
+<Sample file="beeper.sctx" />
+
+<Sample file="trace/save.mjs" output />
+
+The trace holds the chart's variables under the names KIELER's simulation uses. That is why the valued
+signal `beep` is three columns: `beep` for its presence, `beep_val` for its value, and `beep_curval`,
+which KIELER keeps beside them.
+
+## The four formats
+
+The same four ticks in each format. All four hold the same run, and `readTrace()` reads any of them back.
+
+<TraceFormats code={beeper} steps={[{ press: false }, { press: true }, { press: true }, { press: false }]} model="beeper.sctx" />
+
+| Format | Good for |
+| --- | --- |
+| **KTrace** (`.ktrace`) | KIELER's own format, loaded by its tools. One tick per line: inputs, `=>`, outputs, each only when it changed. It has no place for local variables. |
+| **CSV** (`.csv`) | Spreadsheets, and sequences written by hand: one row per tick, one column per variable. An empty cell keeps the value of the row above. |
+| **JSON** (`.json`) | Programs. It keeps each variable's role and type. |
+| **XML** (`.xml`) | Tools that want XML. The same content as JSON. |
+
+`readTrace(text, 'run.csv')` takes a format or a file name, and picks the format from the name's
+extension. A file it cannot read throws a `TraceFileError` that says the line and the reason.
+
+## Replay a file
+
+`replayTrace(result, trace)` runs a fresh simulation of a chart with the file's inputs, tick by tick, and
+compares every output the file holds with what the chart gives:
+
+<Sample file="trace/replay.mjs" region="replay" output />
+
+The second chart, `EarlyTurnstile`, counts a person when the coin drops and not when they push through.
+The two runs side by side, on the file's inputs:
+
+<CompareFigure a={{ code: turnstile }} b={{ code: early }} steps={[{}, { coin: true }, { coin: false, push: true }, {}]} caption="The file was saved from `Turnstile`. Replayed into `EarlyTurnstile`, `passed` is already 1 in tick 2, where the file has 0: the tick the replay reports, marked here." />
+
+What a replay does with the file's columns:
+
+- An **input** of the file that the chart also has drives the chart. Its value is converted to the
+  chart's type: `0` and `1` are fine for a `bool`.
+- An **output** of the file that the chart also has is checked after every tick.
+- A column the chart does not have is ignored, and an input the file does not set keeps its value.
+  `outcome.state` lists them, as `ignored` and `unset`, beside the `checked` outputs.
+
+A CSV file does not say which columns are inputs. The chart decides: the columns that are its inputs
+drive it, and those that are its outputs are checked.
+
+### Replay step by step
+
+`replayTrace()` runs the whole file. A user interface that steps through one wants `SimulationReplay`,
+which runs a tick of the file at a time on a simulation you hold:
+
+<Sample file="trace/step-replay.mjs" output />
+
+`replay.run()` goes on to the end of the file, or until a tick you choose:
+`replay.run((step) => step.mismatches.length > 0)` stops at the first tick that differs.
+
+### Names that differ
+
+A file's columns may be spelled another way than the chart's variables: `NS_Green` in one, `nsGreen` in
+the other. `suggestRenames()` pairs the names that differ only in case and separators, and `renameTrace()`
+applies the pairs:
+
+<Sample file="trace/rename.mjs" output />
+
+## Run a chart on a sequence
+
+An **input sequence** is a trace with only inputs: a script for a run. Write one by hand as CSV, or take
+one from a recorded run with `inputsOnly(trace)`. `runOnSequence()` runs a chart on it for a number of
+ticks and gives the run as a trace:
+
+<Sample file="trace/sequence.mjs" output />
+
+<Run code={turnstile} steps={[{ coin: false, push: false }, { coin: true }, { coin: false, push: true }, { push: false }, { coin: true }, {}]} wave label="on the sequence" layout={{ declarations: false }} caption="The six ticks of that run. The sequence has five rows: in tick 6 the inputs keep the values of row 5, and the turnstile stays unlocked." />
+
+A sequence may give times in place of ticks: a `time` column in seconds. `runOnTimedSequence()` runs a
+chart on such a sequence up to a moment, ticking a chart with a clock when its timers are due.
+
+## Compare runs
+
+`compareRuns()` takes two or more runs and says, variable by variable, where they differ. The first run is
+the reference.
+
+<Sample file="trace/compare.mjs" output />
+
+A comparison knows more than "differs". For each variable it lists every change of value in each run and
+lines the changes up, so a chart that does the right things one tick late is told apart from one that does
+the wrong things: `sameSequence` says the values came in the same order, and `worstTickShift` by how many
+ticks at most. `comparisonMarkdown()` and `comparisonCsv()` write the reports the VS Code extension shows.
+
+To compare files and not runs, read them and give the traces to `compareTraces()`.
+
+## Without the engine
+
+A tool that only reads, converts or compares trace files does not need the engine. The subpaths load
+only their own code:
+
+<Sample file="trace/convert.mjs" output />
+
+| Import | What it has |
+| --- | --- |
+| `@sccharts-lab/trace` | Everything, with the functions that work on the engine's runs. |
+| `@sccharts-lab/trace/trace-file` | The four formats: `readTrace()`, `writeTrace()`, `inputsOnly()`. |
+| `@sccharts-lab/trace/trace-compare` | `compareTraces()`. |
+| `@sccharts-lab/trace/comparison-report` | `comparisonMarkdown()`, `comparisonCsv()`. |
+| `@sccharts-lab/trace/trace-replay` | `TraceReplay`, the matching and checking behind a replay. |
+| `@sccharts-lab/trace/trace-rename` | `suggestRenames()`, `renameTrace()`. |
+| `@sccharts-lab/trace/trace-timing` | Timed sequences. |
+
+<Aside type="note" title="A chart that writes its own input">
+A trace records each input as it is after the tick. A chart can assign to its own input, and then the
+value after the tick is not the value the tick read, so replaying the trace does not repeat the run.
+`traceFromRun(result, simulation, { inputs: 'read' })` records what each tick read, and that trace
+replays exactly.
+</Aside>
+
+## Next
+
+The [API reference](/packages/trace/api/) lists every function and type. To show a chart on a page
+without any of this code, see the [embed package](/packages/embed/).

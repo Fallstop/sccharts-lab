@@ -1,0 +1,161 @@
+---
+/**
+ * <IdExplorer code={...} />: a chart's diagram beside the ids of everything in it, on a page of the packages'
+ * documentation. Pointing at (or tabbing to) an id marks its element in the diagram, and pointing at an element
+ * marks its id: the ids are the `data-id`s the diagram package wrote, the same ones a tick reports.
+ *
+ * Props: code, files, layout, caption.
+ */
+import '@sccharts-lab/diagram/diagram.css'
+import WidgetFrame from '../frame/WidgetFrame.astro'
+import { compiled, layoutOf, svgOf, type FigureLayout } from './figures'
+
+interface Props {
+	code: string
+	files?: Record<string, string>
+	layout?: FigureLayout
+	caption?: string
+}
+const { code, files, layout, caption } = Astro.props
+
+const c = compiled(code, files, '<IdExplorer>')
+const svg = svgOf(await layoutOf(c, layout), undefined, `Diagram of ${c.chart.name}`, true)
+
+// What the markup holds: every element with a data-id, by what its classes say it is.
+const KINDS = [
+	{ cls: 'sc-state', title: 'States' },
+	{ cls: 'sc-region', title: 'Regions' },
+	{ cls: 'sc-transition', title: 'Transitions' },
+	{ cls: 'sc-declaration', title: 'Variables' },
+]
+const unescape = (text: string) => text.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&')
+const found = [...svg.matchAll(/<\w+ class="([^"]*)"[^>]*? data-id="([^"]*)"(?: data-ids="([^"]*)")?/g)].map((m) => ({
+	classes: m[1].split(' '),
+	ids: (m[3] ?? m[2]).split(' ').map(unescape),
+}))
+const groups = KINDS.map((k) => ({ title: k.title, ids: [...new Set(found.filter((f) => f.classes.includes(k.cls)).flatMap((f) => f.ids))] })).filter((g) => g.ids.length)
+---
+
+<WidgetFrame kind="chart" name={c.chart.name} label="element ids" caption={caption}>
+	<div class="sc-pkg-ids" data-pkg-ids>
+		<div class="sc-pkg-ids__svg" set:html={svg} />
+		<div class="sc-pkg-ids__list">
+			{
+				groups.map((g) => (
+					<div class="sc-pkg-ids__group">
+						<p>{g.title}</p>
+						<ul>
+							{g.ids.map((id) => (
+								<li>
+									<button type="button" data-ref={id}>
+										{id}
+									</button>
+								</li>
+							))}
+						</ul>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</WidgetFrame>
+
+<script>
+	// Marks an id's element in the diagram (is-focus) while the id is pointed at or focused, and the other way round.
+	function enhance(root: HTMLElement) {
+		if (root.dataset.enhanced) return
+		root.dataset.enhanced = 'true'
+		const idsOf = (el: Element) => (el.getAttribute('data-ids') ?? el.getAttribute('data-id') ?? '').split(' ')
+		const elements = [...root.querySelectorAll<SVGElement>('.sc-pkg-ids__svg [data-id]')]
+		const buttons = [...root.querySelectorAll<HTMLButtonElement>('button[data-ref]')]
+		const mark = (id: string | undefined) => {
+			for (const el of elements) el.classList.toggle('is-focus', id !== undefined && idsOf(el).includes(id))
+			for (const b of buttons) b.classList.toggle('is-on', b.dataset.ref === id)
+		}
+		for (const b of buttons) {
+			b.addEventListener('pointerenter', () => mark(b.dataset.ref))
+			b.addEventListener('focus', () => mark(b.dataset.ref))
+			b.addEventListener('pointerleave', () => mark(undefined))
+			b.addEventListener('blur', () => mark(undefined))
+		}
+		const svg = root.querySelector('.sc-pkg-ids__svg')
+		svg?.addEventListener('pointerover', (event) => {
+			// The innermost element with an id: a state inside the chart, not the chart around it.
+			const el = (event.target as Element).closest('[data-id]')
+			mark(el ? idsOf(el)[0] : undefined)
+		})
+		svg?.addEventListener('pointerleave', () => mark(undefined))
+	}
+	const run = () => document.querySelectorAll<HTMLElement>('[data-pkg-ids]').forEach(enhance)
+	run()
+	document.addEventListener('astro:page-load', run)
+</script>
+
+<style>
+	.sc-pkg-ids {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+	}
+	@container (min-width: 38rem) {
+		.sc-pkg-ids {
+			grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+		}
+		.sc-pkg-ids__list {
+			border-top: 0 !important;
+			border-inline-start: 1px solid var(--c-rule);
+		}
+	}
+	.sc-pkg-ids__svg {
+		display: grid;
+		place-items: center;
+		padding: 1rem;
+		background-color: var(--c-inset);
+	}
+	.sc-pkg-ids__list {
+		padding: 0.75rem 0.875rem 0.875rem;
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-pkg-ids__group + .sc-pkg-ids__group {
+		margin-top: 0.75rem;
+	}
+	.sc-pkg-ids__group p {
+		margin: 0 0 0.25rem;
+		font-size: var(--text-xs);
+		font-weight: 700;
+		color: var(--c-muted);
+	}
+	.sc-pkg-ids__group ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3125rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.sc-pkg-ids__group li {
+		margin: 0;
+	}
+	.sc-pkg-ids button {
+		padding: 0.1875rem 0.5rem;
+		font: inherit;
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		color: var(--c-ink);
+		background-color: var(--c-sheet);
+		border: 1px solid var(--c-control);
+		border-radius: var(--radius-sm);
+		cursor: default;
+		overflow-wrap: anywhere;
+		text-align: start;
+	}
+	.sc-pkg-ids button:hover,
+	.sc-pkg-ids button:focus-visible,
+	.sc-pkg-ids button.is-on {
+		border-color: var(--c-accent-bright);
+		background-color: var(--c-accent-soft);
+	}
+	.sc-pkg-ids button:focus-visible {
+		outline: 2px solid var(--c-accent-bright);
+		outline-offset: 1px;
+	}
+</style>

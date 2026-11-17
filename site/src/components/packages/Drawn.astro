@@ -1,0 +1,40 @@
+---
+/**
+ * <Drawn code={...} />: the diagram the packages' own calls draw for a chart, on a page of their documentation.
+ * At build time the chart is compiled with @sccharts-lab/engine and drawn with @sccharts-lab/diagram, as the code
+ * beside it on the page does, so the figure is that code's result.
+ *
+ * Props: code (SCTX), files (the files it imports, by name), label (after the chart's name in the head: what the
+ * figure is, "Turnstile.svg"), caption, steps (inputs tick by tick: the diagram is highlighted as after the last
+ * of them, with `tickClasses`), layout (`layoutChart`'s options that are plain data: `direction`, `references`,
+ * `declarations`, ...), classes (highlight classes by element id, added to the tick's), errors (the chart does not
+ * compile: draw it with the elements its errors name marked `is-error`, as samples/diagram/errors.ts does).
+ */
+import { mergeClasses, tickClasses } from '@sccharts-lab/diagram'
+import DiagramView from '../frame/DiagramView.astro'
+import { nextId } from '../frame/ids'
+import WidgetFrame from '../frame/WidgetFrame.astro'
+import { compiled, errorClasses, layoutOf, run, svgOf, type FigureLayout, type Inputs } from './figures'
+
+interface Props {
+	code: string
+	files?: Record<string, string>
+	label?: string
+	caption?: string
+	steps?: Inputs[]
+	layout?: FigureLayout
+	classes?: Record<string, string[]>
+	errors?: boolean
+}
+const { code, files, label = 'Diagram', caption, steps = [], layout = {}, classes, errors = false } = Astro.props
+
+const c = compiled(code, files, '<Drawn>', errors)
+const tick = errors ? undefined : run(c, steps, '<Drawn>').at(-1)
+const marks = mergeClasses(tick ? tickClasses(tick) : undefined, errors ? errorClasses(c.result) : undefined, classes)
+const svg = svgOf(await layoutOf(c, layout), marks, `Diagram of ${c.chart.name}`)
+const key = nextId('scp-')
+---
+
+<WidgetFrame kind="chart" name={c.chart.name} label={label} caption={caption}>
+	<DiagramView svg={svg} key={key} root={c.chart.id} />
+</WidgetFrame>

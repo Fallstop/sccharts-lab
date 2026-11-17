@@ -1,0 +1,10 @@
+scchart Blinker {
+  input bool button
+  output bool led = false
+
+  initial state Off
+    if button do led = true go to On
+
+  state On
+    if button do led = false go to Off
+}

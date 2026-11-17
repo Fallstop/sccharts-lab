@@ -1,0 +1,73 @@
+---
+/**
+ * <LiveTurnstile />: the quick start's browser example, running: the page of samples/quick-start/browser.html with
+ * the script samples/quick-start/browser.ts, the two files the page shows, unchanged. The diagram is drawn here at
+ * build time as the script will draw it (after its first tick); the script, and with it the engine and the layout
+ * library, loads when the reader first uses the example.
+ */
+import { tickClasses } from '@sccharts-lab/diagram'
+import '@sccharts-lab/diagram/diagram.css'
+import WidgetFrame from '../frame/WidgetFrame.astro'
+import source from './samples/quick-start/turnstile.sctx?raw'
+import { compiled, layoutOf, run, svgOf } from './figures'
+
+const c = compiled(source, undefined, '<LiveTurnstile>')
+const first = run(c, [{}], '<LiveTurnstile>')[0]
+const svg = svgOf(await layoutOf(c), tickClasses(first), `Diagram of ${c.chart.name}`, true)
+---
+
+<WidgetFrame kind="sim" name={c.chart.name} label="the page above, running" caption="Press **Coin**, then **Push**: each press is one tick. This is `main.ts` itself, loaded when you first press a button.">
+	<div class="sc-pkg-live" data-pkg-live>
+		<div id="diagram" set:html={svg} />
+		<div class="sc-pkg-live__buttons">
+			<button type="button" class="sc-btn sc-btn--sm" data-input="coin">Coin</button>
+			<button type="button" class="sc-btn sc-btn--sm" data-input="push">Push</button>
+		</div>
+	</div>
+</WidgetFrame>
+
+<script>
+	// The first press loads the sample (it draws the chart, runs tick 1 and listens to the buttons), then is
+	// pressed again for the sample to hear.
+	const root = document.querySelector<HTMLElement>('[data-pkg-live]')
+	let loaded: Promise<unknown> | undefined
+	root?.addEventListener(
+		'click',
+		(event) => {
+			const button = (event.target as Element).closest<HTMLButtonElement>('button[data-input]')
+			if (!button || loaded) return
+			event.stopPropagation()
+			root.setAttribute('aria-busy', 'true')
+			loaded = import('./samples/quick-start/browser.ts')
+			loaded.then(
+				() => {
+					root.removeAttribute('aria-busy')
+					button.click()
+				},
+				() => {
+					root.removeAttribute('aria-busy')
+					loaded = undefined
+				}
+			)
+		},
+		true
+	)
+</script>
+
+<style>
+	.sc-pkg-live #diagram {
+		display: grid;
+		place-items: center;
+		padding: 1rem;
+		background-color: var(--c-inset);
+	}
+	.sc-pkg-live__buttons {
+		display: flex;
+		gap: 0.5rem;
+		padding: 0.625rem 0.875rem;
+		border-top: 1px solid var(--c-rule);
+	}
+	.sc-pkg-live[aria-busy='true'] .sc-pkg-live__buttons {
+		opacity: 0.6;
+	}
+</style>

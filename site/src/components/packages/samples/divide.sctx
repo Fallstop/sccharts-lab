@@ -1,0 +1,7 @@
+scchart Divide {
+  input int by
+  output int out = 0
+
+  initial state Run
+    do out = 100 / by go to Run
+}

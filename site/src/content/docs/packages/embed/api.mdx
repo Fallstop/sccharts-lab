@@ -1,0 +1,331 @@
+---
+title: "Embed API"
+description: "Every export of @sccharts-lab/embed: the <sccharts-lab-chart> element, the embed's options and address, and the postMessage protocol's commands and events."
+---
+
+import PackageFacts from '~components/packages/PackageFacts.astro'
+
+<PackageFacts name="embed" api />
+
+Everything here is imported from `@sccharts-lab/embed`. The [guide](/packages/embed/) shows it at work,
+and [Embedding charts](/reference/embed/) is the manual for page authors. The signatures and tables on
+this page are checked against the package's source.
+
+## The element
+
+### `define()`
+
+```ts
+function define(base?: string): void
+```
+
+Registers `<sccharts-lab-chart>`, once. `base` is the site its embeds come from, for a copy of SCCharts
+Lab served elsewhere; the default is `https://sccharts.jmw.nz/`. `TAG` is the element's name,
+`'sccharts-lab-chart'`.
+
+### `SCChartsLabChart`
+
+The element's class, an `HTMLElement`. Its attributes are the embed's options (`view`, `height`, `tick`,
+`tour`, `controls`, `chart`), where the chart comes from (`example`, `src`, `run`), and `label`, `loading`
+and `base`.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `ready` | `Promise<ReadyInfo>` | Resolves once the chart is live. |
+| `compiled` | `CompiledInfo \| undefined` | The latest compile the embed reported. |
+| `tick` | `TickInfo \| undefined` | The latest tick it reported. |
+| `iframe` | `HTMLIFrameElement \| undefined` | The frame. |
+| `step()` | `(inputs?: Inputs) => Promise<TickInfo>` | Sets these inputs and runs one tick. |
+| `setInputs()` | `(inputs: Inputs) => Promise<TickInfo>` | Sets inputs for the next tick without running it. |
+| `reset()` | `() => Promise<TickInfo>` | Back to before the first tick. |
+| `rewind()` | `(tick: number) => Promise<TickInfo>` | Shows an earlier tick of those computed. |
+| `setSource()` | `(source: string) => Promise<CompiledInfo>` | Replaces the chart's text. |
+| `setFiles()` | `(files: Record<string, string>, active?: string) => Promise<CompiledInfo>` | Opens a project of several files. |
+| `selectChart()` | `(chart: string) => Promise<CompiledInfo>` | Shows another chart of the file. |
+| `getState()` | `() => Promise<{ compiled?: CompiledInfo; tick: TickInfo }>` | What the chart shows now. |
+
+A method's promise rejects when the embed refuses the command, with the embed's message.
+
+### `SCChartsLabChartEventMap`
+
+The element's events and their `detail`. They are `CustomEvent`s and do not bubble.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `ready` | `CustomEvent<ReadyInfo>` | The chart is live. |
+| `compiled` | `CustomEvent<CompiledInfo>` | A chart was compiled: a new source, new files, another chart. |
+| `tick` | `CustomEvent<TickInfo>` | The tick shown changed. |
+| `resize` | `CustomEvent<{ height: number }>` | The content's height, with `height="auto"`. |
+| `error` | `CustomEvent<{ message: string; command?: string }>` | A file could not be fetched, or a command was refused. |
+
+### What the events carry
+
+### `ReadyInfo`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `view` | `string` | The view shown. |
+| `compiled?` | `CompiledInfo` | The chart's compile. |
+| `tick` | `TickInfo` | The tick shown. |
+
+### `CompiledInfo`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `ok` | `boolean` | KIELER would accept the chart. |
+| `file` | `string` | The file compiled. |
+| `chart?` | `string` | The chart shown and simulated. |
+| `charts` | `string[]` | Every chart of the file. |
+| `diagnostics` | `DiagnosticInfo[]` | Its errors and warnings. |
+| `inputs` | `VariableInfo[]` | Its inputs. |
+| `outputs` | `VariableInfo[]` | Its outputs. |
+
+### `TickInfo`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `tick` | `number` | The tick shown: 0 before the first. |
+| `ticks` | `number` | How many ticks are computed. After `rewind()`, more than `tick`. |
+| `tour` | `boolean` | The example's guided tour, or a shared run, is in control. |
+| `values` | `Record<string, Value>` | Every variable after the tick, under KIELER's names. Empty at tick 0. |
+| `present` | `Record<string, boolean>` | Which signals were present. |
+| `active` | `string[]` | Ids of the states active at the end of the tick. |
+| `entered` | `string[]` | Ids of the states entered. |
+| `taken` | `string[]` | Ids of the transitions that fired, in order. |
+| `printed` | `string[]` | What the chart printed. |
+| `terminated` | `boolean` | The chart has terminated. |
+| `error?` | `string` | A run-time error stopped the simulation in this tick. |
+
+### `DiagnosticInfo`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `severity` | `'error' \| 'warning' \| 'info'` | An error means the chart is rejected. |
+| `message` | `string` | What is wrong. |
+| `code?` | `string` | A stable name for the kind of problem. |
+| `hint?` | `string` | What to do about it. |
+| `line?` | `number` | The line, from 1. |
+| `column?` | `number` | The column, from 1. |
+| `endLine?` | `number` | The line of the end. |
+| `endColumn?` | `number` | The column of the end. |
+
+### `VariableInfo`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The variable's name. |
+| `type` | `string` | `pure` for a signal without a value, `bool`, `int`, `float`, `string`. |
+| `signal` | `boolean` | It is a signal. |
+| `valued` | `boolean` | It is a signal with a value. |
+| `dims` | `number[]` | Array sizes, empty for a scalar. |
+
+### `Value`
+
+```ts
+type Value = boolean | number | string | null | Value[]
+```
+
+`Inputs` is `Record<string, Value>`: inputs by name.
+
+## Options and the address
+
+Also at `@sccharts-lab/embed/options`.
+
+### `embedUrl()`
+
+```ts
+function embedUrl(base: string, t: EmbedTarget, hash?: string): string
+```
+
+The address of an embed: `<base>embed/?<options>`. `hash` is a playground link's part after `#`
+(`code=...`), for a chart that is not a guide example.
+
+### `EmbedTarget`
+
+An embed's options, each optional, and the example to show. It extends `Partial<EmbedOptions>`.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `example?` | `string` | A guide example: `learn/first-chart/dimmer`. |
+
+### `EmbedOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `view` | `EmbedView` | What is shown. |
+| `height` | `EmbedHeight` | How tall the embed is. |
+| `tick?` | `number` | Start at this tick. |
+| `tour` | `boolean` | Start in the example's guided tour. |
+| `controls` | `boolean` | Show the simulation's controls and the diagram's tools. Off: the page drives the chart. |
+| `chart?` | `string` | The chart of the file to show, when not its first. |
+| `source?` | `'parent'` | The chart comes from the page, with `setSource` or `setFiles`. |
+
+### `EmbedView`
+
+```ts
+type EmbedView = 'diagram' | 'sim' | 'editor' | 'full'
+```
+
+The diagram alone; the diagram and the simulation (`DEFAULT_VIEW`); the editor and the diagram; all three.
+`VIEWS` lists the four, and `VIEW_PARTS` says which parts each shows.
+
+### `EmbedHeight`
+
+```ts
+type EmbedHeight = 'fill' | 'auto' | number
+```
+
+`'fill'`: the embed fills its frame. `'auto'`: it takes the height its content needs and reports it with
+`resize` events. A number: that many pixels, from `MIN_HEIGHT` to `MAX_HEIGHT`.
+
+### `embedQuery()`
+
+```ts
+function embedQuery(t: EmbedTarget): string
+```
+
+The query of an embed's address: only the options that differ from the `DEFAULTS`, in a fixed order.
+
+### `parseEmbedQuery()`
+
+```ts
+function parseEmbedQuery(search: string | URLSearchParams): EmbedOptions & { example?: string }
+```
+
+The options in an address's query. Anything unknown or malformed is left at its default.
+
+### `targetFromAttributes()`
+
+```ts
+function targetFromAttributes(get: (name: string) => string | null): EmbedTarget
+```
+
+The options of a `<sccharts-lab-chart>` from its attributes. `get` returns an attribute's value, or
+`null`. The height is `'auto'` unless given.
+
+### `estimateHeight()`
+
+```ts
+function estimateHeight(view: EmbedView, width?: number): number
+```
+
+A first guess at the height of an auto-sized embed, so the page moves little when the embed reports its
+own.
+
+### Parsing single options
+
+| Export | What it reads |
+| --- | --- |
+| `parseView()` | A view; anything else is the default view. |
+| `parseHeight()` | `auto`, `fill`, or pixels (`480`, `480px`). |
+| `parseTick()` | A tick, from 0 to `MAX_TICK`. |
+| `parseFlag()` | A flag: present and empty, or `1`, `true`, `yes`, `on`. |
+| `parseExample()` | A guide example's id. |
+| `parseChartName()` | A chart's name. |
+
+`DEFAULT_BASE` is `'https://sccharts.jmw.nz/'`, the site an embed comes from.
+
+## The protocol
+
+Also at `@sccharts-lab/embed/protocol`. `PROTOCOL` is `'sccharts-lab'` and `VERSION` is `1`: the `type` and
+`version` of every message's envelope.
+
+### `envelope()`
+
+```ts
+function envelope<T extends object>(body: T): T & { type: typeof PROTOCOL; version: typeof VERSION }
+```
+
+A command or an event, wrapped in the envelope.
+
+### `EmbedCommand`
+
+```ts
+type EmbedCommand =
+    | { command: 'setSource'; source: string }
+    | { command: 'setFiles'; files: Record<string, string>; active?: string; name?: string }
+    | { command: 'selectChart'; chart: string }
+    | { command: 'step'; inputs?: Inputs }
+    | { command: 'setInputs'; inputs: Inputs }
+    | { command: 'reset' }
+    | { command: 'rewind'; tick: number }
+    | { command: 'getState' }
+```
+
+What a page sends to an embed. `CommandName` is the name of one, `COMMANDS` lists the names, and a
+`CommandMessage` is a command in the envelope, with an optional `id` (a `CommandId`: a string or a
+number).
+
+### `EmbedEvent`
+
+```ts
+type EmbedEvent =
+    | ({ event: 'ready' } & ReadyInfo)
+    | ({ event: 'compiled' } & CompiledInfo)
+    | ({ event: 'tick' } & TickInfo)
+    | { event: 'resize'; height: number }
+    | { event: 'error'; message: string; command?: string }
+    | { event: 'reply'; id: CommandId; ok: boolean; error?: string; result?: unknown }
+```
+
+What an embed sends to its page. `EventName` is the name of one, and an `EventMessage` is an event in the
+envelope. A `reply` answers the command that carried its `id`.
+
+### `parseCommand()`
+
+```ts
+function parseCommand(data: unknown): Parsed
+```
+
+Reads a message sent to an embed, as the embed does.
+
+### `Parsed`
+
+```ts
+type Parsed =
+    | { kind: 'command'; message: CommandMessage }
+    | { kind: 'invalid'; error: string; id?: CommandId; command?: string }
+    | { kind: 'ignore' }
+```
+
+`command`: a command the embed can run, as a fresh copy holding only the fields it uses. `invalid`: in the
+envelope, but not a command it can run, with the reason. `ignore`: not for the embed at all.
+
+### `parseEvent()`
+
+```ts
+function parseEvent(data: unknown): EventMessage | undefined
+```
+
+Reads a message sent by an embed: an event in the envelope, else `undefined`.
+
+### Checks and limits
+
+| Export | What it is |
+| --- | --- |
+| `LIMITS` | The most a message may hold: the length of a source, the number of files and inputs, the size and depth of an array. |
+| `isValue()` | Whether something is a value a chart can take. |
+| `checkInputs()` | Why an object is not a set of inputs, or `undefined` when it is one. |
+| `checkPath()` | Why a string is not a project file's path, or `undefined` when it is one. |
+
+## For element authors
+
+Two helpers the element uses on its own content, for code that reads charts out of HTML the same way.
+
+### `inlineFiles()`
+
+```ts
+function inlineFiles(host: Element): { files: Record<string, string>; active: string } | undefined
+```
+
+The files written inside an element: its `<pre>`, `<textarea>` and `<script type="text/sctx">` children,
+each named by its `data-file`. `undefined` when there are none.
+
+### `dedent()`
+
+```ts
+function dedent(text: string): string
+```
+
+Source text written inside HTML, without its first and last blank lines and the indentation its lines
+share.

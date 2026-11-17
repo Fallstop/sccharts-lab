@@ -1,0 +1,11 @@
+scchart EarlyTurnstile {
+  input bool coin, push
+  output bool unlocked = false
+  output int passed = 0
+
+  initial state Locked
+    if coin do unlocked = true; passed += 1 go to Unlocked
+
+  state Unlocked
+    if push do unlocked = false go to Locked
+}

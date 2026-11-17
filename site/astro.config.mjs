@@ -149,7 +149,24 @@ export default defineConfig({
                 { label: 'Going further', items: [{ autogenerate: { directory: 'advanced' } }] },
                 { label: 'Patterns', items: [{ autogenerate: { directory: 'patterns' } }] },
                 { label: 'Reference', items: [{ autogenerate: { directory: 'reference' } }] },
+                // The npm packages' documentation, a section of its own: packages-nav.ts gives its pages a sidebar of
+                // only these entries and the guide's pages one collapsed group with a link per entry.
+                {
+                    label: 'Packages',
+                    items: [
+                        { label: 'Overview', link: '/packages/' },
+                        { label: 'Quick start', link: '/packages/quick-start/' },
+                        ...['Engine', 'Diagram', 'Trace', 'Embed'].map((name) => ({
+                            label: name,
+                            items: [
+                                { label: 'Guide', link: `/packages/${name.toLowerCase()}/` },
+                                { label: 'API reference', link: `/packages/${name.toLowerCase()}/api/` },
+                            ],
+                        })),
+                    ],
+                },
             ],
+            routeMiddleware: './src/components/overrides/packages-nav.ts',
         }),
         svelte(),
         shortInlineCode,
@@ -159,13 +176,18 @@ export default defineConfig({
     vite: {
         css: { postcss: { plugins: [noJsTheme()] } },
         build: {
-            // The one chunk over Vite's default 500 kB is the playground's app (CodeMirror and the editor, about
-            // 520 kB, 165 kB gzipped), which only /playground loads, all of it at start. Guide pages load about
-            // 16 kB of JS until a widget is engaged. elkjs's 1.6 MB layout worker is an asset, not a chunk.
-            chunkSizeWarningLimit: 600,
+            // Two chunks are over Vite's default 500 kB. The playground's app (CodeMirror and the editor, about
+            // 520 kB, 165 kB gzipped), which only /playground loads, all of it at start. And elkjs's main-thread
+            // build (1.43 MB, 435 kB gzipped), which the diagram package loads when it lays out without a worker:
+            // only the quick start's live example does (/packages/quick-start/ runs the sample it shows), on the
+            // reader's first press. Guide pages load about 16 kB of JS until a widget is engaged. elkjs's 1.6 MB
+            // layout worker, which the site's own widgets use, is an asset, not a chunk.
+            chunkSizeWarningLimit: 1500,
         },
         resolve: {
             alias: {
+                // The diagram package's fonts.css exists only in its build (src/styles/diagram-fonts.css says why).
+                '@sccharts-lab/diagram/fonts.css': fileURLToPath(new URL('./src/styles/diagram-fonts.css', import.meta.url)),
                 '~engine': fileURLToPath(new URL('./packages/engine/src', import.meta.url)),
                 '~diagram': fileURLToPath(new URL('./packages/diagram/src', import.meta.url)),
                 '~components': fileURLToPath(new URL('./src/components', import.meta.url)),
