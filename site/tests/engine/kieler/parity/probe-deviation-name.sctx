@@ -1,0 +1,9 @@
+// @DeviationOutput in a chart with its own variable called lag: KIELER's unique name for the generated one.
+@DeviationOutput
+scchart PrDevName {
+  output int lag = 7
+  output bool o
+  clock c
+  initial state A
+  if c >= 2 do o = true go to A
+}

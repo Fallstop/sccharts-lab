@@ -1,0 +1,14 @@
+// An ode next to a clock, and a deltaT the chart declares itself: both use it.
+scchart PrOdeClock {
+  input float deltaT
+  output float v = 0
+  output bool late
+  clock t
+  initial state A {
+    ode v = 0.5
+  }
+  if t >= 2 do late = true go to B
+  state B {
+    ode v = -1
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "hash": "c71db5694d493c59605eb0e45144037b9dd21954",
+  "chart": "tests/engine/kieler/parity/probe-logical-reset.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on c, lag."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "fired": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "lag": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "c": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "fired": 0,
+        "lag": 0,
+        "sleepT": 2,
+        "c": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 1
+      },
+      "values": {
+        "deltaT": 1,
+        "fired": 0,
+        "lag": 0,
+        "sleepT": 1,
+        "c": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 1.5
+      },
+      "values": {
+        "deltaT": 1.5,
+        "fired": 1,
+        "lag": 0.5,
+        "sleepT": 1.5,
+        "c": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 1
+      },
+      "values": {
+        "deltaT": 1,
+        "fired": 1,
+        "lag": 0,
+        "sleepT": 0.5,
+        "c": 1.5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 0.5
+      },
+      "values": {
+        "deltaT": 0.5,
+        "fired": 2,
+        "lag": 0,
+        "sleepT": 2,
+        "c": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "deltaT": 2
+      },
+      "values": {
+        "deltaT": 2,
+        "fired": 3,
+        "lag": 0,
+        "sleepT": 2,
+        "c": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "deltaT": 0.75
+      },
+      "values": {
+        "deltaT": 0.75,
+        "fired": 3,
+        "lag": 0,
+        "sleepT": 1.25,
+        "c": 0.75
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "deltaT": 3
+      },
+      "values": {
+        "deltaT": 3,
+        "fired": 4,
+        "lag": 1.75,
+        "sleepT": 0.25,
+        "c": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

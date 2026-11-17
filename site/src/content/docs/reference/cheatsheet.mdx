@@ -499,7 +499,8 @@ These parse, but this guide does not use them, and some do not compile in every 
 | `abort region R { … }` | a region that ends its parent as soon as it reaches a final state; the regions then run one after another, not concurrently |
 | `if A Pr=0.5 go to B`, `if A nondeterministic go to B` | a transition's probability, or a mark that its choice is nondeterministic |
 | `violation state V` | a state that marks a violated property, drawn in red |
-| `ode` actions, `schedule` declarations and clauses | differential equations; schedules written by hand. This guide's simulations cannot run either |
+| `ode x = e` | a differential equation: each tick `x` grows by `e * deltaT` (the chart gets the input `deltaT`) |
+| `schedule` declarations and clauses | schedules written by hand. This guide's simulations cannot run them |
 | `state S calls Other(…)` | a call of another chart; does not work in the C simulation |
 | `policy` regions, `extends`, `override region` | object orientation: see the KIELER wiki's [Object Orientation](https://github.com/kieler/semantics/wiki/Syntax:-Object-Orientation) page |
 | `global int g` | in a referenced chart, one variable shared by all its instances; at the top level of the chart that is simulated, KIELER fails on it |

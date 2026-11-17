@@ -1,0 +1,187 @@
+{
+  "hash": "385f4047ac4631376acfb7d9fff65ac240bed3e4",
+  "chart": "tests/engine/kieler/parity/probe-logical-int.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "bound": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "deltaT": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "a": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "lag": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0,
+        "bound": 4
+      },
+      "values": {
+        "bound": 4,
+        "deltaT": 0,
+        "a": false,
+        "b": false,
+        "sleepT": 3,
+        "lag": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 1
+      },
+      "values": {
+        "bound": 4,
+        "deltaT": 1,
+        "a": false,
+        "b": false,
+        "sleepT": 2,
+        "lag": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 2
+      },
+      "values": {
+        "bound": 4,
+        "deltaT": 2,
+        "a": false,
+        "b": true,
+        "sleepT": 1,
+        "lag": 0
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 2
+      },
+      "values": {
+        "bound": 4,
+        "deltaT": 2,
+        "a": true,
+        "b": true,
+        "sleepT": 1000,
+        "lag": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 1
+      },
+      "values": {
+        "bound": 4,
+        "deltaT": 1,
+        "a": true,
+        "b": true,
+        "sleepT": 1000,
+        "lag": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "deltaT": 3
+      },
+      "values": {
+        "bound": 4,
+        "deltaT": 3,
+        "a": true,
+        "b": true,
+        "sleepT": 1000,
+        "lag": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "deltaT": 1
+      },
+      "values": {
+        "bound": 4,
+        "deltaT": 1,
+        "a": true,
+        "b": true,
+        "sleepT": 1000,
+        "lag": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

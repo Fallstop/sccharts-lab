@@ -9,7 +9,10 @@
 // with `sleepT = maxSleep` (1000, or @DefaultSleep). @SimulateSleep sets `deltaT = pre(sleepT)` after the first tick,
 // @NoSleep drops sleepT. A clock tested by several regions, or by a state and inside it, is rejected, unless
 // @ClocksUseSD: then the declaring state advances the clock and KIELER's ClockIUR schedule orders its writes
-// (clockWithSD). @DeviationOutput and @Logical clocks are not simulated.
+// (clockWithSD). A chart with `ode` actions but no clocks gets only deltaT (the ODE pass multiplies by it).
+// @DeviationOutput, or a @Logical clock, adds `lag` (an output with @DeviationOutput, else a local): how far deltaT
+// overshot the sleep time asked for, `lag = deltaT > pre(sleepT) ? deltaT - pre(sleepT) : 0` (delayed). A @Logical
+// clock advances by `pre(lag) + (deltaT - lag)` instead of deltaT, and asks to sleep for `b - (t + lag)`.
 
 import type { Annotation, Diagnostic, State } from '../../types'
 import type { ModelIndex } from '../../parser/resolve'
@@ -62,7 +65,9 @@ function isClock(v: CVar): boolean {
 function transform(ctx: PassContext) {
     const root = ctx.root
     const states = allStates(root)
-    if (!states.some(s => s.decls.some(isClock))) return
+    const hasClocks = states.some(s => s.decls.some(isClock))
+    const hasOdes = states.some(s => s.actions.some(a => a.kind === 'ode'))
+    if (!hasClocks && !hasOdes) return
     const annotations = chartAnnotations(ctx)
     const intClock = [...annotations].reverse().find(a => ['integralclocktype', 'integerclocktype'].includes(a.name.toLowerCase()))
     const clockType = intClock ? 'int' : 'float'
@@ -70,16 +75,8 @@ function transform(ctx: PassContext) {
     const noSleep = !!named(annotations, 'NoSleep')
     const simulate = !!named(annotations, 'SimulateSleep')
     const useSD = !!named(annotations, 'ClocksUseSD')
-    const unsupported = named(annotations, 'DeviationOutput') ??
-        (states.some(s => s.decls.some(v => isClock(v) && v.tags.has('@Logical'))) ? ({ name: 'Logical' } as Annotation) : undefined)
-    if (unsupported) {
-        ctx.report({
-            severity: 'info', code: 'unsupported', span: unsupported.span,
-            message: `The guide's simulator cannot run \`@${unsupported.name}\` yet`,
-            hint: 'This experimental part of KIELER\'s Timed Automata transformation is not implemented in the simulator. The official KIELER tools can run this chart.',
-        })
-        return
-    }
+    const deviationOutput = !!named(annotations, 'DeviationOutput')
+    const anyLogical = states.some(s => s.decls.some(v => isClock(v) && isLogical(v)))
     const sleepAnnotation = named(annotations, 'DefaultSleep')
     let maxSleep = MAX_SLEEP_DEFAULT
     if (sleepAnnotation) {
@@ -107,6 +104,7 @@ function transform(ctx: PassContext) {
         deltaT = generated('deltaT', clockType, root, lit(0))
         deltaT.input = true
     }
+    if (!hasClocks) return
     let sleepT = own('sleepT')
     if (sleepT) {
         if (!sleepT.init) sleepT.init = lit(0)
@@ -114,6 +112,34 @@ function transform(ctx: PassContext) {
     } else if (!noSleep) {
         sleepT = generated('sleepT', clockType, root, lit(0))
         sleepT.output = true
+    }
+    if (anyLogical && noSleep) {
+        // KIELER builds the clock's advance from a lag it never declared (it has no sleep time): its SCG crashes.
+        const clock = states.flatMap(s => s.decls).find(v => isClock(v) && isLogical(v))!
+        const annotation = named(annotations, 'NoSleep')
+        ctx.report({
+            severity: 'error', code: 'kieler-crash', span: clock.span ?? annotation?.span, related: clock.decl ? [clock.decl] : undefined,
+            message: `KIELER's compiler crashes on the @Logical clock \`${clock.name}\` in a chart with @NoSleep: a logical clock is corrected by the lag behind the sleep time, and @NoSleep has none`,
+            kieler: 'java.lang.IllegalArgumentException: Can\'t copy valued object. Valued object is null!',
+            hint: 'Remove @NoSleep, or @Logical from the clock.',
+        })
+        return
+    }
+    let deviation: CVar | undefined
+    if ((deviationOutput || anyLogical) && !noSleep && sleepT) {
+        deviation = generated(uniqueName(root, 'lag'), clockType, root, lit(0))
+        if (deviationOutput) deviation.output = true
+        const during = createAction(root, 'during')
+        during.about = deviation.decl
+        const preSleep = (): CExpr => ({ k: 'op', op: 'pre', args: [ref(sleepT!)] })
+        during.effects.push({
+            k: 'assign', ref: ref(deviation), op: '=', o: { by: deviation.decl },
+            expr: { k: 'op', op: '?:', args: [
+                { k: 'op', op: '>', args: [ref(deltaT), preSleep()] },
+                { k: 'op', op: '-', args: [ref(deltaT), preSleep()] },
+                { k: 'lit', t: 'int', v: 0 },
+            ] },
+        })
     }
     if (!noSleep && sleepT) {
         const start = createImmediateDuringAction(root)
@@ -138,7 +164,7 @@ function transform(ctx: PassContext) {
             }
             if (clock.tags.has('@Passive')) continue
             if (useSD) {
-                clockWithSD(state, clock, deltaT, noSleep ? undefined : sleepT, ctx, lit)
+                clockWithSD(state, clock, deltaT, noSleep ? undefined : sleepT, ctx, lit, deviation)
                 continue
             }
             // The region whose states test the clock (looking through single-state wrappers).
@@ -188,8 +214,8 @@ function transform(ctx: PassContext) {
                 // Time passes: a delayed during action, so not in the tick the state is entered (S-36).
                 const progress = createAction(sub, 'during')
                 progress.about = clock.decl
-                progress.effects.push({ k: 'assign', ref: ref(clock), op: '+=', expr: ref(deltaT), o: { by: clock.decl, span: clock.span } })
-                if (!noSleep && sleepT) handleSleep(ctx, sub, clock, sleepT, lit)
+                progress.effects.push({ k: 'assign', ref: ref(clock), op: '+=', expr: advance(clock, deltaT, deviation), o: { by: clock.decl, span: clock.span } })
+                if (!noSleep && sleepT) handleSleep(ctx, sub, clock, sleepT, lit, deviation)
             }
         }
     }
@@ -201,7 +227,7 @@ function transform(ctx: PassContext) {
  * schedule ClockIUR orders the clock's writes: the increment (priority 0) before resets `t = ...` (1) before
  * updates (2, confluent with each other). Every state inside asks for sleep times for its timeouts.
  */
-function clockWithSD(state: CState, clock: CVar, deltaT: CVar, sleepT: CVar | undefined, ctx: PassContext, lit: (n: number) => CExpr) {
+function clockWithSD(state: CState, clock: CVar, deltaT: CVar, sleepT: CVar | undefined, ctx: PassContext, lit: (n: number) => CExpr, deviation: CVar | undefined) {
     const group: ScheduleGroup = { name: `${clock.name}SD`, protocols: ['conflict', 'conflict', 'confluent'] }
     const schedule = (f: CEffect, priority: number) => {
         f.o = { ...f.o, schedule: [...(f.o.schedule ?? []), { group, priority }] }
@@ -211,13 +237,36 @@ function clockWithSD(state: CState, clock: CVar, deltaT: CVar, sleepT: CVar | un
             for (const a of scope.actions) for (const f of a.effects) if (f.k === 'assign' && f.ref.v === clock) schedule(f, f.op === '=' ? 1 : 2)
         }
         for (const t of s.out) for (const f of t.effects) if (f.k === 'assign' && f.ref.v === clock) schedule(f, f.op === '=' ? 1 : 2)
-        if (sleepT && !s.connector) handleSleep(ctx, s, clock, sleepT, lit)
+        if (sleepT && !s.connector) handleSleep(ctx, s, clock, sleepT, lit, deviation)
     }
     const progress = createAction(state, 'during')
     progress.about = clock.decl
-    const increment: CEffect = { k: 'assign', ref: ref(clock), op: '+=', expr: ref(deltaT), o: { by: clock.decl, span: clock.span } }
+    const increment: CEffect = { k: 'assign', ref: ref(clock), op: '+=', expr: advance(clock, deltaT, deviation), o: { by: clock.decl, span: clock.span } }
     schedule(increment, 0)
     progress.effects.push(increment)
+}
+
+function isLogical(clock: CVar): boolean {
+    return clock.tags.has('@Logical')
+}
+
+/** A clock's advance per tick: deltaT, or for a @Logical clock `pre(lag) + (deltaT - lag)`. */
+function advance(clock: CVar, deltaT: CVar, deviation: CVar | undefined): CExpr {
+    if (!deviation || !isLogical(clock)) return ref(deltaT)
+    return { k: 'op', op: '+', args: [
+        { k: 'op', op: 'pre', args: [ref(deviation)] },
+        { k: 'op', op: '-', args: [ref(deltaT), ref(deviation)] },
+    ] }
+}
+
+/** KIELER's uniqueName for a generated root variable: `lag`, or `lag1`, `lag2`, ... when the chart has one. */
+function uniqueName(root: CState, base: string): string {
+    const taken = new Set<string>()
+    for (const s of allStates(root)) for (const scope of [s, ...s.regions]) for (const v of scope.decls) taken.add(v.name)
+    if (!taken.has(base)) return base
+    let i = 1
+    while (taken.has(`${base}${i}`)) i++
+    return `${base}${i}`
 }
 
 /** A schedule object (deps.ts): `protocols[p]` is KIELER's PriorityProtocol of priority p. */
@@ -295,7 +344,7 @@ interface Constraint {
 }
 
 /** KIELER's handleSleep: sleep requests for the bounds of the state's timed transitions (S-38). */
-function handleSleep(ctx: PassContext, state: CState, clock: CVar, sleepT: CVar, lit: (n: number) => CExpr) {
+function handleSleep(ctx: PassContext, state: CState, clock: CVar, sleepT: CVar, lit: (n: number) => CExpr, deviation: CVar | undefined) {
     const constraints: Constraint[] = []
     const complex: Extract<CExpr, { k: 'op' }>[] = []
     for (const t of state.out) {
@@ -326,7 +375,9 @@ function handleSleep(ctx: PassContext, state: CState, clock: CVar, sleepT: CVar,
         const during = createImmediateDuringAction(state)
         during.about = clock.decl
         during.trigger = { k: 'op', op: '<', args: [ref(clock), bound] }
-        during.effects.push({ k: 'assign', ref: ref(sleepT), op: 'min=', expr: { k: 'op', op: '-', args: [copyExpr(bound), ref(clock)] }, o: { hidden: true, by: sleepT.decl } })
+        // A @Logical clock is behind real time by lag.
+        const now: CExpr = deviation && isLogical(clock) ? { k: 'op', op: '+', args: [ref(clock), ref(deviation)] } : ref(clock)
+        during.effects.push({ k: 'assign', ref: ref(sleepT), op: 'min=', expr: { k: 'op', op: '-', args: [copyExpr(bound), now] }, o: { hidden: true, by: sleepT.decl } })
     }
     // 1. Comparisons with an expression: `t >= e` or `e <= t`.
     for (const c of complex) {

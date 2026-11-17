@@ -1,0 +1,9 @@
+// @Logical with @NoSleep: there is no sleep time, so no lag; KIELER's compiler crashes (a rejection).
+@NoSleep
+scchart PrLogicalNoSleep {
+  output bool o
+  @Logical clock c
+  initial state A
+  if c >= 2 do o = true go to B
+  state B
+}

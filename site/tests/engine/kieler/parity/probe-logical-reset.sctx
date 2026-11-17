@@ -1,0 +1,8 @@
+// A @Logical clock that is reset on a timeout and runs again: the next timeout counts from the logical time.
+@DeviationOutput
+scchart PrLogicalReset {
+  output int fired = 0
+  @Logical clock c
+  initial state A
+  if c >= 2 do c = 0; fired += 1 go to A
+}
