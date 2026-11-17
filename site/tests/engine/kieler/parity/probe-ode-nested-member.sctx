@@ -1,0 +1,12 @@
+// ode on a member of a nested struct: KIELER keeps only l, so gcc rejects l += ....
+scchart PrOdeNested {
+  struct Line {
+    struct Pt {
+      float x
+    } a
+  } l
+  initial state A {
+    ode l.a.x = 2
+    initial state I
+  }
+}

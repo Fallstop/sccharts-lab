@@ -1,0 +1,10 @@
+// ode on a member of an element of an instance array: KIELER keeps only cs, so gcc rejects cs += ....
+scchart PrOdeInstArr {
+  class C {
+    float v
+  } cs[2]
+  initial state A {
+    ode cs[1].v = 2
+    initial state I
+  }
+}
