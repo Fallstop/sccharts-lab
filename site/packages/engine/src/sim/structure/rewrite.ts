@@ -5,7 +5,7 @@
 
 import type { CEquation } from '../lower'
 import {
-    allScopes, isRegion, mapExpr, type CArg, type CEffect, type CExpr, type CRef, type CState, type CStmt, type CVar,
+    allScopes, CVar, isRegion, mapExpr, type SchedEntry, type CArg, type CEffect, type CExpr, type CRef, type CState, type CStmt,
     type Scope,
 } from '../model'
 
@@ -20,9 +20,31 @@ export interface Rewriter {
 
 export function rewriteExpr(e: CExpr, w: Rewriter): CExpr {
     return mapExpr(e, x => {
-        if (x.k === 'ref') return w.read?.(x) ?? w.node?.(x)
-        return w.node?.(x)
+        const sched = rewriteSchedule(x.sched, w)
+        if (x.k === 'ref') {
+            // A bound or redirected reference keeps the read's schedules (Reference.xtend copies them).
+            const out = w.read?.(x) ?? w.node?.(x)
+            if (out) return sched && !out.sched ? { ...out, sched } : out
+        } else {
+            const out = w.node?.(x)
+            if (out) return out
+        }
+        return sched !== x.sched ? { ...x, sched } : undefined
     })
+}
+
+/** A schedule object declared inside a copied part goes to its copy, as any other variable. */
+export function rewriteSchedule(list: SchedEntry[] | undefined, w: Rewriter): SchedEntry[] | undefined {
+    if (!list || !w.read) return list
+    let changed = false
+    const out = list.map(e => {
+        if (!(e.group instanceof CVar)) return e
+        const r = w.read!({ k: 'ref', v: e.group, idx: [] })
+        if (r?.k !== 'ref' || r.v === e.group) return e
+        changed = true
+        return { ...e, group: r.v }
+    })
+    return changed ? out : list
 }
 
 function rewriteTarget(r: CRef, w: Rewriter): CRef {
@@ -32,6 +54,8 @@ function rewriteTarget(r: CRef, w: Rewriter): CRef {
 }
 
 export function rewriteEffect(f: CEffect, w: Rewriter): CEffect {
+    const schedule = rewriteSchedule(f.o.schedule, w)
+    if (schedule !== f.o.schedule) f = { ...f, o: { ...f.o, schedule } } as CEffect
     switch (f.k) {
         case 'assign': return { ...f, ref: rewriteTarget(f.ref, w), expr: f.expr ? rewriteExpr(f.expr, w) : undefined }
         case 'emit': return { ...f, ref: rewriteTarget(f.ref, w), value: f.value ? rewriteExpr(f.value, w) : undefined }
@@ -83,6 +107,7 @@ export function rewriteScope(root: CState | Scope, w: Rewriter) {
     const scopes: Scope[] = isRegion(root) ? [root, ...root.states.flatMap(s => allScopes(s))] : allScopes(root)
     for (const scope of scopes) {
         for (const v of scope.decls) rewriteVar(v, w)
+        if (scope.ext.userSchedule) scope.ext.userSchedule = rewriteSchedule(scope.ext.userSchedule as SchedEntry[], w)
         for (const a of scope.actions) {
             if (a.trigger) a.trigger = rewriteExpr(a.trigger, w)
             a.effects = a.effects.map(f => rewriteEffect(f, w))

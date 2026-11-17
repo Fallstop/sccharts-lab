@@ -28,6 +28,7 @@ export function copyVar(v: CVar): CVar {
     c.span = v.span
     c.tags = new Set(v.tags)
     c.declKind = v.declKind
+    c.priorities = v.priorities
     if (v.instance) c.instance = { ...v.instance, args: v.instance.args.map(a => ({ ...a, expr: copyExpr(a.expr) })) }
     return c
 }

@@ -1,0 +1,15 @@
+// Two schedule objects that order the same writes in opposite directions: a cycle.
+scchart SchTwoObjects {
+  output int o
+  schedule s, t
+  region R1 {
+    initial state A
+    immediate do o = 1 schedule s 0 t 1 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 1 t 0 go to D
+    state D
+  }
+}

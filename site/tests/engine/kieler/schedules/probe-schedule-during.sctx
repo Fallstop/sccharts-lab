@@ -1,0 +1,16 @@
+// A schedule on a state with a during action goes to the action (it is not a simple state).
+scchart SchDuring {
+  input int i
+  output int o = 0, x = 0
+  schedule s
+  region R1 {
+    initial state S schedule s 0 {
+      immediate during do o = x
+    }
+  }
+  region R2 {
+    initial state C {
+      immediate during do x = i schedule s 1
+    }
+  }
+}

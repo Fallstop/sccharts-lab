@@ -1,0 +1,8 @@
+// A schedule clause naming a variable that is not a schedule.
+scchart SchNotSchedule {
+  output int o
+  int s
+  initial state A
+  immediate do o = 1 schedule s 0 go to B
+  state B
+}

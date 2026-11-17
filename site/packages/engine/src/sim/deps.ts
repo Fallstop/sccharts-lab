@@ -10,7 +10,7 @@
 //   non-commuting operators conflict too.
 
 import type { AssignOperator, Span } from '../types'
-import { controlflowRegions, sameExpr, walkExpr, type CExpr, type CMethod, type CRef, type CState, type CStmt, type CVar } from './model'
+import { controlflowRegions, CVar, sameExpr, walkExpr, type CExpr, type CMethod, type CRef, type CState, type CStmt, type SchedEntry } from './model'
 import { noKielerNode, type SCG, type SNode, type Thread } from './scg'
 
 export type AccessClass = 'write' | 'relative' | 'read'
@@ -30,6 +30,8 @@ export interface Access {
     op?: AssignOperator | '++' | '--'
     expr?: CExpr
     span?: Span
+    /** Schedules of this access itself (a trigger's or a read's `schedule s 1`), besides its node's. */
+    sched?: SchedEntry[]
 }
 
 export interface Dependency {
@@ -71,7 +73,7 @@ function lowermost(r: CRef): CRef {
 /** The reads of an expression: every variable reference, including those in indices. */
 function reads(node: SNode, e: CExpr | undefined, out: Access[]) {
     walkExpr(e, x => {
-        if (x.k === 'ref') out.push({ node, v: x.v, cell: cellKey(x), cls: 'read', span: x.span })
+        if (x.k === 'ref') out.push({ node, v: x.v, cell: cellKey(x), cls: 'read', span: x.span, ...(x.sched ? { sched: x.sched } : {}) })
     })
 }
 
@@ -80,6 +82,9 @@ export function nodeAccesses(node: SNode): Access[] {
     const out: Access[] = []
     if (node.kind === 'cond') {
         reads(node, node.expr, out)
+        // A trigger's schedule goes to every reference it reads (SCGTransformation: the trigger schedule).
+        const top = node.expr?.sched
+        if (top) for (const a of out) a.sched = [...(a.sched ?? []), ...top]
         return out
     }
     if (node.kind !== 'assign' || !node.effect) return out
@@ -203,9 +208,16 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean): 
     return out
 }
 
-/** The user schedules of a node's effect (dataflow sequences, passes/userSchedule.ts). */
-function schedulesOf(n: SNode): { group: object; priority: number }[] {
-    return n.kind === 'assign' ? n.effect?.o.schedule ?? [] : []
+/** The user schedules of an access: its node's effect's (passes/userSchedule.ts) and its own. */
+function schedulesOf(a: Access): SchedEntry[] {
+    const node = a.node.kind === 'assign' ? a.node.effect?.o.schedule ?? [] : []
+    return a.sched ? [...node, ...a.sched] : node
+}
+
+/** KIELER's PriorityProtocol of each priority of a schedule object: a `schedule` declaration's or a generated one's. */
+function protocolsOf(group: object): string[] | undefined {
+    if (group instanceof CVar) return group.priorities?.map(p => (p === 'commuting' ? 'confluent' : 'conflict'))
+    return (group as { protocols?: string[] }).protocols
 }
 
 /**
@@ -218,14 +230,14 @@ function scheduledDependencies(byVar: Map<CVar, Access[]>, deps: Dependency[], s
     for (const [v, list] of byVar) {
         const groups = new Map<object, { a: Access; priority: number }[]>()
         for (const a of list) {
-            for (const s of schedulesOf(a.node)) {
+            for (const s of schedulesOf(a)) {
                 let g = groups.get(s.group)
                 if (!g) groups.set(s.group, (g = []))
                 g.push({ a, priority: s.priority })
             }
         }
         for (const [group, g] of groups) {
-            const protocols = (group as { protocols?: string[] }).protocols
+            const protocols = protocolsOf(group)
             for (const x of g) {
                 for (const y of g) {
                     if (x.a.node === y.a.node || x.priority > y.priority) continue

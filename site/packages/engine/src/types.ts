@@ -128,6 +128,8 @@ export interface State extends NodeBase {
     transitions: Transition[]
     /** `state S is Other(a, b to c)`: the state is an instance of another SCChart. */
     reference?: ScopeCall
+    /** `state S is C(...) schedule s 1` or `state S schedule s 1 { ... }` (KIELER's user schedules). */
+    schedule?: ScheduleRef[]
     /** `calls` (module call) instead of `is`. */
     callsReference?: boolean
     /** `extends` base states (inheritance, rare). */
@@ -164,6 +166,8 @@ export interface Region extends NodeBase {
     forLoop?: { variable: string; from: Expression; to?: Expression; span: Span }
     /** `region R is super.X`: resolves only to regions inherited through `extends`; it does not instantiate a chart. */
     reference?: ScopeCall
+    /** `region R schedule s 1 { ... }` (KIELER's user schedules). */
+    schedule?: ScheduleRef[]
     /** Dataflow `once`. */
     once?: boolean
     /** Span of the region's name (when it has one). */
@@ -194,6 +198,8 @@ export interface Transition extends NodeBase {
     /** Count delay: `if 3 A go to B` fires on the third tick in which A holds. */
     triggerDelay?: number
     trigger?: Expression
+    /** `if A schedule s 1 go to B`: the trigger's schedule (KIELER's BoolScheduleExpression). */
+    triggerSchedule?: ScheduleRef[]
     /** `Pr=0.5` probability and `nondeterministic` (kept, not simulated). */
     probability?: number
     nondeterministic?: boolean
@@ -218,6 +224,7 @@ export interface LocalAction extends NodeBase {
     weak?: boolean
     triggerDelay?: number
     trigger?: Expression
+    triggerSchedule?: ScheduleRef[]
     /** `entry if A Pr 0.5`, `during if A Pr=0.5` (kept, not simulated). */
     probability?: number
     effects: Effect[]
@@ -234,6 +241,7 @@ export interface Equation extends NodeBase {
     sequential?: boolean
     /** Dataflow reference call `A(x, y)` / `A(x) = e`: the call's arguments (expression is then the call or `e`). */
     callArgs?: Expression[]
+    schedule?: ScheduleRef[]
     annotations?: Annotation[]
 }
 
@@ -316,8 +324,12 @@ export interface Declaration extends NodeBase {
     body?: { declarations: Declaration[]; statements: SclStatement[]; span: Span }
     /** `override method ...` */
     override?: boolean
-    /** Schedule declarations: `schedule {conflicting, commuting} s` priorities, and `global` protocol. */
+    /** Schedule declarations: `schedule {conflicting, commuting} s` priorities (one protocol per priority). */
     priorities?: string[]
+    /** Schedule declarations: `schedule global conflicting s` (KIELER's dependency analysis does not use it). */
+    scheduleGlobal?: string
+    /** Methods: `method m() schedule s 1 { ... }`. */
+    schedule?: ScheduleRef[]
     /** `policy` regions of a host class. */
     policies?: Region[]
 }
@@ -378,6 +390,13 @@ export type Expression =
 /** Parameter passing mode of a call argument: `&x` call by reference, `!&x` pure output, null for a plain value. */
 export type ParamAccess = '&' | '!&' | null
 
+/** `schedule s 1` after an effect, trigger, state, region or method: the schedule object and the priority. */
+export interface ScheduleRef {
+    ref: Reference
+    priority: number
+    span: Span
+}
+
 export interface Reference {
     kind: 'ref'
     name: string
@@ -394,15 +413,15 @@ export interface Reference {
 export type AssignOperator = '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=' | '>>>=' | 'min=' | 'max='
 
 export type Effect =
-    | { kind: 'assign'; target: Reference; operator: AssignOperator; expression: Expression; span: Span; annotations?: Annotation[] }
-    | { kind: 'postfix'; target: Reference; operator: '++' | '--'; span: Span; annotations?: Annotation[] }
+    | { kind: 'assign'; target: Reference; operator: AssignOperator; expression: Expression; span: Span; schedule?: ScheduleRef[]; annotations?: Annotation[] }
+    | { kind: 'postfix'; target: Reference; operator: '++' | '--'; span: Span; schedule?: ScheduleRef[]; annotations?: Annotation[] }
     /** `S` or `S(value)`. A bare name in an effect list parses as an emission; emitting a non-signal is a
      *  warning in KIELER's validator and an error from its compiler in reachable code (the validator reports
      *  both). `S(v)` where S is a method or a reference becomes a 'call' effect in the resolver (KIELER's
      *  KEffectsEmissionReferenceCallConverter). */
-    | { kind: 'emit'; target: Reference; value?: Expression; span: Span; annotations?: Annotation[] }
-    | { kind: 'call'; name: string; args: Expression[]; extern?: boolean; target?: Reference; super?: boolean; paramAccess?: ParamAccess[]; span: Span; annotations?: Annotation[] }
-    | { kind: 'print'; args: Expression[]; span: Span; annotations?: Annotation[] }
+    | { kind: 'emit'; target: Reference; value?: Expression; span: Span; schedule?: ScheduleRef[]; annotations?: Annotation[] }
+    | { kind: 'call'; name: string; args: Expression[]; extern?: boolean; target?: Reference; super?: boolean; paramAccess?: ParamAccess[]; span: Span; schedule?: ScheduleRef[]; annotations?: Annotation[] }
+    | { kind: 'print'; args: Expression[]; span: Span; schedule?: ScheduleRef[]; annotations?: Annotation[] }
     | { kind: 'randomize'; args: Expression[]; span: Span; annotations?: Annotation[] }
     | { kind: 'hostcode'; text: string; span: Span; annotations?: Annotation[] }
     /** `{ ... }` SCL code block. `text` is its source including the braces; the parsed body is kept too. */
@@ -415,7 +434,7 @@ export type SclStatement =
     | { kind: 'goto'; target: string; span: Span }
     | { kind: 'return'; expression: Expression; span: Span }
     | { kind: 'block'; declarations: Declaration[]; statements: SclStatement[]; span: Span }
-    | { kind: 'if'; condition: Expression; declarations: Declaration[]; statements: SclStatement[]; else?: { declarations: Declaration[]; statements: SclStatement[]; span: Span }; span: Span }
+    | { kind: 'if'; condition: Expression; conditionSchedule?: ScheduleRef[]; declarations: Declaration[]; statements: SclStatement[]; else?: { declarations: Declaration[]; statements: SclStatement[]; span: Span }; span: Span }
     | { kind: 'while'; condition: Expression; declarations: Declaration[]; statements: SclStatement[]; span: Span }
     /** `for (int i = 0; i < n; i++) { ... }`: init is a declaration or a statement. */
     | { kind: 'for'; init?: Declaration | SclStatement; condition: Expression; update?: SclStatement; declarations: Declaration[]; statements: SclStatement[]; span: Span }

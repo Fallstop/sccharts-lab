@@ -11,13 +11,13 @@
 //   with constant folding in scopes that declare constants, so constants never exist at run time.
 
 import type {
-    AssignOperator, Declaration, Diagnostic, Effect, Expression, LocalAction, Reference, Region, ScopeParameter, SclStatement, Span,
+    AssignOperator, Declaration, Diagnostic, Effect, Expression, LocalAction, Reference, Region, ScheduleRef, ScopeParameter, SclStatement, Span,
     State, Transition, ValuedObject, ValueType,
 } from '../types'
 import type { ModelIndex } from '../parser/resolve'
 import {
     CAction, CRegion, CState, CTransition, CVar, copyExpr, setTarget, type CArg, type CExpr, type CEffect, type CMethod, type CRef,
-    type CStmt, type Scope,
+    type CStmt, type EffectOrigin, type SchedEntry, type Scope,
 } from './model'
 import { foldConstants } from './fold'
 
@@ -74,6 +74,8 @@ class Lowering {
     readonly constScopes = new Set<Scope>()
     /** `state(S)` in method bodies: the flag of each state S (KIELER's MethodSignaling, attachStateFlags). */
     readonly stateFlags = new Map<string, CVar>()
+    /** User schedules where the simulator does not apply them yet (passes/userSchedule.ts reports them). */
+    readonly unsupportedSchedules: { what: string; span?: Span }[] = []
 
     constructor(readonly index: ModelIndex | undefined) {}
 
@@ -116,6 +118,7 @@ class Lowering {
                 v.span = vo.nameSpan ?? vo.span
                 v.scope = scope
                 if (d.declKind !== 'variable' && !enumRef) v.declKind = d.declKind
+                if (d.declKind === 'schedule') v.priorities = d.priorities ?? []
                 // Annotations of the declaration (`@Passive clock t`), as `@name` tags.
                 for (const a of [...d.annotations, ...(vo.annotations ?? [])]) v.tags.add(`@${a.name}`)
                 scope.decls.push(v)
@@ -291,6 +294,7 @@ class Lowering {
     }
 
     private method(d: Declaration, hidden: CVar[] = []): CMethod {
+        this.schedule(d.schedule, 'schedules on methods')
         const params: CVar[] = [...hidden]
         const locals: CVar[] = []
         for (const p of d.parameters ?? []) this.frameVars([p], params)
@@ -314,6 +318,8 @@ class Lowering {
     }
 
     private statement(s: SclStatement, locals: CVar[], by: string | undefined): CStmt[] {
+        const scheduled = ('schedule' in s && s.schedule) || (s.kind === 'if' && s.conditionSchedule)
+        if (scheduled) this.unsupportedSchedules.push({ what: 'schedules in code blocks and methods', span: scheduled[0].span })
         switch (s.kind) {
             case 'assign': case 'postfix': case 'call': case 'print': case 'randomize': case 'hostcode':
                 return [{ k: 'do', f: this.effect(s, by ?? '') }]
@@ -547,8 +553,35 @@ class Lowering {
 
     // ----- effects -----
 
+    /**
+     * `schedule s 1`: the schedule variable and the priority. KIELER also lets a class instance's schedule be named
+     * (`c.s 1`) and attaches method schedules to calls; the simulator does not apply those yet.
+     */
+    schedule(list: ScheduleRef[] | undefined, what?: string): SchedEntry[] | undefined {
+        if (!list?.length) return undefined
+        if (what) {
+            this.unsupportedSchedules.push({ what, span: list[0].span })
+            return undefined
+        }
+        const out: SchedEntry[] = []
+        for (const s of list) {
+            const v = s.ref.decl ? this.vars.get(s.ref.decl) : undefined
+            if (s.ref.sub) {
+                this.unsupportedSchedules.push({ what: `the schedule of an instance (\`${s.ref.name}.${s.ref.sub.name}\`)`, span: s.span })
+                continue
+            }
+            // Not resolved: the front end reports it. A variable that is not a schedule crashes KIELER's dependency
+            // analysis where it orders an access (passes/userSchedule.ts reports it).
+            if (!v) continue
+            out.push({ group: v, priority: s.priority, ...(v.declKind === 'schedule' ? {} : { span: s.span }) })
+        }
+        return out.length ? out : undefined
+    }
+
     effect(f: Effect, by: string, owner?: Scope): CEffect {
-        const o = { by, span: f.span }
+        // An emission's schedule is lost: KIELER's Signal processor replaces the emission by new assignments.
+        const schedule = 'schedule' in f && f.kind !== 'emit' ? this.schedule(f.schedule, f.kind === 'call' ? 'schedules on calls' : undefined) : undefined
+        const o: EffectOrigin = schedule ? { by, span: f.span, schedule } : { by, span: f.span }
         switch (f.kind) {
             case 'assign': return { k: 'assign', ref: this.ref(f.target), op: f.operator, expr: this.expr(f.expression), o }
             case 'postfix': return { k: 'assign', ref: this.ref(f.target), op: f.operator, o }
@@ -576,6 +609,8 @@ class Lowering {
         if (s.reference) c.ext.reference = s.reference
         if (s.callsReference) c.ext.calls = true
         if (s.baseStates?.length) c.ext.baseStates = s.baseStates
+        const schedule = this.schedule(s.schedule)
+        if (schedule) c.ext.userSchedule = schedule
         this.states.set(s.id, c)
         this.declare(c, s.declarations)
         for (const r of s.regions) c.regions.push(this.region(r, c))
@@ -608,6 +643,8 @@ class Lowering {
         if (r.equations.length) c.ext.equations = r.equations
         if (r.reference) c.ext.reference = r.reference
         if (r.once) c.ext.once = true
+        const schedule = this.schedule(r.schedule, r.regionType === 'dataflow' ? 'schedules on dataflow regions' : undefined)
+        if (schedule) c.ext.userSchedule = schedule
         this.regions.set(r.id, c)
         this.declare(c, r.declarations)
         for (const s of r.states) c.states.push(this.state(s, c))
@@ -644,6 +681,7 @@ class Lowering {
             }
             if (r.regionType === 'dataflow') {
                 // Equations, lowered like effects (passes/dataflow.ts turns them into control flow, structure.md S-25).
+                for (const eq of r.equations) this.schedule(eq.schedule, 'schedules on equations')
                 const eqs: CEquation[] = r.equations.map(eq => ({
                     target: this.ref(eq.target), op: eq.operator, expr: this.expr(eq.expression),
                     sequential: !!eq.sequential, call: eq.callArgs !== undefined, span: eq.span,
@@ -658,7 +696,7 @@ class Lowering {
     private actionContents(source: LocalAction[], target: CAction[], owner: Scope) {
         source.forEach((a, i) => {
             const c = target[i]
-            if (a.trigger) c.trigger = this.expr(a.trigger)
+            if (a.trigger) c.trigger = this.trigger(a.trigger, a.triggerSchedule)
             c.effects = a.effects.map(f => this.effect(f, a.id, owner))
             delete (c as CAction & { src?: LocalAction }).src
         })
@@ -687,9 +725,16 @@ class Lowering {
         c.deferred = t.deferred
         c.origin = t.id
         c.span = t.span
-        if (t.trigger) c.trigger = this.expr(t.trigger)
+        if (t.trigger) c.trigger = this.trigger(t.trigger, t.triggerSchedule)
         c.effects = t.effects.map(f => this.effect(f, t.id, source.parent?.parent ?? source))
         return c
+    }
+
+    /** A trigger with its schedule (`if A schedule s 1`), which KIELER keeps on the trigger expression. */
+    private trigger(e: Expression, schedule: ScheduleRef[] | undefined): CExpr {
+        const c = this.expr(e)
+        const sched = this.schedule(schedule)
+        return sched ? { ...c, sched: [...(c.sched ?? []), ...sched] } : c
     }
 }
 
@@ -727,6 +772,16 @@ export function lowerChart(chart: State, index: ModelIndex | undefined): LowerRe
         const reset = new CAction('entry')
         reset.effects.push({ k: 'mark', m: { kind: 'ttsReset' }, o: { hidden: true } })
         root.actions.push(reset)
+    }
+
+    const first = l.unsupportedSchedules[0]
+    if (first) {
+        l.reports.push({
+            // Not a rejection: KIELER runs this chart, only the guide's simulator cannot (yet).
+            severity: 'info', code: 'unsupported', span: first.span,
+            message: `The guide's simulator cannot run ${first.what} yet`,
+            hint: 'The simulator applies schedules on assignments, emissions, triggers, states and regions. The official KIELER tools can run this chart.',
+        })
     }
 
     return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports }

@@ -10,7 +10,7 @@
 
 import type {
     Annotation, AssignOperator, CombineOperator, Declaration, DelayType, Diagnostic, Effect, Equation, Expression,
-    LocalAction, LocalActionKind, OperatorType, ParamAccess, Pragma, Program, Reference, Region, ScopeCall,
+    LocalAction, LocalActionKind, OperatorType, ParamAccess, Pragma, Program, Reference, Region, ScheduleRef, ScopeCall,
     ScopeParameter, SclStatement, Span, State, Transition, ValuedObject, ValueType,
 } from '../types'
 import { describeToken, KEYWORDS, lex, type Token } from './lexer'
@@ -931,12 +931,14 @@ class Parser {
         if (this.at('is')) {
             this.next()
             state.reference = this.parseScopeCall()
-            this.parseOptionalSchedule()
+            const schedule = this.parseOptionalSchedule()
+            if (schedule) state.schedule = schedule
         } else if (this.at('calls')) {
             this.next()
             state.reference = this.parseModuleScopeCall()
             state.callsReference = true
-            this.parseOptionalSchedule()
+            const schedule = this.parseOptionalSchedule()
+            if (schedule) state.schedule = schedule
         } else {
             let needsBody = false
             if (this.accept('extends')) {
@@ -944,7 +946,11 @@ class Parser {
                 while (this.accept(',')) state.baseStates.push(this.parseBaseStateReference())
                 needsBody = true
             }
-            if (this.parseOptionalSchedule()) needsBody = true
+            const schedule = this.parseOptionalSchedule()
+            if (schedule) {
+                state.schedule = schedule
+                needsBody = true
+            }
             if (this.at('{')) {
                 const open = this.pos
                 this.next()
@@ -984,20 +990,25 @@ class Parser {
         return false
     }
 
-    private parseOptionalSchedule(): boolean {
-        if (!this.at('schedule')) return false
+    private parseOptionalSchedule(): ScheduleRef[] | undefined {
+        if (!this.at('schedule')) return undefined
         // KIELER's lookahead only enters the clause when a schedule reference (name ... number) follows; otherwise the
         // 'schedule' starts the next element (a schedule declaration).
         if (this.scan(() => { this.next(); this.parseScheduleObjectReference() }) < 0) {
-            if (this.isScheduleDeclarationNext()) return false
+            if (this.isScheduleDeclarationNext()) return undefined
         }
         this.next()
-        this.parseScheduleObjectReference()
+        const out = [this.parseScheduleObjectReference()]
         while (this.at('ID')) {
             const r = this.attempt(() => this.parseScheduleObjectReference())
             if (r instanceof Failure) break
+            out.push(r)
         }
-        return true
+        return out
+    }
+
+    private setSchedule(node: { schedule?: ScheduleRef[] }, schedule: ScheduleRef[] | undefined) {
+        if (schedule) node.schedule = schedule
     }
 
     private isScheduleDeclarationNext(): boolean {
@@ -1005,15 +1016,18 @@ class Parser {
     }
 
     /** ScheduleObjectReference: PrimeID ('.' VOR)? INT ('annotated(' QuotedStringAnnotation+ ')')? */
-    private parseScheduleObjectReference() {
-        this.parsePrimeID()
-        if (this.accept('.')) this.parseValuedObjectReference()
-        this.expect('INT', `Expected the schedule priority (a number) but found ${describeToken(this.la())}`)
+    private parseScheduleObjectReference(): ScheduleRef {
+        const start = this.pos
+        const name = this.parsePrimeID()
+        const ref: Reference = { kind: 'ref', name, indices: [], span: this.span(start) }
+        if (this.accept('.')) ref.sub = this.parseValuedObjectReference()
+        const priority = this.intValue(this.expect('INT', `Expected the schedule priority (a number) but found ${describeToken(this.la())}`))
         if (this.accept('annotated(')) {
             const a = this.parseAnnotations('quoted')
             if (!a.annotations.length) this.fail('Expected an annotation inside annotated( )')
             this.expect(')')
         }
+        return { ref, priority, span: this.span(start) }
     }
 
     private parseScopeCall(): ScopeCall {
@@ -1106,6 +1120,7 @@ class Parser {
             t.trigger = this.parseBoolScheduleExpression(t.triggerDelay !== undefined
                 ? `KIELER reads a number right after 'if' as a count delay, so 'if ${t.triggerDelay} ...' needs a condition after the number. To compare a number, put the variable first: \`if x == ${t.triggerDelay}\`.`
                 : undefined)
+            if (this.lastTriggerSchedule) t.triggerSchedule = this.lastTriggerSchedule
             if (this.at('Pr=')) {
                 this.next()
                 t.probability = this.floatValue(this.expect('FLOAT', `Expected a probability such as 0.5 after 'Pr='`))
@@ -1211,12 +1226,12 @@ class Parser {
             this.next()
             region.reference = this.parseScopeCall()
             if (this.at('for')) region.forLoop = this.parseForLoop()
-            this.parseOptionalSchedule()
+            this.setSchedule(region, this.parseOptionalSchedule())
             region.span = this.span(start)
             return region
         }
         if (this.at('for')) region.forLoop = this.parseForLoop()
-        this.parseOptionalSchedule()
+        this.setSchedule(region, this.parseOptionalSchedule())
         if (this.at('{')) {
             const open = this.pos
             this.next()
@@ -1355,7 +1370,7 @@ class Parser {
         }
         if (this.at('STRING')) region.label = stringValue(this.next().text)
         if (this.at('for')) region.forLoop = this.parseForLoop()
-        this.parseOptionalSchedule()
+        this.setSchedule(region, this.parseOptionalSchedule())
         if (this.accept('once')) region.once = true
         let form: 'brace' | 'colon'
         const open = this.pos
@@ -1420,8 +1435,9 @@ class Parser {
             if (!ASSIGN_OPS.has(this.kind())) this.fail(`Expected '=' in the equation but found ${describeToken(this.la())}`, 'Equations are written Output = expression, for example O = A && B.')
             const operator = this.next().kind as AssignOperator
             const expression = this.parseExpression()
-            this.parseOptionalSchedule()
+            const schedule = this.parseOptionalSchedule()
             const eq: Equation = { kind: 'equation', target, operator, expression, span: this.span(start) }
+            if (schedule) eq.schedule = schedule
             if (this.at(';') || this.at('seq')) { this.next(); eq.sequential = true }
             if (pending.annotations.length) eq.annotations = pending.annotations
             eq.span = this.span(start)
@@ -1444,7 +1460,8 @@ class Parser {
             if (access.some(a => a !== null)) callExpr.paramAccess = access
             const eq: Equation = { kind: 'equation', target, operator: '=', expression: callExpr, callArgs: args, span: this.span(start) }
             if (this.accept('=')) eq.expression = this.parseExpression()
-            this.parseOptionalSchedule()
+            const schedule = this.parseOptionalSchedule()
+            if (schedule) eq.schedule = schedule
             if (this.at(';') || this.at('seq')) { this.next(); eq.sequential = true }
             if (pending.annotations.length) eq.annotations = pending.annotations
             eq.span = this.span(start)
@@ -1532,8 +1549,9 @@ class Parser {
         const start = this.pos
         const pending = this.parseAnnotations('quoted')
         const target = this.parseValuedObjectReference()
-        this.parseOptionalSchedule()
+        const schedule = this.parseOptionalSchedule()
         const e: Effect = { kind: 'emit', target, span: this.span(start) }
+        if (schedule) e.schedule = schedule
         if (pending.annotations.length) e.annotations = pending.annotations
         return e
     }
@@ -1580,6 +1598,7 @@ class Parser {
                 if ((kind === 'during' || kind === 'suspend') && this.at('INT')) action.triggerDelay = this.intValue(this.next())
                 if (this.atAny(['do', 'label']) || this.at('}') || this.at('EOF')) this.fail(`Expected a condition after 'if' but found ${describeToken(this.la())}`)
                 action.trigger = this.parseBoolScheduleExpression()
+                if (this.lastTriggerSchedule) action.triggerSchedule = this.lastTriggerSchedule
                 if (kind === 'entry' || kind === 'exit') {
                     if (this.at('Pr')) { this.next(); action.probability = this.floatValue(this.expect('FLOAT')) }
                 } else if (this.at('Pr=')) {
@@ -1864,15 +1883,11 @@ class Parser {
             if (!this.at('conflicting') && !this.at('commuting')) this.fail(`Expected 'conflicting' or 'commuting' but found ${describeToken(this.la())}`)
             return this.next().kind
         }
-        if (this.accept('global')) {
-            d.global = true
-            d.priorities = [protocol()]
-        }
+        if (this.accept('global')) d.scheduleGlobal = protocol()
         if (this.accept('{')) {
-            const list = [protocol()]
-            while (this.accept(',')) list.push(protocol())
+            d.priorities = [protocol()]
+            while (this.accept(',')) d.priorities.push(protocol())
             this.expect('}')
-            d.priorities = [...(d.priorities ?? []), ...list]
         }
         d.valuedObjects.push(this.parseValuedObject())
         while (this.accept(',')) d.valuedObjects.push(this.parseValuedObject())
@@ -2001,7 +2016,8 @@ class Parser {
             while (this.accept(',')) d.parameters.push(this.parseMethodParameter(keyword))
             this.expect(')', `Expected ',' or ')' after the method parameter but found ${describeToken(this.la())}`)
         }
-        this.parseOptionalSchedule()
+        const methodSchedule = this.parseOptionalSchedule()
+        if (methodSchedule) d.schedule = methodSchedule
         if (this.at('{')) {
             const open = this.pos
             this.next()
@@ -2158,11 +2174,13 @@ class Parser {
             this.parseAnnotations('full')
             this.next()
             const condition = this.parseBoolScheduleExpression()
+            const conditionSchedule = this.lastTriggerSchedule
             const open = this.pos
             this.expect('{', `Expected '{' after the condition of 'if' but found ${describeToken(this.la())}`, 'In code blocks, conditionals are written if (x > 0) { ... } else { ... }.')
             const block = { declarations: [] as Declaration[], statements: [] as SclStatement[] }
             this.parseBlockContents(block, open)
             const st: Extract<SclStatement, { kind: 'if' }> = { kind: 'if', condition, ...block, span: this.span(start) }
+            if (conditionSchedule) st.conditionSchedule = conditionSchedule
             let semicolon = false
             const elseAt = this.scan(() => this.parseAnnotations('full'))
             if (this.kindAt(elseAt) === 'else') {
@@ -2235,15 +2253,17 @@ class Parser {
                 if (ASSIGN_OPS.has(this.kind())) {
                     const operator = this.next().kind as AssignOperator
                     const expression = this.parseExpression()
-                    this.parseOptionalSchedule()
+                    const schedule = this.parseOptionalSchedule()
                     const st: SclStatement = { kind: 'assign', target, operator, expression, span: this.span(start) }
+                    if (schedule) st.schedule = schedule
                     if (pending.annotations.length) st.annotations = pending.annotations
                     return st
                 }
                 if (this.at('++') || this.at('--')) {
                     const operator = this.next().kind as '++' | '--'
-                    this.parseOptionalSchedule()
+                    const schedule = this.parseOptionalSchedule()
                     const st: SclStatement = { kind: 'postfix', target, operator, span: this.span(start) }
+                    if (schedule) st.schedule = schedule
                     if (pending.annotations.length) st.annotations = pending.annotations
                     return st
                 }
@@ -2262,7 +2282,8 @@ class Parser {
             const pending = this.parseAnnotations('full')
             const st = this.parseEffectStatement(start)
             if (pending.annotations.length) (st as { annotations?: Annotation[] }).annotations = pending.annotations
-            this.parseOptionalSchedule()
+            const schedule = this.parseOptionalSchedule()
+            if (schedule) (st as { schedule?: ScheduleRef[] }).schedule = [...((st as { schedule?: ScheduleRef[] }).schedule ?? []), ...schedule]
             return st
         })
         if (!(effect instanceof Failure)) return { statement: effect, semicolon: semi() }
@@ -2415,8 +2436,8 @@ class Parser {
             const args = [this.parseParameter().expression]
             while (this.accept(',')) args.push(this.parseParameter().expression)
             this.expect(')', `Expected ',' or ')' in print( ... ) but found ${describeToken(this.la())}`)
-            this.parseOptionalSchedule()
-            return withAnnotations({ kind: 'print', args, span: this.span(start) })
+            const schedule = this.parseOptionalSchedule()
+            return withAnnotations({ kind: 'print', args, span: this.span(start), ...(schedule ? { schedule } : {}) })
         }
         if (k === 'randomize') {
             this.next()
@@ -2443,13 +2464,13 @@ class Parser {
         if (!isSuperFirst && ASSIGN_OPS.has(op)) {
             this.next()
             const expression = this.parseExpression()
-            this.parseOptionalSchedule()
-            return withAnnotations({ kind: 'assign', target, operator: op as AssignOperator, expression, span: this.span(start) })
+            const schedule = this.parseOptionalSchedule()
+            return withAnnotations({ kind: 'assign', target, operator: op as AssignOperator, expression, span: this.span(start), ...(schedule ? { schedule } : {}) })
         }
         if (!isSuperFirst && (op === '++' || op === '--')) {
             this.next()
-            this.parseOptionalSchedule()
-            return withAnnotations({ kind: 'postfix', target, operator: op, span: this.span(start) })
+            const schedule = this.parseOptionalSchedule()
+            return withAnnotations({ kind: 'postfix', target, operator: op, span: this.span(start), ...(schedule ? { schedule } : {}) })
         }
         if (op === '==' && !isSuperFirst) {
             this.fail(`'==' compares; use '=' to assign`, `In an effect, write \`${referenceName(target)} = value\`. Use \`==\` only in conditions (\`if x == 3\`).`, this.pos, "no viable alternative at input '=='")
@@ -2461,11 +2482,11 @@ class Parser {
                 this.next()
                 const value = this.parseExpression()
                 this.expect(')')
-                this.parseOptionalSchedule()
-                return value
+                return { value, schedule: this.parseOptionalSchedule() }
             })
             if (!(emission instanceof Failure) && this.quotedCompatible(pending.annotations)) {
-                return withAnnotations({ kind: 'emit', target, value: emission, span: this.span(start) })
+                const { value, schedule } = emission
+                return withAnnotations({ kind: 'emit', target, value, span: this.span(start), ...(schedule ? { schedule } : {}) })
             }
             this.pos = afterOpen
         }
@@ -2473,8 +2494,9 @@ class Parser {
             const args: Expression[] = []
             const access: ParamAccess[] = []
             this.parseCallArguments(args, access)
-            this.parseOptionalSchedule()
+            const schedule = this.parseOptionalSchedule()
             const e: Effect = { kind: 'call', name: referenceName(target), args, target, span: this.span(start) }
+            if (schedule) e.schedule = schedule
             if (isSuperFirst) e.super = true
             if (access.some(a => a !== null)) e.paramAccess = access
             return withAnnotations(e)
@@ -2482,8 +2504,8 @@ class Parser {
         if (isSuperFirst) this.fail(`Expected '(' after the method name`)
         // PureEmission
         if (!this.quotedCompatible(pending.annotations)) this.fail('Annotations on an emission can only have quoted values', 'Write @name "value" (with quotes) in front of an emitted signal.')
-        this.parseOptionalSchedule()
-        return withAnnotations({ kind: 'emit', target, span: this.span(start) })
+        const schedule = this.parseOptionalSchedule()
+        return withAnnotations({ kind: 'emit', target, span: this.span(start), ...(schedule ? { schedule } : {}) })
     }
 
     private quotedCompatible(annotations: Annotation[]): boolean {
@@ -2495,8 +2517,9 @@ class Parser {
         const args: Expression[] = []
         const access: ParamAccess[] = []
         this.parseCallArguments(args, access)
-        this.parseOptionalSchedule()
+        const schedule = this.parseOptionalSchedule()
         const e: Effect = { kind: 'call', name: referenceName(target), args, target, span: this.span(start) }
+        if (schedule) e.schedule = schedule
         if (isSuper) e.super = true
         if (access.some(a => a !== null)) e.paramAccess = access
         return e
@@ -2582,7 +2605,11 @@ class Parser {
     }
 
     /** BoolScheduleExpression: LogicalOrExpression ('schedule' ScheduleObjectReference)? */
+    /** The schedule of the last BoolScheduleExpression parsed (`if A schedule s 1`). */
+    private lastTriggerSchedule: ScheduleRef[] | undefined
+
     private parseBoolScheduleExpression(hint?: string): Expression {
+        this.lastTriggerSchedule = undefined
         let e: Expression
         const start = this.pos
         try {
@@ -2592,7 +2619,7 @@ class Parser {
             if (f instanceof Failure && hint && !f.hint && f.at === start) throw new Failure(f.at, f.message, hint)
             throw f
         }
-        if (this.accept('schedule')) this.parseScheduleObjectReference()
+        if (this.accept('schedule')) this.lastTriggerSchedule = [this.parseScheduleObjectReference()]
         return e
     }
 

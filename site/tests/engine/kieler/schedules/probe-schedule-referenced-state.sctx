@@ -1,0 +1,22 @@
+// A schedule on a referenced state applies to everything inside its copy: SchRefInner's writes of p (bound to o)
+// run at priority 0, before the other region's o = 7 (priority 1).
+scchart SchRefInner {
+  output int p
+  initial state S
+  immediate do p = 3 go to T
+  state T
+  do p = 9 go to T
+}
+scchart SchRefOuter {
+  output int o
+  schedule s
+  region R1 {
+    initial state A is SchRefInner(o) schedule s 0
+  }
+  region R2 {
+    initial state C
+    immediate do o = 7 schedule s 1 go to D
+    state D
+    do o = 8 schedule s 1 go to D
+  }
+}

@@ -1,0 +1,16 @@
+// Two schedule objects for different variables: s orders the writes of o, t those of p.
+scchart SchTwoObjectsOk {
+  output int o, p
+  schedule s
+  schedule t
+  region R1 {
+    initial state A
+    immediate do o = 1 schedule s 0; p = 1 schedule t 1 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 1; p = 2 schedule t 0 go to D
+    state D
+  }
+}

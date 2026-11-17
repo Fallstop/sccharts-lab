@@ -1,0 +1,15 @@
+// A trigger that is a single variable keeps its schedule on the reference.
+scchart SchTriggerRef {
+  input bool i
+  output bool x = false
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A
+    do x = i schedule s 1 go to A
+  }
+  region R2 {
+    initial state C
+    if x schedule s 0 do n++ go to C
+  }
+}

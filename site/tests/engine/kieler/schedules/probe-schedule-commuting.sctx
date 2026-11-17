@@ -1,0 +1,16 @@
+// A commuting priority: two writes of o at the same priority do not depend on each other, so the two regions are
+// not ordered and the chart compiles.
+scchart SchCommuting {
+  output int o
+  schedule {commuting} s
+  region R1 {
+    initial state A
+    immediate do o = 1 schedule s 0 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 0 go to D
+    state D
+  }
+}

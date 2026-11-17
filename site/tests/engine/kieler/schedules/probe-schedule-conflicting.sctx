@@ -1,0 +1,15 @@
+// A conflicting priority (the default): two different writes of o at the same priority conflict.
+scchart SchConflicting {
+  output int o
+  schedule s
+  region R1 {
+    initial state A
+    immediate do o = 1 schedule s 0 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 0 go to D
+    state D
+  }
+}

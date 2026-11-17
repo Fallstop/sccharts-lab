@@ -1,0 +1,15 @@
+// `global commuting` does not change the priorities: o = 2 (priority 0) still runs before o = 1 (priority 1).
+scchart SchGlobal {
+  output int o
+  schedule "order" global commuting {conflicting, conflicting} s
+  region R1 {
+    initial state A
+    immediate do o = 1 schedule s 1 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 0 go to D
+    state D
+  }
+}

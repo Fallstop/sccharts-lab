@@ -1,0 +1,92 @@
+{
+  "hash": "333d2343236a86e6fad34216530a7d7efc9f0c61",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-during-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "n": 0,
+        "x": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 3,
+        "n": 0,
+        "x": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 5
+      },
+      "values": {
+        "i": 5,
+        "n": 1,
+        "x": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "n": 2,
+        "x": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "n": 2,
+        "x": 0
+      },
+      "terminated": false
+    }
+  ]
+}

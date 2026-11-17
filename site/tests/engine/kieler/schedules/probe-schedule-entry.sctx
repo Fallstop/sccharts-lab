@@ -1,0 +1,15 @@
+// An entry action with a schedule: o = 1 (priority 1) after the other region's o = 2 (priority 0).
+scchart SchEntry {
+  output int o
+  schedule s
+  region R1 {
+    initial state A {
+      entry do o = 1 schedule s 1
+    }
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 0 go to D
+    state D
+  }
+}

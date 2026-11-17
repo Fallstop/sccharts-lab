@@ -1,0 +1,16 @@
+// A during action's trigger with a schedule: the test of x (priority 0) before x = i (priority 1).
+scchart SchDuringTrigger {
+  input int i
+  output int x = 0, n = 0
+  schedule s
+  region R1 {
+    initial state A {
+      during do x = i schedule s 1
+    }
+  }
+  region R2 {
+    initial state C {
+      during if x > 2 schedule s 0 do n++
+    }
+  }
+}

@@ -1,0 +1,24 @@
+// A chart with a schedule of its own, used twice: each instance orders its own writes (p = 2 before p = 1).
+scchart SchInstInner {
+  output int p
+  schedule s
+  region R1 {
+    initial state A
+    immediate do p = 1 schedule s 1 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do p = 2 schedule s 0 go to D
+    state D
+  }
+}
+scchart SchInstOuter {
+  output int o1, o2
+  region {
+    initial state X is SchInstInner(o1)
+  }
+  region {
+    initial state Y is SchInstInner(o2)
+  }
+}

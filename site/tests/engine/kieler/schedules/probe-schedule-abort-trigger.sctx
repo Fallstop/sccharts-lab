@@ -1,0 +1,19 @@
+// A scheduled trigger on a transition out of a superstate (an abort): x is tested before x = i is written.
+scchart SchAbortTrigger {
+  input int i
+  output int x = 0
+  output bool left = false
+  schedule s
+  region R1 {
+    initial state A
+    do x = i schedule s 1 go to A
+  }
+  region R2 {
+    initial state S {
+      initial state T
+      go to T
+    }
+    if x > 2 schedule s 0 do left = true go to E
+    state E
+  }
+}

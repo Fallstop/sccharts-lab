@@ -1,0 +1,16 @@
+// The schedule puts y = x + w (priority 0) before x = 1 (priority 1), but y = x + w reads w, which the same
+// transition writes after x = 1: a cycle.
+scchart SchCycle {
+  output int x, y, w
+  schedule s
+  region R1 {
+    initial state A
+    immediate do x = 1 schedule s 1; w = 2 go to B
+    state B
+  }
+  region R2 {
+    initial state C
+    immediate do y = x + w schedule s 0 go to D
+    state D
+  }
+}

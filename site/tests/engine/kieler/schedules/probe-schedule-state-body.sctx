@@ -1,0 +1,18 @@
+// A schedule on a superstate goes to its regions' transitions: the inner write of o (priority 1) runs after the
+// other region's o = 2 (priority 0).
+scchart SchStateBody {
+  output int o
+  schedule s
+  region R1 {
+    initial state S schedule s 1 {
+      initial state A
+      immediate do o = 1 go to B
+      state B
+    }
+  }
+  region R2 {
+    initial state C
+    immediate do o = 2 schedule s 0 go to D
+    state D
+  }
+}
