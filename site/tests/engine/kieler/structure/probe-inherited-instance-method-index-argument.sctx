@@ -1,0 +1,11 @@
+// Index and argument both name the inherited variable.
+scchart T extends Base {
+  initial state I
+  do cs[i % 2].add(i + 3); o = cs[1].v go to I
+}
+scchart Base {
+  int i = 1
+  class C { int v = 2
+    void add(int n) { v += n } } cs[2]
+  output int o
+}

@@ -1,0 +1,15 @@
+// region is super.R with nested structs and an array of instances.
+scchart T extends Base {
+  override region R {
+    initial state W { region is super.R }
+  }
+}
+scchart Base {
+  struct S { struct P { int x } p } a, b
+  class C { int v = 1 } cs[2]
+  output int o
+  region R {
+    initial state I
+    do a.p.x += 1; b.p.x += 2; cs[1].v += 3; o = a.p.x*100 + b.p.x*10 + cs[1].v go to I
+  }
+}

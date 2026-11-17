@@ -1,0 +1,12 @@
+// Instances from two levels of base charts.
+scchart T extends Mid {
+  initial state I
+  do a.v += 1; m.v += 2; o = a.v*10 + m.v go to I
+}
+scchart Mid extends Base {
+  class D { int v = 0 } m
+}
+scchart Base {
+  class C { int v = 0 } a
+  output int o
+}

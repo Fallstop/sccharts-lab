@@ -1,0 +1,12 @@
+// Inherited variables inside the indices of reads, nested.
+scchart T extends Base {
+  initial state I
+  if cs[i % 2].v > 1 do o = c.arr[i + 0] + x[c.arr[i - 1] - 4] go to I
+}
+scchart Base {
+  int i = 1
+  int x[2] = {8, 9}
+  class C { int arr[2] = {4,5} } c
+  class D { int v = 2 } cs[2]
+  output int o
+}

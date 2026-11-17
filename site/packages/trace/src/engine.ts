@@ -118,7 +118,8 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
             const { of } = v.member
             let type: string | undefined
             if (of.declKind === 'reference' && of.instance) type = `${of.instance.target}1`
-            else if (nested && (of.declKind === 'class' || of.declKind === 'struct')) type = result.index?.vos.get(of.decl ?? '')?.decl?.className
+            // An inherited instance's id has the base chart's copy in front (`…/Base$a`).
+            else if (nested && (of.declKind === 'class' || of.declKind === 'struct')) type = (result.index?.vos.get(of.decl ?? '') ?? result.index?.vos.get((of.decl ?? '').split('/').pop()!))?.decl?.className
             if (!type) continue
             out.push({ name: `${type}${nested ? '1' : ''}.${v.member.name}`, input: false, output: false, type: typeName(v.type, v.hostType), dims: [], late: true })
         }

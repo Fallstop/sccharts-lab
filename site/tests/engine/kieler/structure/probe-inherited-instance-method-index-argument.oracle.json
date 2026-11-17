@@ -1,0 +1,98 @@
+{
+  "hash": "f19009a323d829084cda784588b5a9d390447c54",
+  "chart": "../../../../../../tmp/claude-1000/-home-fallstop-Documents-projects-sccharts-lab/4bebbd45-15e3-49f5-b757-ef5ec383b3e9/scratchpad/nr10keep/probe-inherited-instance-method-index-argument.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_cs_add_n is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": [
+        "inherited"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "cs": [
+          {
+            "v": 2
+          },
+          {
+            "v": 2
+          }
+        ],
+        "i": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 6,
+        "cs": [
+          {
+            "v": 2
+          },
+          {
+            "v": 6
+          }
+        ],
+        "i": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 10,
+        "cs": [
+          {
+            "v": 2
+          },
+          {
+            "v": 10
+          }
+        ],
+        "i": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

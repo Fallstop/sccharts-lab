@@ -1,0 +1,15 @@
+// The extending chart's region reads a member the base's region updates: the read comes after.
+scchart T extends Base {
+  region R2 {
+    initial state J
+    do o = c.v + a.v go to J
+  }
+}
+scchart Base {
+  class C { int v = 1 } c, a
+  output int o
+  region R1 {
+    initial state I
+    do c.v += 2 go to I
+  }
+}

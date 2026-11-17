@@ -1,0 +1,11 @@
+// The same in the index of the element a method is called on.
+scchart T extends Base {
+  initial state I
+  do cs[i % 2].inc(); o = cs[1].v * 10 + cs[0].v go to I
+}
+scchart Base {
+  int i = 1
+  class C { int v = 2
+    void inc() { v++ } } cs[2]
+  output int o
+}

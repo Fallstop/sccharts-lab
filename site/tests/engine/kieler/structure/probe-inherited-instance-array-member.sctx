@@ -1,0 +1,9 @@
+// An inherited struct's array member read and written in one effect list.
+scchart T extends Base {
+  initial state I
+  do c.arr[1] += 1; c.arr[0] = c.arr[1] * 2; o = c.arr[0] go to I
+}
+scchart Base {
+  struct C { int arr[2] } c
+  output int o
+}

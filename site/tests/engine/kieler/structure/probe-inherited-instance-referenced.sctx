@@ -1,0 +1,14 @@
+// A referenced chart that extends another and uses the base's instances.
+scchart Top {
+  output int o
+  initial state W is T(o)
+}
+scchart T extends Base {
+  initial state I
+  do a.v += 1; b.v += 2; cs[1].inc(); o = a.v*100 + b.v*10 + cs[1].v go to I
+}
+scchart Base {
+  class C { int v = 0
+    void inc() { v++ } } a, b, cs[2]
+  output int o
+}

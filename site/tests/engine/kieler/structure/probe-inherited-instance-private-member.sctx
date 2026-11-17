@@ -1,0 +1,11 @@
+// A private member behind the inherited instance's methods.
+scchart T extends Base {
+  initial state I
+  do c.put(4); o = c.get() go to I
+}
+scchart Base {
+  class C { private int v = 1
+    void put(int n) { v = n }
+    int get() { return v } } c
+  output int o
+}

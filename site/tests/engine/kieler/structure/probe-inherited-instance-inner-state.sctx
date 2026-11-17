@@ -1,0 +1,12 @@
+// A state inside a chart extends a chart with an output: KIELER wants the inherited output bound (rejected).
+scchart Top {
+  output int o2
+  initial state W extends Base {
+    initial state I
+    do a.v += 1; b.v += 2; o2 = a.v*10 + b.v go to I
+  }
+}
+scchart Base {
+  class C { int v = 0 } a, b
+  output int o2
+}

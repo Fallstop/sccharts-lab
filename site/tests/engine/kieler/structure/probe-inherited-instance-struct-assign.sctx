@@ -1,0 +1,9 @@
+// A nested struct of an inherited instance assigned as a whole.
+scchart T extends Base {
+  initial state I
+  do l.p.x = 3; l.q = l.p; o = l.q.x go to I
+}
+scchart Base {
+  struct L { struct P { int x } p, q } l
+  output int o
+}

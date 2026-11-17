@@ -1,0 +1,11 @@
+// An inherited instance's method that calls another of its methods.
+scchart T extends Base {
+  initial state I
+  do c.twice(); o = c.v go to I
+}
+scchart Base {
+  class C { int v = 1
+    void inc() { v++ }
+    void twice() { inc(); inc() } } c
+  output int o
+}

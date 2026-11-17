@@ -1,0 +1,15 @@
+// The base's region and the extending chart's region both write the same inherited member: not schedulable.
+scchart T extends Base {
+  region R2 {
+    initial state J
+    do c.v = 5 go to J
+  }
+}
+scchart Base {
+  class C { int v = 1 } c
+  output int o
+  region R1 {
+    initial state I
+    do c.v = 3; o = c.v go to I
+  }
+}

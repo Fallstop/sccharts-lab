@@ -1,0 +1,88 @@
+{
+  "hash": "908d0b5b49e61858c098aab22a649e6916ecaf0e",
+  "chart": "../../../../../../tmp/claude-1000/-home-fallstop-Documents-projects-sccharts-lab/4bebbd45-15e3-49f5-b757-ef5ec383b3e9/scratchpad/nr10keep/probe-inherited-instance-array-member.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads c.arr[0], so the compiler treats it as an update of c.arr[0] (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. c.arr[0] += 1.\nIt only matters when another region also writes c.arr[0] in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 4,
+      "column": 21
+    }
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    },
+    "C.arr": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "struct",
+      "properties": [
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "arr": [
+            0,
+            0
+          ]
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "c": {
+          "arr": [
+            2,
+            1
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "c": {
+          "arr": [
+            4,
+            2
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -14,7 +14,7 @@ import type { Diagnostic, ScopeCall, Span, State } from '../../types'
 import type { ModelIndex } from '../../parser/resolve'
 import type { PassContext } from './context'
 import {
-    allContainedStates, allRegions, allScopes, walkExpr, type CExpr, type CRef, type CRegion, type CState, type CStmt, type CVar,
+    allContainedStates, allRegions, allScopes, mapExpr, walkExpr, type CExpr, type CRef, type CRegion, type CState, type CStmt, type CVar,
 } from '../model'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { inheritedDeclarations } from '../lower'
@@ -147,8 +147,10 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
             if (!member) break
             out = { ...out.sub, v: member, idx: [...out.idx, ...out.sub.idx], span: r.span }
         }
-        return out
+        // The indices on the way name inherited variables too (`c.arr[i % 2]`, `cs[i % 2].inc()`).
+        return { ...out, idx: out.idx.map(deep) }
     }
+    const deep = (e: CExpr): CExpr => mapExpr(e, x => (x.k === 'ref' ? redirect(x) : retarget(x, redirect)))
     rewriteScope(state, { read: redirect, target: redirect, node: e => retarget(e, redirect) })
     // An override replaces the base method everywhere, also in the base's own bodies (structure.md S-66), unless it
     // calls `super`: then KIELER keeps the base method and the base's references keep calling it (KIELER's defect,
@@ -188,9 +190,16 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
         const r = copy.regions.find(x => x.origin === prefix + source.id)
         if (!r) continue
         // Its variables are the inherited ones.
+        // A member's counterpart is found through its instance's: two instances of one type share the members' ids.
+        const counterpart = (v: CVar): CVar | undefined => {
+            const id = v.decl?.startsWith(prefix) ? v.decl.slice(prefix.length) : undefined
+            if (!id) return undefined
+            const of = v.member ? counterpart(v.member.of) : undefined
+            const member = of ? [...(instances.get(of) ?? [])].find(([key]) => key.split(REFERENCE_SEPARATOR).pop() === id.split(REFERENCE_SEPARATOR).pop())?.[1] : undefined
+            return member ?? byDecl.get(id)
+        }
         const mapped = (ref: CRef): CRef | undefined => {
-            const id = ref.v.decl?.startsWith(prefix) ? ref.v.decl.slice(prefix.length) : undefined
-            const target = id ? byDecl.get(id) : undefined
+            const target = counterpart(ref.v)
             // The copy's own declarations, and what it names from its own bases (unresolved in the copy alone).
             return target && (copy.decls.includes(ref.v) || ref.v.declKind === 'unresolved') ? { ...ref, v: target } : undefined
         }

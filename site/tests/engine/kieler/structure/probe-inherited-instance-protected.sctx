@@ -1,0 +1,9 @@
+// A protected instance is renamed Base_c in the data.
+scchart T extends Base {
+  initial state I
+  do c.v += 4; o = c.v go to I
+}
+scchart Base {
+  protected class C { int v = 1 } c
+  output int o
+}

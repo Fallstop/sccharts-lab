@@ -1,0 +1,10 @@
+// An element of an inherited array of instances before a plain variable in a trigger: gcc fails as for the chart's own.
+scchart T extends Base {
+  input int n
+  initial state I
+  if cs[n % 2].v > 0 && o < 9 do o += 1 go to I
+}
+scchart Base {
+  class C { int v = 1 } cs[2]
+  output int o
+}

@@ -1,0 +1,9 @@
+// pre of an inherited instance's member.
+scchart T extends Base {
+  initial state I
+  do c.v += 1; o = pre(c.v) go to I
+}
+scchart Base {
+  class C { int v = 1 } c
+  output int o
+}
