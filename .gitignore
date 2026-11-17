@@ -2,6 +2,8 @@ build
 dist
 lerna-debug.log
 lib
+# Test inputs may sit in a lib/ folder (an import probe's "../lib/*")
+!site/tests/**/lib/
 node_modules
 pack
 plugins
