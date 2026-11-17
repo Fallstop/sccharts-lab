@@ -1,0 +1,14 @@
+// An inner state extending a chart with @DeviationOutput: the annotation is copied into the chart, so lag is an output.
+scchart PrDevInner {
+  initial state T extends PrDevInnerBase {
+  }
+}
+@DeviationOutput
+scchart PrDevInnerBase {
+  clock c
+  region {
+    initial state A
+    if c >= 5 go to B
+    final state B
+  }
+}

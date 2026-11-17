@@ -1,0 +1,10 @@
+// clock @Logical c in a referenced chart: on the variable, KIELER ignores it in the copy too.
+scchart PrLogRef {
+  initial state S is PrLogRefChild
+}
+scchart PrLogRefChild {
+  clock @Logical c
+  initial state A
+  if c >= 5 go to B
+  final state B
+}

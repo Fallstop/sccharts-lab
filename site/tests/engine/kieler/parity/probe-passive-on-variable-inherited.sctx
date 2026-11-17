@@ -1,0 +1,9 @@
+// clock @Passive c in a base chart: on the variable, KIELER ignores it, also in the extending chart.
+scchart PrPasInh extends PrPasInhBase {
+}
+scchart PrPasInhBase {
+  clock @Passive c
+  initial state A
+  if c >= 2 go to B
+  final state B
+}

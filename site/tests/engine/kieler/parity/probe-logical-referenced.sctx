@@ -1,0 +1,10 @@
+// @Logical clock c in a referenced chart: the copy is logical.
+scchart PrLogRefD {
+  initial state S is PrLogRefDChild
+}
+scchart PrLogRefDChild {
+  @Logical clock c
+  initial state A
+  if c >= 5 go to B
+  final state B
+}

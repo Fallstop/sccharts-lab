@@ -22,6 +22,7 @@ import {
     type CEffect, type CExpr, type CRegion, type CState, type CTransition,
 } from '../model'
 import type { InstanceRecord } from './reference'
+import { REFERENCE_SEPARATOR } from '../structure/instance'
 
 export const timedAutomata: Pass = {
     id: 'de.cau.cs.kieler.sccharts.processors.timedautomata',
@@ -47,9 +48,16 @@ export function chartAnnotations(ctx: PassContext): Annotation[] {
         if (!value || typeof value !== 'object') return
         const obj = value as Record<string, unknown>
         if (obj.kind === 'annotation') out.push(obj as unknown as Annotation)
+        // KIELER's Inheritance copies the base charts' annotations and contents into the extending state first.
+        if (obj.kind === 'state') {
+            for (const call of (obj as unknown as State).baseStates ?? []) {
+                const base = index?.scopeTargets.get(call)
+                if (base && !charts.includes(base)) charts.push(base)
+            }
+        }
         for (const [k, v] of Object.entries(obj)) if (k !== 'span' && v && typeof v === 'object') visit(v)
     }
-    charts.forEach(visit)
+    for (let i = 0; i < charts.length; i++) visit(charts[i])
     return out
 }
 
@@ -80,7 +88,9 @@ function transform(ctx: PassContext) {
     // ignoring case. Lowering merges both kinds into the tags, so rebuild these two from the declaration.
     const index = ctx.shared.index as ModelIndex | undefined
     for (const clock of states.flatMap(s => s.decls).filter(isClock)) {
-        const decl = clock.decl ? index?.vos.get(clock.decl)?.decl : undefined
+        // A copied clock (a reference instance, an inherited base) has its id behind the copy's prefix.
+        const entry = clock.decl ? index?.vos.get(clock.decl) ?? index?.vos.get(clock.decl.split(REFERENCE_SEPARATOR).pop()!) : undefined
+        const decl = entry?.decl
         for (const name of ['Logical', 'Passive']) {
             const tagged = [...clock.tags].some(t => t.toLowerCase() === `@${name.toLowerCase()}`)
             const has = decl ? decl.annotations.some(a => a.name.toLowerCase() === name.toLowerCase()) : tagged
