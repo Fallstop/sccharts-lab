@@ -1,0 +1,14 @@
+// @UnpackRenaming "Sum" names the unpacked member accSum; an empty one names it as the instance (acc).
+scchart T {
+  @UnpackClass
+  class C {
+    @UnpackRenaming "Sum"
+    int sum = 1
+    @UnpackRenaming ""
+    int total
+    int plain = 2
+    void inc() { sum += 1; total += 2 } } acc
+  initial state I go to J
+  state J do acc.inc(); acc.plain += acc.sum go to K
+  state K
+}

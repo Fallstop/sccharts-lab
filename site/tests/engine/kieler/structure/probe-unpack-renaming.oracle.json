@@ -1,0 +1,66 @@
+{
+  "hash": "3055afc25a7a5c8e0d785b0587fe682c737d6702",
+  "chart": "tests/engine/kieler/structure/probe-unpack-renaming.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "acc": {
+      "type": "int",
+      "properties": []
+    },
+    "accSum": {
+      "type": "int",
+      "properties": []
+    },
+    "acc_plain": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "acc": 0,
+        "accSum": 1,
+        "acc_plain": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "acc": 0,
+        "accSum": 1,
+        "acc_plain": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "acc": 2,
+        "accSum": 2,
+        "acc_plain": 4
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

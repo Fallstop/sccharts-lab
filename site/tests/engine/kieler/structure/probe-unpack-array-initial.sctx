@@ -1,0 +1,8 @@
+// As probe-unpack-array with an initial value on the member: gcc rejects the assignment of one value to the array.
+scchart T {
+  @UnpackClass
+  struct C { int v = 3 } cs[2]
+  initial state I go to J
+  state J do cs[1].v += 2 go to K
+  state K
+}

@@ -1,0 +1,7 @@
+// KIELER's access identifier compares every level: cells[n].v and cells[0].v are different identifiers, so the two writes are not compared (accepted; the later region's write wins when n is 0).
+scchart A {
+  input int n
+  class Cell { int v = 0 } cells[2]
+  region R0 { initial state B do cells[n].v = 1 go to B }
+  region R1 { initial state A do cells[0].v = 5 go to A }
+}

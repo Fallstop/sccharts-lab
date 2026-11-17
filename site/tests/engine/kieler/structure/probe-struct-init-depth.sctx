@@ -1,0 +1,10 @@
+// A struct's initial values are applied two levels deep only (its members and those of the structs directly inside): c1 and d1 stay 0.
+scchart T {
+  struct A { int a1 = 1
+    struct B { int b1 = 2
+      struct C { int c1 = 3
+        struct D { int d1 = 4 } d } c } b } a
+  initial state I go to J
+  state J do a.a1 += 10 go to K
+  state K
+}

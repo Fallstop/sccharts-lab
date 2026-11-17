@@ -1173,6 +1173,18 @@ accepted (probe, `--system priority`).
   asc-schedulable!`), while the same loop updating another variable is accepted (probes
   `tests/engine/kieler/structure/probe-method-inner-update-conflict`, `-other-variable`; engine code
   `update-conflict`).
+- **A class's method that stays a function reads the class's members through its own `self` parameter**
+  (`MethodProcessor` adds it; `SCGMethodExtensions` `ANNOTATION_METHOD_REQUIRES_SELF`). To the dependency analysis
+  `self.v` of one method is a variable of its own: it is the same for every instance the method is called on,
+  different from every other method's, and never the `c.v` written outside. So, in two concurrent regions:
+  `c.big()` (a loop of `v += 1`) next to `c.v += 1` is accepted, with no order between them (the regions' order
+  decides); `c.set7()` next to `c.set8()`, or next to `c.v = 8`, is accepted the same way; a reader of `c.v`
+  does not wait for the method's write, so `o = c.get()` with `c.v = o + 1` is no cycle; but `c.set7()` next to
+  `d.set7()` is **rejected** (both write the `self.v` of `set7`, and the two calls are different expressions), as
+  is `cells[0].set7()` next to `cells[1].set7()`. The same call twice is confluent. A method KIELER inlines into
+  a kept one reads through the kept one's `self`; a kept one called by a kept one keeps its own. A variable of the
+  chart accessed in such a method is the chart's as before. Probes
+  `tests/engine/kieler/structure/probe-method-self-*`; engine: `deps.ts` `innerAccesses` (`Access.bucket`).
 - Teaching: treat parameters as read-only; compute into a local (`int r = k * 2`) instead.
 - Implementation: inline or not as KIELER does (the choice decides what a parameter assignment means); give every
   call the body's accesses for scheduling.
@@ -1443,7 +1455,24 @@ declares a class and two instances. Inside a class:
   (`ps[2][2]`, `ps[1][0].x`) and with an index from an input (`ps[i].x`). A method of an inner instance is
   called through it (`ob.in.inc()`, or `in.inc()` in a method of the outer class); a method of an array
   element works on that element (`cs[i].inc()`, also with a loop, which KIELER keeps as a C function taking
-  the element). A member's initial value holds for every element (`int v = 1` in `cs[2]`).
+  the element). A member's initial value holds for every element (`int v = 1` in `cs[2]`), and one that reads a
+  sibling member reads the element's own (`int b = a + 1`).
+- **Initial values reach two levels into a struct, and every level of a class.** A class initialises its
+  variables in a generated `_init` method that calls the `_init` of the classes inside it. A struct's values are
+  assigned from outside, and KIELER collects them from its members and the members of the structs directly
+  inside it only (`getAllNestedValuedObjects`): `struct A { struct B { struct C { int c1 = 3 } c } b } a` leaves
+  `a.b.c.c1` at 0. A struct inside a class counts from the struct. Probes `probe-struct-init-depth*`,
+  `probe-class-init-depth`, `probe-class-struct-init-depth`; source `Initialization.xtend:204-232`.
+- **A whole instance can be assigned only when it is nested**: `q = p` and `ps[1] = ps[0]` are rejected
+  (`Assignments to class/struct types are not supported.`), `a.q = a.p` is accepted and copies every member, as
+  the C struct assignment it becomes. To the scheduler it writes `a.q`, which every access of a member of `a.q`
+  reads (a member access reads each instance on its way): a concurrent `x = a.q.v` or `a.q.v = 9` comes after it.
+  Probes `probe-struct-assign-*`.
+- **A class inside a class cannot use the outer class's members.** KIELER's C code looks the name up in the
+  chart's data: gcc fails with `'TickData' has no member named 'w'` for a member or a method of the outer class
+  named in an inner method that is called or in an inner initial value; an inner method never called gets no C
+  code and does no harm; and if the chart itself declares a variable of that name, the inner class silently uses
+  that one. Probes `probe-class-outer-member*`, `probe-class-outer-method`; engine code `outer-member`.
 - For scheduling, a member of one instance is one variable, and a member of an array of instances is one
   array: concurrent writes of different members (`p.x`, `p.y`) or of the same member of two nested instances
   (`l.a.x`, `l.b.x`) are independent, concurrent writes of `ps[0].x` and `ps[1].x` are accepted as writes of
@@ -1521,10 +1550,22 @@ replace the members by plain variables named `<instance>_<member>`: `acc.sum` be
 the pool's name (`122-unpack-class`: `acc_sum = 1, 3`). Two instances are rejected: `Unpacking multiple
 instances of the same class is not yet supported.` (`123-err-unpack-two-instances`); an array instance of a
 class with methods: `Unpacking an array instance of a class with methods is not yet supported.` (source).
-`@UnpackRenaming "suffix"` on a member names it `<instance><suffix>` instead (source). On a `ref` declaration of
+`@UnpackRenaming "suffix"` on a member names it `<instance><suffix>` instead (probes `probe-unpack-renaming*`; on a declaration of two members both get the one name, and gcc finds a duplicate member). On a `ref` declaration of
 a chart class the annotation has no effect (probe). Official KIELER 0.3.0 ignores the annotation altogether:
 the instance stays an object in the pool and two instances are accepted (S-68).
 
+The processor also unpacks, innermost first:
+
+| written | result |
+| --- | --- |
+| on a class with a class inside (`class O { int w  class In { int v } inn } o`) | the chart's `o_w` and the instance `o_inn` (pool `o_inn: { v }`); the inner class's methods may then use `w`, which is the chart's `o_w` |
+| on a class inside a class (`class O { @UnpackClass class In { int v } inn } o`) | the members move into the outer class: pool `o: { inn_v }`; a method of `In` is a method of `O` (and may use `O`'s members) |
+| on both | `o_inn_v`, `o_w` |
+| on an array of instances (`} cs[2]`, at the top or inside a class) | every member gets the instance's dimensions in front: `cs_v[2]`, `cs_arr[2][2]`, `o: { inn_v: [..] }`; `cs[1].v` is `cs_v[1]` |
+| on an array of instances with a method | rejected: `Unpacking an array instance of a class with methods is not yet supported.` |
+| on an array of instances whose member has an initial value | rejected: the one value is assigned to the member, now an array (gcc: `assignment to expression with array type`; a vector as the value: `Cardinalities do not match. …`) |
+
+- Evidence: probes `tests/engine/kieler/structure/probe-unpack-*`.
 - Source: `processors/UnpackClasses.xtend:45-160`.
 - Teaching: not needed for simulation; mention only if a reader asks why their pool shows `acc_sum`.
 - Implementation: rename as KIELER does; reject the two cases above.

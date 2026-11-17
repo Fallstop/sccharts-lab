@@ -1,0 +1,87 @@
+{
+  "hash": "6852d45322ea2e5b56f25a2e7d0673044e48ec15",
+  "chart": "tests/engine/kieler/structure/probe-struct-assign-inner-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O.P.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.ps": {
+      "type": "struct",
+      "properties": []
+    },
+    "a": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": {
+          "ps": [
+            {
+              "v": 1
+            },
+            {
+              "v": 1
+            }
+          ]
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": {
+          "ps": [
+            {
+              "v": 1
+            },
+            {
+              "v": 1
+            }
+          ]
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": {
+          "ps": [
+            {
+              "v": 4
+            },
+            {
+              "v": 4
+            }
+          ]
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

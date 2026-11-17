@@ -28,7 +28,9 @@ export type Feature =
      *  writes of w in concurrent regions (absolute writes too, which only the schedule orders). Not in `mix`. */
     | 'schedules'
     /** Nested instances: a struct inside a struct (`ln.a.qx`), a class inside a class (`box.in.v`, a method of the
-     *  inner one), an array of class instances with a method (`cells[1].inc()`, `cells[n % 2].v`). Not in `mix`. */
+     *  inner one), an array of class instances with a method (`cells[1].inc()`, `cells[n % 2].v`), an array member of
+     *  an array of structs (`rows[n % 2].arr[1]`), and methods with a loop, which KIELER keeps as functions and whose
+     *  accesses it reads through their own `self` (`cells[0].bump()`, `cells[1].put(n)`, `box.fill()`). Not in `mix`. */
     | 'nested'
 
 export const ALL_FEATURES: Feature[] = [
@@ -181,7 +183,7 @@ class Generator {
         if (s.object && this.on('code')) opts.push(`${s.object}.sum(n) > 2`, `${s.object}.halve(${s.object}.get()) == 2`)
         if (s.struct) opts.push(`${s.struct}.px > 1`, `${s.struct}.py == 0`)
         if (s.mode) opts.push(`${s.mode} == Mode.RUN`, `${s.mode} != Mode.IDLE`)
-        if (s.nested) opts.push('ln.a.qx > 1', 'ln.b.qx == ln.wd', 'box.in.get() > 1', 'cells[0].v > 1', 'cells[1].v == 2', 'cells[n % 2].v > 0')
+        if (s.nested) opts.push('ln.a.qx > 1', 'ln.b.qx == ln.wd', 'box.in.get() > 1', 'cells[0].v > 1', 'cells[1].v == 2', 'cells[n % 2].v > 0', 'cells[0].sum(1) > 2', 'rows[0].arr[1] > 1', 'rows[n % 2].arr[0] == 1')
         if (s.rare?.at) opts.push(`${s.rare.at}()`, `!${s.rare.at}()`, `a && ${s.rare.at}()`)
         if (s.rare?.konst) opts.push(`scchart(${s.rare.konst}).ON && b`, `n > scchart(${s.rare.konst}).K`)
         if (s.rare?.prime) opts.push(`n == ${s.rare.prime}`)
@@ -230,7 +232,11 @@ class Generator {
             if (this.on('code') && s.outs.length && r.chance(0.3)) opts.push(this.codeEffect(s))
             if (s.nested) {
                 opts.push('ln.a.qx += 1', 'box.in.inc()', 'box.w += 1', 'cells[0].inc()', 'cells[1].v += 1', 'cells[n % 2].inc()')
-                if (!s.conc) opts.push('ln.b.qx = ln.a.qx + 1', 'ln.wd = n', 'box.w = box.in.get()', 'cells[1].v = cells[0].v + 1', 'cells[n % 2].v = 0')
+                opts.push('cells[0].bump()', 'cells[1].bump()', 'cells[n % 2].bump()', 'box.fill()', 'rows[0].arr[1] += 1', 'rows[n % 2].arr[n % 2] += 1', 'rows[0].arr[n % 2] += 1', 'rows[n % 2].arr[1] += 1')
+                // Absolute writes in concurrent regions too, now and then: KIELER compares them by identifier and by method.
+                if (s.conc && r.chance(0.3)) opts.push('cells[0].put(1)', 'cells[1].put(n)', 'cells[n % 2].v = 0', 'cells[0].v = 3', 'rows[0].arr[n % 2] = 1', 'rows[n % 2].arr[1] = 2', 'rows[0].arr[1] = 2', 'box.in.v = 8', 'box.w = cells[0].sum(n)', 'box.w = cells[0].sum(1)')
+                if (!s.conc || r.chance(0.2)) opts.push('ln.b = ln.a', 'ln.a = ln.b', 'cells[1].k += cells[0].k')
+                if (!s.conc) opts.push('cells[0].put(n)', 'rows[1].arr[0] = rows[0].arr[1]', 'box.w = cells[1].sum(2)', 'ln.b.qx = ln.a.qx + 1', 'ln.wd = n', 'box.w = box.in.get()', 'cells[1].v = cells[0].v + 1', 'cells[n % 2].v = 0')
             }
             if (s.sched) {
                 // Absolute and relative writes of w, ordered (or not) by the schedule's priorities.
@@ -514,8 +520,13 @@ class Generator {
         if (this.on('nested')) {
             lines.push(
                 '  struct Line {', '    struct P2 {', '      int qx = 0', '    } a, b', '    int wd = 1', '  } ln',
-                '  class Box {', '    class In {', '      int v = 0', '      void inc() {', '        v = v + 1', '      }', '      int get() {', '        return v', '      }', '    } in', '    int w = 0', '  } box',
-                '  class Cell {', '    int v = 0', '    void inc() {', '      v = v + 1', '    }', '  } cells[2]')
+                '  class Box {', '    class In {', '      int v = 0', '      void inc() {', '        v = v + 1', '      }', '      int get() {', '        return v', '      }', '    } in', '    int w = 0',
+                '    void fill() {', '      for (int j = 0; j < 2; j++) {', '        in.v += 1;', '      }', '    }', '  } box',
+                '  class Cell {', '    int v = 0', '    int k = v + 2', '    void inc() {', '      v = v + 1', '    }',
+                '    void bump() {', '      for (int j = 0; j < 2; j++) {', '        v += 1;', '      }', '    }',
+                '    void put(int a) {', '      for (int j = 0; j < 1; j++) {', '        v = a;', '      }', '    }',
+                '    int sum(int a) {', '      int r = 0', '      for (int j = 0; j < 2; j++) {', '        r = r + v + a;', '      }', '      return r', '    }', '  } cells[2]',
+                '  struct Row {', '    int arr[2]', '  } rows[2]')
         }
         if (this.on('structs')) lines.push('  struct Pt {', '    int px = 0', '    int py = 0', '  } pt')
         if (this.on('enums')) lines.push('  enum Mode { IDLE, RUN, HALT }', '  ref Mode m = Mode.IDLE')

@@ -1,0 +1,10 @@
+// The chart declares a variable of the outer member's name: the inner method reads the chart's variable (10), not the outer class's member (1).
+scchart T {
+  output int w = 10
+  class O { int w = 1
+    class In { int v = 0
+      void inc() { v = v + w } } inn } o
+  initial state I go to J
+  state J do o.inn.inc() go to K
+  state K
+}

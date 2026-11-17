@@ -1,0 +1,10 @@
+// a.q.v = 9 reads a.q (a member write reads the instances it goes through), so the concurrent a.q = a.p comes first, although its region is the later one.
+scchart T {
+  struct O { struct P { int v = 1 } p, q } a
+  region R0 { initial state I go to J
+    state J do a.q.v = 9 go to K
+    state K }
+  region R1 { initial state I go to J
+    state J do a.p.v = 4; a.q = a.p go to K
+    state K }
+}

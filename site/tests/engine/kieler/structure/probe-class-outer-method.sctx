@@ -1,0 +1,2 @@
+// The inner class's method calls a method of the outer class: gcc fails ('TickData' has no member named 'bump').
+scchart T { input int n output int z = 0 class O { int w = 0 void bump() { w += 1 } class In { int v = 0 void inc() { bump(); v += 1 } } inn } o initial state I go to J state J do o.inn.inc() go to K state K }

@@ -1,0 +1,14 @@
+// @UnpackRenaming on a declaration of two members names both the same: gcc finds a duplicate member.
+scchart T {
+  @UnpackClass
+  class C {
+    @UnpackRenaming "Sum"
+    int sum = 1
+    @UnpackRenaming "_total"
+    int total, other
+    int plain = 2
+    void inc() { sum += 1; total += 2; other += 3 } } acc
+  initial state I go to J
+  state J do acc.inc(); acc.plain += acc.sum go to K
+  state K
+}

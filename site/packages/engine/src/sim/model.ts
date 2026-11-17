@@ -837,6 +837,13 @@ export function sameExpr(a: CExpr | undefined, b: CExpr | undefined): boolean {
         }
         case 'call': {
             const o = b as typeof a
+            // A call of a model's method is a reference to KIELER (ReferenceCall): the method and the instance's
+            // indices are compared, the arguments are not (`c.f(1)` and `c.f(2)` are the same expression).
+            if (a.target?.v.method && o.target?.v.method) {
+                if (a.target.v !== o.target.v) return false
+                const indices = a.target.v.member?.of.dims.length ?? 0
+                return a.args.slice(0, indices).every((x, i) => sameExpr(x, o.args[i]))
+            }
             return a.name === o.name && a.args.length === o.args.length && a.args.every((x, i) => sameExpr(x, o.args[i]))
         }
     }

@@ -1,0 +1,9 @@
+// As probe-class-outer-member with a method KIELER keeps as a function.
+scchart T {
+  class O { int w = 1
+    class In { int v = 0
+      void inc() { for (int j = 0; j < 2; j++) { v = v + w; } } } inn } o
+  initial state I go to J
+  state J do o.inn.inc() go to K
+  state K
+}

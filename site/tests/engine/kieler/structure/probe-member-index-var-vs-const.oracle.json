@@ -1,0 +1,116 @@
+{
+  "hash": "26d67ef187cb162234dc7072d13ba383f72811d2",
+  "chart": "tests/engine/kieler/structure/probe-member-index-var-vs-const.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "Cell.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cells": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "cells": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "cells": [
+          {
+            "v": 5
+          },
+          {
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "cells": [
+          {
+            "v": 5
+          },
+          {
+            "v": 1
+          }
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "cells": [
+          {
+            "v": 5
+          },
+          {
+            "v": 1
+          }
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

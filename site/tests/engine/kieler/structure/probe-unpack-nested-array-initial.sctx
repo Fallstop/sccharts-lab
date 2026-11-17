@@ -1,0 +1,9 @@
+// @UnpackClass on an array of instances inside a class whose member has an initial value: the member becomes an array and KIELER assigns the one value to it, which gcc rejects.
+scchart T {
+  class O {
+    @UnpackClass
+    class In { int v = 0 } inn[2] } o
+  initial state I go to J
+  state J do o.inn[1].v = 2 go to K
+  state K
+}

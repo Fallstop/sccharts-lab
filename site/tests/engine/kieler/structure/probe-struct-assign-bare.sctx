@@ -1,0 +1,7 @@
+// A whole instance declared in the chart cannot be assigned: KIELER rejects it.
+scchart T {
+  struct P { int v = 1 } p, q
+  initial state I go to J
+  state J do p.v = 4; q = p go to K
+  state K
+}

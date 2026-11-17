@@ -1,0 +1,7 @@
+// os[0].arr[n] and os[0].arr[1]: the identifier without any index is the only one compared with a specific cell, and os[0].arr[n] is not it (its instance has an index): accepted.
+scchart A {
+  input int n
+  struct P { int arr[2] } os[2]
+  region R0 { initial state A do os[0].arr[n] = 1 go to A }
+  region R1 { initial state B do os[0].arr[1] = 2 go to B }
+}

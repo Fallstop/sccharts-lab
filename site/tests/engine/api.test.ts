@@ -352,6 +352,34 @@ describe('traceableVariables: what a reader may trace', () => {
         expect(t2.trace).toEqual({ 'l.a.x': 1, 'l.w': 7, 'cs.v': [1, 2] })
         expect(t2.pool).toEqual({ l: { a: { x: 1 }, w: 7 }, cs: [{ v: 1 }, { v: 2 }] })
     })
+
+    it('lists the members of unpacked classes where @UnpackClass puts them', () => {
+        const r = compile(`scchart U {
+  @UnpackClass
+  class O { int w = 1  class In { int v = 2 } inn } o
+  class P {
+    @UnpackClass
+    class Q { int v
+      @UnpackRenaming "X"
+      int y } q[2]
+    int z = 5 } p
+  initial state A
+  do o.inn.v++; p.q[1].v++ go to A
+}`)
+        // o_w is a variable of the chart (in the pool); o_inn is an instance; q's members are p's, as arrays.
+        expect(traceableVariables(r).map(v => [v.key, v.dims, v.inPool])).toEqual([
+            ['o_w', [], true],
+            ['o_inn.v', [], false],
+            ['p.q_v', [2], false],
+            ['p.qX', [2], false],
+            ['p.z', [], false],
+        ])
+        const sim = createSimulation(r)
+        sim.step({})
+        const t2 = sim.step({})
+        expect(t2.trace).toEqual({ 'o_inn.v': 3, 'p.q_v': [0, 1], 'p.qX': [0, 0], 'p.z': 5 })
+        expect(t2.pool).toEqual({ o_w: 1, o_inn: { v: 3 }, p: { q_v: [0, 1], qX: [0, 0], z: 5 } })
+    })
 })
 
 describe('what each tick ran with (TickResult.ranWith)', () => {

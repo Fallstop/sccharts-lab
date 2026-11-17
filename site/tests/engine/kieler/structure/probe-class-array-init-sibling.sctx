@@ -1,0 +1,2 @@
+// An initial value that reads a sibling member (b = a + 1) in an array of instances: every element's own a.
+scchart T { input int n output int z = 0 class C { int a = 2 int b = a + 1 void inc() { b += 1 } } cs[2] initial state I go to J state J do cs[1].inc() go to K state K }

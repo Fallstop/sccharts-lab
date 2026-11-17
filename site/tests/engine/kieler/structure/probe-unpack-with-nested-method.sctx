@@ -1,0 +1,11 @@
+// @UnpackClass on a class with a class inside and a method using it: the method is the chart's, the inner instance o_inn.
+scchart T {
+  @UnpackClass
+  class O { int w = 1
+    class In { int v = 0
+      void inc() { v += 1 } } inn
+    void f() { inn.inc(); w += inn.v } } o
+  initial state I go to J
+  state J do o.f(); o.inn.v += 10 go to K
+  state K
+}

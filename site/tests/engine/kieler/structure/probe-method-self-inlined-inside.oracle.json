@@ -1,0 +1,82 @@
+{
+  "hash": "539b5558af913630c8aa37e123cf579027ec6728",
+  "chart": "tests/engine/kieler/structure/probe-method-self-inlined-inside.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name big is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "d": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "c": {
+          "v": 0
+        },
+        "d": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "c": {
+          "v": 3
+        },
+        "d": {
+          "v": 1
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "c": {
+          "v": 6
+        },
+        "d": {
+          "v": 2
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

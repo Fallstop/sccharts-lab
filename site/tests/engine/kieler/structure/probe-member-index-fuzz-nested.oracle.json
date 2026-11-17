@@ -1,0 +1,170 @@
+{
+  "hash": "0aa35a46413ea959748eeedd09f4b0b28278f254",
+  "chart": "tests/engine/kieler/structure/probe-member-index-fuzz-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "Cell.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Line.P2.qx": {
+      "type": "int",
+      "properties": []
+    },
+    "Line.a": {
+      "type": "struct",
+      "properties": []
+    },
+    "Line.b": {
+      "type": "struct",
+      "properties": []
+    },
+    "cells": {
+      "type": "class",
+      "properties": []
+    },
+    "ln": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "cells": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          }
+        ],
+        "ln": {
+          "a": {
+            "qx": 0
+          },
+          "b": {
+            "qx": 0
+          }
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "cells": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          }
+        ],
+        "ln": {
+          "a": {
+            "qx": 0
+          },
+          "b": {
+            "qx": 0
+          }
+        }
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "cells": [
+          {
+            "v": 1
+          },
+          {
+            "v": 1
+          }
+        ],
+        "ln": {
+          "a": {
+            "qx": 1
+          },
+          "b": {
+            "qx": 0
+          }
+        }
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "cells": [
+          {
+            "v": 1
+          },
+          {
+            "v": 1
+          }
+        ],
+        "ln": {
+          "a": {
+            "qx": 1
+          },
+          "b": {
+            "qx": 0
+          }
+        }
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "hash": "d2ad9e4f0976843ad81585ab5fce4a029285a9c2",
+  "chart": "tests/engine/kieler/structure/probe-unpack-renaming-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O.accX": {
+      "type": "int",
+      "properties": []
+    },
+    "o": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": {
+          "accX": 1
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": {
+          "accX": 1
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": {
+          "accX": 2
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

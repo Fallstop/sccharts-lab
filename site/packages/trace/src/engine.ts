@@ -12,7 +12,7 @@
 import type { CompileResult, Simulation, SimTickResult } from '@sccharts-lab/engine'
 import { allScopes } from '@sccharts-lab/engine/internal'
 import type { CVar } from '@sccharts-lab/engine/internal'
-import type { Declaration, Value } from '@sccharts-lab/engine/types'
+import type { Declaration, Value, ValuedObject } from '@sccharts-lab/engine/types'
 import { compareTraces } from './trace-compare'
 import type { TraceComparison } from './trace-compare'
 import { printedOf } from './trace-record'
@@ -56,16 +56,33 @@ function typeName(type: string | undefined, hostType?: string): string {
     return type
 }
 
-/** The member declarations KIELER lists for a class or struct type: `Type.member`, nested types by their path. */
-function memberDeclarations(prefix: string, members: Declaration[], out: PoolVariable[]): void {
+const unpacked = (d: Declaration): boolean =>
+    (d.declKind === 'class' || d.declKind === 'struct') && !d.host && d.annotations.some((a) => a.name === 'UnpackClass')
+
+/** What `@UnpackClass` adds to the instance's name for a member: `_<member>`, or its `@UnpackRenaming`. */
+const unpackedSuffix = (vo: ValuedObject, m: Declaration): string =>
+    [...(vo.annotations ?? []), ...m.annotations].find((a) => a.name === 'UnpackRenaming')?.values[0] ?? `_${vo.name}`
+
+/**
+ * The member declarations KIELER lists for a class or struct type: `Type.member`, nested types by their path. An
+ * unpacked class inside it (`@UnpackClass`) gives its members to the type around it (`O.inn_v`). Without a `prefix`
+ * the members are the chart's own variables (the class was unpacked into the chart): only the types inside are listed,
+ * by their own name (`In.v`).
+ */
+function memberDeclarations(prefix: string | undefined, members: Declaration[], out: PoolVariable[], name: (vo: ValuedObject, m: Declaration) => string = (vo) => vo.name): void {
     const member = (name: string, type: string): PoolVariable => ({ name, input: false, output: false, type, dims: [], late: true })
     for (const m of members) {
         if (m.declKind === 'method' || m.const) continue
         if (m.declKind === 'class' || m.declKind === 'struct') {
-            if (m.className) memberDeclarations(`${prefix}.${m.className}`, m.members ?? [], out)
-            for (const vo of m.valuedObjects) out.push(member(`${prefix}.${vo.name}`, m.declKind))
-        } else if (m.declKind === 'variable') {
-            for (const vo of m.valuedObjects) out.push(member(`${prefix}.${vo.name}`, typeName(m.type, m.hostType)))
+            if (unpacked(m) && m.valuedObjects.length === 1) {
+                const instance = m.valuedObjects[0]
+                memberDeclarations(prefix, m.members ?? [], out, (vo, mm) => `${name(instance, m)}${unpackedSuffix(vo, mm)}`)
+                continue
+            }
+            if (m.className) memberDeclarations(prefix === undefined ? m.className : `${prefix}.${m.className}`, m.members ?? [], out)
+            if (prefix !== undefined) for (const vo of m.valuedObjects) out.push(member(`${prefix}.${name(vo, m)}`, m.declKind))
+        } else if (m.declKind === 'variable' && prefix !== undefined) {
+            for (const vo of m.valuedObjects) out.push(member(`${prefix}.${name(vo, m)}`, typeName(m.type, m.hostType)))
         }
     }
 }
@@ -130,9 +147,8 @@ export function poolVariables(result: Compiled): PoolVariable[] {
     const members: PoolVariable[] = []
     for (const d of result.chart?.declarations ?? []) {
         // @UnpackClass makes the members plain variables (`<instance>_<member>`), which are in the pool.
-        const unpacked = d.annotations.some((a) => a.name === 'UnpackClass')
-        if ((d.declKind === 'class' || d.declKind === 'struct') && !d.host && !unpacked && d.className) {
-            memberDeclarations(d.className, d.members ?? [], members)
+        if ((d.declKind === 'class' || d.declKind === 'struct') && !d.host && d.className) {
+            memberDeclarations(unpacked(d) ? undefined : d.className, d.members ?? [], members)
         }
     }
     generatedMemberDeclarations(result, members)

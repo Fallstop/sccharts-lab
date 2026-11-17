@@ -1,0 +1,7 @@
+// c.put(1) and c.put(2) write v inside the kept method: one identifier, and the calls count as the same expression: accepted.
+scchart A {
+  class C { int v = 0
+    void put(int a) { for (int j = 0; j < 1; j++) { v = a; } } } c
+  region R0 { initial state A do c.put(1) go to A }
+  region R1 { initial state B do c.put(2) go to B }
+}

@@ -428,7 +428,11 @@ IASC-schedulable!".
 (`+=`), or a valued signal with a combine function. *Two regions may not set the same variable to different
 values.*
 **Implementation.** Structural equality of expressions (same operator tree, same references, same
-literals) counts as confluent; `x = 1 + 0` vs `x = 1` was not probed.
+literals) counts as confluent; `x = 1 + 0` vs `x = 1` was not probed. Two calls of a model's method that KIELER
+keeps as a function (S-44f) are equal when the method and its instance are, **whatever the arguments**: `o =
+c.add2(1)` and `o = c.add2(2)` in two regions are accepted, and the later region's value stays (probes
+`structure/probe-call-arguments-confluent*`; `KExpressionsCompareExtensions.equals2` compares a `ReferenceCall`
+as a reference: valued object, indices, sub-reference).
 
 ### C-5 Concurrent relative writes must commute (by operator)
 **Rule.** Concurrent relative writes are accepted if their assignment operators commute (same operator, or
@@ -490,6 +494,25 @@ index interacts with every cell.
 **Source.** `deps:377-396` (specific vs generic identifiers).
 **Teaching.** *Different fixed cells are different variables; `a[i]` touches them all.*
 **Implementation.** Key accesses by (array, constant index) or (array, *).
+
+**Members of instances.** KIELER's identifier of an access has one such key per level: `os[1].arr[2]` is
+(`os`, 1) then (`arr`, 2), and a level whose index is not a literal, or that has no index, is `*`. Two accesses are
+compared only if every level is the same, with one exception: an access whose lowermost level is constant (a
+*specific* one) is also compared with the accesses that have `*` at every level. So, for concurrent writes:
+
+| one region | the other | compared? |
+| --- | --- | --- |
+| `cells[n].v` | `cells[0].v` | no (`*` and `0` at the instance level; neither is specific) |
+| `os[0].arr[n]` | `os[0].arr[1]` | no (the first is not `*` at every level) |
+| `os[n].arr[1]` | `os[0].arr[1]` | no (two specific identifiers) |
+| `os[n].arr[n]` | `os[0].arr[n]` | no |
+| `os[n].arr[n]` | `os[0].arr[1]` | **yes**: rejected if the writes differ |
+
+Accesses that are not compared get no dependency: the regions run in their order, and the later region's write
+wins when both hit the same cell. Probes `tests/engine/kieler/structure/probe-member-index-*` (one of them the
+`nested` fuzz profile's first finding). Source: `ValuedObjectIdentifier.xtend` (`equals` compares `parentVOI`;
+`getGenericIdentifier` drops the indices of every level; `isArraySpecificIdentifier` looks at the lowermost one
+only), `AbstractDependencyAnalysis.addDependencies`. Engine: `deps.ts` `identifier`, `interacting`.
 
 ### C-9 The analysis is static
 **Rule.** KIELER never considers which states or guards can be active together. "False cycles" that exist

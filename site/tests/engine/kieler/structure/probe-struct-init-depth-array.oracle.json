@@ -1,0 +1,213 @@
+{
+  "hash": "ccca2f5d45ffac8845f9e0ad7b329f6bc386cfb7",
+  "chart": "tests/engine/kieler/structure/probe-struct-init-depth-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "A.B.C.arr": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.C.c1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.b1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.c": {
+      "type": "struct",
+      "properties": []
+    },
+    "A.a1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.b": {
+      "type": "struct",
+      "properties": []
+    },
+    "as": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "as": [
+          {
+            "a1": 1,
+            "b": {
+              "b1": 2,
+              "c": [
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                },
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                }
+              ]
+            }
+          },
+          {
+            "a1": 1,
+            "b": {
+              "b1": 2,
+              "c": [
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                },
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "as": [
+          {
+            "a1": 1,
+            "b": {
+              "b1": 2,
+              "c": [
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                },
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                }
+              ]
+            }
+          },
+          {
+            "a1": 1,
+            "b": {
+              "b1": 2,
+              "c": [
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                },
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "as": [
+          {
+            "a1": 1,
+            "b": {
+              "b1": 2,
+              "c": [
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                },
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                }
+              ]
+            }
+          },
+          {
+            "a1": 1,
+            "b": {
+              "b1": 2,
+              "c": [
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 10
+                },
+                {
+                  "arr": [
+                    0,
+                    0
+                  ],
+                  "c1": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

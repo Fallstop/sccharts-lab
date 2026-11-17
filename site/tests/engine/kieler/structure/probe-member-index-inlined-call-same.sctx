@@ -1,0 +1,7 @@
+// An inlined method of the same element after an absolute write of it: write before the update.
+scchart A {
+  class Cell { int v = 0
+    void inc() { v = v + 1 } } cells[2]
+  region R0 { initial state A do cells[0].v = 5 go to A }
+  region R1 { initial state B do cells[0].inc() go to B }
+}

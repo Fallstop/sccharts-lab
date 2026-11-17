@@ -1,0 +1,79 @@
+{
+  "hash": "e486c59230e8fa49c64e06ffdb96b7ca24e2c2ac",
+  "chart": "tests/engine/kieler/structure/probe-unpack-nested-in-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "O.inn_v": {
+      "type": "int",
+      "properties": []
+    },
+    "os": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "os": [
+          {
+            "inn_v": 0
+          },
+          {
+            "inn_v": 0
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "os": [
+          {
+            "inn_v": 0
+          },
+          {
+            "inn_v": 0
+          }
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "os": [
+          {
+            "inn_v": 0
+          },
+          {
+            "inn_v": 1
+          }
+        ]
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

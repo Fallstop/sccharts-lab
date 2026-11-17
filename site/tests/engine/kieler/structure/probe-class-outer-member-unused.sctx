@@ -1,0 +1,9 @@
+// The inner method is never called: it gets no C code, and the chart compiles.
+scchart T {
+  class O { int w = 1
+    class In { int v = 0
+      void inc() { v = v + w } } inn } o
+  initial state I go to J
+  state J do o.inn.v = 3 go to K
+  state K
+}

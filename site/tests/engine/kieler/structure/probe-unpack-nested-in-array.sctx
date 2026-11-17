@@ -1,0 +1,10 @@
+// @UnpackClass on a class inside a class: its members become members inn_v of the outer class (here of every element of os), its methods methods of the outer class.
+scchart T {
+  class O {
+    @UnpackClass
+    class In { int v = 0
+      void inc() { v += 1 } } inn } os[2]
+  initial state I go to J
+  state J do os[1].inn.inc() go to K
+  state K
+}

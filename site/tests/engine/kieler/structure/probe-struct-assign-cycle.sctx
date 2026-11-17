@@ -1,0 +1,11 @@
+// x = a.q.v waits for a.q = a.p, whose region reads x first: a cycle.
+scchart T {
+  output int x
+  struct O { struct P { int v = 1 } p, q } a
+  region R0 { initial state I go to J
+    state J do a.p.v = x; a.q = a.p go to K
+    state K }
+  region R1 { initial state I go to J
+    state J do x = a.q.v go to K
+    state K }
+}

@@ -1,0 +1,9 @@
+// @UnpackClass on an array of instances of a class with a method: KIELER refuses.
+scchart T {
+  @UnpackClass
+  class C { int v
+    void inc() { v += 1 } } cs[2]
+  initial state I go to J
+  state J do cs[1].inc() go to K
+  state K
+}

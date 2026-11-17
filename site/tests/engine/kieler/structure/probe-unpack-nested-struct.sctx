@@ -1,0 +1,10 @@
+// @UnpackClass on a struct inside a struct, with an array member.
+scchart T {
+  struct O {
+    @UnpackClass
+    struct In { int v = 0
+      int arr[2] } inn } o
+  initial state I go to J
+  state J do o.inn.v = 2; o.inn.arr[1] = 3 go to K
+  state K
+}

@@ -1,0 +1,10 @@
+// @UnpackClass on a class inside a class with two outer instances, an initial value and a method.
+scchart T {
+  class O { int w = 1
+    @UnpackClass
+    class In { int v = 4
+      int get() { return v } } inn } o, p
+  initial state I go to J
+  state J do o.w = o.inn.get(); p.inn.v = 6 go to K
+  state K
+}

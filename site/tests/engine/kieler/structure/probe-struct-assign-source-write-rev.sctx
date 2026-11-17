@@ -1,0 +1,10 @@
+// As probe-struct-assign-source-write with the regions swapped (q gets the new value).
+scchart T {
+  struct O { struct P { int v = 1 } p, q } a
+  region R0 { initial state I go to J
+    state J do a.p.v = 4 go to K
+    state K }
+  region R1 { initial state I go to J
+    state J do a.q = a.p go to K
+    state K }
+}

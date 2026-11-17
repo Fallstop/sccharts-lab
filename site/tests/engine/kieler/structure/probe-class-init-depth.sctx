@@ -1,0 +1,10 @@
+// A class initialises its members in an _init method that calls the classes inside: every depth is initialised.
+scchart T {
+  class A { int a1 = 1
+    class B { int b1 = 2
+      class C { int c1 = 3
+        void inc() { c1 += 1 } } c } b } a
+  initial state I go to J
+  state J do a.b.c.inc() go to K
+  state K
+}

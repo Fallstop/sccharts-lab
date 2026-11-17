@@ -1,0 +1,9 @@
+// A struct may not contain a class: KIELER rejects it.
+scchart T {
+  struct A { int a1 = 1
+    class B { int b1 = 2
+      class C { int c1 = 3 } c } b } a
+  initial state I go to J
+  state J do a.a1 += 10 go to K
+  state K
+}

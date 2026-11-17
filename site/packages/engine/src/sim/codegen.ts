@@ -458,6 +458,37 @@ function cText(root: CState): Diagnostic[] {
         const by = holder.origin ?? holder.about
         assigns(holder.effects, by ? [by] : undefined)
     }
+    // A class inside a class naming a member of the outer one (lower.ts ref): KIELER's C code reads it from the chart's
+    // data, which has no such member.
+    const outerSeen = new Set<CVar>()
+    const outerMember = (e: CExpr | undefined, related?: string[]) => walkExpr(e, x => {
+        // A call's method is its target.
+        const v = x.k === 'ref' ? x.v : x.k === 'call' ? x.target?.v : undefined
+        if (!v || !v.tags.has('#outer-member') || outerSeen.has(v)) return
+        outerSeen.add(v)
+        out.push({
+            severity: 'error', code: 'outer-member', span: x.span ?? v.span, related,
+            message: `\`${v.name}\` is a member of the class around this one, which a class inside it cannot use: KIELER's C code does not compile`,
+            kieler: `‘TickData’ has no member named ‘${v.name}’\n${GCC_FAILED}`,
+            hint: `KIELER's C code looks up \`${v.name}\` among the chart's own variables, not in the outer class. Pass the value as a parameter of the method, or move the member (or the method) so that both are in the same class.`,
+        })
+    })
+    {
+        const reaching = reachingC(root)
+        for (const { e, related } of reaching.exprs) outerMember(e, related)
+        const targets = (list: CEffect[], related?: string[]) => { for (const f of list) if (f.k === 'assign' || f.k === 'emit') outerMember(f.ref, related) }
+        for (const site of allActionSites(root)) targets((site.transition ?? site.action!).effects)
+        const statements = (list: CStmt[], acc: CEffect[] = []): CEffect[] => {
+            for (const st of list) {
+                if (st.k === 'do') acc.push(st.f)
+                else if (st.k === 'if') { statements(st.then, acc); if (st.else) statements(st.else, acc) }
+                else if (st.k === 'while') statements(st.body, acc)
+                else if (st.k === 'for') { statements(st.init, acc); statements(st.update, acc); statements(st.body, acc) }
+            }
+            return acc
+        }
+        for (const m of reaching.called) targets(statements(m.method!.body), m.decl ? [m.decl] : undefined)
+    }
     const effectsOf = (list: CStmt[], acc: CEffect[] = []): CEffect[] => {
         for (const st of list) {
             if (st.k === 'do') acc.push(st.f)

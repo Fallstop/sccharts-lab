@@ -1,0 +1,67 @@
+{
+  "hash": "5eedae3d45817319ddb3b760047805e868cdeb87",
+  "chart": "tests/engine/kieler/structure/probe-unpack-both.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads o.w, so the compiler treats it as an update of o.w (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. o.w += 1.\nIt only matters when another region also writes o.w in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 8,
+      "column": 14
+    }
+  ],
+  "interface": {
+    "o_inn_v": {
+      "type": "int",
+      "properties": []
+    },
+    "o_w": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o_inn_v": 4,
+        "o_w": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o_inn_v": 4,
+        "o_w": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o_inn_v": 4,
+        "o_w": 5
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

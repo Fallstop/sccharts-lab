@@ -1,0 +1,239 @@
+{
+  "hash": "616e8bd80dc597f3911d17d8efcc7629516bdf23",
+  "chart": "tests/engine/kieler/structure/probe-class-array-struct-init.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "A.B.C.c1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.b1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.c": {
+      "type": "struct",
+      "properties": []
+    },
+    "A.a1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.b": {
+      "type": "struct",
+      "properties": []
+    },
+    "as": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "as": [
+          {
+            "a1": 1,
+            "b": [
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              },
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "a1": 1,
+            "b": [
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              },
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "as": [
+          {
+            "a1": 1,
+            "b": [
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              },
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "a1": 1,
+            "b": [
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              },
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "as": [
+          {
+            "a1": 1,
+            "b": [
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              },
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "a1": 2,
+            "b": [
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              },
+              {
+                "b1": 2,
+                "c": [
+                  {
+                    "c1": 3
+                  },
+                  {
+                    "c1": 3
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

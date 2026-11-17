@@ -23,8 +23,21 @@ export interface Access {
     anyOp?: boolean
     /** The access is inside this method, which KIELER does not inline (innerAccesses); `_effect<n>` is a code block. */
     via?: string
-    /** Constant indices of a cell access, or undefined for the whole variable / a variable index. */
-    cell?: string
+    /**
+     * KIELER's ValuedObjectIdentifier below the variable: per level of `os[1].arr[2]` (the instance, then the member) its
+     * constant indices, or `*` for none or one that is not a literal ("1/2", "1/*", "*").
+     */
+    sig: string
+    /** The lowermost level has constant indices (isArraySpecificIdentifier). */
+    specific: boolean
+    /** No level has constant indices: the identifier the specific ones are also compared with. */
+    generic: boolean
+    /**
+     * A member of the instance whose method (one KIELER does not inline) contains the access: KIELER reads it through
+     * the method's own `self` parameter, so it only meets the accesses inside the same method, of any instance, and
+     * never one outside (probes structure/probe-method-self-*).
+     */
+    bucket?: object
     cls: AccessClass
     /** The assignment operator (for writes). */
     op?: AssignOperator | '++' | '--'
@@ -58,16 +71,42 @@ function commuting(a: string | undefined, b: string | undefined): boolean {
     return a === b || (PLUS_MINUS.has(a ?? '') && PLUS_MINUS.has(b ?? ''))
 }
 
-/** Constant-index key of a reference (`a[1][2]` -> "1,2"), undefined if any index is not a literal. */
-function cellKey(r: CRef): string | undefined {
-    if (!r.idx.length) return undefined
+/** Constant indices (`a[1][2]` -> "1,2"), or `*` if there are none or one is not a literal. */
+function constants(idx: CExpr[]): string {
+    if (!idx.length) return '*'
     const parts: number[] = []
-    for (const i of r.idx) {
+    for (const i of idx) {
         if (i.k === 'lit' && typeof i.v === 'number') parts.push(i.v)
         else if (i.k === 'lit' && typeof i.v === 'boolean') parts.push(i.v ? 1 : 0)
-        else return undefined
+        else return '*'
     }
     return parts.join(',')
+}
+
+/**
+ * KIELER's identifier of a reference (ValuedObjectIdentifier: the valued object, its constant indices, and the same of
+ * the instance it is a member of). A member of an array of instances has the instance's dimensions in front of its
+ * own (lower.ts declareMembers), so its indices are split by level here. Two identifiers are the same only if every
+ * level is: `cells[n].v` and `cells[1].v` are different ones. `below` leaves out the levels down to that instance.
+ */
+function identifier(r: CRef, below?: CVar): Pick<Access, 'sig' | 'specific' | 'generic'> {
+    const chain: CVar[] = []
+    for (let v: CVar | undefined = r.v; v && v !== below; v = v.member?.of) chain.unshift(v)
+    let at = below ? below.dims.length : 0
+    const levels = chain.map((v, k) => {
+        // The lowermost level takes what is left (an index beyond the declared dimensions too).
+        const end = k === chain.length - 1 ? r.idx.length : at + v.dims.length - (v.member?.of.dims.length ?? 0)
+        const level = constants(r.idx.slice(at, end))
+        at = end
+        return level
+    })
+    return { sig: levels.join('/'), specific: levels[levels.length - 1] !== '*', generic: levels.every(l => l === '*') }
+}
+
+/** Whether KIELER compares two accesses of one variable: those of one identifier, and a specific one (`a[1]`) with the
+ *  accesses of the identifier without any index (AbstractDependencyAnalysis.addDependencies). */
+function interacting(a: Access, b: Access): boolean {
+    return a.sig === b.sig || (a.generic && b.specific) || (b.generic && a.specific)
 }
 
 function lowermost(r: CRef): CRef {
@@ -76,10 +115,23 @@ function lowermost(r: CRef): CRef {
     return x
 }
 
+/**
+ * A member access reads the instances it goes through: `a.q.v` reads `a.q` and `a` (KIELER makes an access for every
+ * reference of the chain). Only `a.q = a.p`, a write of the whole instance, ever meets these reads: it comes before
+ * every concurrent access of a member of `a.q` (probes structure/probe-struct-assign-*).
+ */
+function instanceReads(node: SNode, r: CRef, out: Access[]) {
+    for (let v = r.v.member?.of; v; v = v.member?.of) {
+        out.push({ node, v, ...identifier({ k: 'ref', v, idx: r.idx.slice(0, v.dims.length) }), cls: 'read', span: r.span })
+    }
+}
+
 /** The reads of an expression: every variable reference, including those in indices. */
 function reads(node: SNode, e: CExpr | undefined, out: Access[]) {
     walkExpr(e, x => {
-        if (x.k === 'ref') out.push({ node, v: x.v, cell: cellKey(x), cls: 'read', span: x.span, ...(x.sched ? { sched: x.sched } : {}) })
+        if (x.k !== 'ref') return
+        out.push({ node, v: x.v, ...identifier(x), cls: 'read', span: x.span, ...(x.sched ? { sched: x.sched } : {}) })
+        instanceReads(node, x, out)
     })
 }
 
@@ -103,7 +155,9 @@ export function nodeAccesses(node: SNode): Access[] {
             const low = lowermost(target)
             // A sub reference reads its parent (member access).
             if (target.sub) reads(node, { ...target, sub: undefined, idx: [] }, out)
-            const isTarget = (a: Access) => a.v === low.v && a.cell === cellKey(low)
+            instanceReads(node, low, out)
+            const lowId = identifier(low)
+            const isTarget = (a: Access) => a.v === low.v && a.sig === lowId.sig
             const ownReads = rhs.filter(isTarget).length
             // The assignment's own reads of its target are dropped once the write is recorded (deps:200-205).
             for (const a of rhs) if (!isTarget(a)) out.push(a)
@@ -112,7 +166,7 @@ export function nodeAccesses(node: SNode): Access[] {
             let cls: AccessClass = 'write'
             if (ownReads > 0 && ownReads === 1 && f.op === '=') cls = 'relative'
             if (f.op !== '=' && ownReads === 0) cls = 'relative'
-            out.push({ node, v: low.v, cell: cellKey(low), cls, op: f.op, expr: f.expr, span: f.o.span })
+            out.push({ node, v: low.v, ...lowId, cls, op: f.op, expr: f.expr, span: f.o.span })
             return out
         }
         case 'print':
@@ -124,7 +178,7 @@ export function nodeAccesses(node: SNode): Access[] {
                 const mode = call.paramAccess?.[i]
                 if (mode === '!&' || mode === '&') {
                     walkExpr(a, x => {
-                        if (x.k === 'ref') out.push({ node, v: x.v, cell: cellKey(x), cls: mode === '!&' ? 'write' : 'relative', span: x.span })
+                        if (x.k === 'ref') out.push({ node, v: x.v, ...identifier(x), cls: mode === '!&' ? 'write' : 'relative', span: x.span })
                     })
                 } else {
                     reads(node, a, out)
@@ -146,16 +200,32 @@ export function nodeAccesses(node: SNode): Access[] {
  * calling node's, and the calling node's operator decides whether two updates commute (a call effect is an
  * assignment with `=`, so its `x += 1` conflicts with a concurrent `x += 1`; probe structure/probe-method-inner-*).
  */
-export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean): Access[] {
+export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean, buckets = new Map<string, object>()): Access[] {
     const out: Access[] = []
     const op: AssignOperator | '++' | '--' | undefined = node.kind === 'assign' && node.effect?.k === 'assign' ? node.effect.op : node.kind === 'assign' ? '=' : undefined
+    // The calling node's expression: KIELER's check for two writes of one value compares the nodes (isConfluentTo).
+    const expr = node.kind === 'assign' ? (node.effect?.k === 'assign' ? node.effect.expr : node.effect?.k === 'call' ? node.effect.call : undefined) : undefined
     const anyOp = node.kind !== 'assign'
     const visiting = new Set<CMethod>()
     let via = ''
+    /** The method KIELER keeps as a function around the access, and its instance (`self`), if it is a class's. */
+    let self: { id: string; inst: CVar } | undefined
     const tag = () => (anyOp ? { anyOp, via } : { via })
-    const calls = (e: CExpr | undefined, local: Set<CVar>) => walkExpr(e, x => { if (x.k === 'call' && !x.extern && x.target?.v.method) method(x.target.v.method, local) })
+    /** The identifier of a reference inside the method: a member of `self` is the method's own (Access.bucket). */
+    const key = (r: CRef): Pick<Access, 'sig' | 'specific' | 'generic' | 'bucket'> => {
+        if (!self) return identifier(r)
+        const path: string[] = []
+        let v: CVar | undefined = r.v
+        for (; v && v !== self.inst; v = v.member?.of) path.unshift(v.member?.name ?? v.name)
+        if (!v) return identifier(r)
+        const id = `${self.id}|${path.join('.')}`
+        let bucket = buckets.get(id)
+        if (!bucket) buckets.set(id, (bucket = { id }))
+        return { ...identifier(r, self.inst), bucket }
+    }
+    const calls = (e: CExpr | undefined, local: Set<CVar>) => walkExpr(e, x => { if (x.k === 'call' && !x.extern && x.target?.v.method) method(x.target.v, local) })
     const read = (e: CExpr | undefined, local: Set<CVar>) => {
-        walkExpr(e, x => { if (x.k === 'ref' && !local.has(x.v)) out.push({ node, v: x.v, cell: cellKey(x), cls: 'read', span: x.span, ...tag() }) })
+        walkExpr(e, x => { if (x.k === 'ref' && !local.has(x.v)) out.push({ node, v: x.v, ...key(x), cls: 'read', span: x.span, ...tag() }) })
         calls(e, local)
     }
     const statements = (list: CStmt[], local: Set<CVar>) => {
@@ -165,9 +235,10 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean): 
                     const f = st.f
                     if (f.k === 'assign') {
                         const low = lowermost(f.ref)
+                        const lowKey = key(low)
                         const rhs: Access[] = []
-                        walkExpr(f.expr, x => { if (x.k === 'ref') rhs.push({ node, v: x.v, cell: cellKey(x), cls: 'read', span: x.span }) })
-                        const isTarget = (a: Access) => a.v === low.v && a.cell === cellKey(low)
+                        walkExpr(f.expr, x => { if (x.k === 'ref') rhs.push({ node, v: x.v, ...key(x), cls: 'read', span: x.span }) })
+                        const isTarget = (a: Access) => a.v === low.v && a.sig === lowKey.sig
                         const ownReads = rhs.filter(isTarget).length
                         for (const a of rhs) if (!isTarget(a) && !local.has(a.v)) out.push({ ...a, ...tag() })
                         calls(f.expr, local)
@@ -176,7 +247,7 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean): 
                         let cls: AccessClass = 'write'
                         if (ownReads === 1 && f.op === '=') cls = 'relative'
                         if (f.op !== '=' && ownReads === 0) cls = 'relative'
-                        out.push({ node, v: low.v, cell: cellKey(low), cls, op, span: f.o.span, ...tag() })
+                        out.push({ node, v: low.v, ...lowKey, cls, op, expr, span: f.o.span, ...tag() })
                     } else if (f.k === 'print') f.args.forEach(a => read(a, local))
                     else if (f.k === 'call') { f.call.args.forEach(a => read(a, local)); calls(f.call, local) }
                     else if (f.k === 'emit') read(f.value, local)
@@ -191,10 +262,15 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean): 
             }
         }
     }
-    function method(m: CMethod, outer: Set<CVar>) {
+    function method(mv: CVar, outer: Set<CVar>) {
+        const m = mv.method!
         if (visiting.has(m)) return
         visiting.add(m)
+        // A method KIELER inlines into this one reads through this one's `self`; one it keeps has its own.
+        const saved = self
+        if (!isInlined(m)) self = mv.member ? { id: mv.decl ?? mv.name, inst: mv.member.of } : undefined
         statements(m.body, new Set([...outer, ...m.params, ...m.locals]))
+        self = saved
         visiting.delete(m)
     }
     const roots: Extract<CExpr, { k: 'call' }>[] = []
@@ -209,7 +285,8 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean): 
     }
     for (const c of roots) {
         via = c.target!.v.name
-        method(c.target!.v.method!, new Set())
+        self = undefined
+        method(c.target!.v, new Set())
     }
     return out
 }
@@ -231,9 +308,10 @@ function protocolsOf(group: object): string[] | undefined {
  * access comes before every access of a higher priority (a write-read dependency, read or write alike), and two
  * writes of the same priority conflict. Returns, per variable, the node pairs handled here (both directions).
  */
-function scheduledDependencies(byVar: Map<CVar, Access[]>, deps: Dependency[], seen: Set<string>): Map<CVar, Set<string>> {
-    const out = new Map<CVar, Set<string>>()
-    for (const [v, list] of byVar) {
+function scheduledDependencies(byVar: Map<object, Access[]>, deps: Dependency[], seen: Set<string>): Map<object, Set<string>> {
+    const out = new Map<object, Set<string>>()
+    for (const [bucket, list] of byVar) {
+        const v = list[0].v
         const groups = new Map<object, { a: Access; priority: number }[]>()
         for (const a of list) {
             for (const s of schedulesOf(a)) {
@@ -247,9 +325,9 @@ function scheduledDependencies(byVar: Map<CVar, Access[]>, deps: Dependency[], s
             for (const x of g) {
                 for (const y of g) {
                     if (x.a.node === y.a.node || x.priority > y.priority) continue
-                    if (x.a.cell !== undefined && y.a.cell !== undefined && x.a.cell !== y.a.cell) continue
-                    let pairs = out.get(v)
-                    if (!pairs) out.set(v, (pairs = new Set()))
+                    if (!interacting(x.a, y.a)) continue
+                    let pairs = out.get(bucket)
+                    if (!pairs) out.set(bucket, (pairs = new Set()))
                     pairs.add(`${x.a.node.id}>${y.a.node.id}`)
                     pairs.add(`${y.a.node.id}>${x.a.node.id}`)
                     const xw = x.a.cls !== 'read'
@@ -416,14 +494,17 @@ export function dependencyReach(scg: SCG): { reached: Set<SNode>; stop?: SNode; 
  */
 export function dependencies(nodes: SNode[], reached?: Set<SNode>, isInlined: (m: CMethod) => boolean = () => true): { deps: Dependency[]; accesses: Map<SNode, Access[]> } {
     const accesses = new Map<SNode, Access[]>()
-    const byVar = new Map<CVar, Access[]>()
+    // The accesses KIELER compares with each other: those of one variable, or of one method's `self` member.
+    const byVar = new Map<object, Access[]>()
+    const buckets = new Map<string, object>()
     for (const n of nodes) {
-        const list = [...nodeAccesses(n), ...innerAccesses(n, isInlined)]
+        const list = [...nodeAccesses(n), ...innerAccesses(n, isInlined, buckets)]
         accesses.set(n, list)
         if (reached && !reached.has(n)) continue
         for (const a of list) {
-            let l = byVar.get(a.v)
-            if (!l) byVar.set(a.v, (l = []))
+            const bucket = a.bucket ?? a.v
+            let l = byVar.get(bucket)
+            if (!l) byVar.set(bucket, (l = []))
             l.push(a)
         }
     }
@@ -432,16 +513,17 @@ export function dependencies(nodes: SNode[], reached?: Set<SNode>, isInlined: (m
     // User schedules first (AbstractDependencyAnalysis.processDependencies): the accesses of one schedule object are
     // ordered by priority, whatever they are; those node pairs are left out of initialise-update-read below.
     const scheduled = scheduledDependencies(byVar, deps, seen)
-    for (const [v, list] of byVar) {
+    for (const [bucket, list] of byVar) {
         if (list.length < 2) continue
-        const exclude = scheduled.get(v)
+        const v = list[0].v
+        const exclude = scheduled.get(bucket)
         for (const a of list) {
             for (const b of list) {
                 if (a === b || a.node === b.node) continue
                 if (exclude?.has(`${a.node.id}>${b.node.id}`)) continue
                 if (PRIORITY[a.cls] > PRIORITY[b.cls]) continue
                 // Different constant cells of an array do not interact (C-8).
-                if (a.cell !== undefined && b.cell !== undefined && a.cell !== b.cell) continue
+                if (!interacting(a, b)) continue
                 let kind: Dependency['kind'] | undefined
                 if (a.cls === 'write') kind = b.cls === 'write' ? 'write-write' : b.cls === 'relative' ? 'write-relative' : 'write-read'
                 else if (a.cls === 'relative') {

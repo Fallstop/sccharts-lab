@@ -1,0 +1,33 @@
+{
+  "hash": "c9d2befe2bf1393c9162572ceb8612ccd7c3d205",
+  "chart": "tests/engine/kieler/structure/probe-struct-assign-bare.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "5:23 Assignments to class/struct types are not supported. Please specify a member.",
+    "5:23 Referencing class/struct types is not supported. Please specify a member.",
+    "5:27 Referencing class/struct types is not supported. Please specify a member."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Assignments to class/struct types are not supported. Please specify a member.",
+      "line": 5,
+      "column": 23
+    },
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 5,
+      "column": 23
+    },
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 5,
+      "column": 27
+    }
+  ],
+  "ticks": []
+}

@@ -1,0 +1,8 @@
+// @UnpackClass on an array of instances whose array member has a vector as initial value: KIELER rejects the cardinalities.
+scchart T {
+  @UnpackClass
+  struct C { int arr[2] = {1, 2} } cs[2]
+  initial state I go to J
+  state J do cs[1].arr[0] += 10 go to K
+  state K
+}

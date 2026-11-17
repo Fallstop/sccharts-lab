@@ -1,0 +1,10 @@
+// As probe-struct-init-depth with arrays of instances and an array member.
+scchart T {
+  struct A { int a1 = 1
+    struct B { int b1 = 2
+      struct C { int c1 = 3
+        int arr[2] = {7, 8} } c[2] } b } as[2]
+  initial state I go to J
+  state J do as[1].b.c[0].c1 += 10 go to K
+  state K
+}

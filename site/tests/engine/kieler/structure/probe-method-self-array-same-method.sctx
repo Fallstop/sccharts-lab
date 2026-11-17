@@ -1,0 +1,7 @@
+// One kept method on two elements: cells[0].set7() is not cells[1].set7(), a write-write conflict.
+scchart A {
+  class C { int v = 0
+    void set7() { for (int j = 0; j < 1; j++) { v = 7; } } } cells[2]
+  region R0 { initial state A do cells[0].set7() go to A }
+  region R1 { initial state B do cells[1].set7() go to B }
+}

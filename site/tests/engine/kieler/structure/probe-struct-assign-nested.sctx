@@ -1,0 +1,8 @@
+// a.q = a.p, two instances of a struct inside a struct: KIELER accepts it (C copies the struct), every member is copied, an array member too.
+scchart T {
+  struct O { struct P { int v = 1
+      int arr[2] = {5, 6} } p, q } a
+  initial state I go to J
+  state J do a.p.v = 4; a.p.arr[1] = 9; a.q = a.p go to K
+  state K
+}

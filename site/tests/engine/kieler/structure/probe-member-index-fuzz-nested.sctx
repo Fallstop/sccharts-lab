@@ -1,0 +1,28 @@
+// The nested fuzz profile, seed 1 (nested-1-29, reduced): cells[1].v += 1 next to cells[n % 2].inc(), which KIELER inlines as cells[n % 2].v = ...: an identifier with a variable index at the instance level is not compared with cells[1].v (accepted).
+scchart F29 {
+  input int n
+  struct Line {
+    struct P2 {
+      int qx = 0
+    } a, b
+  } ln
+  class Cell {
+    int v = 0
+    void inc() {
+      v = v + 1
+    }
+  } cells[2]
+  region R0 {
+    initial state R0s0
+    go to R0s1
+    state R0s1
+    do ln.a.qx += 1; cells[1].v += 1 go to R0s0
+  }
+  region R1 {
+    initial state R1s0
+    go to R1s1
+    state R1s1
+    do cells[n % 2].inc() go to R1s2
+    state R1s2
+  }
+}

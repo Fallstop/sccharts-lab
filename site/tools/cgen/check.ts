@@ -67,6 +67,21 @@ function fuzzCases(a: Args): Case[] {
     return out
 }
 
+/**
+ * The recordings the engine is known not to reproduce yet (tests/conformance/engine-expected-failures.json, by the
+ * conformance test's ids): the generated C differs from KIELER there as the engine does, which is not a new finding.
+ */
+const knownDifferences: [string, string][] = (() => {
+    const file = path.join(site, 'tests/conformance/engine-expected-failures.json')
+    if (!fs.existsSync(file)) return []
+    return Object.entries(JSON.parse(fs.readFileSync(file, 'utf8')) as Record<string, string>).filter(([k]) => !k.startsWith('//'))
+})()
+
+function knownDifference(id: string): string | undefined {
+    const key = id.replace(/^tests\/engine\/kieler\//, 'kieler-probes/').replace(/^src\/examples\//, 'examples/').replace(/^tests\/conformance\//, '')
+    return knownDifferences.find(([pattern]) => (pattern.endsWith('*') ? key.startsWith(pattern.slice(0, -1)) : key === pattern))?.[1]
+}
+
 /** Runs the cases and prints the summary; returns the results. */
 export async function runCheck(cases: Case[], a: Pick<Args, 'jobs' | 'keep' | 'verbose'>, label: string): Promise<CaseResult[]> {
     let done = 0
@@ -78,6 +93,8 @@ export async function runCheck(cases: Case[], a: Pick<Args, 'jobs' | 'keep' | 'v
         } catch (e) {
             r = { id: c.id, verdict: 'mismatch', problems: [`crash: ${(e as Error).stack?.split('\n').slice(0, 4).join(' | ')}`], engineTicks: 0, kielerTicks: 0 }
         }
+        const known = r.verdict === 'mismatch' ? knownDifference(c.id) : undefined
+        if (known) r = { ...r, verdict: 'skipped', reason: 'known engine difference (engine-expected-failures.json)', problems: [] }
         if (r.verdict === 'mismatch' && a.keep) {
             const dir = path.join(a.keep, c.id.replace(/[^\w.-]+/g, '_'))
             fs.mkdirSync(dir, { recursive: true })

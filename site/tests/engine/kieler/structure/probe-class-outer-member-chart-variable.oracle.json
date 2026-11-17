@@ -1,0 +1,91 @@
+{
+  "hash": "ad1aa7d14b5b5bbb2d23c0e8d544286e208b2f4e",
+  "chart": "tests/engine/kieler/structure/probe-class-outer-member-chart-variable.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "w": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O.In.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.inn": {
+      "type": "class",
+      "properties": []
+    },
+    "O.w": {
+      "type": "int",
+      "properties": []
+    },
+    "o": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "w": 10,
+        "o": {
+          "inn": {
+            "v": 0
+          },
+          "w": 1
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "w": 10,
+        "o": {
+          "inn": {
+            "v": 0
+          },
+          "w": 1
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "w": 10,
+        "o": {
+          "inn": {
+            "v": 10
+          },
+          "w": 1
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

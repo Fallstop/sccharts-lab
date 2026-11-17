@@ -1,0 +1,10 @@
+// As probe-struct-assign-member-write with the regions swapped.
+scchart T {
+  struct O { struct P { int v = 1 } p, q } a
+  region R0 { initial state I go to J
+    state J do a.p.v = 4; a.q = a.p go to K
+    state K }
+  region R1 { initial state I go to J
+    state J do a.q.v = 9 go to K
+    state K }
+}

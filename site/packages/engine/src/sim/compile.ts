@@ -777,6 +777,17 @@ function cycleDiagnostic(cycle: SNode[], analysis: Analysis, index: ModelIndex |
                 hint: `KIELER makes one copy of ${label} for each value of \`${forRegion.forLoop!.variable}\`, but a variable declared in the region is declared once, outside the copies: they all write the same ${name} in the same tick. Declare ${name} in a state inside the region (\`initial state W { int ${plain} = 0 ... }\`), or use an update such as \`${plain} += 1\`.`,
             }
         }
+        // Both sides are inside one method of a class that KIELER calls as a C function: it reads the members through
+        // the method's own `self`, the same for every instance (deps.ts Access.bucket).
+        if (conflict.a.bucket && conflict.a.via !== undefined) {
+            const member = v.member?.name ?? plain
+            const methods = [...new Set([conflict.a.via, conflict.b.via ?? conflict.a.via].map(m => `\`${m.replace(/^.*\./, '')}\``))]
+            return {
+                severity: 'error', code: relative ? 'update-conflict' : 'write-conflict', span: spanA ?? spanB, kieler, related: [...new Set([...rel, ...related])],
+                message: `Two concurrent regions call ${methods.length > 1 ? `the methods ${methods.join(' and ')}, which both end in the same method writing` : `the method ${methods[0]}, which writes`} \`${member}\`, and KIELER takes the two calls for different writes of one variable`,
+                hint: `KIELER does not copy this method into place (it has a loop, a call or too many statements) but calls it as a C function, and inside it \`${member}\` is the same variable whatever instance the method is called on. Two calls in concurrent regions are accepted only if they are the same call on the same instance. Call the method from one region, or write \`${member}\` on the transitions themselves.`,
+            }
+        }
         // One side is inside a code block or method that KIELER calls as a C function (deps.ts innerAccesses).
         const inner = conflict.a.via !== undefined ? conflict.a : conflict.b.via !== undefined ? conflict.b : undefined
         if (inner && relative) {

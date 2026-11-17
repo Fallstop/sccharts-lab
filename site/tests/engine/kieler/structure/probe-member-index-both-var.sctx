@@ -1,0 +1,7 @@
+// os[n].arr[n] has no constant index at any level, so it is compared with the specific os[0].arr[1]: a write-write conflict.
+scchart A {
+  input int n
+  struct P { int arr[2] } os[2]
+  region R0 { initial state A do os[n].arr[n] = 1 go to A }
+  region R1 { initial state B do os[0].arr[1] = 2 go to B }
+}

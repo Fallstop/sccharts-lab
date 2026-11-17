@@ -1,0 +1,111 @@
+{
+  "hash": "ec041d4c2101a4262fcc1f1284118fc3cf3722d6",
+  "chart": "tests/engine/kieler/structure/probe-struct-assign-deep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O.M.P.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.M.p": {
+      "type": "struct",
+      "properties": []
+    },
+    "O.M.w": {
+      "type": "int",
+      "properties": []
+    },
+    "O.k": {
+      "type": "struct",
+      "properties": []
+    },
+    "O.m": {
+      "type": "struct",
+      "properties": []
+    },
+    "a": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": {
+          "k": {
+            "p": {
+              "v": 0
+            },
+            "w": 2
+          },
+          "m": {
+            "p": {
+              "v": 0
+            },
+            "w": 2
+          }
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": {
+          "k": {
+            "p": {
+              "v": 0
+            },
+            "w": 2
+          },
+          "m": {
+            "p": {
+              "v": 0
+            },
+            "w": 2
+          }
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": {
+          "k": {
+            "p": {
+              "v": 4
+            },
+            "w": 7
+          },
+          "m": {
+            "p": {
+              "v": 4
+            },
+            "w": 7
+          }
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

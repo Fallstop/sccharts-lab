@@ -1,0 +1,91 @@
+{
+  "hash": "21e62b8adbb1963c31f37e738154c1fdc9b67024",
+  "chart": "tests/engine/kieler/structure/probe-struct-assign-source-write-rev.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O.P.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.p": {
+      "type": "struct",
+      "properties": []
+    },
+    "O.q": {
+      "type": "struct",
+      "properties": []
+    },
+    "a": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": {
+          "p": {
+            "v": 1
+          },
+          "q": {
+            "v": 1
+          }
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": {
+          "p": {
+            "v": 1
+          },
+          "q": {
+            "v": 1
+          }
+        }
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": {
+          "p": {
+            "v": 4
+          },
+          "q": {
+            "v": 4
+          }
+        }
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "hash": "7abdf98118025f93451a3b1ec40eb5591163010e",
+  "chart": "tests/engine/kieler/structure/probe-class-struct-init-depth.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "A.B.C.D.d1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.C.c1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.C.d": {
+      "type": "struct",
+      "properties": []
+    },
+    "A.B.b1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.c": {
+      "type": "struct",
+      "properties": []
+    },
+    "A.a1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.b": {
+      "type": "struct",
+      "properties": []
+    },
+    "a": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": {
+          "a1": 1,
+          "b": {
+            "b1": 2,
+            "c": {
+              "c1": 3,
+              "d": {
+                "d1": 0
+              }
+            }
+          }
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": {
+          "a1": 1,
+          "b": {
+            "b1": 2,
+            "c": {
+              "c1": 3,
+              "d": {
+                "d1": 0
+              }
+            }
+          }
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": {
+          "a1": 11,
+          "b": {
+            "b1": 2,
+            "c": {
+              "c1": 3,
+              "d": {
+                "d1": 0
+              }
+            }
+          }
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

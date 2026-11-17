@@ -1,0 +1,11 @@
+// @UnpackRenaming in an unpacked class inside a class: the outer class's member accX.
+scchart T {
+  class O {
+    @UnpackClass
+    class C {
+      @UnpackRenaming "X"
+      int sum = 1 } acc } o
+  initial state I go to J
+  state J do o.acc.sum += 1 go to K
+  state K
+}

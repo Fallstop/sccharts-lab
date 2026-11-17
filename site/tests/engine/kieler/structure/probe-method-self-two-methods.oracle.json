@@ -1,0 +1,82 @@
+{
+  "hash": "f6684e2b5c2a06ec7ab2729c3eb3380ed27b175d",
+  "chart": "tests/engine/kieler/structure/probe-method-self-two-methods.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name set7 is contained in the model but not in VariableStore.",
+    "ValuedObject with name set8 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "Cell.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "d": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "c": {
+          "v": 0
+        },
+        "d": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "c": {
+          "v": 7
+        },
+        "d": {
+          "v": 8
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "c": {
+          "v": 7
+        },
+        "d": {
+          "v": 8
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

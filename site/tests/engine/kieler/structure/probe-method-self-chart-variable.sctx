@@ -1,0 +1,8 @@
+// A kept class method that updates a variable of the chart: that access is the chart's, so it conflicts with y += 1 outside (the call is a plain assignment).
+scchart A {
+  output int y = 0
+  class C { int k = 3
+    void bump() { for (int j = 0; j < 2; j++) { y += 1; } } } c
+  region R0 { initial state A do c.bump() go to A }
+  region R1 { initial state B do y += 1 go to B }
+}

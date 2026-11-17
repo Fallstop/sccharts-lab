@@ -1,0 +1,7 @@
+// os[n].arr[1] and os[0].arr[1] are two specific identifiers (the instance levels differ): not compared, accepted.
+scchart A {
+  input int n
+  struct P { int arr[2] } os[2]
+  region R0 { initial state A do os[n].arr[1] = 1 go to A }
+  region R1 { initial state B do os[0].arr[1] = 2 go to B }
+}

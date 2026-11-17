@@ -222,7 +222,7 @@ export class ExecutableChart {
             return v && info ? { v, slot: info.slot, dims: info.dims } : undefined
         }, padding, compiled.lowered.takenOrder.length)
         this.padding = { slot: padding, size: memory.size }
-        const ec = new ExprCompiler({ info: ensure, label: v => v.display ?? v.name, memory })
+        const ec = new ExprCompiler({ info: ensure, label: v => v.display ?? v.name, memory, members: v => [...this.slots.keys()].filter(m => m.member?.of === v) })
         // The source triggers, for the values a check read (reasons.ts).
         const sources = sourceElements(compiled.chart, compiled.shared.index as ModelIndex | undefined)
         const probe = (core: CExpr | undefined, trigger: Expression | undefined) => {

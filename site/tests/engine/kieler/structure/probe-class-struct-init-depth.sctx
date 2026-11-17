@@ -1,0 +1,10 @@
+// A struct inside a class is initialised two levels deep from the struct: b1 and c1 are set, d1 stays 0.
+scchart T {
+  class A { int a1 = 1
+    struct B { int b1 = 2
+      struct C { int c1 = 3
+        struct D { int d1 = 4 } d } c } b } a
+  initial state I go to J
+  state J do a.a1 += 10 go to K
+  state K
+}

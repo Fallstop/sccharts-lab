@@ -1,0 +1,113 @@
+{
+  "hash": "7217038ee2049926e2f76871f5928d5325d59e22",
+  "chart": "tests/engine/kieler/structure/probe-class-array-init-sibling.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.a": {
+      "type": "int",
+      "properties": []
+    },
+    "C.b": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "z": 0,
+        "cs": [
+          {
+            "a": 2,
+            "b": 3
+          },
+          {
+            "a": 2,
+            "b": 3
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "z": 0,
+        "cs": [
+          {
+            "a": 2,
+            "b": 3
+          },
+          {
+            "a": 2,
+            "b": 3
+          }
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "z": 0,
+        "cs": [
+          {
+            "a": 2,
+            "b": 3
+          },
+          {
+            "a": 2,
+            "b": 4
+          }
+        ]
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

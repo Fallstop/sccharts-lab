@@ -1,0 +1,7 @@
+// A kept method of one element next to an update of another element's member: accepted.
+scchart A {
+  class Cell { int v = 0
+    void big() { for (int j = 0; j < 2; j++) { v += 1; } } } cells[2]
+  region R0 { initial state B do cells[0].big() go to B }
+  region R1 { initial state A do cells[1].v += 1 go to A }
+}

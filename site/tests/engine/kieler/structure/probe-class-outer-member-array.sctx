@@ -1,0 +1,2 @@
+// The outer class is an array of instances and its method calls the inner one, which names the outer member: gcc fails.
+scchart T { input int n output int z = 0 class O { int w = 1 class In { int v = 0 void inc() { v = v + w } } inn void inc() { inn.inc() } } os[2] initial state I go to J state J do os[1].inc() go to K state K }

@@ -1,0 +1,10 @@
+// Two concurrent whole assignments of one nested instance from different sources: a write-write conflict.
+scchart T {
+  struct O { struct P { int v = 1 } p, q, r } a
+  region R0 { initial state I go to J
+    state J do a.q = a.p go to K
+    state K }
+  region R1 { initial state I go to J
+    state J do a.q = a.r go to K
+    state K }
+}

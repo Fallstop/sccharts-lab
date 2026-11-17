@@ -354,25 +354,46 @@ export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index'
     // Members of the chart's own instances (`struct Pt { int x } pt`): the pool has the object `pt`. A class inside a
     // class has its members under its own name (`l.a.x`); a member of an array of instances (`cs[2]`) is one array with
     // the instances' dimensions in front of its own (`cs.v`, dims [2]).
-    const members = (d: Declaration, instance: string, outer: number[]) => {
+    // `@UnpackClass` moves a class's members into what holds its instance, named `<instance>_<member>` (or by
+    // `@UnpackRenaming`): into the chart, where they are pool variables (no `instance` here), or into the class around.
+    const unpacked = (d: Declaration) => (d.declKind === 'class' || d.declKind === 'struct') && !d.host && d.annotations.some(a => a.name === 'UnpackClass')
+    const suffix = (vo: ValuedObject, m: Declaration) => [...(vo.annotations ?? []), ...m.annotations].find(a => a.name === 'UnpackRenaming')?.values[0] ?? `_${vo.name}`
+    const members = (d: Declaration, instance: string | undefined, outer: number[], name: (vo: ValuedObject, m: Declaration) => string = vo => vo.name) => {
         for (const m of d.members ?? []) {
             if (m.const) continue
             for (const mvo of m.valuedObjects) {
-                const key = `${instance}.${mvo.name}`
-                if ((m.declKind === 'class' || m.declKind === 'struct') && !m.host) members(m, key, [...outer, ...dims(mvo)])
+                const nested = (m.declKind === 'class' || m.declKind === 'struct') && !m.host
+                if (nested && unpacked(m)) {
+                    members(m, instance, [...outer, ...dims(mvo)], (vo, mm) => `${name(mvo, m)}${suffix(vo, mm)}`)
+                    continue
+                }
+                const local = name(mvo, m)
+                const key = instance === undefined ? local : `${instance}.${local}`
+                if (nested) members(m, key, [...outer, ...dims(mvo)])
                 if (m.declKind !== 'variable') continue
                 const type = m.type ?? 'pure'
+                if (instance === undefined) {
+                    // Unpacked into the chart: a variable of the chart, in the pool under its new name.
+                    out.push({
+                        key, name: key, group: 'local', type, signal: m.signal, valued: m.signal && type !== 'pure', input: false, output: false,
+                        dims: [...outer, ...dims(mvo)], scope: chartScope, inPool: true,
+                    })
+                    continue
+                }
                 out.push({
                     key, name: key, group: 'member', type,
                     signal: m.signal, valued: m.signal && type !== 'pure', input: false, output: false, dims: [...outer, ...dims(mvo)],
-                    scope: chartScope, inPool: false, member: { instance, member: mvo.name },
+                    scope: chartScope, inPool: false, member: { instance, member: local },
                 })
             }
         }
     }
     for (const d of chart.declarations) {
         if ((d.declKind !== 'class' && d.declKind !== 'struct') || d.host) continue
-        for (const inst of d.valuedObjects) members(d, inst.name, dims(inst))
+        for (const inst of d.valuedObjects) {
+            if (unpacked(d)) members(d, undefined, dims(inst), (vo, m) => `${inst.name}${suffix(vo, m)}`)
+            else members(d, inst.name, dims(inst))
+        }
     }
     // Locals of inner states and regions (not of referenced charts: their states are another chart's).
     type Copy = NonNullable<TraceableVariable['copy']>

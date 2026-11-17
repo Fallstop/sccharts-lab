@@ -1,0 +1,69 @@
+{
+  "hash": "4c654c1f7f65ead8681058f2f336d2c633886cdd",
+  "chart": "tests/engine/kieler/structure/probe-unpack-nested-outer-member.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O.inn_v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.w": {
+      "type": "int",
+      "properties": []
+    },
+    "o": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_v": 0,
+          "w": 1
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_v": 0,
+          "w": 1
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_v": 1,
+          "w": 1
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

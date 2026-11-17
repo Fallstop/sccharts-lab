@@ -1,0 +1,11 @@
+// @UnpackClass on an array of instances inside an array of structs: os[i].inn_v[j], os[i].inn_arr[j][k].
+scchart T {
+  input int n
+  struct O {
+    @UnpackClass
+    struct In { int v
+      int arr[2] } inn[2] } os[2]
+  initial state I go to J
+  state J do os[1].inn[0].v = 2; os[n].inn[1].arr[n] = 3 go to K
+  state K
+}

@@ -1,0 +1,7 @@
+// An element of an array of nested instances assigned from another element.
+scchart T {
+  struct O { struct P { int v = 1 } ps[2] } a
+  initial state I go to J
+  state J do a.ps[0].v = 4; a.ps[1] = a.ps[0] go to K
+  state K
+}

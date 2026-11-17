@@ -1,0 +1,201 @@
+{
+  "hash": "d0631074fac7b36ef66b512dc36a05785682f906",
+  "chart": "tests/engine/kieler/structure/probe-struct-array-init-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O.P.a": {
+      "type": "int",
+      "properties": []
+    },
+    "O.P.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.p": {
+      "type": "struct",
+      "properties": []
+    },
+    "os": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "z": 0,
+        "os": [
+          {
+            "p": [
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              },
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              }
+            ]
+          },
+          {
+            "p": [
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              },
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "z": 0,
+        "os": [
+          {
+            "p": [
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              },
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              }
+            ]
+          },
+          {
+            "p": [
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              },
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "z": 0,
+        "os": [
+          {
+            "p": [
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              },
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              }
+            ]
+          },
+          {
+            "p": [
+              {
+                "a": [
+                  3,
+                  4
+                ],
+                "v": 2
+              },
+              {
+                "a": [
+                  4,
+                  4
+                ],
+                "v": 2
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

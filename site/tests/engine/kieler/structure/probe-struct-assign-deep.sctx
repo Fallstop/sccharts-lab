@@ -1,0 +1,8 @@
+// A nested instance with a nested instance of its own is copied whole; its innermost member's initial value (three structs deep) is never applied.
+scchart T {
+  struct O { struct M { struct P { int v = 1 } p
+      int w = 2 } m, k } a
+  initial state I go to J
+  state J do a.m.p.v = 4; a.m.w = 7; a.k = a.m go to K
+  state K
+}

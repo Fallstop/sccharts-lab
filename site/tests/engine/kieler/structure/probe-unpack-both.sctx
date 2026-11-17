@@ -1,0 +1,10 @@
+// @UnpackClass on a class and on the class inside it: o_inn_v, o_w.
+scchart T {
+  @UnpackClass
+  class O { int w = 1
+    @UnpackClass
+    class In { int v = 4 } inn } o
+  initial state I go to J
+  state J do o.w = o.inn.v + 1 go to K
+  state K
+}

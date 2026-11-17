@@ -1,0 +1,10 @@
+// The method of an unpacked inner class is the outer class's, so it may use the outer class's member.
+scchart T {
+  class O { int w = 1
+    @UnpackClass
+    class In { int v = 0
+      void inc() { v = v + w } } inn } o
+  initial state I go to J
+  state J do o.inn.inc() go to K
+  state K
+}

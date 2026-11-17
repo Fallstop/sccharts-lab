@@ -1,0 +1,69 @@
+{
+  "hash": "7a61b2e6111d43ec552ba55e975c301170b1905a",
+  "chart": "tests/engine/kieler/structure/probe-unpack-with-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "In.v": {
+      "type": "int",
+      "properties": []
+    },
+    "o_inn": {
+      "type": "class",
+      "properties": []
+    },
+    "o_w": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o_inn": {
+          "v": 0
+        },
+        "o_w": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o_inn": {
+          "v": 0
+        },
+        "o_w": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o_inn": {
+          "v": 2
+        },
+        "o_w": 4
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

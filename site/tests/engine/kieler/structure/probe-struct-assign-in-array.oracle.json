@@ -1,0 +1,126 @@
+{
+  "hash": "bd2218c3f9a37b0bb1d22b6f0e18e742930a1263",
+  "chart": "tests/engine/kieler/structure/probe-struct-assign-in-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "O.P.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.p": {
+      "type": "struct",
+      "properties": []
+    },
+    "O.q": {
+      "type": "struct",
+      "properties": []
+    },
+    "os": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "n": 0,
+        "os": [
+          {
+            "p": {
+              "v": 1
+            },
+            "q": {
+              "v": 1
+            }
+          },
+          {
+            "p": {
+              "v": 1
+            },
+            "q": {
+              "v": 1
+            }
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "n": 0,
+        "os": [
+          {
+            "p": {
+              "v": 1
+            },
+            "q": {
+              "v": 1
+            }
+          },
+          {
+            "p": {
+              "v": 1
+            },
+            "q": {
+              "v": 1
+            }
+          }
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "n": 0,
+        "os": [
+          {
+            "p": {
+              "v": 4
+            },
+            "q": {
+              "v": 1
+            }
+          },
+          {
+            "p": {
+              "v": 1
+            },
+            "q": {
+              "v": 4
+            }
+          }
+        ]
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "hash": "432f498fc76ab1df2158e51ef338230b01ef2260",
+  "chart": "tests/engine/kieler/structure/probe-method-self-nested-member.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name setIn is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "Box.In.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Box.in": {
+      "type": "class",
+      "properties": []
+    },
+    "box": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "box": {
+          "in": {
+            "v": 0
+          }
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "box": {
+          "in": {
+            "v": 8
+          }
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "box": {
+          "in": {
+            "v": 8
+          }
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

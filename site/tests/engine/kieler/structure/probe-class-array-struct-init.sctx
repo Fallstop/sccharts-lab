@@ -1,0 +1,10 @@
+// Arrays of structs inside an array of class instances: initial values two levels below the struct, for every element.
+scchart T {
+  class A { int a1 = 1
+    struct B { int b1 = 2
+      struct C { int c1 = 3 } c[2] } b[2]
+    void inc() { a1 += 1 } } as[2]
+  initial state I go to J
+  state J do as[1].inc() go to K
+  state K
+}

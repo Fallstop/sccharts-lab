@@ -539,8 +539,7 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 
 Written schedules inside code blocks and methods, on calls, methods, equations and dataflow regions, and of class
 instances (structure.md S-27a; those on effects, triggers, states and regions run), `extends` with generic parameters,
-chart instances in dataflow regions that call methods, dataflow reference calls `A(x, y)`, @UnpackClass on an array
-of instances or on a class with a class inside. Never (no C compiler in the browser): host code (backticks), `extern` functions, host
+chart instances in dataflow regions that call methods, dataflow reference calls `A(x, y)`. Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".
 
 ## Known differences

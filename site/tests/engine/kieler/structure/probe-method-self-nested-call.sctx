@@ -1,0 +1,10 @@
+// A kept method calling another kept method: the inner one's accesses keep the inner one's self, so c.outer7() conflicts with d.set7().
+scchart A {
+  class C { int v = 0
+    void big() { for (int j = 0; j < 2; j++) { v += 1; } }
+    void outer() { for (int j = 0; j < 1; j++) { big(); } }
+    void set7() { for (int j = 0; j < 1; j++) { v = 7; } }
+    void outer7() { for (int j = 0; j < 1; j++) { set7(); } } } c, d
+  region R0 { initial state A do c.outer7() go to A }
+  region R1 { initial state B do d.set7() go to B }
+}

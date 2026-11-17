@@ -1,0 +1,8 @@
+// Whole nested instances assigned between elements of an array of structs, with a variable index too.
+scchart T {
+  input int n
+  struct O { struct P { int v = 1 } p, q } os[2]
+  initial state I go to J
+  state J do os[0].p.v = 4; os[1].q = os[0].p; os[n].p = os[1].q go to K
+  state K
+}

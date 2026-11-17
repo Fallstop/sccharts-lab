@@ -1,0 +1,9 @@
+// @UnpackClass on a class with a class inside: the members become the chart's o_w, the inner instance the chart's o_inn.
+scchart T {
+  @UnpackClass
+  class O { int w = 1
+    class In { int v = 0 } inn } o
+  initial state I go to J
+  state J do o.inn.v = 2; o.w = 4 go to K
+  state K
+}

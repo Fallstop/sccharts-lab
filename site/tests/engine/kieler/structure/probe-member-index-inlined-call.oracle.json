@@ -1,0 +1,79 @@
+{
+  "hash": "542295a287ee5ffa691910156079b8a9c1ddb7c6",
+  "chart": "tests/engine/kieler/structure/probe-member-index-inlined-call.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "Cell.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cells": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "cells": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "cells": [
+          {
+            "v": 1
+          },
+          {
+            "v": 1
+          }
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "cells": [
+          {
+            "v": 2
+          },
+          {
+            "v": 2
+          }
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

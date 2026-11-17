@@ -1,0 +1,9 @@
+// @UnpackClass on an array of instances inside a class: o.inn_v is an array.
+scchart T {
+  class O {
+    @UnpackClass
+    class In { int v } inn[2] } o
+  initial state I go to J
+  state J do o.inn[1].v = 2 go to K
+  state K
+}

@@ -1,0 +1,10 @@
+// The calls inside an operator expression: still the same expression.
+scchart A {
+  output int o
+  class C { int k = 3
+    int add2(int a) { int r = 0
+      for (int j = 0; j < 1; j++) { r = k + a; }
+      return r } } c
+  region R0 { initial state A do o = c.add2(1) + 1 go to A }
+  region R1 { initial state B do o = c.add2(2) + 1 go to B }
+}

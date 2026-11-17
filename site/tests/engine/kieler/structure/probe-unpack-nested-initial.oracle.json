@@ -1,0 +1,85 @@
+{
+  "hash": "2dffc5541b58e6cf75f0e577d395bb0106f13353",
+  "chart": "tests/engine/kieler/structure/probe-unpack-nested-initial.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O.inn_v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.w": {
+      "type": "int",
+      "properties": []
+    },
+    "o": {
+      "type": "class",
+      "properties": []
+    },
+    "p": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_v": 4,
+          "w": 1
+        },
+        "p": {
+          "inn_v": 4,
+          "w": 1
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_v": 4,
+          "w": 1
+        },
+        "p": {
+          "inn_v": 4,
+          "w": 1
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_v": 4,
+          "w": 4
+        },
+        "p": {
+          "inn_v": 6,
+          "w": 1
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

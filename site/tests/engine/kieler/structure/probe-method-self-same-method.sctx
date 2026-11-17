@@ -1,0 +1,9 @@
+// One kept method called on two instances: both calls write self.v of the same method, and c.set7() is not d.set7(): a write-write conflict.
+scchart A {
+  class Cell { int v = 0
+    void set7() { for (int j = 0; j < 1; j++) { v = 7; } }
+    void set8() { for (int j = 0; j < 1; j++) { v = 8; } }
+    int get() { int r = 0; for (int j = 0; j < 1; j++) { r = v; } return r } } c, d
+  region R0 { initial state A do c.set7() go to A }
+  region R1 { initial state B do d.set7() go to B }
+}

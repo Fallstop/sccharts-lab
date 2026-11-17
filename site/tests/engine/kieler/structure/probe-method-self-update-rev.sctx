@@ -1,0 +1,7 @@
+// As probe-method-self-update with the regions swapped.
+scchart A {
+  class Cell { int v = 0
+    void big() { for (int j = 0; j < 2; j++) { v += 1; } } } c
+  region R0 { initial state A do c.v += 1 go to A }
+  region R1 { initial state B do c.big() go to B }
+}

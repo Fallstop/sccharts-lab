@@ -1,0 +1,82 @@
+{
+  "hash": "cc25416e1f305e6b2cd0187d83117649050adda4",
+  "chart": "tests/engine/kieler/structure/probe-class-outer-member-unused.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "O.In.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.inn": {
+      "type": "class",
+      "properties": []
+    },
+    "O.w": {
+      "type": "int",
+      "properties": []
+    },
+    "o": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn": {
+            "v": 0
+          },
+          "w": 1
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn": {
+            "v": 0
+          },
+          "w": 1
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn": {
+            "v": 3
+          },
+          "w": 1
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

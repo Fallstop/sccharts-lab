@@ -1,0 +1,101 @@
+{
+  "hash": "f51a514512214f72bbbc91eaa46a6ec96a5e7622",
+  "chart": "tests/engine/kieler/structure/probe-class-init-depth.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "A.B.C.c1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.b1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.B.c": {
+      "type": "class",
+      "properties": []
+    },
+    "A.a1": {
+      "type": "int",
+      "properties": []
+    },
+    "A.b": {
+      "type": "class",
+      "properties": []
+    },
+    "a": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": {
+          "a1": 1,
+          "b": {
+            "b1": 2,
+            "c": {
+              "c1": 3
+            }
+          }
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "a": {
+          "a1": 1,
+          "b": {
+            "b1": 2,
+            "c": {
+              "c1": 3
+            }
+          }
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": {
+          "a1": 1,
+          "b": {
+            "b1": 2,
+            "c": {
+              "c1": 4
+            }
+          }
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

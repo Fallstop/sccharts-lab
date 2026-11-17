@@ -1,0 +1,10 @@
+// a.q = a.p reads a.p and a.p.v = 4 reads a.p too: no dependency, the regions run in order (q keeps the old value).
+scchart T {
+  struct O { struct P { int v = 1 } p, q } a
+  region R0 { initial state I go to J
+    state J do a.q = a.p go to K
+    state K }
+  region R1 { initial state I go to J
+    state J do a.p.v = 4 go to K
+    state K }
+}

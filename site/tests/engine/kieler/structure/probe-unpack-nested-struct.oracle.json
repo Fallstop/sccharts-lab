@@ -1,0 +1,78 @@
+{
+  "hash": "1d7d1208dd5e3d264b499b1f158962ec5f45de95",
+  "chart": "tests/engine/kieler/structure/probe-unpack-nested-struct.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "O.inn_arr": {
+      "type": "int",
+      "properties": []
+    },
+    "O.inn_v": {
+      "type": "int",
+      "properties": []
+    },
+    "o": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_arr": [
+            0,
+            0
+          ],
+          "inn_v": 0
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_arr": [
+            0,
+            0
+          ],
+          "inn_v": 0
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": {
+          "inn_arr": [
+            0,
+            3
+          ],
+          "inn_v": 2
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

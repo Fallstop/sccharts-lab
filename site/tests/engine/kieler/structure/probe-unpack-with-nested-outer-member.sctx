@@ -1,0 +1,10 @@
+// The outer class is unpacked into the chart: its member is the chart's o_w, which the inner class's method may use.
+scchart T {
+  @UnpackClass
+  class O { int w = 1
+    class In { int v = 0
+      void inc() { v = v + w } } inn } o
+  initial state I go to J
+  state J do o.inn.inc() go to K
+  state K
+}

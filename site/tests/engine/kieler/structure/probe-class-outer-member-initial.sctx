@@ -1,0 +1,8 @@
+// An initial value in the inner class names the outer class's member: gcc fails the same way.
+scchart T {
+  class O { int w = 3
+    class In { int v = w } inn } o
+  initial state I go to J
+  state J do o.inn.v += 1 go to K
+  state K
+}

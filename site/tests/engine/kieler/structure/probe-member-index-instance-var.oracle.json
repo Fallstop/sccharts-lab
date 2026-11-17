@@ -1,0 +1,140 @@
+{
+  "hash": "c46ef635ff3f5b5ec4742a80b0aa9c40d71b59b7",
+  "chart": "tests/engine/kieler/structure/probe-member-index-instance-var.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "P.arr": {
+      "type": "int",
+      "properties": []
+    },
+    "os": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "os": [
+          {
+            "arr": [
+              0,
+              0
+            ]
+          },
+          {
+            "arr": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "os": [
+          {
+            "arr": [
+              0,
+              2
+            ]
+          },
+          {
+            "arr": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "os": [
+          {
+            "arr": [
+              0,
+              2
+            ]
+          },
+          {
+            "arr": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "os": [
+          {
+            "arr": [
+              0,
+              2
+            ]
+          },
+          {
+            "arr": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

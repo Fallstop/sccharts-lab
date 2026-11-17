@@ -1,0 +1,19 @@
+{
+  "hash": "63517df815c68a8beb859d344cc0891c47cd4a33",
+  "chart": "tests/engine/kieler/structure/probe-struct-assign-cycle.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3b to _g9b",
+    "Can't schedule from _g9b to _g3b",
+    "Can't schedule from _g3b to _g4",
+    "Can't schedule from _g9b to _g10",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving x, v, q prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through v, q, x.",
+    "Potential instantaneous loop through v, q, x."
+  ],
+  "ticks": []
+}

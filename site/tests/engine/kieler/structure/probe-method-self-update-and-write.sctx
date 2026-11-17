@@ -1,0 +1,8 @@
+// Two different kept methods, one updating and one writing v: different selfs, accepted.
+scchart A {
+  class C { int v = 0
+    void big() { for (int j = 0; j < 2; j++) { v += 1; } } 
+    void set7() { for (int j = 0; j < 1; j++) { v = 7; } } } c, d
+  region R0 { initial state A do c.big() go to A }
+  region R1 { initial state B do d.set7() go to B }
+}

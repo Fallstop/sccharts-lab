@@ -1,0 +1,7 @@
+// An inlined method of another element (cells[0].inc()) next to cells[1].v += 1: different identifiers, accepted.
+scchart A {
+  class Cell { int v = 0
+    void inc() { v = v + 1 } } cells[2]
+  region R0 { initial state A do cells[1].v += 1 go to A }
+  region R1 { initial state B do cells[0].inc() go to B }
+}

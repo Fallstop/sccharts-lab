@@ -1,0 +1,7 @@
+// A kept method writing a member of a nested instance (in.v): not compared with box.in.v = 8 outside.
+scchart A {
+  class Box { class In { int v = 0 } in
+    void setIn() { for (int j = 0; j < 1; j++) { in.v = 7; } } } box
+  region R0 { initial state A do box.setIn() go to A }
+  region R1 { initial state B do box.in.v = 8 go to B }
+}

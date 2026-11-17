@@ -1,0 +1,9 @@
+// An inlined method called by a kept one reads through the kept one's self.
+scchart A {
+  class C { int v = 0
+    void inc() { v = v + 1 }
+    void big() { for (int j = 0; j < 2; j++) { inc(); } } } c, d
+  region R0 { initial state A do c.big() go to A }
+  region R1 { initial state B do d.v += 1 go to B }
+  region R2 { initial state C do c.v += 1 go to C }
+}

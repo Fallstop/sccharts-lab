@@ -1,0 +1,9 @@
+// A method of a class inside a class names a member of the outer class: KIELER's C code looks it up in the chart's data, and gcc fails ('TickData' has no member named 'w').
+scchart T {
+  class O { int w = 1
+    class In { int v = 0
+      void inc() { v = v + w } } inn } o
+  initial state I go to J
+  state J do o.inn.inc() go to K
+  state K
+}

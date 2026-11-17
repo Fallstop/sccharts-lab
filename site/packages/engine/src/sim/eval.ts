@@ -51,6 +51,8 @@ export interface EvalContext {
     label(v: CVar): string
     /** KIELER's struct of the chart's variables, for indices outside an array (memory.ts). */
     memory?: Memory
+    /** The members of a class or struct instance (variables and nested instances), for `a.q = a.p`. */
+    members?(v: CVar): CVar[]
 }
 
 /** An index outside its array, as the flat (row-major) element number C computes from it: C reads or writes whatever
@@ -563,6 +565,41 @@ function compileAssign(f: Extract<CEffect, { k: 'assign' }>, ec: ExprCompiler): 
 
     if (!f.expr) return () => undefined
     const rhsExpr = f.expr
+    // `a.q = a.p`, two nested instances of one struct: C copies the struct, so every member is copied (KIELER
+    // accepts it for an instance inside an instance; probe structure/probe-struct-nested-assign).
+    if (f.op === '=' && rhsExpr.k === 'ref' && !rhsExpr.sub && (vref.declKind === 'struct' || vref.declKind === 'class') && rhsExpr.v.declKind === vref.declKind && ec.ctx.members) {
+        const members = ec.ctx.members
+        const from = rhsExpr.idx.length ? ec.indexer(rhsExpr, ec.ctx.info(rhsExpr.v)) : undefined
+        const pairs: { to: number; from: number }[] = []
+        const collect = (a: CVar, b: CVar) => {
+            const source = new Map(members(b).map(m => [m.member!.name, m]))
+            for (const m of members(a)) {
+                const other = source.get(m.member!.name)
+                if (!other || m.declKind === 'method') continue
+                if (m.declKind) collect(m, other)
+                else pairs.push({ to: ec.ctx.info(m).slot, from: ec.ctx.info(other).slot })
+            }
+        }
+        collect(vref, rhsExpr.v)
+        const clone = (v: RValue): RValue => (Array.isArray(v) ? v.map(clone) : v)
+        return rt => {
+            const at = index?.(rt)
+            const source = from?.(rt)
+            if (at instanceof Far || source instanceof Far) return undefined
+            for (const p of pairs) {
+                let value = rt.vals[p.from]
+                for (const i of source ?? []) value = (value as RValue[])[i]
+                value = clone(value)
+                if (!at?.length) rt.vals[p.to] = value
+                else {
+                    let v = rt.vals[p.to] as RValue[]
+                    for (let k = 0; k < at.length - 1; k++) v = v[at[k]] as RValue[]
+                    v[at[at.length - 1]] = value
+                }
+            }
+            return undefined
+        }
+    }
     if (isArrayTarget) {
         const span = f.o.span
         return () => { throw new SimError(`${ec.ctx.label(vref)} is an array: assign its elements (KIELER's C code cannot assign whole arrays)`, span, 'array-assignment') }
