@@ -630,32 +630,58 @@ class Lowering {
             }
             return { ...this.constAtUse(value, v), span: r.span }
         }
+        this.inheritedConstArray(r)
         return this.ref(r)
     }
 
     /**
-     * The index of a const array's element, as KIELER's Const processor needs it: an int literal where the element
-     * is replaced. That is a literal, or a constant replaced before the array is (`replacedBefore`); a constant of a
-     * class must also be written as a literal there, because only a scope's own constants are computed first
-     * (evaluateExpressions). Inside the value of a scope's own constant the index has been computed by then, from
-     * the constants before that one (`const int M = N[0 + 1]`).
+     * An element of a const array of a base chart. The inherited declarations come first in the chart, so when
+     * KIELER replaces the array none of the chart's own constants is a number yet: the index must be a literal,
+     * or be computed inside the value of one of the chart's own constants (constIndex).
+     */
+    private inheritedConstArray(r: Reference) {
+        const source = r.decl?.split('/').pop()
+        if (!source || !r.indices.length || !this.inherited.has(source) || (r.decl && this.vars.has(r.decl))) return
+        const entry = this.index?.vos.get(source)
+        if (!entry?.decl?.const) return
+        const within = [...this.inlining].pop()
+        for (const i of r.indices) {
+            if (i.kind === 'int' || (within?.const && this.computedBefore(i, within))) continue
+            // An inherited name alone is reported by inheritedIndex.
+            if (i.kind === 'ref' && i.decl && this.inherited.has(i.decl.split('/').pop()!)) continue
+            this.reports.push({
+                severity: 'error', code: 'const-array-element', span: i.span ?? r.span,
+                message: `The inherited constant array \`${r.name}\` can only be indexed with a number written out`,
+                kieler: `Cannot insert const array element. ${i.kind === 'ref' ? i.name : 'The index'} is not a valid index (integer value).`,
+                hint: `KIELER puts the element's value where \`${r.name}[...]\` is written, and the constants of a base chart are replaced before this chart's own, which are still names then. Write the index as a number.`,
+            })
+        }
+    }
+
+    /**
+     * The index of a const array's element, as KIELER's Const processor needs it: an int literal at the moment the
+     * array is replaced. The processor first computes the values of each scope's own constants, in order, from the
+     * ones computed before (evaluateExpressions; not the constants of classes), then replaces the constants scope
+     * by scope from the root, in each scope as declared, a class's constants at the class. Replacing puts the
+     * value's expression where the name was and computes nothing: `N[K]` is fine when K has been replaced by a
+     * number by the time N is, `N[0 + 1]` only inside a value that was computed in the first step.
      */
     private constIndex(i: Expression, array: CVar): number | undefined {
         if (i.kind === 'int') return i.value
-        const literal = (value: CExpr) => (value.k === 'lit' && typeof value.v === 'number' && Number.isInteger(value.v) ? value.v : undefined)
         const within = [...this.inlining].pop()
-        if (within?.const) return this.computedBefore(i, within) ? literal(foldConstants(this.expr(i))) : undefined
-        if (i.kind !== 'ref') return undefined
-        let last = i
-        while (last.sub) last = last.sub
-        const k = last === i ? (i.decl ? this.vars.get(i.decl) : undefined) : this.ref(i).v
-        if (!k || k.decl !== last.decl || !this.constSource.has(k) || !this.replacedBefore(k, array)) return undefined
-        if (!k.const) {
-            let written: Expression | undefined = this.constSource.get(k)
-            for (const x of last.indices) written = written?.kind === 'vector' && x.kind === 'int' ? written.values[x.value] : undefined
-            if (written?.kind !== 'int') return undefined
+        if (within?.const && this.computedBefore(i, within)) {
+            const value = foldConstants(this.expr(i))
+            return value.k === 'lit' && typeof value.v === 'number' && Number.isInteger(value.v) ? value.v : undefined
         }
-        return literal(foldConstants(this.refExpr(i)))
+        return this.literalAt(i, array)
+    }
+
+    /** The constant a reference names (by its name, or through an instance), if the lowering replaces it. */
+    private constOf(e: Reference): CVar | undefined {
+        let last = e
+        while (last.sub) last = last.sub
+        const k = last === e ? (e.decl ? this.vars.get(e.decl) : undefined) : this.ref(e).v
+        return k && k.decl === last.decl && this.constSource.has(k) ? k : undefined
     }
 
     /** KIELER replaces the constants scope by scope from the root, in each scope in the order they are declared. */
@@ -665,21 +691,59 @@ class Lowering {
         return false
     }
 
+    private readonly computedConsts = new Map<CVar, boolean>()
+
+    /** Whether KIELER's first step computes the value of a scope's own constant (it is then a number or a vector). */
+    private computed(k: CVar): boolean {
+        if (!k.const) return false
+        const done = this.computedConsts.get(k)
+        if (done !== undefined) return done
+        this.computedConsts.set(k, false)
+        const source = this.constSource.get(k)
+        const result = !!source && this.computedBefore(source, k)
+        this.computedConsts.set(k, result)
+        return result
+    }
+
     /** Whether an expression names only constants KIELER has computed before the scope's constant `within`. */
     private computedBefore(e: Expression, within: CVar): boolean {
         switch (e.kind) {
             case 'int': case 'bool': case 'float': return true
             case 'op': return e.args.every(a => this.computedBefore(a, within))
+            case 'vector': return e.values.every(a => this.computedBefore(a, within))
             case 'ref': {
-                let last = e
-                while (last.sub) last = last.sub
-                const k = last === e ? (e.decl ? this.vars.get(e.decl) : undefined) : this.ref(e).v
-                if (!k || k.decl !== last.decl || !this.constSource.has(k) || !this.replacedBefore(k, within)) return false
+                const k = this.constOf(e)
+                if (!k || !this.replacedBefore(k, within) || !this.computed(k)) return false
                 for (let x: Reference | undefined = e; x; x = x.sub) if (!x.indices.every(a => this.computedBefore(a, within))) return false
                 return true
             }
             default: return false
         }
+    }
+
+    private readonly substituting = new Set<CVar>()
+
+    /** The int literal an expression has become when KIELER replaces the constant `at`, if it is one by then. */
+    private literalAt(e: Expression, at: CVar): number | undefined {
+        if (e.kind === 'int') return e.value
+        if (e.kind !== 'ref') return undefined
+        const k = this.constOf(e)
+        if (!k || !this.replacedBefore(k, at) || this.substituting.has(k)) return undefined
+        if (this.computed(k)) {
+            const value = foldConstants(this.refExpr(e))
+            return value.k === 'lit' && typeof value.v === 'number' && Number.isInteger(value.v) ? value.v : undefined
+        }
+        let last = e
+        while (last.sub) last = last.sub
+        this.substituting.add(k)
+        let written: Expression | undefined = this.constSource.get(k)
+        for (const x of last.indices) {
+            const n = this.literalAt(x, at)
+            written = written?.kind === 'vector' && n !== undefined ? written.values[n] : undefined
+        }
+        const result = written ? this.literalAt(written, at) : undefined
+        this.substituting.delete(k)
+        return result
     }
 
     /**

@@ -1,0 +1,11 @@
+// The chart's own constant as the index inside the value of a later constant of the chart.
+scchart T extends Base {
+  const int K = 1
+  const int M = N[K]
+  initial state I
+  do o = M go to I
+}
+scchart Base {
+  const int N[2] = {3,4}
+  output int o
+}

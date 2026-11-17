@@ -560,11 +560,17 @@ Index a `const` array with numbers or earlier constants only, or drop the `const
 
 ### `The valued object reference points to a valued object (k) that is not contained in the model!`
 
-In a chart that `extends` another, a variable or constant of the base chart stands alone as an index,
-as in `x[k]`. KIELER copies the base chart's declarations into the extending chart and misses a name
-written alone between the brackets, also in the base chart's own regions. Write the index as an
-expression, `x[k + 0]`, or declare `k` in the chart that uses it. The same message after a binding
-error is a follow-on of that error: see [the referencing binding](#the-referencing-binding-is-erroneous).
+KIELER's compiler copied part of a chart and left a name behind that still points at the original.
+Three things cause it:
+
+- In a chart that `extends` another, a variable or constant of the base chart stands alone as an
+  index, as in `x[k]`. KIELER copies the base chart's declarations into the extending chart and misses
+  a name written alone between the brackets, also in the base chart's own regions. Write the index as
+  an expression, `x[k + 0]`, or declare `k` in the chart that uses it.
+- A constant of another chart, `scchart(Other).LIMIT`, has a value that names a second constant of
+  that chart. Only `LIMIT` is copied. Give it a value without names.
+- A binding error in a referenced chart came first, and this message follows from it: see
+  [the referencing binding](#the-referencing-binding-is-erroneous).
 
 ### `A count delay of 0 is not allowed on a trigger.`
 

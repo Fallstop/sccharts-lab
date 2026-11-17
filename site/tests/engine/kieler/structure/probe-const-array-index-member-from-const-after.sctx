@@ -1,0 +1,9 @@
+// The chart's constant is declared after the array: the index is still K when the array is replaced.
+scchart T {
+  class C { const int J = K } c
+  const int N[2] = {3,4}
+  const int K = 1
+  output int o
+  initial state I
+  do o = N[c.J] go to I
+}

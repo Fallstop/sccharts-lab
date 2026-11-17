@@ -1,0 +1,10 @@
+// A base chart's const array indexed by the chart's own constant: the inherited declarations come first, K is still a name.
+scchart T extends Base {
+  const int K = 1
+  initial state I
+  do o = N[K] go to I
+}
+scchart Base {
+  const int N[2] = {3,4}
+  output int o
+}

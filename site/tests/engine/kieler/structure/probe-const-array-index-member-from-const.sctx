@@ -1,0 +1,9 @@
+// A const member whose value is an earlier constant of the chart, as an index: K is replaced in J's value first, then c.J by 1.
+scchart T {
+  const int K = 1
+  class C { const int J = K } c
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[c.J] go to I
+}

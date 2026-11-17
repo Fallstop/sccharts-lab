@@ -1,0 +1,9 @@
+// A class's constant is not computed in KIELER's first step: N[c.K + 0] in a constant's value stays 1 + 0, no int literal.
+scchart T {
+  class C { const int K = 1 } c
+  const int N[2] = {3,4}
+  const int M = N[c.K + 0]
+  output int o
+  initial state I
+  do o = M go to I
+}

@@ -146,11 +146,14 @@ describe('error links', () => {
             expect(first(probe).code, probe).toBe('c-name')
             expect(errorAnchor(first(probe)), probe).toBe(gcc)
         }
-        // `scchart(C).X`: gcc's error for an array element; KIELER's copy error has no section of its own yet.
+        // `scchart(C).X`: gcc's error for an array element; KIELER's copy error has its own section.
         expect(first('rare/probe-static-access-array.sctx').code).toBe('static-access')
         expect(errorAnchor(first('rare/probe-static-access-array.sctx'))).toBe(gcc)
         expect(first('rare/probe-static-access-chained.sctx').code).toBe('static-access')
-        expect(errorAnchor(first('rare/probe-static-access-chained.sctx'))).toBeUndefined()
+        expect(errorAnchor(first('rare/probe-static-access-chained.sctx'))).toBe('the-valued-object-reference-points-to-a-valued-object-k-that-is-not-contained-in-the-model')
+        // An inherited name written alone as an index: the same message of KIELER.
+        expect(first('structure/probe-inherited-index.sctx').code).toBe('inherited-index')
+        expect(errorAnchor(first('structure/probe-inherited-index.sctx'))).toBe('the-valued-object-reference-points-to-a-valued-object-k-that-is-not-contained-in-the-model')
         // Names: a label nobody declared is a name error like the others.
         expect(errorAnchor({ code: 'unknown-label', message: 'There is no label `done` in this block', kieler: "Couldn't resolve reference to Label 'done'." })).toBe('name-errors')
         expect(errorAnchor("Couldn't resolve reference to Label 'done'.")).toBe('name-errors')

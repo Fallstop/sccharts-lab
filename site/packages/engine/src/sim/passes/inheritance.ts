@@ -10,7 +10,7 @@
 // Not supported (an `unsupported` info): bindings or generic parameters on `extends`, and conflicting overrides of
 // inherited methods.
 
-import type { ScopeCall, State } from '../../types'
+import type { Diagnostic, ScopeCall, Span, State } from '../../types'
 import type { ModelIndex } from '../../parser/resolve'
 import type { PassContext } from './context'
 import {
@@ -24,6 +24,8 @@ interface Base {
     chart: State
     prefix: string
     root: CState
+    /** What lowering the base's copy found (lower.ts inheritedIndex): reported for the parts the chart keeps. */
+    reports?: Diagnostic[]
 }
 
 /** KIELER's getAllInheritedStates: every base, transitively, each once. */
@@ -79,8 +81,7 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
     const bases: Base[] = allInherited(chart, find).map(b => {
         const prefix = `${state.origin ?? state.about ?? state.name}${REFERENCE_SEPARATOR}`
         const lowered = lowerInstance(b, index, prefix, undefined, replaced)
-        for (const d of lowered.reports) if (d.code === 'inherited-index') ctx.report(d)
-        return { chart: b, prefix, root: lowered.root }
+        return { chart: b, prefix, root: lowered.root, reports: lowered.reports.filter(d => d.code === 'inherited-index') }
     })
     if (!bases.length) return true
     // Variables of the bases by their source id (the inheriting chart's references carry those ids).
@@ -143,6 +144,20 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
             read: swap, target: swap,
             node: e => (e.k === 'call' && e.target?.v === base ? { ...e, target: { ...e.target, v: overrider } } : undefined),
         })
+    }
+    // What lowering the bases found, for the parts that stay: KIELER drops an overridden region or method with what
+    // is written in it. An override that calls `super` keeps the base's method; `region is super.R` copies the
+    // base's region another way, which redirects every name (probes probe-inherited-index-override-*).
+    const visibleIds = new Set(visibleRegions(chart, find).map(x => x.region))
+    for (const b of bases) {
+        const dropped: (Span | undefined)[] = b.chart.regions.filter(r => !visibleIds.has(r.id)).map(r => r.span)
+        for (const [base, overrider] of overridden) {
+            if (callsVar(overrider.method?.body ?? [], base)) continue
+            dropped.push(b.chart.declarations.find(d => d.valuedObjects.some(vo => b.prefix + vo.id === base.decl))?.span)
+        }
+        for (const d of b.reports ?? []) {
+            if (!dropped.some(span => span && d.span && d.span.start >= span.start && d.span.end <= span.end)) ctx.report(d)
+        }
     }
     // `region is super.R`: a copy of the base's R in its place.
     for (const region of allRegions(state)) {

@@ -1,0 +1,9 @@
+// N[c.K] in a constant's value: c.K is replaced by 1 before the array.
+scchart T {
+  class C { const int K = 1 } c
+  const int N[2] = {3,4}
+  const int M = N[c.K]
+  output int o
+  initial state I
+  do o = M go to I
+}

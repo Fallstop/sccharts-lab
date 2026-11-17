@@ -1,0 +1,11 @@
+// An inherited method's body has x[k]: rejected.
+scchart T extends Base {
+  initial state I
+  do o = get() + 2 go to I
+}
+scchart Base {
+  int k = 1
+  int x[2]
+  output int o
+  method int get() { return x[k] }
+}

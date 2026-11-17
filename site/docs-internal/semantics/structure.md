@@ -1487,7 +1487,11 @@ declares a class and two instances. Inside a class:
   each scope in the order they are declared: the chart's constant can index an inner state's const array, not the
   other way round; an earlier const array's element (`N[K[1]]`) and a const member of an instance (`N[a[0].K]`)
   are replaced by then. Inside the value of a scope's own constant the index is computed first (`const int M =
-  N[0 + 1]` is fine, from the constants declared before `M`); a class's constants are not computed first. Probes `probe-const-member-*`, `probe-const-array-*`; source
+  N[0 + 1]` is fine, from the constants declared before `M`); a class's constants are not computed first (`N[c.K +
+  0]` in a constant's value stays `1 + 0`: rejected; `N[c.K]` is fine). Replacing substitutes, in order, into the
+  values of later constants too: `class C { const int J = K } c` is a number as an index when `K` is replaced
+  before the array, whichever of `K` and the class comes first. The engine models the two steps (lower.ts
+  `computed`, `literalAt`). Probes `probe-const-member-*`, `probe-const-array-*`; source
   `Const.xtend:60-120`, `KExpressionsDeclarationExtensions.xtend:318`.
 - **Initial values reach two levels into a struct, and every level of a class.** A class initialises its
   variables in a generated `_init` method that calls the `_init` of the classes inside it. A struct's values are
@@ -1662,7 +1666,12 @@ twice through the hierarchy is inherited once). Then:
   levels, also in a referenced chart that extends one) fails: `The valued object reference points to a valued
   object (k) that is not contained in the model!` (engine code `inherited-index`). Inside an operator the name is
   redirected (`x[k + 0]`), and so is the chart's own variable as the index of an inherited array, a literal
-  index, and a variable of a region of the base. Probes `probe-inherited-index*`; source `Inheritance.xtend:523-530`.
+  index, and a variable of a region of the base. An overridden region or method of the base is dropped with what
+  is written in it (no error); an override that calls `super` keeps the base's method and its error; `region is
+  super.R` copies the base's region by another path that redirects every name (accepted). A base chart's const
+  array is replaced before the extending chart's own constants, so only a literal indexes it (or an index computed
+  inside the value of one of the chart's own constants). Probes `probe-inherited-index*`,
+  `probe-inherited-const-array-*`; source `Inheritance.xtend:523-530, 400-430`.
 - A chart with `extends` can be simulated itself or used as a class (`130-chart-class-inheritance`: the wiki's
   `TwoCounterApplication`, `ControlledCountingCounter extends CountingCounter extends Counter`, with `override
   region`, `region Counting is super.Counting` and methods `start()`/`stop()` called in entry and exit actions).

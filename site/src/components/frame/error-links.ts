@@ -55,6 +55,7 @@ const A = {
     arrayInit: 'initial-value-of-an-array-can-not-be-a-single-value',
     cardinality: 'cardinalities-do-not-match',
     constIndex: 'cannot-insert-const-array-element',
+    lostReference: 'the-valued-object-reference-points-to-a-valued-object-k-that-is-not-contained-in-the-model',
     countZero: 'a-count-delay-of-0-is-not-allowed-on-a-trigger',
     connectorDeadEnd: 'connector-states-must-have-an-outgoing-transition',
     binding: 'the-referencing-binding-is-erroneous',
@@ -116,7 +117,7 @@ export const ANCHORS: readonly string[] = Object.values(A)
  *  `ternary-grouping`, ...) are not compiler messages. `parse` is matched by its message, else the syntax errors
  *  section. Some codes stand for more than one of KIELER's messages and go by their words on purpose: `static-access`
  *  (gcc's `expected expression before ‘{’ token` links to the C compiler's section; `The valued object reference
- *  points to a valued object (…) that is not contained in the model!` has no section yet), `kieler-crash` (the
+ *  points to a valued object (…) that is not contained in the model!` to its own), `kieler-crash` (the
  *  crash's own section, else the internal errors as a whole), `method-twice`, `module-call` and
  *  `for-counter-method` (gcc's words). */
 export const CODES: Readonly<Record<string, string>> = {
@@ -257,6 +258,7 @@ export const MESSAGES: readonly (readonly [RegExp, string])[] = [
     [/^Initial value of an array can not be a single value/, A.arrayInit],
     [/^Cardinalities do not match/, A.cardinality],
     [/^Cannot insert const array element/, A.constIndex],
+    [/^The valued object reference points to a valued object/, A.lostReference],
     [/^A count delay of 0 is not allowed/, A.countZero],
     [/^Connector states must have an outgoing transition/, A.connectorDeadEnd],
     [/^The referencing binding is erroneous|^There are binding errors in a referenced state|^A binding for the valued object reference/, A.binding],

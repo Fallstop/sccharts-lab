@@ -1,0 +1,18 @@
+// The overriding region's own x[k] is rejected.
+scchart T extends Base {
+  override region R {
+    initial state W {
+      region is super.R
+    }
+    if x[k] > 100 go to W
+  }
+}
+scchart Base {
+  int k = 1
+  int x[2]
+  output int o
+  region R {
+    initial state I
+    do o = x[1] + 4 go to I
+  }
+}

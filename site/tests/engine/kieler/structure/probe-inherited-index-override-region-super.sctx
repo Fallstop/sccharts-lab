@@ -1,0 +1,17 @@
+// region is super.R copies the base's region another way, which redirects the index: accepted.
+scchart T extends Base {
+  override region R {
+    initial state W {
+      region is super.R
+    }
+  }
+}
+scchart Base {
+  int k = 1
+  int x[2]
+  output int o
+  region R {
+    initial state I
+    do o = x[k] + 4 go to I
+  }
+}

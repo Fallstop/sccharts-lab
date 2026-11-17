@@ -1,0 +1,12 @@
+// The base's method with x[k] is overridden: accepted.
+scchart T extends Base {
+  override method int get() { return 9 }
+  initial state I
+  do o = get() go to I
+}
+scchart Base {
+  int k = 1
+  int x[2]
+  output int o
+  method int get() { return x[k] }
+}

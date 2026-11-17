@@ -1,0 +1,11 @@
+// The same index for a const array of an inner state.
+scchart T {
+  const int K = 1
+  class C { const int J = K } c
+  output int o
+  initial state S {
+    const int N[2] = {3,4}
+    initial state I
+    do o = N[c.J] go to I
+  }
+}

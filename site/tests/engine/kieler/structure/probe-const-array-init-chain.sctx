@@ -1,0 +1,10 @@
+// Constants computed from earlier ones as indices, in a constant's value and in an effect.
+scchart T {
+  const int A = 0 + 1
+  const int B = A
+  const int N[2] = {3,4}
+  const int M = N[B] + N[A - 1]
+  output int o
+  initial state I
+  do o = M + N[B] go to I
+}

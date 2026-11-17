@@ -1,0 +1,16 @@
+// The base's region with x[k] is overridden: KIELER drops it with what is written in it, the chart compiles.
+scchart T extends Base {
+  override region R {
+    initial state I
+    do o = 9 go to I
+  }
+}
+scchart Base {
+  int k = 1
+  int x[2]
+  output int o
+  region R {
+    initial state I
+    do o = x[k] go to I
+  }
+}
