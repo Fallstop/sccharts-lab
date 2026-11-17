@@ -1,0 +1,8 @@
+// The base chart's own N[0 + 1] is KIELER's error in the extending chart too.
+scchart T extends Base {}
+scchart Base {
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[0+1] go to I
+}

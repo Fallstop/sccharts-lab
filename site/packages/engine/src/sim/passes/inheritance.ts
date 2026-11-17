@@ -81,7 +81,7 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
     const bases: Base[] = allInherited(chart, find).map(b => {
         const prefix = `${state.origin ?? state.about ?? state.name}${REFERENCE_SEPARATOR}`
         const lowered = lowerInstance(b, index, prefix, undefined, replaced)
-        return { chart: b, prefix, root: lowered.root, reports: lowered.reports.filter(d => d.code === 'inherited-index') }
+        return { chart: b, prefix, root: lowered.root, reports: lowered.reports }
     })
     if (!bases.length) return true
     // Variables of the bases by their source id (the inheriting chart's references carry those ids).
@@ -115,6 +115,8 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
             // conformance structure/134: "St134Base_secret" in the pool).
             const access = source ? index?.vos.get(source)?.decl?.access : undefined
             if ((access === 'private' || access === 'protected') && !v.method) v.name = `${b.chart.name}_${v.name}`
+            // The simulated chart's own variables now (exec.ts traces the members of its instances).
+            if (state.root) v.tags.add('#inherited')
             inherited.push(v)
         }
     }
@@ -128,10 +130,20 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
     state.regions.unshift(...visible)
     for (const r of state.regions) r.override = false
     // The inheriting chart's references to inherited variables.
+    const inheritedVar = (v: CVar): CVar | undefined =>
+        (v.declKind === 'unresolved' && v.decl ? byDecl.get(v.decl) ?? byDecl.get(v.decl.split(REFERENCE_SEPARATOR).pop()!) : undefined)
     const redirect = (r: CRef): CRef | undefined => {
-        if (r.v.declKind !== 'unresolved' || !r.v.decl) return undefined
-        const target = byDecl.get(r.v.decl) ?? byDecl.get(r.v.decl.split(REFERENCE_SEPARATOR).pop()!)
-        return target ? { ...r, v: target } : undefined
+        const target = inheritedVar(r.v)
+        if (!target) return undefined
+        // A member of an inherited instance (`c.x`, `l.a.x`, `cs[1].v`, `c.inc()`): the member's variable, with
+        // the indices of the instances on the way in front of its own (as lower.ts ref() does for the chart's own).
+        let out: CRef = { ...r, v: target }
+        while (out.sub) {
+            const member = inheritedVar(out.sub.v)
+            if (!member) break
+            out = { ...out.sub, v: member, idx: [...out.idx, ...out.sub.idx], span: r.span }
+        }
+        return out
     }
     rewriteScope(state, { read: redirect, target: redirect, node: e => retarget(e, redirect) })
     // An override replaces the base method everywhere, also in the base's own bodies (structure.md S-66), unless it

@@ -380,6 +380,30 @@ describe('traceableVariables: what a reader may trace', () => {
         expect(t2.trace).toEqual({ 'o_inn.v': 3, 'p.q_v': [0, 1], 'p.qX': [0, 0], 'p.z': 5 })
         expect(t2.pool).toEqual({ o_w: 1, o_inn: { v: 3 }, p: { q_v: [0, 1], qX: [0, 0], z: 5 } })
     })
+
+    it('lists the members of instances the chart inherits', () => {
+        const r = compile(`scchart T extends Base {
+  initial state I
+  do l.a.x = 3; cs[1].v += 2; o = l.a.x + cs[1].v go to I
+}
+scchart Base {
+  struct L { struct A { int x } a } l
+  class C { const int N = 4
+    int v = 1 } cs[2]
+  output int o
+}`)
+        expect(r.diagnostics.filter(d => d.severity === 'error')).toEqual([])
+        expect(traceableVariables(r).map(v => [v.key, v.dims, v.inPool])).toEqual([
+            ['o', [], true],
+            ['l.a.x', [], false],
+            ['cs.v', [2], false],
+        ])
+        const sim = createSimulation(r)
+        sim.step({})
+        const t2 = sim.step({})
+        expect(t2.trace).toEqual({ 'l.a.x': 3, 'cs.v': [1, 3] })
+        expect(t2.pool).toEqual({ o: 6, l: { a: { x: 3 } }, cs: [{ v: 1 }, { v: 3 }] })
+    })
 })
 
 describe('what each tick ran with (TickResult.ranWith)', () => {

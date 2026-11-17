@@ -1,0 +1,13 @@
+// An inherited instance with an unpacked class inside.
+scchart T extends Base {
+  initial state I
+  do a.p.x = 3; o = a.p.x + a.w go to I
+}
+scchart Base {
+  class O {
+    int w = 2
+    @UnpackClass
+    class P { int x } p
+  } a
+  output int o
+}

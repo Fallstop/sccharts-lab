@@ -12,7 +12,7 @@
 import type { CompileResult, Simulation, SimTickResult } from '@sccharts-lab/engine'
 import { allScopes } from '@sccharts-lab/engine/internal'
 import type { CVar } from '@sccharts-lab/engine/internal'
-import type { Declaration, Value, ValuedObject } from '@sccharts-lab/engine/types'
+import type { Declaration, State, Value, ValuedObject } from '@sccharts-lab/engine/types'
 import { compareTraces } from './trace-compare'
 import type { TraceComparison } from './trace-compare'
 import { printedOf } from './trace-record'
@@ -162,7 +162,15 @@ export function poolVariables(result: Compiled): PoolVariable[] {
         add(v ? instance(v) : { name, input: false, output: false, type: 'class', dims: [], late: false })
     }
     const members: PoolVariable[] = []
-    for (const d of result.chart?.declarations ?? []) {
+    // The chart's own types and those of the charts it extends (their declarations are the chart's).
+    const charts: State[] = []
+    const inherit = (chart: State | undefined) => {
+        if (!chart || charts.includes(chart)) return
+        charts.push(chart)
+        for (const b of chart.baseStates ?? []) inherit(result.index?.charts.find((c) => c.name === b.target))
+    }
+    inherit(result.chart)
+    for (const d of charts.flatMap((c) => c.declarations)) {
         // @UnpackClass makes the members plain variables (`<instance>_<member>`), which are in the pool.
         if ((d.declKind === 'class' || d.declKind === 'struct') && !d.host && d.className) {
             memberDeclarations(unpacked(d) ? undefined : d.className, d.members ?? [], members, undefined, unpacked(d) ? 0 : 1)

@@ -267,7 +267,7 @@ export class ExecutableChart {
             this.traced.push({ key, v, type: ctypeOf(v.type) })
         }
         for (const [v] of this.slots) {
-            if (v.const || v.declKind || !v.decl || v.decl.includes('/')) continue
+            if (v.const || v.declKind || !v.decl || (v.decl.includes('/') && !v.tags.has('#inherited'))) continue
             if (v.member && rootDecls.has(v)) { if (!v.tags.has('#const-member')) trace(`${v.member.of.name}.${v.member.name}`, v); continue }
             if (rootDecls.has(v) || v.member) continue
             // Source variables only (a region's declaration keeps its id when KIELER moves it to the parent state); a

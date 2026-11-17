@@ -390,7 +390,15 @@ export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index'
             }
         }
     }
-    for (const d of chart.declarations) {
+    // The chart's own instances and those of the charts it extends.
+    const charts: State[] = []
+    const inherit = (c: State | undefined) => {
+        if (!c || charts.includes(c)) return
+        charts.push(c)
+        for (const b of c.baseStates ?? []) inherit(index?.charts.find(x => x.name === b.target))
+    }
+    inherit(chart)
+    for (const d of charts.flatMap(c => c.declarations)) {
         if ((d.declKind !== 'class' && d.declKind !== 'struct') || d.host) continue
         for (const inst of d.valuedObjects) {
             if (unpacked(d)) members(d, undefined, dims(inst), (vo, m) => `${inst.name}${suffix(vo, m)}`, 0)

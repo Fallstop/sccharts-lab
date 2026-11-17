@@ -1,0 +1,10 @@
+// A const member and a variable of an inherited class instance.
+scchart T extends Base {
+  initial state I
+  do o = c.N + c.v go to I
+}
+scchart Base {
+  class C { const int N = 4
+    int v = 2 } c
+  output int o
+}

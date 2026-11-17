@@ -1,0 +1,8 @@
+// The base chart's own N[2] of a two-element const array.
+scchart T extends Base {}
+scchart Base {
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[2] go to I
+}

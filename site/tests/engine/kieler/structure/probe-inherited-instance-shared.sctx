@@ -1,0 +1,15 @@
+// The base's region and the extending chart's region use the same inherited member.
+scchart T extends Base {
+  region R2 {
+    initial state J
+    do c.N += 1 go to J
+  }
+}
+scchart Base {
+  struct C { int N = 4 } c
+  output int o
+  region R1 {
+    initial state I
+    do o = c.N go to I
+  }
+}

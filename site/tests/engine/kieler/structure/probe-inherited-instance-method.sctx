@@ -1,0 +1,11 @@
+// Methods of an inherited class instance called in the extending chart.
+scchart T extends Base {
+  initial state I
+  do c.inc(); o = c.get() go to I
+}
+scchart Base {
+  class C { int v = 2
+    void inc() { v++ }
+    int get() { return v } } c
+  output int o
+}

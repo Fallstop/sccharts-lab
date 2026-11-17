@@ -1,0 +1,9 @@
+// A member of a struct instance declared in the base chart, read in the extending chart.
+scchart T extends Base {
+  initial state I
+  do o = c.N go to I
+}
+scchart Base {
+  struct C { int N = 4 } c
+  output int o
+}

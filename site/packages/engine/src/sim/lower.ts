@@ -306,7 +306,9 @@ class Lowering {
                             hint: 'KIELER only puts the value of a constant where it is named when the constant is a member of a class of the chart or of a class directly inside one, and it does not compute an expression there. Write the size as a number.',
                         })
                     }
-                    if (m.declKind === 'variable' && mvo.initialValue && this.initialised(v) && !this.constSource.has(v)) v.init = initial(mvo.initialValue)
+                    // A replaced const keeps a value that is a number: a chart that inherits the instance reads it.
+                    const plain = (e: CExpr): boolean => e.k === 'lit' || (e.k === 'vector' && e.values.every(plain))
+                    if (m.declKind === 'variable' && mvo.initialValue && this.initialised(v) && (!this.constSource.has(v) || plain(this.constValue(v)))) v.init = initial(mvo.initialValue)
                     if (m.declKind !== 'variable') this.initialiseInstance(v)
                 } else if (m.declKind === 'method') {
                     const savedSelf = this.self

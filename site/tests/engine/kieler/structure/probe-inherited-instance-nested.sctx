@@ -1,0 +1,11 @@
+// Inherited nested structs and an array of instances: l.a.x, cs[1].v, cs[0].arr[1].
+scchart T extends Base {
+  initial state I
+  do l.a.x = 3; cs[1].v += 2; o = l.a.x + cs[1].v + cs[0].arr[1] go to I
+}
+scchart Base {
+  struct L { struct A { int x } a } l
+  class C { int v = 1
+    int arr[2] = {5, 6} } cs[2]
+  output int o
+}

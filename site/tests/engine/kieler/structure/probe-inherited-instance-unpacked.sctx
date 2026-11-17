@@ -1,0 +1,11 @@
+// An inherited instance of an unpacked class: c.v is the chart's c_v.
+scchart T extends Base {
+  initial state I
+  do o = c.N + c.v go to I
+}
+scchart Base {
+  @UnpackClass
+  class C { const int N = 4
+    int v = 2 } c
+  output int o
+}

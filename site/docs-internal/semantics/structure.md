@@ -1672,6 +1672,11 @@ twice through the hierarchy is inherited once). Then:
   array is replaced before the extending chart's own constants, so only a literal indexes it (or an index computed
   inside the value of one of the chart's own constants). Probes `probe-inherited-index*`,
   `probe-inherited-const-array-*`; source `Inheritance.xtend:523-530, 400-430`.
+- Class and struct instances are inherited like variables: the extending chart reads and writes their members
+  (`c.N`, `l.a.x`, `cs[1].v`, also with its own variable as the index), calls their methods and reads their const
+  members; `@UnpackClass` instances too. The trace lists the inherited types' members (`C.v`). What KIELER rejects
+  in a base chart's body is rejected in the extending chart as well (the body is the chart's now). Probes
+  `probe-inherited-instance-*`, `probe-inherited-base-const-array*`.
 - A chart with `extends` can be simulated itself or used as a class (`130-chart-class-inheritance`: the wiki's
   `TwoCounterApplication`, `ControlledCountingCounter extends CountingCounter extends Counter`, with `override
   region`, `region Counting is super.Counting` and methods `start()`/`stop()` called in entry and exit actions).
