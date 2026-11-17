@@ -1,0 +1,8 @@
+// @passive in lower case: the clock is not advanced.
+scchart PrPasLower {
+  @passive
+  clock t
+  initial state A
+  if t >= 5 go to B
+  state B
+}

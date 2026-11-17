@@ -76,6 +76,18 @@ function transform(ctx: PassContext) {
     const simulate = !!named(annotations, 'SimulateSleep')
     const useSD = !!named(annotations, 'ClocksUseSD')
     const deviationOutput = !!named(annotations, 'DeviationOutput')
+    // KIELER reads @Logical and @Passive off the clock's declaration (`@Logical clock t`, not `clock @Logical t`),
+    // ignoring case. Lowering merges both kinds into the tags, so rebuild these two from the declaration.
+    const index = ctx.shared.index as ModelIndex | undefined
+    for (const clock of states.flatMap(s => s.decls).filter(isClock)) {
+        const decl = clock.decl ? index?.vos.get(clock.decl)?.decl : undefined
+        for (const name of ['Logical', 'Passive']) {
+            const tagged = [...clock.tags].some(t => t.toLowerCase() === `@${name.toLowerCase()}`)
+            const has = decl ? decl.annotations.some(a => a.name.toLowerCase() === name.toLowerCase()) : tagged
+            for (const t of [...clock.tags]) if (t.toLowerCase() === `@${name.toLowerCase()}`) clock.tags.delete(t)
+            if (has) clock.tags.add(`@${name}`)
+        }
+    }
     const anyLogical = states.some(s => s.decls.some(v => isClock(v) && isLogical(v)))
     const sleepAnnotation = named(annotations, 'DefaultSleep')
     let maxSleep = MAX_SLEEP_DEFAULT

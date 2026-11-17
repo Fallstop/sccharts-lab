@@ -1,0 +1,82 @@
+{
+  "hash": "ab8b10505f6a5c1cf83c71ffd1de4a2079dabeff",
+  "chart": "tests/engine/kieler/parity/probe-logical-on-variable-nosleep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "t": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 2
+      },
+      "values": {
+        "deltaT": 2,
+        "t": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 7
+      },
+      "values": {
+        "deltaT": 7,
+        "t": 9
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 1
+      },
+      "values": {
+        "deltaT": 1,
+        "t": 10
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}
