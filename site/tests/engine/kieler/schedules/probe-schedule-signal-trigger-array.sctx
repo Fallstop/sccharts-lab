@@ -1,0 +1,14 @@
+// The same with an element of a signal array: the new reference takes the index and not the schedule.
+scchart T {
+  output signal S[2]
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do S[1] go to A
+  }
+  region R2 {
+    initial state B
+    if S[1] schedule s 0 do n++ go to B
+  }
+}

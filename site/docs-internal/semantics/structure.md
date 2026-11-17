@@ -589,7 +589,11 @@ initialise-update-read. Contradictory orders (two objects, or a schedule against
 VariableStore.`
 
 An emission's clause is lost: the Signal processor replaces the emission by new assignments; so is the clause of a
-trigger that is a single signal (`if V schedule s 0`), whose reference is replaced by the presence variable. A
+trigger that is a single signal (`if V schedule s 0`, `if V[1] schedule s 0`, also on a during action and for a
+signal parameter of a referenced chart), whose reference is replaced by a new one of the presence variable, and of
+`val(V)` alone, which becomes the reference inside it. A trigger with an operator keeps it (`!V`, `V && c`,
+`pre(V)`, `val(V) > 1`, a count `2 V`), and so does a base chart's signal tested alone in the extending chart
+(`probe-schedule-signal-*`, `-inherited-signal-trigger`, `-binding-*`). A
 clause naming a variable that is not a schedule crashes the dependency analysis (`java.lang.ClassCastException:
 ... VariableDeclarationImpl cannot be cast to ... ScheduleDeclaration`) as soon as it is on an effect or trigger.
 

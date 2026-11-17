@@ -1,0 +1,19 @@
+// The same, bound to an array element.
+scchart T {
+  output bool x[2]
+  output int m = 0
+  initial state W is Inner(x[1], m)
+}
+scchart Inner {
+  output bool p
+  output int n
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do p = !p go to A
+  }
+  region R2 {
+    initial state B
+    if p schedule s 0 do n++ go to B
+  }
+}

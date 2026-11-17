@@ -1,0 +1,14 @@
+// A trigger with an operator around the signal keeps its schedule (it is on the operator): !S at priority 0 is tested before the emission at priority 1.
+scchart T {
+  output signal S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do S go to A
+  }
+  region R2 {
+    initial state B
+    if !S schedule s 0 do n++ go to B
+  }
+}

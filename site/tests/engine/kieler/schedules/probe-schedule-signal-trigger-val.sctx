@@ -1,0 +1,14 @@
+// val(S) alone as a trigger becomes the reference inside it.
+scchart T {
+  output signal bool S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do S(true) go to A
+  }
+  region R2 {
+    initial state B
+    if val(S) schedule s 0 do n++ go to B
+  }
+}

@@ -1,0 +1,14 @@
+// A counted signal trigger (if 2 S schedule s 0).
+scchart T {
+  output signal S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do S go to A
+  }
+  region R2 {
+    initial state B
+    if 2 S schedule s 0 do n++ go to B
+  }
+}

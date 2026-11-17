@@ -1,0 +1,14 @@
+// The same with a valued emission: neither the value's assignment nor the presence's has the schedule.
+scchart T {
+  output signal int S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A
+    do S(2) schedule s 1 go to A
+  }
+  region R2 {
+    initial state B
+    if val(S) > 1 schedule s 0 do n++ go to B
+  }
+}

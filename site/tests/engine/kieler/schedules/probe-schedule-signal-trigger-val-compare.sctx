@@ -1,0 +1,14 @@
+// val(S) > 1 keeps its schedule on the comparison; the value's own update has none.
+scchart T {
+  output signal int S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do S(2) go to A
+  }
+  region R2 {
+    initial state B
+    if val(S) > 1 schedule s 0 do n++ go to B
+  }
+}

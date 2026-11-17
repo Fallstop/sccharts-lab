@@ -1,0 +1,14 @@
+// A trigger that is a signal alone loses its schedule: KIELER's Signal transformation puts a new reference there. The test comes after the emission (priority 1), as without the clause.
+scchart T {
+  output signal S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do S go to A
+  }
+  region R2 {
+    initial state B
+    if S schedule s 0 do n++ go to B
+  }
+}

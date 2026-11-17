@@ -1,0 +1,14 @@
+// The same with a valued signal: the test of S loses its schedule and the effect reads the value of this tick.
+scchart T {
+  output signal int S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do S(2) go to A
+  }
+  region R2 {
+    initial state B
+    if S schedule s 0 do n += val(S) go to B
+  }
+}

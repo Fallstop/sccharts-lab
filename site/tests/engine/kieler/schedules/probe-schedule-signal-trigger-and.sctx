@@ -1,0 +1,15 @@
+// S && !c keeps its schedule: the test (priority 0) comes before the emission (priority 1) and never sees it.
+scchart T {
+  input bool c
+  output signal S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A schedule s 1 {}
+    do S go to A
+  }
+  region R2 {
+    initial state B
+    if S && !c schedule s 0 do n++ go to B
+  }
+}

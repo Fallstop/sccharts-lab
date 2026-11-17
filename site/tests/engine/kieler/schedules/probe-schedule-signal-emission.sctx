@@ -1,0 +1,15 @@
+// An emission's schedule is lost: the assignment KIELER makes of it is new. The test (priority 0, kept on &&) sees the emission written at priority 1.
+scchart T {
+  input bool c
+  output signal S
+  output int n = 0
+  schedule s
+  region R1 {
+    initial state A
+    do S schedule s 1 go to A
+  }
+  region R2 {
+    initial state B
+    if S && !c schedule s 0 do n++ go to B
+  }
+}

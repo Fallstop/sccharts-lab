@@ -159,7 +159,8 @@ function transformSignal(state: CState, ctx: PassContext) {
                     }
                     return undefined
                 }
-                if (holder.trigger) holder.trigger = mapExpr(holder.trigger, replaceVal)
+                // A trigger that is val(S) alone becomes the reference inside it, which has no schedule.
+                if (holder.trigger) holder.trigger = replaceVal(holder.trigger) ?? mapExpr(holder.trigger, replaceVal)
                 holder.effects = holder.effects.map(f => mapEffectExprs(f, replaceVal))
             }
         }
@@ -175,6 +176,12 @@ function transformSignal(state: CState, ctx: PassContext) {
 
         for (const site of allActionSites(state)) {
             const holder = site.transition ?? site.action!
+            // KIELER puts a new reference where the signal was tested: a trigger that is the signal alone
+            // (`if S schedule s 0`) loses its schedule, one with an operator (`if !S schedule s 0`) keeps it.
+            if (holder.trigger?.k === 'ref' && holder.trigger.v === s && holder.trigger.sched) {
+                const { sched: _, ...bare } = holder.trigger
+                holder.trigger = bare
+            }
             holder.effects = holder.effects.map(f => {
                 if (f.k === 'emit' && f.ref.v === s) {
                     return { k: 'assign', ref: { ...ref(s), idx: f.ref.idx }, op: '|=', expr: lit(true), o: { ...f.o, emits: s } }

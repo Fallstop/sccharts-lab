@@ -510,7 +510,10 @@ describe.skipIf(!enabled)('embedding a chart in another site', () => {
         await dialog.locator('label', { hasText: 'iframe' }).click()
         await page.waitForFunction(() => document.querySelector<HTMLIFrameElement>('[data-preview]')?.src.includes('view=diagram'))
         // The preview is the embed itself, sized by its `resize`; the iframe's code takes the height it needed.
-        const preview = page.frames().find(f => f.url().includes('/embed/?example=showcase/abro&view=diagram&height=auto'))!
+        // The frame takes the new address a moment after the iframe's src has it.
+        const previewFrame = () => page.frames().find(f => f.url().includes('/embed/?example=showcase/abro&view=diagram&height=auto'))
+        await expect.poll(() => !!previewFrame(), { timeout: 30000 }).toBe(true)
+        const preview = previewFrame()!
         await preview.waitForSelector('[data-pg-stage] svg.sc-pg-svg', { timeout: 60000 })
         await page.waitForTimeout(600)
         const previewHeight = await page.$eval('[data-preview]', el => el.getBoundingClientRect().height)

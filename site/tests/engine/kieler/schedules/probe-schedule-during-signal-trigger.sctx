@@ -1,0 +1,11 @@
+// A during action's trigger that is a signal alone loses its schedule as a transition's does.
+scchart T {
+  output signal S
+  output int n = 0
+  schedule s
+  during if S schedule s 0 do n++
+  region R1 {
+    initial state A schedule s 1 {}
+    do S go to A
+  }
+}
