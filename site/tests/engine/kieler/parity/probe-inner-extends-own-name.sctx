@@ -1,0 +1,20 @@
+// The enclosing chart's own output o does not bind the inner state's inherited o, even though the chart extends
+// another chart: KIELER rejects it.
+scchart PrBaseO {
+  output int p
+  region {
+    initial state Q
+  }
+}
+scchart PrBaseO2 {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}
+scchart PrInnerO extends PrBaseO {
+  output int o
+  initial state T extends PrBaseO2 {
+  }
+}

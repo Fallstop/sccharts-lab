@@ -1,0 +1,19 @@
+// An inner state extending a chart binds by name to the outputs its enclosing chart inherits (o from PrBaseN),
+// not to the chart's own variables. KIELER compiles it.
+scchart PrBaseN {
+  output int o
+  region {
+    initial state Q
+  }
+}
+scchart PrBaseN2 {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}
+scchart PrInnerN extends PrBaseN {
+  initial state T extends PrBaseN2 {
+  }
+}

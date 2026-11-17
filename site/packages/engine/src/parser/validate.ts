@@ -170,7 +170,10 @@ class Validator {
         }
         this.checkMethods(state)
         if (state.reference) this.checkScopeCall(state)
-        if (state.baseStates?.length) this.checkInheritance(state)
+        if (state.baseStates?.length) {
+            this.checkInheritance(state)
+            this.checkBaseStateBindings(state)
+        }
 
         for (const t of state.transitions) this.transition(t, state)
         for (const r of state.regions) this.region(r, state)
@@ -767,7 +770,7 @@ class Validator {
     }
 
     /** KIELER's createBindings (SCChartsReferenceExtensions) error messages. */
-    private bindingErrors(target: State, parameters: State['reference'] extends infer _ ? NonNullable<State['reference']>['parameters'] : never, scopeState: State | Region | undefined, referencing?: State): string[] {
+    private bindingErrors(target: State, parameters: State['reference'] extends infer _ ? NonNullable<State['reference']>['parameters'] : never, scopeState: State | Region | undefined, referencing?: State, parentNames?: Map<string, ValuedObject>): string[] {
         const errors: string[] = []
         const targetVOs = this.interfaceOf(target)
         const bound = new Set<ValuedObject>()
@@ -793,7 +796,7 @@ class Validator {
             }
         }
         if (bound.size < targetVOs.length) {
-            const names = this.nameMap(referencing ?? scopeState)
+            const names = parentNames ?? this.nameMap(referencing ?? scopeState)
             for (const vo of targetVOs) {
                 if (bound.has(vo)) continue
                 const decl = this.vo(vo.id)?.decl
@@ -860,6 +863,34 @@ class Validator {
             if (decl?.declKind === 'variable' && decl.output) return [`It is not possible to bind the literal ${this.text(source.span)} \n                    to the output ${target.name} !`]
         }
         return []
+    }
+
+    /**
+     * KIELER's checkBaseStateBindings (SCTXValidator) with createBindings(BaseStateReference): an inner state's base
+     * chart binds by name only to the inputs and outputs inherited by an enclosing state that extends a chart, never
+     * to the enclosing chart's own variables.
+     */
+    private checkBaseStateBindings(state: State) {
+        if (!this.index.parentRegion.get(state)) return
+        const names = new Map<string, ValuedObject>()
+        for (let r = this.index.parentRegion.get(state); r; ) {
+            const s = this.index.parentState.get(r)
+            if (!s) break
+            if (s.baseStates?.length) {
+                for (const base of this.allInherited(s)) for (const d of base.declarations) if (d.input || d.output) for (const vo of d.valuedObjects) names.set(vo.name, vo)
+            }
+            r = this.index.parentRegion.get(s)
+        }
+        for (const call of state.baseStates ?? []) {
+            const target = this.index.scopeTargets.get(call)
+            if (!target || target === state) continue
+            if (call.parameters.some(p => p.binding !== undefined && !p.bindingDecl)) continue
+            const errors = this.bindingErrors(target, call.parameters, undefined, undefined, names)
+            if (!errors.length) continue
+            this.add('error', 'binding-error', call.span, `\`${state.name}\` extends \`${target.name}\` without binding all of its inputs and outputs: ${errors[0]}`,
+                'The binding of inherited variables is erroneous!\n' + errors.join('\n'),
+                `An inner state that extends a chart is not connected to the variables around it by name. Bind them in a parameter list: \`extends ${target.name}(...)\`.`, [state.id])
+        }
     }
 
     private checkInheritance(state: State) {

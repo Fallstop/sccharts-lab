@@ -1507,6 +1507,15 @@ twice through the hierarchy is inherited once). Then:
 | a region with the name of an inherited one, without `override` | `There is an inherited region with the same name, you may use the override keyword.` |
 | `override` on an anonymous region / on a region that is not inherited | `Cannot override anonymous region.` / `The is no region to override.` (sic) (source) |
 | an inheritance cycle | `Inconsistent inheritance hierarchy! Cycle including base state: B` (source) |
+| an inner state `state T extends B` that leaves an input or output of `B` unbound | `The binding of inherited variables is erroneous!` + `Valued object in the referenced scope was not bound properly: o` (`parity/probe-inner-extends-unbound`) |
+
+An inner state can extend a chart too (`initial state T extends B(o)`), with a parameter list as for a reference
+(S-6 to S-10). Unlike a reference, its unbound inputs and outputs are **not** bound by name to the variables
+around it: only to the inputs and outputs that an enclosing state (or the chart) inherits through its own
+`extends`. The enclosing chart's own `output int o` does not bind `B`'s `o` (`probe-inner-extends-own-name`,
+rejected); an `o` the chart inherits does (`probe-inner-extends-inherited-name`). Evidence:
+`tests/engine/kieler/parity/probe-inner-extends*`; source `SCTXValidator.checkBaseStateBindings`,
+`SCChartsReferenceExtensions.createBindings(BaseStateReference)`.
 
 **Official KIELER 0.3.0 cannot compile method overrides**: every chart with an `override method` that is called
 fails there (no answer at all for `131` and `138`; gcc errors or no answer for the probes; gcc errors for the
