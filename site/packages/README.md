@@ -7,7 +7,7 @@
 | [@sccharts-lab/trace](./trace/README.md) | Simulation traces: KTrace, CSV, JSON and XML files, replay and comparison |
 | [@sccharts-lab/embed](./embed/README.md) | Live charts on any page: the `<sccharts-lab-chart>` element (also one script, `dist/embed.min.js`, the site's `/embed.js`), the embed's options and postMessage protocol |
 
-None of them is on npm yet.
+Each is on npm, published from this repository with provenance.
 
 The site imports them as TypeScript sources (each `package.json`'s `exports` points into `src/`), so the dev server and
 the tests need no build. What npm gets is built: `publishConfig` (applied by `pnpm pack`) replaces `exports`, `main`
@@ -55,26 +55,23 @@ with the gzipped size of each package's main entry.
 
 ## Releasing
 
-Once:
-
-1. Create the npm organisation `sccharts-lab` (npmjs.com, Add Organization, the free plan for public packages).
-2. Create a granular access token (npmjs.com, Access Tokens, Generate New Token, Granular Access Token: "Packages and
-   scopes" Read and write, for the scope `@sccharts-lab`) and add it to the GitHub repository as the Actions secret
-   `NPM_TOKEN` (Settings, Secrets and variables, Actions).
+The packages are published by npm's trusted publishing: each one's Settings page on npmjs.com names the GitHub
+repository `Fallstop/sccharts-lab` and the workflow `packages.yml` (with "Allow npm publish" ticked), and only that
+workflow can publish them; there is no token. Publishing access is set to require 2FA and refuse tokens that bypass it.
 
 Each release:
 
 1. Set the same `version` in the four `packages/*/package.json` (`pack.mjs` refuses different ones), and in the
    jsDelivr address of `packages/embed/README.md` when the minor version changes.
-2. `pnpm build && pnpm packages:smoke` locally, then commit.
-3. Tag and push: `git tag packages-v0.1.0 && git push origin packages-v0.1.0`.
+2. `pnpm exec vitest run && pnpm build && pnpm packages:smoke --site dist`, then commit. Run it in a fresh clone of
+   that commit: the CI on `main` does not run the site's tests, and a file only in your worktree passes locally.
+3. Tag that commit and push the tag: `git tag packages-v0.1.0 <commit> && git push origin packages-v0.1.0`.
 
 The tag starts `.github/workflows/packages.yml`: it installs in `site/`, runs the whole test suite, builds the site,
-runs `pnpm packages:smoke --version <tag's version> --site dist` and publishes the smoke test's tarballs with npm provenance (the
-engine first). A pre-release version (`0.2.0-beta.1`) goes to the dist-tag `next`; a version already on npm is skipped,
-so a failed run can be re-run. The extension's own release tags (`v1.2.3`) do not start it.
+runs `pnpm packages:smoke --version <tag's version> --site dist` and publishes the smoke test's tarballs with npm
+provenance (the engine first). A pre-release version (`0.2.0-beta.1`) goes to the dist-tag `next`; a version already on
+npm is skipped, so a failed run can be re-run. The extension's own release tags (`v1.2.3`) do not start it.
 
-After the first release, npm's trusted publishing can replace the token: on each package's Settings page on
-npmjs.com add the GitHub repository and the workflow `packages.yml`, then delete the secret. To publish by hand
-instead: `pnpm packages:smoke`, then `npm publish <tarball> --access public` for each tarball the smoke test names,
-engine first.
+A new package cannot be published this way the first time: trusted publishing is set on a package that exists. Publish
+its first version by hand (`pnpm packages:smoke`, then `npm publish <tarball> --access public`, logged in to an npm
+account in the `sccharts-lab` organisation), then add the trusted publisher on its Settings page.
