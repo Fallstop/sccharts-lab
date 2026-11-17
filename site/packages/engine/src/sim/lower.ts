@@ -27,8 +27,12 @@ export interface CEquation {
     op: AssignOperator
     expr: CExpr
     sequential: boolean
-    /** A dataflow reference call `A(x, y)` (not supported by the simulator). */
+    /** A dataflow reference call `m(x, y)`: `expr` is the call (KIELER's DataflowReferenceCall). */
     call: boolean
+    /** `m(x) = e`: KIELER makes `e` the trigger of the action that calls (Dataflow.xtend, OO translation). */
+    trigger?: CExpr
+    /** `x = e schedule s 1`: kept by the OO translation only (the classic one makes a new assignment). */
+    schedule?: SchedEntry[]
     span?: Span
 }
 
@@ -967,7 +971,8 @@ class Lowering {
         if (r.equations.length) c.ext.equations = r.equations
         if (r.reference) c.ext.reference = r.reference
         if (r.once) c.ext.once = true
-        const schedule = this.schedule(r.schedule, r.regionType === 'dataflow' ? 'schedules on dataflow regions' : undefined)
+        // A dataflow region's schedule goes to the control-flow region the Dataflow pass makes of it.
+        const schedule = this.schedule(r.schedule)
         if (schedule) c.ext.userSchedule = schedule
         this.regions.set(r.id, c)
         this.declare(c, r.declarations)
@@ -1005,11 +1010,17 @@ class Lowering {
             }
             if (r.regionType === 'dataflow') {
                 // Equations, lowered like effects (passes/dataflow.ts turns them into control flow, structure.md S-25).
-                for (const eq of r.equations) this.schedule(eq.schedule, 'schedules on equations')
-                const eqs: CEquation[] = r.equations.map(eq => ({
-                    target: this.ref(eq.target), op: eq.operator, expr: this.expr(eq.expression),
-                    sequential: !!eq.sequential, call: eq.callArgs !== undefined, span: eq.span,
-                }))
+                const eqs: CEquation[] = r.equations.map(eq => {
+                    const call = eq.callArgs !== undefined
+                    const out: CEquation = {
+                        target: this.ref(eq.target), op: eq.operator, expr: this.expr(call ? eq.call ?? eq.expression : eq.expression),
+                        sequential: !!eq.sequential, call, span: eq.span,
+                    }
+                    if (call && eq.call && eq.expression !== eq.call) out.trigger = this.expr(eq.expression)
+                    const schedule = this.schedule(eq.schedule)
+                    if (schedule) out.schedule = schedule
+                    return out
+                })
                 cr.ext.eqs = eqs
             }
             this.actionContents(r.actions, cr.actions, target)

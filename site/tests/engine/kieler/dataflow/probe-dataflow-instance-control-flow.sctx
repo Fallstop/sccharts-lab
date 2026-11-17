@@ -1,0 +1,19 @@
+// An OO instance with control flow of its own, a local with an initial value and pre() of its input: its regions run
+// concurrently with the equations.
+scchart DfInstanceControlFlow {
+  input int x
+  output int o, m, p
+  ref Cnt g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+    p = g.q
+  }
+}
+scchart Cnt {
+  input int a
+  output int s, q
+  int n = 5
+  initial state A do s = a + n; n += 1; q = pre(a) go to A
+}

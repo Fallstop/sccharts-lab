@@ -1,0 +1,13 @@
+// A sequence of equations with ; in an OO region runs in written order (KIELER's seq schedule on the during actions'
+// effects).
+scchart DfOoSequence {
+  input int x
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = x;
+    o = twice(o);
+    o = o + 1
+    m = o
+  }
+}

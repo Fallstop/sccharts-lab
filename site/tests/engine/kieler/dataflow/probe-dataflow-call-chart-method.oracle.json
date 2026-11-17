@@ -1,0 +1,66 @@
+{
+  "hash": "f4b0543e71a68e9bcd04a7a7d7a6e227caad469c",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-chart-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 1,
+        "v": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 4,
+        "v": 4
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 9,
+        "v": 9
+      },
+      "terminated": false
+    }
+  ]
+}

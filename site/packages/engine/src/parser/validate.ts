@@ -1052,6 +1052,7 @@ class Validator {
 
     private equation(eq: Equation) {
         this.checkExpression(eq.expression, false)
+        if (eq.call && eq.call !== eq.expression) this.checkExpression(eq.call, false)
         if (!eq.callArgs) this.checkAssignmentTarget(eq.target, eq.span, true)
     }
 

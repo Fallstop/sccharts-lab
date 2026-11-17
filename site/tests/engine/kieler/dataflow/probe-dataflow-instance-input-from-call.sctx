@@ -1,0 +1,16 @@
+// An instance's input set from a method call (inc.a = twice(x)); the output m is never written.
+scchart DfInstanceInputFromCall {
+  input int x
+  output int o, m
+  ref DInc inc
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    inc.a = twice(x)
+    o = inc.s
+  }
+}
+scchart DInc {
+  input int a
+  output int s
+  dataflow { s = a + 1 }
+}

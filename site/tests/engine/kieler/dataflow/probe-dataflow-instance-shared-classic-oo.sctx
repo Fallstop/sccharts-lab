@@ -1,0 +1,18 @@
+// The same with the classic region first: rejected too.
+scchart DfInstanceSharedClassicOo {
+  input int x
+  output int o, m
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow D1 {
+    o = g.s
+  }
+  dataflow D2 {
+    g.a = twice(x)
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

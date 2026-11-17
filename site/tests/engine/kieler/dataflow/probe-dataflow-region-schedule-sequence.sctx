@@ -1,0 +1,9 @@
+// A dataflow region with a schedule and a sequence of equations: the region's priority is on every equation of the
+// sequence, which then conflict with each other. Rejected.
+scchart DfRegionScheduleSequence {
+  input int x
+  output int o, m
+  schedule s
+  dataflow D schedule s 0 { o = x; o = o * 10; o = o + 1  m = o }
+  region R2 { initial state C do o = 2 schedule s 1 go to C }
+}

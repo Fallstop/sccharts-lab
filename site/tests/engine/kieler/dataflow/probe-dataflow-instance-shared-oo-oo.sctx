@@ -1,0 +1,19 @@
+// Two regions that both call methods share an instance: accepted, one object.
+scchart DfInstanceSharedOoOo {
+  input int x
+  output int o, m
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow D1 {
+    o = g.s
+    m = twice(o)
+  }
+  dataflow D2 {
+    g.a = twice(x)
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

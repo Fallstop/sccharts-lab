@@ -1,0 +1,23 @@
+// An OO instance of a chart that extends another: the inherited input and output are members too.
+scchart DfInstanceExtends {
+  input int x
+  output int o, p
+  ref Ext g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    g.b = 4
+    o = g.s
+    p = g.t
+  }
+}
+scchart Ext extends Two {
+  input int b
+  output int t
+  dataflow { t = s + b }
+}
+scchart Two {
+  input int a
+  output int s
+  dataflow { s = a + 1 }
+}

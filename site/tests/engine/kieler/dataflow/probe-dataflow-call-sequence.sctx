@@ -1,0 +1,18 @@
+// A sequence of calls and assignments on an instance (c.add(x); p = c.get(); c.add(100); o = c.get()) runs in written
+// order.
+scchart DfCallSequence {
+  input int x
+  output int o, p
+  ref DCounter c
+  dataflow {
+    c.add(x);
+    p = c.get();
+    c.add(100);
+    o = c.get()
+  }
+}
+scchart DCounter {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

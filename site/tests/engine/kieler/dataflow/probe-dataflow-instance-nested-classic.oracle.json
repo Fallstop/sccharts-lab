@@ -1,0 +1,113 @@
+{
+  "hash": "1465409a521b008a127509f3f56a2fa7dedff5e0",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-nested-classic.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Outer1.__df_t_a": {
+      "type": "int",
+      "properties": []
+    },
+    "Outer1.__df_t_b": {
+      "type": "int",
+      "properties": []
+    },
+    "Outer1.__df_t_s": {
+      "type": "int",
+      "properties": []
+    },
+    "Outer1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Outer1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "m": 0,
+        "o": 6,
+        "g": {
+          "__df_t_a": 2,
+          "__df_t_b": 3,
+          "__df_t_s": 6,
+          "a": 2,
+          "s": 6
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "m": 0,
+        "o": 10,
+        "g": {
+          "__df_t_a": 6,
+          "__df_t_b": 3,
+          "__df_t_s": 10,
+          "a": 6,
+          "s": 10
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "m": 0,
+        "o": 14,
+        "g": {
+          "__df_t_a": 10,
+          "__df_t_b": 3,
+          "__df_t_s": 14,
+          "a": 10,
+          "s": 14
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

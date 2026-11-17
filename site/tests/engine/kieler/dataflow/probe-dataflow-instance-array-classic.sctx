@@ -1,0 +1,17 @@
+// The same array without a method call: the classic translation makes one instance of the whole array and both
+// gs[0].a and gs[1].a write its one input. Rejected (unschedulable).
+scchart DfInstanceArrayClassic {
+  input int x
+  output int o, m
+  ref Two gs[2]
+  dataflow {
+    gs[0].a = x
+    gs[1].a = gs[0].s
+    o = gs[1].s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

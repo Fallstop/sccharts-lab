@@ -1,0 +1,121 @@
+{
+  "hash": "beba24cb9e5c58edbc6929992dd0dbf97e733151",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-chart-instance-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_cs_bump_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_cs_bump_k is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cnt1.n": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 0,
+        "p": 0,
+        "cs": [
+          {
+            "n": 0,
+            "v": 0
+          },
+          {
+            "n": 0,
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 3,
+        "p": 1,
+        "cs": [
+          {
+            "n": 1,
+            "v": 3
+          },
+          {
+            "n": 1,
+            "v": 1
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 8,
+        "p": 2,
+        "cs": [
+          {
+            "n": 2,
+            "v": 8
+          },
+          {
+            "n": 2,
+            "v": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

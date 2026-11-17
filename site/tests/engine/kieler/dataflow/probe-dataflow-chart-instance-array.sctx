@@ -1,0 +1,14 @@
+// An array of chart instances outside dataflow (ref Cnt cs[2]): each element runs the chart's region and has its own
+// fields, methods are called on an element.
+scchart DfChartInstanceArray {
+  input int x
+  output int o, p
+  ref Cnt cs[2]
+  region R { initial state A do cs[0].bump(x); cs[1].bump(1); o = cs[0].v; p = cs[1].n go to A }
+}
+scchart Cnt {
+  int v = 0
+  int n = 0
+  method void bump(int k) { v += k }
+  region T { initial state A do n += 1 go to A }
+}

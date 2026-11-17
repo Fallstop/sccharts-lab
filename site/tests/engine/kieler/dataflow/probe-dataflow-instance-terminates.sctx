@@ -1,0 +1,20 @@
+// An instance of a chart that terminates, declared in the chart and used in an OO region: it is not restarted (the
+// classic translation restarts it one tick later), its output keeps the last value.
+scchart DfInstanceTerminates {
+  input int x
+  output int o, m
+  ref Fin g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = x
+    o = g.s
+    m = twice(x)
+  }
+}
+scchart Fin {
+  input int a
+  output int s
+  initial state A do s = a go to B
+  state B do s = a + 100 go to C
+  final state C
+}

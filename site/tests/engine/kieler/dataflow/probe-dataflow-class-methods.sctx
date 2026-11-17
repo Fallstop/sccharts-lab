@@ -1,0 +1,11 @@
+// A class instance's methods called in equations (acc.add(x), o = acc.get()): the equations are immediate during
+// actions in written order.
+scchart DfClassMethods {
+  input int x
+  output int o
+  class Acc { int v = 0  void add(int k) { v += k }  int get() { return v } } acc
+  dataflow {
+    acc.add(x)
+    o = acc.get()
+  }
+}

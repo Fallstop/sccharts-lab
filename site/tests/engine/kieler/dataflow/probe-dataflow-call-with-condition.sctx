@@ -1,0 +1,16 @@
+// c.add(x) = x > 2: the expression after a dataflow reference call is the trigger of the action that calls, so the
+// method runs only while x > 2.
+scchart DfCallWithCondition {
+  input int x
+  output int o
+  ref DCounter c
+  dataflow {
+    c.add(x) = x > 2
+    o = c.get()
+  }
+}
+scchart DCounter {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

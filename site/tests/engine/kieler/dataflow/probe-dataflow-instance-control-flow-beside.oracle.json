@@ -1,0 +1,142 @@
+{
+  "hash": "085aa2c986c2480fddb9195a5b6f2b314e9ee2d5",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-control-flow-beside.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "k": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Two1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "k": 0,
+        "m": 0,
+        "o": 3,
+        "g": {
+          "a": 2,
+          "b": 0,
+          "s": 3
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "k": 1007,
+        "m": 1,
+        "o": 7,
+        "g": {
+          "a": 6,
+          "b": 0,
+          "s": 7
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "k": 1007,
+        "m": 1,
+        "o": 61,
+        "g": {
+          "a": 10,
+          "b": 50,
+          "s": 61
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "k": 1053,
+        "m": 2,
+        "o": 53,
+        "g": {
+          "a": 2,
+          "b": 50,
+          "s": 53
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

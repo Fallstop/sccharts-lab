@@ -1,0 +1,8 @@
+// A dataflow region at priority 0 and a transition's write at priority 1: in tick 1 the transition's value stays,
+// later only the equation writes.
+scchart DfRegionScheduleFirst {
+  output int o
+  schedule s
+  dataflow D schedule s 0 { o = 1 }
+  region R2 { initial state C immediate do o = 2 schedule s 1 go to D state D }
+}

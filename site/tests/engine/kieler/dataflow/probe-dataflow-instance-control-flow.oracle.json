@@ -1,0 +1,134 @@
+{
+  "hash": "0b5bf0784d340ba555e5c8ef847e79a56dcb7e27",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-control-flow.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cnt1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt1.n": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt1.q": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "m": 0,
+        "o": 0,
+        "p": 0,
+        "g": {
+          "a": 2,
+          "n": 5,
+          "q": 0,
+          "s": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "m": 0,
+        "o": 11,
+        "p": 2,
+        "g": {
+          "a": 6,
+          "n": 6,
+          "q": 2,
+          "s": 11
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "m": 0,
+        "o": 16,
+        "p": 6,
+        "g": {
+          "a": 10,
+          "n": 7,
+          "q": 6,
+          "s": 16
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "x": 7,
+        "m": 0,
+        "o": 21,
+        "p": 10,
+        "g": {
+          "a": 14,
+          "n": 8,
+          "q": 10,
+          "s": 21
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

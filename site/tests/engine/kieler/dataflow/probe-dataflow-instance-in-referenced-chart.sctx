@@ -1,0 +1,21 @@
+// A referenced chart (state S is Wrap) with an OO dataflow region and an instance of its own.
+scchart DfInstanceInReferencedChart {
+  input int x
+  output int o
+  initial state S is Wrap(x, o)
+}
+scchart Wrap {
+  input int i
+  output int r
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(i)
+    r = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

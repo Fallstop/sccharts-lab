@@ -1,0 +1,21 @@
+// One instance wired (c.a = x, o = c.s) and called (c.add(x), p = c.get()) in the same region: its input, output and
+// local are members of the object.
+scchart DfInstanceMethodsAndWiring {
+  input int x
+  output int o, p
+  ref Mix c
+  dataflow {
+    c.a = x
+    c.add(x)
+    o = c.s
+    p = c.get()
+  }
+}
+scchart Mix {
+  input int a
+  output int s
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+  dataflow { s = a + v }
+}

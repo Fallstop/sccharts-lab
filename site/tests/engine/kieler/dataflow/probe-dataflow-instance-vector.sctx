@@ -1,0 +1,17 @@
+// A vector assigned to an instance in an OO region sets its inputs in declaration order, _ skips one (g = {x, _,
+// twice(x)}).
+scchart DfInstanceVector {
+  input int x
+  output int o, m
+  ref Three g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g = {x, _, twice(x)}
+    o = g.s
+  }
+}
+scchart Three {
+  input int a, b, c
+  output int s
+  dataflow { s = a + 10 * b + 100 * c }
+}

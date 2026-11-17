@@ -1,0 +1,112 @@
+{
+  "hash": "6c65eca8f9a5f81ff51db90ac89de7282cf2b9a6",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-extends.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "Ext1.a": {
+      "type": "int",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "Ext1.s": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Ext1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Ext1.t": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 3,
+        "p": 7,
+        "g": {
+          "a": 2,
+          "s": 3,
+          "b": 4,
+          "t": 7
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 7,
+        "p": 11,
+        "g": {
+          "a": 6,
+          "s": 7,
+          "b": 4,
+          "t": 11
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 11,
+        "p": 15,
+        "g": {
+          "a": 10,
+          "s": 11,
+          "b": 4,
+          "t": 15
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

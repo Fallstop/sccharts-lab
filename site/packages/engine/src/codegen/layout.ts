@@ -162,9 +162,12 @@ export class Layout {
         const id = decls.map(m => m.decl ?? '').find(d => d.includes(`$${inst}/`)) ?? ''
         const rest = id.slice(id.indexOf(`$${inst}/`) + inst.length + 2)
         const chart = rest ? rest.split(/[/$]/)[0] : inst
+        // An array of instances (`ref C cs[2]`) is an array of the struct: its sizes are in front of each member's own.
+        const of = inside[0]?.member?.of
+        const outer = of ? dimsOf(of) : []
         const fields = inside.map(m => (m.declKind
             ? `${this.classType(m, decls, classes)} ${identifier(m.member!.name)}${ownDimsOf(m).map(n => `[${n}]`).join('')};`
-            : `${ctypeOf(m)} ${identifier(m.member!.name)}${dimsOf(m).map(n => `[${n}]`).join('')};`))
+            : `${ctypeOf(m)} ${identifier(m.member!.name)}${ownDimsOf(m).map(n => `[${n}]`).join('')};`))
         const key = `chart ${chart}|${fields.join(' ')}`
         let type = classes.get(key)
         if (!type) {
@@ -173,16 +176,18 @@ export class Layout {
             this.typedefs.push(`typedef struct {\n${fields.map(f => `  ${f}\n`).join('')}} ${type};\n`)
         }
         const name = this.unique(identifier(inst))
-        this.lines.push(`${type} ${name};`)
+        this.lines.push(`${type} ${name}${outer.map(n => `[${n}]`).join('')};`)
         this.instances.push({ name: inst, member: name, ctype: type, pool: inst })
-        for (const m of nested) this.instance(m, `${name}.${identifier(m.member!.name)}`, decls, true)
+        const element = `${name}${'[]'.repeat(outer.length)}`
+        for (const m of nested) this.instance(m, `${element}.${identifier(m.member!.name)}`, decls, true)
         for (const m of members) {
-            const member = `${name}.${identifier(m.member!.name)}`
+            const member = `${element}.${identifier(m.member!.name)}`
             this.slots.set(m, { v: m, member })
             if (m.tags.has('#const-member')) continue
             this.variables.push({
                 name: `${inst}.${m.member!.name}`, member, ctype: ctypeOf(m), type: simpleType(m), dims: dimsOf(m),
                 input: false, output: false, pool: m.member!.name, poolObject: inst,
+                ...(outer.length ? { poolPath: [{ key: inst, dims: outer }, { key: m.member!.name, dims: ownDimsOf(m) }] } : {}),
             })
         }
     }

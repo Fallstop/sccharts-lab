@@ -1,0 +1,18 @@
+// ref Two g(x) in an OO region: a binding by position is not applied (only explicit ones are), a stays a member with
+// 0.
+scchart DfInstancePositionalBinding {
+  input int x
+  output int o, m
+  int w
+  ref Two g(x)
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.b = twice(x)
+    o = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

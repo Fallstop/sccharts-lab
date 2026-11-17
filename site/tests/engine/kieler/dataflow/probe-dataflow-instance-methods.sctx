@@ -1,0 +1,17 @@
+// A chart instance in a dataflow region whose equations call its methods: c.add(x) is an equation of its own (a
+// dataflow reference call), o = c.get() an assignment. KIELER uses its OO translation and the instance is an object
+// in the data pool.
+scchart DfInstanceMethods {
+  input int x
+  output int o
+  ref DCounter c
+  dataflow {
+    c.add(x)
+    o = c.get()
+  }
+}
+scchart DCounter {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

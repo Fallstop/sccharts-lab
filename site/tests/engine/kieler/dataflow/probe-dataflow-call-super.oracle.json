@@ -1,0 +1,69 @@
+{
+  "hash": "110364f1cc0bd023807cb7d3913ddd15b4fad386",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-super.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_Base14_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 3,
+        "v": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 12,
+        "v": 12
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 27,
+        "v": 27
+      },
+      "terminated": false
+    }
+  ]
+}

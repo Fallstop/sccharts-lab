@@ -1,0 +1,121 @@
+{
+  "hash": "6334442499e839fafb5ddc3df29c5b256d88d575",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Two1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "gs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "m": 0,
+        "o": 4,
+        "gs": [
+          {
+            "a": 2,
+            "b": 0,
+            "s": 3
+          },
+          {
+            "a": 3,
+            "b": 0,
+            "s": 4
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "m": 0,
+        "o": 8,
+        "gs": [
+          {
+            "a": 6,
+            "b": 0,
+            "s": 7
+          },
+          {
+            "a": 7,
+            "b": 0,
+            "s": 8
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "m": 0,
+        "o": 12,
+        "gs": [
+          {
+            "a": 10,
+            "b": 0,
+            "s": 11
+          },
+          {
+            "a": 11,
+            "b": 0,
+            "s": 12
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

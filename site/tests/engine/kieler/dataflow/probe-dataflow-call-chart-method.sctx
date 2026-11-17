@@ -1,0 +1,12 @@
+// The chart's own methods as equations: add(x) and o = get().
+scchart DfCallChartMethod {
+  input int x
+  output int o
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+  dataflow {
+    add(x)
+    o = get()
+  }
+}

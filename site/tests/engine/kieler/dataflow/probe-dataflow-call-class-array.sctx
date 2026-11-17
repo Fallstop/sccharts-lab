@@ -1,0 +1,13 @@
+// Methods of the elements of an array of class instances called as equations, with a computed index (accs[x %
+// 2].add(100)).
+scchart DfCallClassArray {
+  input int x
+  output int o, p
+  class Acc { int v = 0  void add(int k) { v += k }  int get() { return v } } accs[2]
+  dataflow {
+    accs[0].add(x)
+    accs[x % 2].add(100)
+    o = accs[0].get()
+    p = accs[1].get()
+  }
+}

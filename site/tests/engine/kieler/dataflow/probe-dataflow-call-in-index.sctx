@@ -1,0 +1,11 @@
+// A method call only inside an index (o = arr[idx()]) makes the region an OO one.
+scchart DfCallInIndex {
+  input int x
+  output int o, m
+  int arr[2] = {10, 20}
+  method int idx() { return x }
+  dataflow {
+    o = arr[idx()]
+    m = x + 1
+  }
+}

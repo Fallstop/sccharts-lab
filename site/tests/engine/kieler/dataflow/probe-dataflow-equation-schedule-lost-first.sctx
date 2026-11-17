@@ -1,0 +1,7 @@
+// The same with the equation at priority 0: rejected as well, the clause is not there any more.
+scchart DfEquationScheduleLostFirst {
+  output int o
+  schedule s
+  dataflow { o = 1 schedule s 0 }
+  region R2 { initial state C immediate do o = 2 schedule s 1 go to D state D }
+}

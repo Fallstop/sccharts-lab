@@ -1,0 +1,18 @@
+// Without a sequence, the reads of the instance's state come after the calls that write it, whatever the written
+// order.
+scchart DfCallOrder {
+  input int x
+  output int o, p
+  ref DCounter c
+  dataflow {
+    p = c.get()
+    c.add(x)
+    o = c.get()
+    c.add(100)
+  }
+}
+scchart DCounter {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}
