@@ -1,0 +1,15 @@
+// Two regions write different members of one struct instance in the same tick.
+scchart PrSConcOther {
+  struct P {
+    int x
+    int y
+  } p
+  region R1 {
+    initial state A
+    do p.x = 1 go to A
+  }
+  region R2 {
+    initial state B
+    do p.y = 2 go to B
+  }
+}

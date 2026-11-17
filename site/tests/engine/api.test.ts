@@ -333,6 +333,25 @@ describe('traceableVariables: what a reader may trace', () => {
         expect(t2.trace).toEqual({ 'pt.px': 1, 'pt.py': 0, 'T.S$c': 6, 'T.S:R$inR': true, 'T.S$V': 6, 'T.S$P': true })
         expect(t2.values.top).toBe(1)
     })
+
+    it('lists the members of a struct inside a struct and of an array of instances, with their values', () => {
+        const r = compile(`scchart N {
+  struct L { struct P { int x } a  int w = 7 } l
+  class C { int v = 1  void inc() { v++ } } cs[2]
+  initial state A
+  do l.a.x++; cs[1].inc() go to A
+}`)
+        expect(traceableVariables(r).map(v => [v.key, v.dims, v.member])).toEqual([
+            ['l.a.x', [], { instance: 'l.a', member: 'x' }],
+            ['l.w', [], { instance: 'l', member: 'w' }],
+            ['cs.v', [2], { instance: 'cs', member: 'v' }],
+        ])
+        const sim = createSimulation(r)
+        sim.step({})
+        const t2 = sim.step({})
+        expect(t2.trace).toEqual({ 'l.a.x': 1, 'l.w': 7, 'cs.v': [1, 2] })
+        expect(t2.pool).toEqual({ l: { a: { x: 1 }, w: 7 }, cs: [{ v: 1 }, { v: 2 }] })
+    })
 })
 
 describe('what each tick ran with (TickResult.ranWith)', () => {

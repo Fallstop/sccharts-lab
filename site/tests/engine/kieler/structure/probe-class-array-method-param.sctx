@@ -1,0 +1,16 @@
+// A method with a parameter called on two elements of an array of class instances.
+scchart PrCaMp {
+  input int k
+  output int o0, o1
+  class C {
+    int v = 1
+    void add(int n) {
+      v = v + n
+    }
+    int get() {
+      return v
+    }
+  } cs[2]
+  initial state A
+  do cs[0].add(k); cs[1].add(2 * k); o0 = cs[0].get(); o1 = cs[1].get() go to A
+}

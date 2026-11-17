@@ -49,8 +49,16 @@ export interface LowerResult {
 
 class Lowering {
     readonly vars = new Map<string, CVar>()
-    /** Class and struct instances (`class C { ... } c`): per instance id, its members by member id. */
-    private readonly instances = new Map<string, Map<string, CVar>>()
+    /**
+     * Class and struct instances (`class C { ... } c`), nested ones (`l.a`) too: per instance variable, its members by
+     * member id and its declaration.
+     */
+    private readonly instances = new Map<CVar, { members: Map<string, CVar>; decl: Declaration }>()
+    /**
+     * While lowering the methods of an instance inside an array of instances (`cs[2]`): its members and the hidden
+     * parameters that carry the element's indices (a bare `v` in the body is `cs.v[_self0]`).
+     */
+    private self: { members: Set<CVar>; idx: CVar[] } | undefined
     readonly states = new Map<string, CState>()
     readonly regions = new Map<string, CRegion>()
     readonly problems: LowerResult['problems'] = []
@@ -113,10 +121,12 @@ class Lowering {
                 scope.decls.push(v)
                 this.vars.set(vo.id, v)
                 if (d.declKind === 'class' || d.declKind === 'struct') {
+                    const unpack = d.annotations.some(a => a.name === 'UnpackClass')
                     if (d.host) v.tags.add('#host')
-                    else if (vo.cardinalities.length) v.tags.add('#array')
-                    else if ((d.members ?? []).some(m => m.declKind === 'class' || m.declKind === 'struct')) v.tags.add('#nested')
-                    else this.declareMembers(scope, d, vo, v)
+                    // KIELER's Unpack Classes processor does not unpack arrays of instances or classes inside classes.
+                    else if (unpack && vo.cardinalities.length) v.tags.add('#array')
+                    else if (unpack && (d.members ?? []).some(m => m.declKind === 'class' || m.declKind === 'struct')) v.tags.add('#nested')
+                    else this.declareMembers(scope, d, v, unpack)
                 }
                 if (d.const && vo.initialValue) {
                     this.constSource.set(v, vo.initialValue)
@@ -129,17 +139,19 @@ class Lowering {
     /**
      * The members of a class or struct instance: variables of the declaring scope (named `<instance>.<member>`, so they
      * never clash) and, for each method, a method of the instance whose body reads and writes these variables (KIELER
-     * keeps the instance as a C struct and its methods as C functions; the simulator runs them the same way).
+     * keeps the instance as a C struct and its methods as C functions; the simulator runs them the same way). A class
+     * or struct inside it is an instance of its own (`l.a`, members `l.a.x`). An array of instances keeps one array per
+     * member (`cs[2]`: `cs.v` has the dimension of `cs` in front of its own), which is how KIELER's C indexes them.
      */
-    private declareMembers(scope: Scope, d: Declaration, vo: ValuedObject, inst: CVar) {
+    private declareMembers(scope: Scope, d: Declaration, inst: CVar, unpack = false) {
         const members = new Map<string, CVar>()
-        // @UnpackClass (KIELER's Unpack Classes processor): the members become variables `<instance>_<member>`.
-        const unpack = d.annotations.some(a => a.name === 'UnpackClass')
         for (const m of d.members ?? []) {
             for (const mvo of m.valuedObjects) {
-                if (m.declKind !== 'variable' && m.declKind !== 'method') continue
-                const v = new CVar(unpack ? `${vo.name}_${mvo.name}` : `${vo.name}.${mvo.name}`, m.declKind === 'method' ? 'host' : m.type ?? (m.signal ? 'pure' : 'host'))
-                v.display = unpack ? v.name : `${vo.name}.${mvo.name}`
+                const nested = m.declKind === 'class' || m.declKind === 'struct'
+                if (!nested && m.declKind !== 'variable' && m.declKind !== 'method') continue
+                // @UnpackClass (KIELER's Unpack Classes processor): the members become variables `<instance>_<member>`.
+                const v = new CVar(unpack ? `${inst.name}_${mvo.name}` : `${inst.name}.${mvo.name}`, m.declKind === 'method' || nested ? 'host' : m.type ?? (m.signal ? 'pure' : 'host'))
+                v.display = unpack ? v.name : `${inst.display ?? inst.name}.${mvo.name}`
                 v.decl = mvo.id
                 v.span = mvo.nameSpan ?? mvo.span
                 v.scope = scope
@@ -147,48 +159,87 @@ class Lowering {
                 // A const member is a constant of the type: not in KIELER's data pool (conformance structure/157).
                 if (m.const) v.tags.add('#const-member')
                 if (m.declKind === 'method') v.declKind = 'method'
+                if (nested) v.declKind = m.declKind
                 v.hostType = m.hostType
                 scope.decls.push(v)
                 members.set(mvo.id, v)
-            }
-        }
-        this.instances.set(vo.id, members)
-    }
-
-    /** Lowers the members' initial values and the methods of the instances of a class declaration. */
-    private initialiseMembers(d: Declaration) {
-        for (const vo of d.valuedObjects) {
-            const members = this.instances.get(vo.id)
-            if (!members) continue
-            // While lowering the instance's methods, the members' names mean the instance's members.
-            const saved = new Map<string, CVar | undefined>()
-            for (const [id, v] of members) {
-                saved.set(id, this.vars.get(id))
-                this.vars.set(id, v)
-            }
-            for (const m of d.members ?? []) {
-                for (const mvo of m.valuedObjects) {
-                    const v = members.get(mvo.id)
-                    if (!v) continue
-                    if (m.declKind === 'variable') {
-                        v.dims = mvo.cardinalities.map(c => this.expr(c))
-                        if (mvo.initialValue) v.init = this.expr(mvo.initialValue)
-                    } else if (m.declKind === 'method') {
-                        v.method = this.method(m)
-                    }
+                if (nested) {
+                    if (m.host) v.tags.add('#host')
+                    else this.declareMembers(scope, m, v)
                 }
             }
-            for (const [id, v] of saved) {
-                if (v) this.vars.set(id, v)
-                else this.vars.delete(id)
+        }
+        this.instances.set(inst, { members, decl: d })
+    }
+
+    /**
+     * Lowers the members' cardinalities and initial values and the methods of an instance (its own dimensions are
+     * set). A member of an array of instances has the instance's dimensions in front of its own, and its initial value
+     * is repeated for every element; a method gets one hidden parameter per dimension, the element's index.
+     */
+    private initialiseInstance(inst: CVar) {
+        const entry = this.instances.get(inst)
+        if (!entry) return
+        const { members, decl } = entry
+        // While lowering the instance's methods, the members' names mean the instance's members.
+        const saved = new Map<string, CVar | undefined>()
+        for (const [id, v] of members) {
+            saved.set(id, this.vars.get(id))
+            this.vars.set(id, v)
+        }
+        const outer = inst.dims
+        const sizes = outer.map(c => {
+            const n = foldConstants(copyExpr(c))
+            return n.k === 'lit' && typeof n.v === 'number' ? n.v : undefined
+        })
+        const repeat = (value: CExpr): CExpr => {
+            if (sizes.some(n => n === undefined || n < 0)) return value
+            let out = value
+            for (let k = sizes.length - 1; k >= 0; k--) {
+                const element = out
+                out = { k: 'vector', values: Array.from({ length: sizes[k]! }, () => copyExpr(element)), span: value.span }
             }
+            return out
+        }
+        for (const m of decl.members ?? []) {
+            for (const mvo of m.valuedObjects) {
+                const v = members.get(mvo.id)
+                if (!v) continue
+                if (m.declKind === 'variable' || m.declKind === 'class' || m.declKind === 'struct') {
+                    v.dims = [...outer.map(c => copyExpr(c)), ...mvo.cardinalities.map(c => this.expr(c))]
+                    if (m.declKind === 'variable' && mvo.initialValue) v.init = outer.length ? repeat(this.expr(mvo.initialValue)) : this.expr(mvo.initialValue)
+                    if (m.declKind !== 'variable') this.initialiseInstance(v)
+                } else if (m.declKind === 'method') {
+                    const savedSelf = this.self
+                    const hidden = outer.map((_, k) => {
+                        const p = new CVar(`_self${k}`, 'int')
+                        p.generated = true
+                        p.role = 'frame'
+                        p.tags.add('#self')
+                        return p
+                    })
+                    this.self = hidden.length ? { members: new Set(members.values()), idx: hidden } : undefined
+                    v.method = this.method(m, hidden)
+                    this.self = savedSelf
+                }
+            }
+        }
+        for (const [id, v] of saved) {
+            if (v) this.vars.set(id, v)
+            else this.vars.delete(id)
         }
     }
 
     /** Second step: initial values and cardinalities (after every scope declared its variables). */
     initialise(declarations: Declaration[]) {
         for (const d of declarations) {
-            if (d.declKind === 'class' || d.declKind === 'struct') this.initialiseMembers(d)
+            if (d.declKind === 'class' || d.declKind === 'struct') {
+                for (const vo of d.valuedObjects) {
+                    const inst = this.vars.get(vo.id)!
+                    inst.dims = vo.cardinalities.map(c => this.expr(c))
+                    this.initialiseInstance(inst)
+                }
+            }
             for (const vo of d.valuedObjects) {
                 const v = this.vars.get(vo.id)!
                 v.dims = vo.cardinalities.map(c => this.expr(c))
@@ -239,8 +290,8 @@ class Lowering {
         return inits
     }
 
-    private method(d: Declaration): CMethod {
-        const params: CVar[] = []
+    private method(d: Declaration, hidden: CVar[] = []): CMethod {
+        const params: CVar[] = [...hidden]
         const locals: CVar[] = []
         for (const p of d.parameters ?? []) this.frameVars([p], params)
         const by = d.valuedObjects[0]?.id
@@ -424,10 +475,7 @@ class Lowering {
             case 'random': return { k: 'random', span: e.span }
             case 'hostcode': return { k: 'host', text: e.text, span: e.span }
             case 'ignore': return { k: 'ignore', span: e.span }
-            case 'call': return {
-                k: 'call', name: e.name, args: e.args.map(a => this.expr(a)), extern: e.extern,
-                target: e.target ? this.ref(e.target) : undefined, paramAccess: e.paramAccess, span: e.span,
-            }
+            case 'call': return this.call(e.name, e.args.map(a => this.expr(a)), e.target ? this.ref(e.target) : undefined, e)
             case 'special': {
                 // `scchart(Decl).Bit.ZERO`: an enum value of another chart is its position, as `Bit.ZERO` (S-58).
                 const value = e.access === 'scchart' && e.sub ? this.enumValue(e.sub) : undefined
@@ -460,14 +508,6 @@ class Lowering {
     }
 
     ref(r: Reference): CRef {
-        // A member of a class instance (`c.x`, `c.inc()`): the instance's member variable or method.
-        const members = r.decl ? this.instances.get(r.decl) : undefined
-        const member = members && r.sub?.decl ? members.get(r.sub.decl) : undefined
-        if (member) {
-            const out: CRef = { k: 'ref', v: member, idx: [...r.indices, ...r.sub!.indices].map(i => this.expr(i)), span: r.span }
-            if (r.sub!.sub) out.sub = this.ref(r.sub!.sub)
-            return out
-        }
         let v = r.decl ? this.vars.get(r.decl) : undefined
         if (!v) {
             // Not resolved (the front end reports it) or a member of a type the simulator does not model.
@@ -475,9 +515,34 @@ class Lowering {
             v.declKind = 'unresolved'
             if (r.decl) v.decl = r.decl
         }
-        const out: CRef = { k: 'ref', v, idx: r.indices.map(i => this.expr(i)), span: r.span }
-        if (r.sub) out.sub = this.ref(r.sub)
+        const idx = r.indices.map(i => this.expr(i))
+        // A member of the instance whose method is being lowered, inside an array of instances: the element's indices.
+        if (this.self?.members.has(v)) idx.unshift(...this.self.idx.map(p => ({ k: 'ref' as const, v: p, idx: [] })))
+        // A member of a class instance (`c.x`, `l.a.x`, `cs[1].v`, `c.inc()`): the instance's member variable or method,
+        // with the indices of the instances on the way in front of the member's own.
+        let sub = r.sub
+        for (let entry = this.instances.get(v); sub && entry; entry = this.instances.get(v)) {
+            const member = sub.decl ? entry.members.get(sub.decl) : undefined
+            if (!member) break
+            v = member
+            idx.push(...sub.indices.map(i => this.expr(i)))
+            sub = sub.sub
+        }
+        const out: CRef = { k: 'ref', v, idx, span: r.span }
+        if (sub) out.sub = this.ref(sub)
         return out
+    }
+
+    /**
+     * A call: a method of an element of an array of instances (`cs[i].inc()`) takes the element's indices as its first
+     * (hidden) arguments.
+     */
+    private call(name: string, args: CExpr[], target: CRef | undefined, from: { extern?: boolean; paramAccess?: unknown; span?: Span }): Extract<CExpr, { k: 'call' }> {
+        if (target && target.v.declKind === 'method' && target.v.member && target.idx.length) {
+            args = [...target.idx, ...args]
+            target = { ...target, idx: [] }
+        }
+        return { k: 'call', name, args, extern: from.extern, target, paramAccess: from.paramAccess as never, span: from.span }
     }
 
     // ----- effects -----
@@ -489,10 +554,7 @@ class Lowering {
             case 'postfix': return { k: 'assign', ref: this.ref(f.target), op: f.operator, o }
             case 'emit': return { k: 'emit', ref: this.ref(f.target), value: f.value ? this.expr(f.value) : undefined, o }
             case 'print': return { k: 'print', args: f.args.map(a => this.expr(a)), o }
-            case 'call': return {
-                k: 'call', o,
-                call: { k: 'call', name: f.name, args: f.args.map(a => this.expr(a)), extern: f.extern, target: f.target ? this.ref(f.target) : undefined, paramAccess: f.paramAccess, span: f.span },
-            }
+            case 'call': return { k: 'call', o, call: this.call(f.name, f.args.map(a => this.expr(a)), f.target ? this.ref(f.target) : undefined, f) }
             case 'randomize': return { k: 'randomize', o }
             case 'hostcode': return { k: 'host', text: f.text, o }
             case 'code': return this.codeEffect(f, by, owner)

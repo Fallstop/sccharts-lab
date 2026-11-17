@@ -538,8 +538,8 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 
 User-written schedules (`schedule` declarations and `schedule s 1` clauses), `ode` actions, `extends` with bindings
 or generic parameters and inner states that extend, chart instances in dataflow regions that call methods, dataflow
-reference calls `A(x, y)`, @DeviationOutput and @Logical clocks, arrays of class instances and
-classes inside classes, abort regions in a state that is left and entered again in the same tick (KIELER's thread
+reference calls `A(x, y)`, @DeviationOutput and @Logical clocks, @UnpackClass on an array of instances or on a
+class with a class inside, abort regions in a state that is left and entered again in the same tick (KIELER's thread
 reincarnation guards). Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".
 

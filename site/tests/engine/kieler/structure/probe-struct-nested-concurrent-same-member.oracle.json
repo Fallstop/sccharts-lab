@@ -1,0 +1,85 @@
+{
+  "hash": "7260f25e6e02a4f7dcbdd8ad677966ffb657dee7",
+  "chart": "tests/engine/kieler/structure/probe-struct-nested-concurrent-same-member.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "L.P.x": {
+      "type": "int",
+      "properties": []
+    },
+    "L.a": {
+      "type": "struct",
+      "properties": []
+    },
+    "L.b": {
+      "type": "struct",
+      "properties": []
+    },
+    "l": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "l": {
+          "a": {
+            "x": 0
+          },
+          "b": {
+            "x": 0
+          }
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "l": {
+          "a": {
+            "x": 1
+          },
+          "b": {
+            "x": 2
+          }
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "l": {
+          "a": {
+            "x": 1
+          },
+          "b": {
+            "x": 2
+          }
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

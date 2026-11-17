@@ -1,0 +1,142 @@
+{
+  "hash": "e842edc0691d093a05484d09f24e8ac634ac518e",
+  "chart": "tests/engine/kieler/structure/probe-struct-nested-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "done": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "L.P.x": {
+      "type": "int",
+      "properties": []
+    },
+    "L.a": {
+      "type": "struct",
+      "properties": []
+    },
+    "L.w": {
+      "type": "int",
+      "properties": []
+    },
+    "l": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "done": false,
+        "l": {
+          "a": {
+            "x": 0
+          },
+          "w": 7
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "done": false,
+        "l": {
+          "a": {
+            "x": 1
+          },
+          "w": 7
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "done": false,
+        "l": {
+          "a": {
+            "x": 2
+          },
+          "w": 7
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "done": false,
+        "l": {
+          "a": {
+            "x": 3
+          },
+          "w": 7
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {},
+      "values": {
+        "done": true,
+        "l": {
+          "a": {
+            "x": 3
+          },
+          "w": 7
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {},
+      "values": {
+        "done": true,
+        "l": {
+          "a": {
+            "x": 3
+          },
+          "w": 7
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

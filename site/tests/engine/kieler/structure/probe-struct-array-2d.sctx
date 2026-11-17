@@ -1,0 +1,8 @@
+// A two-dimensional array of struct instances.
+scchart PrSa2d {
+  struct P {
+    int x
+  } ps[2][2]
+  initial state A
+  do ps[1][0].x += 1; ps[0][1].x = ps[1][0].x * 3 go to A
+}

@@ -1,0 +1,134 @@
+{
+  "hash": "5d1747d03a33431bc064faf7ec4bf569f679d261",
+  "chart": "tests/engine/kieler/structure/probe-class-array-method-param.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_cs_add_n is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_cs_add_n is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "k": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o0": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "k": 1
+      },
+      "values": {
+        "k": 1,
+        "o0": 0,
+        "o1": 0,
+        "cs": [
+          {
+            "v": 1
+          },
+          {
+            "v": 1
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "k": 3
+      },
+      "values": {
+        "k": 3,
+        "o0": 4,
+        "o1": 7,
+        "cs": [
+          {
+            "v": 4
+          },
+          {
+            "v": 7
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "k": 0
+      },
+      "values": {
+        "k": 0,
+        "o0": 4,
+        "o1": 7,
+        "cs": [
+          {
+            "v": 4
+          },
+          {
+            "v": 7
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "k": 0
+      },
+      "values": {
+        "k": 0,
+        "o0": 4,
+        "o1": 7,
+        "cs": [
+          {
+            "v": 4
+          },
+          {
+            "v": 7
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

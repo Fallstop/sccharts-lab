@@ -1,0 +1,159 @@
+{
+  "hash": "af7e80d4a9c05c3e047a42e87ca38e1416681822",
+  "chart": "tests/engine/kieler/structure/probe-class-array-method-input-index.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "o": 0,
+        "cs": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 2
+      },
+      "values": {
+        "i": 2,
+        "o": 1,
+        "cs": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          },
+          {
+            "v": 1
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 2
+      },
+      "values": {
+        "i": 2,
+        "o": 2,
+        "cs": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          },
+          {
+            "v": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "o": 1,
+        "cs": [
+          {
+            "v": 1
+          },
+          {
+            "v": 0
+          },
+          {
+            "v": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "o": 2,
+        "cs": [
+          {
+            "v": 2
+          },
+          {
+            "v": 0
+          },
+          {
+            "v": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

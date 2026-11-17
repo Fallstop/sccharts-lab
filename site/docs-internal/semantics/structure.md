@@ -1382,7 +1382,16 @@ declares a class and two instances. Inside a class:
   is declared (probe: a method writing the chart's output `O = base + v`).
 - **Inner classes** (`class Outer { class Inner { int v } in  int w } o`, then `o.in.v`) and **arrays of
   instances** (`} cs[2]`, then `cs[0].inc()`) compile and run in KIELER (`124-class-inner`,
-  `125-class-instance-array`).
+  `125-class-instance-array`). Structs nest the same way (`107-struct-nested`), also inside arrays
+  (`ls[2]` of a struct with a struct `p` and an array `a`: `ls[1].p.x`, `ls[0].a[1]`), in two dimensions
+  (`ps[2][2]`, `ps[1][0].x`) and with an index from an input (`ps[i].x`). A method of an inner instance is
+  called through it (`ob.in.inc()`, or `in.inc()` in a method of the outer class); a method of an array
+  element works on that element (`cs[i].inc()`, also with a loop, which KIELER keeps as a C function taking
+  the element). A member's initial value holds for every element (`int v = 1` in `cs[2]`).
+- For scheduling, a member of one instance is one variable, and a member of an array of instances is one
+  array: concurrent writes of different members (`p.x`, `p.y`) or of the same member of two nested instances
+  (`l.a.x`, `l.b.x`) are independent, concurrent writes of `ps[0].x` and `ps[1].x` are accepted as writes of
+  two elements of one array are, and a read of `ps[1].x` waits for the writes of `ps[..].x` in the same tick. Probes: `tests/engine/kieler/structure/probe-struct-*`, `probe-class-array-*`, `probe-class-nested-*`.
 - A class cannot extend another class: `class B extends A { ... }` is a syntax error (`mismatched input
   'extends' expecting '{'`, `137-err-class-extends`). Inheritance is between charts (S-66).
 - An enum declared inside a class cannot be used (S-58).
@@ -1398,7 +1407,10 @@ Each instance has its own fields (`113-class-fields-methods`: `c1` and `c2` coun
   the chart calls the operations instead of touching the fields. Plain English: "a class is a struct that also
   has its own little functions."
 - Implementation: fields as for structs (S-59); methods as methods of the declaring scope whose bodies see the
-  instance's fields and the class's other methods; private members resolvable only inside the class.
+  instance's fields and the class's other methods; private members resolvable only inside the class. An inner
+  instance is an instance of its own (`o.in`, fields `o.in.v`); an array of instances keeps one array per member
+  (`cs.v` with the instances' dimensions in front of the member's own, as C's `cs[i].v`), and a method of an
+  element takes the element's indices as hidden first parameters (`lower.ts` `initialiseInstance`).
 
 ### S-62 Calling methods on instances
 

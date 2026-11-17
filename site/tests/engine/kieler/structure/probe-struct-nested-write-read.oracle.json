@@ -1,0 +1,114 @@
+{
+  "hash": "a21cf49ae7b1a158fd0188a353b583bd9cf6d511",
+  "chart": "tests/engine/kieler/structure/probe-struct-nested-write-read.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "L.P.x": {
+      "type": "int",
+      "properties": []
+    },
+    "L.a": {
+      "type": "struct",
+      "properties": []
+    },
+    "L.b": {
+      "type": "struct",
+      "properties": []
+    },
+    "l": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "l": {
+          "a": {
+            "x": 0
+          },
+          "b": {
+            "x": 0
+          }
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "l": {
+          "a": {
+            "x": 1
+          },
+          "b": {
+            "x": 1
+          }
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "l": {
+          "a": {
+            "x": 2
+          },
+          "b": {
+            "x": 2
+          }
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "l": {
+          "a": {
+            "x": 3
+          },
+          "b": {
+            "x": 3
+          }
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

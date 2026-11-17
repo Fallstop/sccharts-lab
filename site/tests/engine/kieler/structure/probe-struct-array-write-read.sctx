@@ -1,0 +1,15 @@
+// One region reads ps[1].x, a concurrent one writes ps[1].x and ps[0].x in the same tick.
+scchart PrSaWr {
+  output int o
+  struct P {
+    int x
+  } ps[2]
+  region R1 {
+    initial state A
+    do o = ps[1].x go to A
+  }
+  region R2 {
+    initial state B
+    do ps[1].x = ps[0].x + 1; ps[0].x = 5 go to B
+  }
+}

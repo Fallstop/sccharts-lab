@@ -1,0 +1,107 @@
+{
+  "hash": "0856884620cc2da4d79bf51c9d0cc665b66c874f",
+  "chart": "tests/engine/kieler/structure/probe-class-nested-methods.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name bump is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Outer.Inner.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Outer.in": {
+      "type": "class",
+      "properties": []
+    },
+    "Outer.w": {
+      "type": "int",
+      "properties": []
+    },
+    "ob": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "ob": {
+          "in": {
+            "v": 0
+          },
+          "w": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 10,
+        "ob": {
+          "in": {
+            "v": 1
+          },
+          "w": 10
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 20,
+        "ob": {
+          "in": {
+            "v": 2
+          },
+          "w": 20
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "o": 30,
+        "ob": {
+          "in": {
+            "v": 3
+          },
+          "w": 30
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

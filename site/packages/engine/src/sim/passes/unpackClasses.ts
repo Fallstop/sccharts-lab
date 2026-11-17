@@ -1,8 +1,9 @@
 // Classes and structs (structure.md). KIELER's Unpack Classes processor only unpacks classes annotated @UnpackClass
 // (their members become variables `<instance>_<member>`); every other class stays a C struct whose methods are C
 // functions. The simulator lowers an instance's members to variables and its methods to methods of the instance
-// (lower.ts declareMembers), and runs them as KIELER's C code does. Not simulated: host classes (their methods are
-// C or Java code), arrays of instances and classes inside classes.
+// (lower.ts declareMembers), nested instances and arrays of instances too, and runs them as KIELER's C code does. Not
+// simulated: host classes (their methods are C or Java code), and @UnpackClass on an array of instances or on a class
+// with a class inside.
 
 import type { Declaration } from '../../types'
 import type { ModelIndex } from '../../parser/resolve'
@@ -41,7 +42,8 @@ export const unpackClasses: Pass = {
                 }
             }
             const host = v.tags.has('#host')
-            const what = host ? undefined : v.tags.has('#array') ? `arrays of ${v.declKind} instances (\`${v.name}\`)` : v.tags.has('#nested') ? `a ${v.declKind} inside a ${v.declKind} (\`${v.name}\`)` : undefined
+            // Arrays of instances and classes inside classes are tagged only with @UnpackClass (lower.ts).
+            const what = host ? undefined : v.tags.has('#array') ? `\`@UnpackClass\` on an array of ${v.declKind} instances (\`${v.name}\`)` : v.tags.has('#nested') ? `\`@UnpackClass\` on a ${v.declKind} with a ${v.declKind} inside (\`${v.name}\`)` : undefined
             if (!host && !what) continue
             ctx.report({
                 severity: 'info', code: 'unsupported', span: v.span, related: v.decl ? [v.decl] : undefined,

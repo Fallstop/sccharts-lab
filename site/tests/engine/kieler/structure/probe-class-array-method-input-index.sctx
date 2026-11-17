@@ -1,0 +1,14 @@
+// A method of an element chosen by an input index, in an expression.
+scchart PrCaIdx {
+  input int i
+  output int o
+  class C {
+    int v
+    int inc() {
+      v = v + 1;
+      return v
+    }
+  } cs[3]
+  initial state A
+  do o = cs[i].inc() go to A
+}
