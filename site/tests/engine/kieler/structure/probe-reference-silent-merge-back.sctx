@@ -1,0 +1,15 @@
+// A referenced chart whose initial state is merged into the next one (silent immediate transition, S-15a case 1)
+// and a delayed transition back: a delayed self-loop after the merge, no instantaneous loop. KIELER compiles it.
+scchart PrSilentBack {
+  output int y = 0
+  initial state A
+  go to B
+  state B is PrSilentBackC(y to o)
+}
+scchart PrSilentBackC {
+  output int o = 0
+  initial state P
+  immediate go to Q
+  state Q
+  go to P
+}

@@ -1,0 +1,29 @@
+{
+  "hash": "02f58d9f7c577fc6fcadf6f2f9afcbeef05ec536",
+  "chart": "tests/engine/kieler/structure/probe-reference-silent-merge-back-triggered.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g2 to _cg2",
+    "Can't schedule from _g2 to _g2",
+    "Can't schedule from _g2 to _g3",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency prevents scheduling this tick."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Q, P]",
+      "line": 15,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Q, P]",
+      "line": 13,
+      "column": 3
+    }
+  ],
+  "ticks": []
+}

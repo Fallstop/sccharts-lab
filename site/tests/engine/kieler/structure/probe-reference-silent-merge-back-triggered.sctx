@@ -1,0 +1,17 @@
+// The merged state is reached again by an immediate triggered transition: a real instantaneous cycle when a holds.
+scchart PrSilentBackTrig {
+  input bool a
+  output int y = 0
+  initial state A
+  go to B
+  state B is PrSilentBackTrigC(a to p, y to o)
+}
+scchart PrSilentBackTrigC {
+  input bool p
+  output int o = 0
+  initial state P
+  immediate go to Q
+  state Q
+  immediate if p go to P
+  go to P
+}

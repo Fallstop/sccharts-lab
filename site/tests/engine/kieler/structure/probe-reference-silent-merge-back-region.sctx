@@ -1,0 +1,18 @@
+// The same inside a region of a superstate entered by a delayed transition (found by the timed fuzz profile).
+scchart PrSilentBackRegion {
+  output int y = 0
+  initial state A
+  go to B
+  state B {
+    region {
+      initial state I is PrSilentBackRegionC(y to o)
+    }
+  }
+}
+scchart PrSilentBackRegionC {
+  output int o = 0
+  initial state P
+  immediate go to Q
+  state Q
+  go to P
+}

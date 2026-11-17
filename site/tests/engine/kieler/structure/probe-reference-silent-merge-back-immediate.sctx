@@ -1,0 +1,14 @@
+// An untriggered immediate transition back to the merged state: a loop of silent transitions (S-15a case 2).
+scchart PrSilentBackImm {
+  output int y = 0
+  initial state A
+  go to B
+  state B is PrSilentBackImmC(y to o)
+}
+scchart PrSilentBackImmC {
+  output int o = 0
+  initial state P
+  immediate go to Q
+  state Q
+  immediate go to P
+}

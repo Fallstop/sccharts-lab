@@ -290,7 +290,10 @@ simulated chart:
 1. **Merged.** An untriggered immediate transition without effect to another state merges its source into the
    target (SITO). `initial state C0xs0 immediate go to C0xs1  final state C0xs1` becomes a region that is only a
    final state, with the consequences of `concurrency.md` T-6/K-1: under the delayed self-loop of the
-   referencing state the chart is rejected (`Can't schedule from …`, `160-err-reference-silent-merge`).
+   referencing state the chart is rejected (`Can't schedule from …`, `160-err-reference-silent-merge`). A
+   transition back into the merged state leads to its target: `P immediate go to Q`, `Q go to P` is `Q` with a
+   delayed self-loop, accepted (`probe-reference-silent-merge-back`, `-region`); `Q immediate if p go to P` is
+   an instantaneous cycle, rejected (`-triggered`).
 2. **Dropped: the state is left without code.** An untriggered immediate self-loop without effect (`state Spin
    immediate go to Spin`), or a cycle of such transitions (`Spin → Spin2 → Spin`), is removed together with the
    state's later transitions. The state then has no transitions and no node in KIELER's graph. In the simulated

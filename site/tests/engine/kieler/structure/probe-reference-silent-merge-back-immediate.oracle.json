@@ -1,0 +1,76 @@
+{
+  "hash": "8bf3e8e248482cdf4905c85569c924def33c193e",
+  "chart": "tests/engine/kieler/structure/probe-reference-silent-merge-back-immediate.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Q, P]",
+      "line": 13,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Q, P]",
+      "line": 11,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "y": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

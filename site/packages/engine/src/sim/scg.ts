@@ -183,6 +183,8 @@ class Builder {
     private readonly resolving = new Set<CState>()
     /** States being merged into the target of their silent transition (simpleState), and the silent cycles found. */
     private readonly silentMerging = new Set<CState>()
+    /** The target each state in silentMerging is merged into. */
+    private readonly silentTarget = new Map<CState, CState>()
     private readonly silentCycle = new Set<CState>()
     /** Creation keys of the flows (converted to ranks at the end). */
     private readonly keys = new Map<SNode, { next?: Key; then?: Key; else?: Key; threads?: Key[] }>()
@@ -296,6 +298,12 @@ class Builder {
                 for (const x of path) this.silentCycle.add(x)
                 return undefined
             }
+            // A state being merged into its target is that target's node: once a state on the way has a node (it
+            // paused or tested a trigger first), the flow leads there and the analysis judges the cycle.
+            let merged: CState | undefined = s
+            while (merged && this.silentMerging.has(merged)) merged = this.silentTarget.get(merged)
+            const node = merged ? this.stateNodes.get(merged) : undefined
+            if (node) return node
             // A cycle of immediate transitions without trigger and effects: no node in between.
             this.problems.push({ message: 'instantaneous loop of transitions without trigger and effects', states: [...this.resolving] })
             const loop = this.node('assign', t, { state: s }, [...(this.pos.get(s) ?? [0]), 0])
@@ -515,8 +523,10 @@ class Builder {
                     if (silent) for (const e of tr.effects) if (e.k === 'mark' && e.m.kind === 'take') this.silentHops.push(e.m.key ?? e.m.transition)
                     // The state has no node of its own: it is its target's node.
                     this.silentMerging.add(s)
+                    this.silentTarget.set(s, tr.target)
                     const target = this.stateNode(tr.target, t)
                     this.silentMerging.delete(s)
+                    this.silentTarget.delete(s)
                     // In a silent cycle the region stays in the state it entered (the tracker follows no hop).
                     if (!target && this.silentCycle.has(s)) this.silentHops.length = hops
                     this.resolving.delete(s)
