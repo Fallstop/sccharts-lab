@@ -1,0 +1,418 @@
+{
+  "hash": "e8aa375e49675487c31a3f3103be97e62817d5b4",
+  "chart": "tests/engine/kieler/preemption/probe-reincarnation-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 26,
+      "column": 19
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "inner": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "outer": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "inner": 1,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "inner": 1,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "inner": 2,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "inner": 2,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "inner": 3,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "inner": 4,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "inner": 4,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "inner": 5,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "inner": 6,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "inner": 6,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "inner": 7,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "inner": 8,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "inner": 9,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "inner": 9,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "inner": 9,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 16,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "inner": 10,
+        "outer": 1
+      },
+      "taken": [
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

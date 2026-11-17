@@ -1,0 +1,26 @@
+// The content region passes an immediate effect before its first pause, and has a second state that a restart does
+// not reach; the join enters the state again in the same tick.
+scchart PrRcEntryEffect {
+  input bool a, b, c
+  output int entries = 0, k = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      immediate do k += 1 go to J
+      state J
+      if c go to L
+      if a go to F
+      state L
+      if c go to J
+      if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}

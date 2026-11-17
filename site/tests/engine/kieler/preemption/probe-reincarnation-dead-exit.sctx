@@ -1,0 +1,20 @@
+// The content region never finishes (no final state) and a trailing abort region could restart the state. KIELER's
+// start guard of the abort region after a restart refers to the content region's exit, which has no code: the abort
+// region never starts, not even in the first tick, and the state never restarts.
+scchart PrRcDeadExit {
+  input bool a
+  output int work = 0, entries = 0
+  initial state M {
+    entry do entries += 1
+    region Main {
+      initial state I
+      if true do work += 1 go to I
+    }
+    abort region Watch {
+      initial state W
+      if a go to F
+      final state F
+    }
+  }
+  join to M
+}

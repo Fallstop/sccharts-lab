@@ -1,0 +1,20 @@
+// The content region can finish in the tick it is entered, so the state could restart again and again in one tick.
+// KIELER rejects it as an instantaneous loop of the sequential fork.
+scchart PrRcInstant {
+  input bool a, b
+  output int entries = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      immediate if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}

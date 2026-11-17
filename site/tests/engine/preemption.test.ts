@@ -333,27 +333,52 @@ describe('abort regions (P-62)', () => {
         expect(alone.diagnostics.find(d => d.severity === 'error')?.kieler).toBe('Found abort regions but there are no regions to abort.')
     })
 
-    it('a state with abort regions that is re-entered in the tick it finishes is not simulated (thread reincarnation)', () => {
-        const r = compile(`scchart F {
-  input bool A
-  output int work = 0
+    it('restarts a state with abort regions that its join enters again in the tick it finishes (thread reincarnation)', () => {
+        // As conformance/preemption/105 (recorded with KIELER): the restart's pauses survive the join that fired.
+        const { ticks } = run(`scchart F {
+  input bool A, B
+  output int entries = 0
   initial state M {
+    entry do entries += 1
     region Main {
       initial state I
-      if true do work += 1 go to I
+      if A go to D
+      final state D
     }
     abort region Watch {
       initial state W
-      if A go to F
-      final state F
+      if B go to E
+      final state E
     }
   }
   join to M
-}`)
-        expect(r.ok).toBe(true)
-        const d = r.diagnostics.find(x => x.code === 'unsupported')
-        expect(d?.message).toContain('abort regions in a state that is left and entered again in the same tick (`M`)')
-        expect(d?.related).toEqual(['F.M'])
+}`, [{}, {}, { B: true }, { B: false }, { A: true }, { A: false }])
+        expect(ticks.map(t => t.values.entries)).toEqual([1, 1, 2, 2, 3, 3])
+        for (const t of ticks.slice(2)) expect(t.active).toEqual(expect.arrayContaining(['F.M', 'F.M.I', 'F.M.W']))
+        expect(ticks[2].active).not.toContain('F.M.E')
+        expect(ticks[4].active).not.toContain('F.M.D')
+    })
+    it('never starts a later region whose restart guard refers to an earlier region that cannot finish, as KIELER', () => {
+        // KIELER's start guard of a region after a restart refers to the exits of the regions before it, even one
+        // without code: here Watch never starts (probe tests/engine/kieler/preemption/probe-reincarnation-dead-exit).
+        const { ticks } = run(`scchart G {
+  input bool C
+  output int work = 0, seen = 0
+  initial state M {
+    region Main {
+      initial state K
+      if true do work += 1 go to K
+    }
+    abort region Watch {
+      initial state Y
+      if C do seen += 1 go to Z
+      final state Z
+    }
+  }
+  join to M
+}`, [{}, { C: true }, { C: true }])
+        expect(ticks.map(t => t.values.work)).toEqual([0, 1, 2])
+        expect(ticks.map(t => t.values.seen)).toEqual([0, 0, 0])
     })
 })
 

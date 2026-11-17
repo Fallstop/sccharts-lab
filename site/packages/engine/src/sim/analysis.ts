@@ -14,6 +14,7 @@
 
 import type { Dependency } from './deps'
 import { predecessors, successors, type SCG, type SNode, type Thread } from './scg'
+import { revivals, type Revival } from './abortRegions'
 
 export type PathType = 'instantaneous' | 'potentially' | 'delayed' | 'disconnected'
 
@@ -68,6 +69,16 @@ export interface Analysis {
      * these thread exits ran earlier in the tick.
      */
     preemption: Map<SNode, SNode[]>
+    /**
+     * Thread reincarnation (a preemptive fork whose join leads back to it within a tick): a later thread's entry also
+     * runs when one of these earlier entries runs together with its exit (the earlier thread finished and was entered
+     * again), whatever `preemption` says.
+     */
+    reincarnation?: Map<SNode, SNode[]>
+    /** The surfaces of threads under such a fork that a par-or join does not end (abortRegions.ts revivals). */
+    revival?: Map<SNode, Revival>
+    /** A thread entry KIELER cannot give reincarnation guards (an earlier thread is not delayed). */
+    reincarnationError?: SNode
     /** The scheduling blocks depend on each other in a cycle although the nodes do not (the node order is used). */
     blockCycle?: boolean
 }
@@ -513,14 +524,23 @@ export function analyse({ scg, deps, script = [] }: AnalysisInput): Analysis {
     for (const d of active) if (reached.has(d.from) && reached.has(d.to)) add(d.from, d.to)
     // Abort regions: the sequential order of a preemptive fork's threads and their preemption guards.
     const preemption = new Map<SNode, SNode[]>()
+    const reincarnation = new Map<SNode, SNode[]>()
+    let reincarnationError: SNode | undefined
     const sequentialEdges: [SNode, SNode][] = []
     for (const fork of scg.nodes) {
         if (fork.kind !== 'fork' || !fork.preemptive || !reached.has(fork)) continue
         // A state re-entered in the tick it finishes gets KIELER's surface/depth separation and reincarnation guards
         // instead (not simulated: abortRegions.ts reports it as unsupported).
-        if (!fork.reincarnation) sequentialOrder(scg, fork, reached, (from, to) => { add(from, to); sequentialEdges.push([from, to]) })
+        sequentialOrder(scg, fork, reached, (from, to) => { add(from, to); sequentialEdges.push([from, to]) })
         const threads = fork.threads!
         threads.forEach((t, i) => {
+            // SimpleGuardExpressions: a thread may start again after the earlier ones finished, if they all pause first.
+            if (fork.reincarnation && i > 0 && reached.has(t.entry)) {
+                const earlier = threads.slice(0, i).map(x => x.entry)
+                if (threads.slice(0, i).some(x => pathTypes.get(x) !== 'delayed')) reincarnationError ??= t.entry
+                for (const e of earlier) if (reached.has(e)) ref(e, t.entry)
+                reincarnation.set(t.entry, earlier.filter(e => reached.has(e)))
+            }
             // A later thread does not start when an earlier one finished in this tick (its entry guard).
             const before = threads.slice(0, i).map(x => x.exit).filter(e => reached.has(e))
             if (i > 0 && before.length && reached.has(t.entry)) {
@@ -553,7 +573,7 @@ export function analyse({ scg, deps, script = [] }: AnalysisInput): Analysis {
     // Only copies that stayed (reachable from the thread's start) lose a termination.
     const present = new Set(scg.nodes)
     const lost = lostTerminations.filter(l => present.has(l.node) && alive.has(l.node))
-    return { pathTypes, loops, cured, joins, cycles, order, failure, deps: active, lostTerminations: lost, ambiguous, choice, decisions, curedAt, preemption, blockCycle }
+    return { pathTypes, loops, cured, joins, cycles, order, failure, deps: active, lostTerminations: lost, ambiguous, choice, decisions, curedAt, preemption, blockCycle, reincarnation, revival: revivals(scg, reached), reincarnationError }
 }
 
 /**
@@ -983,7 +1003,9 @@ function sequentialOrder(scg: SCG, fork: SNode, reached: Set<SNode>, add: (from:
             if (reached.has(last) && reached.has(next.entry)) add(last, next.entry)
         }
         const lastDepth = [...depth].filter(n => n.kind === 'surface' || n === t.exit)
-        const lastDepthDuty = new Set(lastDepth.flatMap(n => preceding(n, t.entry)).filter(n => depth.has(n)))
+        // A node both a fresh start and a resumption reach, in a state that restarts within the tick, is two nodes in
+        // KIELER's graph (the copy on the restart path); the resuming copy alone is ordered before the next thread.
+        const lastDepthDuty = new Set(lastDepth.flatMap(n => preceding(n, t.entry)).filter(n => depth.has(n) && !(fork.reincarnation && surface.has(n))))
         if (!lastDepthDuty.size) continue
         const firsts = new Set(threadNodes(scg, next).filter(n => n.kind === 'depth').flatMap(d => succeeding(d, next.exit)))
         for (const last of lastDepthDuty) for (const first of firsts) if (reached.has(last) && reached.has(first)) add(last, first)

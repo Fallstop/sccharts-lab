@@ -26,7 +26,7 @@ export const SIMULATOR_CODES: ReadonlySet<string> = new Set([
     'clock-variable', 'clock-array', 'timing-constraint', 'default-sleep', 'method-without-value', 'method-without-return', 'for-counter-method',
     'inheritance-conflict', 'module-call', 'method-twice', 'inline-loop', 'signal-member', 'unpack-instances',
     // Preemption passes (suspend, weak suspend, abort regions).
-    'suspend-without-trigger', 'abort-region-order', 'abort-region-alone', 'abort-region-loop',
+    'suspend-without-trigger', 'abort-region-order', 'abort-region-alone', 'abort-region-loop', 'abort-region-reincarnation',
     // Final polish (engine-5).
     'conditional-without-else', 'index-out-of-range', 'c-array-address',
     // Found by the C code generator's checks (tools/cgen).

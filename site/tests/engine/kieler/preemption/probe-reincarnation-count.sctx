@@ -1,0 +1,20 @@
+// Count delays inside the regions of a state entered again in the tick it finishes.
+// KIELER rejects it: the count delays get a region of their own after the abort region (the order error).
+scchart PrRcCount {
+  input bool a, b
+  output int entries = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      if 2 a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if 3 b go to G
+      final state G
+    }
+  }
+  join to M
+}

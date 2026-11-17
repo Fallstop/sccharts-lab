@@ -1,0 +1,416 @@
+{
+  "hash": "f2866c3bbd9f8d864d9b5ad897bf2d3614bc7516",
+  "chart": "tests/engine/kieler/preemption/probe-reincarnation-both-plain.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "w": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 1,
+        "w": 0,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 1,
+        "w": 0,
+        "x": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "entries": 2,
+        "w": 0,
+        "x": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 2,
+        "w": 0,
+        "x": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "entries": 3,
+        "w": 0,
+        "x": 1
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "entries": 4,
+        "w": 0,
+        "x": 2
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "entries": 5,
+        "w": 0,
+        "x": 2
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "entries": 6,
+        "w": 0,
+        "x": 2
+      },
+      "taken": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "entries": 7,
+        "w": 0,
+        "x": 2
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 7,
+        "w": 0,
+        "x": 2
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "entries": 8,
+        "w": 0,
+        "x": 2
+      },
+      "taken": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "entries": 9,
+        "w": 0,
+        "x": 2
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "entries": 10,
+        "w": 0,
+        "x": 3
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "entries": 11,
+        "w": 0,
+        "x": 3
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 11,
+        "w": 0,
+        "x": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 16,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "entries": 12,
+        "w": 0,
+        "x": 4
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

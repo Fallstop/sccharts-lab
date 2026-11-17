@@ -1,0 +1,23 @@
+// The leading abort region pauses on entry but can later finish through an immediate transition; the content region
+// pauses on entry too.
+scchart PrRcPotential {
+  input bool a, b, c
+  output int entries = 0
+  initial state M {
+    entry do entries += 1
+    abort region S {
+      initial state P
+      if c go to Q
+      state Q
+      immediate if a go to R
+      if b go to P
+      final state R
+    }
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+  }
+  join to M
+}

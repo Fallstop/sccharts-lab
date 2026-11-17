@@ -1,0 +1,33 @@
+// The content region holds a superstate with two ordinary regions; the state is entered again by its join.
+// KIELER rejects it: the during action makes the restart an instantaneous loop of the sequential fork.
+scchart PrRcSuperstate {
+  input bool a, b, c
+  output int entries = 0, p = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state S {
+        region {
+          initial state A1
+          if a go to A2
+          final state A2
+        }
+        region {
+          initial state B1 {
+            during do p += 1
+          }
+          if c go to B2
+          final state B2
+        }
+      }
+      join to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}

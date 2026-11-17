@@ -420,7 +420,8 @@ included) and structure recordings, every example in `src/examples`, and the pro
   SCGAbortRegionProcessor, the sequential preemptive fork and its par-or join, nesting of several regions, the
   depth guard's off-by-one that lets the region just before an abort region react in the tick it finishes, the
   entry guard, data order without concurrency, `Sequential forks must not be schizophrenic!`, the order checks
-  only for states that can be reached). `kieler-quirk` infos explain P-12, P-20, P-23, P-30, P-38, P-42..P-44, P-51
+  only for states that can be reached, the thread reincarnation guards of a state its join enters again in the
+  tick it finishes). `kieler-quirk` infos explain P-12, P-20, P-23, P-30, P-38, P-42..P-44, P-51
   and P-54 a where a chart can show them. Probes in `tests/engine/kieler/preemption/`.
 
 - Structure (structure.md S-1 .. S-56): references `state S is C(...)` with KIELER's binding pointer, implicit and
@@ -539,8 +540,7 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 User-written schedules (`schedule` declarations and `schedule s 1` clauses), `ode` actions, `extends` with bindings
 or generic parameters and inner states that extend, chart instances in dataflow regions that call methods, dataflow
 reference calls `A(x, y)`, @DeviationOutput and @Logical clocks, arrays of class instances and
-classes inside classes, abort regions in a state that is left and entered again in the same tick (KIELER's thread
-reincarnation guards). Never (no C compiler in the browser): host code (backticks), `extern` functions, host
+classes inside classes. Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".
 
 ## Known differences

@@ -1,0 +1,31 @@
+// The content region holds a superstate with two ordinary regions; the state is entered again by its join.
+// Without the during actions of the version without -plain, which make KIELER reject the restart.
+scchart PrRcSuperstatePlain {
+  input bool a, b, c
+  output int entries = 0, p = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state S {
+        region {
+          initial state A1
+          if a go to A2
+          final state A2
+        }
+        region {
+          initial state B1
+          if c do p += 1 go to B2
+          final state B2
+        }
+      }
+      join to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}

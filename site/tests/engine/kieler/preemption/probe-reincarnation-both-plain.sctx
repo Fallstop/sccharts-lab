@@ -1,0 +1,25 @@
+// A leading and a trailing abort region around the content region; the join enters the state again in the same tick.
+// Without the during actions of the version without -plain, which make KIELER reject the restart.
+scchart PrRcBothPlain {
+  input bool a, b, c
+  output int entries = 0, w = 0, x = 0
+  initial state M {
+    entry do entries += 1
+    abort region S {
+      initial state P
+      if c go to Q
+      final state Q
+    }
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b do x += 1 go to G
+      final state G
+    }
+  }
+  join to M
+}

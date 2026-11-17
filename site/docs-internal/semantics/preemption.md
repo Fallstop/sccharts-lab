@@ -894,8 +894,23 @@ finishes ends the state too, #105 tick 5). In detail:
 - **Re-entry in the finishing tick.** A state whose own transition re-enters it in the tick it finishes is an
   instantaneous loop of the sequential fork if a region can finish in its entry tick: rejected, lab *A sequential
   region is re-entered in the tick it is left.*, official *Sequential forks must not be schizophrenic!* (#102).
-  Otherwise KIELER compiles it with its thread reincarnation guards and the state restarts correctly (#105:
-  `entries` 1, 2, 3). The guide's simulator does not run this shape (it reports it as unsupported).
+  Otherwise KIELER compiles it with its thread reincarnation guards (#105: `entries` 1, 2, 3):
+  - a pause reached in the tick the par-or join fires survives the join when its *revival* guard held: the node
+    just before the pause on the first path from the region's entry (in the restarting state's fork) into it, if
+    every node on that path is reached only from such paths and leads only along them (the region's entry itself,
+    an immediate effect before the first pause); otherwise the region's entry ran and, when the region can reach
+    another pause or its exit within the tick, its exit did not (two immediate choices into two states). Only the
+    innermost restarting state counts (KIELER: "currently only works for single revival");
+  - a later region starts if no earlier region with a live exit finished in this tick, or if an earlier region
+    finished and was entered again (its entry and exit both ran). When no earlier region has a live exit (a region
+    without a final state), only the second part is left: **the later region never starts, not even in the first
+    tick** (`probe-reincarnation-dead-exit`, `-nested`: a trailing abort region after a region that cannot finish
+    never reacts, so the state never restarts);
+  - KIELER rejects the restart if a region before a later one can finish without pausing (*Cannot handle thread
+    reincarnation with (potentially) instantaneous threads*); in practice the instantaneous loop is reported first
+    (#102, `probe-reincarnation-instantaneous`). A `during` action in a region also makes the restart an
+    instantaneous loop of the sequential fork (`probe-reincarnation-strong`, `-both`, `-choice`, `-superstate`;
+    the `-plain` versions without it compile).
 - **A state with abort regions that is never entered crashes the compiler** when its fork has a second thread
   (another region, or the region the Abort transformation adds for the state's own weak abort): entered only by
   a join from a region that never finishes, it has no live code, and SimpleGuardTransformation throws
@@ -907,19 +922,26 @@ finishes ends the state too, #105 tick 5). In detail:
 - **Official KIELER 0.3.0 differs:** it rejects #103 and #104 (`Can't schedule …`, `The SCG is NOT
   asc-schedulable!`), and in #99 the chart stops reacting for good once `W1` finishes (`done` stays 0); #77, #100,
   #101, #102 and #105 agree.
-**Evidence.** #77, #78 (priority), #99-#105; *probes:* abort region alone (rejected), in the middle (rejected), with an
+**Evidence.** #77, #78 (priority), #99-#105; `tests/engine/kieler/preemption/probe-reincarnation-*` (restarts:
+leading, trailing and both kinds of abort region, two content regions, a connector, an outer state, nested restarting
+states, a superstate inside, immediate choices and effects, count delays, the rejections); *probes:* abort region alone (rejected), in the middle (rejected), with an
 outgoing `if A go to Done` after a trailing one (rejected with the order error), and the engine's probes in
 `tests/engine/kieler/preemption/abort-region-*` (content that finishes, two content regions, a `during` action,
 the top level).
 **Source.** `processors/scg/SCGAbortRegionProcessor.xtend:66-160` (the sequential preemptive fork, the par-or join);
 `scg/.../processors/SimpleGuardExpressions.xtend:381-385` (the depth guard of a thread looks at
 `entries.take(entries.indexOf(ownEntryInFork) - 1)`: the threads before it except the one just before it);
+`:300-366` (the revival guard of a depth under a restarting par-or fork), `:495-534` (a later thread's start guard
+after a restart);
 `processors/AbortRegion.xtend:62-79`; `scg/.../processors/analyzer/LoopAnalyzerV2.xtend:125` (the
 schizophrenic fork; the lab's wording).
 **Teaching.** *Experimental; the guide should mention it at most in a footnote,* and say that the two KIELER versions
 disagree.
-**Implementation.** As above (the engine follows KIELER's processor, including both guards; re-entry in the finishing
-tick is `unsupported`).
+**Implementation.** As above (the engine follows KIELER's processor, including both guards and the reincarnation
+guards: analysis.ts `reincarnation`, abortRegions.ts `revivals`, exec.ts `starts`/`revives`, codegen/logic.ts).
+Where KIELER's graph has two copies of a node that a restart and a resumption both reach (an inner state's entry
+action, entered by its own `join to`), the engine's graph has one; the sequential order then leaves out the
+resumption's edge from it. Probes `tests/engine/kieler/preemption/probe-reincarnation-*`.
 
 #### P-63 Final states and termination
 **Rule.** Reaching a final state in every region terminates the superstate in that tick (P-25) only if it has a

@@ -1,0 +1,25 @@
+// An outer weak abort watches a superstate whose inner state with abort regions is re-entered by its own join.
+// KIELER rejects it with the order error for M, as the engine does.
+scchart PrRcOuterAbort {
+  input bool a, b, r
+  output int entries = 0, resets = 0
+  initial state Top {
+    region {
+      initial state M {
+        entry do entries += 1
+        region {
+          initial state I
+          if a go to F
+          final state F
+        }
+        abort region W {
+          initial state V
+          if b go to G
+          final state G
+        }
+      }
+      join to M
+    }
+  }
+  if r do resets += 1 go to Top
+}

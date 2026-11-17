@@ -187,6 +187,20 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
             hint: `KIELER runs the regions of a state with abort regions one after the other and cannot untangle such a state when it restarts within a tick. Make the transition that re-enters \`${name}\` delayed, or make the abort regions ordinary regions.`,
         })
     }
+    // SimpleGuardExpressions: a later region of a state re-entered in the tick it finishes may start again only if
+    // every region before it pauses before it can finish.
+    const reincarnation = analysis.reincarnationError
+    if (reincarnation && !sequentialInLoop && !diagnostics.some(d => d.severity === 'error')) {
+        const fork = reincarnation.thread.fork!
+        const id = fork.state?.origin ?? fork.state?.about
+        const name = (id && index?.states.get(id)?.name) ?? fork.state?.name ?? 'A state'
+        diagnostics.push({
+            severity: 'error', code: 'abort-region-reincarnation', related: id ? [id] : undefined,
+            message: `\`${name}\` has abort regions and can be left and entered again in the same tick, but a region before another one can finish without pausing: KIELER cannot compile that`,
+            kieler: 'Cannot handle thread reincarnation with (potentially) instantaneous threads',
+            hint: `When \`${name}\` restarts within a tick, KIELER starts each region again only after the regions before it, and needs those to pause first. Make every way through the earlier regions (and abort regions) of \`${name}\` take at least one tick, or make the transition that re-enters \`${name}\` delayed.`,
+        })
+    }
     diagnostics.push(...loopDiagnostics(analysis, accesses, lowered, index))
     for (const lost of dedupeLost(analysis.lostTerminations)) {
         const t = lost.node.transition!

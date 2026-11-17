@@ -1,0 +1,20 @@
+// A leading (strong) abort region in a state that its join enters again in the same tick.
+// Without the during actions of the version without -plain, which make KIELER reject the restart.
+scchart PrRcStrongPlain {
+  input bool a, b
+  output int entries = 0, n = 0
+  initial state M {
+    entry do entries += 1
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+    region {
+      initial state I
+      if a do n += 1 go to F
+      final state F
+    }
+  }
+  join to M
+}

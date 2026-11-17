@@ -1,0 +1,388 @@
+{
+  "hash": "92556c9430adf9eeb36b51a294c7227c9c56dec7",
+  "chart": "tests/engine/kieler/preemption/probe-reincarnation-potential.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "entries": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "entries": 2
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "entries": 3
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "entries": 3
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "entries": 4
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "entries": 4
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 4
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "entries": 5
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "entries": 6
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "entries": 6
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "entries": 6
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "entries": 6
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 16,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "entries": 7
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

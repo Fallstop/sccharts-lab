@@ -147,7 +147,12 @@ export function generateLogic(input: LogicInput): LogicOutput {
         let condition: string | undefined
         if (kind === 'cond') condition = conditionCode(x, input, out, emit)
         let active = or(s.terms)
-        if ((kind === 'entry' || kind === 'depth') && x.preempt?.length && active !== '0') {
+        if (kind === 'entry' && x.revive && active !== '0') {
+            // Thread reincarnation: as exec.ts starts().
+            const restarted = x.revive.map(r => [valueOf(r.entry), valueOf(r.exit)])
+            const unpreempted = x.preempt?.length ? [[not(or(x.preempt.map(e => [valueOf(e)])))]] : []
+            active = and([active, or([...unpreempted, ...restarted])])
+        } else if ((kind === 'entry' || kind === 'depth') && x.preempt?.length && active !== '0') {
             // Abort regions: an earlier thread of the preemptive fork finished in this tick.
             active = and([active, not(or(x.preempt.map(e => [valueOf(e)])))])
         }
@@ -211,7 +216,11 @@ export function generateLogic(input: LogicInput): LogicOutput {
             if (!reg) continue
             if (first && input.comment) emit('/* a region of a state with abort regions finished: the other regions stop */')
             first = false
-            emit(`${D}${reg.guard} = ${D}${reg.guard} && ${not(j)};`)
+            // Thread reincarnation: a pause reached by the restart survives (exec.ts revives()).
+            const r = exe.revival.get(k)
+            const revived = r && r.when >= 0 ? and([valueOf(r.when), ...(r.unless >= 0 ? [not(valueOf(r.unless))] : [])]) : '0'
+            const kept = revived === '0' ? not(j) : or([[not(j)], [revived]])
+            emit(`${D}${reg.guard} = ${D}${reg.guard} && ${grouped(kept) ? kept : `(${kept})`};`)
         }
     }
     flush()

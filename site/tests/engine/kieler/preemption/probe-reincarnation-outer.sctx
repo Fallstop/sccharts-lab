@@ -1,0 +1,21 @@
+// The state is left by its join into another state, whose immediate transition enters it again in the same tick.
+scchart PrRcOuter {
+  input bool a, b
+  output int entries = 0, passes = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to N
+  state N
+  immediate do passes += 1 go to M
+}

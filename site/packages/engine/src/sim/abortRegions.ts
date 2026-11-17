@@ -20,15 +20,18 @@
 //   (`!pre(join)`).
 //
 // A state with abort regions that can be left and entered again in the same tick (its join leads back to its fork
-// without a pause) needs KIELER's thread reincarnation guards, which the simulator does not implement: such charts
-// get the `unsupported` info.
+// without a pause: thread reincarnation) gets KIELER's extra guards (SimpleGuardExpressions):
+//
+// - a later thread starts again when an earlier one finished and was entered again in this tick (`entry && exit` of
+//   the earlier thread); KIELER rejects this unless every earlier thread is delayed (analysis.ts);
+// - a pause reached after the join fired survives it when its "revival" guard held (revivals below).
 
 import type { Diagnostic } from '../types'
 import type { SCG, SNode, Thread } from './scg'
 import { successors } from './scg'
 import { abortRegionErrors } from './passes/abortRegion'
 
-/** Applies SCGAbortRegionProcessor to the graph; returns its errors and the `unsupported` info for charts it cannot simulate. */
+/** Applies SCGAbortRegionProcessor to the graph; returns its errors. */
 export function abortRegionsSCG(scg: SCG, nameOf: (id: string) => string | undefined = () => undefined): Diagnostic[] {
     const out: Diagnostic[] = []
     const forks = scg.nodes.filter(n => n.kind === 'fork' && n.threads!.some(t => t.region?.abort))
@@ -64,17 +67,7 @@ export function abortRegionsSCG(scg: SCG, nameOf: (id: string) => string | undef
             done.push(nest(scg, fork, strong, content, weak))
         }
     }
-    for (const fork of done) {
-        if (!feedback(fork)) continue
-        fork.reincarnation = true
-        const id = fork.state?.origin ?? fork.state?.about
-        const name = (id && nameOf(id)) ?? fork.state?.name
-        out.push({
-            severity: 'info', code: 'unsupported', related: id ? [id] : undefined,
-            message: `The guide's simulator cannot run abort regions in a state that is left and entered again in the same tick${name ? ` (\`${name}\`)` : ''}`,
-            hint: 'KIELER gives the regions of such a state extra "reincarnation" conditions that the simulator does not reproduce. The official KIELER tools run this chart. Making the transition that re-enters the state delayed lets the guide run it.',
-        })
-    }
+    for (const fork of done) if (feedback(fork)) fork.reincarnation = true
     return out
 }
 
@@ -173,4 +166,136 @@ export function preemptiveAncestors(t: Thread): { fork: SNode; index: number }[]
         if (x.fork.preemptive) out.push({ fork: x.fork, index: x.fork.threads!.indexOf(x) })
     }
     return out
+}
+
+/**
+ * A pause that survives a par-or join that fired in the tick it was reached: when `when` ran in that tick and
+ * `unless` (if any) did not.
+ */
+export interface Revival { when: SNode; unless?: SNode }
+
+/** A control flow: its source, its slot among the source's outgoing flows, its target. */
+interface Flow { from: SNode; key: string; to: SNode }
+
+function outgoing(n: SNode): Flow[] {
+    switch (n.kind) {
+        case 'cond': {
+            const out: Flow[] = []
+            if (n.then) out.push({ from: n, key: `${n.id}t`, to: n.then })
+            if (n.else) out.push({ from: n, key: `${n.id}e`, to: n.else })
+            return out
+        }
+        case 'fork': return n.threads!.map((t, i) => ({ from: n, key: `${n.id}f${i}`, to: t.entry }))
+        case 'surface': return []
+        default: return n.next ? [{ from: n, key: `${n.id}n`, to: n.next }] : []
+    }
+}
+
+/** SCGControlFlowExtensions.MAX_CONTROLFLOW_ACCUMULATION. */
+const MAX_PATH = 100
+
+/** The nodes reached from `source`'s outgoing flows (not `source` itself unless a flow leads back to it). */
+function forward(source: SNode, flows: (n: SNode) => Flow[]): Set<SNode> {
+    const seen = new Set<SNode>()
+    const work = flows(source).map(f => f.to)
+    while (work.length) {
+        const n = work.pop()!
+        if (seen.has(n)) continue
+        seen.add(n)
+        for (const f of flows(n)) work.push(f.to)
+    }
+    return seen
+}
+
+/** The nodes from which `target` is reached over the flows `use` accepts (`target` included). */
+function backward(target: SNode, incoming: Map<SNode, Flow[]>, use: (f: Flow) => boolean): Set<SNode> {
+    const seen = new Set<SNode>([target])
+    const work = [target]
+    while (work.length) {
+        const n = work.pop()!
+        for (const f of incoming.get(n) ?? []) if (use(f) && !seen.has(f.from)) { seen.add(f.from); work.push(f.from) }
+    }
+    return seen
+}
+
+/**
+ * SimpleGuardExpressions.createDepthBlockGuardExpression for the depths of threads under a par-or fork whose join
+ * leads back to it (the innermost such fork; KIELER: "currently only works for single revival"), by surface. The
+ * pause survives the join when the last node before it on the first path from the fork's thread entry into it ran,
+ * provided every node on that path is reached only from such paths and leads only along them; otherwise when the
+ * depth's own thread entry ran and, if the fork's thread can reach another of its pauses or the depth's thread its
+ * exit, that exit did not.
+ *
+ * KIELER lists every path (getInstantaneousControlFlows), which can be exponentially many: here the flows on some
+ * path are those between a node the entry reaches and one that reaches the pause, and the first path whose nodes
+ * all pass the check is found depth first (KIELER's order) along such nodes' flows only.
+ */
+export function revivals(scg: SCG, alive: Set<SNode>): Map<SNode, Revival> {
+    const out = new Map<SNode, Revival>()
+    if (!scg.nodes.some(n => n.reincarnation)) return out
+    const cache = new Map<SNode, Flow[]>()
+    const flows = (n: SNode): Flow[] => {
+        let l = cache.get(n)
+        if (!l) cache.set(n, (l = outgoing(n)))
+        return l
+    }
+    const incoming = new Map<SNode, Flow[]>()
+    for (const n of scg.nodes) for (const f of flows(n)) {
+        let l = incoming.get(f.to)
+        if (!l) incoming.set(f.to, (l = []))
+        l.push(f)
+    }
+    const reachedFrom = new Map<SNode, Set<SNode>>()
+    for (const depth of scg.nodes) {
+        if (depth.kind !== 'depth' || !depth.surface || !alive.has(depth)) continue
+        const surface = depth.surface
+        const own = depth.thread
+        let inFork: Thread | undefined
+        for (let x: Thread | undefined = own; x?.fork; x = x.parent) {
+            const f = x.fork
+            if (f.join?.any && f.reincarnation && alive.has(f)) { inFork = x; break }
+        }
+        if (!inFork) continue
+        const entry = inFork.entry
+        let ahead = reachedFrom.get(entry)
+        if (!ahead) reachedFrom.set(entry, (ahead = forward(entry, flows)))
+        if (!ahead.has(surface)) continue
+        const from = (n: SNode) => n === entry || ahead.has(n)
+        const behind = backward(surface, incoming, () => true)
+        const onPath = (f: Flow) => from(f.from) && behind.has(f.to)
+        // KIELER's fixpoint stops after one round (it compares the filtered list with itself).
+        const good = (s: SNode) =>
+            (s.kind === 'entry' || s.kind === 'join' || (incoming.get(s) ?? []).every(onPath))
+            && (s.kind === 'fork' || flows(s).every(onPath))
+        const usable = (f: Flow) => onPath(f) && good(f.from)
+        const leads = backward(surface, incoming, usable)
+        const path: Flow[] = []
+        const walk = (f: Flow): Flow | undefined => {
+            if (!usable(f) || !leads.has(f.to) || path.includes(f)) return undefined
+            if (f.to === surface) return f
+            if (path.length === MAX_PATH) return undefined
+            path.push(f)
+            for (const g of flows(f.to)) {
+                const last = walk(g)
+                if (last) return last
+            }
+            path.pop()
+            return undefined
+        }
+        let last: Flow | undefined
+        for (const f of flows(entry)) if ((last = walk(f))) break
+        if (last) {
+            out.set(surface, { when: last.from })
+            continue
+        }
+        const other = scg.nodes.some(n => n.kind === 'surface' && n !== surface && within(n.thread, inFork) && ahead.has(n))
+            || (alive.has(own.exit) && ahead.has(own.exit))
+        out.set(surface, other ? { when: own.entry, unless: own.exit } : { when: own.entry })
+    }
+    return out
+}
+
+function within(t: Thread, outer: Thread): boolean {
+    for (let x: Thread | undefined = t; x; x = x.parent) if (x === outer) return true
+    return false
 }

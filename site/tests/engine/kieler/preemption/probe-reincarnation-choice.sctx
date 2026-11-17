@@ -1,0 +1,29 @@
+// On entry the content region chooses between two states immediately, so two paths lead from its entry to pauses.
+// KIELER rejects it: the during action makes the restart an instantaneous loop of the sequential fork.
+scchart PrRcChoice {
+  input bool a, b, c
+  output int entries = 0, l = 0, r = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      immediate if c go to L
+      immediate go to R
+      state L {
+        during do l += 1
+      }
+      if a go to F
+      state R {
+        during do r += 1
+      }
+      if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}
