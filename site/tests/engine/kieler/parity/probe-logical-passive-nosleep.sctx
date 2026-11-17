@@ -1,0 +1,6 @@
+// A passive @Logical clock under @NoSleep: KIELER does not advance it, so the missing lag never matters.
+@NoSleep
+scchart PrLogPassive {
+  @Passive @Logical clock c
+  initial state A
+}

@@ -1,0 +1,9 @@
+// ode on an array element: KIELER's ODE transformation keeps only the variable, so x += 2 * deltaT assigns the
+// whole array and gcc rejects it.
+scchart PrOdeArr {
+  output float x[2] = {0, 0}
+  initial state A {
+    ode x[1] = 2
+    initial state I
+  }
+}

@@ -113,9 +113,11 @@ function transform(ctx: PassContext) {
         sleepT = generated('sleepT', clockType, root, lit(0))
         sleepT.output = true
     }
-    if (anyLogical && noSleep) {
-        // KIELER builds the clock's advance from a lag it never declared (it has no sleep time): its SCG crashes.
-        const clock = states.flatMap(s => s.decls).find(v => isClock(v) && isLogical(v))!
+    // KIELER builds a logical clock's advance from a lag it never declares under @NoSleep: its SCG crashes. A passive
+    // clock is not advanced, so it is spared.
+    const advancedLogical = states.flatMap(s => s.decls).find(v => isClock(v) && isLogical(v) && !v.tags.has('@Passive'))
+    if (advancedLogical && noSleep) {
+        const clock = advancedLogical
         const annotation = named(annotations, 'NoSleep')
         ctx.report({
             severity: 'error', code: 'kieler-crash', span: clock.span ?? annotation?.span, related: clock.decl ? [clock.decl] : undefined,

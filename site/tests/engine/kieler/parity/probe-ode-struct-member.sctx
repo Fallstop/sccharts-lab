@@ -1,0 +1,10 @@
+// ode on a struct member: the member is dropped as the index is.
+scchart PrOdeStruct {
+  struct P {
+    float x
+  } p
+  initial state A {
+    ode p.x = 2
+    initial state I
+  }
+}

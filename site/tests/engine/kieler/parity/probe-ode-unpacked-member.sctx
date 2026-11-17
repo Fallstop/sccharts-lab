@@ -1,0 +1,12 @@
+// ode on a member of an @UnpackClass instance: the member is a variable of its own (p_x) before the ODE
+// transformation runs, so KIELER compiles it.
+scchart PrOdeUnpacked {
+  @UnpackClass
+  class P {
+    float x
+  } p
+  initial state A {
+    ode p.x = 2
+    initial state I
+  }
+}
