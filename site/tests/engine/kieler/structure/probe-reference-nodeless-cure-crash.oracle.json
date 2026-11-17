@@ -1,0 +1,25 @@
+{
+  "hash": "a678f011e2aa94e3a25f6dd5403a5862a5799fb4",
+  "chart": "tests/engine/kieler/structure/probe-reference-nodeless-cure-crash.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "The compiler failed during compilation setup."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 23,
+      "column": 3
+    },
+    {
+      "severity": 2,
+      "message": "There is an immediate loop. The model is not SASC.\nInvolved states: [Spin]",
+      "line": 17,
+      "column": 7
+    }
+  ],
+  "ticks": []
+}

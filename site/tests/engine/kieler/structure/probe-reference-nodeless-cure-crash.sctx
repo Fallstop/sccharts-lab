@@ -1,0 +1,24 @@
+// A referenced chart's superstate holds a silent immediate self-loop (a state without node, S-15a) and leaves itself
+// by a delayed transition, and the referencing state can be left: KIELER's Structural Depth Join cure walks into
+// the missing node and throws ("The successor node list in the surface check has a null entry").
+scchart StNodelessCure {
+  input bool b
+  output int x = 0
+  initial state I is StNodelessCureSub(b, x)
+  go to Next
+  state Next
+}
+scchart StNodelessCureSub {
+  input bool p
+  output int o = 0
+  initial state Busy {
+    region {
+      initial state Spin
+      immediate go to Spin
+    }
+    region {
+      initial state Other
+    }
+  }
+  go to Busy
+}

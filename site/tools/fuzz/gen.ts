@@ -235,7 +235,7 @@ class Generator {
             if (s.sched) {
                 // Absolute and relative writes of w, ordered (or not) by the schedule's priorities.
                 // Mostly a priority of its own (a total order KIELER accepts), now and then a shared one.
-                const k = r.chance(0.8) ? this.priority++ : r.int(0, 2)
+                const k = r.chance(0.65) ? this.priority++ : r.int(0, 2)
                 opts.push(...[`w = ${r.pick(['1', '2', 'w + 1', 'n'].filter(v => v !== 'n' || s.ints.length))} schedule ${s.sched} ${k}`, `w += 1 schedule ${s.sched} ${k}`, `w = w * 2 schedule ${s.sched} ${k}`].flatMap(x => [x, x]))
             }
             if (opts.length) out.push(r.pick(opts))
