@@ -79,6 +79,12 @@ export const PROFILES: Record<string, Profile> = {
     timed: { features: ['hierarchy', 'data', 'immediate', 'joins', 'clocks', 'timed', 'actions'], optional: ['concurrency', 'aborts', 'count', 'suspend', 'references', 'signals', 'history'], optionalRate: 0.25, maxDepth: 1 },
 }
 
+/** Clock declarations of the timed profile: @Logical / @Passive count on the declaration (any case), not on the variable. */
+const TIMED_CLOCKS = [
+    '  clock t = 0', '  @Logical clock t = 0', '  @logical clock t = 0', '  clock @Logical t = 0', '  @Passive clock t = 0',
+    '  @Passive @Logical clock t = 0', '  clock @Passive t = 0', '  @Logical clock t = 0',
+]
+
 /** A small, fast, seedable PRNG (mulberry32). */
 export class Rng {
     private s: number
@@ -413,6 +419,13 @@ class Generator {
             // Its output is bound to a variable the referencing chart may update concurrently: commuting updates only.
             const scope: Scope = { conc: true, depth: 1, bools: ['p', 'q'], ints: [], outs: ['o'], signals: this.on('signals') ? ['T'] : [], valued: [] }
             const lines = [`scchart ${name} {`, '  input bool p, q', '  output int o = 0', ...(scope.signals.length ? ['  output signal T'] : [])]
+            // A clock of the copy: its annotations must survive the copying (declaration only, any case).
+            if (this.on('timed') && r.chance(0.6)) {
+                if (r.chance(0.3)) lines.unshift(r.pick(['@DeviationOutput', '@deviationoutput', '@NoSleep']))
+                lines.push(r.pick(TIMED_CLOCKS).replace(' t = 0', ' cc = 0'))
+                scope.clock = 'cc'
+                scope.sharedClock = true
+            }
             const body = sub.region(scope, '  ', `${name}x`)
             lines.push(...body.lines, '}')
             this.children.push(lines.join('\n'))
@@ -427,6 +440,13 @@ class Generator {
     chart(index: number): string {
         const r = this.rng
         const lines = [`scchart F${index} {`, '  input bool a, b, c, d', '  input int n', '  output int x = 0, y = 0, z = 0']
+        if (this.on('timed') && r.chance(0.2)) {
+            // A base chart with its own clock and annotations: KIELER's Inheritance copies both into this chart.
+            lines[0] = `scchart F${index} extends FB${index} {`
+            const ann = r.chance(0.5) ? [r.pick(['@DeviationOutput', '@deviationoutput', '@NoSleep', '@IntegerClockType'])] : []
+            this.children.push([...ann, `scchart FB${index} {`, r.pick(TIMED_CLOCKS).replace(' t = 0', ' bc = 0'), '  region {', '    initial state FBs0',
+                `    if bc >= ${r.pick([100, 300])} go to FBs1`, '    state FBs1', '    if bc >= 600 do bc = 0 go to FBs0', '  }', '}'].join('\n'))
+        }
         const signals = this.on('signals') ? ['S'] : []
         const valued = this.on('valued') ? ['V'] : []
         if (signals.length) lines.push('  output signal S')
@@ -448,10 +468,7 @@ class Generator {
             lines.push('  output float f = 0', '  output int g = 0')
             if (r.chance(0.12)) lines.push('  output int lag = 0')
             // @Logical / @Passive on the declaration count; on the variable (clock @Logical t) KIELER ignores them.
-            lines.push(r.pick([
-                '  clock t = 0', '  @Logical clock t = 0', '  @logical clock t = 0', '  clock @Logical t = 0', '  @Passive clock t = 0',
-                '  @Passive @Logical clock t = 0', '  clock @Passive t = 0', '  @Logical clock t = 0',
-            ]))
+            lines.push(r.pick(TIMED_CLOCKS))
         } else if (this.on('clocks')) lines.push('  clock t = 0')
         if (this.on('classes')) {
             lines.push('  class Cnt {', '    int v = 0', '    void inc() {', '      v = v + 1', '    }', '    int get() {', '      return v', '    }')
