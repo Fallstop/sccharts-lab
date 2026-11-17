@@ -1,0 +1,310 @@
+{
+  "hash": "96444fedb2aaa77c3047b7a851feb64be5c3502f",
+  "chart": "tests/engine/kieler/preemption/probe-reincarnation-dead-exit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 16,
+      "column": 19
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "work": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 3
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "entries": 1,
+        "work": 4
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "entries": 1,
+        "work": 5
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 6
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "entries": 1,
+        "work": 7
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 8
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 9
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "entries": 1,
+        "work": 10
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "entries": 1,
+        "work": 11
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 12
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 13
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 15,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "entries": 1,
+        "work": 14
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 16,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "entries": 1,
+        "work": 15
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

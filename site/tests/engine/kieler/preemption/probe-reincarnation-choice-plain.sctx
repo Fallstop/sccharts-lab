@@ -1,0 +1,25 @@
+// On entry the content region chooses between two states immediately, so two paths lead from its entry to pauses.
+// Without the during actions of the version without -plain, which make KIELER reject the restart.
+scchart PrRcChoicePlain {
+  input bool a, b, c
+  output int entries = 0, l = 0, r = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      immediate if c go to L
+      immediate go to R
+      state L
+      if a do l += 1 go to F
+      state R
+      if a do r += 1 go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}

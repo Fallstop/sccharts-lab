@@ -1,0 +1,30 @@
+// A state with abort regions inside another one; both are entered again by their joins in the same tick.
+scchart PrRcNested {
+  input bool a, b, c
+  output int outer = 0, inner = 0
+  initial state M {
+    entry do outer += 1
+    region {
+      initial state K {
+        entry do inner += 1
+        region {
+          initial state I
+          if a go to F
+          final state F
+        }
+        abort region W {
+          initial state V
+          if b go to G
+          final state G
+        }
+      }
+      join to K
+    }
+    abort region X {
+      initial state Y
+      if c go to Z
+      final state Z
+    }
+  }
+  join to M
+}

@@ -1,0 +1,21 @@
+// A leading abort region without a final state (it never finishes) before a content region that does; the join
+// enters the state again in the same tick.
+scchart PrRcAbortForever {
+  input bool a, b
+  output int entries = 0, toggles = 0
+  initial state M {
+    entry do entries += 1
+    abort region S {
+      initial state P
+      if b do toggles += 1 go to Q
+      state Q
+      if b go to P
+    }
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+  }
+  join to M
+}

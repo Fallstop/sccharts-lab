@@ -1,0 +1,23 @@
+// The content region's first state has a delayed self-loop, so its pause is reached both on entry and from its own
+// depth; a second state can be reached as well.
+scchart PrRcSelfLoop {
+  input bool a, b, c
+  output int entries = 0, loops = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      if c do loops += 1 go to I
+      if a go to J
+      state J
+      if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}

@@ -1,0 +1,22 @@
+// A leading (strong) abort region in a state that its join enters again in the same tick.
+// KIELER rejects it: the during action makes the restart an instantaneous loop of the sequential fork.
+scchart PrRcStrong {
+  input bool a, b
+  output int entries = 0, n = 0
+  initial state M {
+    entry do entries += 1
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+    region {
+      initial state I {
+        during do n += 1
+      }
+      if a go to F
+      final state F
+    }
+  }
+  join to M
+}

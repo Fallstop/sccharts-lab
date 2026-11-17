@@ -1,0 +1,25 @@
+// Two content regions and a trailing abort region (KIELER nests the content regions into a thread of their own);
+// the join enters the state again in the same tick.
+scchart PrRcTwoContent {
+  input bool a, b, c
+  output int entries = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+    region {
+      initial state J
+      if c go to H
+      final state H
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to M
+}

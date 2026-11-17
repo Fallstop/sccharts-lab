@@ -1,0 +1,24 @@
+// The join leads back into the state through a connector, with a choice.
+scchart PrRcConnector {
+  input bool a, b, c
+  output int entries = 0, other = 0
+  initial state M {
+    entry do entries += 1
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V
+      if b go to G
+      final state G
+    }
+  }
+  join to C
+  connector state C
+  immediate if c do other += 1 go to N
+  immediate go to M
+  state N
+  go to M
+}

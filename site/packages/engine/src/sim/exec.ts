@@ -70,6 +70,9 @@ export interface XNode {
     probes?: Probe[]
     /** Abort regions: an entry or depth that does not run when one of these thread exits ran earlier in the tick. */
     preempt?: number[]
+    /** Thread reincarnation: an entry that `preempt` stops still runs when one of these earlier threads was entered
+     *  again in this tick after it finished (its entry and exit both ran). */
+    revive?: { entry: number; exit: number }[]
     /** cond: the slot of KIELER's guard variable `_c<g>` holding the condition's value since it was last computed
      *  (only for conditions with a conditional without else, which reads it; see the main loop). */
     mem?: number
@@ -86,6 +89,8 @@ export interface JoinGuard {
     kill?: number[]
     /** A par-or join: the source state whose regions it ends. */
     state?: string
+    /** A par-or join whose state can be entered again in the tick it fires: its regions stop when it fires. */
+    restarts?: boolean
 }
 
 interface LogInfo {
@@ -182,6 +187,8 @@ export class ExecutableChart {
     readonly padding: { slot: number; size: number }
     readonly varCount: number
     readonly rootEntry: number
+    /** Thread reincarnation: a surface a fired par-or join does not end when `when` ran this tick and `unless` did not. */
+    readonly revival = new Map<number, { when: number; unless: number }>()
     /** Names of every variable in the pool (inputs or not). */
     readonly knownNames = new Set<string>()
     private readonly signalValues = new Map<string, CVar>()
@@ -347,6 +354,7 @@ export class ExecutableChart {
                             const fork = n.fork!
                             x.join.kill = fork.threads!.flatMap(t => threadNodes(compiled.scg, t)).filter(m => m.kind === 'surface').map(at).filter(i => i >= 0)
                             x.join.state = fork.state?.origin ?? fork.state?.about
+                            if (fork.reincarnation) x.join.restarts = true
                         }
                     }
                     break
@@ -354,6 +362,8 @@ export class ExecutableChart {
             }
             const preempt = compiled.analysis.preemption?.get(n)
             if (preempt) x.preempt = preempt.map(at).filter(i => i >= 0)
+            const revive = compiled.analysis.reincarnation?.get(n)
+            if (revive) x.revive = revive.map(e => ({ entry: at(e), exit: at(e.thread.exit) })).filter(r => r.entry >= 0 && r.exit >= 0)
             this.nodes.push(x)
         }
         // KIELER's reset(): the GO block's assignments without input reads, in order (only their effect on inputs is kept).
@@ -362,7 +372,27 @@ export class ExecutableChart {
             this.goInits.push(index.get(n)!)
         }
         this.rootEntry = at(compiled.scg.root.entry)
+        for (const [surface, r] of compiled.analysis.revival ?? []) {
+            const i = at(surface)
+            if (i >= 0) this.revival.set(i, { when: at(r.when), unless: r.unless ? at(r.unless) : -1 })
+        }
         this.varCount = slot
+    }
+
+    /**
+     * Thread reincarnation (SimpleGuardExpressions): a later thread of the state starts when no earlier thread with a
+     * live exit finished in this tick, or when an earlier thread finished and was entered again. With no live exit
+     * before it, only the second holds (KIELER's guard then has no first part).
+     */
+    starts(x: XNode, act: Uint8Array): boolean {
+        if (x.preempt?.length && !x.preempt.some(e => act[e])) return true
+        return x.revive!.some(r => act[r.entry] === 1 && act[r.exit] === 1)
+    }
+
+    /** Thread reincarnation: the pause at surface `i` survives a par-or join that fired in this tick. */
+    revives(i: number, act: Uint8Array): boolean {
+        const r = this.revival.get(i)
+        return !!r && r.when >= 0 && act[r.when] === 1 && !(r.unless >= 0 && act[r.unless] === 1)
     }
 
     initialState(tracker: Tracker): SimState {
@@ -635,6 +665,8 @@ export class SimRunner {
                         if (x.join && joinFires(x.join, act)) {
                             if (x.next >= 0) act[x.next] = 1
                             if (x.join.kill) parOr.push(x.join)
+                            // The restart enters the regions again later in this tick: they stop now.
+                            if (x.join.restarts) log.push(...this.parOrEvents(x.join, act))
                         }
                         continue
                     }
@@ -661,7 +693,7 @@ export class SimRunner {
                         case K.Entry:
                         case K.Depth:
                             // Abort regions: an earlier thread of a preemptive fork finished in this tick.
-                            if (x.preempt && x.preempt.some(e => act[e])) {
+                            if (x.revive ? !exe.starts(x, act) : x.preempt?.some(e => act[e])) {
                                 act[i] = 0
                                 break
                             }
@@ -764,7 +796,7 @@ export class SimRunner {
                 }
                 // A par-or join fired: its state's regions stop. At the end of the tick, since the regions after the
                 // one that finished still react in this tick (a weak abort).
-                for (const j of parOr) log.push(...this.parOrEvents(j, act))
+                for (const j of parOr) if (!j.restarts) log.push(...this.parOrEvents(j, act))
                 for (let i = 0; i < nodes.length; i++) {
                     if (paused[i] && nodes[i].log?.pause) {
                         const state = nodes[i].log!.pause!.state
@@ -784,7 +816,7 @@ export class SimRunner {
                     log.splice(at, 0, ...suspended)
                 }
                 // After a par-or join fired, nothing inside its threads resumes in the next tick (`!pre(join)`).
-                for (const j of parOr) for (const i of j.kill!) paused[i] = 0
+                for (const j of parOr) for (const i of j.kill!) if (!exe.revives(i, act)) paused[i] = 0
                 s.paused = paused
                 s.started = true
                 if (terminatedNow) {

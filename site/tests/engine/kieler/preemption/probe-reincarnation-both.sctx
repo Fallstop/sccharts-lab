@@ -1,0 +1,27 @@
+// A leading and a trailing abort region around the content region; the join enters the state again in the same tick.
+// KIELER rejects it: the during action makes the restart an instantaneous loop of the sequential fork.
+scchart PrRcBoth {
+  input bool a, b, c
+  output int entries = 0, w = 0, x = 0
+  initial state M {
+    entry do entries += 1
+    abort region S {
+      initial state P
+      if c go to Q
+      final state Q
+    }
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+    abort region W {
+      initial state V {
+        during do w += 1
+      }
+      if b do x += 1 go to G
+      final state G
+    }
+  }
+  join to M
+}

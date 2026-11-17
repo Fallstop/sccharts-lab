@@ -109,7 +109,7 @@ helpers (EMF iteration orders, `and`/`not`, deep copies, DoNotDefer, tracker mar
   The order checks (`abort-region-order`, `abort-region-alone`) run on the SCG's forks (passes/abortRegion.ts), so
   states that cannot be reached are not checked; a preemptive fork in an instantaneous loop is rejected
   (`abort-region-loop`, "Sequential forks must not be schizophrenic!"); a state re-entered in the tick it finishes
-  (KIELER's thread reincarnation guards) gets the `unsupported` info.
+  gets KIELER's thread reincarnation guards (abortRegions.ts `revivals`, analysis.ts `reincarnation`).
 
 The marks `enterRegions` and `resume` have no KIELER effect (scg.ts gives them weight 0). exec.ts hands the take
 mark's refinements and the hooks to preemptionLog.ts, which moves the tracker and writes plain-English `note`
