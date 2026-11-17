@@ -1,6 +1,7 @@
 # Publishes the npm packages @sccharts-lab/engine, /diagram, /trace and /embed (site/packages) when a tag
-# packages-v1.2.3 is pushed. The tag must equal the version of all four packages. Requires the NPM_TOKEN secret: an
-# npm granular access token with read and write access to the @sccharts-lab scope (site/packages/README.md).
+# packages-v1.2.3 is pushed. The tag must equal the version of all four packages. npm's trusted publishing authenticates
+# the job by its OIDC token, so there is no npm token: each package names this repository and workflow on npmjs.com
+# (site/packages/README.md).
 #
 # The site's test suite runs first, then the site is built (the embed check needs its /embed/) and pnpm
 # packages:smoke builds and packs the packages and checks the tarballs in a fresh npm project (Node, TypeScript, a
@@ -15,7 +16,7 @@ on:
 
 permissions:
     contents: read
-    id-token: write # npm provenance
+    id-token: write # npm trusted publishing and provenance
 
 jobs:
     publish:
@@ -36,7 +37,6 @@ jobs:
                   node-version: 24.x
                   cache: pnpm
                   cache-dependency-path: site/pnpm-lock.yaml
-                  registry-url: https://registry.npmjs.org
 
             - name: Version from the tag
               run: echo "VERSION=${VERSION#packages-v}" >> "$GITHUB_ENV"
@@ -49,9 +49,12 @@ jobs:
               run: pnpm packages:smoke --version "$VERSION" --dir "$RUNNER_TEMP/packages" --site dist
 
             - name: Publish
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
+                  # Trusted publishing needs npm 11.5.1 or later.
+                  npm_version=$(npm --version)
+                  if [ "$(printf '%s\n' 11.5.1 "$npm_version" | sort -V | head -1)" != 11.5.1 ]; then
+                      echo "npm $npm_version cannot use trusted publishing (11.5.1 or later)"; exit 1
+                  fi
                   tag=latest
                   case "$VERSION" in *-*) tag=next ;; esac
                   # The engine first: diagram and trace name it as a peer dependency.
