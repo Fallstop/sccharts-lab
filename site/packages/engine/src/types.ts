@@ -541,6 +541,12 @@ export interface TickResult {
     log: TraceEvent[]
     /** Text from print() effects. */
     printed: string[]
+    /**
+     * The seeds the tick's `randomize()` calls gave the random numbers, in the order they ran (absent when none ran).
+     * KIELER's C code seeds with `time(NULL)`, the clock in whole seconds, so two runs differ; a simulation given
+     * these seeds again (`SimulationOptions.seed`) repeats the run.
+     */
+    seeds?: number[]
     /** A runtime failure (division by zero, array index out of range, runaway immediate loop, ...). */
     error?: Diagnostic
     /**

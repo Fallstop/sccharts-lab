@@ -126,11 +126,23 @@ function printNode(node: PoolNode, k: number, idx: string[]): string[] {
 }
 
 /** main.c: reset, then per tick the inputs, tick(), the pool. `taken`: print the cumulative counters too. */
-export function harness(gen: GeneratedC, ticks: Record<string, Value>[]): string {
+/** `seeds`: what `time()` answers, call by call (the generated code's randomize() is `srand(time(NULL))`). */
+export function harness(gen: GeneratedC, ticks: Record<string, Value>[], seeds: number[] = []): string {
     const S = gen.names.struct
     const lines: string[] = [
-        '#include <stdio.h>', '#include <stdlib.h>', '#include <string.h>', `#include "${gen.header}"`, '',
+        '#include <stdio.h>', '#include <stdlib.h>', '#include <string.h>', ...(seeds.length ? ['#include <time.h>'] : []), `#include "${gen.header}"`, '',
         `static ${S} d;`, '',
+        ...(seeds.length ? [
+            '/* The clock of the recorded run, in place of the C library\'s. */',
+            `static const long long seeds[] = { ${seeds.map(n => `${n}LL`).join(', ')} };`,
+            'static unsigned seed_calls = 0;',
+            'time_t time(time_t* t) {',
+            `  time_t now = (time_t) seeds[seed_calls < ${seeds.length} ? seed_calls : ${seeds.length - 1}];`,
+            '  seed_calls++;',
+            '  if (t) *t = now;',
+            '  return now;',
+            '}', '',
+        ] : []),
         '/* A fresh copy of a string (C99 has no strdup). */',
         'static char* sdup(const char* s) {',
         '  char* p = malloc(strlen(s) + 1);',

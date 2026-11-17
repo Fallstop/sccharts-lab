@@ -1,0 +1,11 @@
+// A during action that seeds in every tick: each tick's first random() is the first number of that second's
+// sequence, so ticks within one second show the same number.
+scchart ProbeRandomizeEveryTick {
+  output float o
+  output int n = 0
+  initial state A
+    go to B
+  state B {
+    during do randomize(); o = random(); n += 1
+  }
+}

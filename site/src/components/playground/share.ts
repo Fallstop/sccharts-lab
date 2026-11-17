@@ -124,19 +124,26 @@ export interface SharedRun {
     ticks: Record<string, Value>[]
     /** The tick that was shown, 1 to ticks.length. */
     at: number
+    /** The seeds of each tick's randomize() calls (index 0 is tick 1), when the run made any: the link repeats the run. */
+    seeds?: (number[] | undefined)[]
 }
+
+const isSeeds = (v: unknown): v is number[] => Array.isArray(v) && v.length > 0 && v.every(n => Number.isInteger(n) && n >= 0 && n <= 0xffffffff)
 
 const isValue = (v: unknown): v is Value =>
     v === null || typeof v === 'boolean' || typeof v === 'string' || (typeof v === 'number' && Number.isFinite(v)) || (Array.isArray(v) && v.every(isValue))
 const same = (a: Value | undefined, b: Value | undefined) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null)
 
 /** A run from the inputs of its ticks (a string never set, `null`, is left out) and the tick shown. */
-export function makeRun(rows: Record<string, Value>[], cursor: number): SharedRun {
+export function makeRun(rows: Record<string, Value>[], cursor: number, seeds?: (number[] | undefined)[]): SharedRun {
     const ticks = rows.slice(0, MAX_RUN_TICKS).map(row => Object.fromEntries(Object.entries(row).filter(([, v]) => v !== null && v !== undefined)))
-    return { ticks, at: Math.max(1, Math.min(ticks.length, Math.round(cursor) || 1)) }
+    const run: SharedRun = { ticks, at: Math.max(1, Math.min(ticks.length, Math.round(cursor) || 1)) }
+    if (seeds?.slice(0, ticks.length).some(isSeeds)) run.seeds = ticks.map((_, i) => (isSeeds(seeds[i]) ? seeds[i] : undefined))
+    return run
 }
 
-/** The run, compressed for a URL: `{ v: 1, at, t: [changes of tick 1, changes of tick 2, ...] }`. */
+/** The run, compressed for a URL: `{ v: 1, at, t: [changes of tick 1, changes of tick 2, ...] }`, and for a run
+ *  that called randomize() `s: { "<tick>": [seeds] }`. */
 export function encodeRun(run: SharedRun): string {
     let previous: Record<string, Value> = {}
     const t = run.ticks.map(row => {
@@ -145,7 +152,8 @@ export function encodeRun(run: SharedRun): string {
         previous = { ...previous, ...row }
         return changed
     })
-    return LZString.compressToEncodedURIComponent(JSON.stringify({ v: 1, at: run.at, t }))
+    const s = Object.fromEntries((run.seeds ?? []).flatMap((seeds, i) => (seeds ? [[String(i + 1), seeds]] : [])))
+    return LZString.compressToEncodedURIComponent(JSON.stringify({ v: 1, at: run.at, t, ...(Object.keys(s).length ? { s } : {}) }))
 }
 
 /** The run from `encodeRun`'s output, or null when it is not one. */
@@ -154,7 +162,7 @@ export function decodeRun(encoded: string): SharedRun | null {
     try {
         const text = LZString.decompressFromEncodedURIComponent(encoded.replace(/ /g, '+'))
         if (!text) return null
-        const data = JSON.parse(text) as { v?: unknown; at?: unknown; t?: unknown }
+        const data = JSON.parse(text) as { v?: unknown; at?: unknown; t?: unknown; s?: unknown }
         if (data?.v !== 1 || !Array.isArray(data.t) || !data.t.length) return null
         const ticks: Record<string, Value>[] = []
         let row: Record<string, Value> = {}
@@ -167,7 +175,18 @@ export function decodeRun(encoded: string): SharedRun | null {
             ticks.push(row)
         }
         const at = typeof data.at === 'number' && Number.isFinite(data.at) ? Math.round(data.at) : ticks.length
-        return { ticks, at: Math.max(1, Math.min(ticks.length, at)) }
+        const run: SharedRun = { ticks, at: Math.max(1, Math.min(ticks.length, at)) }
+        if (data.s !== undefined) {
+            if (!data.s || typeof data.s !== 'object' || Array.isArray(data.s)) return null
+            const seeds: (number[] | undefined)[] = ticks.map(() => undefined)
+            for (const [tick, list] of Object.entries(data.s as Record<string, unknown>)) {
+                const n = Number(tick)
+                if (!Number.isInteger(n) || n < 1 || n > ticks.length || !isSeeds(list)) return null
+                seeds[n - 1] = list
+            }
+            if (seeds.some(Boolean)) run.seeds = seeds
+        }
+        return run
     } catch {
         return null
     }

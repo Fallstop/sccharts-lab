@@ -735,7 +735,7 @@ divided in single precision by RAND_MAX (2147483647, which is 2^31 as a float); 
 simulation never seeds the generator, so the sequence is the same on every run: glibc's default
 sequence 1804289383, 846930886, 1681692777, 1714636915, 1957747793, 424238335, ... Each evaluation
 consumes one number, in execution order. `random() * 100` stored in an int truncates. `randomize()`
-(an effect) seeds with `srand(time(NULL))`, making runs irreproducible; inside the tick-1 block of the
+(an effect) seeds with `srand(time(NULL))`, so every run has its own numbers; inside the tick-1 block of the
 netlist compiler it even breaks compilation (`‘null’ undeclared`: B-34's code motion into `reset()`
 serialises the call as `null`). Elsewhere it compiles if gcc sees `srand`: current KIELER adds
 `#include <stdlib.h>` only for `random()`, so a chart that calls `randomize()` but never `random()` fails
@@ -745,7 +745,7 @@ with `implicit declaration of function ‘srand’` (`77-randomize-needs-stdlib`
 compiles with `#hostcode "#include <stdlib.h>"` (section 10.1).
 
 **Evidence.** `61-random` (r = 0.8401877284049988 with percent = 39; then 0.7830992341041565 / 79;
-0.911647379398346 / 19); `77-randomize-needs-stdlib`. Probes for randomize() and for official KIELER.
+0.911647379398346 / 19); `77-randomize-needs-stdlib`; `tests/engine/kieler/random/probe-randomize-*` (below).
 
 **Source.** `ccode/CCodeSerializeHRExtensions.xtend` 350-373 (`random()` adds `<stdlib.h>`,
 `randomize()` adds `<time.h>`).
@@ -757,6 +757,21 @@ call returns `r[k + 343] >>> 1` (k = 1, 2, ...). Then `random()` = `Math.fround(
 2147483648)`; `random() * 100` is computed in single precision too (`Math.fround(r * 100)`) before an int
 target truncates it. Verified in Node: 1804289383 → 0.8401877284049988, 846930886 → 0.39438292384147644
 (× 100 → 39), 1681692777 → 0.7830992341041565.
+
+**randomize() in the engine.** `srand(seed)` is the same generator started from `r[0] = seed` (0 is taken as
+1; the seed is C's `unsigned int`, read as an int32 by glibc's arithmetic, whose division truncates). The seed
+is `time(NULL)`, the clock in whole seconds when the call runs: two calls within one second start the same
+sequence twice (`random/probe-randomize-twice-in-tick`: a = b; `-every-tick`: a during action that seeds in
+every tick draws one number four ticks running). The engine takes the clock by default
+(`SimulationOptions.seed` overrides it), reports each tick's seeds (`TickResult.seeds`) and gives a tick run
+again after `rewind()` the seeds it had, so a run can be repeated (`replaySeeds`). A recording of such a chart
+keeps the clock around every tick (`ticks[].clock`, written by `pnpm oracle:record` for charts that name
+`randomize`); `tools/oracle/seeds.ts` finds the seconds in those windows for which the engine's run is the
+recorded one and writes them into the scenario (`ticks[].seeds`). The conformance test, `pnpm cgen:check`
+(its harness defines `time()` to answer with those seeds) and the guide's tours replay them, so these charts
+are compared with KIELER number for number: `tests/engine/kieler/random/probe-randomize-*` (9 probes: later,
+triggered in tick 1, twice in a tick, every tick, in a method and a code block, in a class method, in two
+ticks, with a `random()` trigger, without `random()`), `examples/advanced/methods/dice-reseeded`.
 
 ### B-30 print()
 

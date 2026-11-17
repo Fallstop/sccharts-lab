@@ -1,0 +1,15 @@
+scchart DiceReseeded {
+  input bool shake
+  output float r = 0
+  output int face = 0
+
+  region Seed {
+    initial state Still
+      if shake do randomize() go to Still
+  }
+
+  region Roll {
+    initial state Rolling
+      do r = random(); face = r * 6 + 1 go to Rolling
+  }
+}

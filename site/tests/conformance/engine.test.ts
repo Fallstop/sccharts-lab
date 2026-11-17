@@ -18,14 +18,15 @@ import { afterAll, describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { compile, createSimulation, type PoolValue } from '@sccharts-lab/engine'
+import { compile, createSimulation, replaySeeds, type PoolValue } from '@sccharts-lab/engine'
 import type { Value } from '@sccharts-lab/engine/types'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const site = path.resolve(here, '../..')
 
 interface Scenario {
-    ticks: { inputs?: Record<string, Value> }[]
+    /** `seeds`: what KIELER's clock gave each randomize() of the tick in the recorded run (tools/oracle/seeds.ts). */
+    ticks: { inputs?: Record<string, Value>; seeds?: number[] }[]
     expect?: 'ok' | 'error'
     system?: string
     imports?: string[]
@@ -144,7 +145,7 @@ function run(c: Case): { skip?: string; problems: string[] } {
     if (unsupported) return { skip: `unsupported: ${unsupported.message}`, problems: [] }
     if (!result.ok) return { problems: [`KIELER accepts this chart but the engine rejects it: ${errors.map(e => `${e.code}: ${e.message}`).join(' | ').slice(0, 300)}`] }
 
-    const sim = createSimulation(result)
+    const sim = createSimulation(result, { seed: replaySeeds(scenario.ticks) })
     const problems: string[] = []
     let kielerTerminated = -1
     let engineTerminated = -1

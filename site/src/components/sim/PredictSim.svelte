@@ -14,7 +14,7 @@
 	import { formatValue, initialInputs } from './inputs'
 	import { stateName } from './lines'
 	import { markDiagram, pulseTransitions, reducedMotion } from './link'
-	import { Timeline } from './timeline'
+	import { scriptSeeds, Timeline } from './timeline'
 	import { hasSuspension, lanesFor, traceSvg } from './trace'
 
 	/** A question, resolved at build time: `state` is a state id. */
@@ -120,7 +120,7 @@
 		failure = undefined
 		let ticks: TickResult[]
 		try {
-			const t = new Timeline(createSimulation(compiled), initialInputs(compiled.interface), scenario)
+			const t = new Timeline(createSimulation(compiled, { seed: scriptSeeds(scenario) }), initialInputs(compiled.interface), scenario)
 			for (let i = 0; i < lastTick; i++) t.step()
 			ticks = t.history.slice(0, lastTick)
 		} catch (error) {

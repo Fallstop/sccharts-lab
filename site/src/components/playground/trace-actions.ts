@@ -114,7 +114,8 @@ export function planReplay(result: CompileResult, trace: TraceRecord, label: str
         ticks: ticks.map((inputs, i) => {
             const diffs = byTick.get(i + 1)
             const error = history[i]?.error
-            return { inputs, note: error ? `The model stopped: ${error.message}` : diffs ? tickNote(diffs) : 'The outputs are the same as in the file.' }
+            const seeds = history[i]?.seeds
+            return { inputs, note: error ? `The model stopped: ${error.message}` : diffs ? tickNote(diffs) : 'The outputs are the same as in the file.', ...(seeds ? { seeds } : {}) }
         }),
     }
     const renamedFile = replay.replay.trace

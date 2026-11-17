@@ -585,6 +585,8 @@ export class SimRunner {
     private readonly names: StateNames
     private readonly regionNames = new Map<string, string>()
     private readonly abortRegions = new Set<string>()
+    /** The seed for the `index`-th randomize() of a tick: C's `time(NULL)`, unless the simulation's owner decides. */
+    seedSource: (tick: number, index: number) => number = () => Math.floor(Date.now() / 1000)
 
     constructor(readonly exe: ExecutableChart, readonly chart: State) {
         // References and for-regions: the tracker follows the chart with its instances and copies (structure/track.ts).
@@ -638,7 +640,16 @@ export class SimRunner {
         let error: Diagnostic | undefined
 
         const before = s.vals.map(cloneValue)
-        const rt: Runtime = { vals: s.vals, rand: s.rand, printed }
+        const seeds: number[] = []
+        const rt: Runtime = {
+            vals: s.vals, rand: s.rand, printed,
+            seed: () => {
+                // srand() takes C's unsigned int.
+                const seed = this.seedSource(tick, seeds.length) >>> 0
+                seeds.push(seed)
+                return seed
+            },
+        }
 
         if (s.halted) {
             return this.result(tick, given, log, printed, taken, actions, false, s.halted, before, exe.inputValues(s.vals))
@@ -856,13 +867,13 @@ export class SimRunner {
             s.halted = error
             tracker.restore(s.tracker)
             tracker.beginTick()
-            return this.result(tick, given, log, printed, [], [], false, error, before, ranWith)
+            return this.result(tick, given, log, printed, [], [], false, error, before, ranWith, seeds)
         }
         s.tracker = tracker.snapshot()
-        return this.result(tick, given, log, printed, taken, actions, terminatedNow, error, undefined, ranWith)
+        return this.result(tick, given, log, printed, taken, actions, terminatedNow, error, undefined, ranWith, seeds)
     }
 
-    private result(tick: number, given: Record<string, Value>, log: TraceEvent[], printed: string[], taken: string[], actions: string[], terminatedNow: boolean, error: Diagnostic | undefined, vals?: RValue[], ranWith?: Record<string, Value>): SimTickResult {
+    private result(tick: number, given: Record<string, Value>, log: TraceEvent[], printed: string[], taken: string[], actions: string[], terminatedNow: boolean, error: Diagnostic | undefined, vals?: RValue[], ranWith?: Record<string, Value>, seeds?: number[]): SimTickResult {
         const s = this.state
         const report = this.exe.report(vals ?? s.vals, this.extra)
         const inputs: Record<string, Value> = {}
@@ -892,6 +903,7 @@ export class SimRunner {
         }
         const copies = copyStates(this.exe.compiled, this.tracker.activeInternal(), this.tracker.enteredInternal)
         if (copies) r.copies = copies
+        if (seeds?.length) r.seeds = seeds
         if (error) r.error = error
         return r
     }

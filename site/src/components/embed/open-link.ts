@@ -3,8 +3,8 @@
 // as a tour) once the reader has stepped. Worked out when the link is about to be followed, not on every tick.
 
 import { sameFiles } from '../playground/project'
-import { runInputs } from '../playground/run-tour'
-import { hashForProject, makeRun, runUrl } from '../playground/share'
+import { sharedRun } from '../playground/run-tour'
+import { hashForProject, runUrl } from '../playground/share'
 import type { Playground } from '../playground/app'
 
 export function playgroundHref(app: Playground): string {
@@ -21,7 +21,7 @@ export function playgroundHref(app: Playground): string {
     const name = ran && ran !== a?.result.program?.charts[0]?.name ? ran : undefined
     const which = name ? `chart=${encodeURIComponent(name)}` : ''
     if (a && view?.history.length && sim.ok && !sim.stale) {
-        const run = makeRun(runInputs(a.result, view.history).ticks, view.cursor)
+        const run = sharedRun(a.result, view.history, view.cursor)
         const several = Object.keys(texts).length > 1
         const where =
             example && a.file === project.mainFile

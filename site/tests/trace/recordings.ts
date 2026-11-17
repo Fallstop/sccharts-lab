@@ -14,7 +14,7 @@ const here = path.dirname(fileURLToPath(import.meta.url))
 export const site = path.resolve(here, '../..')
 
 export interface Scenario {
-    ticks: { inputs?: Record<string, Value> }[]
+    ticks: { inputs?: Record<string, Value>; seeds?: number[] }[]
     system?: string
     imports?: string[]
     needs?: string[]

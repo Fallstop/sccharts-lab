@@ -4,11 +4,11 @@
 // the others stand ("In this tick `A` is absent and `B` is present; `R` stays absent."). Pure (the engine runs in
 // memory).
 
-import { createSimulation, type CompileResult } from '@sccharts-lab/engine'
+import { createSimulation, replaySeeds, type CompileResult } from '@sccharts-lab/engine'
 import type { TickResult, Value, VariableInfo } from '@sccharts-lab/engine/types'
 import type { Scenario } from '../frame/examples'
 import { controlsFor, formatValue, initialInputs, type InputControl } from '../sim/inputs'
-import type { SharedRun } from './share'
+import { makeRun, type SharedRun } from './share'
 
 type Row = Record<string, Value>
 
@@ -31,14 +31,15 @@ function fingerprint(t: TickResult): string {
  * ticks, from the first, that come out the same (the whole pool, the states, the transitions). A hand-made result
  * without `ranWith` gives the inputs as they were after the tick.
  */
-export function runInputs(compiled: CompileResult, history: TickResult[]): { ticks: Row[]; exact: number } {
+export function runInputs(compiled: CompileResult, history: TickResult[]): { ticks: Row[]; exact: number; seeds: (number[] | undefined)[] } {
     const keys = inputKeys(compiled.interface)
     const initial = initialInputs(compiled.interface).levels
     const after = (t: TickResult): Row => {
         const pool = ((t as TickResult & { pool?: Row }).pool ?? {}) as Row
         return Object.fromEntries(keys.map(k => [k, k in pool ? pool[k] : k in t.inputs ? t.inputs[k] : (initial[k] ?? null)]))
     }
-    const sim = createSimulation(compiled)
+    // The run's randomize() calls took their seeds from the clock: the replay gets the same ones.
+    const sim = createSimulation(compiled, { seed: replaySeeds(history) })
     let exact = 0
     const ticks = history.map((t, k) => {
         const ran: Row = t.ranWith ?? after(t)
@@ -47,7 +48,13 @@ export function runInputs(compiled: CompileResult, history: TickResult[]): { tic
         if (exact === k && fingerprint(sim.step(row)) === fingerprint(t)) exact = k + 1
         return row
     })
-    return { ticks, exact }
+    return { ticks, exact, seeds: history.map(t => t.seeds) }
+}
+
+/** The run as a link carries it: the inputs of every tick, the seeds of its randomize() calls and the tick shown. */
+export function sharedRun(compiled: CompileResult, history: TickResult[], cursor: number): SharedRun {
+    const found = runInputs(compiled, history)
+    return makeRun(found.ticks, cursor, found.seeds)
 }
 
 const clean = (row: Row): Row => Object.fromEntries(Object.entries(row).filter(([, v]) => v !== null && v !== undefined))
@@ -123,7 +130,7 @@ function standings(controls: InputControl[], row: Record<string, Value>, verb: '
  * The run as a tour: each tick's inputs, and a note saying which inputs changed in it and, for a chart with up to
  * FULL_STATE_MAX inputs, where the others stand, so that every note gives the whole input of its tick ("In tick 1
  * `A` is present; `B` and `R` are absent.", "In this tick no input changes: `A` stays present; `B` and `R` stay
- * absent.").
+ * absent."). A tick that called randomize() keeps its seeds, so the tour shows the numbers of the run.
  */
 export function sharedRunTour(run: SharedRun, iface: VariableInfo[]): Scenario {
     const initial = initialInputs(iface).levels
@@ -142,7 +149,8 @@ export function sharedRunTour(run: SharedRun, iface: VariableInfo[]): Scenario {
         else if (i === 0) note = changes.length ? `In tick 1 ${list(changes)}${others && `; ${others}`}.` : `In tick 1 every input has its initial value${others && `: ${others}`}.`
         else if (changes.length) note = `In this tick ${list(changes)}${others && `; ${others}`}.`
         else note = `In this tick no input changes${others && `: ${others}`}.`
-        return { inputs: inputs as Record<string, unknown>, note }
+        const seeds = run.seeds?.[i]
+        return { inputs: inputs as Record<string, unknown>, note, ...(seeds ? { seeds } : {}) }
     })
     return { ticks, expect: 'ok' }
 }

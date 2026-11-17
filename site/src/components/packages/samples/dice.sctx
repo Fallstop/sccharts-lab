@@ -1,0 +1,14 @@
+scchart Dice {
+  input bool shake
+  output int face = 0
+
+  region Seed {
+    initial state Still
+      if shake do randomize() go to Still
+  }
+
+  region Roll {
+    initial state Rolling
+      do face = random() * 6 + 1 go to Rolling
+  }
+}

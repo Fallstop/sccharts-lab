@@ -4,9 +4,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, test } from 'vitest'
+import LZString from 'lz-string'
 import { compile, createSimulation } from '@sccharts-lab/engine'
 import type { TickResult, Value } from '@sccharts-lab/engine/types'
-import { Timeline } from '../../src/components/sim/timeline'
+import { scriptSeeds, Timeline } from '../../src/components/sim/timeline'
 import { initialInputs } from '../../src/components/sim/inputs'
 import { chartFromHash, decodeRun, encodeRun, hasRun, makeRun, MAX_RUN_TICKS, runFromHash, runUrl, sourceFromHash, type SharedRun } from '../../src/components/playground/share'
 import { inputChanges, runInputs, sharedRunTour } from '../../src/components/playground/run-tour'
@@ -36,7 +37,7 @@ const shape = (h: TickResult[]) => h.map(t => JSON.stringify([t.values, t.presen
 /** The run a reader shares: the inputs every tick ran with, and the tick shown. */
 function share(source: string, history: TickResult[], cursor: number): SharedRun & { exact: number } {
     const found = runInputs(compile(source), history)
-    return { ...makeRun(found.ticks, cursor), exact: found.exact }
+    return { ...makeRun(found.ticks, cursor, found.seeds), exact: found.exact }
 }
 
 const plain = ({ ticks, at }: SharedRun): SharedRun => ({ ticks, at })
@@ -45,7 +46,7 @@ const plain = ({ ticks, at }: SharedRun): SharedRun => ({ ticks, at })
 function replay(source: string, shared: SharedRun): TickResult[] {
     const compiled = compile(source)
     const tour = sharedRunTour(shared, compiled.interface)
-    const timeline = new Timeline(createSimulation(compiled), initialInputs(compiled.interface), tour)
+    const timeline: Timeline = new Timeline(createSimulation(compiled, { seed: scriptSeeds(tour, () => timeline.tour) }), initialInputs(compiled.interface), tour)
     for (let i = 0; i < tour.ticks.length; i++) timeline.step()
     return timeline.history
 }
@@ -142,6 +143,24 @@ describe('the replay is the same run', () => {
         const forged = history.map((t, i) => (i === 1 ? { ...t, ranWith: { ...t.ranWith!, V_val: 9 } } : t))
         expect(runInputs(compile(chart), history).exact).toBe(2)
         expect(runInputs(compile(chart), forged)).toMatchObject({ exact: 1, ticks: [{ press: true }, { V: true, V_val: 9 }] })
+    })
+
+    test('a run that called randomize(): the link carries the seeds, and the replay draws the same numbers', () => {
+        const source = `scchart Dice {\n  input bool seed\n  output float r = 0\n  region Seed {\n    initial state S\n      if seed do randomize() go to S\n  }\n  region Roll {\n    initial state R\n      do r = random() go to R\n  }\n}\n`
+        const history = run(source, [{}, { seed: true }, { seed: false }, { seed: true }, { seed: false }])
+        expect(history.map(t => t.seeds?.length ?? 0)).toEqual([0, 1, 0, 1, 0])
+        const shared = share(source, history, 5)
+        expect(shared.exact).toBe(5)
+        expect(shared.seeds).toEqual(history.map(t => t.seeds))
+        const decoded = decodeRun(encodeRun(shared))!
+        expect(decoded.seeds).toEqual(shared.seeds)
+        const again = replay(source, decoded)
+        expect(shape(again)).toEqual(shape(history))
+        expect(again.map(t => t.seeds)).toEqual(history.map(t => t.seeds))
+        // A run without randomize() has no seeds in its link, and damaged seeds are no run.
+        expect(share(chart, run(chart, [{ press: true }]), 1).seeds).toBeUndefined()
+        expect(decodeRun(LZString.compressToEncodedURIComponent(JSON.stringify({ v: 1, at: 1, t: [{}], s: { 2: [1] } })))).toBeNull()
+        expect(decodeRun(LZString.compressToEncodedURIComponent(JSON.stringify({ v: 1, at: 1, t: [{}], s: { 1: ['x'] } })))).toBeNull()
     })
 
     test('every example with a scenario', () => {

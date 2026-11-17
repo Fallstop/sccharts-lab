@@ -9,9 +9,14 @@
 //
 // Exit code 1 when a chart's outcome contradicts its scenario's "expect" ("ok" by default, or "error"
 // with an optional "errorIncludes" substring).
+//
+// A chart that calls randomize() runs differently every time: KIELER seeds with its clock. Its recording keeps
+// each tick's clock, and tools/oracle/seeds.ts (run from here) writes the seeds that reproduce the recorded run
+// into the scenario's ticks ("seeds"), which the engine's tests and the guide's widgets replay.
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
+import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { startOracle } from './oracle.mjs'
 
@@ -58,11 +63,14 @@ const stale = jobs.filter(j => j.stale)
 console.error(`${jobs.length} scenarios, ${stale.length} to record`)
 let failures = 0
 const oracle = stale.length ? await startOracle() : undefined
+/** Charts recorded now whose run calls randomize(): their scenarios get the seeds KIELER's clock gave. */
+const reseeded = []
 try {
     for (const job of jobs) {
         let result = job.previous
         if (job.stale) {
             const inputs = (job.scenario.ticks ?? []).map(t => t.inputs ?? {})
+            const seeded = [job.model, ...Object.values(job.imports)].some(text => /\brandomize\b/.test(text))
             const raw = await oracle.run({ name: path.relative(root, job.chart), model: job.model, inputs, ticks: inputs.length, system: job.scenario.system, imports: job.imports, fileName: path.basename(job.chart) })
             result = {
                 hash: job.hash,
@@ -73,9 +81,11 @@ try {
                 warnings: raw.warnings,
                 diagnostics: raw.diagnostics,
                 interface: raw.interface,
-                ticks: raw.ticks.map(({ takenTotal, ...t }) => t),
+                // The clock of each tick only where the run depends on it (tools/oracle/seeds.ts reads it).
+                ticks: raw.ticks.map(({ takenTotal, clock, ...t }) => (seeded ? { ...t, clock } : t)),
             }
             fs.writeFileSync(job.out, JSON.stringify(result, null, 2) + '\n')
+            if (seeded && raw.ok) reseeded.push(job.chart)
         }
         const expect = job.scenario.expect ?? 'ok'
         let problem
@@ -89,5 +99,10 @@ try {
     }
 } finally {
     await oracle?.stop()
+}
+if (reseeded.length) {
+    // KIELER seeded with its clock: find the seeds that give the recorded run and note them in the scenarios.
+    const tool = spawnSync(process.execPath, ['--experimental-transform-types', '--no-warnings', '--import', './tools/fuzz/register.mjs', 'tools/oracle/seeds.ts', ...reseeded], { cwd: root, stdio: 'inherit' })
+    if (tool.status !== 0) failures++
 }
 process.exit(failures ? 1 : 0)

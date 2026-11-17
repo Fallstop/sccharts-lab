@@ -1,0 +1,8 @@
+#hostcode "#include <stdlib.h>"
+// randomize() with no random() anywhere: nothing shows the seed.
+scchart ProbeRandomizeNoRandom {
+  output int n = 0
+  initial state A
+    go to B
+  state B do randomize(); n += 1 go to B
+}

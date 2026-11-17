@@ -40,7 +40,8 @@ export interface OracleRecording {
 
 /** `<name>.scenario.json`, see docs-internal/CONTENT-PLAN.md. */
 export interface Scenario {
-    ticks: { inputs?: Record<string, unknown>; note?: string }[]
+    /** `seeds`: what KIELER's clock gave each randomize() of the tick in the recorded run (tools/oracle/seeds.ts). */
+    ticks: { inputs?: Record<string, unknown>; note?: string; seeds?: number[] }[]
     expect?: 'ok' | 'error'
     errorIncludes?: string
     /** Other files the chart imports, relative to it (`["push-switch.sctx"]`): the oracle and the widgets

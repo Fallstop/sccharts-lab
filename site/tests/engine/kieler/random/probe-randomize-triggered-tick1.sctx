@@ -1,0 +1,8 @@
+// A triggered immediate transition in tick 1 is not in KIELER's reset code: randomize() seeds in the first tick.
+scchart ProbeRandomizeTriggeredTick1 {
+  input bool start
+  output float o
+  initial state A
+    immediate if start do randomize(); o = random() go to B
+  state B do o = random() go to B
+}

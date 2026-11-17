@@ -146,6 +146,25 @@ returns the first error as its `error`.
 | Property | Type | Description |
 | --- | --- | --- |
 | `strict?` | `boolean` | `step()` throws on a name that is not an input of the chart, with the input it most likely meant. Off by default, as KIELER's simulation takes any name. |
+| `seed?` | `number \| ((call: SeedCall) => number \| undefined)` | What `randomize()` seeds the random numbers with: one number for every call, or a function asked for each call (`undefined` leaves that call to the default). Default: the clock in whole seconds, as KIELER's `srand(time(NULL))`. A tick run again after `rewind()` gets the seeds it had; `reset()` forgets them. |
+
+### `SeedCall`
+
+One `randomize()` call of a run, as the `seed` function is asked about it.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `tick` | `number` | The tick the call runs in, from 1. |
+| `index` | `number` | Its place among the tick's `randomize()` calls, from 0. |
+
+### `replaySeeds()`
+
+```ts
+function replaySeeds(ticks: readonly { seeds?: readonly number[] }[]): (call: SeedCall) => number | undefined
+```
+
+The seeds of an earlier run as a `seed` option: `createSimulation(result, { seed: replaySeeds(earlier.history) })`
+seeds every `randomize()` as that run did, tick by tick. A call the earlier run did not make takes the clock.
 
 ### `Simulation`
 
@@ -186,6 +205,7 @@ What `step()` returns: a [`TickResult`](#tickresult) with two more properties.
 | `terminatedNow?` | `boolean` | `true` only in the tick of termination. |
 | `log` | `TraceEvent[]` | What happened, step by step. |
 | `printed` | `string[]` | Text from `print()` effects. |
+| `seeds?` | `number[]` | The seeds the tick's `randomize()` calls used, in the order they ran. Absent when none ran. |
 | `error?` | `Diagnostic` | A run-time failure: division by zero, an array index out of range. |
 | `copies?` | `ForCopyState[]` | For a chart with for-regions: where each copy is. |
 

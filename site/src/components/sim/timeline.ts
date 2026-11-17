@@ -25,7 +25,17 @@ export interface Stepper {
 }
 
 export interface TourScript {
-    ticks: { inputs?: Record<string, unknown>; note?: string }[]
+    /** `seeds`: the seeds of the tick's randomize() calls in the run the script comes from. */
+    ticks: { inputs?: Record<string, unknown>; note?: string; seeds?: number[] }[]
+}
+
+/**
+ * A simulation's `seed` option (the engine's SimulationOptions) for a run a script drives: every randomize() of a
+ * scripted tick gets the seed it had in the script's run, so the tour shows that run. `scripted`: whether the
+ * script is still in control (a reader who took over gets the clock, as in KIELER).
+ */
+export function scriptSeeds(script: TourScript | undefined, scripted: () => boolean = () => true): (call: { tick: number; index: number }) => number | undefined {
+    return ({ tick, index }) => (scripted() ? script?.ticks[tick - 1]?.seeds?.[index] : undefined)
 }
 
 export type StepOutcome = 'stepped' | 'replayed' | 'branched'

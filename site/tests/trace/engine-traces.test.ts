@@ -14,7 +14,7 @@
 
 import { afterAll, describe, expect, it } from 'vitest'
 import path from 'node:path'
-import { createSimulation, type PoolValue } from '@sccharts-lab/engine'
+import { createSimulation, replaySeeds, type PoolValue } from '@sccharts-lab/engine'
 import { readTrace, replayTrace, sameTraceValue, traceFromRun, writeTrace, type TraceFormat, type TraceRecord } from '@sccharts-lab/trace'
 import { compileCase, extensionTrace, recordedCases, tickCount, type Case } from './recordings'
 
@@ -83,7 +83,9 @@ function check(c: Case): string[] {
     stats.run++
     stats.ticks += ticks
     const model = path.basename(c.chart)
-    const simulation = createSimulation(result)
+    // A recorded run that calls randomize() has the seeds of KIELER's clock in its scenario.
+    const seeded = () => createSimulation(result, { seed: replaySeeds(c.scenario.ticks) })
+    const simulation = seeded()
     for (let i = 0; i < ticks; i++) simulation.step(c.scenario.ticks[i].inputs ?? {})
     const engine = traceFromRun(result, simulation, { model })
     if (engine.printed) stats.printing++
@@ -121,13 +123,13 @@ function check(c: Case): string[] {
         if (readProblems.length === 0) stats.readBack[format]++
         else problems.push(...readProblems.map((p) => `${format} read back: ${p}`))
 
-        let replayed = replayTrace(result, back, { label: `${model}.${format}`, model })
+        let replayed = replayTrace(result, back, { label: `${model}.${format}`, model, simulation: seeded() })
         stats.replayMismatches += replayed.mismatches.length
         if (replayed.error) stats.replayErrors++
         const read = traceFromRun(result, simulation, { model, inputs: 'read' })
         if ((replayed.mismatches.length > 0 || replayed.error) && writesInputs(engine, read)) {
             if (format === 'ktrace') stats.writesInputs++
-            replayed = replayTrace(result, readTrace(writeTrace(read, format), format), { model })
+            replayed = replayTrace(result, readTrace(writeTrace(read, format), format), { model, simulation: seeded() })
         }
         const replayProblems = [
             ...replayed.mismatches.map((m) => `tick ${m.tick}: ${m.name} is ${JSON.stringify(m.actual)}, the trace has ${JSON.stringify(m.expected)}`),

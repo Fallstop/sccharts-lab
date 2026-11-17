@@ -64,6 +64,29 @@ export interface SimulationOptions {
      *  likely meant. Off by default: KIELER's simulation takes any name from its environment into the data pool (the
      *  pool then has it; replaying a trace file with extra columns relies on that). */
     strict?: boolean
+    /**
+     * What `randomize()` seeds the random numbers with: a number for every call, or a function asked for each call
+     * (`tick` it runs in, `index` among the tick's calls, from 0; undefined leaves that call to the default). Default:
+     * the clock in whole seconds, as KIELER's `srand(time(NULL))`. A tick run again after `rewind()` gets the seeds
+     * it had; `reset()` forgets them. A tick's seeds are in its result (`TickResult.seeds`): give them to another
+     * simulation to repeat a run.
+     */
+    seed?: number | ((call: SeedCall) => number | undefined)
+}
+
+/** One `randomize()` call of a run: the tick it runs in and its place among the tick's calls (from 0). */
+export interface SeedCall {
+    tick: number
+    index: number
+}
+
+/**
+ * A run's seeds as a `SimulationOptions.seed`: the simulation seeds every `randomize()` as that run did, tick by
+ * tick (`createSimulation(result, { seed: replaySeeds(earlier.history) })`). Calls the run did not make take the clock.
+ */
+export function replaySeeds(ticks: readonly { seeds?: readonly number[] }[]): (call: SeedCall) => number | undefined {
+    const seeds = ticks.map(t => t.seeds?.slice())
+    return ({ tick, index }) => seeds[tick - 1]?.[index]
 }
 
 export function createSimulation(result: SimulationInput, options: SimulationOptions = {}): Simulation {
@@ -72,6 +95,14 @@ export function createSimulation(result: SimulationInput, options: SimulationOpt
     if (!result.ok || !compiled || !compiled.runnable || !result.chart) return rejectedSimulation(result, compiled)
     const exe = new ExecutableChart(compiled, result.interface)
     const runner = new SimRunner(exe, result.chart)
+    // The seeds of the ticks run so far, kept across rewind(): a tick run again is the tick it was.
+    const seeds: number[][] = []
+    runner.seedSource = (tick, index) => {
+        const given = typeof options.seed === 'function' ? options.seed({ tick, index }) : options.seed
+        const seed = given ?? seeds[tick - 1]?.[index] ?? Math.floor(Date.now() / 1000)
+        ;(seeds[tick - 1] ??= [])[index] = seed
+        return seed
+    }
     const history: SimTickResult[] = []
     const inputsLog: Record<string, Value>[] = []
     const snapshots: ReturnType<SimRunner['snapshot']>[] = [runner.snapshot()]
@@ -90,6 +121,7 @@ export function createSimulation(result: SimulationInput, options: SimulationOpt
         },
         reset() {
             runner.reset()
+            seeds.length = 0
             history.length = 0
             inputsLog.length = 0
             snapshots.length = 0

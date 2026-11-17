@@ -1,0 +1,150 @@
+{
+  "hash": "5ab293de2f4ffd242f0adf069eccd3ee508f7000",
+  "chart": "src/examples/advanced/methods/dice-reseeded.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "shake": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "face": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "r": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "shake": false
+      },
+      "values": {
+        "shake": false,
+        "face": 0,
+        "r": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false,
+      "clock": [
+        1794959246,
+        1794959246
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "shake": false
+      },
+      "values": {
+        "shake": false,
+        "face": 6,
+        "r": 0.8401877284049988
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false,
+      "clock": [
+        1794959246,
+        1794959246
+      ]
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "shake": true
+      },
+      "values": {
+        "shake": true,
+        "face": 2,
+        "r": 0.32510724663734436
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false,
+      "clock": [
+        1794959246,
+        1794959246
+      ]
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "shake": false
+      },
+      "values": {
+        "shake": false,
+        "face": 6,
+        "r": 0.9215947389602661
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false,
+      "clock": [
+        1794959246,
+        1794959246
+      ]
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "shake": true
+      },
+      "values": {
+        "shake": true,
+        "face": 2,
+        "r": 0.32510724663734436
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false,
+      "clock": [
+        1794959246,
+        1794959246
+      ]
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "shake": false
+      },
+      "values": {
+        "shake": false,
+        "face": 6,
+        "r": 0.9215947389602661
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false,
+      "clock": [
+        1794959246,
+        1794959246
+      ]
+    }
+  ]
+}

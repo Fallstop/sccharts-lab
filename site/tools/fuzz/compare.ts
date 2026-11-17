@@ -1,13 +1,14 @@
 // Compares the engine with one oracle result (tools/oracle/oracle.mjs): acceptance, KIELER's data pool, the
 // taken-transition counters and the termination tick, tick by tick (as tests/conformance/engine.test.ts does).
 
-import { compile, createSimulation, SIMULATOR_CODES, type PoolValue } from '@sccharts-lab/engine'
+import { compile, createSimulation, replaySeeds, SIMULATOR_CODES, type PoolValue } from '@sccharts-lab/engine'
 import type { Value } from '@sccharts-lab/engine/types'
 
 export interface OracleResult {
     ok: boolean
     errors: string[]
-    ticks: { step: number; values: Record<string, PoolValue>; taken?: number[]; terminated?: boolean }[]
+    /** `clock`: the clock (whole seconds) just before and after the tick; a randomize() in it seeded with one of them. */
+    ticks: { step: number; values: Record<string, PoolValue>; taken?: number[]; terminated?: boolean; clock?: [number, number] }[]
     /** KIELER's LSP diagnostics (parser, linker, validator): severity 1 error, 2 warning, 3 info. */
     diagnostics?: { severity: number; message: string; line: number; column: number; code?: string }[]
 }
@@ -51,7 +52,7 @@ export const MISMATCH: ReadonlySet<OutcomeKind> = new Set(['engine-accepts', 'en
 const show = (v: PoolValue | undefined) => (v === undefined ? 'absent' : JSON.stringify(v))
 
 /** Values of KIELER's data pool: scalars, arrays and the objects of class and struct instances. */
-function same(a: PoolValue | undefined, b: PoolValue | undefined): boolean {
+export function same(a: PoolValue | undefined, b: PoolValue | undefined): boolean {
     if (a === undefined || a === null) return b === undefined || b === null
     if (Array.isArray(a) || Array.isArray(b)) {
         if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false
@@ -79,6 +80,52 @@ export function engineVerdict(model: string, files?: Record<string, string>): st
     }
 }
 
+/**
+ * The seeds KIELER's randomize() calls used in a recorded run, per tick (undefined: no call): the clock seconds
+ * around each tick (`clock`) for which the engine's run has the recorded data pool. Undefined when no choice of
+ * seeds gives the recording (the engine differs from KIELER somewhere else too), or when the chart does not compile.
+ */
+export function resolveSeeds(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>): (number[] | undefined)[] | undefined {
+    const result = compile(model, { files })
+    if (!rec.ok || !result.ok || result.diagnostics.some(d => d.code === 'unsupported')) return undefined
+    const chosen: (number[] | undefined)[] = []
+    const window = (i: number): number[] => {
+        // A second of slack on either side: the oracle's clock and the simulation's are read at different moments.
+        const [from, to] = rec.ticks[i].clock ?? [0, 0]
+        return Array.from({ length: to - from + 3 }, (_, k) => from - 1 + k)
+    }
+    const sim = createSimulation(result, { seed: ({ tick, index }) => chosen[tick - 1]?.[index] ?? window(tick - 1)[0] })
+    const matches = (i: number): number | undefined => {
+        sim.rewind(i)
+        const actual = sim.step(inputs[i] ?? {})
+        if (actual.error) return undefined
+        const expected = rec.ticks[i].values
+        for (const [key, value] of Object.entries(expected)) if (!same(actual.pool[key], value)) return undefined
+        return actual.seeds?.length ?? 0
+    }
+    /** Seeds in the order the calls ran: time does not go backwards within a tick. */
+    function* tuples(candidates: number[], length: number, from = 0): Generator<number[]> {
+        if (!length) { yield []; return }
+        for (let k = from; k < candidates.length; k++) for (const rest of tuples(candidates, length - 1, k)) yield [candidates[k], ...rest]
+    }
+    const solve = (i: number): boolean => {
+        if (i >= rec.ticks.length) return true
+        chosen.length = i
+        // A first run tells how many calls the tick makes (with seeds that may be wrong).
+        sim.rewind(i)
+        const calls = sim.step(inputs[i] ?? {}).seeds?.length ?? 0
+        if (!calls) return matches(i) === 0 && solve(i + 1)
+        for (const seeds of tuples(window(i), calls)) {
+            chosen.length = i
+            chosen[i] = seeds
+            if (matches(i) === calls && solve(i + 1)) return true
+        }
+        chosen.length = i
+        return false
+    }
+    return solve(0) ? Array.from({ length: rec.ticks.length }, (_, i) => chosen[i]) : undefined
+}
+
 export function compareWithOracle(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>): Outcome {
     let result
     try {
@@ -103,7 +150,9 @@ export function compareWithOracle(model: string, inputs: Record<string, Value>[]
     if (unsupported) return { kind: 'unsupported', detail: unsupported.message }
     let sim
     try {
-        sim = createSimulation(result)
+        // KIELER seeded each randomize() with its clock: the engine gets the seconds that give KIELER's run, if any do.
+        const seeds = rec.ticks.some(t => t.clock) && /\brandomize\b/.test([model, ...Object.values(files ?? {})].join('\n')) ? resolveSeeds(model, inputs, rec, files) : undefined
+        sim = createSimulation(result, seeds ? { seed: replaySeeds(seeds.map(s => ({ seeds: s }))) } : {})
     } catch (e) {
         return { kind: 'engine-crash', detail: `createSimulation threw: ${(e as Error).message}` }
     }

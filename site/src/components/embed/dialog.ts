@@ -8,8 +8,8 @@ import { parseEvent } from '@sccharts-lab/embed/protocol'
 import { elementSnippet, iframeSnippet, iframeSrc, type EmbedChoice } from './snippet'
 import { plural } from '../playground/app-types'
 import { sameFiles } from '../playground/project'
-import { runInputs } from '../playground/run-tour'
-import { encodeRun, makeRun } from '../playground/share'
+import { sharedRun } from '../playground/run-tour'
+import { encodeRun } from '../playground/share'
 import type { Playground } from '../playground/app'
 import './styles/dialog.css'
 
@@ -40,7 +40,7 @@ function snapshot(app: Playground) {
     const view = sim.view
     const a = sim.analysed
     // A run of the file the embed opens, as it is now.
-    const run = a && view?.history.length && sim.ok && !sim.stale && a.file === project.active ? { code: encodeRun(makeRun(runInputs(a.result, view.history).ticks, view.cursor)), ticks: view.history.length, at: view.cursor } : undefined
+    const run = a && view?.history.length && sim.ok && !sim.stale && a.file === project.active ? { code: encodeRun(sharedRun(a.result, view.history, view.cursor)), ticks: view.history.length, at: view.cursor } : undefined
     const name = app.latest?.result.chart?.name ?? project.name
     return { chart, example, run, tour: !!(example && sim.originTour), chartChoice: app.chartChoice, name }
 }

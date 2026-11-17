@@ -1,0 +1,13 @@
+// randomize() and random() inside methods of a class instance.
+scchart ProbeRandomizeClass {
+  output float o
+  class Dice {
+    float last = 0
+    void seed() { randomize() }
+    float roll() { last = random(); return last }
+  } d
+  initial state A
+    do o = d.roll() go to B
+  state B do d.seed(); o = d.roll() go to C
+  state C do o = d.roll() go to C
+}

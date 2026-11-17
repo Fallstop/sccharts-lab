@@ -1,0 +1,50 @@
+{
+  "needs": [
+    "c-random"
+  ],
+  "ticks": [
+    {
+      "inputs": {
+        "shake": false
+      },
+      "note": "Tick 1 enters `Still` and `Rolling`; both transitions are delayed, so nothing is drawn yet."
+    },
+    {
+      "inputs": {
+        "shake": false
+      },
+      "note": "No `randomize()` so far: `r` ≈ 0.840 and `face` = 6, the first number of every unseeded run."
+    },
+    {
+      "inputs": {
+        "shake": true
+      },
+      "note": "`shake` seeds the generator from the clock, and `Roll`, which comes after `Seed`, draws the first number of the new sequence. This is the run KIELER recorded: its clock, its numbers.",
+      "seeds": [
+        1794959246
+      ]
+    },
+    {
+      "inputs": {
+        "shake": false
+      },
+      "note": "The sequence that seed started goes on."
+    },
+    {
+      "inputs": {
+        "shake": true
+      },
+      "note": "Seeded again. KIELER reads the clock in whole seconds, and this tick ran in the same second as tick 3, so the sequence starts over: `r` is the number of tick 3 again.",
+      "seeds": [
+        1794959246
+      ]
+    },
+    {
+      "inputs": {
+        "shake": false
+      },
+      "note": "And the second number is the one of tick 4. Take over and press Step: now the clock is yours, and the numbers are new."
+    }
+  ],
+  "expect": "ok"
+}

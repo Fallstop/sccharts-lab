@@ -52,6 +52,7 @@ for (const [index, base] of jobs.entries()) {
     const model = fs.readFileSync(base + '.sctx', 'utf8')
     const imports = Object.fromEntries((scenario.imports ?? []).map(f => [path.basename(f), fs.readFileSync(path.join(path.dirname(base), f), 'utf8')]))
     const inputs = (scenario.ticks ?? []).map(t => t.inputs ?? {})
+    const seeded = (rec.ticks ?? []).some(t => t.clock)
     let raw, hang = false
     try {
         raw = await Promise.race([
@@ -67,7 +68,8 @@ for (const [index, base] of jobs.entries()) {
     const row = {
         chart, hang,
         recOk: rec.ok, offOk: raw.ok,
-        sameValues: rec.ok && raw.ok ? values(rec) === values(raw) : null,
+        // A run that calls randomize() is seeded by the clock: two runs differ, so only the verdicts are compared.
+        sameValues: rec.ok && raw.ok && !seeded ? values(rec) === values(raw) : null,
         recErrors: rec.ok ? undefined : rec.errors.slice(0, 3).map(s => s.slice(0, 200)),
         offErrors: raw.ok ? undefined : (raw.errors ?? []).slice(0, 3).map(s => s.slice(0, 200)),
     }

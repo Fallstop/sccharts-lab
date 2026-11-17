@@ -5,7 +5,7 @@
 // It is a comparison, not a grade: another chart can solve an exercise its own way, and one run of inputs cannot
 // show that a chart is right. The wording says so.
 
-import { createSimulation, type CompileResult } from '@sccharts-lab/engine'
+import { createSimulation, replaySeeds, type CompileResult } from '@sccharts-lab/engine'
 import type { Diagnostic, Value, VariableInfo } from '@sccharts-lab/engine/types'
 import type { Scenario } from '../frame/examples'
 import type { Recording } from './sources'
@@ -189,7 +189,8 @@ export function compareWithSolution(reader: CompileResult, scenario: Scenario, r
     if (unsupported) return { ...out, unsupported: true, reason: CANNOT_RUN, errors: [unsupported] }
     let sim
     try {
-        sim = createSimulation(reader)
+        // The test run's randomize() seeds, where it has any: the reader's chart draws the numbers the solution drew.
+        sim = createSimulation(reader, { seed: replaySeeds(scenario.ticks) })
     } catch (error) {
         return { ...out, reason: `Your chart cannot be simulated: ${error instanceof Error ? error.message : String(error)}` }
     }

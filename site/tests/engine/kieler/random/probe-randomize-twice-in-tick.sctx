@@ -1,0 +1,8 @@
+// Two randomize() calls in one tick read the same second: the sequence starts again, a and b are the same number.
+scchart ProbeRandomizeTwiceInTick {
+  output float a, b, c
+  initial state A
+    go to B
+  state B do randomize(); a = random(); randomize(); b = random(); c = random() go to C
+  state C do c = random() go to C
+}

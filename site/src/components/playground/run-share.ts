@@ -17,7 +17,7 @@ export async function shareRun(pg: Playground) {
     }
     // The inputs each tick ran with (the engine's TickResult.ranWith; runInputs replays them to check).
     const found = runInputs(a.result, view.history)
-    const run = makeRun(found.ticks, view.cursor)
+    const run = makeRun(found.ticks, view.cursor, found.seeds)
     // The chart the run belongs to: the one in the panel (the source may have changed since the run started).
     const source = a.tracker.doc.toString()
     const project = pg.project

@@ -1,0 +1,16 @@
+// A random() in a trigger is evaluated in every tick; a randomize() between the ticks changes what it draws.
+scchart ProbeRandomizeTrigger {
+  input bool a
+  output int hits = 0
+  output float seen = 0
+  region Seed {
+    initial state S
+      if a do randomize() go to T
+    state T
+  }
+  region Draw {
+    initial state W
+      if random() < 0.5 do hits += 1 go to W
+      do seen = random() go to W
+  }
+}

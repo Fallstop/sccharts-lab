@@ -22,7 +22,7 @@
 	import { Fold } from './fold.svelte'
 	import { pairStepper, unionInputs } from './pair'
 	import Stack from './Stack.svelte'
-	import { Timeline } from './timeline'
+	import { scriptSeeds, Timeline } from './timeline'
 	import { compareSvg, differences, forCopiesIn, hasSuspension, lanesFor, mightSuspend, resolveShow, terminationText, type ComparedChart, type ForCopies } from './trace'
 
 	interface Side {
@@ -63,8 +63,10 @@
 	let failure = $state<string | undefined>()
 	if (ok) {
 		try {
-			sa = createSimulation(ca)
-			sb = createSimulation(cb)
+			// A tour's ticks seed randomize() as the recorded run did, in both charts.
+			const seed = scriptSeeds(tour, () => timeline?.tour ?? false)
+			sa = createSimulation(ca, { seed })
+			sb = createSimulation(cb, { seed })
 			const { stepper, readPool } = pairStepper(sa, ca.interface, sb, cb.interface)
 			timeline = new Timeline(stepper, initialInputs(union), tour, readPool)
 		} catch (error) {

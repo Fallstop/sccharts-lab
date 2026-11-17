@@ -10,7 +10,7 @@
 //                 "inputs"?: [ {var: value}, ... ], "system"?: "netlist" | "priority" }.
 // Output (stdout, JSON): one result, or an array for --batch:
 //   { name, ok, system, errors: [msg], warnings: [msg], interface: { var: {type, properties} },
-//     ticks: [ { step, inputs, values, taken: [fired this tick, per transition], takenTotal, terminated } ],
+//     ticks: [ { step, inputs, values, taken: [fired this tick, per transition], takenTotal, terminated, clock: [s, s] } ],
 //     diagnostics?: [LSP diagnostic { severity, message, line, column, source, code }],
 //     issues?: [the compiler's structured issues { severity, code, message, hint?, details?, line?, column?, processor }],
 //     internalErrors?: [{ message, processor, details }] }
@@ -137,6 +137,7 @@ export async function startOracle({ java = DEFAULT_JAVA, jar = process.env.SCCHA
             for (let i = 0; i < ticks; i++) {
                 const values = inputs[i] ?? {}
                 const stepped = waitFor('keith/simulation/didStep', () => true, 60000)
+                const sentAt = Math.floor(Date.now() / 1000)
                 await connection.sendNotification('keith/simulation/step', { valuesForNextStep: values, simulationType: 'Manual' })
                 const tick = await stepped
                 if (!result.interface && tick.values?.['#interface']) result.interface = publicInterface(tick.values['#interface'], scenario.raw)
@@ -149,6 +150,8 @@ export async function startOracle({ java = DEFAULT_JAVA, jar = process.env.SCCHA
                     taken: delta(tick.values?._taken_transitions, result.ticks.at(-1)?.takenTotal),
                     takenTotal: tick.values?._taken_transitions,
                     terminated: tick.values?._TERM,
+                    // The clock (whole seconds) around the tick: a randomize() in it seeded with a second in between.
+                    clock: [sentAt, Math.floor(Date.now() / 1000)],
                 })
                 if (tick.error) { result.errors.push(`tick ${i + 1}: ${tick.error}`); break }
             }

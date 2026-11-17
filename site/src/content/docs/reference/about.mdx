@@ -179,9 +179,12 @@ number per call. The guide reproduces that sequence number for number, in the or
 the calls, so an example with `random()` shows the same numbers as its recording.
 
 The recordings are made on Linux, with the GNU C library's `rand()`. Other systems' C libraries have
-their own `rand()`, so on Windows or a Mac SCCharts Lab may well show different numbers. A chart that
-calls `randomize()` asks for a new seed from the clock, and gets different numbers in KIELER on every
-run; the guide keeps the fixed sequence.
+their own `rand()`, so on Windows or a Mac SCCharts Lab may well show different numbers.
+
+A chart that calls `randomize()` seeds the generator with the time of day in whole seconds, so every run
+has its own numbers, in KIELER and in the guide's simulator alike. Such an example is still checked
+number for number: its recording keeps the clock of every tick, the second that gives KIELER's numbers
+is found from it, and the guided tour and the checks replay the run with that seed.
 
 ## Random charts, compared with KIELER
 

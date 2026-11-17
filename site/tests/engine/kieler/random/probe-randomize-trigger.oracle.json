@@ -1,0 +1,156 @@
+{
+  "hash": "e4dac2bbe919c8f135ee0db2d12fe3877d41f27e",
+  "chart": "tests/engine/kieler/random/probe-randomize-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "hits": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "seen": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "hits": 0,
+        "seen": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false,
+      "clock": [
+        1794958853,
+        1794958853
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "hits": 0,
+        "seen": 0.08619759976863861
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false,
+      "clock": [
+        1794958853,
+        1794958853
+      ]
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "hits": 0,
+        "seen": 0.9466986656188965
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false,
+      "clock": [
+        1794958853,
+        1794958853
+      ]
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "hits": 1,
+        "seen": 0.9466986656188965
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false,
+      "clock": [
+        1794958853,
+        1794958853
+      ]
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "hits": 2,
+        "seen": 0.9466986656188965
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false,
+      "clock": [
+        1794958853,
+        1794958853
+      ]
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "hits": 2,
+        "seen": 0.16564518213272095
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false,
+      "clock": [
+        1794958853,
+        1794958853
+      ]
+    }
+  ]
+}

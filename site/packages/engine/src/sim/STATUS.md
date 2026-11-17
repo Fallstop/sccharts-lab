@@ -28,6 +28,15 @@ if (result.ok) {
   after the chart terminated KIELER's simulation stops stepping (no condition is computed any more), as the simulator.
   A chart that calls a recursive method is rejected (`kieler-crash`, "The compiler ran out of stack space during
   Dependency."; was `unsupported`); a recursive method that is never called is harmless and the chart runs.
+- **randomize() (basics.md B-29):** seeds glibc's generator as KIELER's `srand(time(NULL))` does (it was a no-op: a
+  chart kept the unseeded sequence). `createSimulation(result, { seed })`: a number for every call, or a function of
+  `{ tick, index }` (`SeedCall`; undefined: the default, the clock in whole seconds). `TickResult.seeds`: the seeds a
+  tick's calls used. A tick run again after `rewind()` has the seeds it had; `reset()` forgets them.
+  `replaySeeds(history)` is the `seed` option that repeats a run in another simulation. The tick's log has a note
+  ("randomize() seeded the random numbers from the clock (seed n): ..."). Recorded runs: `ticks[].clock` in the
+  recording, `ticks[].seeds` in the scenario (tools/oracle/seeds.ts, run by `pnpm oracle:record`), replayed by the
+  conformance test, cgen:check (whose harness answers `time()` with them) and the widgets' tours
+  (`scriptSeeds`, src/components/sim/timeline.ts); a shared run's link carries its seeds (`s` in share.ts).
 - **Final polish (engine-5), for widgets-E and playground-5:**
   - `describeTick(result, program, previous?, { markdown: true })` gives the same sentences as inline Markdown, with
     state, variable, signal and chart names, triggers and values in code spans ("Inside `Left` (a copy of

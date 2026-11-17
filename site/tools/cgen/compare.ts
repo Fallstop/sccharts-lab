@@ -5,13 +5,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { compile, createSimulation, generateC, type GeneratedC, type PoolValue, type SimTickResult } from '@sccharts-lab/engine'
+import { compile, createSimulation, generateC, replaySeeds, type GeneratedC, type PoolValue, type SimTickResult } from '@sccharts-lab/engine'
 import type { Value } from '@sccharts-lab/engine/types'
 import { compileAndRun, type RunResult } from './gcc'
 import { harness, parseOutput, type HarnessTick } from './harness'
 
 export interface Scenario {
-    ticks: { inputs?: Record<string, Value> }[]
+    /** `seeds`: what KIELER's clock gave each randomize() of the tick in the recorded run (tools/oracle/seeds.ts). */
+    ticks: { inputs?: Record<string, Value>; seeds?: number[] }[]
     expect?: 'ok' | 'error'
     system?: string
     imports?: string[]
@@ -135,11 +136,14 @@ async function compareCase(c: Case, options: { keep?: string } = {}): Promise<Ca
 
     // The engine's run (none for host code and recursive methods, which the simulator cannot run).
     const engine: { tick: SimTickResult; taken: number[] }[] = []
-    const sim = gen.simulated ? createSimulation(result) : undefined
+    const sim = gen.simulated ? createSimulation(result, { seed: replaySeeds(sc?.ticks ?? []) }) : undefined
     if (sim) for (const given of c.inputs) { const t = sim.step(given); engine.push({ tick: t, taken: sim.takenCounts(t) }) }
-    let run = await compileAndRun(gen.files, harness(gen, c.inputs), options)
+    // The C program's clock answers with the seeds the engine's randomize() calls had (the recorded run's, or this
+    // moment's for a chart without a recording), so the two runs are the same run.
+    const seeds = sim ? engine.flatMap(e => e.tick.seeds ?? []) : (sc?.ticks ?? []).flatMap(t => t.seeds ?? [])
+    let run = await compileAndRun(gen.files, harness(gen, c.inputs, seeds), options)
     // A machine busy with other work can stall a run: try once more, with more time, before reporting it.
-    if (run.timedOut) run = await compileAndRun(gen.files, harness(gen, c.inputs), { ...options, timeout: 120_000 })
+    if (run.timedOut) run = await compileAndRun(gen.files, harness(gen, c.inputs, seeds), { ...options, timeout: 120_000 })
     if (run.compileError) return { ...base, verdict: 'mismatch', problems: [`gcc rejects the generated code: ${gccErrors(run.compileError)}`], hostCode: gen.hostCode }
     const out = parseOutput(run.stdout)
     const warnings = generatedWarnings(run, gen)

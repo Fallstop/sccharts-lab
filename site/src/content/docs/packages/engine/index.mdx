@@ -151,6 +151,19 @@ complaint and changes nothing. In tests, turn on `strict`:
 
 <Sample file="engine/strict.mjs" output />
 
+### Random numbers
+
+`random()` gives the numbers of C's `rand()` as KIELER's simulation draws them: the same sequence in
+every run, until the chart calls `randomize()`. That seeds the generator from the clock, in KIELER with
+`srand(time(NULL))` and here with the same second, so from then on every run has its own numbers.
+
+<Sample file="dice.sctx" />
+
+Each tick's result lists the seeds its `randomize()` calls used. Give them to another simulation with
+`replaySeeds()` and it repeats the run; give a number as the `seed` option and every call seeds with it:
+
+<Sample file="engine/random.mjs" output />
+
 ### Run-time errors
 
 Some charts compile and then fail while running: a division by zero, an array index out of range. The

@@ -242,6 +242,14 @@ reproducible, provided gcc knows `srand`: KIELER includes `<stdlib.h>` itself on
 `implicit declaration of function ‘srand’`; older versions only warn, and the chart runs.
 Either way, `#hostcode "#include <stdlib.h>"` fixes it.
 
+<Sim example="advanced/methods/dice-reseeded" caption="`shake` calls `randomize()`. The tour is a run KIELER recorded; take over, and the numbers come from your own clock." />
+
+KIELER's C code seeds with `srand(time(NULL))`: the time of day in whole seconds. Two `randomize()` calls
+within the same second therefore start the same sequence twice, which is what ticks 3 and 5 of the
+recorded run show. The simulator on this site seeds the same way, from your computer's clock, so its
+numbers differ from run to run as KIELER's do. The guided tour is the exception: it replays the run
+KIELER recorded, with the second KIELER's clock showed at the time.
+
 ## Try it
 
 <TryIt example="advanced/methods/sign-start" solution="advanced/methods/sign-solution" title="A sign method">

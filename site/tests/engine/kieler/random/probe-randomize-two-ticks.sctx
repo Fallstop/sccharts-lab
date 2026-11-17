@@ -1,0 +1,16 @@
+// randomize() in two different ticks, with random() calls in between and int results.
+scchart ProbeRandomizeTwoTicks {
+  input bool a
+  output int die = 0
+  output float r = 0
+  region Seed {
+    initial state S
+      if a do randomize() go to S
+  }
+  region Roll {
+    initial state W
+      go to R
+    state R
+      do r = random(); die = r * 6 + 1 go to R
+  }
+}

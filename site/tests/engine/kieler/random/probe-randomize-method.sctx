@@ -1,0 +1,10 @@
+// randomize() inside a method and inside a code block.
+scchart ProbeRandomizeMethod {
+  output float o, p
+  method void reseed() { randomize() }
+  initial state A
+    do o = random() go to B
+  state B do reseed(); o = random() go to C
+  state C do { randomize(); p = random() } go to D
+  state D do o = random(); p = random() go to D
+}

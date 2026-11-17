@@ -13,14 +13,14 @@
 	import { errorLink } from '../frame/error-links'
 	import { inlineCode, inlineMd, withoutLinkTo } from '../frame/inline-md'
 	import { describeTick, explainTick, tickSummary, type DescribeContext } from './describe'
-	import { createSimulation, traceableVariables, type CompileResult } from './engine'
+	import { createSimulation, replaySeeds, traceableVariables, type CompileResult } from './engine'
 	import { controlsFor, initialInputs, type InputState } from './inputs'
 	import Inputs from './Inputs.svelte'
 	import { elementsOf, errorClasses, errorLines, lineMap, tickLines, type LineMap } from './lines'
 	import { keepFocus, keepTickInView, reducedMotion, roving } from './link'
 	import { Fold, type FoldStart } from './fold.svelte'
 	import Stack from './Stack.svelte'
-	import { Timeline } from './timeline'
+	import { scriptSeeds, Timeline } from './timeline'
 	import { forCopiesIn, hasSuspension, lanesFor, mightSuspend, traceSvg, type ForCopies } from './trace'
 
 	export interface SimView {
@@ -142,7 +142,11 @@
 			return
 		}
 		try {
-			const sim = createSimulation(c)
+			// randomize(): an edited chart replays the ticks so far with the seeds they had, and a tour's ticks have the
+			// seeds of the recorded run; everything else takes the clock.
+			const before = timeline && recompile === 'replay' ? replaySeeds(timeline.history.slice(0, timeline.cursor)) : undefined
+			const scripted = scriptSeeds(tour, () => timeline?.tour ?? false)
+			const sim = createSimulation(c, { seed: (call) => before?.(call) ?? scripted(call) })
 			const init = initialInputs(c.interface)
 			if (timeline && recompile === 'replay') timeline = timeline.replace(sim, init, true)
 			else if (timeline) timeline = timeline.replace(sim, init, false)

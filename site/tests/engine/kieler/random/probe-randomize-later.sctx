@@ -1,0 +1,9 @@
+// randomize() on a delayed transition: random() before it is C's unseeded sequence, after it the sequence of
+// srand(time(NULL)), the clock's second when the tick ran.
+scchart ProbeRandomizeLater {
+  output float o
+  initial state A
+    do o = random() go to B
+  state B do randomize(); o = random() go to C
+  state C do o = random() go to C
+}

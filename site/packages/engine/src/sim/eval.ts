@@ -10,7 +10,7 @@
 import type { Span } from '../types'
 import type { CEffect, CExpr, CRef, CVar } from './model'
 import type { Memory } from './memory'
-import { newRandState, random, type RandState } from './random'
+import { newRandState, random, seedRandState, type RandState } from './random'
 import { compileMethodCall } from './structure/methods'
 import {
     convert, doubleToInt, INT_MIN, isCString, literalString, printfValue, toChar,
@@ -27,6 +27,8 @@ export class SimError extends Error {
 export interface Runtime {
     vals: RValue[]
     rand: RandState
+    /** The seed of the next randomize() (C's `time(NULL)`); the executor records what it gave. */
+    seed?: () => number
     /** Text printed in this tick (print() inside methods). */
     printed?: string[]
     /** What a write outside an array overwrote (memory.ts), for the log's notes (plain and Markdown); the executor
@@ -475,7 +477,14 @@ export function compileEffect(f: CEffect, ec: ExprCompiler): EffectFn {
             const c = ec.compile(f.call)
             return rt => { c.fn(rt); return undefined }
         }
-        case 'randomize': return () => undefined
+        case 'randomize': return rt => {
+            if (!rt.seed) return undefined
+            const seed = rt.seed()
+            seedRandState(rt.rand, seed)
+            const say = (c: (s: string) => string) => `${c('randomize()')} seeded the random numbers from the clock (seed ${seed}): ${c('random()')} starts a new sequence.`
+            ;(rt.notes ??= []).push({ text: say(s => s), markdown: say(s => '`' + s + '`') })
+            return undefined
+        }
         case 'host': {
             const span = f.o.span
             return () => { throw new SimError('The simulator cannot run host code', span, 'unsupported') }
