@@ -200,10 +200,11 @@ A value of a chart's variable. An array variable is a nested array; an unset str
 ### `PoolValue`
 
 ```ts
-type PoolValue = Value | { [member: string]: PoolValue }
+type PoolValue = Value | PoolValue[] | { [member: string]: PoolValue }
 ```
 
-A value in KIELER's data pool. An instance of a class or struct is an object of its members.
+A value in KIELER's data pool. An instance of a class or struct is an object of its members, an instance inside
+it an object inside that, and an array of instances an array of such objects.
 
 ### `TraceEvent`
 
@@ -410,6 +411,7 @@ C code for a compiled chart, in the shape of KIELER's netlist-based compilation.
 | `output` | `boolean` | It is an output. |
 | `pool?` | `string` | The name KIELER's simulation reports it under. |
 | `poolObject?` | `string` | For a member of an instance: the instance's name in the pool. |
+| `poolPath?` | `{ key: string; dims: number[] }[]` | For a member of an instance: the way to it in the pool, from the outermost instance (`ls`, `p`, `x` for `ls[1].p.x`), each step with its own array sizes. Inside an array of instances `member` has a `[]` for each instance index (`cs[].v`), and `dims` starts with the instances' sizes. |
 | `signal?` | `'presence' \| 'value' \| 'curval'` | For a valued signal: which of its three members this is. |
 
 ## The model
@@ -497,6 +499,7 @@ A chart, a state or a superstate. Its most used members:
 | `Reference` | A name in an expression, with its `indices`, a member access in `sub`, and the id it resolves to in `decl`. |
 | `Effect` | A union by `kind`: `'assign'`, `'postfix'` (`x++`), `'emit'`, `'call'`, `'print'`, `'randomize'`, `'hostcode'`, `'code'`. |
 | `AssignOperator` | `'='`, `'+='`, `'min='` and the other assignment operators. |
+| `ScheduleRef` | A written schedule clause (`schedule s 1` after an effect, a trigger, a state or a region): the schedule in `ref` and the `priority`. |
 | `CombineOperator` | A valued signal's combine operator: `'+'`, `'*'`, `'max'`, `'min'`, `'\|'`, `'&'`, `'none'`, `'host'`. |
 | `Equation` | An equation of a dataflow region. |
 | `ScopeCall`, `ScopeParameter` | A reference to another chart (`is Other(a, b to c)`) and one of its bindings. |
