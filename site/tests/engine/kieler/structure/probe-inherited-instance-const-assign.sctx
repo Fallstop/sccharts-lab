@@ -1,0 +1,9 @@
+// Assigning an inherited instance's const member: the same crash.
+scchart T extends Base {
+  initial state I
+  do c.K = 3; o = c.K go to I
+}
+scchart Base {
+  class C { const int K = 2 } c
+  output int o
+}

@@ -1,0 +1,9 @@
+// A base chart's const array indexed past its end.
+scchart T extends Base {
+  initial state I
+  do o = N[3] go to I
+}
+scchart Base {
+  const int N[2] = {4,5}
+  output int o
+}

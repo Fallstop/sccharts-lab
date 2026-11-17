@@ -1,0 +1,9 @@
+// The same with a struct inside the struct.
+scchart T extends Base {
+  initial state I
+  do a.p.x += 1; b.p.x += 2; o = a.p.x*10+b.p.x go to I
+}
+scchart Base {
+  struct C { struct P { int x } p } a, b
+  output int o
+}

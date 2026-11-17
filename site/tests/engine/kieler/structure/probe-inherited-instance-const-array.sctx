@@ -1,0 +1,10 @@
+// A const array member and a const member of an inherited instance, with a literal index.
+scchart T extends Base {
+  initial state I
+  do o = c.N[1] + c.K go to I
+}
+scchart Base {
+  class C { const int N[2] = {4,5}
+    const int K = 2 } c
+  output int o
+}

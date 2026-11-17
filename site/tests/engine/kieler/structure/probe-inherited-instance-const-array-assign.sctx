@@ -1,0 +1,9 @@
+// Assigning an element of an inherited instance's const array: KIELER's Const processor crashes.
+scchart T extends Base {
+  initial state I
+  do c.N[1] = 3; o = c.N[1] go to I
+}
+scchart Base {
+  class C { const int N[2] = {4,5} } c
+  output int o
+}

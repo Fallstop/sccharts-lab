@@ -1,0 +1,12 @@
+// A method called on an element of an inherited array of instances works on that element.
+scchart T extends Base {
+  initial state I
+  do cs[1].inc(); o = cs[1].v go to I
+}
+scchart Base {
+  class C {
+    int v = 2
+    void inc() { v++ }
+  } cs[2]
+  output int o
+}

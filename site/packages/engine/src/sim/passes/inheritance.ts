@@ -76,11 +76,14 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
         })
         return false
     }
+    /** The members of the bases' class and struct instances (two instances of one type share the members' ids). */
+    const instances = new Map<CVar, Map<string, CVar>>()
     // Inside the copies of the bases, the bases' declarations are the inherited ones too (lower.ts inheritedIndex).
     const replaced = inheritedDeclarations(chart, index)
     const bases: Base[] = allInherited(chart, find).map(b => {
         const prefix = `${state.origin ?? state.about ?? state.name}${REFERENCE_SEPARATOR}`
         const lowered = lowerInstance(b, index, prefix, undefined, replaced)
+        for (const [inst, members] of lowered.instances) instances.set(inst, members)
         return { chart: b, prefix, root: lowered.root, reports: lowered.reports }
     })
     if (!bases.length) return true
@@ -139,7 +142,8 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
         // the indices of the instances on the way in front of its own (as lower.ts ref() does for the chart's own).
         let out: CRef = { ...r, v: target }
         while (out.sub) {
-            const member = inheritedVar(out.sub.v)
+            const source = out.sub.v.declKind === 'unresolved' ? out.sub.v.decl?.split(REFERENCE_SEPARATOR).pop() : undefined
+            const member = source ? [...(instances.get(out.v) ?? [])].find(([id]) => id.split(REFERENCE_SEPARATOR).pop() === source)?.[1] : undefined
             if (!member) break
             out = { ...out.sub, v: member, idx: [...out.idx, ...out.sub.idx], span: r.span }
         }
@@ -233,5 +237,8 @@ function callsVar(list: CStmt[], v: CVar): boolean {
 function retarget(e: CExpr, map: (r: CRef) => CRef | undefined): CExpr | undefined {
     if (e.k !== 'call' || !e.target) return undefined
     const t = map(e.target)
-    return t ? { ...e, target: t } : undefined
+    if (!t) return undefined
+    // A method of an element of an array of instances takes the element's indices first (lower.ts call()).
+    if (t.v.declKind === 'method' && t.v.member && t.idx.length) return { ...e, args: [...t.idx, ...e.args], target: { ...t, idx: [] } }
+    return { ...e, target: t }
 }

@@ -1,0 +1,12 @@
+// The same with an argument: the element's index comes first, then the argument.
+scchart T extends Base {
+  initial state I
+  do cs[1].add(7); o = cs[1].v + cs[0].v go to I
+}
+scchart Base {
+  class C {
+    int v = 2
+    void add(int n) { v += n }
+  } cs[2]
+  output int o
+}

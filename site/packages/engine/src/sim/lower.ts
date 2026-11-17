@@ -45,6 +45,8 @@ export interface LowerResult {
     problems: { message: string; span?: Span; what: string }[]
     /** Errors KIELER reports for what the lowering sees (compile.ts reports them). */
     reports: Diagnostic[]
+    /** The members of every class and struct instance, by the member's declaration id (passes/inheritance.ts). */
+    instances: Map<CVar, Map<string, CVar>>
 }
 
 class Lowering {
@@ -84,6 +86,10 @@ class Lowering {
     readonly unsupportedSchedules: { what: string; span?: Span }[] = []
 
     constructor(readonly index: ModelIndex | undefined, private readonly inherited: ReadonlySet<string> = new Set()) {}
+
+    instanceMembers(): Map<CVar, Map<string, CVar>> {
+        return new Map([...this.instances].map(([inst, entry]) => [inst, entry.members]))
+    }
 
     /** Index references already reported by inheritedIndex (by where they are written). */
     private readonly lostIndices = new Set<string>()
@@ -637,26 +643,55 @@ class Lowering {
     }
 
     /**
-     * An element of a const array of a base chart. The inherited declarations come first in the chart, so when
-     * KIELER replaces the array none of the chart's own constants is a number yet: the index must be a literal,
-     * or be computed inside the value of one of the chart's own constants (constIndex).
+     * A constant of a base chart, or a const member of an instance declared there (`c.N`, two levels deep as for
+     * the chart's own): the lowering leaves the name to the Inheritance pass, which reads the constant's storage.
+     * Returns the constant's entry and the reference that names it.
+     */
+    private inheritedConst(r: Reference): { last: Reference; vo: ValuedObject } | undefined {
+        const source = r.decl?.split('/').pop()
+        if (!source || !this.inherited.has(source) || (r.decl && this.vars.has(r.decl))) return undefined
+        let last = r
+        let depth = 0
+        while (last.sub) { last = last.sub; depth++ }
+        if (depth > 2 || !last.decl) return undefined
+        const entry = this.index?.vos.get(last.decl.split('/').pop()!)
+        return entry?.decl?.const && entry.vo.initialValue ? { last, vo: entry.vo } : undefined
+    }
+
+    /**
+     * An element of an inherited const array. The inherited declarations come first in the chart, so when KIELER
+     * replaces the array none of the chart's own constants is a number yet: the index must be a literal, or be
+     * computed inside the value of one of the chart's own constants (constIndex).
      */
     private inheritedConstArray(r: Reference) {
-        const source = r.decl?.split('/').pop()
-        if (!source || !r.indices.length || !this.inherited.has(source) || (r.decl && this.vars.has(r.decl))) return
-        const entry = this.index?.vos.get(source)
-        if (!entry?.decl?.const) return
+        const found = this.inheritedConst(r)
+        if (!found || !found.last.indices.length) return
+        const { last, vo } = found
         const within = [...this.inlining].pop()
-        for (const i of r.indices) {
-            if (i.kind === 'int' || (within?.const && this.computedBefore(i, within))) continue
+        let value: Expression | undefined = vo.initialValue
+        for (const i of last.indices) {
             // An inherited name alone is reported by inheritedIndex.
-            if (i.kind === 'ref' && i.decl && this.inherited.has(i.decl.split('/').pop()!)) continue
-            this.reports.push({
-                severity: 'error', code: 'const-array-element', span: i.span ?? r.span,
-                message: `The inherited constant array \`${r.name}\` can only be indexed with a number written out`,
-                kieler: `Cannot insert const array element. ${i.kind === 'ref' ? i.name : 'The index'} is not a valid index (integer value).`,
-                hint: `KIELER puts the element's value where \`${r.name}[...]\` is written, and the constants of a base chart are replaced before this chart's own, which are still names then. Write the index as a number.`,
-            })
+            if (i.kind === 'ref' && i.decl && this.inherited.has(i.decl.split('/').pop()!)) return
+            let index = i.kind === 'int' ? i.value : undefined
+            if (index === undefined && within?.const && this.computedBefore(i, within)) {
+                const folded = foldConstants(this.expr(i))
+                if (folded.k === 'lit' && typeof folded.v === 'number') index = folded.v
+            }
+            const element: Expression | undefined = index !== undefined && value?.kind === 'vector' ? value.values[index] : undefined
+            if (index === undefined || (value?.kind === 'vector' && !element)) {
+                this.reports.push({
+                    severity: 'error', code: 'const-array-element', span: i.span ?? r.span,
+                    message: index === undefined
+                        ? `The inherited constant array \`${last.name}\` can only be indexed with a number written out`
+                        : `The constant array \`${last.name}\` has no element ${index}`,
+                    kieler: index === undefined
+                        ? `Cannot insert const array element. ${i.kind === 'ref' ? i.name : 'The index'} is not a valid index (integer value).`
+                        : `Cannot insert const array element. Array ${last.name} does not provide a value for index ${index}.`,
+                    hint: `KIELER puts the element's value where \`${last.name}[...]\` is written, and the constants of a base chart are replaced before this chart's own, which are still names then. Write the index as a number inside the array.`,
+                })
+                return
+            }
+            value = element
         }
     }
 
@@ -854,10 +889,11 @@ class Lowering {
      */
     private target(r: Reference): CRef {
         const ref = this.ref(r)
-        if (r.sub && !ref.sub && this.constSource.has(ref.v) && ref.v.tags.has('#const-member')) {
+        const inherited = r.sub ? this.inheritedConst(r) : undefined
+        if ((r.sub && !ref.sub && this.constSource.has(ref.v) && ref.v.tags.has('#const-member')) || inherited) {
             this.reports.push({
                 severity: 'error', code: 'kieler-crash', span: r.span,
-                message: `\`${ref.v.display ?? ref.v.name}\` is a constant and cannot be changed: KIELER's compiler crashes on this assignment`,
+                message: `\`${inherited ? inherited.last.name : ref.v.display ?? ref.v.name}\` is a constant and cannot be changed: KIELER's compiler crashes on this assignment`,
                 kieler: 'java.lang.ClassCastException: class de.cau.cs.kieler.kexpressions.impl.IntValueImpl cannot be cast to class de.cau.cs.kieler.kexpressions.ValuedObjectReference',
                 hint: 'Remove `const` from the member\'s declaration if it needs to change.',
             })
@@ -1099,7 +1135,7 @@ export function lowerChart(chart: State, index: ModelIndex | undefined, inherite
         })
     }
 
-    return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports }
+    return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports, instances: l.instanceMembers() }
 }
 
 function markActions(scope: Scope) {

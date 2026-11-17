@@ -1,0 +1,9 @@
+// The same with an index past the end.
+scchart T extends Base {
+  initial state I
+  do o = c.N[3] go to I
+}
+scchart Base {
+  class C { const int N[2] = {4,5} } c
+  output int o
+}

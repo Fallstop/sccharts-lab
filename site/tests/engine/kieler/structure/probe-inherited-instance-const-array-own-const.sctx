@@ -1,0 +1,10 @@
+// A const array member of an inherited instance indexed by the chart's own constant: still a name when KIELER replaces the array.
+scchart T extends Base {
+  const int K = 1
+  initial state I
+  do o = c.N[K] go to I
+}
+scchart Base {
+  class C { const int N[2] = {4,5} } c
+  output int o
+}
