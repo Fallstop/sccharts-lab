@@ -874,6 +874,8 @@ The transformation keeps only the target's variable: `ode x[1] = 2` becomes `x +
 (gcc: `assignment to expression with array type`, the engine's `array-assignment`), and `ode p.x = 2` on a struct
 or class member becomes `p += ...` (gcc: `invalid operands to binary +`, the engine's `ode-member`). A member of
 an `@UnpackClass` instance is a variable of its own by then and works.
+`ode x++` / `ode x--` have no rate: KIELER's ODE processor crashes (`The 'no null' constraint is violated`), the
+engine rejects them as `kieler-crash` (`parity/probe-ode-postfix`).
 
 - Evidence: `parity/probe-ode`, `-multi`, `-clock`, `-array-element`, `-struct-member`, `-unpacked-member`.
 - Source: `processors/Ode.xtend:45-63`, `TimedAutomata.xtend:175-206` (`hasODEs`).

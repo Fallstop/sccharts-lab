@@ -1,0 +1,7 @@
+// ode x++ has no rate: KIELER's ODE processor crashes on the missing expression.
+scchart PrOdePostfix {
+  output float x = 0
+  initial state A {
+    ode x++
+  }
+}
