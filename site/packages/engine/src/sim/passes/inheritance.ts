@@ -26,7 +26,7 @@ interface Base {
 }
 
 /** KIELER's getAllInheritedStates: every base, transitively, each once. */
-function allInherited(chart: State, find: (name: string) => State | undefined): State[] {
+export function allInherited(chart: State, find: (name: string) => State | undefined): State[] {
     const direct = (s: State) => (s.baseStates ?? []).map(b => find(b.target)).filter((x): x is State => !!x && x !== chart)
     const out: State[] = []
     const work = [...direct(chart)].reverse()
@@ -40,7 +40,7 @@ function allInherited(chart: State, find: (name: string) => State | undefined): 
 }
 
 /** KIELER's getAllVisibleInheritedRegions: base regions (depth first) not hidden by an override region above them. */
-function visibleRegions(chart: State, find: (name: string) => State | undefined): { base: State; region: string }[] {
+export function visibleRegions(chart: State, find: (name: string) => State | undefined): { base: State; region: string }[] {
     const out: { base: State; region: string }[] = []
     const visit = (s: State, hidden: Set<string>, path: State[]) => {
         if (s !== chart) {

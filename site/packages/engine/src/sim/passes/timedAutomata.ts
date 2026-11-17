@@ -23,6 +23,7 @@ import {
 } from '../model'
 import type { InstanceRecord } from './reference'
 import { REFERENCE_SEPARATOR } from '../structure/instance'
+import { allInherited, visibleRegions } from './inheritance'
 
 export const timedAutomata: Pass = {
     id: 'de.cau.cs.kieler.sccharts.processors.timedautomata',
@@ -43,21 +44,27 @@ export function chartAnnotations(ctx: PassContext): Annotation[] {
     if (main) charts.push(main)
     for (const r of (ctx.shared.instances as InstanceRecord[] | undefined) ?? []) charts.push(r.chart)
     const out: Annotation[] = []
+    const find = (name: string) => index?.charts.find(c => c.name === name)
+    const copied = new Set<State>()
     const visit = (value: unknown) => {
         if (Array.isArray(value)) { value.forEach(visit); return }
         if (!value || typeof value !== 'object') return
         const obj = value as Record<string, unknown>
         if (obj.kind === 'annotation') out.push(obj as unknown as Annotation)
-        // KIELER's Inheritance copies the base charts' annotations and contents into the extending state first.
-        if (obj.kind === 'state') {
-            for (const call of (obj as unknown as State).baseStates ?? []) {
-                const base = index?.scopeTargets.get(call)
-                if (base && !charts.includes(base)) charts.push(base)
-            }
-        }
+        if (obj.kind === 'state' && (obj as unknown as State).baseStates?.length) inheritInto(obj as unknown as State)
         for (const [k, v] of Object.entries(obj)) if (k !== 'span' && v && typeof v === 'object') visit(v)
     }
-    for (let i = 0; i < charts.length; i++) visit(charts[i])
+    // KIELER's Inheritance copies into the extending state, before the timed automata: every base's annotations,
+    // declarations and actions, and the base regions no override region hides (getAllVisibleInheritedRegions).
+    const inheritInto = (state: State) => {
+        for (const base of allInherited(state, find)) {
+            if (copied.has(base)) continue
+            copied.add(base)
+            visit({ ...base, regions: [], baseStates: [] })
+        }
+        for (const { base, region } of visibleRegions(state, find)) visit(base.regions.find(r => r.id === region))
+    }
+    charts.forEach(visit)
     return out
 }
 

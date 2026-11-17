@@ -1,0 +1,19 @@
+// @NoSleep inside a base region that the extending chart overrides: KIELER's Inheritance does not copy the region,
+// so the annotation is gone and the @Logical clock compiles.
+scchart PrAnnOver extends PrAnnOverBase {
+  override region R {
+    initial state A
+  }
+}
+scchart PrAnnOverBase {
+  @Logical clock t
+  @NoSleep
+  region R {
+    initial state Gone
+  }
+  region Live {
+    initial state S
+    if t >= 5 go to T
+    final state T
+  }
+}
