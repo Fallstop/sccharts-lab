@@ -1,0 +1,7 @@
+input press, output beep, output beep_val, output count, local beep_curval
+// beeper.sctx: 4 ticks, saved by SCCharts Lab
+press = false => beep = false beep_val = 0 count = 0;
+press = true => beep = true beep_val = 1 count = 1;
+=> beep_val = 2 count = 2;
+press = false => beep = false;
+

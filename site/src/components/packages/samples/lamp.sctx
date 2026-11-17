@@ -1,0 +1,9 @@
+scchart Lamp {
+  input bool press
+
+  initial state Off
+    if press go to On
+
+  state On
+    if press go to Off
+}

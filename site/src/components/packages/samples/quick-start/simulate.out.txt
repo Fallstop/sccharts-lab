@@ -1,0 +1,8 @@
+tick 1: { coin: false, push: false, unlocked: false, passed: 0 }
+  The chart starts in Locked.
+tick 2: { coin: true, push: false, unlocked: true, passed: 0 }
+  Locked went to Unlocked because coin was true.
+tick 3: { coin: false, push: true, unlocked: false, passed: 1 }
+  Unlocked went to Locked because push was true.
+tick 4: { coin: false, push: true, unlocked: false, passed: 1 }
+  No transition fired: Locked waits for coin.

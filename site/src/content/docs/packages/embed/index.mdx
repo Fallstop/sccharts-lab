@@ -1,0 +1,127 @@
+---
+title: "Embed"
+description: "@sccharts-lab/embed: a live SCCharts chart on any page with the <sccharts-lab-chart> element, typed methods and events to drive it, and the protocol behind it."
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import EmbedDemo from '~components/embed/EmbedDemo.astro'
+import Install from '~components/packages/Install.astro'
+import PackageFacts from '~components/packages/PackageFacts.astro'
+import Sample from '~components/packages/Sample.astro'
+
+<PackageFacts name="embed" />
+
+The embed package puts a live chart on a page: its diagram, its simulation and, if you like, its editor.
+It does not ship the engine to your page. The `<sccharts-lab-chart>` element makes a frame of SCCharts
+Lab's own embed page, sizes the frame to its content, and turns the messages between the two into methods
+and events. The package is that element, about 4 kB gzipped, with types.
+
+<EmbedDemo example="learn/first-chart/dimmer" caption="One `<sccharts-lab-chart>` element. Press `button` in the simulation, or open the chart in the playground." />
+
+Choose it over the [engine](/packages/engine/) and [diagram](/packages/diagram/) packages when you want a
+finished, interactive chart and have no need to build the interface yourself.
+
+## With a script tag
+
+No build step and no install: load the script from a CDN, then use the element anywhere on the page.
+
+<Sample file="embed/tag.html" title="page.html" />
+
+The chart comes from one of three places: an example of the guide (`example`), a `.sctx` file beside your
+page (`src`), or text written inside the element. The guide's [Embedding charts](/reference/embed/) is
+the full manual for page authors: every attribute, the plain iframe for pages that cannot load scripts,
+and sandboxed course platforms.
+
+<Aside type="tip" title="Pin the version">
+`@0.1` in the address keeps the page on the 0.1 releases. The same script is also served, always at its
+newest, as `https://sccharts.jmw.nz/embed.js`.
+</Aside>
+
+## With a bundler
+
+Install the package and register the element yourself:
+
+<Install packages="@sccharts-lab/embed" />
+
+<Sample file="embed/bundler.ts" title="main.ts" />
+
+`define()` registers `<sccharts-lab-chart>` once, however often it is called. Importing
+`@sccharts-lab/embed/loader` does the same as a side effect. The package imports nothing else and can be
+imported where there is no DOM, for example while a page is rendered on a server: only `define()` needs a
+browser.
+
+In TypeScript, `document.querySelector('sccharts-lab-chart')` and `document.createElement()` already
+know the element's type.
+
+## Drive the chart
+
+The element's methods send a command to the chart and resolve with its answer. The buttons under this
+chart belong to the page, not to the chart: each calls `step()` with one input.
+
+<EmbedDemo example="showcase/abro" view="diagram" api={['A', 'B', 'R']} height={340} caption="The page steps ABRO through the element's methods. Press A, then B, and `O` is emitted. R starts it again." />
+
+| Method | Resolves with | What it does |
+| --- | --- | --- |
+| `step(inputs?)` | the tick | Sets these inputs, then runs one tick. |
+| `setInputs(inputs)` | the tick shown | Sets inputs for the next tick without running it. |
+| `reset()` | tick 0 | Back to before the first tick. |
+| `rewind(tick)` | that tick | Shows an earlier tick. The later ones stay, and the next step replays them. |
+| `setSource(text)` | the compile | Replaces the chart. The simulation starts again. |
+| `setFiles(files, active?)` | the compile | Opens a project of several files. |
+| `selectChart(name)` | the compile | Shows another chart of the file. |
+| `getState()` | `{ compiled, tick }` | What the chart shows now. |
+
+`ready` is a promise that resolves once the chart is live. Methods called before that wait for it, so you
+do not have to. `compiled` and `tick` hold the latest compile and tick, and `iframe` is the frame itself.
+
+As in the engine, inputs keep their values from tick to tick, and values use KIELER's names: a valued
+signal `V` is `V` for its presence and `V_val` for its value. A name that is not an input of the chart is
+refused, with a message, and nothing runs.
+
+## Listen to it
+
+The element fires events as the chart changes, whoever changed it: your code, or the reader using the
+chart's own controls. In TypeScript each event's `detail` is typed.
+
+<Sample file="embed/events.ts" title="main.ts" />
+
+| Event | When | `detail` |
+| --- | --- | --- |
+| `ready` | The chart is live. | `view`, `compiled`, `tick` |
+| `compiled` | The chart was compiled again: it was edited or replaced. | `ok`, `chart`, `charts`, `diagnostics`, `inputs`, `outputs` |
+| `tick` | The tick shown changed: a step, Back, Reset, a new chart. | `tick`, `ticks`, `values`, `present`, `active`, `entered`, `taken`, `printed`, `terminated`, `error` |
+| `resize` | The content's height changed. | `height` |
+| `error` | A command could not run, or a file could not be fetched. | `message` |
+
+## A frame of your own
+
+The element is a convenience. Underneath, an embed is a page, `https://sccharts.jmw.nz/embed/`, with its
+options in the address, that talks to the page around it with `postMessage`. The package exports both
+halves, typed, for code that writes the frame itself: a server that renders the `<iframe>` tag, a framework
+component, a test.
+
+<Sample file="embed/iframe.mjs" output />
+
+Every message, both ways, is an object in one envelope, `{ type: 'sccharts-lab', version: 1, ... }`. Your
+page sends a `command`; the embed answers with an `event`. A command with an `id` gets a `reply` event
+with the same `id`. A whole exchange:
+
+<Sample file="embed/postmessage.ts" title="main.ts" />
+
+The embed only listens to the page that frames it, ignores every message that is not a command in the
+envelope, and answers a malformed command with an error. A page cannot break it, and nothing in a message
+is ever evaluated.
+
+## Entry points
+
+| Import | What it has |
+| --- | --- |
+| `@sccharts-lab/embed` | Everything: the element, the options and the protocol. |
+| `@sccharts-lab/embed/loader` | Nothing to import: it registers the element as a side effect. |
+| `@sccharts-lab/embed/options` | The embed's options and address: `embedUrl()`, `parseEmbedQuery()`. |
+| `@sccharts-lab/embed/protocol` | The messages: `envelope()`, `parseCommand()`, `parseEvent()`, and their types. |
+| `@sccharts-lab/embed/embed.min.js` | The element as one script for a script tag: the file the CDN serves. |
+
+## Next
+
+The [API reference](/packages/embed/api/) lists the element's members, the options and every message.

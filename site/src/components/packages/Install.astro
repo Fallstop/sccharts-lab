@@ -1,0 +1,29 @@
+---
+/**
+ * <Install packages="@sccharts-lab/engine @sccharts-lab/diagram" />: the install command for each package manager,
+ * in tabs that switch together across the page and the visit.
+ */
+import { Code, TabItem, Tabs } from '@astrojs/starlight/components'
+
+interface Props {
+	/** Package names, separated by spaces. */
+	packages: string
+}
+const { packages } = Astro.props
+const managers = [
+	{ name: 'npm', command: 'npm install' },
+	{ name: 'pnpm', command: 'pnpm add' },
+	{ name: 'yarn', command: 'yarn add' },
+	{ name: 'bun', command: 'bun add' },
+]
+---
+
+<Tabs syncKey="package-manager">
+	{
+		managers.map((m) => (
+			<TabItem label={m.name}>
+				<Code code={`${m.command} ${packages}`} lang="sh" wrap />
+			</TabItem>
+		))
+	}
+</Tabs>

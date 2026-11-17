@@ -7,7 +7,9 @@
 | [@sccharts-lab/trace](./trace/README.md) | Simulation traces: KTrace, CSV, JSON and XML files, replay and comparison |
 | [@sccharts-lab/embed](./embed/README.md) | Live charts on any page: the `<sccharts-lab-chart>` element (also one script, `dist/embed.min.js`, the site's `/embed.js`), the embed's options and postMessage protocol |
 
-Each is on npm, published from this repository with provenance.
+Each is on npm, published from this repository with provenance. Their documentation is the site's `/packages/`
+section (`src/content/docs/packages/`: an overview, a quick start, and a guide and an API reference per package); each
+package's `homepage` and README link to its pages there.
 
 The site imports them as TypeScript sources (each `package.json`'s `exports` points into `src/`), so the dev server and
 the tests need no build. What npm gets is built: `publishConfig` (applied by `pnpm pack`) replaces `exports`, `main`
@@ -49,6 +51,12 @@ with the gzipped size of each package's main entry.
   compiles goes in `GENERATED` there.
 - A `README.md` whose first `js` code block is a quick start that runs as it is (the smoke test runs it), and a copy of
   the repository's `LICENSE` (EPL-2.0; the pack checks it is identical).
+- Its documentation: `src/content/docs/packages/<name>/index.mdx` (the guide) and `api.mdx` (the API reference), in the
+  sidebar's Packages group (astro.config.mjs), with `homepage` set to `https://sccharts.jmw.nz/packages/<name>/` and
+  the README linking there. `tests/packages-docs` checks all of it: the API page names every export with the source's
+  signatures and members, the pages' code is the files of `src/components/packages/samples` (each `.mjs` is run and
+  its output compared with the `.out.txt` the page shows; `vitest -u` records it), and the smoke test runs the same
+  samples against the tarballs.
 - The packages are released together, all at one version.
 - A script for a script tag (not a module) is named `*.min.js` and has no declarations; `jsdelivr` and `unpkg` point
   at it, so `https://cdn.jsdelivr.net/npm/@sccharts-lab/<name>` serves it.
@@ -61,8 +69,9 @@ workflow can publish them; there is no token. Publishing access is set to requir
 
 Each release:
 
-1. Set the same `version` in the four `packages/*/package.json` (`pack.mjs` refuses different ones), and in the
-   jsDelivr address of `packages/embed/README.md` when the minor version changes.
+1. Set the same `version` in the four `packages/*/package.json` (`pack.mjs` refuses different ones), and, when the
+   minor version changes, in the jsDelivr addresses (`@sccharts-lab/embed@0.1`) of `packages/embed/README.md` and of
+   the documentation's `samples/embed/tag.html` (`tests/packages-docs` fails until they agree).
 2. `pnpm exec vitest run && pnpm build && pnpm packages:smoke --site dist`, then commit. Run it in a fresh clone of
    that commit: the CI on `main` does not run the site's tests, and a file only in your worktree passes locally.
 3. Tag that commit and push the tag: `git tag packages-v0.1.0 <commit> && git push origin packages-v0.1.0`.

@@ -1,0 +1,35 @@
+---
+/**
+ * <Sample file="quick-start/compile.mjs" output />: a code sample of the packages' documentation, from the real
+ * file in ./samples (see samples.ts: the tests run it), with what it prints under it.
+ *
+ * Props: file (under ./samples), region (show only the lines of `// #region <name>`), title (default: the file's
+ * name for a whole file, none for a region; false for none), output (also show the recorded output,
+ * `<name>.out.txt`), mark (Expressive Code's line marks, e.g. `{ range: '3-4' }`).
+ */
+import { Code } from '@astrojs/starlight/components'
+import { outputFile, sampleLanguage, sampleText } from './samples'
+
+const files = import.meta.glob('./samples/**/*', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+
+interface Props {
+	file: string
+	region?: string
+	title?: string | false
+	output?: boolean
+	mark?: string | number | { range: string } | (string | number | { range: string })[]
+}
+const { file, region, output = false, mark } = Astro.props
+
+function load(name: string): string {
+	const text = files[`./samples/${name}`]
+	if (text === undefined) throw new Error(`<Sample file="${file}">: there is no src/components/packages/samples/${name}`)
+	return text
+}
+const code = sampleText(load(file), region, file)
+const title = Astro.props.title === false ? undefined : (Astro.props.title ?? (region ? undefined : file.slice(file.lastIndexOf('/') + 1)))
+const printed = output ? load(outputFile(file)).replace(/\n+$/, '') : undefined
+---
+
+<Code code={code} lang={sampleLanguage(file)} title={title} mark={mark} />
+{printed !== undefined && <Code code={printed} lang="text" title="Output" frame="terminal" wrap />}

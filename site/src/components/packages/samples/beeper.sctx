@@ -1,0 +1,8 @@
+scchart Beeper {
+  input signal press
+  output signal int beep
+  output int count = 0
+
+  initial state Idle
+    if press do count += 1; beep(count) go to Idle
+}

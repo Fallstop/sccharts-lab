@@ -1,0 +1,8 @@
+import "blinker"
+
+scchart Panel {
+  input bool button
+  output bool led = false
+
+  initial state Run is Blinker(button to button, led to led)
+}

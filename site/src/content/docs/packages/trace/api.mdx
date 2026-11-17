@@ -1,0 +1,453 @@
+---
+title: "Trace API"
+description: "Every function, class and type of @sccharts-lab/trace: traces of runs, the four file formats, replay, renaming, sequences and comparison."
+---
+
+import PackageFacts from '~components/packages/PackageFacts.astro'
+
+<PackageFacts name="trace" api />
+
+Everything here is imported from `@sccharts-lab/trace`. The [guide](/packages/trace/) shows the calls at
+work, and says which [subpaths](/packages/trace/#without-the-engine) hold the parts that do not need the
+engine. The signatures and tables on this page are checked against the package's source.
+
+## A trace
+
+### `TraceRecord`
+
+A run: every variable's value after each tick.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `model?` | `string` | The file name of the chart, when known. |
+| `variables` | `TraceVariable[]` | The trace's columns. |
+| `ticks` | `Record<string, unknown>[]` | `ticks[i]` holds the values after tick `i + 1`, by variable name. |
+| `pauses?` | `number[]` | Ticks after which a replay stops running: KTrace's `pause`. |
+| `notes?` | `string[]` | What a reader dropped or guessed, worth telling the user. |
+| `times?` | `number[]` | Seconds at each tick, for a run or a sequence in time. |
+| `printed?` | `string[][]` | What the chart printed in each tick, line by line. |
+
+### `TraceVariable`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The variable's name, as KIELER's simulation has it. |
+| `role?` | `TraceRole` | Unknown when the file does not say, as in CSV. |
+| `type?` | `string` | `bool`, `int`, `float` or `string`, when known. |
+
+### `TraceRole`
+
+```ts
+type TraceRole = 'input' | 'output' | 'local'
+```
+
+### `traceFromRun()`
+
+```ts
+function traceFromRun(result: CompileResult, run: EngineRun, options?: TraceOptions): TraceRecord
+```
+
+The trace of a run of the engine: every variable of KIELER's data pool after each tick, and what the
+chart printed. `run` is a `Simulation` or its `history`. A tick with a run-time error ends the trace.
+
+### `TraceOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `model?` | `string` | The file name the trace names. |
+| `inputs?` | `'pool' \| 'read'` | `'pool'` (the default): each input as it is after the tick. `'read'`: as the tick read it, which differs where a chart writes its own input. |
+
+### `EngineRun`
+
+```ts
+type EngineRun = Simulation | readonly SimTickResult[]
+```
+
+### `traceColumns()`
+
+```ts
+function traceColumns(result: CompileResult): TraceVariable[]
+```
+
+The columns `traceFromRun()` gives for a chart: name, role and type.
+
+### `poolVariables()`
+
+```ts
+function poolVariables(result: CompileResult): PoolVariable[]
+```
+
+KIELER's data pool for the chart, in KIELER's order. Empty when the chart does not compile.
+
+### `PoolVariable`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The name in the pool. |
+| `input` | `boolean` | It is an input. |
+| `output` | `boolean` | It is an output. |
+| `type` | `string` | KIELER's type name: `bool`, `int`, `float`, `string`, `class`, `struct`. |
+| `dims` | `number[]` | Array sizes, empty for a scalar. |
+| `late` | `boolean` | Not in the pool before the first tick: a string without a value, a member of a class. |
+
+### `initialValue()`
+
+```ts
+function initialValue(variable: PoolVariable): Value
+```
+
+An input's value before the first tick.
+
+## Files
+
+### `writeTrace()`
+
+```ts
+function writeTrace(trace: TraceRecord, format: TraceFormat): string
+```
+
+The text of a trace file.
+
+### `readTrace()`
+
+```ts
+function readTrace(text: string, formatOrFileName: TraceFormat | string): TraceRecord
+```
+
+Reads a trace file. The second argument is a format, or a file name whose extension names one. Throws a
+`TraceFileError`.
+
+### `TraceFormat`
+
+```ts
+type TraceFormat = 'ktrace' | 'csv' | 'json' | 'xml'
+```
+
+### `TRACE_FORMATS`
+
+```ts
+const TRACE_FORMATS: { format: TraceFormat; label: string; extension: string }[]
+```
+
+The four formats with a label and a file extension each, for a Save dialog. `TRACE_FORMAT_ID` is
+`'sccharts-lab-trace'`, the `format` its JSON and XML files carry.
+
+### `traceFormatOf()`
+
+```ts
+function traceFormatOf(fileName: string): TraceFormat | undefined
+```
+
+The format a file name's extension names.
+
+### `TraceFileError`
+
+The error `readTrace()` throws: an `Error` whose message says the line and the reason.
+
+### `inputsOnly()`
+
+```ts
+function inputsOnly(trace: TraceRecord): TraceRecord
+```
+
+The trace with only its inputs: an input sequence for another chart.
+
+## Replay
+
+### `replayTrace()`
+
+```ts
+function replayTrace(
+    result: CompileResult,
+    trace: TraceRecord,
+    options?: EngineReplayOptions & { simulation?: Simulation; stopAtMismatch?: boolean; model?: string }
+): ReplayOutcome
+```
+
+Replays a whole trace into a chart and reports every output that differs. By default into a fresh
+simulation; with `simulation`, into yours, from its current tick. `stopAtMismatch` stops at the first
+tick that differs. `model` names the chart in the replayed run's own trace.
+
+### `EngineReplayOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `label?` | `string` | How the replay names the file. Default `trace`. |
+| `checkOutputs?` | `boolean` | `false` when the outputs are not expected to match. Default `true`. |
+| `renames?` | `Renames` | The file's names to the chart's, applied before matching. |
+
+### `ReplayOutcome`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `replay` | `SimulationReplay` | The replay, at its end. |
+| `mismatches` | `ReplayMismatch[]` | Every output that differs, tick by tick. |
+| `firstMismatch?` | `ReplayMismatch[]` | The outputs that differ at the first tick that differs. |
+| `run` | `TraceRecord` | The replayed run as a trace. |
+| `state` | `ReplayState` | The replay's summary. |
+| `error?` | `Diagnostic` | The run-time error that stopped the chart, if one did. |
+
+### `ReplayMismatch`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `tick` | `number` | The tick. |
+| `name` | `string` | The output. |
+| `expected` | `unknown` | The file's value. |
+| `actual` | `unknown` | The chart's value. |
+
+### `ReplayState`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `label` | `string` | The file's name. |
+| `length` | `number` | Ticks in the file. |
+| `tick` | `number` | Rows of the file replayed so far. |
+| `checked` | `string[]` | Outputs in both the file and the chart, checked after each tick. |
+| `ignored` | `string[]` | Inputs of the file the chart does not have. |
+| `unset` | `string[]` | Inputs of the chart the file does not set. |
+| `mismatchTicks` | `number` | How many ticks so far have an output that differs. |
+| `firstMismatch?` | `{ tick: number; text: string }` | The first of them, in words. |
+| `problems` | `string[]` | Values of the file that do not fit the chart's inputs. |
+| `notes` | `string[]` | What the reader left out of the file. |
+
+### `SimulationReplay`
+
+```ts
+new SimulationReplay(result: CompileResult, simulation: Simulation, trace: TraceRecord, options?: EngineReplayOptions)
+```
+
+Drives a simulation from a trace, a tick at a time. The file's first row is the simulation's next tick.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `done` | `boolean` | The file has driven its last row. |
+| `step()` | `() => ReplayStep \| undefined` | Runs the next tick with the file's inputs. `undefined` once the file has ended or the chart has stopped. |
+| `run()` | `(stop?: (step: ReplayStep) => boolean) => ReplayStep[]` | Runs to the end of the file, or until `stop` returns `true` for a tick. |
+| `rewindTo()` | `(tick: number) => void` | Goes back to the state after `tick`. |
+| `state()` | `() => ReplayState` | The replay's summary so far. |
+| `error` | `Diagnostic \| undefined` | The run-time error that stopped the chart, if one did. |
+| `replay` | `TraceReplay` | The matching underneath. |
+
+### `ReplayStep`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `tick` | `SimTickResult` | The engine's result for the tick. |
+| `inputs` | `Record<string, unknown>` | The inputs the file gave it, in the chart's types. |
+| `mismatches` | `ReplayMismatch[]` | The checked outputs that differ after it. |
+| `pause` | `boolean` | The file asks to stop running here: KTrace's `pause`. |
+
+### `TraceReplay`
+
+The matching and checking behind a replay, without a simulation: for a tool that runs the chart
+elsewhere, as the VS Code extension runs it on KIELER. From `@sccharts-lab/trace/trace-replay` too.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `driven` | `string[]` | Inputs the file sets and the chart reads. |
+| `ignored` | `string[]` | Inputs of the file the chart does not have. |
+| `unset` | `string[]` | Inputs of the chart the file does not set. |
+| `checked` | `string[]` | Outputs in both. |
+| `length` | `number` | Ticks in the file. |
+| `inputsFor()` | `(tick: number, current: (id: string) => unknown) => Map<string, unknown>` | The values the chart reads at a tick. |
+| `check()` | `(tick: number, actual: (id: string) => unknown) => ReplayMismatch[]` | Compares the chart's outputs after a tick with the file's. |
+| `mismatchesOf()` | `(name: string) => ReplayMismatch[]` | Where one variable differs. |
+| `state()` | `(tick: number) => ReplayState` | The summary at a tick. |
+
+`replayTargets(result)` gives a chart's variables as the `ReplayTarget`s a `TraceReplay` is made with, and
+`coerceInput(value, type)` converts a file's value to a chart's type.
+
+## Names that differ
+
+### `suggestRenames()`
+
+```ts
+function suggestRenames(from: NamedVariable[], to: NamedVariable[], aliases?: Alias[]): RenameSuggestion[]
+```
+
+Pairs the names only `from` has with the names only `to` has: first the pairs in `aliases`, then names
+spelled alike apart from case and separators. A name is paired only when exactly one name fits it.
+
+### `RenameSuggestion`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `from` | `string` | A name of the first side. |
+| `to` | `string` | The name it stands for on the other. |
+| `reason` | `'remembered' \| 'spelling'` | From `aliases`, or by its spelling. |
+
+### `renameTrace()`
+
+```ts
+function renameTrace(trace: TraceRecord, renames: Renames): TraceRecord
+```
+
+The trace with its variables renamed. Names not in `renames` stay.
+
+### `Renames`
+
+```ts
+type Renames = Record<string, string>
+```
+
+Names of one side to the names they stand for on the other.
+
+### The other helpers
+
+| Export | What it is |
+| --- | --- |
+| `NamedVariable` | A name and, when known, its role: what the matching works on. A `TraceVariable` fits. |
+| `Alias` | Two names a user said are one variable. |
+| `rememberAliases()`, `forgetAliases()` | A list of aliases with pairs added or removed. |
+| `unmatched()`, `couldMatch()` | The names each side lacks, and whether any could pair. |
+| `nameKey()`, `sameKind()` | A name without case and separators, and whether two variables' roles allow a pair. |
+| `describeRenames()` | The renames in words, for a report. |
+
+## Sequences
+
+### `runOnSequence()`
+
+```ts
+function runOnSequence(result: CompileResult, sequence: TraceRecord, ticks: number, options?: { label?: string; model?: string }): SequenceRun
+```
+
+Runs a fresh simulation for `ticks` ticks with its inputs from `sequence`.
+
+### `runOnTimedSequence()`
+
+```ts
+function runOnTimedSequence(
+    result: CompileResult,
+    sequence: TraceRecord,
+    until: number,
+    options?: { label?: string; model?: string; mode?: TickMode }
+): SequenceRun
+```
+
+Runs a fresh simulation on a sequence with times, up to `until` seconds. A chart with a clock ticks at the
+sequence's moments and when it asks to be woken; another chart as `mode` says.
+
+### `SequenceRun`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `trace` | `TraceRecord` | The run. |
+| `notes` | `string[]` | What to tell the user: inputs the sequence does not set, or the chart lacks. |
+
+### `TickMode`
+
+```ts
+type TickMode =
+    | { kind: 'clock'; delta: string; sleep?: string }
+    | { kind: 'timer'; input: string; period: number }
+    | { kind: 'events' }
+```
+
+How a chart is ticked in time. `clock`: at the sequence's moments and whenever the chart asks to be
+woken, with the time since the last tick in the variable `delta`. `timer`: at the sequence's moments and
+every `period` seconds, with `input` true on the timer's ticks. `events`: at the sequence's moments only.
+
+### Timing helpers
+
+| Export | What it is |
+| --- | --- |
+| `TimedSchedule` | Hands out the ticks of one timed run in order, as `TimedTick`s. |
+| `timedEvents()` | The moments of a timed sequence, with what changes at each. |
+| `traceTimes()` | Seconds after each tick of a trace, when it has times. |
+| `timeDeltaOf()` | The variable that tells a timed chart how much time passed. |
+| `MAX_TIMED_TICKS` | The tick at which a timed run stops in any case. |
+
+## Comparison
+
+### `compareRuns()`
+
+```ts
+function compareRuns(runs: ({ label: string; result: CompileResult; run: EngineRun } & TraceOptions)[]): TraceComparison
+```
+
+Compares runs of the engine. The first is the reference.
+
+### `compareTraces()`
+
+```ts
+function compareTraces(traces: NamedTrace[]): TraceComparison
+```
+
+Compares traces against the first: tick by tick, or moment by moment when all have times.
+
+### `NamedTrace`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `label` | `string` | How the report names the run. |
+| `trace` | `TraceRecord` | The run. |
+
+### `TraceComparison`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `alignment` | `Alignment` | `'tick'`, or `'time'` when every trace has times. |
+| `traces` | `{ label: string; model?: string; ticks: number; duration?: number }[]` | The traces compared. |
+| `until?` | `number` | Aligned by time: the moment the comparison ends. |
+| `variables` | `VariableComparison[]` | The variables every trace has. |
+| `partial` | `{ name: string; labels: string[] }[]` | Variables only some traces have. |
+| `printed?` | `PrintedComparison` | What the charts printed, lined up. |
+
+### `VariableComparison`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The variable. |
+| `role?` | `TraceRole` | Its role. |
+| `compared` | `number` | How many ticks, or moments, were compared. |
+| `differing` | `number[]` | The ticks, or times in seconds, where a trace differs from the first. |
+| `differingFor?` | `number` | Aligned by time: for how many seconds. |
+| `changes` | `ValueChange[][]` | For each trace, every change of value. |
+| `sameSequence` | `boolean` | Every trace goes through the same values in the same order. |
+| `worstTickShift` | `number` | The most ticks by which a change is early or late. |
+| `worstTimeShift?` | `number` | The same in seconds. |
+
+### `ValueChange`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `tick` | `number` | The tick of the change. |
+| `time?` | `number` | Its time, when the trace has times. |
+| `value` | `unknown` | The new value. |
+
+### `Alignment`
+
+```ts
+type Alignment = 'tick' | 'time'
+```
+
+### `comparisonMarkdown()`
+
+```ts
+function comparisonMarkdown(
+    comparison: TraceComparison,
+    options?: { maxRows?: number; preamble?: string[] }
+): string
+```
+
+The comparison as a Markdown report: what was compared, a summary per variable, every change of the
+variables that differ, and the first ticks that differ.
+
+### `comparisonCsv()`
+
+```ts
+function comparisonCsv(comparison: TraceComparison): string
+```
+
+Every change of every shared variable, one row per change, for a spreadsheet.
+
+### Comparison helpers
+
+| Export | What it is |
+| --- | --- |
+| `PrintedComparison` | The printed lines of each trace, lined up like value changes. |
+| `valueOf()` | The value a variable holds at a tick or a time, from its changes. |
+| `sameTraceValue()` | Whether two values of a trace count as the same. |
+| `formatTraceValue()` | A value as a report or a CSV cell writes it. |
+| `printedOf()` | The printed lines per tick, or nothing when no tick printed. |

@@ -1,0 +1,32 @@
+---
+/**
+ * <TraceFormats code={...} steps={[...]} />: one run in each of the trace package's four formats, in tabs, on a
+ * page of the packages' documentation. The files are `writeTrace()`'s own output for the run (see figures.ts).
+ *
+ * Props: code, files, steps (inputs tick by tick), model (the file name the trace names; default `<Chart>.sctx`).
+ */
+import { Code, TabItem, Tabs } from '@astrojs/starlight/components'
+import { TRACE_FORMATS, traceFromRun, writeTrace } from '@sccharts-lab/trace'
+import { compiled, run, type Inputs } from './figures'
+
+interface Props {
+	code: string
+	files?: Record<string, string>
+	steps: Inputs[]
+	model?: string
+}
+const { code, files, steps } = Astro.props
+const c = compiled(code, files, '<TraceFormats>')
+const trace = traceFromRun(c.result, run(c, steps, '<TraceFormats>'), { model: Astro.props.model ?? `${c.chart.name}.sctx` })
+const LANGUAGE: Record<string, string> = { json: 'json', xml: 'xml' }
+---
+
+<Tabs syncKey="trace-format">
+	{
+		TRACE_FORMATS.map((f) => (
+			<TabItem label={f.label}>
+				<Code code={writeTrace(trace, f.format).trimEnd()} lang={LANGUAGE[f.format] ?? 'text'} title={`run.${f.extension}`} />
+			</TabItem>
+		))
+	}
+</Tabs>

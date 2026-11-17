@@ -7,6 +7,8 @@ drawn as SVG. Layout and rendering run in Node, in a browser and in a Web Worker
 `data-id` on every state, region and transition, so a simulation highlights it by toggling classes, without drawing it
 again. It draws every diagram of the [SCCharts Lab](https://sccharts.jmw.nz) guide and IDE.
 
+**Documentation:** [guide](https://sccharts.jmw.nz/packages/diagram/), [API reference](https://sccharts.jmw.nz/packages/diagram/api/), [quick start](https://sccharts.jmw.nz/packages/quick-start/).
+
 ```sh
 npm install @sccharts-lab/engine @sccharts-lab/diagram
 ```

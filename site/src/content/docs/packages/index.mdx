@@ -1,0 +1,77 @@
+---
+title: "npm packages"
+description: "The compiler, simulator, diagrams, traces and embeds behind SCCharts Lab, as four npm packages for your own tools, tests and pages."
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import Install from '~components/packages/Install.astro'
+import Outputs from '~components/packages/Outputs.astro'
+import PackageList from '~components/packages/PackageList.astro'
+import Sample from '~components/packages/Sample.astro'
+
+Everything this site does with a chart, your code can do too. The [playground](/playground/) and every
+example in the guide run on four npm packages: they compile SCCharts, run them tick by tick, draw their
+diagrams, save and replay their traces, and generate C. They are written in TypeScript, run in Node and
+in the browser, and need no KIELER installation and no Java.
+
+<Outputs />
+
+Each part of that figure was made by the call its heading names, while this page was built.
+
+## The four packages
+
+<PackageList />
+
+## Which package do I need?
+
+| I want to | Package | Start with |
+| --- | --- | --- |
+| Check that a chart compiles, and report what is wrong with it | engine | [`compile()`](/packages/engine/#compile-a-chart) |
+| Run a chart tick by tick, in a test or a tool | engine | [`createSimulation()`](/packages/engine/#run-it-tick-by-tick) |
+| Turn a chart into C code | engine | [`generateC()`](/packages/engine/#generate-c) |
+| Draw a chart as an SVG picture | engine, diagram | [`chartToSvg()`](/packages/diagram/#draw-a-chart) |
+| Show a running simulation in the diagram | engine, diagram | [`tickClasses()`](/packages/diagram/#highlight-a-simulation) |
+| Save a run to a file, or check a chart against a saved run | engine, trace | [`traceFromRun()`](/packages/trace/#save-a-run), [`replayTrace()`](/packages/trace/#replay-a-file) |
+| Compare two charts on the same inputs | engine, trace | [`compareRuns()`](/packages/trace/#compare-runs) |
+| Put a live chart on a web page, without building anything | embed | [the `<sccharts-lab-chart>` element](/packages/embed/) |
+
+The engine is the base: the diagram and trace packages work on what it returns. The embed package is
+separate. It puts SCCharts Lab's own page in a frame, so your page ships none of the engine.
+
+## Install
+
+<Install packages="@sccharts-lab/engine @sccharts-lab/diagram @sccharts-lab/trace" />
+
+Install only what you use: the engine alone is enough to compile and simulate.
+
+## A first look
+
+A chart, compiled and run for three ticks:
+
+<Sample file="quick-start/first-look.mjs" output />
+
+The [quick start](/packages/quick-start/) builds this up step by step: diagnostics, a diagram, a trace
+file and C code.
+
+## What to expect
+
+- **ES modules with types.** Every package is an ES module with its TypeScript declarations included.
+  There is no CommonJS build: use `import`, or `await import()` from CommonJS code.
+- **Node 20 or later, and current browsers.** No package touches the DOM or a Node API unless you ask it
+  to: the same calls work in Node, in a browser, and in a Web Worker.
+- **The same behaviour as KIELER.** The engine accepts and rejects charts as KIELER's compiler does, and
+  every tick gives the values KIELER's simulation gives. It is checked against recordings of KIELER on
+  more than 1,200 runs and about 10,000 random charts ([How this guide is checked](/reference/about/)).
+- **One version for all four.** The packages are released together under one version number. The diagram
+  and trace packages name the engine of their own version as a peer dependency, so a project has one
+  copy of it.
+- **Small where it matters.** The engine has no dependencies (about 170 kB gzipped). The diagram package
+  adds about 19 kB of its own and loads the ELK layout library (about 440 kB gzipped) only when it lays
+  out a diagram. The embed's script is about 4 kB.
+
+<Aside type="note" title="Who makes what">
+SCCharts and KIELER are developed by the [Real-Time and Embedded Systems
+group](https://rtsys.informatik.uni-kiel.de) at Kiel University. The engine is a port of KIELER's SCCharts
+compiler, so the packages are under the same licence, the Eclipse Public License 2.0. SCCharts Lab is an
+independent project, not affiliated with or endorsed by Kiel University.
+</Aside>

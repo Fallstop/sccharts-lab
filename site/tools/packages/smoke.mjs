@@ -1,7 +1,9 @@
 // Consumer smoke test of the publishable packages: packs them (tools/packages/pack.mjs), installs the tarballs with npm
 // into a fresh project (no workspace links), and there
 //   (a) runs a Node ES module script with engine, diagram and trace (tools/packages/smoke/node-check.mjs: ABRO against KIELER's
-//       recording, its C code through gcc, its diagram, its trace in every format);
+//       recording, its C code through gcc, its diagram, its trace in every format), the quick start of each README,
+//       and every sample of the packages' documentation (src/components/packages/samples: each must print the
+//       output its page shows);
 //   (b) type-checks a TypeScript consumer (smoke/consumer.ts) with moduleResolution bundler and node16;
 //   (c) bundles a browser app with Vite (smoke/web: engine and diagram, ELK on the main thread and in a Web Worker)
 //       and loads it in headless Chromium: it must draw, step and highlight ABRO, render text exactly as wide as
@@ -342,6 +344,32 @@ async function main() {
         run('node', [`readme-${name}.mjs`])
     }
     console.log('the first js block of each README runs (the embed\'s: its options and protocol, no DOM)')
+
+    // The documentation's samples (src/components/packages/samples, shown on /packages/), as published: every .mjs
+    // runs beside the samples' charts and prints the .out.txt the page shows; main.c builds on the generated code.
+    const samples = path.join(site, 'src/components/packages/samples')
+    const sampleFiles = fs.readdirSync(samples, { recursive: true }).map(f => f.split(path.sep).join('/')).sort()
+    const work = path.join(consumer, 'docs-run')
+    fs.rmSync(path.join(consumer, 'docs-samples'), { recursive: true, force: true })
+    fs.rmSync(work, { recursive: true, force: true })
+    fs.cpSync(samples, path.join(consumer, 'docs-samples'), { recursive: true })
+    fs.mkdirSync(work)
+    for (const file of sampleFiles.filter(f => f.endsWith('.sctx'))) fs.copyFileSync(path.join(samples, file), path.join(work, path.basename(file)))
+    const scripts = sampleFiles.filter(f => f.endsWith('.mjs'))
+    for (const file of scripts) {
+        const printed = run('node', [path.join(consumer, 'docs-samples', file)], { cwd: work })
+        const expected = fs.readFileSync(path.join(samples, file.replace(/\.mjs$/, '.out.txt')), 'utf8')
+        if (printed !== expected) fail(`the documentation's sample ${file} prints\n${printed}\nbut the page shows\n${expected}`)
+    }
+    let c = 'no gcc, main.c skipped'
+    if (node.gcc) {
+        fs.copyFileSync(path.join(samples, 'quick-start/main.c'), path.join(work, 'main.c'))
+        run('gcc', ['-Wall', '-Wextra', '-Werror', '-o', 'turnstile', 'main.c', 'Turnstile.c'], { cwd: work })
+        const printed = run(path.join(work, 'turnstile'), [], { cwd: work })
+        if (printed !== fs.readFileSync(path.join(samples, 'quick-start/main.out.txt'), 'utf8')) fail(`the documentation's main.c prints\n${printed}`)
+        c = 'main.c built with gcc and run'
+    }
+    console.log(`the documentation's ${scripts.length} samples print what its pages show; ${c}`)
 
     step('(b) TypeScript: moduleResolution bundler and node16, skipLibCheck off')
     for (const config of ['tsconfig.bundler.json', 'tsconfig.node16.json', 'tsconfig.web.json']) {

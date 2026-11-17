@@ -1,0 +1,36 @@
+---
+/**
+ * <CompareFigure a={...} b={...} steps={[...]} />: two charts run on the same inputs, as one timing diagram with
+ * each chart's outputs under its name and the ticks where they differ marked, on a page of the packages'
+ * documentation. Both runs are the engine's (see figures.ts); the picture is the one the guide's Compare draws.
+ *
+ * Props: a and b (each `{ code, files? }`), steps (inputs tick by tick), caption.
+ */
+import WidgetFrame from '../frame/WidgetFrame.astro'
+import { compareSvg, lanesFor } from '../sim/trace'
+import { compiled, run, type Inputs } from './figures'
+
+interface Chart {
+	code: string
+	files?: Record<string, string>
+}
+interface Props {
+	a: Chart
+	b: Chart
+	steps: Inputs[]
+	caption?: string
+}
+const { a, b, steps, caption } = Astro.props
+const side = (chart: Chart) => {
+	const c = compiled(chart.code, chart.files, '<CompareFigure>')
+	return { name: c.chart.name, lanes: lanesFor(c.result.interface, c.chart), history: run(c, steps, '<CompareFigure>') }
+}
+const left = side(a)
+const right = side(b)
+// Width 0: only the ticks of the run are drawn, no empty columns for ticks to come (compareSvg draws at least four).
+const wave = compareSvg(left.lanes.filter((l) => l.role === 'input'), left.history, left, right, { cursor: steps.length, width: 0 })
+---
+
+<WidgetFrame kind="compare" name={`${left.name} and ${right.name}`} label="on the same inputs" caption={caption}>
+	<div slot="trace" class="sc-trace" tabindex="0" role="group" aria-label={`Timing diagram of ${left.name} and ${right.name}: scrolls sideways`} set:html={wave} />
+</WidgetFrame>

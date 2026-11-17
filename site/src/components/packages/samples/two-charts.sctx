@@ -1,0 +1,11 @@
+scchart Up {
+  output int n = 0
+  initial state Count
+    do n += 1 go to Count
+}
+
+scchart Down {
+  output int n = 10
+  initial state Count
+    do n -= 1 go to Count
+}

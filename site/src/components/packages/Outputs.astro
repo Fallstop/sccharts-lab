@@ -1,0 +1,145 @@
+---
+/**
+ * <Outputs />: the overview's figure, one chart and everything the packages make of it: its diagram, its C header,
+ * a run as a timing diagram, the run in words and the run's trace file. Each part is made here, at build time, by
+ * the call its heading names (see figures.ts), from samples/quick-start/turnstile.sctx.
+ */
+import { Code } from '@astrojs/starlight/components'
+import { describeTick, generateC } from '@sccharts-lab/engine'
+import { traceFromRun, writeTrace } from '@sccharts-lab/trace'
+import '@sccharts-lab/diagram/diagram.css'
+import source from './samples/quick-start/turnstile.sctx?raw'
+import { compiled, layoutOf, run, svgOf, waveOf } from './figures'
+
+const c = compiled(source, undefined, '<Outputs>')
+const history = run(c, [{}, { coin: true }, { coin: false, push: true }, { push: false }, { coin: true }, { coin: false, push: true }], '<Outputs>')
+const svg = svgOf(await layoutOf(c), undefined, `Diagram of ${c.chart.name}`, true)
+const wave = waveOf(c, history, 620)
+const words = history.map((tick, i) => describeTick(tick, c.result.program!, history[i - 1]).join(' '))
+const csv = writeTrace(traceFromRun(c.result, history, { model: 'turnstile.sctx' }), 'csv').trim()
+const generated = generateC(c.result)
+// The header's struct, with the generated state after the chart's own variables left out, and its three functions.
+const header = generated.files[generated.header]
+const struct = /typedef struct \{[\s\S]*?\} \w+;/.exec(header)?.[0] ?? ''
+const own = struct.split('\n').filter((line) => !/^\s+\w+ _/.test(line))
+own.splice(own.length - 1, 0, '  /* ... the chart\'s state ... */')
+const c_code = [...own, '', ...header.split('\n').filter((line) => /^void \w+\(/.test(line))].join('\n')
+---
+
+<figure class="sc-pkg-out not-content" aria-label="One chart, and what the packages make of it">
+	<div class="sc-pkg-out__tile is-wide">
+		<p class="sc-pkg-out__head"><span>A chart</span><code>turnstile.sctx</code></p>
+		<Code code={source.trim()} lang="sctx" frame="none" />
+	</div>
+	<div class="sc-pkg-out__tile">
+		<p class="sc-pkg-out__head"><span>Its diagram</span><code>chartToSvg()</code></p>
+		<div class="sc-pkg-out__svg" set:html={svg} />
+	</div>
+	<div class="sc-pkg-out__tile">
+		<p class="sc-pkg-out__head"><span>Its C code</span><code>generateC()</code></p>
+		<Code code={c_code} lang="c" frame="none" />
+	</div>
+	<div class="sc-pkg-out__tile is-wide">
+		<p class="sc-pkg-out__head"><span>A run, tick by tick</span><code>createSimulation()</code></p>
+		<div class="sc-trace" tabindex="0" role="group" aria-label={`Timing diagram of ${c.chart.name}: scrolls sideways`} set:html={wave} />
+	</div>
+	<div class="sc-pkg-out__tile">
+		<p class="sc-pkg-out__head"><span>The run in words</span><code>describeTick()</code></p>
+		<ol class="sc-pkg-out__words">
+			{words.map((sentence) => <li>{sentence}</li>)}
+		</ol>
+	</div>
+	<div class="sc-pkg-out__tile">
+		<p class="sc-pkg-out__head"><span>The run as a file</span><code>writeTrace()</code></p>
+		<Code code={csv} lang="text" frame="none" />
+	</div>
+</figure>
+
+<style>
+	.sc-pkg-out {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1px;
+		margin: 1.75rem 0;
+		border: 1px solid var(--c-rule-strong);
+		border-radius: var(--radius-md);
+		box-shadow: 0 1.5px 0 var(--c-rule-strong);
+		background-color: var(--c-rule);
+		overflow: hidden;
+	}
+	@media (min-width: 50rem) {
+		.sc-pkg-out {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+		.sc-pkg-out__tile.is-wide {
+			grid-column: 1 / -1;
+		}
+	}
+	.sc-pkg-out__tile {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		background-color: var(--c-sheet);
+	}
+	.sc-pkg-out__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.125rem 0.75rem;
+		margin: 0;
+		padding: 0.5rem 0.875rem;
+		font-size: var(--text-xs);
+		background-color: var(--c-rail);
+		border-bottom: 1px solid var(--c-rule);
+	}
+	.sc-pkg-out__head span {
+		font-weight: 700;
+		color: var(--c-ink);
+	}
+	.sc-pkg-out__head code {
+		font-family: var(--font-mono);
+		color: var(--c-muted);
+	}
+	.sc-pkg-out__svg {
+		flex: 1;
+		display: grid;
+		place-items: center;
+		padding: 1rem;
+		background-color: var(--c-inset);
+	}
+	.sc-pkg-out__words {
+		flex: 1;
+		margin: 0;
+		padding: 0.75rem 0.875rem 0.875rem 2.25rem;
+		font-size: var(--text-xs);
+		line-height: 1.5;
+		color: var(--c-text);
+	}
+	.sc-pkg-out__words li {
+		margin: 0;
+		padding-inline-start: 0.25rem;
+	}
+	.sc-pkg-out__words li + li {
+		margin-top: 0.25rem;
+	}
+	.sc-pkg-out__words li::marker {
+		font-family: var(--font-mono);
+		color: var(--c-muted);
+	}
+	/* The code of a tile sits in the tile, not in a frame of its own. */
+	.sc-pkg-out__tile :global(.expressive-code) {
+		margin: 0;
+		flex: 1;
+	}
+	.sc-pkg-out__tile :global(.expressive-code .frame) {
+		box-shadow: none;
+		height: 100%;
+	}
+	.sc-pkg-out__tile :global(.expressive-code pre) {
+		border: 0;
+		border-radius: 0;
+		height: 100%;
+		font-size: var(--text-xs);
+	}
+</style>

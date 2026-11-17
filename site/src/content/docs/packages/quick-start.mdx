@@ -1,0 +1,147 @@
+---
+title: "Quick start"
+description: "From an empty folder to a chart that compiles, runs, draws itself, saves its run and becomes C code, in seven short scripts."
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import Drawn from '~components/packages/Drawn.astro'
+import Install from '~components/packages/Install.astro'
+import LiveTurnstile from '~components/packages/LiveTurnstile.astro'
+import Run from '~components/packages/Run.astro'
+import Sample from '~components/packages/Sample.astro'
+import turnstile from '~components/packages/samples/quick-start/turnstile.sctx?raw'
+
+This page takes one small chart through everything the packages do. Each step is a complete script: copy
+it, run it with `node`, and compare what it prints with the output shown under it. Those outputs are
+recorded from the scripts themselves, so they are what you will see.
+
+You need [Node](https://nodejs.org) 20 or later. You do not need KIELER, Java or a C compiler (the last
+step uses `gcc`, but only to try the generated code).
+
+## Set up
+
+Make a folder, and install the three packages this page uses:
+
+```sh
+mkdir turnstile && cd turnstile
+npm init -y && npm pkg set type=module
+```
+
+<Install packages="@sccharts-lab/engine @sccharts-lab/diagram @sccharts-lab/trace" />
+
+`type=module` lets the `.mjs` files below be plain `.js` files too: the packages are ES modules.
+
+Then save the chart. It is a turnstile: a coin unlocks it, and pushing through locks it again and counts
+the person.
+
+<Sample file="quick-start/turnstile.sctx" />
+
+## Compile a chart
+
+`compile()` takes the text of a file and gives back everything known about the chart: whether it
+compiles, its diagnostics, its inputs and outputs, and the parsed chart itself.
+
+<Sample file="quick-start/compile.mjs" output />
+
+`result.ok` is `true` exactly when KIELER's compiler accepts the chart. `compile()` never throws, whatever
+the text: a broken chart is a result like any other.
+
+## Read the diagnostics
+
+What is wrong with a chart is in `result.diagnostics`. Each one has a message written for a person, where
+it is in the source, and often a hint that says what to do about it.
+
+<Sample file="quick-start/diagnostics.mjs" output />
+
+An `error` means the chart does not compile. A `warning` is something KIELER also warns about, and the
+chart may still compile. Each diagnostic also carries a stable `code` (here `unknown-state` and
+`unreachable-state`), KIELER's own wording in `kieler`, and the ids of the states and transitions involved,
+so a tool can underline the source and mark the diagram. The [engine guide](/packages/engine/#read-the-diagnostics)
+shows all of it.
+
+## Run it
+
+`createSimulation()` runs a compiled chart. Each call of `step()` is one tick: you give the inputs, and
+get back the value of every variable after the tick, the states that are active, and the transitions that
+fired. `describeTick()` says the same in a sentence.
+
+<Sample file="quick-start/simulate.mjs" output mark={{ range: '8' }} />
+
+The same four ticks as pictures. Each frame is the chart after one `step()`, with the states it is in and
+the transition that fired marked; under them, every variable over time:
+
+<Run code={turnstile} steps={[{}, { coin: true }, { coin: false, push: true }, {}]} caption="In tick 2 the coin unlocks the turnstile; in tick 3 the push locks it again and `passed` becomes 1. In tick 4 nothing fires: `push` is still `true`, but `Locked` only waits for `coin`." />
+
+Look at tick 4. Its inputs are `{}`, yet `push` is still `true`: an input keeps its value until you
+change it, as in KIELER's simulation. Set an input back to `false` yourself when its moment has passed,
+as tick 3 does with `coin`.
+
+## Draw it
+
+The diagram package lays the chart out as KIELER does and gives you SVG markup. This script writes a
+file you can open in a browser or put in a document:
+
+<Sample file="quick-start/draw.mjs" output />
+
+<Drawn code={turnstile} label="turnstile.svg" caption="What `turnstile.svg` shows: the diagram KIELER draws for the chart, with its declarations, the initial state's thick border, and each transition's trigger and effect." />
+
+The few lines in the middle put the stylesheet and the fonts inside the file, so it needs nothing else.
+On a web page you load the stylesheet once and leave them out, as [In the browser](#in-the-browser) does.
+
+## Save and replay a run
+
+A **trace** is a run written down: the inputs and outputs of every tick. The trace package writes one in
+four formats (KIELER's KTrace, CSV, JSON and XML) and replays a file into a chart, checking every output
+against the file. That makes a saved run a regression test.
+
+<Sample file="quick-start/trace.mjs" output />
+
+Change the chart so that it counts differently, run the last three lines again, and `outcome.mismatches`
+lists every tick and output that no longer agrees with the file.
+
+## Generate C
+
+`generateC()` turns the chart into a header and a C file, in the shape of the code KIELER generates: a
+`TickData` struct that holds the inputs, the outputs and the chart's state, and the functions `reset()`
+and `tick()`.
+
+<Sample file="quick-start/generate-c.mjs" output />
+
+To use the code, set the inputs in the struct, call `tick()`, and read the outputs:
+
+<Sample file="quick-start/main.c" />
+
+```sh
+gcc -o turnstile main.c Turnstile.c && ./turnstile
+```
+
+<Sample file="quick-start/main.out.txt" title="Output" />
+
+The same four ticks as the simulation, with the same values.
+
+## In the browser
+
+Nothing above is particular to Node. In a page built with a bundler such as [Vite](https://vite.dev), the
+same calls compile the chart, draw it into an element, and mark each tick in the diagram:
+
+<Sample file="quick-start/browser.html" title="index.html" />
+
+<Sample file="quick-start/browser.ts" title="main.ts" />
+
+`tickClasses()` turns a tick into CSS classes by element, and `applyClasses()` sets them on the drawn
+diagram: the active states, the transition that fired, the state just entered. Here is that page:
+
+<LiveTurnstile />
+
+<Aside type="tip" title="No build step?">
+If you only want a live chart on a page, you need none of this. The [embed package](/packages/embed/) is
+one script tag and one element, and brings the editor and the simulation with it.
+</Aside>
+
+## Where next
+
+- [Engine](/packages/engine/): diagnostics in full, charts in several files, signals, run-time errors, and
+  the options of the C code.
+- [Diagram](/packages/diagram/): layout options, themes, fonts, and laying out in a Web Worker.
+- [Trace](/packages/trace/): the four formats, replaying step by step, and comparing two charts.
+- [Embed](/packages/embed/): the element, its events, and the messages behind it.

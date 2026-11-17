@@ -1,0 +1,638 @@
+---
+title: "Engine API"
+description: "Every function, option and type of @sccharts-lab/engine: compile, simulate, explain, generate C, and the model of a chart."
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import PackageFacts from '~components/packages/PackageFacts.astro'
+
+<PackageFacts name="engine" api />
+
+Everything here is imported from `@sccharts-lab/engine` unless a section names another entry point. The
+[guide](/packages/engine/) shows the calls at work. The signatures and tables on this page are checked
+against the package's source, so they are the ones your editor will show.
+
+## Compiling
+
+### `compile()`
+
+```ts
+function compile(source: string, options?: CompileOptions): CompileResult
+```
+
+Parses a file, resolves its names, checks it with KIELER's rules and prepares its chart for simulation.
+`source` is the text of one `.sctx` file. It never throws: a text that is not a chart gives a result with
+`ok: false`.
+
+### `CompileOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `chart?` | `string` | The name of the chart to simulate. Default: the first in the file, as KIELER. |
+| `files?` | `Record<string, string>` | The other files, by file name (`'lib/beep.sctx'`), for `import` and for references to charts in them. |
+
+### `CompileResult`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `ok` | `boolean` | `true` exactly when KIELER accepts the chart. Reading `ok`, `diagnostics`, `sim` or `forCopies` runs the simulator's compilation, once. |
+| `program?` | `Program` | The parsed file. Present whenever the text could be parsed, also when `ok` is `false`. |
+| `chart?` | `State` | The chart that is simulated: the root state of the tree. |
+| `diagnostics` | `Diagnostic[]` | Errors, warnings and notes. |
+| `interface` | `VariableInfo[]` | The chart's inputs, outputs and top-level variables, as KIELER's simulation has them. |
+| `index?` | `ModelIndex` | The resolved model: lookups by id, parents, transition targets. |
+| `sim?` | `CompiledChart` | The simulator's own compiled chart. For the other packages; its shape is not part of this API. |
+| `forCopies?` | `ForCopies[]` | The chart's for-regions and the counter value of each copy, when it has any. |
+
+### `parse()`
+
+```ts
+function parse(source: string): ParseResult
+```
+
+Reads the syntax only: no name resolution, no checks. Never throws. Its diagnostics are syntax errors.
+
+### `ParseResult`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `program?` | `Program` | The parsed file, when the text could be read. |
+| `diagnostics` | `Diagnostic[]` | Syntax errors and lexical warnings. |
+
+### `parseExpression()`
+
+```ts
+function parseExpression(source: string, options?: { as?: StandaloneMode }): ExpressionParseResult
+```
+
+Parses one expression or effect on its own, exactly as KIELER's grammar reads it inside a chart. With
+`as: 'auto'` (the default) the text is read as an expression if it is one, else as an effect (`x = a + b`,
+`x++`). Names are not resolved. Never throws.
+
+### `ExpressionParseResult`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `as` | `'expression' \| 'effect'` | The rule the text was read with. |
+| `expression?` | `Expression` | The expression, when `as` is `'expression'` and the text parsed. |
+| `effect?` | `Effect` | The effect, when `as` is `'effect'` and the text parsed. |
+| `diagnostics` | `Diagnostic[]` | Syntax errors, with spans in the given text. Empty when it parsed. |
+
+### `StandaloneMode`
+
+```ts
+type StandaloneMode = 'expression' | 'effect' | 'auto'
+```
+
+## Diagnostics
+
+### `Diagnostic`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `severity` | `Severity` | `'error'`: the chart is rejected. |
+| `message` | `string` | What is wrong, for the person who wrote the chart. |
+| `span?` | `Span` | Where in the source. |
+| `code?` | `string` | A stable name for the kind of problem: `'parse'`, `'unknown-state'`, `'causality-cycle'`. |
+| `hint?` | `string` | One or two sentences on what to do about it. |
+| `related?` | `string[]` | Ids of the states, transitions and regions involved, for marking them in a diagram. |
+| `kieler?` | `string` | KIELER's own message for the same problem, when it has one. |
+| `suggestion?` | `string` | The name the message proposes instead: a quick fix puts it in place of `span`. |
+| `tick?` | `number` | For a run-time error: the tick in which the simulation stopped. |
+
+### `Severity`
+
+```ts
+type Severity = 'error' | 'warning' | 'info'
+```
+
+### `Span`
+
+A place in the source. Offsets are UTF-16 indices, as JavaScript strings and editors count; lines and
+columns count from 1; the end is exclusive.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `start` | `number` | Offset of the first character. |
+| `end` | `number` | Offset after the last character. |
+| `line` | `number` | Line of the start. |
+| `col` | `number` | Column of the start. |
+| `endLine` | `number` | Line of the end. |
+| `endCol` | `number` | Column of the end. |
+
+### `SIMULATOR_CODES`
+
+```ts
+const SIMULATOR_CODES: ReadonlySet<string>
+```
+
+The codes of the diagnostics that come from KIELER's compilation stage (scheduling, code generation)
+and not from its editor's checks: `'causality-cycle'`, `'instantaneous-loop'`, `'unsupported'` and others.
+A tool that mirrors an editor's live checks can leave these out.
+
+## Simulating
+
+### `createSimulation()`
+
+```ts
+function createSimulation(result: CompileResult, options?: SimulationOptions): Simulation
+```
+
+A simulation of a compiled chart, before its first tick. For a chart that does not compile, every `step()`
+returns the first error as its `error`.
+
+### `SimulationOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `strict?` | `boolean` | `step()` throws on a name that is not an input of the chart, with the input it most likely meant. Off by default, as KIELER's simulation takes any name. |
+
+### `Simulation`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `interface` | `VariableInfo[]` | The chart's variables, as in the compile result. |
+| `tick` | `number` | How many ticks have run. |
+| `history` | `SimTickResult[]` | The result of every tick so far. |
+| `step()` | `(inputs?: Readonly<Record<string, Value \| undefined>>) => SimTickResult` | Runs one tick. An input left out, or `undefined`, keeps its value. |
+| `reset()` | `() => void` | Back to before the first tick. |
+| `rewind()` | `(toTick: number) => void` | Back to the state after tick `toTick` (0: before the first). Later history is dropped. |
+| `takenCounts()` | `(result: TickResult) => number[]` | How often each transition fired in a tick, in the order of KIELER's `taken` counters. |
+
+### `SimTickResult`
+
+What `step()` returns: a [`TickResult`](#tickresult) with two more properties.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `pool` | `Record<string, PoolValue>` | The tick's values under KIELER's names: a valued signal `V` is `V` (presence) and `V_val` (value). |
+| `trace` | `Record<string, Value>` | Values KIELER's pool has no name for: locals of inner states and regions, members of class instances. Keys come from `traceableVariables()`. |
+
+### `TickResult`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `tick` | `number` | The tick's number, from 1. |
+| `inputs` | `Record<string, Value>` | The inputs at the end of the tick. |
+| `ranWith?` | `Record<string, Value>` | The inputs as the tick read them, under KIELER's names. Giving these to `step()` again, tick by tick, repeats the run. |
+| `values` | `Record<string, Value>` | Every input, output and variable after the tick. A valued signal: its value. |
+| `present` | `Record<string, boolean>` | Which signals were present. |
+| `active` | `string[]` | Ids of the states active at the end of the tick, with their ancestors and the chart. |
+| `entered` | `string[]` | Ids of the states entered. |
+| `exited` | `string[]` | Ids of the states left. |
+| `taken` | `string[]` | Ids of the transitions that fired, in order. One can fire more than once. |
+| `actions` | `string[]` | Ids of the entry, during and exit actions that ran. |
+| `terminated` | `boolean` | The chart has terminated, in this tick or an earlier one. |
+| `terminatedNow?` | `boolean` | `true` only in the tick of termination. |
+| `log` | `TraceEvent[]` | What happened, step by step. |
+| `printed` | `string[]` | Text from `print()` effects. |
+| `error?` | `Diagnostic` | A run-time failure: division by zero, an array index out of range. |
+| `copies?` | `ForCopyState[]` | For a chart with for-regions: where each copy is. |
+
+### `Value`
+
+```ts
+type Value = boolean | number | string | Value[] | null
+```
+
+A value of a chart's variable. An array variable is a nested array; an unset string is `null`.
+
+### `PoolValue`
+
+```ts
+type PoolValue = Value | { [member: string]: PoolValue }
+```
+
+A value in KIELER's data pool. An instance of a class or struct is an object of its members.
+
+### `TraceEvent`
+
+```ts
+type TraceEvent =
+    | { kind: 'enter'; state: string }
+    | { kind: 'exit'; state: string }
+    | { kind: 'check'; transition: string; result: boolean; reason?: string; seen?: TraceSeen[] }
+    | { kind: 'take'; transition: string; reason?: string; seen?: TraceSeen[]; unchecked?: boolean }
+    | { kind: 'action'; action: string; fired: boolean }
+    | { kind: 'write'; variable: string; value: Value; by: string; how: 'init' | 'update' }
+    | { kind: 'emit'; signal: string; value?: Value; by: string }
+    | { kind: 'pause'; state: string; region: string }
+    | { kind: 'terminate'; region: string }
+    | { kind: 'suspend'; state: string; reason?: string; seen?: TraceSeen[] }
+    | { kind: 'print'; text: string; by: string }
+    | { kind: 'note'; text: string; markdown?: string; related?: string[] }
+```
+
+One entry of a tick's `log`, in the order the engine worked. `check` is a trigger being evaluated, with
+the values it read in words (`reason`) and as data (`seen`); `take` is a transition firing; `write` and
+`emit` name the transition or action that caused them in `by`; `note` is an explanation in plain words.
+
+### `TraceSeen`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The reference as the trigger writes it: `n`, `a[i]`, `pre(x)`, `val(S)`. |
+| `value` | `Value` | What it read at that moment. |
+| `signal?` | `boolean` | It is a signal's presence: `value` is `true` for present. |
+
+### `ForCopies`
+
+A for-region and its copies, in `CompileResult.forCopies`.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `region` | `string` | The for-region's id. |
+| `counter` | `string` | The counter's name. |
+| `values` | `number[]` | The counter's value in each copy, in KIELER's order. |
+| `name?` | `string` | The region's name, when it has one. |
+
+### `ForCopyState`
+
+One copy of a for-region in a tick, in `TickResult.copies`.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `region` | `string` | The for-region's id. |
+| `value` | `number \| string` | The counter's value in this copy. |
+| `active` | `string[]` | Ids of the states active in this copy at the end of the tick. |
+| `entered` | `string[]` | Ids of the states entered in this copy. |
+
+## Explaining
+
+### `describeTick()`
+
+```ts
+function describeTick(result: TickResult, program: Program, previous?: TickResult, options?: DescribeOptions): string[]
+```
+
+Sentences about a tick: what was entered, which transitions fired and why, which signals were emitted,
+which outputs changed, and whether the chart terminated or stopped with an error. `previous` is the tick
+before, for saying what changed.
+
+### `DescribeOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `markdown?` | `boolean` | Names, triggers and values in code spans, as inline Markdown. |
+
+### `elementName()`
+
+```ts
+function elementName(id: string, program: Program, options?: DescribeOptions): { name: string; within?: string } | undefined
+```
+
+A readable name for an id from a tick: `{ name: 'Off → On', within: 'inside Left (a copy of Blinker)' }`.
+`undefined` for an id it does not know.
+
+### `traceableVariables()`
+
+```ts
+function traceableVariables(result: Pick<CompileResult, 'chart' | 'index' | 'interface'>): TraceableVariable[]
+```
+
+Every variable of the chart whose value a tick holds, in declaration order: the inputs, the outputs, the
+chart's own variables, and also the locals of its inner states and regions and the members of its class
+instances. It is what the playground offers to show in a timing diagram.
+
+### `TraceableVariable`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `key` | `string` | Where the value is in a tick: a name in `values` when `inPool`, else a key of `trace`. |
+| `name` | `string` | The name as written: `x`, `pt.x`, `deltaT`. |
+| `group` | `'input' \| 'output' \| 'local' \| 'member' \| 'time'` | What kind of variable it is. |
+| `type` | `ValueType` | The declared type. |
+| `simulationType?` | `ValueType` | KIELER's type in a simulation, when it differs: a clock is a `float` or an `int`. |
+| `signal` | `boolean` | It is a signal. |
+| `valued` | `boolean` | It is a valued signal. |
+| `input` | `boolean` | It is an input. |
+| `output` | `boolean` | It is an output. |
+| `dims` | `number[]` | Array sizes, empty for a scalar. |
+| `scope` | `{ kind: 'chart' \| 'state' \| 'region'; id: string; name: string }` | Where it is declared. |
+| `inPool` | `boolean` | KIELER's simulation reports it under this name. |
+| `added?` | `boolean` | KIELER adds it: `deltaT` and `sleepT` of a timed chart. |
+| `member?` | `{ instance: string; member: string }` | For a member of a class or struct instance. |
+| `copy?` | `{ region: string; counter: string; value: number }` | For a local inside a for-region: which copy. |
+
+## The chart's interface
+
+### `VariableInfo`
+
+One entry of `CompileResult.interface`.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The variable's name. |
+| `id` | `string` | Its id, `Chart$name`. |
+| `type` | `ValueType` | Its type. A clock of a timed chart has KIELER's simulation type, `float` or `int`. |
+| `signal` | `boolean` | It is a signal. |
+| `valued` | `boolean` | It is a signal with a value. |
+| `combine?` | `CombineOperator` | A valued signal's combine operator. |
+| `input` | `boolean` | It is an input. |
+| `output` | `boolean` | It is an output. |
+| `const` | `boolean` | It is a constant. |
+| `dims` | `number[]` | Array sizes, empty for a scalar. |
+| `initialValue?` | `Value` | Its initial value, when it has a constant one. |
+
+### `extractInterface()`
+
+```ts
+function extractInterface(chart: State, index?: ModelIndex): VariableInfo[]
+```
+
+The variables declared at the top of a chart, in declaration order with their types as declared. For a
+chart from `parse()`; `compile()` already gives `interface`.
+
+### `constantValue()`
+
+```ts
+function constantValue(e: Expression, index?: ModelIndex, depth?: number): Value | undefined
+```
+
+The value of a constant expression, or `undefined` when it is not constant. Leave `depth` out: the function
+uses it to follow one constant into another.
+
+## C code
+
+### `generateC()`
+
+```ts
+function generateC(result: CompileResult, options?: GenerateCOptions): GeneratedC
+```
+
+C code for a compiled chart, in the shape of KIELER's netlist-based compilation.
+
+### `GenerateCOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `naming?` | `'default' \| 'prefix' \| 'suffix' \| Partial<CNaming>` | The names of the functions and the struct. `'prefix'` and `'suffix'` add the chart's name (`ABROtick`, `tickABRO`), as KIELER's `#code.naming`; an object sets any of them. Default: the chart's own `#code.naming` pragma, else `tick`, `reset`, `logic`, `TickData`. |
+| `takenTransitions?` | `boolean` | Count the fired transitions in `int _taken_transitions[n]`, as KIELER's simulation does. Off by default. |
+| `comments?` | `boolean` | Comments that name the source states and transitions. On by default. |
+| `fileName?` | `string` | The base name of the two files. Default: the chart's name. |
+
+### `GeneratedC`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `ok` | `boolean` | Code was generated. |
+| `chart` | `string` | The chart's name. |
+| `files` | `Record<string, string>` | The two files, by name. |
+| `header` | `string` | The header's name, a key of `files`. |
+| `source` | `string` | The C file's name, a key of `files`. |
+| `names` | `CNaming` | The names used for the functions and the struct. |
+| `variables` | `CVariable[]` | The chart's variables in the struct, in struct order. |
+| `instances` | `{ name: string; member: string; ctype: string; pool?: string }[]` | Instances of classes and structs: the struct member and its type. |
+| `diagnostics` | `Diagnostic[]` | Why there is no code, or what to know about it. |
+| `hostCode` | `boolean` | The chart uses host code, which the C code carries as written. |
+| `simulated` | `boolean` | The engine's simulation runs the chart too. `false` for host code and recursive methods, which only C can run. |
+| `takenTransitions?` | `string[]` | With the `takenTransitions` option: the transition counted by each counter. |
+
+### `CNaming`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `tick` | `string` | The function that runs one tick. |
+| `reset` | `string` | The function that initialises the struct. |
+| `logic` | `string` | The function `tick` calls for the chart's logic. |
+| `struct` | `string` | The struct's type name. |
+
+### `CVariable`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The name in the chart: `count`, or `home.count` for a member. |
+| `member` | `string` | The member of the struct: `d->` and this is the C lvalue. |
+| `ctype` | `string` | The C type of one element: `char` for a bool, `int`, `double`, `char*`, or a host type. |
+| `type` | `'bool' \| 'int' \| 'float' \| 'string' \| 'host'` | The chart's type. |
+| `dims` | `number[]` | Array sizes, empty for a scalar. |
+| `input` | `boolean` | It is an input. |
+| `output` | `boolean` | It is an output. |
+| `pool?` | `string` | The name KIELER's simulation reports it under. |
+| `poolObject?` | `string` | For a member of an instance: the instance's name in the pool. |
+| `signal?` | `'presence' \| 'value' \| 'curval'` | For a valued signal: which of its three members this is. |
+
+## The model
+
+`program` is the parsed file as plain data. A `Program` holds charts; a chart is a `State`; a state holds
+`regions` and `transitions`; a region holds `states`. Every node has a `kind` that names its type and a
+`span` in the source, and states, regions, transitions and variables have an `id`
+([Element ids](/packages/engine/#element-ids)). The types are also at `@sccharts-lab/engine/types`.
+
+### `Program`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `kind` | `'program'` | |
+| `imports` | `string[]` | The `import "file"` strings, in order. |
+| `importSpans?` | `Span[]` | Where each import's name is. |
+| `pragmas` | `Pragma[]` | The file's `#` pragmas. |
+| `charts` | `State[]` | Every `scchart` in the file, in order. |
+| `comments?` | `{ kind: 'line' \| 'block'; text: string; span: Span }[]` | The file's ordinary comments. |
+
+### `State`
+
+A chart, a state or a superstate. Its most used members:
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Its id. |
+| `name` | `string` | Its name. |
+| `label?` | `string` | Its display label: `state A "Waiting for A"`. |
+| `isRoot` | `boolean` | It is a chart. |
+| `initial` | `boolean` | It is an initial state. |
+| `final` | `boolean` | It is a final state. |
+| `connector` | `boolean` | It is a connector state. |
+| `declarations` | `Declaration[]` | The variables and signals it declares. |
+| `actions` | `LocalAction[]` | Its entry, during, exit and suspend actions. |
+| `regions` | `Region[]` | Its regions. Empty for a simple state. States written directly inside a superstate form one region. |
+| `transitions` | `Transition[]` | Its outgoing transitions, in priority order. |
+| `reference?` | `ScopeCall` | `state S is Other(...)`: the chart it is an instance of. |
+| `doc?` | `string` | Its `/** ... */` comment. |
+| `nameSpan` | `Span` | Where its name is, for renaming and go-to-definition. |
+
+### `Region`
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Its id. |
+| `name?` | `string` | Its name, when it has one. |
+| `regionType` | `'controlflow' \| 'dataflow'` | States and transitions, or dataflow equations. |
+| `implicit` | `boolean` | The states were written without a `region` keyword. |
+| `declarations` | `Declaration[]` | The variables it declares. |
+| `states` | `State[]` | Its states. |
+| `equations` | `Equation[]` | A dataflow region's equations. |
+| `forLoop?` | `{ variable: string; from: Expression; to?: Expression; span: Span }` | `region R for i : 0 to 3`. |
+
+### `Transition`
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Its id. |
+| `source` | `string` | The id of its source state. |
+| `targetName` | `string` | The target's name as written. |
+| `target?` | `string` | The id of the target state, when the name resolves. |
+| `priority` | `number` | Its priority, from 1, in the order written. |
+| `delay?` | `DelayType` | `'immediate'` or `'delayed'` as written. Left out: delayed. |
+| `preemption` | `PreemptionType` | `go to` is `'weak'`, `abort to` is `'strong'`, `join to` is `'termination'`. |
+| `triggerDelay?` | `number` | A count delay: `if 3 A`. |
+| `trigger?` | `Expression` | Its trigger. |
+| `effects` | `Effect[]` | Its effects. |
+| `history?` | `'reset' \| 'shallow' \| 'deep'` | A history transition. |
+| `label?` | `string` | Its display label. |
+
+### Other node types
+
+| Type | What it is |
+| --- | --- |
+| `NodeBase` | What every node has: `span`. |
+| `Declaration` | A declaration line: its `type`, whether it is `input`, `output`, `signal` or `const`, and its `valuedObjects`. |
+| `ValuedObject` | One declared name, with its array sizes, initial value and combine operator. |
+| `ValueType` | `'pure' \| 'bool' \| 'int' \| 'float' \| 'string' \| 'clock' \| 'clock-time' \| 'host'`. |
+| `LocalAction`, `LocalActionKind` | An action of a state: `'entry'`, `'during'`, `'exit'`, `'suspend'`, `'period'` or `'ode'`. |
+| `DelayType` | `'delayed' \| 'immediate' \| 'auto' \| 'undefined'`. |
+| `PreemptionType` | `'weak' \| 'strong' \| 'termination'`. |
+| `Expression` | A union by `kind`: literals (`'bool'`, `'int'`, `'float'`, `'string'`), a `Reference`, an operation (`'op'`, with `op` and `args`), a `'call'`, and rarer forms. |
+| `OperatorType` | The operators of an `'op'` expression: `'&&'`, `'+'`, `'pre'`, `'?:'` and the rest. |
+| `Reference` | A name in an expression, with its `indices`, a member access in `sub`, and the id it resolves to in `decl`. |
+| `Effect` | A union by `kind`: `'assign'`, `'postfix'` (`x++`), `'emit'`, `'call'`, `'print'`, `'randomize'`, `'hostcode'`, `'code'`. |
+| `AssignOperator` | `'='`, `'+='`, `'min='` and the other assignment operators. |
+| `CombineOperator` | A valued signal's combine operator: `'+'`, `'*'`, `'max'`, `'min'`, `'\|'`, `'&'`, `'none'`, `'host'`. |
+| `Equation` | An equation of a dataflow region. |
+| `ScopeCall`, `ScopeParameter` | A reference to another chart (`is Other(a, b to c)`) and one of its bindings. |
+| `ParamAccess` | How an argument is passed: `'&'` by reference, `'!&'` as a pure output. |
+| `SclStatement` | A statement of a code block (`do { ... }`) or a method body. |
+| `Annotation`, `Pragma` | An `@annotation` on an element, and a `#pragma` of the file. |
+| `ModelIndex`, `VOEntry` | The resolved model in `CompileResult.index`: maps from ids to states, regions and declarations, parent links, and resolved targets. |
+
+### `referenceName()`
+
+```ts
+function referenceName(r: Reference): string
+```
+
+`a.b.c` for a chain of member accesses.
+
+## Formatting
+
+Functions that print parts of the model the way KIELER's diagrams label them. From
+`@sccharts-lab/engine/format`, except the first two, which the main entry point has too.
+
+### `formatExpressionParenthesised()`
+
+```ts
+function formatExpressionParenthesised(e: Expression, options?: ParenthesiseOptions): string
+```
+
+The expression with every nested operation in parentheses, so the grouping KIELER's parser chose is
+visible: `a + b * c` gives `a + (b * c)`.
+
+### `formatEffectParenthesised()`
+
+```ts
+function formatEffectParenthesised(effect: Effect, options?: ParenthesiseOptions): string
+```
+
+The same for an effect: `x = a + (b * c)`.
+
+### `ParenthesiseOptions`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `nary?` | `'flat' \| 'left'` | KIELER keeps `a - b - c` as one operation with three operands. `'flat'` (the default) prints it so; `'left'` nests it as the C code evaluates it, `(a - b) - c`. |
+
+### The other formatters
+
+Each takes a node and, optionally, a `FormatContext` (from `createFormatContext(program)`), which lets
+it apply the file's symbol pragmas and look up declarations.
+
+| Function | Gives |
+| --- | --- |
+| `formatExpression()` | An expression as the diagram shows it, with parentheses only where precedence needs them. |
+| `formatExpressionPlain()` | KIELER's plain form, with every operation in parentheses. |
+| `formatEffect()`, `formatEffects()` | An effect, or several joined with `; `. |
+| `formatTrigger()` | A trigger with its count delay: `3 A`. |
+| `formatTransition()` | Trigger and effects on one line: `3 A / x = 1; S`. |
+| `transitionLabel()`, `transitionLabelLines()` | The label KIELER draws on a transition, on one line or as its lines, with the priority when the state has several transitions. Options: `TransitionLabelOptions`. |
+| `formatDeclaration()`, `declarationLines()` | A declaration on one line (`output int F = 0`), or the lines of a class or struct (`DeclarationLine`). |
+| `formatValuedObject()` | A declared name with its array sizes: `arr[3]`. |
+| `formatAction()` | An action on one line: `immediate during A / c++`. |
+| `formatEquation()` | A dataflow equation: `O = A && !pre(A)`. |
+| `formatScl()` | A code block as KIELER prints it. |
+| `formatFloat()` | A float as KIELER prints it: `1.0`, `1.0E7`. |
+| `displayName()`, `stateDisplayName()` | A name as shown: with symbol pragmas applied, and a state's label in place of its name. |
+| `isImplicitlyImmediate()` | Whether KIELER draws a transition dashed. |
+| `forRegionRange()` | The first and last counter value of a for-region. |
+| `createFormatContext()` | A `FormatContext` for a program. Its symbol table is a `SymbolTable`. |
+
+The diagram package builds its labels from runs of text in one format, a `TextSegment` with a
+`TextFormat`: `declarationSegments()`, `declarationComponents()`, `actionSegments()`,
+`actionComponents()`, `stateTitleSegments()`, `regionLabelSegments()`, `mergeComponents()` and
+`segmentsText()`.
+
+## Lexer
+
+From `@sccharts-lab/engine/lexer`: the tokens of a text, without the parser. It is all a syntax
+highlighter needs.
+
+### `lex()`
+
+```ts
+function lex(text: string, lines?: LineMap): LexResult
+```
+
+Splits a text into tokens. Leave `lines` out.
+
+### `LexResult`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `tokens` | `Token[]` | The tokens, ending with one of kind `'EOF'`. |
+| `comments` | `Comment[]` | The comments, which are not tokens. |
+| `diagnostics` | `Diagnostic[]` | Characters that are not SCTX. |
+
+### `Token`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `kind` | `TokenKind` | What it is. |
+| `start` | `number` | Offset of its first character. |
+| `end` | `number` | Offset after its last character. |
+| `text` | `string` | Its text. |
+
+### `TokenKind`
+
+```ts
+type TokenKind =
+    | 'ID' | 'INT' | 'FLOAT' | 'BOOLEAN' | 'STRING' | 'HOSTCODE'
+    | 'COMMENT_ANNOTATION' | 'SL_COMMENT_ANNOTATION'
+    | 'ANY_OTHER' | 'EOF'
+    | string
+```
+
+A keyword or a punctuation mark has its own text as its kind: `'state'`, `'{'`, `'->'`.
+
+### `KEYWORDS`
+
+```ts
+const KEYWORDS: ReadonlySet<string>
+```
+
+Every keyword and punctuation mark of SCTX. A token is one of them when `KEYWORDS.has(token.kind)`.
+
+### `Comment`
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `kind` | `'line' \| 'block'` | `// ...` or `/* ... */`. |
+| `start` | `number` | Offset of its first character. |
+| `end` | `number` | Offset after its last character. |
+| `text` | `string` | Its text. |
+
+### `describeToken()`
+
+```ts
+function describeToken(t: Token): string
+```
+
+A token named for a message: `'state'`, `the name 'foo'`, `the end of the file`.
