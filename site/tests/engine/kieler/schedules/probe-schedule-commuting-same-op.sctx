@@ -1,0 +1,13 @@
+// Two = writes at a commuting priority 1: the operators commute, so the confluent priority holds: accepted.
+scchart SchCommSameOp {
+  output int w = 1
+  schedule {conflicting, commuting} s
+  region A {
+    initial state A
+    do w = 3 schedule s 1 go to A
+  }
+  region B {
+    initial state B
+    do w = 2 schedule s 1 go to B
+  }
+}

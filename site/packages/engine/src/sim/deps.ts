@@ -48,6 +48,12 @@ export interface Dependency {
 const PRIORITY: Record<AccessClass, number> = { write: 0, relative: 1, read: 2 }
 const PLUS_MINUS = new Set(['++', '--', '+=', '-='])
 
+/** The operator of an assignment node as KIELER's dependency analysis sees it (other effects are assignments with =). */
+function nodeOp(node: SNode): string | undefined {
+    if (node.kind !== 'assign') return undefined
+    return node.effect?.k === 'assign' ? node.effect.op : '='
+}
+
 function commuting(a: string | undefined, b: string | undefined): boolean {
     return a === b || (PLUS_MINUS.has(a ?? '') && PLUS_MINUS.has(b ?? ''))
 }
@@ -248,6 +254,18 @@ function scheduledDependencies(byVar: Map<CVar, Access[]>, deps: Dependency[], s
                     pairs.add(`${y.a.node.id}>${x.a.node.id}`)
                     const xw = x.a.cls !== 'read'
                     const yw = y.a.cls !== 'read'
+                    // KIELER quirk: a scheduled access's priority takes the place of its access class, and priority 1
+                    // is GLOBAL_RELATIVE_WRITE, so two assignments at priority 1 whose operators do not commute (+= and
+                    // =) are a write-write pair, whatever the protocol and even for a read (processDependency).
+                    const [xo, yo] = [nodeOp(x.a.node), nodeOp(y.a.node)]
+                    if (x.priority === 1 && y.priority === 1 && xo && yo && !x.a.anyOp && !y.a.anyOp && !commuting(xo, yo)) {
+                        if (!concurrentThreads(x.a.node.thread, y.a.node.thread)) continue
+                        const key = `${x.a.node.id}>${y.a.node.id}:${v.uid}:write-write`
+                        if (seen.has(key)) continue
+                        seen.add(key)
+                        deps.push({ from: x.a.node, to: y.a.node, v, kind: 'write-write', confluent: confluent(x.a, y.a), a: x.a, b: y.a })
+                        continue
+                    }
                     // Accesses of a confluent priority do not depend on each other (KIELER's PriorityProtocol.CONFLUENT).
                     if (x.priority === y.priority && protocols?.[x.priority] === 'confluent') continue
                     if (x.priority === y.priority && xw && !yw) continue

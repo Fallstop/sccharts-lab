@@ -593,6 +593,14 @@ trigger that is a single signal (`if V schedule s 0`), whose reference is replac
 clause naming a variable that is not a schedule crashes the dependency analysis (`java.lang.ClassCastException:
 ... VariableDeclarationImpl cannot be cast to ... ScheduleDeclaration`) as soon as it is on an effect or trigger.
 
+- **Priority 1 quirk.** A scheduled access's priority replaces its access class in KIELER's dependency analysis,
+  and 1 is the class of a relative write: two assignments at priority 1 whose operators do not commute (`w += 1`
+  and `w = 2`, or `w += 1` and `y = w`) are a write-write pair, even at a `commuting` priority and even when one of
+  them only reads: concurrent, they are rejected (`probe-schedule-commuting-mixed`, `-p1-write-read`). The same
+  pair at priority 0 is confluent (`-commuting-mixed-p0`); two `=` at priority 1 commute (`-commuting-same-op`).
+- A vector assignment `x = {1, 2} schedule s 0` loses its schedule: KIELER's ArrayAssignment makes new element
+  assignments (`probe-schedule-array-vector`, rejected as an unscheduled conflict).
+- `state S schedule s 0 { schedule s ... }` names the state's own `s` (`probe-schedule-state-local`).
 - Evidence: `tests/engine/kieler/schedules/probe-schedule-*` (commuting, conflicting, cycle, read-first, global,
   referenced-state, two-objects, trigger, trigger-ref, state-body, simple-state, region, during, entry, aborts,
   emit, relative, instances, unknown, not-a-schedule), `tests/engine/kieler/parity/probe-user-schedule*`.

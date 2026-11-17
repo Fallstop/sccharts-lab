@@ -31,7 +31,9 @@ export const arrayAssignment: Pass = {
                             const r = copyRef(asm.ref)
                             const low = lowermost(r)
                             low.idx = [...target.idx.map(x => copyExpr(x)), lit(i)]
-                            out.push({ ...asm, ref: r, expr: v, o: { ...asm.o } })
+                            // KIELER's element assignments are new ones: the vector assignment's schedule is not copied.
+                            const { schedule: _, ...o } = asm.o
+                            out.push({ ...asm, ref: r, expr: v, o })
                         })
                     } else {
                         out.push(asm)

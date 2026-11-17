@@ -1,0 +1,16 @@
+// A scheduled vector assignment to an array: KIELER's ArrayAssignment makes element assignments without the
+// schedule, so the two concurrent writes conflict and the chart is rejected.
+scchart SchArrayVector {
+  output int x[2] = {0, 0}
+  schedule s
+  region A {
+    initial state A
+    immediate do x = {1, 2} schedule s 0 go to B
+    state B
+  }
+  region B {
+    initial state A
+    immediate do x = {3, 4} schedule s 1 go to B
+    state B
+  }
+}

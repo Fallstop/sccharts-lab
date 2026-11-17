@@ -1,0 +1,13 @@
+// The same pair at a commuting priority 0: no shorthand check there, the priority is confluent: accepted.
+scchart SchCommMixedP0 {
+  output int w = 1
+  schedule {commuting} s
+  region A {
+    initial state A
+    do w += 1 schedule s 0 go to A
+  }
+  region B {
+    initial state B
+    do w = 2 schedule s 0 go to B
+  }
+}

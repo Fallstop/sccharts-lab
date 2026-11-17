@@ -27,6 +27,9 @@ export type Feature =
     /** Written schedules: `schedule {conflicting, commuting} s` declarations and `schedule s N` clauses on
      *  writes of w in concurrent regions (absolute writes too, which only the schedule orders). Not in `mix`. */
     | 'schedules'
+    /** Nested instances: a struct inside a struct (`ln.a.qx`), a class inside a class (`box.in.v`, a method of the
+     *  inner one), an array of class instances with a method (`cells[1].inc()`, `cells[n % 2].v`). Not in `mix`. */
+    | 'nested'
 
 export const ALL_FEATURES: Feature[] = [
     'hierarchy', 'concurrency', 'connectors', 'immediate', 'pre', 'data', 'signals', 'valued', 'actions', 'aborts',
@@ -78,6 +81,8 @@ export const PROFILES: Record<string, Profile> = {
     rare: { features: [...BASE, 'rare'], optional: ['signals', 'count', 'actions', 'pre', 'classes'], optionalRate: 0.35, roots: [1, 2, 2], maxDepth: 1 },
     // The final polish's forms (engine-5) among ordinary behaviour.
     polish: { features: [...BASE, 'polish', 'pre'], optional: ['signals', 'count', 'actions', 'code'], optionalRate: 0.35, roots: [1, 2, 2], maxDepth: 1 },
+    // Nested structs and classes, and arrays of instances, read and written in triggers, effects and methods.
+    nested: { features: [...BASE, 'nested', 'actions'], optional: ['structs', 'classes', 'code', 'signals', 'count', 'references'], optionalRate: 0.3 },
     // Written schedules ordering concurrent writes of w, in two or three regions.
     schedules: { features: ['hierarchy', 'concurrency', 'data', 'immediate', 'joins', 'schedules'], optional: ['actions', 'signals', 'aborts', 'references'], optionalRate: 0.3, roots: [2, 2, 3], maxDepth: 1 },
     // Timed annotations and ode actions among clocks, suspension and references.
@@ -142,6 +147,8 @@ interface Scope {
     struct?: string
     /** A `ref Mode` variable of an enum Mode { IDLE, RUN, HALT }. */
     mode?: string
+    /** Nested instances in scope: ln (struct in struct), box (class in class), cells[2] (instance array). */
+    nested?: boolean
     /** A written schedule object in scope (writes of w carry `schedule <sched> N`). */
     sched?: string
     /** `ode` targets in scope (the chart's f and g; a referenced chart has none). */
@@ -174,6 +181,7 @@ class Generator {
         if (s.object && this.on('code')) opts.push(`${s.object}.sum(n) > 2`, `${s.object}.halve(${s.object}.get()) == 2`)
         if (s.struct) opts.push(`${s.struct}.px > 1`, `${s.struct}.py == 0`)
         if (s.mode) opts.push(`${s.mode} == Mode.RUN`, `${s.mode} != Mode.IDLE`)
+        if (s.nested) opts.push('ln.a.qx > 1', 'ln.b.qx == ln.wd', 'box.in.get() > 1', 'cells[0].v > 1', 'cells[1].v == 2', 'cells[n % 2].v > 0')
         if (s.rare?.at) opts.push(`${s.rare.at}()`, `!${s.rare.at}()`, `a && ${s.rare.at}()`)
         if (s.rare?.konst) opts.push(`scchart(${s.rare.konst}).ON && b`, `n > scchart(${s.rare.konst}).K`)
         if (s.rare?.prime) opts.push(`n == ${s.rare.prime}`)
@@ -220,6 +228,10 @@ class Generator {
                 if (!s.conc) opts.push(`${o} = (${p}) ? n`, `${o} = 1 + ((${p}) ? pre(n, ${r.pick(s.bools)}))`, `ov[2] = ${o}`, `ovz = ov[n % 3]`)
             }
             if (this.on('code') && s.outs.length && r.chance(0.3)) opts.push(this.codeEffect(s))
+            if (s.nested) {
+                opts.push('ln.a.qx += 1', 'box.in.inc()', 'box.w += 1', 'cells[0].inc()', 'cells[1].v += 1', 'cells[n % 2].inc()')
+                if (!s.conc) opts.push('ln.b.qx = ln.a.qx + 1', 'ln.wd = n', 'box.w = box.in.get()', 'cells[1].v = cells[0].v + 1', 'cells[n % 2].v = 0')
+            }
             if (s.sched) {
                 // Absolute and relative writes of w, ordered (or not) by the schedule's priorities.
                 // Mostly a priority of its own (a total order KIELER accepts), now and then a shared one.
@@ -499,6 +511,12 @@ class Generator {
             const decl = r.chance(0.15) ? `"sch" global ${r.pick(['conflicting', 'commuting'])} ` : protocols.length ? `{${protocols.join(', ')}} ` : ''
             lines.push(`  schedule ${decl}s`, '  output int w = 0')
         }
+        if (this.on('nested')) {
+            lines.push(
+                '  struct Line {', '    struct P2 {', '      int qx = 0', '    } a, b', '    int wd = 1', '  } ln',
+                '  class Box {', '    class In {', '      int v = 0', '      void inc() {', '        v = v + 1', '      }', '      int get() {', '        return v', '      }', '    } in', '    int w = 0', '  } box',
+                '  class Cell {', '    int v = 0', '    void inc() {', '      v = v + 1', '    }', '  } cells[2]')
+        }
         if (this.on('structs')) lines.push('  struct Pt {', '    int px = 0', '    int py = 0', '  } pt')
         if (this.on('enums')) lines.push('  enum Mode { IDLE, RUN, HALT }', '  ref Mode m = Mode.IDLE')
         const rare: NonNullable<Scope['rare']> = {}
@@ -522,7 +540,7 @@ class Generator {
             conc: false, depth: 0, bools: ['a', 'b', 'c', 'd'], ints: ['n'], outs: ['x', 'y', 'z'], signals, valued,
             clock: this.on('clocks') ? 't' : undefined, sharedClock: shared, object: this.on('classes') ? 'cnt' : undefined,
             struct: this.on('structs') ? 'pt' : undefined, mode: this.on('enums') ? 'm' : undefined,
-            rare: this.on('rare') ? rare : undefined, ode: this.on('timed') ? ['f', 'g'] : undefined, sched: this.on('schedules') ? 's' : undefined,
+            rare: this.on('rare') ? rare : undefined, ode: this.on('timed') ? ['f', 'g'] : undefined, sched: this.on('schedules') ? 's' : undefined, nested: this.on('nested') || undefined,
         }
         const roots = this.profile.roots ? r.pick(this.profile.roots) : this.on('concurrency') && r.chance(0.35) ? 2 : 1
         const rootDataflow = this.on('dataflow') && r.chance(0.6)

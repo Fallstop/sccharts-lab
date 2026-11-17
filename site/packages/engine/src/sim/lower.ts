@@ -609,10 +609,11 @@ class Lowering {
         if (s.reference) c.ext.reference = s.reference
         if (s.callsReference) c.ext.calls = true
         if (s.baseStates?.length) c.ext.baseStates = s.baseStates
-        const schedule = this.schedule(s.schedule)
-        if (schedule) c.ext.userSchedule = schedule
         this.states.set(s.id, c)
         this.declare(c, s.declarations)
+        // After the declarations: `state S schedule s 0 { schedule s ... }` names the state's own schedule.
+        const schedule = this.schedule(s.schedule)
+        if (schedule) c.ext.userSchedule = schedule
         for (const r of s.regions) c.regions.push(this.region(r, c))
         for (const a of s.actions) c.actions.push(this.action(a))
         return c

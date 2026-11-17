@@ -1,0 +1,14 @@
+// A write w += 1 and a read y = w both at conflicting priority 1: the operators (+= and =) do not commute, so
+// KIELER makes the write and the read a write-write pair, a cycle: rejected.
+scchart SchP1WriteRead {
+  output int w = 0, y = 0
+  schedule {conflicting, conflicting} s
+  region A {
+    initial state A
+    do w += 1 schedule s 1 go to A
+  }
+  region B {
+    initial state B
+    do y = w schedule s 1 go to B
+  }
+}

@@ -1,0 +1,17 @@
+// A state scheduled by a schedule it declares itself: the clause names the state's own s, so the write of x and the
+// read of x in its regions both get priority 0, where a write does not wait for a read: seen gets the previous x.
+scchart SchStateLocal {
+  input int i
+  output int x = 0, seen = 0
+  initial state S schedule s 0 {
+    schedule s
+    region W {
+      initial state A
+      do x = i go to A
+    }
+    region R {
+      initial state B
+      do seen = x go to B
+    }
+  }
+}
