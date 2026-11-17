@@ -16,7 +16,7 @@ One script tag, then the element wherever a chart goes: a guide example, a `.sct
 inside the element (a `<pre>` also shows the code to readers without JavaScript).
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@sccharts-lab/embed@0.1/dist/embed.min.js" async></script>
+<script src="https://cdn.jsdelivr.net/npm/@sccharts-lab/embed@0.2/dist/embed.min.js" async></script>
 
 <sccharts-lab-chart example="learn/concurrency/abro" view="sim"></sccharts-lab-chart>
 
