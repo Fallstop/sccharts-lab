@@ -886,6 +886,11 @@ Evidence: `67-err-clock-shared`, `68-err-clock-hierarchical`, `71-err-deltaT-wro
 - Teaching: one clock per region that tests it; nested waiting gets its own clock.
 - Implementation: a clock may be tested by the transitions of exactly one region's states (looking through
   chains of single-state wrapper regions) and not also inside one of those states.
+- "Tested" means a transition **with a trigger** that mentions the clock anywhere, its effects included: KIELER
+  searches the whole transition. A region whose only use is `if a do t = 0` owns the clock (it advances only
+  while that region is in a state); two such regions are rejected as several readers; a state with several
+  regions and none of them so mentioning the clock is rejected as "used across concurrent or nested regions",
+  an inherited region counting as one of them (`parity/probe-clock-region-by-reset`, `-two`, `-inherited`).
 
 ### S-40 Timing annotations (on the root chart)
 
@@ -898,7 +903,7 @@ Evidence: `67-err-clock-shared`, `68-err-clock-hierarchical`, `71-err-deltaT-wro
 | `@ClocksUseSD` | experimental scheduling-directive expansion for shared clocks | not tested |
 | `@Passive` on a clock declaration | the clock is not advanced automatically | source only |
 | `@DeviationOutput` | an output `lag` (`lag1`, ... if the chart has a `lag`, KIELER's uniqueName): how far `deltaT` overshot the sleep time asked for, `lag = deltaT > pre(sleepT) ? deltaT - pre(sleepT) : 0`, a delayed during action of the root (0 in tick 1) | `parity/probe-deviation-output`, `-name` |
-| `@Logical` on a clock | the same `lag`, as a local unless `@DeviationOutput`; the clock advances by `pre(lag) + (deltaT - lag)` instead of `deltaT` (it ignores the overshoot of the tick it fires in and catches up a tick later) and asks to sleep for `b - (t + lag)`. With `@NoSleep` there is no `lag` and KIELER crashes (`Can't copy valued object. Valued object is null!`); the engine rejects it as `kieler-crash`. A `@Passive @Logical` clock is not advanced, so it is spared | `parity/probe-logical-clock`, `-int`, `-reset`, `-nosleep`, `-passive-nosleep` |
+| `@Logical` on a clock | the same `lag`, as a local unless `@DeviationOutput`; the clock advances by `pre(lag) + (deltaT - lag)` instead of `deltaT` (it ignores the overshoot of the tick it fires in and catches up a tick later) and asks to sleep for `b - (t + lag)`. With `@NoSleep` there is no `lag` and KIELER crashes (`Can't copy valued object. Valued object is null!`); the engine rejects it as `kieler-crash`. A `@Passive @Logical` clock is not advanced, so it is spared. `@Logical` and `@Passive` count only on the declaration (`@Logical clock t`), in any case (`@logical`); on the variable (`clock @Logical t`) KIELER ignores them, also in a referenced or inherited copy of the clock. Chart annotations (`@DeviationOutput`, `@NoSleep`, ...) count anywhere in the chart, in its referenced charts and in the charts it or its states extend: KIELER's Inheritance copies the base charts' annotations, declarations and actions first, and the base regions no `override region` hides: an annotation inside an overridden region is gone, unless `region is super.R` brings the region back; the bases' annotations come after the chart's own, so the chart's `@DefaultSleep` wins (`probe-annotation-own-before-base`, `probe-annotation-super-region`, `probe-deviation-inherited`, `-inner-extends`, `probe-annotation-overridden-region`, `-sleep`, `probe-annotation-inherited-region-sleep`) | `parity/probe-logical-clock`, `-int`, `-reset`, `-nosleep`, `-passive-nosleep`, `-lowercase`, `-on-variable`, `probe-passive-lowercase`, `-on-variable` |
 
 Source: `TimedAutomata.xtend:62-77, 129-172, 241-262, 277-283`.
 
@@ -915,6 +920,8 @@ The transformation keeps only the target's variable: `ode x[1] = 2` becomes `x +
 (gcc: `assignment to expression with array type`, the engine's `array-assignment`), and `ode p.x = 2` on a struct
 or class member becomes `p += ...` (gcc: `invalid operands to binary +`, the engine's `ode-member`). A member of
 an `@UnpackClass` instance is a variable of its own by then and works.
+`ode x++` / `ode x--` have no rate: KIELER's ODE processor crashes (`The 'no null' constraint is violated`), the
+engine rejects them as `kieler-crash` (`parity/probe-ode-postfix`).
 
 - Evidence: `parity/probe-ode`, `-multi`, `-clock`, `-array-element`, `-struct-member`, `-unpacked-member`.
 - Source: `processors/Ode.xtend:45-63`, `TimedAutomata.xtend:175-206` (`hasODEs`).

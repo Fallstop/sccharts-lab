@@ -1,0 +1,96 @@
+{
+  "hash": "9ef9f7e94eab2d1155517f230adced2323bbd4a2",
+  "chart": "tests/engine/kieler/parity/probe-deviation-inner-extends.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "lag": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0
+      },
+      "values": {
+        "deltaT": 0,
+        "lag": 0,
+        "sleepT": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 1
+      },
+      "values": {
+        "deltaT": 1,
+        "lag": 0,
+        "sleepT": 4
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 2
+      },
+      "values": {
+        "deltaT": 2,
+        "lag": 0,
+        "sleepT": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 3
+      },
+      "values": {
+        "deltaT": 3,
+        "lag": 1,
+        "sleepT": 1000
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 4
+      },
+      "values": {
+        "deltaT": 4,
+        "lag": 0,
+        "sleepT": 1000
+      },
+      "terminated": false
+    }
+  ]
+}

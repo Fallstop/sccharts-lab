@@ -1,0 +1,13 @@
+// @DefaultSleep on the chart and on its base: KIELER appends the base's annotations after the chart's own and
+// takes the first, so the chart's 10 wins.
+@DefaultSleep 10
+@SimulateSleep
+scchart PrAnnOwn extends PrAnnOwnBase {
+}
+@DefaultSleep 5
+scchart PrAnnOwnBase {
+  clock c
+  initial state A
+  if c >= 20 go to B
+  final state B
+}

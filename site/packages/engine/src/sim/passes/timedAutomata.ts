@@ -14,7 +14,7 @@
 // overshot the sleep time asked for, `lag = deltaT > pre(sleepT) ? deltaT - pre(sleepT) : 0` (delayed). A @Logical
 // clock advances by `pre(lag) + (deltaT - lag)` instead of deltaT, and asks to sleep for `b - (t + lag)`.
 
-import type { Annotation, Diagnostic, State } from '../../types'
+import type { Annotation, Diagnostic, Region, State } from '../../types'
 import type { ModelIndex } from '../../parser/resolve'
 import type { Pass, PassContext } from './context'
 import {
@@ -22,6 +22,8 @@ import {
     type CEffect, type CExpr, type CRegion, type CState, type CTransition,
 } from '../model'
 import type { InstanceRecord } from './reference'
+import { REFERENCE_SEPARATOR } from '../structure/instance'
+import { allInherited, visibleRegions } from './inheritance'
 
 export const timedAutomata: Pass = {
     id: 'de.cau.cs.kieler.sccharts.processors.timedautomata',
@@ -42,12 +44,44 @@ export function chartAnnotations(ctx: PassContext): Annotation[] {
     if (main) charts.push(main)
     for (const r of (ctx.shared.instances as InstanceRecord[] | undefined) ?? []) charts.push(r.chart)
     const out: Annotation[] = []
+    const find = (name: string) => index?.charts.find(c => c.name === name)
+    const copied = new Set<State>()
+    const extenders: State[] = []
+    const recurse = (obj: Record<string, unknown>, skip?: string) => {
+        for (const [k, v] of Object.entries(obj)) if (k !== 'span' && k !== skip && v && typeof v === 'object') visit(v)
+    }
+    // KIELER's Inheritance copies into the extending state, before the timed automata: the bases' annotations after
+    // the state's own (the first @DefaultSleep wins), their declarations and actions, and the base regions no
+    // override region hides (getAllVisibleInheritedRegions); `region is super.R` brings a hidden one back.
     const visit = (value: unknown) => {
         if (Array.isArray(value)) { value.forEach(visit); return }
         if (!value || typeof value !== 'object') return
         const obj = value as Record<string, unknown>
         if (obj.kind === 'annotation') out.push(obj as unknown as Annotation)
-        for (const [k, v] of Object.entries(obj)) if (k !== 'span' && v && typeof v === 'object') visit(v)
+        const state = obj.kind === 'state' ? (obj as unknown as State) : undefined
+        if (state?.baseStates?.length) {
+            const bases = allInherited(state, find)
+            visit(state.annotations)
+            for (const base of bases) visit(base.annotations)
+            extenders.push(state)
+            recurse(obj, 'annotations')
+            for (const base of bases) {
+                if (copied.has(base)) continue
+                copied.add(base)
+                visit({ ...base, annotations: [], regions: [], baseStates: [] })
+            }
+            for (const { base, region } of visibleRegions(state, find)) visit(base.regions.find(r => r.id === region))
+            extenders.pop()
+            return
+        }
+        const call = obj.kind === 'region' ? (obj as unknown as Region).reference : undefined
+        if (call?.super) {
+            for (let i = extenders.length - 1; i >= 0; i--) {
+                const source = allInherited(extenders[i], find).flatMap(b => b.regions).find(r => r.name === call.target)
+                if (source) { visit(source); break }
+            }
+        }
+        recurse(obj)
     }
     charts.forEach(visit)
     return out
@@ -76,6 +110,20 @@ function transform(ctx: PassContext) {
     const simulate = !!named(annotations, 'SimulateSleep')
     const useSD = !!named(annotations, 'ClocksUseSD')
     const deviationOutput = !!named(annotations, 'DeviationOutput')
+    // KIELER reads @Logical and @Passive off the clock's declaration (`@Logical clock t`, not `clock @Logical t`),
+    // ignoring case. Lowering merges both kinds into the tags, so rebuild these two from the declaration.
+    const index = ctx.shared.index as ModelIndex | undefined
+    for (const clock of states.flatMap(s => s.decls).filter(isClock)) {
+        // A copied clock (a reference instance, an inherited base) has its id behind the copy's prefix.
+        const entry = clock.decl ? index?.vos.get(clock.decl) ?? index?.vos.get(clock.decl.split(REFERENCE_SEPARATOR).pop()!) : undefined
+        const decl = entry?.decl
+        for (const name of ['Logical', 'Passive']) {
+            const tagged = [...clock.tags].some(t => t.toLowerCase() === `@${name.toLowerCase()}`)
+            const has = decl ? decl.annotations.some(a => a.name.toLowerCase() === name.toLowerCase()) : tagged
+            for (const t of [...clock.tags]) if (t.toLowerCase() === `@${name.toLowerCase()}`) clock.tags.delete(t)
+            if (has) clock.tags.add(`@${name}`)
+        }
+    }
     const anyLogical = states.some(s => s.decls.some(v => isClock(v) && isLogical(v)))
     const sleepAnnotation = named(annotations, 'DefaultSleep')
     let maxSleep = MAX_SLEEP_DEFAULT
@@ -179,12 +227,13 @@ function transform(ctx: PassContext) {
                     while (test.states.length === 1 && test.states[0].out.length === 0 && controlflowRegions(test.states[0]).length === 1) {
                         test = controlflowRegions(test.states[0])[0]
                     }
-                    if (test.states.some(s => s.out.some(t => t.trigger && mentionsVar(t.trigger, clock)))) using.push(test)
+                    // KIELER looks through the whole of a triggered transition: `if y > 2 do t = 0` counts too.
+                    if (test.states.some(s => s.out.some(t => t.trigger && (mentionsVar(t.trigger, clock) || t.effects.some(f => effectMentions(f, clock)))))) using.push(test)
                 }
                 region = using[0]
                 if (using.length > 1) {
                     // At the second region's transition that tests the clock (the first is where the clock goes).
-                    const reading = using.slice(0, 2).map(r => r.states.flatMap(s => s.out).find(t => t.trigger && mentionsVar(t.trigger, clock)))
+                    const reading = using.slice(0, 2).map(r => r.states.flatMap(s => s.out).find(t => t.trigger && (mentionsVar(t.trigger, clock) || t.effects.some(f => effectMentions(f, clock)))))
                     const second = reading[1]
                     const d = sharedClock(state, clock, `Clock \`${clock.name}\` is read by several concurrent regions of \`${state.name}\`.`,
                         'Cannot handle concurrent timed automata using the same clock. Add @ClocksUseSD annotation for experimental support based on schduling directives.',

@@ -1,0 +1,8 @@
+// @logical in lower case: KIELER compares annotation names ignoring case, so the clock is logical.
+scchart PrLogLower {
+  @logical
+  clock t
+  initial state A
+  if t >= 5 go to B
+  state B
+}

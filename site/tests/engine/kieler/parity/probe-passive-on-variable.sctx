@@ -1,0 +1,7 @@
+// clock @Passive t: an annotation of the variable; KIELER still advances the clock.
+scchart PrPasOnVar {
+  clock @Passive t
+  initial state A
+  if t >= 5 go to B
+  state B
+}

@@ -18,7 +18,17 @@ export const ode: Pass = {
         for (const state of allStates(ctx.root)) {
             for (const action of state.actions.filter(a => a.kind === 'ode')) {
                 for (const f of action.effects) {
-                    if (f.k !== 'assign' || !f.expr) continue
+                    if (f.k !== 'assign') continue
+                    if (!f.expr) {
+                        // x++ / x--: KIELER multiplies the missing expression by deltaT and crashes.
+                        ctx.report({
+                            severity: 'error', code: 'kieler-crash', span: f.o.span, related: action.origin ? [action.origin] : undefined,
+                            message: `KIELER's compiler crashes on \`ode ${f.ref.v.name}${f.op}\`: an ode needs a rate, \`ode ${f.ref.v.name} = e\``,
+                            kieler: "java.lang.IllegalArgumentException: The 'no null' constraint is violated",
+                            hint: `Write the rate of change: \`ode ${f.ref.v.name} = ${f.op === '--' ? '-1' : '1'}\`.`,
+                        })
+                        return
+                    }
                     // A member (lowered to a variable of its own) is dropped too: C cannot add a number to a struct.
                     let member = f.ref.v.member
                     while (member?.of.member) member = member.of.member

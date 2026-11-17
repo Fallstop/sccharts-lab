@@ -1,0 +1,16 @@
+// An inherited region beside the chart's own: the clock goes to the region that resets it (found by the timed fuzz
+// profile).
+scchart PrClkInh extends PrClkInhBase {
+  input bool a
+  output int y = 0
+  clock t = 0
+  region R0 {
+    initial state A
+    if a do t = 0 go to A
+  }
+}
+scchart PrClkInhBase {
+  region {
+    initial state P
+  }
+}

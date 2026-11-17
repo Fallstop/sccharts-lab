@@ -1,0 +1,15 @@
+// @DefaultSleep inside a base region that is inherited (not overridden): copied, so it applies.
+scchart PrAnnInhSl extends PrAnnInhSlBase {
+}
+scchart PrAnnInhSlBase {
+  clock t
+  @DefaultSleep 3
+  region R {
+    initial state Kept
+  }
+  region Live {
+    initial state S
+    if t >= 5 go to T
+    state T
+  }
+}

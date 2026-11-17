@@ -1,0 +1,18 @@
+// @DefaultSleep inside an overridden base region: not copied, so the default sleep stays 1000.
+scchart PrAnnOverSl extends PrAnnOverSlBase {
+  override region R {
+    initial state A
+  }
+}
+scchart PrAnnOverSlBase {
+  clock t
+  @DefaultSleep 3
+  region R {
+    initial state Gone
+  }
+  region Live {
+    initial state S
+    if t >= 5 go to T
+    state T
+  }
+}

@@ -1,0 +1,10 @@
+// @DeviationOutput on a base chart: KIELER copies the base annotations into the extending chart, so lag is an output.
+scchart PrDevInh extends PrDevInhBase {
+}
+@DeviationOutput
+scchart PrDevInhBase {
+  clock c
+  initial state A
+  if c >= 5 go to B
+  final state B
+}

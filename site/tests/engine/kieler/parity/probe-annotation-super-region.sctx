@@ -1,0 +1,13 @@
+// An overridden region brought back by region is super.R keeps its contents, @NoSleep included: no sleepT.
+scchart PrAnnSuper extends PrAnnSuperBase {
+  override region R {
+    region is super.R
+  }
+}
+scchart PrAnnSuperBase {
+  clock t
+  @NoSleep
+  region R {
+    initial state A
+  }
+}

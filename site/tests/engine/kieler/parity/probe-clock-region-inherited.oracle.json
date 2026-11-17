@@ -1,0 +1,156 @@
+{
+  "hash": "8f36855a9508ea66ad7ced20b5c3f74259023b0c",
+  "chart": "tests/engine/kieler/parity/probe-clock-region-inherited.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through t."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "deltaT": 1
+      },
+      "values": {
+        "a": false,
+        "deltaT": 1,
+        "sleepT": 1000,
+        "y": 0,
+        "t": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "deltaT": 2
+      },
+      "values": {
+        "a": false,
+        "deltaT": 2,
+        "sleepT": 1000,
+        "y": 0,
+        "t": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true,
+        "deltaT": 1
+      },
+      "values": {
+        "a": true,
+        "deltaT": 1,
+        "sleepT": 1000,
+        "y": 0,
+        "t": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "deltaT": 3
+      },
+      "values": {
+        "a": false,
+        "deltaT": 3,
+        "sleepT": 1000,
+        "y": 0,
+        "t": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true,
+        "deltaT": 1
+      },
+      "values": {
+        "a": true,
+        "deltaT": 1,
+        "sleepT": 1000,
+        "y": 0,
+        "t": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": false,
+        "deltaT": 2
+      },
+      "values": {
+        "a": false,
+        "deltaT": 2,
+        "sleepT": 1000,
+        "y": 0,
+        "t": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

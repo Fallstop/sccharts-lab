@@ -1,0 +1,8 @@
+// clock @Logical t: an annotation of the variable, not of the declaration. KIELER reads the declaration only, so
+// the clock is not logical.
+scchart PrLogOnVar {
+  clock @Logical t
+  initial state A
+  if t >= 5 go to B
+  state B
+}
