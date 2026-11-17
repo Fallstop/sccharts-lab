@@ -1,0 +1,134 @@
+{
+  "hash": "b8bb33ba3aa3d525888bebb8f1a8956f9fcc8dc4",
+  "chart": "tests/engine/kieler/parity/probe-ode-multi.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "stop": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "deltaT": 0,
+        "stop": false
+      },
+      "values": {
+        "deltaT": 0,
+        "stop": false,
+        "n": 0,
+        "x": 0,
+        "y": 10
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "deltaT": 0.5,
+        "stop": false
+      },
+      "values": {
+        "deltaT": 0.5,
+        "stop": false,
+        "n": 1,
+        "x": 0.5,
+        "y": 9
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "deltaT": 1,
+        "stop": false
+      },
+      "values": {
+        "deltaT": 1,
+        "stop": false,
+        "n": 4,
+        "x": 1.5,
+        "y": 7
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "deltaT": 0.25,
+        "stop": true
+      },
+      "values": {
+        "deltaT": 0.25,
+        "stop": true,
+        "n": 4,
+        "x": 1.75,
+        "y": 6.5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "deltaT": 1,
+        "stop": false
+      },
+      "values": {
+        "deltaT": 1,
+        "stop": false,
+        "n": 4,
+        "x": 1.75,
+        "y": 6.5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

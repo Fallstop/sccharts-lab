@@ -1,0 +1,20 @@
+// @IntegerClockType: lag and the clocks are ints. Two clocks, only one @Logical; a bound that is an expression.
+@IntegerClockType
+scchart PrLogicalInt {
+  input int bound = 4
+  output bool a, b
+  initial state S {
+    region R1 {
+      @Logical clock c
+      initial state A
+      if c >= bound do a = true go to A2
+      state A2
+    }
+    region R2 {
+      clock d
+      initial state B
+      if d >= 3 do b = true go to B2
+      state B2
+    }
+  }
+}

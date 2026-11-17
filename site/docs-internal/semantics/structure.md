@@ -854,12 +854,24 @@ Evidence: `67-err-clock-shared`, `68-err-clock-hierarchical`, `71-err-deltaT-wro
 | `@SimulateSleep` | `deltaT = pre(sleepT)` in every tick after the first (the environment's `deltaT` is overwritten): the chart jumps from timeout to timeout | `66` |
 | `@ClocksUseSD` | experimental scheduling-directive expansion for shared clocks | not tested |
 | `@Passive` on a clock declaration | the clock is not advanced automatically | source only |
-| `@Logical` on a clock, `@DeviationOutput` | deviation (`lag`) tracking | source only |
+| `@DeviationOutput` | an output `lag` (`lag1`, ... if the chart has a `lag`, KIELER's uniqueName): how far `deltaT` overshot the sleep time asked for, `lag = deltaT > pre(sleepT) ? deltaT - pre(sleepT) : 0`, a delayed during action of the root (0 in tick 1) | `parity/probe-deviation-output`, `-name` |
+| `@Logical` on a clock | the same `lag`, as a local unless `@DeviationOutput`; the clock advances by `pre(lag) + (deltaT - lag)` instead of `deltaT` (it ignores the overshoot of the tick it fires in and catches up a tick later) and asks to sleep for `b - (t + lag)`. With `@NoSleep` there is no `lag` and KIELER crashes (`Can't copy valued object. Valued object is null!`); the engine rejects it as `kieler-crash` | `parity/probe-logical-clock`, `-int`, `-reset`, `-nosleep` |
 
-Source: `TimedAutomata.xtend:62-77, 129-172, 277-283`.
+Source: `TimedAutomata.xtend:62-77, 129-172, 241-262, 277-283`.
 
 - Teaching: `@SimulateSleep` is the easiest way to watch a timed chart run without typing `deltaT`.
 - Implementation: annotation names are compared case-insensitively; they are searched anywhere in the chart.
+
+### S-40a `ode` actions
+
+`ode x = e` in a state is one Euler step per tick: KIELER's ODE processor (after Timed Automata) replaces it by
+an immediate during action `x += e * deltaT`, so it also runs in the tick the state is entered and stops when the
+state is left. A chart with an `ode` gets the input `deltaT` (or uses its own) even without clocks; without
+clocks it gets no `sleepT`. An int target is truncated as C does (`n += 3 * deltaT`).
+
+- Evidence: `parity/probe-ode`, `-multi`, `-clock`.
+- Source: `processors/Ode.xtend:45-63`, `TimedAutomata.xtend:175-206` (`hasODEs`).
+- Implementation: `passes/ode.ts`; `timedAutomata.ts` declares `deltaT` for it.
 
 ### S-41 The "timed transitions" loop warning is advisory
 

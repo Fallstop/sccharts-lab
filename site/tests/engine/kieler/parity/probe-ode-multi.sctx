@@ -1,0 +1,15 @@
+// Two ode actions, an int target (C truncates x + e * deltaT) and an ode in a superstate that is left:
+// the integration stops when the state is left.
+scchart PrOdeMulti {
+  input bool stop
+  output float x = 0, y = 10
+  output int n = 0
+  initial state Run {
+    ode x = 1
+    ode y = -2
+    ode n = 3
+    initial state I
+  }
+  if stop go to Done
+  state Done
+}
