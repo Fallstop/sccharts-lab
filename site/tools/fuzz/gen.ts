@@ -20,6 +20,10 @@ export type Feature =
     /** The final polish's forms: conditionals without else (`(a) ? b`), `pre(x, c)` next to `pre(x)`, gotos in code
      *  blocks (forward, and now and then back), writes outside an array (`ov[2]` is `ovz`). Not in `mix`. */
     | 'polish'
+    /** The timed annotations and ode actions (KIELER's TimedAutomata and ODE processors): @Logical / @Passive on the
+     *  clock's declaration or variable, in any case, @NoSleep, @DeviationOutput, @IntegerClockType, @SimulateSleep, a
+     *  chart's own `lag`, and `ode` actions on a float and an int. Implies clocks. Not in `mix`. */
+    | 'timed'
 
 export const ALL_FEATURES: Feature[] = [
     'hierarchy', 'concurrency', 'connectors', 'immediate', 'pre', 'data', 'signals', 'valued', 'actions', 'aborts',
@@ -71,6 +75,8 @@ export const PROFILES: Record<string, Profile> = {
     rare: { features: [...BASE, 'rare'], optional: ['signals', 'count', 'actions', 'pre', 'classes'], optionalRate: 0.35, roots: [1, 2, 2], maxDepth: 1 },
     // The final polish's forms (engine-5) among ordinary behaviour.
     polish: { features: [...BASE, 'polish', 'pre'], optional: ['signals', 'count', 'actions', 'code'], optionalRate: 0.35, roots: [1, 2, 2], maxDepth: 1 },
+    // Timed annotations and ode actions among clocks, suspension and references.
+    timed: { features: ['hierarchy', 'data', 'immediate', 'joins', 'clocks', 'timed', 'actions'], optional: ['concurrency', 'aborts', 'count', 'suspend', 'references', 'signals', 'history'], optionalRate: 0.25, maxDepth: 1 },
 }
 
 /** A small, fast, seedable PRNG (mulberry32). */
@@ -125,6 +131,8 @@ interface Scope {
     struct?: string
     /** A `ref Mode` variable of an enum Mode { IDLE, RUN, HALT }. */
     mode?: string
+    /** `ode` targets in scope (the chart's f and g; a referenced chart has none). */
+    ode?: string[]
     /** Rare forms: a method reading `state(R0.R0s1)`, a chart with constants (`scchart(FK).K`), a primed constant. */
     rare?: { at?: string; konst?: string; prime?: string }
 }
@@ -365,6 +373,10 @@ class Generator {
                 if (e) out.push(`${pad}${kind} ${trig}do ${e}${this.label()}`)
             }
         }
+        if (s.ode?.length && r.chance(superstate ? 0.3 : 0.15)) {
+            // One Euler step per tick: f += e * deltaT (g, an int, is truncated as C does).
+            out.push(`${pad}ode ${r.pick([...s.ode, s.ode[0]])} = ${r.pick(['1', '2', '-1', 'n', 'n + 1', '0.5'])}`)
+        }
         if (superstate && this.on('suspend') && r.chance(0.28)) out.push(`${pad}${r.pick(['', 'immediate '])}suspend if ${this.trigger({ ...s, conc: true })}`)
         if (superstate && this.on('weakSuspend') && r.chance(0.14)) out.push(`${pad}${r.pick(['', 'immediate '])}weak suspend if ${this.trigger({ ...s, conc: true })}`)
         return out
@@ -425,7 +437,22 @@ class Generator {
         if (this.on('dataflow')) lines.push('  output int d1 = 0, d2 = 0', '  output bool db = false')
         const shared = this.on('clocks') && r.chance(0.5)
         if (shared) lines.unshift('@ClocksUseSD')
-        if (this.on('clocks')) lines.push('  clock t = 0')
+        if (this.on('timed')) {
+            // Chart annotations in random case; KIELER compares their names ignoring case.
+            const variants: Record<string, string[]> = {
+                NoSleep: ['@NoSleep', '@nosleep'], DeviationOutput: ['@DeviationOutput', '@deviationOutput'],
+                IntegerClockType: ['@IntegerClockType', '@IntegralClockType'], SimulateSleep: ['@SimulateSleep'],
+            }
+            const rates: Record<string, number> = { NoSleep: 0.15, DeviationOutput: 0.35, IntegerClockType: 0.25, SimulateSleep: 0.15 }
+            for (const [k, v] of Object.entries(variants)) if (r.chance(rates[k])) lines.unshift(r.pick(v))
+            lines.push('  output float f = 0', '  output int g = 0')
+            if (r.chance(0.12)) lines.push('  output int lag = 0')
+            // @Logical / @Passive on the declaration count; on the variable (clock @Logical t) KIELER ignores them.
+            lines.push(r.pick([
+                '  clock t = 0', '  @Logical clock t = 0', '  @logical clock t = 0', '  clock @Logical t = 0', '  @Passive clock t = 0',
+                '  @Passive @Logical clock t = 0', '  clock @Passive t = 0', '  @Logical clock t = 0',
+            ]))
+        } else if (this.on('clocks')) lines.push('  clock t = 0')
         if (this.on('classes')) {
             lines.push('  class Cnt {', '    int v = 0', '    void inc() {', '      v = v + 1', '    }', '    int get() {', '      return v', '    }')
             if (this.on('code')) {
@@ -459,7 +486,7 @@ class Generator {
             conc: false, depth: 0, bools: ['a', 'b', 'c', 'd'], ints: ['n'], outs: ['x', 'y', 'z'], signals, valued,
             clock: this.on('clocks') ? 't' : undefined, sharedClock: shared, object: this.on('classes') ? 'cnt' : undefined,
             struct: this.on('structs') ? 'pt' : undefined, mode: this.on('enums') ? 'm' : undefined,
-            rare: this.on('rare') ? rare : undefined,
+            rare: this.on('rare') ? rare : undefined, ode: this.on('timed') ? ['f', 'g'] : undefined,
         }
         const roots = this.profile.roots ? r.pick(this.profile.roots) : this.on('concurrency') && r.chance(0.35) ? 2 : 1
         const rootDataflow = this.on('dataflow') && r.chance(0.6)
@@ -494,6 +521,7 @@ export function generate(seed: number, profileName: string, index: number, ticks
     const features = new Set<Feature>(profile.features)
     for (const f of profile.optional ?? []) if (rng.chance(profile.optionalRate ?? 0.4)) features.add(f)
     if (features.has('valued')) features.add('signals')
+    if (features.has('timed')) features.add('clocks')
     const g = new Generator(rng, features, profile)
     const model = g.chart(index)
     return { name: `${profileName}-${seed}-${index}`, model, inputs: inputsFor(rng, ticks, features.has('clocks')), profile: profileName, features: [...features].sort() }
