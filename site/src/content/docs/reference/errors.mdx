@@ -553,8 +553,18 @@ given.` It appears when the chart is compiled. A shorter vector is allowed; see
 
 The full message continues `ValuedObjectReferenceImpl@… I is not a valid index (integer value).` A
 `const` array is indexed with a variable, as in `LIMITS[I]`. KIELER replaces constants by their values
-when it compiles the chart, so the index must be a number it knows then. Index a `const` array with
-numbers only, or drop the `const`.
+when it compiles the chart, so the index must be a number it knows then: a number, or a constant
+declared before the array. A sum such as `LIMITS[0 + 1]` and a constant declared after the array are
+refused too, and an index past the end gives `Array LIMITS does not provide a value for index 2.`
+Index a `const` array with numbers or earlier constants only, or drop the `const`.
+
+### `The valued object reference points to a valued object (k) that is not contained in the model!`
+
+In a chart that `extends` another, a variable or constant of the base chart stands alone as an index,
+as in `x[k]`. KIELER copies the base chart's declarations into the extending chart and misses a name
+written alone between the brackets, also in the base chart's own regions. Write the index as an
+expression, `x[k + 0]`, or declare `k` in the chart that uses it. The same message after a binding
+error is a follow-on of that error: see [the referencing binding](#the-referencing-binding-is-erroneous).
 
 ### `A count delay of 0 is not allowed on a trigger.`
 
