@@ -403,7 +403,7 @@ function droppedIndices(scg: SCG, chart: string): Diagnostic[] {
     const seen = new Set<string>()
     const alive = liveNodes(scg)
     for (const n of scg.nodes) {
-        if (n.kind !== 'cond' || !n.expr || !alive.has(n)) continue
+        if (n.kind !== 'cond' || !n.expr) continue
         const g = guardCondition(n.expr)
         if (!g) continue
         const first = g.instance?.written ?? [...g.dropped.values()][0] ?? [...g.mixed.values()][0]
@@ -411,7 +411,10 @@ function droppedIndices(scg: SCG, chart: string): Diagnostic[] {
         if (seen.has(key)) continue
         seen.add(key)
         const by = n.method ? undefined : n.transition?.origin ?? n.transition?.about
-        out.push(...droppedIndexDiagnostics(n.expr, g, v => v.display ?? v.name, by ? [by] : undefined, chart))
+        // KIELER's C code has the condition of a node that never runs too: gcc's errors hold there, the wrong
+        // value is never read.
+        const found = droppedIndexDiagnostics(n.expr, g, v => v.display ?? v.name, by ? [by] : undefined, chart)
+        out.push(...(alive.has(n) ? found : found.filter(d => d.severity === 'error')))
     }
     return out
 }

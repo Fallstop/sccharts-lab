@@ -1,0 +1,11 @@
+// A const three levels in is a variable: it can be assigned through the instance.
+scchart T {
+  output int o
+  class O {
+    class P {
+      class Q { const int K = 2 } q
+    } p
+  } a
+  initial state I
+  do a.p.q.K = 3; o = a.p.q.K go to I
+}

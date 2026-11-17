@@ -1,0 +1,11 @@
+// A const member inside a method.
+scchart T {
+  output int o
+  class O {
+    const int N = 3
+    int w
+    void put() { w = N + 1 }
+  } a
+  initial state I
+  do a.put(); o = a.w go to I
+}

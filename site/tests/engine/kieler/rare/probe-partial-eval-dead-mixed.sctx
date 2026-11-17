@@ -1,0 +1,10 @@
+// The same with an int array: the C code compiles and the condition is never read.
+scchart T {
+  input int n
+  int xs[2]
+  initial state A { initial state I }
+  join to B
+  state B
+  if xs[n % 2] > n go to C
+  state C
+}

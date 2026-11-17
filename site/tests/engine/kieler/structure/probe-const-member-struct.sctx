@@ -1,0 +1,10 @@
+// A const in a struct inside a struct (two levels) is replaced and not in the data.
+scchart T {
+  output int o
+  struct O {
+    struct P { const int K = 5
+      int v = K } p
+  } a
+  initial state I
+  do o = a.p.K + a.p.v go to I
+}

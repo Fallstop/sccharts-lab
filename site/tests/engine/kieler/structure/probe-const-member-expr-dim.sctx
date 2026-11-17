@@ -1,0 +1,11 @@
+// A const member with a computed value as an array's size: refused by the validation.
+scchart T {
+  output int o
+  class O {
+    const int N = 2
+    const int M = N + 1
+    int w[M]
+  } a
+  initial state I
+  do a.w[2] = 3; o = a.w[2] go to I
+}

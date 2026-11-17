@@ -1,0 +1,13 @@
+// Const members read through the instance (a.N, a.M, a.p[1].K) and by name inside the class are their values.
+scchart T {
+  output int o
+  class O {
+    const int N = 2
+    const int M = N + 1
+    int w = M
+    struct P { const int K = 5
+      int v = 7 } p[N]
+  } a
+  initial state I
+  do o = a.N + a.M + a.p[1].K go to I
+}

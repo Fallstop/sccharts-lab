@@ -1,0 +1,9 @@
+// A class inside a struct is refused by the validation.
+scchart T {
+  int v = 10
+  struct O {
+    class P { int v = 3
+      int w = v + 2 } p
+  } a
+  initial state I
+}

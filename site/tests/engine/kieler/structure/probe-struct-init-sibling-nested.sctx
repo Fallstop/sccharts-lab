@@ -1,0 +1,9 @@
+// The same in a struct inside a struct.
+scchart T {
+  int v = 10
+  struct O {
+    struct P { int v = 3
+      int w = v + 2 } p
+  } a
+  initial state I
+}

@@ -1,0 +1,102 @@
+{
+  "hash": "bc8e6827a4923a45a697ae884ec2f5d8bbbaf13c",
+  "chart": "../../../../../../tmp/claude-1000/-home-fallstop-Documents-projects-sccharts-lab/4bebbd45-15e3-49f5-b757-ef5ec383b3e9/scratchpad/nr4keep-structure/probe-const-member-deep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O.P.Q.K": {
+      "type": "int",
+      "properties": [
+        "const"
+      ]
+    },
+    "O.P.Q.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.P.q": {
+      "type": "class",
+      "properties": []
+    },
+    "O.p": {
+      "type": "class",
+      "properties": []
+    },
+    "a": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "a": {
+          "p": {
+            "q": {
+              "K": 5,
+              "v": 5
+            }
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 10,
+        "a": {
+          "p": {
+            "q": {
+              "K": 5,
+              "v": 5
+            }
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 10,
+        "a": {
+          "p": {
+            "q": {
+              "K": 5,
+              "v": 5
+            }
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+// Assigning a const member by its name in a method: refused by the validation.
+scchart T {
+  output int o
+  class O {
+    const int N = 3
+    void put() { N = 4 }
+  } a
+  initial state I
+  do a.put(); o = a.N go to I
+}

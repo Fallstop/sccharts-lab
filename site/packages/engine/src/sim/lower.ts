@@ -176,7 +176,13 @@ class Lowering {
                 // An unpacked class inside a class is no member itself: its members are the outer class's.
                 if (link && !unpackInner) v.member = link
                 // A const member is a constant of the type: not in KIELER's data pool (conformance structure/157).
-                if (m.const) v.tags.add('#const-member')
+                // KIELER's Const processor puts the value where a const member is named and removes the member (it
+                // is not in the data pool, conformance structure/157), two levels deep only (getAllNestedValuedObjects:
+                // a class's members and those of the classes directly inside it): one further in stays a variable.
+                if (m.const && mvo.initialValue && link && !link.of.member?.of.member) {
+                    v.tags.add('#const-member')
+                    this.constSource.set(v, mvo.initialValue)
+                }
                 if (m.declKind === 'method') v.declKind = 'method'
                 if (nested) v.declKind = m.declKind
                 v.hostType = m.hostType
@@ -219,13 +225,17 @@ class Lowering {
         if (!entry) return
         const { members, decl } = entry
         const savedCode = this.code
-        this.code = { owner: entry.owner }
+        // A struct has no code of its own: KIELER copies an initial value into the chart's initialisation as it is
+        // written, so a member's name in it (a sibling's too) is looked up in the chart's data.
+        this.code = { owner: decl.declKind === 'struct' ? undefined : entry.owner }
         // While lowering the instance's methods, the members' names mean the instance's members.
         const saved = new Map<string, CVar | undefined>()
         for (const [id, v] of members) {
             saved.set(id, this.vars.get(id))
             this.vars.set(id, v)
         }
+        // The class's constants, evaluated while its members' names are in scope.
+        for (const v of members.values()) if (this.constSource.has(v)) this.constValue(v)
         const outer = inst.dims
         const sizes = outer.map(c => {
             const n = foldConstants(copyExpr(c))
@@ -257,8 +267,17 @@ class Lowering {
                 const v = members.get(mvo.id)
                 if (!v) continue
                 if (m.declKind === 'variable' || m.declKind === 'class' || m.declKind === 'struct') {
-                    v.dims = [...outer.map(c => copyExpr(c)), ...mvo.cardinalities.map(c => this.expr(c))]
-                    if (m.declKind === 'variable' && mvo.initialValue && this.initialised(v)) v.init = initial(mvo.initialValue)
+                    const own = mvo.cardinalities.map(c => this.expr(c))
+                    v.dims = [...outer.map(c => copyExpr(c)), ...own]
+                    if (m.declKind === 'variable' && !mvo.initialValue && own.some(c => c.k !== 'lit')) {
+                        this.reports.push({
+                            severity: 'error', code: 'array-size', span: mvo.cardinalities[own.findIndex(c => c.k !== 'lit')]?.span ?? mvo.span,
+                            message: `The size of the array \`${mvo.name}\` is not a number KIELER knows when it compiles the chart`,
+                            kieler: `Cannot initialize array with non integer cardinality: ${mvo.name}`,
+                            hint: 'KIELER only puts the value of a constant where it is named when the constant is a member of a class of the chart or of a class directly inside one, and it does not compute an expression there. Write the size as a number.',
+                        })
+                    }
+                    if (m.declKind === 'variable' && mvo.initialValue && this.initialised(v) && !this.constSource.has(v)) v.init = initial(mvo.initialValue)
                     if (m.declKind !== 'variable') this.initialiseInstance(v)
                 } else if (m.declKind === 'method') {
                     const savedSelf = this.self
@@ -546,10 +565,17 @@ class Lowering {
     private refExpr(r: Reference): CExpr {
         const enumValue = this.enumValue(r)
         if (enumValue !== undefined) return { k: 'lit', t: 'int', v: enumValue, span: r.span }
-        const v = r.decl ? this.vars.get(r.decl) : undefined
-        if (v?.const) {
+        let v = r.decl ? this.vars.get(r.decl) : undefined
+        let last = r
+        // A const member, by its name inside the class or through an instance (`a.N`, `cs[1].N`).
+        if (v && !v.const) {
+            while (last.sub) last = last.sub
+            v = last === r ? v : this.ref(r).v
+            if (!this.constSource.has(v) || v.decl !== last.decl) v = undefined
+        }
+        if (v) {
             let value = this.constValue(v)
-            for (const i of r.indices) {
+            for (const i of last.indices) {
                 const index = foldConstants(this.expr(i))
                 if (value.k === 'vector' && index.k === 'lit' && typeof index.v === 'number' && index.v >= 0 && index.v < value.values.length) {
                     value = copyExpr(value.values[index.v])
@@ -639,13 +665,30 @@ class Lowering {
         return out.length ? out : undefined
     }
 
+    /**
+     * The target of an assignment. A const member written through its instance (`a.N = 4`; the validation only
+     * refuses the name alone) crashes KIELER's Const processor, which puts the value in the reference's place.
+     */
+    private target(r: Reference): CRef {
+        const ref = this.ref(r)
+        if (r.sub && !ref.sub && this.constSource.has(ref.v) && ref.v.tags.has('#const-member')) {
+            this.reports.push({
+                severity: 'error', code: 'kieler-crash', span: r.span,
+                message: `\`${ref.v.display ?? ref.v.name}\` is a constant and cannot be changed: KIELER's compiler crashes on this assignment`,
+                kieler: 'java.lang.ClassCastException: class de.cau.cs.kieler.kexpressions.impl.IntValueImpl cannot be cast to class de.cau.cs.kieler.kexpressions.ValuedObjectReference',
+                hint: 'Remove `const` from the member\'s declaration if it needs to change.',
+            })
+        }
+        return ref
+    }
+
     effect(f: Effect, by: string, owner?: Scope): CEffect {
         // An emission's schedule is lost: KIELER's Signal processor replaces the emission by new assignments.
         const schedule = 'schedule' in f && f.kind !== 'emit' ? this.schedule(f.schedule, f.kind === 'call' ? 'schedules on calls' : undefined) : undefined
         const o: EffectOrigin = schedule ? { by, span: f.span, schedule } : { by, span: f.span }
         switch (f.kind) {
-            case 'assign': return { k: 'assign', ref: this.ref(f.target), op: f.operator, expr: this.expr(f.expression), o }
-            case 'postfix': return { k: 'assign', ref: this.ref(f.target), op: f.operator, o }
+            case 'assign': return { k: 'assign', ref: this.target(f.target), op: f.operator, expr: this.expr(f.expression), o }
+            case 'postfix': return { k: 'assign', ref: this.target(f.target), op: f.operator, o }
             case 'emit': return { k: 'emit', ref: this.ref(f.target), value: f.value ? this.expr(f.value) : undefined, o }
             case 'print': return { k: 'print', args: f.args.map(a => this.expr(a)), o }
             case 'call': return { k: 'call', o, call: this.call(f.name, f.args.map(a => this.expr(a)), f.target ? this.ref(f.target) : undefined, f) }

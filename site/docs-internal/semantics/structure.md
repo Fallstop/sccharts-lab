@@ -1459,8 +1459,23 @@ declares a class and two instances. Inside a class:
   (`ps[2][2]`, `ps[1][0].x`) and with an index from an input (`ps[i].x`). A method of an inner instance is
   called through it (`ob.in.inc()`, or `in.inc()` in a method of the outer class); a method of an array
   element works on that element (`cs[i].inc()`, also with a loop, which KIELER keeps as a C function taking
-  the element). A member's initial value holds for every element (`int v = 1` in `cs[2]`), and one that reads a
-  sibling member reads the element's own (`int b = a + 1`).
+  the element). A member's initial value holds for every element (`int v = 1` in `cs[2]`), and in a class one
+  that reads a sibling member reads the element's own (`int b = a + 1`).
+- **A struct's initial value that names a sibling does not read the sibling.** KIELER copies a struct member's
+  value into the chart's initialisation as it is written, and its C code looks the name up in the chart's data:
+  `int v = 10  struct O { int v = 3  int w = v + 2 } a` gives `a.w` 12, and without a chart variable `v` gcc fails
+  (`'TickData' has no member named 'v'`, engine code `outer-member`). The struct's kind decides, also inside a
+  class and for arrays of structs; a const sibling is its value. Probes `probe-struct-init-sibling*`,
+  `probe-class-init-sibling*`, `probe-struct-init-const`.
+- **Const members are replaced by their values two levels deep.** KIELER's Const processor replaces every
+  reference to a const member of a class of the chart, or of a class directly inside one, by its value (by name
+  inside the class, through an instance `a.N`, `cs[1].N`, `a.p[1].K`, as an array's size `p[N]`) and removes the
+  member (it is not in the data). A const three levels in is not replaced: it stays a member in the data, can
+  be assigned through its instance, and as an array's size it is no number (`Cannot initialize array with non
+  integer cardinality: v`). Assigning a replaced const through its instance (`a.N = 4`) passes the validation,
+  which only refuses the name alone, and crashes the processor (`ClassCastException: IntValueImpl cannot be cast
+  to ValuedObjectReference`, engine code `kieler-crash`). Probes `probe-const-member-*`; source
+  `Const.xtend:60-120`, `KExpressionsDeclarationExtensions.xtend:318`.
 - **Initial values reach two levels into a struct, and every level of a class.** A class initialises its
   variables in a generated `_init` method that calls the `_init` of the classes inside it. A struct's values are
   assigned from outside, and KIELER collects them from its members and the members of the structs directly
@@ -1567,6 +1582,7 @@ The processor also unpacks, innermost first:
 | on both | `o_inn_v`, `o_w` |
 | on an array of instances (`} cs[2]`, at the top or inside a class) | every member gets the instance's dimensions in front: `cs_v[2]`, `cs_arr[2][2]`, `o: { inn_v: [..] }`; `cs[1].v` is `cs_v[1]` |
 | on an array of instances with a method | rejected: `Unpacking an array instance of a class with methods is not yet supported.` |
+| on a class inside an unpacked array of instances (`@UnpackClass class O { @UnpackClass class P { .. } p } a[2]`) | the inner class is an array too (`a_p_v[2]`): a method or an initial value in it is rejected as above; with only one of the two unpacked both are accepted |
 | on an array of instances whose member has an initial value | rejected: the one value is assigned to the member, now an array (gcc: `assignment to expression with array type`; a vector as the value: `Cardinalities do not match. …`) |
 
 - Evidence: probes `tests/engine/kieler/structure/probe-unpack-*`.

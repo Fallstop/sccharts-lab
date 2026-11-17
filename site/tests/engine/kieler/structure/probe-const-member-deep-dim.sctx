@@ -1,0 +1,12 @@
+// A const three levels in as an array's size is not replaced: Cannot initialize array with non integer cardinality.
+scchart T {
+  output int o
+  class O {
+    class P {
+      class Q { const int K = 2
+        int v[K] } q
+    } p
+  } a
+  initial state I
+  do a.p.q.v[1] = 3; o = a.p.q.v[1] go to I
+}

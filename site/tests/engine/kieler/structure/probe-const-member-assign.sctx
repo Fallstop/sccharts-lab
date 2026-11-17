@@ -1,0 +1,9 @@
+// Assigning a const member through its instance: the validation only refuses the name alone, and KIELER's Const processor crashes (ClassCastException).
+scchart T {
+  output int o
+  class O {
+    const int N = 3
+  } a
+  initial state I
+  do a.N = 4; o = a.N go to I
+}

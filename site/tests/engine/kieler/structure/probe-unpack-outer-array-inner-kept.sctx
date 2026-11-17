@@ -1,0 +1,13 @@
+// Only the outer array unpacked: the inner class is the instance array a_p.
+scchart T {
+  output int o
+  @UnpackClass
+  class O {
+    class P {
+      int v
+      void inc() { v++ }
+    } p
+  } a[2]
+  initial state I
+  do a[1].p.inc(); o = a[1].p.v go to I
+}

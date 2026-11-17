@@ -1,0 +1,9 @@
+// A state no transition leads to has no code: its trigger is not compiled.
+scchart T {
+  input int n
+  class C { int v } cs[2]
+  initial state A
+  state B
+  if cs[n % 2].v > n go to C
+  state C
+}

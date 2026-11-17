@@ -58,9 +58,11 @@ export const unpackClasses: Pass = {
  * of its own. It refuses a method, and a member with an initial value then has a value for one element assigned to
  * the whole array, which its C compiler rejects.
  */
-function unpackedArrays(ctx: PassContext, d: Declaration) {
+function unpackedArrays(ctx: PassContext, d: Declaration, around = false) {
     const unpack = d.annotations.find(a => a.name === 'UnpackClass')
-    if (unpack && d.valuedObjects.length === 1 && d.valuedObjects[0].cardinalities.length) {
+    // An unpacked class inside an unpacked array of instances is an array too: its members got the dimensions.
+    const array = !!unpack && d.valuedObjects.length === 1 && (d.valuedObjects[0].cardinalities.length > 0 || around)
+    if (unpack && array) {
         const name = d.valuedObjects[0].name
         const method = (d.members ?? []).find(m => m.declKind === 'method')
         if (method) {
@@ -83,5 +85,5 @@ function unpackedArrays(ctx: PassContext, d: Declaration) {
             })
         }
     }
-    for (const m of d.members ?? []) if (m.declKind === 'class' || m.declKind === 'struct') unpackedArrays(ctx, m)
+    for (const m of d.members ?? []) if (m.declKind === 'class' || m.declKind === 'struct') unpackedArrays(ctx, m, array)
 }

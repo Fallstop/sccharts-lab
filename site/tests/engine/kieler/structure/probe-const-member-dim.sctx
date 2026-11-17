@@ -1,0 +1,8 @@
+// A const member as the size of an array of structs inside the class: KIELER puts the value there.
+scchart T {
+  class O {
+    const int N = 2
+    struct P { int v = 7 } p[N]
+  } a
+  initial state I
+}

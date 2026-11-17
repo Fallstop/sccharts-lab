@@ -1,0 +1,10 @@
+// A const array member read through the instance.
+scchart T {
+  output int o
+  class O {
+    const int T[2] = {4, 6}
+    int w[2]
+  } a
+  initial state I
+  do o = a.T[1] go to I
+}

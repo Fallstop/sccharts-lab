@@ -563,7 +563,10 @@ subscript is not an integer`). Official KIELER does the same (checked with the o
 `kieler/rare/probe-index-dropped-*`, `probe-index-kept-*`, `probe-partial-eval-*` (the instance cases were found by
 the `nested` fuzz profile); the SCG before the sequentializer still has the index (dumped). The engine runs the same
 evaluation on each condition (sim/guardIndices.ts `guardCondition`), simulates and generates what is left, with a
-`kieler-quirk` warning, and rejects what gcc rejects (`c-array-address`).
+`kieler-quirk` warning, and rejects what gcc rejects (`c-array-address`). A condition of a node that never runs
+(the trigger of a state behind a join that can never fire) is in the C code as well, so gcc's rejection holds
+there too (`probe-partial-eval-dead-instance`, `-dead-mixed`); a state no transition leads to has no code
+(`probe-partial-eval-unconnected-state`).
 
 **Source.** `scg/.../processors/SimpleGuardExpressions.xtend:164-186` (a guard `_c<g>` per conditional),
 `scg/.../processors/optimizer/CopyPropagationV2.xtend:126-140` (propagated only for unmodified inputs),

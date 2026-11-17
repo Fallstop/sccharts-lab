@@ -1,0 +1,13 @@
+// Const members whose values name other const members, of three types.
+scchart T {
+  output int o
+  class O {
+    const int N = 2
+    const int M = N + 1
+    const float F = 1.5
+    const bool B = true
+    int w = M * 2
+  } a
+  initial state I
+  if a.B do o = a.M + a.w go to I
+}

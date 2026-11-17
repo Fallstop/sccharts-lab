@@ -1,0 +1,10 @@
+// A const member of an array of instances, also as a member's size.
+scchart T {
+  output int o
+  class O {
+    const int N = 3
+    int w[N]
+  } cs[2]
+  initial state I
+  do o = cs[1].N; cs[0].w[2] = cs[1].N go to I
+}

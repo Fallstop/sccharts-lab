@@ -358,18 +358,19 @@ export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index'
     // `@UnpackRenaming`): into the chart, where they are pool variables (no `instance` here), or into the class around.
     const unpacked = (d: Declaration) => (d.declKind === 'class' || d.declKind === 'struct') && !d.host && d.annotations.some(a => a.name === 'UnpackClass')
     const suffix = (vo: ValuedObject, m: Declaration) => [...(vo.annotations ?? []), ...m.annotations].find(a => a.name === 'UnpackRenaming')?.values[0] ?? `_${vo.name}`
-    const members = (d: Declaration, instance: string | undefined, outer: number[], name: (vo: ValuedObject, m: Declaration) => string = vo => vo.name) => {
+    const members = (d: Declaration, instance: string | undefined, outer: number[], name: (vo: ValuedObject, m: Declaration) => string = vo => vo.name, depth = 1) => {
         for (const m of d.members ?? []) {
-            if (m.const) continue
+            // KIELER replaces a const member by its value two levels deep; one further in stays a member.
+            if (m.const && depth <= 2) continue
             for (const mvo of m.valuedObjects) {
                 const nested = (m.declKind === 'class' || m.declKind === 'struct') && !m.host
                 if (nested && unpacked(m)) {
-                    members(m, instance, [...outer, ...dims(mvo)], (vo, mm) => `${name(mvo, m)}${suffix(vo, mm)}`)
+                    members(m, instance, [...outer, ...dims(mvo)], (vo, mm) => `${name(mvo, m)}${suffix(vo, mm)}`, depth + 1)
                     continue
                 }
                 const local = name(mvo, m)
                 const key = instance === undefined ? local : `${instance}.${local}`
-                if (nested) members(m, key, [...outer, ...dims(mvo)])
+                if (nested) members(m, key, [...outer, ...dims(mvo)], undefined, depth + 1)
                 if (m.declKind !== 'variable') continue
                 const type = m.type ?? 'pure'
                 if (instance === undefined) {

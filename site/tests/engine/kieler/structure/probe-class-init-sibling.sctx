@@ -1,0 +1,7 @@
+// A class member's initial value reads the class's own sibling (its _init method has the instance): 5.
+scchart T {
+  int v = 10
+  class O { int v = 3
+    int w = v + 2 } a
+  initial state I
+}

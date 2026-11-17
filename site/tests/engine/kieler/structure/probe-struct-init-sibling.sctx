@@ -1,0 +1,7 @@
+// A struct member's initial value that names a sibling reads the chart's variable of that name: KIELER copies the value into the chart's initialisation as written (a.w is 12, not 5).
+scchart T {
+  int v = 10
+  struct O { int v = 3
+    int w = v + 2 } a
+  initial state I
+}

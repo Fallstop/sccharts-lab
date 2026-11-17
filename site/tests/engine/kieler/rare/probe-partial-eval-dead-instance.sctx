@@ -1,0 +1,10 @@
+// A trigger that can never be tested (the superstate never terminates) is in KIELER's C code all the same: the element of an array of instances before a plain variable fails in gcc.
+scchart T {
+  input int n
+  class C { int v } cs[2]
+  initial state A { initial state I }
+  join to B
+  state B
+  if cs[n % 2].v > n go to C
+  state C
+}

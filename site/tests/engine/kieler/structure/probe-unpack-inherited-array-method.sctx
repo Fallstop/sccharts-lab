@@ -1,0 +1,12 @@
+// @UnpackClass on a class inside an unpacked array of instances: it is an array too, and its method is refused.
+scchart T {
+  @UnpackClass
+  class O {
+    @UnpackClass
+    class P {
+      int v
+      void inc() { v++ }
+    } p
+  } a[2]
+  initial state I
+}

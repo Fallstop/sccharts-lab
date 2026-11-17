@@ -1,0 +1,8 @@
+// A struct inside a struct, no chart variable: gcc fails.
+scchart T {
+  struct O {
+    struct P { int v = 3
+      int w = v + 2 } p
+  } a
+  initial state I
+}

@@ -69,17 +69,18 @@ const unpackedSuffix = (vo: ValuedObject, m: Declaration): string =>
  * the members are the chart's own variables (the class was unpacked into the chart): only the types inside are listed,
  * by their own name (`In.v`).
  */
-function memberDeclarations(prefix: string | undefined, members: Declaration[], out: PoolVariable[], name: (vo: ValuedObject, m: Declaration) => string = (vo) => vo.name): void {
+function memberDeclarations(prefix: string | undefined, members: Declaration[], out: PoolVariable[], name: (vo: ValuedObject, m: Declaration) => string = (vo) => vo.name, depth = 1): void {
     const member = (name: string, type: string): PoolVariable => ({ name, input: false, output: false, type, dims: [], late: true })
     for (const m of members) {
-        if (m.declKind === 'method' || m.const) continue
+        // KIELER replaces a const member by its value two levels deep; one further in stays a member.
+        if (m.declKind === 'method' || (m.const && depth <= 2)) continue
         if (m.declKind === 'class' || m.declKind === 'struct') {
             if (unpacked(m) && m.valuedObjects.length === 1) {
                 const instance = m.valuedObjects[0]
-                memberDeclarations(prefix, m.members ?? [], out, (vo, mm) => `${name(instance, m)}${unpackedSuffix(vo, mm)}`)
+                memberDeclarations(prefix, m.members ?? [], out, (vo, mm) => `${name(instance, m)}${unpackedSuffix(vo, mm)}`, depth + 1)
                 continue
             }
-            if (m.className) memberDeclarations(prefix === undefined ? m.className : `${prefix}.${m.className}`, m.members ?? [], out)
+            if (m.className) memberDeclarations(prefix === undefined ? m.className : `${prefix}.${m.className}`, m.members ?? [], out, undefined, depth + 1)
             if (prefix !== undefined) for (const vo of m.valuedObjects) out.push(member(`${prefix}.${name(vo, m)}`, m.declKind))
         } else if (m.declKind === 'variable' && prefix !== undefined) {
             for (const vo of m.valuedObjects) out.push(member(`${prefix}.${name(vo, m)}`, typeName(m.type, m.hostType)))

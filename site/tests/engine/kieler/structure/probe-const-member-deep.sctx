@@ -1,0 +1,12 @@
+// A const member three levels in is not replaced (KIELER looks two levels deep): it stays a member in the data.
+scchart T {
+  output int o
+  class O {
+    class P {
+      class Q { const int K = 5
+        int v = K } q
+    } p
+  } a
+  initial state I
+  do o = a.p.q.K + a.p.q.v go to I
+}
