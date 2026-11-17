@@ -1,0 +1,26 @@
+{
+  "hash": "e6344da134f3fb8e146ad184920944978250bdf9",
+  "chart": "tests/engine/kieler/rare/probe-partial-eval-join.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "‘(F_Cell *)&d->cells’ is a pointer; did you mean to use ‘->’?",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 12,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 17,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

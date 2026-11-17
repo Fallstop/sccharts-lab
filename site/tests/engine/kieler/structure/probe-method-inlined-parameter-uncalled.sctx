@@ -1,0 +1,10 @@
+// The kept method is never called: it gets no C code.
+scchart T {
+  input int n
+  output int o
+  class O { int v = 1
+    int twice(int a) { return a * 2 }
+    void bump(int a) { v = v + twice(a) } } o1
+  initial state I
+  do o1.v += 1; o = o1.v go to I
+}

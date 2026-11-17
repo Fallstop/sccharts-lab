@@ -1,0 +1,103 @@
+{
+  "hash": "6dc2f3c2f492992a859b28abdcd351cb40bc80e9",
+  "chart": "tests/engine/kieler/structure/probe-method-inlined-parameter-inline.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn1_o1_bump_a is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn2_o1_twice_a is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O.v": {
+      "type": "int",
+      "properties": []
+    },
+    "o1": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 0,
+        "o1": {
+          "v": 1
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 5,
+        "o1": {
+          "v": 5
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 9,
+        "o1": {
+          "v": 9
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 13,
+        "o1": {
+          "v": 13
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

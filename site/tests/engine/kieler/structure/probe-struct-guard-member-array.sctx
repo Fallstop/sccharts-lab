@@ -1,0 +1,10 @@
+// rows[0].arr[n % 2] == 1 && a: only the instance's own (literal) index is evaluated; the member's stays.
+scchart T {
+ input int n
+ input bool a
+ struct Row { int arr[2] } rows[2]
+ struct Cell { int v } cells[2]
+ initial state A
+ if rows[0].arr[n % 2] == 1 && a go to B
+ state B
+}

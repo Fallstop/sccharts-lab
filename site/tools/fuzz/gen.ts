@@ -184,12 +184,21 @@ class Generator {
         if (s.struct) opts.push(`${s.struct}.px > 1`, `${s.struct}.py == 0`)
         if (s.mode) opts.push(`${s.mode} == Mode.RUN`, `${s.mode} != Mode.IDLE`)
         if (s.nested) opts.push('ln.a.qx > 1', 'ln.b.qx == ln.wd', 'box.in.get() > 1', 'cells[0].v > 1', 'cells[1].v == 2', 'cells[n % 2].v > 0', 'cells[0].sum(1) > 2', 'rows[0].arr[1] > 1', 'rows[n % 2].arr[0] == 1')
+        // An element with a variable index before or after a plain variable (KIELER's partial evaluation loses the
+        // index in the first case, sim/guardIndices.ts): of an array of instances, of a member array, of a method.
+        // Now and then only: gcc rejects the lost index of an array of instances, and most charts should run.
+        if (s.nested && s.bools.length && r.chance(0.12)) {
+            const p = r.pick(s.bools)
+            opts.push(`${p} && cells[n % 2].v > 0`, `rows[1].arr[n % 2] == 0 && ${p}`, 'cells[n % 2].v == cells[1].v', r.pick([`cells[n % 2].v > 0 && ${p}`, `rows[n % 2].arr[1] == 0 || ${p}`, `cells[n % 2].sum(1) > 2 && ${p}`, 'cells[n % 2].v > n']))
+        }
         if (s.rare?.at) opts.push(`${s.rare.at}()`, `!${s.rare.at}()`, `a && ${s.rare.at}()`)
         if (s.rare?.konst) opts.push(`scchart(${s.rare.konst}).ON && b`, `n > scchart(${s.rare.konst}).K`)
         if (s.rare?.prime) opts.push(`n == ${s.rare.prime}`)
         if (this.on('polish') && s.bools.length > 1) {
             const [p, q] = [r.pick(s.bools), r.pick(s.bools)]
             opts.push(`(${p}) ? ${q}`, `${q} && ((${p}) ? (!${q}))`, `pre(n, ${p}) > 1`, `pre(n) == pre(n, ${q})`, `ov[n % 3] > 0`)
+            // An element before a plain variable loses its index in KIELER's C code (sim/guardIndices.ts).
+            opts.push(`ov[n % 2] > 0 && ${p}`, `ov[n % 2] > n`, `ov[n % 2] < n`, `!(ov[n % 2] > n) || ${q}`, `ov[ov[n % 2] % 2] > 0 && ${p}`, `${p} && ov[n % 2] > 0`, `ov[n % 2] > 0 && pre(${q})`)
         }
         // Reads of outputs and signals: dependencies on writers (more of them outside concurrency).
         const reads: string[] = []

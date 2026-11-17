@@ -1,0 +1,11 @@
+// A chain: the middle method is kept (it calls one) and gets the leaf's parameter.
+scchart T {
+  input int n
+  output int o
+  class O { int v = 1
+    int leaf(int a) { return a + 1 }
+    int mid(int a) { return leaf(a) + 1 }
+    void bump(int a) { v = mid(a) } } o1
+  initial state I
+  do o1.bump(2); o = o1.v go to I
+}

@@ -1,0 +1,23 @@
+// The same call alone: nothing to give up at, the index stays.
+scchart F {
+  input int n
+  input int k
+  output int o
+  output bool f
+  int arr[2] = {0, 5}
+  int m[2][2]
+  class Cell {
+    int v = 0
+    int get() { return v }
+    int slow() { int r = 0
+      for (int j = 0; j < 1; j++) { r = v; }
+      return r }
+  } cells[2], c
+  struct Row { int arr[2] } rows[2]
+  region R1 {
+    initial state A
+    if cells[n % 2].slow() == 0 go to B
+    state B
+    do o += 1; f = !f go to A
+  }
+}

@@ -1,0 +1,9 @@
+// A code block with a loop is such a function too: its call has too few arguments.
+scchart T {
+  input int n
+  output int o
+  class O { int v = 1
+    int twice(int a) { return a * 2 } } o1
+  initial state I
+  do { for (int j = 0; j < 2; j++) { o = o + o1.twice(j); } } go to I
+}

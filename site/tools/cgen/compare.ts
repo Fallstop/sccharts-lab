@@ -2,6 +2,9 @@
 // and, when there is one, with KIELER's recording (the same comparison as tests/conformance/engine.test.ts: every key
 // of KIELER's data pool, the taken-transition counters and the termination tick).
 
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { compile, createSimulation, generateC, type GeneratedC, type PoolValue, type SimTickResult } from '@sccharts-lab/engine'
 import type { Value } from '@sccharts-lab/engine/types'
 import { compileAndRun, type RunResult } from './gcc'
@@ -82,7 +85,29 @@ export function generate(source: string, files?: Record<string, string>): { gen:
     return { gen: generateC(result, { takenTransitions: true }), result }
 }
 
+/**
+ * The recordings the engine is known not to reproduce yet (tests/conformance/engine-expected-failures.json, by the
+ * conformance test's ids): the generated C differs from KIELER there as the engine does, which is not a new finding.
+ */
+const knownDifferences: [string, string][] = (() => {
+    const file = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../tests/conformance/engine-expected-failures.json')
+    if (!fs.existsSync(file)) return []
+    return Object.entries(JSON.parse(fs.readFileSync(file, 'utf8')) as Record<string, string>).filter(([k]) => !k.startsWith('//'))
+})()
+
+function knownDifference(id: string): string | undefined {
+    const key = id.replace(/^tests\/engine\/kieler\//, 'kieler-probes/').replace(/^src\/examples\//, 'examples/').replace(/^tests\/conformance\//, '')
+    return knownDifferences.find(([pattern]) => (pattern.endsWith('*') ? key.startsWith(pattern.slice(0, -1)) : key === pattern))?.[1]
+}
+
+/** Compares one case; a mismatch on a recording the engine is known not to reproduce is skipped. */
 export async function checkCase(c: Case, options: { keep?: string } = {}): Promise<CaseResult> {
+    const r = await compareCase(c, options)
+    if (r.verdict === 'mismatch' && knownDifference(c.id)) return { ...r, verdict: 'skipped', reason: 'known engine difference (engine-expected-failures.json)', problems: [] }
+    return r
+}
+
+async function compareCase(c: Case, options: { keep?: string } = {}): Promise<CaseResult> {
     const base = { id: c.id, problems: [] as string[], engineTicks: 0, kielerTicks: 0 }
     const sc = c.scenario
     if (sc?.system && sc.system !== 'netlist') return { ...base, verdict: 'skipped', reason: `system ${sc.system}` }

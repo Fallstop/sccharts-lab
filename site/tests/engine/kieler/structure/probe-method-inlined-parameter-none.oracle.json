@@ -1,0 +1,124 @@
+{
+  "hash": "d25ae08385f0facd8b37b1256313b7df5e7b2b58",
+  "chart": "tests/engine/kieler/structure/probe-method-inlined-parameter-none.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name bump is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O.v": {
+      "type": "int",
+      "properties": []
+    },
+    "os": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 0,
+        "os": [
+          {
+            "v": 1
+          },
+          {
+            "v": 1
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 2,
+        "os": [
+          {
+            "v": 1
+          },
+          {
+            "v": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 3,
+        "os": [
+          {
+            "v": 1
+          },
+          {
+            "v": 3
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 2,
+        "os": [
+          {
+            "v": 2
+          },
+          {
+            "v": 3
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

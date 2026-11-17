@@ -329,7 +329,8 @@ export class Expansion {
                     ((this.ctx.root.ext.emptyInstances ??= []) as string[]).push(v.name)
                 }
                 for (const local of [...inst.decls]) {
-                    if (!local.declKind) local.member = { of: v, name: local.name }
+                    // A member of an instance inside the chart keeps its instance; the instance is the member.
+                    if (!local.member && (!local.declKind || local.declKind === 'class' || local.declKind === 'struct')) local.member = { of: v, name: local.name }
                     local.name = `_${v.name}_${local.name}`
                     local.generated = true
                     addVar(target, local)

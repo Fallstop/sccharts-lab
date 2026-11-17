@@ -534,16 +534,36 @@ Probes `kieler/rare/probe-trigger-*` (random sequence, a C function's counter, a
 256 as an input trigger, a state that is never entered); the generated C code (dumped): `d->_cg6 =
 ((float) rand() / RAND_MAX) > 2.0;` before `d->_g7 = d->_g6 && d->_cg6;`.
 
-**Defect.** When the sequentializer writes such a guard, an array element whose index contains a variable loses
-the whole index if no plain variable (one without indices, not inside an index) comes before it in the condition
-(pre-order) and one comes after it: `ov[n] > 0 && a` becomes `d->ov > 0 && d->a`, `ok[n] && y > 0` becomes
-`d->ok && d->y > 0`, `ov[n] + y > 1` and `ov[n] == y` lose it too, while `a && ov[n] > 0`, `y == ov[n]`, `ov[n] > 0
-&& ov[1] < 3`, literal indices (`ok[1] && a`, a for-region copy's `key[i]`) and assignments keep theirs. The C code
-then tests the array's address, which is never 0 (so `> 0`, `!= 7`, `+ 1 > 100` hold and `== 0`, `< 3`, `!` do not);
-gcc rejects other arithmetic with it and comparisons with a double (`invalid operands to binary * (have ‘int *’ and
-‘int’)`, `... binary > (have ‘double *’ and ‘double’)`). Official KIELER 0.3.0 does the same. Probes
-`kieler/rare/probe-index-dropped-*`, `probe-index-kept-*`; the SCG before the sequentializer still has the index
-(dumped). The engine reproduces it (sim/guardIndices.ts) with a `kieler-quirk` warning.
+**Defect.** KIELER's partial evaluation (the post processor `partialAssignmentEvaluation`, run twice after the
+sequentializer, with `PartialExpressionEvaluator`) evaluates every such guard ahead of time, left to right, and
+gives up at the first plain variable, for which it knows no value. On the way it has already changed the condition:
+for an array reference it evaluates each index, and an index it cannot evaluate is put, as the very object, into a
+copy of the reference, which takes it out of the original (`cp.indices.set(vor.indices.indexOf(expr),
+expr.evaluate)`, where `evaluate` returns the original when it could not evaluate). When the evaluation then gives
+up, the original stays, without the index. So:
+
+| condition | KIELER's C code |
+| --- | --- |
+| `ov[n] > 0 && a`, `ok[n] && y > 0`, `ov[n] + y > 1`, `ov[n] == y` | the index is lost: `d->ov > 0 && d->a` |
+| `a && ov[n] > 0`, `y == ov[n]` | kept: the evaluation gives up at the plain variable before it reaches the element |
+| `ov[n] > 0`, `ov[n] > 0 && ov[1] < 3` | kept: nothing to give up at, and the copy, which has the index, is used |
+| `ov[n] > 0 && pre(a)`, `&& c.v > 0`, `&& c.get() == 0` | kept: `pre`, a member and a method of an instance are no plain variables |
+| a literal index (`ok[1] && a`, a for-region copy's `key[i]`), an effect | kept (an effect is inside a guard's branch, which the evaluator does not visit) |
+| `ov[ov[n]] > 0 && a` | both lost: the first pass takes the inner index, the second the outer one |
+| `m[i][j] > 0 && a` | both lost; `m[1][j]`, `m[i][1]`: the variable one, a row's address is left |
+| `m[i][j] > 0` (no plain variable after it) | **`m[j][j]`**: with two indices that cannot be evaluated the copy gets the second in the place of the first |
+| `cells[n].v > 0 && a`, `rows[n].arr[0] == 1 \|\| a`, any join's trigger with such an element (the termination flag is appended) | the instance's index is lost and gcc rejects the member of an array: `'(F_Cell *)&d->cells' is a pointer; did you mean to use '->'?` |
+| `rows[1].arr[n] == 0 && a`, `c.arr[n] > 0 && a` | kept: only the indices of the variable the reference starts at are touched |
+
+The C code then tests the array's address, which is never 0 (so `> 0`, `!= 7`, `+ 1 > 100` hold and `== 0`, `< 3`,
+`!` do not). A negative integer compared with it is a very high address (`ov > k` is false for `k = -1`, `ov < k`
+true). gcc rejects other arithmetic with it, comparisons with a double, two arrays added and an array as an index
+(`invalid operands to binary * (have 'int *' and 'int')`, `... binary > (have 'double *' and 'double')`, `array
+subscript is not an integer`). Official KIELER does the same (checked with the official extension's server). Probes
+`kieler/rare/probe-index-dropped-*`, `probe-index-kept-*`, `probe-partial-eval-*` (the instance cases were found by
+the `nested` fuzz profile); the SCG before the sequentializer still has the index (dumped). The engine runs the same
+evaluation on each condition (sim/guardIndices.ts `guardCondition`), simulates and generates what is left, with a
+`kieler-quirk` warning, and rejects what gcc rejects (`c-array-address`).
 
 **Source.** `scg/.../processors/SimpleGuardExpressions.xtend:164-186` (a guard `_c<g>` per conditional),
 `scg/.../processors/optimizer/CopyPropagationV2.xtend:126-140` (propagated only for unmodified inputs),

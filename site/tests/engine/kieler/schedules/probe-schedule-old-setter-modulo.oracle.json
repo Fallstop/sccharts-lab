@@ -1,0 +1,33 @@
+{
+  "hash": "8342be18a011b28ec137cc26673307f256b26c15",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-old-setter-modulo.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3b to _g7b",
+    "Can't schedule from _g7b to _g3b",
+    "Can't schedule from _g3b to _g2",
+    "Can't schedule from _g7b to _g6",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving x prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through x.",
+    "Potential instantaneous loop through x."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nWrite it as x %= 3 to say so. In one region it means the same.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 8,
+      "column": 8
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nWrite it as x %= 4 to say so. In one region it means the same.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 12,
+      "column": 8
+    }
+  ],
+  "ticks": []
+}

@@ -498,6 +498,43 @@ function cText(root: CState): Diagnostic[] {
         }
         return acc
     }
+    // A method KIELER keeps as a C function, whose body calls a simple method with parameters: KIELER copies the simple
+    // one into it (MethodProcessor.inlineMethod) and its parameter declarations with it, still marked as parameters,
+    // so the function gets them as parameters of its own and every call of it has too few arguments (probes
+    // structure/probe-method-inlined-parameter-*).
+    for (const m of called) {
+        const method = m.method!
+        if (isInlined(method)) continue
+        const own = method.params.filter(p => !p.tags.has('#self')).length
+        let extra = 0
+        const calls = (e: CExpr | undefined) => walkExpr(e, x => {
+            const callee = x.k === 'call' && !x.extern ? x.target?.v.method : undefined
+            if (callee && isInlined(callee)) extra += callee.params.filter(p => !p.tags.has('#self')).length
+        })
+        const walk = (list: CStmt[]) => {
+            for (const st of list) {
+                switch (st.k) {
+                    case 'do': effectExprs(st.f).forEach(calls); break
+                    case 'if': calls(st.cond); walk(st.then); if (st.else) walk(st.else); break
+                    case 'while': calls(st.cond); walk(st.body); break
+                    case 'for': walk(st.init); calls(st.cond); walk(st.update); walk(st.body); break
+                    case 'return': calls(st.expr); break
+                    case 'expr': calls(st.e); break
+                    default: break
+                }
+            }
+        }
+        walk(method.body)
+        if (!extra) continue
+        // The tick data and, for a class's method, the instance come first.
+        const fixed = m.member ? 2 : 1
+        out.push({
+            severity: 'error', code: 'method-inlined-parameter', span: method.span ?? m.span, related: m.decl ? [m.decl] : undefined,
+            message: `The method \`${m.member?.name ?? m.name}\` calls a short method with parameters, which KIELER's C code cannot handle: it does not compile`,
+            kieler: `too few arguments to function ‘${m.member ? `${root.name}_${m.name.replace(/^.*\./, '')}` : m.name}’; expected ${fixed + own + extra}, have ${fixed + own}\n${GCC_FAILED}`,
+            hint: `KIELER keeps \`${m.member?.name ?? m.name}\` as a C function (it calls another method) and copies the short method it calls into it. The copy brings the short method's parameters along, as parameters of \`${m.member?.name ?? m.name}\`, and the calls of \`${m.member?.name ?? m.name}\` do not pass them. Write the short method's code in place, or give it no parameters, or mark \`${m.member?.name ?? m.name}\` \`@inline\`.`,
+        })
+    }
     for (const m of called) {
         const related = m.decl ? [m.decl] : m.method!.by ? [m.method!.by] : undefined
         assigns(effectsOf(m.method!.body), related)

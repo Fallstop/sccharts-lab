@@ -1,0 +1,14 @@
+// The variable must be a direct operand: x = (x + 1) * 2 is not an old-style update, a conflict.
+scchart Legacy {
+  output int x = 0
+  output bool f = false
+  schedule s
+  region W {
+    initial state A
+    do x = (x + 1) * 2 schedule s 0 go to A
+  }
+  region R {
+    initial state B
+    do x = (x + 2) * 2 schedule s 0 go to B
+  }
+}

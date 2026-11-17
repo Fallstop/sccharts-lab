@@ -1,0 +1,16 @@
+// m[n % 2][k % 2] > 0 && f loses both indices.
+scchart F {
+  input int n
+  input int k
+  output int o
+  output bool f
+  int arr[2]
+  int m[2][2]
+  class Cell {
+    int v = 0
+  } cells[2]
+  region R1 {
+    initial state A
+    if m[n % 2][k % 2] > 0 && f go to A
+  }
+}

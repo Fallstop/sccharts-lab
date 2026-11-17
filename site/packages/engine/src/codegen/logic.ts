@@ -10,7 +10,7 @@
 
 import type { ExecutableChart, XNode } from '../sim/exec'
 import type { SNode } from '../sim/scg'
-import { droppedIndexRefs } from '../sim/guardIndices'
+import { guardCondition } from '../sim/guardIndices'
 import { effect, expr, type ExprEnv } from './expr'
 
 /** What the netlist needs to know besides the schedule. */
@@ -246,10 +246,12 @@ function joinGuard(x: XNode, valueOf: (i: number) => string): string {
 function conditionCode(x: XNode, input: LogicInput, out: LogicOutput, emit: (line: string) => void): string {
     const { env } = input
     const n = x.src
-    const dropped = droppedIndexRefs(n.expr!)
-    env.dropped = dropped.size ? dropped : undefined
+    // The condition as KIELER's partial evaluation leaves it (sim/guardIndices.ts).
+    const guard = guardCondition(n.expr!)
+    const condition = guard?.expr ?? n.expr!
+    env.dropped = guard?.dropped.size ? new Set(guard.dropped.keys()) : undefined
     try {
-        if (!x.char) return expr(n.expr!, env).text
+        if (!x.char) return expr(condition, env).text
         const D = env.structArg ? `${env.structArg}->` : ''
         const name = input.name(`_cg${n.id}`)
         out.conditions.push(name)
@@ -257,7 +259,7 @@ function conditionCode(x: XNode, input: LogicInput, out: LogicOutput, emit: (lin
         // A conditional without else keeps the guard's previous value (KIELER's `__CONDSELF__`, basics.md B-24).
         const saved = env.self
         env.self = `${D}${name}`
-        const text = expr(n.expr!, env).text
+        const text = expr(condition, env).text
         env.self = saved
         emit(`${D}${name} = ${text};`)
         return `${D}${name}`

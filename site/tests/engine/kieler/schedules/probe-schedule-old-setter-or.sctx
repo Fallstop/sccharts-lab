@@ -1,0 +1,14 @@
+// The same one of || | && & combines only with the same literal.
+scchart Legacy {
+  output int x = 0
+  output bool f = false
+  schedule s
+  region W {
+    initial state A
+    do f = f || true schedule s 0 go to A
+  }
+  region R {
+    initial state B
+    do f = f || true schedule s 0 go to B
+  }
+}

@@ -10,7 +10,7 @@ import type { JoinInfo } from './analysis'
 import type { SNode, Thread } from './scg'
 import { compileEffect, ExprCompiler, SimError, type EffectFn, type Fn, type Runtime, type VarInfo } from './eval'
 import { Memory } from './memory'
-import { addressOf, droppedIndexRefs, withAddresses } from './guardIndices'
+import { addressOf, guardCondition, withAddresses } from './guardIndices'
 import { threadNodes } from './analysis'
 import { allScopes, walkExpr, type CExpr, type CRef, type CTransition, type CVar } from './model'
 import { cloneRandState, newRandState } from './random'
@@ -291,8 +291,8 @@ export class ExecutableChart {
                 case 'exit': if (n === rootExit) x.rootExit = true; break
                 case 'cond': {
                     // KIELER's C code drops some indices of a condition (guardIndices.ts): the array's address instead.
-                    const dropped = droppedIndexRefs(n.expr!)
-                    const condition = dropped.size ? withAddresses(n.expr!, dropped, v => addressOf(v, ensure(v).slot)) : n.expr!
+                    const guard = guardCondition(n.expr!)
+                    const condition = guard ? withAddresses(guard, v => addressOf(v, ensure(v).slot)) : n.expr!
                     // KIELER's guard `_c<g> = condition` is a char that keeps its value between ticks: a conditional
                     // without an else part (`c ? a` in a trigger) gives that value when `c` is false (ExprCompiler.selves).
                     if (hasConditionalWithoutElse(condition)) {

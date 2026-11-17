@@ -1,0 +1,9 @@
+// pre of a member of an element of an array of instances: KIELER's Pre processor fails (Cannot handle pre operator on arrays of classes).
+scchart T {
+ input int n
+ output int o
+struct O { struct P { int v = 1 } p } os[2]
+ initial state I
+ do os[n].p.v = os[n].p.v + 1; o = pre(os[n].p.v) go to I
+
+}

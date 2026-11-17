@@ -13,7 +13,7 @@ import { analyse, liveNodes, type Analysis } from './analysis'
 import { conditionalWithoutElse, checkCodegen } from './codegen'
 import { removeSuperfluousForks } from './sfr'
 import { constantIndexWarnings } from './memory'
-import { droppedIndexDiagnostics, droppedIndexRefs } from './guardIndices'
+import { droppedIndexDiagnostics, guardCondition } from './guardIndices'
 import { inlineMethods, isInlined } from './structure/methods'
 import { goBlock, goBlockDiagnostics, type GoBlock } from './goblock'
 import { stringConditions } from './stringConditions'
@@ -145,7 +145,7 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     diagnostics.push(...conditionalWithoutElse(scg.nodes))
     diagnostics.push(...conditionKeepsResult(scg))
     diagnostics.push(...stringConditions(scg))
-    diagnostics.push(...droppedIndices(scg))
+    diagnostics.push(...droppedIndices(scg, lowered.root.name))
     diagnostics.push(...orderDependentUpdates(scg))
     const go = goBlock(scg)
     diagnostics.push(...goBlockDiagnostics(go))
@@ -396,20 +396,20 @@ function orderDependentUpdates(scg: SCG): Diagnostic[] {
 }
 
 /** Conditions whose array indices KIELER's C code drops (guardIndices.ts): one diagnostic per source condition. */
-function droppedIndices(scg: SCG): Diagnostic[] {
+function droppedIndices(scg: SCG, chart: string): Diagnostic[] {
     const out: Diagnostic[] = []
     const seen = new Set<string>()
     const alive = liveNodes(scg)
     for (const n of scg.nodes) {
         if (n.kind !== 'cond' || !n.expr || !alive.has(n)) continue
-        const dropped = droppedIndexRefs(n.expr)
-        if (!dropped.size) continue
-        const first = [...dropped][0]
+        const g = guardCondition(n.expr)
+        if (!g) continue
+        const first = g.instance?.written ?? [...g.dropped.values()][0] ?? [...g.mixed.values()][0]
         const key = `${first.span?.start ?? n.id}`
         if (seen.has(key)) continue
         seen.add(key)
         const by = n.method ? undefined : n.transition?.origin ?? n.transition?.about
-        out.push(...droppedIndexDiagnostics(n.expr, dropped, v => v.display ?? v.name, by ? [by] : undefined))
+        out.push(...droppedIndexDiagnostics(n.expr, g, v => v.display ?? v.name, by ? [by] : undefined, chart))
     }
     return out
 }

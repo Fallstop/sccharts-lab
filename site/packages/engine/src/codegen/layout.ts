@@ -154,12 +154,17 @@ export class Layout {
 
     /** An instance of a chart used as a class: `<Chart>_<Referenced>1 c;` (KIELER's naming) with the chart's fields. */
     private chartInstance(inst: string, decls: CVar[], classes: Map<string, string>) {
-        const members = decls.filter(m => m.member?.of.name === inst && !m.declKind)
+        // Its fields, and the class and struct instances declared in the chart (with their members inside).
+        const inside = decls.filter(m => m.member?.of.name === inst && (!m.declKind || ((m.declKind === 'class' || m.declKind === 'struct') && !m.tags.has('#host'))))
+        const members = inside.filter(m => !m.declKind)
+        const nested = inside.filter(m => m.declKind)
         // Ids inside the instance are `<Chart>$<instance>/<Referenced chart>[/<Base>]$<name>`.
         const id = decls.map(m => m.decl ?? '').find(d => d.includes(`$${inst}/`)) ?? ''
         const rest = id.slice(id.indexOf(`$${inst}/`) + inst.length + 2)
         const chart = rest ? rest.split(/[/$]/)[0] : inst
-        const fields = members.map(m => `${ctypeOf(m)} ${identifier(m.member!.name)}${dimsOf(m).map(n => `[${n}]`).join('')};`)
+        const fields = inside.map(m => (m.declKind
+            ? `${this.classType(m, decls, classes)} ${identifier(m.member!.name)}${ownDimsOf(m).map(n => `[${n}]`).join('')};`
+            : `${ctypeOf(m)} ${identifier(m.member!.name)}${dimsOf(m).map(n => `[${n}]`).join('')};`))
         const key = `chart ${chart}|${fields.join(' ')}`
         let type = classes.get(key)
         if (!type) {
@@ -170,6 +175,7 @@ export class Layout {
         const name = this.unique(identifier(inst))
         this.lines.push(`${type} ${name};`)
         this.instances.push({ name: inst, member: name, ctype: type, pool: inst })
+        for (const m of nested) this.instance(m, `${name}.${identifier(m.member!.name)}`, decls, true)
         for (const m of members) {
             const member = `${name}.${identifier(m.member!.name)}`
             this.slots.set(m, { v: m, member })

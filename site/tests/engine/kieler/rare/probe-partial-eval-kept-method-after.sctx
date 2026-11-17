@@ -1,0 +1,23 @@
+// A call of an instance's method after the element: the index stays.
+scchart F {
+  input int n
+  input int k
+  output int o
+  output bool f
+  int arr[2] = {0, 5}
+  int m[2][2]
+  class Cell {
+    int v = 0
+    int get() { return v }
+    int slow() { int r = 0
+      for (int j = 0; j < 1; j++) { r = v; }
+      return r }
+  } cells[2], c
+  struct Row { int arr[2] } rows[2]
+  region R1 {
+    initial state A
+    if arr[n % 2] > 0 && c.slow() == 0 go to B
+    state B
+    do o += 1; f = !f go to A
+  }
+}

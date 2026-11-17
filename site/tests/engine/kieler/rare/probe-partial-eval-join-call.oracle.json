@@ -1,0 +1,28 @@
+{
+  "hash": "5f643c6cf548119010b02b24e34791f9bc5914b1",
+  "chart": "tests/engine/kieler/rare/probe-partial-eval-join-call.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "‘(F_Cell *)&d->cells’ is a pointer; did you mean to use ‘->’?",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name _fn0_cells_sum_a is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 12,
+      "column": 7
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 17,
+      "column": 5
+    }
+  ],
+  "ticks": []
+}

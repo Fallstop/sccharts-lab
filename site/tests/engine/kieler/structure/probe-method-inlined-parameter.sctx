@@ -1,0 +1,11 @@
+// A method KIELER keeps as a C function (it calls methods) and that calls a short method with a parameter: the short one is copied into it with its parameter, which becomes a parameter of the kept function, and the call of the kept function has too few arguments.
+scchart T {
+  input int n
+  output int o
+  class O { int v = 1
+    void set(int a) { v = a }
+    int get() { return v }
+    void bump(int a) { set(get() + a) } } o1
+  initial state I
+  do o1.bump(2); o = o1.get() go to I
+}

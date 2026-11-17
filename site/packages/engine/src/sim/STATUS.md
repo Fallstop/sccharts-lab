@@ -303,7 +303,11 @@ API around them).
   element with a variable index loses its index in KIELER's C code when no plain variable comes before it and one
   comes after it (`ov[n] > 0 && a` is `ov > 0 && a`, the array's address, which is never 0; `a && ov[n] > 0` keeps
   it): guardIndices.ts reproduces it with a `kieler-quirk` warning, and rejects (`c-array-address`) what gcc then
-  fails on (`ov[n] * 2`, a comparison with a float); probes `probe-index-dropped-*`, `probe-index-kept-*`. (2) Two code
+  fails on (`ov[n] * 2`, a comparison with a float); probes `probe-index-dropped-*`, `probe-index-kept-*`. Its cause
+  is KIELER's partial evaluation of the guards, which guardIndices.ts now runs as KIELER does (basics.md B-24's
+  defect): that also gives the member of an array of instances (`cells[n].v > 0 && a`, which gcc rejects), the two
+  mixed-up indices of `m[i][j] > 0`, and what keeps its index (`pre`, members, calls); probes `probe-partial-eval-*`.
+  (2) Two code
   blocks or methods of one state (its methods, actions, transitions; the chart's methods) with a label of the same
   name: KIELER resolves the later block's `goto` to the earlier block's label and its compiler crashes
   (`kieler-crash`; official 0.3.0 never answers); probes `probe-label-*`.

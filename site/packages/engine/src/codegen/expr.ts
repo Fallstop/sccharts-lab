@@ -123,8 +123,9 @@ export function expr(e: CExpr, env: ExprEnv): Out {
 
 /** A reference: `d->x`, `d->a[i][j]`; in a condition, an array whose index KIELER drops is its address. */
 export function ref(r: CRef, env: ExprEnv): string {
-    if (env.dropped?.has(r)) return `((long) ${env.access(r.v)})`
     const idx = r.idx.map(i => expr(i, env).text)
+    // The array itself (or a row of it, with the indices that are left), as in KIELER's code.
+    if (env.dropped?.has(r)) return `${env.access(r.v)}${idx.map(i => `[${i}]`).join('')}`
     // A member inside an array of instances (`cs[].v`): the first indices are the instances'.
     let k = 0
     let s = env.access(r.v).replace(/\[\]/g, () => `[${idx[k++] ?? 0}]`)

@@ -1,0 +1,14 @@
+// Two old-style updates x = x + e at one priority of a schedule are compared as writes, and KIELER's areOldConfluentSetter takes them for the same write: accepted.
+scchart Legacy {
+  output int x = 0
+  output bool f = false
+  schedule s
+  region W {
+    initial state A
+    do x = x + 1 schedule s 0 go to A
+  }
+  region R {
+    initial state B
+    do x = x + 2 schedule s 0 go to B
+  }
+}

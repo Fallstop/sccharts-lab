@@ -1,0 +1,9 @@
+// row.inn.arr[n % 2] > 0 && a: the index is a member's, which KIELER's partial evaluation does not touch.
+scchart T {
+ input int n
+ input bool a
+ struct Row { struct Inner { int arr[2] } inn } row
+ initial state A
+ if row.inn.arr[n % 2] > 0 && a go to B
+ state B
+}

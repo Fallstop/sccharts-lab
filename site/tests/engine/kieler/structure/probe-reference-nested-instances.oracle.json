@@ -1,0 +1,171 @@
+{
+  "hash": "7ea480bdc09c368bacdee2012164b9b0090318d7",
+  "chart": "tests/engine/kieler/structure/probe-reference-nested-instances.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘array’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Counter1.O.P.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Counter1.O.p": {
+      "type": "class",
+      "properties": []
+    },
+    "Counter1.os": {
+      "type": "class",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 0,
+        "c": {
+          "os": [
+            {
+              "p": {
+                "v": 1
+              }
+            },
+            {
+              "p": {
+                "v": 1
+              }
+            }
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 2,
+        "c": {
+          "os": [
+            {
+              "p": {
+                "v": 1
+              }
+            },
+            {
+              "p": {
+                "v": 2
+              }
+            }
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 2,
+        "c": {
+          "os": [
+            {
+              "p": {
+                "v": 2
+              }
+            },
+            {
+              "p": {
+                "v": 2
+              }
+            }
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 3,
+        "c": {
+          "os": [
+            {
+              "p": {
+                "v": 2
+              }
+            },
+            {
+              "p": {
+                "v": 3
+              }
+            }
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 3,
+        "c": {
+          "os": [
+            {
+              "p": {
+                "v": 3
+              }
+            },
+            {
+              "p": {
+                "v": 3
+              }
+            }
+          ]
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

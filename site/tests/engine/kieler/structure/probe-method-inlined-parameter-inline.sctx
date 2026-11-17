@@ -1,0 +1,11 @@
+// @inline on the calling method: both are copied into the tick's code, fine.
+scchart T {
+  input int n
+  output int o
+  class O { int v = 1
+    int twice(int a) { return a * 2 }
+    @inline
+    void bump(int a) { v = v + twice(a) } } o1
+  initial state I
+  do o1.bump(2); o = o1.v go to I
+}

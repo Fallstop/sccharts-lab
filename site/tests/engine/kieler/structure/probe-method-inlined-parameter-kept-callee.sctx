@@ -1,0 +1,10 @@
+// The called method is kept itself (a loop): nothing is copied, fine.
+scchart T {
+  input int n
+  output int o
+  class O { int v = 1
+    void big() { for (int j = 0; j < 2; j++) { v += 1; } }
+    void bump() { big() } } os[2]
+  initial state I
+  do os[n].bump(); o = os[n].v go to I
+}

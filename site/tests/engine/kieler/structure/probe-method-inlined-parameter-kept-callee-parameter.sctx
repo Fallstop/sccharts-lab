@@ -1,0 +1,10 @@
+// The called method has a parameter but is kept (a loop): fine.
+scchart T {
+  input int n
+  output int o
+  class O { int v = 1
+    void big(int a) { for (int j = 0; j < 2; j++) { v += a; } }
+    void bump(int a) { big(a) } } o1
+  initial state I
+  do o1.bump(2); o = o1.v go to I
+}

@@ -1,0 +1,33 @@
+{
+  "hash": "a754e96610f583fdc290eb51898f0ace47dc1a5b",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-old-setter-or-different.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3b to _g7b",
+    "Can't schedule from _g7b to _g3b",
+    "Can't schedule from _g3b to _g2",
+    "Can't schedule from _g7b to _g6",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving f prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through f.",
+    "Potential instantaneous loop through f."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads f, so the compiler treats it as an update of f (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. f += 1.\nIt only matters when another region also writes f in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 8,
+      "column": 8
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads f, so the compiler treats it as an update of f (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. f += 1.\nIt only matters when another region also writes f in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 12,
+      "column": 8
+    }
+  ],
+  "ticks": []
+}

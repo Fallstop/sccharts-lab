@@ -1,0 +1,14 @@
+// A mix of * and / combines (the regions run in order: x * 3 / 2).
+scchart Legacy {
+  output int x = 5
+  output bool f = false
+  schedule s
+  region W {
+    initial state A
+    do x = x * 3 schedule s 0 go to A
+  }
+  region R {
+    initial state B
+    do x = x / 2 schedule s 0 go to B
+  }
+}

@@ -136,6 +136,18 @@ export const pre: Pass = {
         const others = new Map<CVar, PreExpr[]>()
         const madeFor = new Map<PreExpr, CVar>()
         const order = presInKielerOrder(ctx.root)
+        // KIELER's key of a pre's operand (Pre.expressionKey) cannot have an index on an instance: `pre(os[i].v)`.
+        for (const p of order) {
+            const operand = p.args[0]
+            if (operand?.k !== 'ref' || !operand.v.member?.of.dims.length || !operand.idx.length) continue
+            ctx.report({
+                severity: 'error', code: 'kieler-crash', span: p.span ?? operand.span, related: operand.v.decl ? [operand.v.decl] : undefined,
+                message: `KIELER cannot take \`pre\` of a member of an array of instances (\`${operand.v.display ?? operand.v.name}\`): its compiler fails`,
+                kieler: 'java.lang.IllegalArgumentException: Cannot handle pre operator on arrays of classes',
+                hint: 'Copy the member into a variable of its own in every tick (a during action) and take `pre` of that variable.',
+            })
+            return
+        }
         for (let i = order.length - 1; i >= 0; i--) {
             const p = order[i]
             const operand = p.args[0]

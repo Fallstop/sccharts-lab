@@ -1,0 +1,10 @@
+// The short method is one of an element of an inner array of instances.
+scchart T {
+  input int n
+  output int o
+  class O { class P { int v = 1
+      void inc(int a) { v = v + a } } ps[2]
+    void bump(int a) { ps[a].inc(2) } } o1
+  initial state I
+  do o1.bump(n); o = o1.ps[n].v go to I
+}

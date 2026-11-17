@@ -96,9 +96,24 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
     const compiled = result.sim!
     for (const scope of allScopes(compiled.core)) {
         for (const v of scope.decls as CVar[]) {
-            if (!v.member || v.declKind || v.const || v.tags.has('#const-member')) continue
-            const { of } = v.member
+            if (!v.member || v.const || v.tags.has('#const-member')) continue
             const nested = scope !== compiled.core
+            // A member of a class or struct instance declared inside a chart used by `ref C c`: the chart's type, the
+            // classes on the way, the member (`Counter1.O.P.v`; the instances themselves too, `Counter1.os`).
+            const chain: CVar[] = []
+            for (let c: CVar | undefined = v; c; c = c.member?.of) chain.unshift(c)
+            const root = chain[0]
+            if (chain.length > 2 || (v.declKind && chain.length === 2)) {
+                if (root.declKind !== 'reference' || !root.instance || (v.declKind && v.declKind !== 'class' && v.declKind !== 'struct')) continue
+                const classes = chain.slice(1, -1).map((c) => result.index?.vos.get((c.decl ?? '').split('/').pop()!)?.decl?.className ?? c.member!.name)
+                out.push({
+                    name: [`${root.instance.target}1${nested ? '1' : ''}`, ...classes, v.member.name].join('.'), input: false, output: false,
+                    type: v.declKind ?? typeName(v.type, v.hostType), dims: [], late: true,
+                })
+                continue
+            }
+            if (v.declKind) continue
+            const { of } = v.member
             let type: string | undefined
             if (of.declKind === 'reference' && of.instance) type = `${of.instance.target}1`
             else if (nested && (of.declKind === 'class' || of.declKind === 'struct')) type = result.index?.vos.get(of.decl ?? '')?.decl?.className

@@ -1,0 +1,14 @@
+// % is not one of the operators that combine: a conflict.
+scchart Legacy {
+  output int x = 7
+  output bool f = false
+  schedule s
+  region W {
+    initial state A
+    do x = x % 3 schedule s 0 go to A
+  }
+  region R {
+    initial state B
+    do x = x % 4 schedule s 0 go to B
+  }
+}

@@ -1,0 +1,15 @@
+// A chart with an array of nested class instances, used as ref Counter c(n, o): the pool has c with the instances inside (c: { os: [ { p: { v } } ] }).
+scchart T {
+ input int n
+ output int o
+ ref Counter c(n,o)
+ initial state A
+}
+scchart Counter {
+ input int n
+ output int o
+ class O { class P { int v=1
+ void inc() { v++ } } p } os[2]
+ initial state A
+ do os[n].p.inc(); o=os[n].p.v go to A
+}

@@ -1,0 +1,105 @@
+{
+  "hash": "fa3e8319f58d5b9e146a2b84482340857e05aa7b",
+  "chart": "tests/engine/kieler/structure/probe-struct-guard-inner-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "Row.Inner.arr": {
+      "type": "int",
+      "properties": []
+    },
+    "Row.inn": {
+      "type": "struct",
+      "properties": []
+    },
+    "row": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "row": {
+          "inn": {
+            "arr": [
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 0,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "row": {
+          "inn": {
+            "arr": [
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 0,
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "row": {
+          "inn": {
+            "arr": [
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

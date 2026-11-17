@@ -379,12 +379,44 @@ export function concurrentThreads(a: Thread, b: Thread): boolean {
     return x.fork === y.fork && !x.fork?.preemptive
 }
 
+const SAME_VALUE_OPS = new Set(['||', '|', '&&', '&'])
+const ARITHMETIC_OPS = new Set(['+', '-', '*', '/'])
+
+/**
+ * KIELER's areOldConfluentSetter (KEffectsDependencyExtensions): two old-style updates `x = x op e` of one variable,
+ * each naming it once, as a direct operand, count as the same write when the operators combine: the same one of
+ * + - * /, a mix of + and -, a mix of * and /, or the same one of || | && & with the same literal. It only shows where
+ * such updates are compared as writes: at one priority of a schedule (`x = x + 1 schedule s 0` next to
+ * `x = x + 2 schedule s 0` is accepted; probes schedules/probe-schedule-old-setter-*).
+ */
+function oldConfluentSetters(a: Access, b: Access): boolean {
+    const [x, y] = [a.expr, b.expr]
+    if (x?.k !== 'op' || y?.k !== 'op' || a.v !== b.v) return false
+    const once = (e: CExpr, v: CVar) => {
+        let n = 0
+        walkExpr(e, r => { if (r !== e && r.k === 'ref' && r.v === v) n++ })
+        return n === 1
+    }
+    const operand = (e: Extract<CExpr, { k: 'op' }>, v: CVar) => e.args.some(r => r.k === 'ref' && r.v === v)
+    if (!once(x, a.v) || !once(y, b.v) || !operand(x, a.v) || !operand(y, b.v)) return false
+    if (x.op === y.op) {
+        if (SAME_VALUE_OPS.has(x.op)) {
+            if (x.args.length !== 2 || y.args.length !== 2) return false
+            const [p, q] = [x.args.find(r => r.k === 'lit'), y.args.find(r => r.k === 'lit')]
+            return p?.k === 'lit' && q?.k === 'lit' && p.t === q.t && p.v === q.v
+        }
+        return ARITHMETIC_OPS.has(x.op)
+    }
+    const both = (ops: string[]) => ops.includes(x.op) && ops.includes(y.op)
+    return both(['+', '-']) || both(['*', '/'])
+}
+
 /** KIELER's isConfluentTo for two absolute writes. */
 function confluent(a: Access, b: Access): boolean {
     if (a.node.kind !== 'assign' || b.node.kind !== 'assign') return false
     if (a.op === '=' && b.op === '=') {
         if (!a.expr || !b.expr) return false
-        return sameExpr(a.expr, b.expr)
+        return sameExpr(a.expr, b.expr) || oldConfluentSetters(a, b)
     }
     return a.op !== undefined && a.op === b.op
 }
