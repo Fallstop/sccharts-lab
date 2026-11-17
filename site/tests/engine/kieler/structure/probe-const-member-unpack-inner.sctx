@@ -1,0 +1,13 @@
+// A const member of a class unpacked into the class around it.
+scchart T {
+  output int o
+  class O {
+    @UnpackClass
+    class P {
+      const int N = 3
+      int w = N + 1
+    } p
+  } a
+  initial state I
+  do o = a.p.N + a.p.w go to I
+}

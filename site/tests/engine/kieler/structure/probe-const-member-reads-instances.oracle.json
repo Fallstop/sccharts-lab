@@ -1,0 +1,95 @@
+{
+  "hash": "cba42c5f1bc9f65622feb0c8cd5893b2e0859fd4",
+  "chart": "../../../../../../tmp/claude-1000/-home-fallstop-Documents-projects-sccharts-lab/4bebbd45-15e3-49f5-b757-ef5ec383b3e9/scratchpad/nr5keep/probe-const-member-reads-instances.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O.w": {
+      "type": "int",
+      "properties": []
+    },
+    "O.x": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "cs": [
+          {
+            "w": 2,
+            "x": 3
+          },
+          {
+            "w": 2,
+            "x": 3
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 9,
+        "cs": [
+          {
+            "w": 2,
+            "x": 3
+          },
+          {
+            "w": 5,
+            "x": 3
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 9,
+        "cs": [
+          {
+            "w": 2,
+            "x": 3
+          },
+          {
+            "w": 5,
+            "x": 3
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

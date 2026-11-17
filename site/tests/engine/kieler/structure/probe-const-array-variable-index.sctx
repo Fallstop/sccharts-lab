@@ -1,0 +1,8 @@
+// A const array of the chart indexed by a variable: Cannot insert const array element.
+scchart T {
+  input int i
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[i] go to I
+}

@@ -1,0 +1,15 @@
+// A const of a class three levels in that is unpacked into the second: the levels are counted with the classes unpacked, so it is replaced.
+scchart T {
+  output int o
+  class O {
+    class P {
+      @UnpackClass
+      class Q {
+        const int N = 3
+        int w = N + 1
+      } q
+    } p
+  } a
+  initial state I
+  do o = a.p.q.N + a.p.q.w go to I
+}

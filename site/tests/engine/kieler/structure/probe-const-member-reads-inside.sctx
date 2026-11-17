@@ -1,0 +1,12 @@
+// Used inside its own class (an initial value, a method) the name means the member.
+scchart T {
+  class O {
+    int w = 2
+    const int N = w + 1
+    int x = N
+    int get() { return N }
+  } a
+  output int o
+  initial state I
+  do o = a.x + a.get() go to I
+}

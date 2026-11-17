@@ -155,7 +155,7 @@ export class Layout {
     /** An instance of a chart used as a class: `<Chart>_<Referenced>1 c;` (KIELER's naming) with the chart's fields. */
     private chartInstance(inst: string, decls: CVar[], classes: Map<string, string>) {
         // Its fields, and the class and struct instances declared in the chart (with their members inside).
-        const inside = decls.filter(m => m.member?.of.name === inst && (!m.declKind || ((m.declKind === 'class' || m.declKind === 'struct') && !m.tags.has('#host'))))
+        const inside = decls.filter(m => m.member?.of.name === inst && !m.const && (!m.declKind || ((m.declKind === 'class' || m.declKind === 'struct') && !m.tags.has('#host'))))
         const members = inside.filter(m => !m.declKind)
         const nested = inside.filter(m => m.declKind)
         // Ids inside the instance are `<Chart>$<instance>/<Referenced chart>[/<Base>]$<name>`.

@@ -1,0 +1,8 @@
+// A const array member indexed by a variable: Cannot insert const array element.
+scchart T {
+  input int i
+  class O { const int N[2] = {3,4} } a
+  output int o
+  initial state I
+  do o = a.N[i] go to I
+}

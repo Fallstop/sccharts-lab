@@ -1,0 +1,7 @@
+// A const array member has no element 2.
+scchart T {
+  class O { const int N[2] = {3,4} } a
+  output int o
+  initial state I
+  do o = a.N[2] go to I
+}

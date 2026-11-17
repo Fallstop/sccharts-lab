@@ -1,0 +1,14 @@
+// Used in a method of a class inside, the member named by the const's value is looked up in the chart's data: gcc fails.
+scchart T {
+  class O {
+    int w = 2
+    const int N = w + 1
+    class P {
+      int v
+      void put() { v = N }
+    } p
+  } a
+  output int o
+  initial state I
+  do a.p.put(); o = a.p.v go to I
+}

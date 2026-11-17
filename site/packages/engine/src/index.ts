@@ -360,12 +360,13 @@ export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index'
     const suffix = (vo: ValuedObject, m: Declaration) => [...(vo.annotations ?? []), ...m.annotations].find(a => a.name === 'UnpackRenaming')?.values[0] ?? `_${vo.name}`
     const members = (d: Declaration, instance: string | undefined, outer: number[], name: (vo: ValuedObject, m: Declaration) => string = vo => vo.name, depth = 1) => {
         for (const m of d.members ?? []) {
-            // KIELER replaces a const member by its value two levels deep; one further in stays a member.
+            // KIELER replaces a const member by its value two levels deep (counted with the classes unpacked); one
+            // further in stays a member.
             if (m.const && depth <= 2) continue
             for (const mvo of m.valuedObjects) {
                 const nested = (m.declKind === 'class' || m.declKind === 'struct') && !m.host
                 if (nested && unpacked(m)) {
-                    members(m, instance, [...outer, ...dims(mvo)], (vo, mm) => `${name(mvo, m)}${suffix(vo, mm)}`, depth + 1)
+                    members(m, instance, [...outer, ...dims(mvo)], (vo, mm) => `${name(mvo, m)}${suffix(vo, mm)}`, depth)
                     continue
                 }
                 const local = name(mvo, m)
@@ -392,7 +393,7 @@ export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index'
     for (const d of chart.declarations) {
         if ((d.declKind !== 'class' && d.declKind !== 'struct') || d.host) continue
         for (const inst of d.valuedObjects) {
-            if (unpacked(d)) members(d, undefined, dims(inst), (vo, m) => `${inst.name}${suffix(vo, m)}`)
+            if (unpacked(d)) members(d, undefined, dims(inst), (vo, m) => `${inst.name}${suffix(vo, m)}`, 0)
             else members(d, inst.name, dims(inst))
         }
     }

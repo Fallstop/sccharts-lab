@@ -133,7 +133,7 @@ class Lowering {
                 if (d.declKind === 'class' || d.declKind === 'struct') {
                     const unpack = d.annotations.some(a => a.name === 'UnpackClass')
                     if (d.host) v.tags.add('#host')
-                    else this.declareMembers(scope, d, v, unpack)
+                    else this.declareMembers(scope, d, v, unpack, undefined, unpack ? 0 : 1)
                 }
                 if (d.const && vo.initialValue) {
                     this.constSource.set(v, vo.initialValue)
@@ -155,7 +155,7 @@ class Lowering {
      * a class, into the outer class (`home`: `o.inn_v`, the pool's `o: { inn_v }`). An array of instances gives every
      * member its dimensions in front (`cs_v[2]`).
      */
-    private declareMembers(scope: Scope, d: Declaration, inst: CVar, unpack = false, home?: { of: CVar; name: string }) {
+    private declareMembers(scope: Scope, d: Declaration, inst: CVar, unpack = false, home?: { of: CVar; name: string }, depth = 1) {
         const members = new Map<string, CVar>()
         const owner = unpack ? home?.of : inst
         for (const m of d.members ?? []) {
@@ -179,8 +179,11 @@ class Lowering {
                 // KIELER's Const processor puts the value where a const member is named and removes the member (it
                 // is not in the data pool, conformance structure/157), two levels deep only (getAllNestedValuedObjects:
                 // a class's members and those of the classes directly inside it): one further in stays a variable.
-                if (m.const && mvo.initialValue && link && !link.of.member?.of.member) {
-                    v.tags.add('#const-member')
+                // The classes are unpacked by then: an unpacked class's members count as those of what holds it.
+                if (m.const && mvo.initialValue && depth <= 2) {
+                    // Unpacked into the chart, it is a constant of the chart.
+                    if (link) v.tags.add('#const-member')
+                    else v.const = true
                     this.constSource.set(v, mvo.initialValue)
                 }
                 if (m.declKind === 'method') v.declKind = 'method'
@@ -190,7 +193,7 @@ class Lowering {
                 members.set(mvo.id, v)
                 if (nested) {
                     if (m.host) v.tags.add('#host')
-                    else this.declareMembers(scope, m, v, unpackInner, unpackInner ? link : undefined)
+                    else this.declareMembers(scope, m, v, unpackInner, unpackInner ? link : undefined, unpackInner ? depth : depth + 1)
                 }
             }
         }
@@ -271,7 +274,7 @@ class Lowering {
                     v.dims = [...outer.map(c => copyExpr(c)), ...own]
                     if (m.declKind === 'variable' && !mvo.initialValue && own.some(c => c.k !== 'lit')) {
                         this.reports.push({
-                            severity: 'error', code: 'array-size', span: mvo.cardinalities[own.findIndex(c => c.k !== 'lit')]?.span ?? mvo.span,
+                            severity: 'error', code: 'array-cardinality', span: mvo.cardinalities[own.findIndex(c => c.k !== 'lit')]?.span ?? mvo.span,
                             message: `The size of the array \`${mvo.name}\` is not a number KIELER knows when it compiles the chart`,
                             kieler: `Cannot initialize array with non integer cardinality: ${mvo.name}`,
                             hint: 'KIELER only puts the value of a constant where it is named when the constant is a member of a class of the chart or of a class directly inside one, and it does not compute an expression there. Write the size as a number.',
@@ -576,16 +579,72 @@ class Lowering {
         if (v) {
             let value = this.constValue(v)
             for (const i of last.indices) {
-                const index = foldConstants(this.expr(i))
-                if (value.k === 'vector' && index.k === 'lit' && typeof index.v === 'number' && index.v >= 0 && index.v < value.values.length) {
-                    value = copyExpr(value.values[index.v])
-                } else {
-                    return { k: 'unsupported', what: `const array element ${v.name}`, span: r.span }
+                const index = this.constIndex(i, v)
+                const fail = (message: string, kieler: string): CExpr => {
+                    this.reports.push({
+                        severity: 'error', code: 'const-array-element', span: i.span ?? r.span, message, kieler,
+                        hint: `KIELER puts the element's value where \`${v!.display ?? v!.name}[...]\` is written, so the index must be a number it knows there: a literal, or a constant declared before \`${v!.display ?? v!.name}\`. Use a variable array if the index changes while the chart runs.`,
+                    })
+                    return { k: 'lit', t: 'int', v: 0, span: r.span }
                 }
+                if (index === undefined) {
+                    return fail(`The constant array \`${v.display ?? v.name}\` can only be indexed with a number KIELER knows when it compiles the chart`,
+                        `Cannot insert const array element. ${i.kind === 'ref' ? i.name : 'The index'} is not a valid index (integer value).`)
+                }
+                if (value.k !== 'vector') {
+                    return fail(`The constant \`${v.display ?? v.name}\` has no elements to index`,
+                        `Cannot insert const array element. Array ${last.name} must be initialized with a vector value.`)
+                }
+                if (index < 0 || index >= value.values.length) {
+                    return fail(`The constant array \`${v.display ?? v.name}\` has no element ${index}`,
+                        `Cannot insert const array element. Array ${last.name} does not provide a value for index ${index}.`)
+                }
+                value = copyExpr(value.values[index])
             }
-            return { ...value, span: r.span }
+            return { ...this.constAtUse(value, v), span: r.span }
         }
         return this.ref(r)
+    }
+
+    /**
+     * The index of a const array's element, as KIELER's Const processor needs it: an int literal where the element
+     * is replaced. That is a literal, or a constant replaced before the array is: one declared before it (a
+     * constant of a class must also be written as a literal; only a scope's own constants are computed first).
+     */
+    private constIndex(i: Expression, array: CVar): number | undefined {
+        if (i.kind === 'int') return i.value
+        if (i.kind !== 'ref' || i.indices.length) return undefined
+        let last = i
+        while (last.sub) last = last.sub
+        const k = last === i ? (i.decl ? this.vars.get(i.decl) : undefined) : this.ref(i).v
+        if (!k || k.decl !== last.decl || !this.constSource.has(k)) return undefined
+        const source = this.constSource.get(k)!
+        if (!k.const && source.kind !== 'int') return undefined
+        if (k.scope === array.scope && (k.span?.start ?? 0) > (array.span?.start ?? 0)) return undefined
+        const value = this.constValue(k)
+        return value.k === 'lit' && typeof value.v === 'number' && Number.isInteger(value.v) ? value.v : undefined
+    }
+
+    /**
+     * A const member's value where it is used. KIELER puts the value's expression there as written, and a member's
+     * name in it means the member only inside the member's own class: anywhere else its C code looks the name up in
+     * the chart's data (the chart's variable of that name, or gcc fails; probes probe-const-member-reads-*).
+     */
+    private constAtUse(value: CExpr, constant: CVar): CExpr {
+        const home = constant.member?.of
+        if (!home) return value
+        return mapExpr(value, x => {
+            if (x.k !== 'ref' || x.v.member?.of !== home) return undefined
+            if (this.code && this.code.owner === home) {
+                return this.self?.members.has(x.v) ? { ...x, idx: [...this.self.idx.map(p => ({ k: 'ref' as const, v: p, idx: [] })), ...x.idx] } : undefined
+            }
+            const chart = this.chartVariable(x.v.member.name)
+            if (chart) return { ...x, v: chart }
+            const marker = new CVar(x.v.member.name, 'int')
+            marker.tags.add('#outer-member')
+            marker.span = x.span
+            return { ...x, v: marker }
+        })
     }
 
     ref(r: Reference): CRef {

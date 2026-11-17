@@ -1,0 +1,11 @@
+// A chart used as a class has a constant: it is not a field of the instance (the generated C had it in the pool).
+scchart T {
+  output int o
+  ref Counter c
+  initial state I
+  do o = c.N + c.w go to I
+}
+scchart Counter {
+  const int N = 3
+  int w = N + 1
+}

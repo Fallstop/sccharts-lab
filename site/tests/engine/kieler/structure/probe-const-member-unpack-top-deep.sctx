@@ -1,0 +1,13 @@
+// Three levels in, the outermost class unpacked into the chart: two levels are left, the const is replaced.
+scchart T {
+  output int o
+  @UnpackClass
+  class O {
+    class P {
+      class Q { const int K = 5
+        int v = K } q
+    } p
+  } a
+  initial state I
+  do o = a.p.q.K + a.p.q.v go to I
+}

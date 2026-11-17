@@ -1,0 +1,12 @@
+// In a struct the name is the chart's variable also in the struct's own initial value.
+scchart T {
+  int w = 7
+  struct O {
+    int w = 2
+    const int N = w + 1
+    int x = N
+  } a
+  output int o
+  initial state I
+  do o = a.N + a.x go to I
+}

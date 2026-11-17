@@ -1,0 +1,8 @@
+// A constant declared after the array is still a name then: rejected.
+scchart T {
+  const int N[2] = {3,4}
+  const int K = 1
+  output int o
+  initial state I
+  do o = N[K] go to I
+}

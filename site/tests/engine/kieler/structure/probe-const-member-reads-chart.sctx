@@ -1,0 +1,11 @@
+// The same with a chart variable w: a.N is the chart's w + 1 (8), not a.w + 1.
+scchart T {
+  int w = 7
+  class O {
+    int w = 2
+    const int N = w + 1
+  } a
+  output int o
+  initial state I
+  do o = a.N go to I
+}

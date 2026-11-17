@@ -1,0 +1,8 @@
+// A constant declared before the array is a number by the time the array's element is replaced.
+scchart T {
+  const int K = 1
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[K] go to I
+}

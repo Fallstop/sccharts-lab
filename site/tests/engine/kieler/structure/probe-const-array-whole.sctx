@@ -1,0 +1,8 @@
+// A const array assigned as a whole.
+scchart T {
+  const int N[2] = {3,4}
+  int w[2]
+  output int o
+  initial state I
+  do w = N; o = w[1] go to I
+}

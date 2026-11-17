@@ -1,0 +1,7 @@
+// 0 + 1 as a const array's index is no int literal for KIELER's Const processor.
+scchart T {
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[0 + 1] go to I
+}

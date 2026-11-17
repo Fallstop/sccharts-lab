@@ -1,0 +1,11 @@
+// The same read by name and through the instance: a_N is not in the data.
+scchart T {
+  output int o
+  @UnpackClass
+  class O {
+    const int N = 3
+    int w = N + 1
+  } a
+  initial state I
+  do o = a.N + a.w go to I
+}

@@ -1472,9 +1472,18 @@ declares a class and two instances. Inside a class:
   inside the class, through an instance `a.N`, `cs[1].N`, `a.p[1].K`, as an array's size `p[N]`) and removes the
   member (it is not in the data). A const three levels in is not replaced: it stays a member in the data, can
   be assigned through its instance, and as an array's size it is no number (`Cannot initialize array with non
-  integer cardinality: v`). Assigning a replaced const through its instance (`a.N = 4`) passes the validation,
+  integer cardinality: v`, engine code `array-cardinality`). Assigning a replaced const through its instance (`a.N = 4`) passes the validation,
   which only refuses the name alone, and crashes the processor (`ClassCastException: IntValueImpl cannot be cast
-  to ValuedObjectReference`, engine code `kieler-crash`). Probes `probe-const-member-*`; source
+  to ValuedObjectReference`, engine code `kieler-crash`). The levels are counted with the classes unpacked
+  (`@UnpackClass`: a const of a class unpacked into the chart is a constant of the chart, `a_N` is not in the data;
+  one of a class three levels in that is unpacked into the second is replaced). The value is put where the const is
+  named as the expression it is written as, not as a number: `int w = 2  const int N = w + 1` means the member `w`
+  only inside the class itself (an initial value, a method, per element in an array of instances); read through
+  the instance (`a.N`) or in a class inside, KIELER's C code looks `w` up in the chart's data (the chart's `w`, or
+  gcc fails, engine code `outer-member`); in a struct it is the chart's `w` everywhere. An element of a const array
+  needs an index that is an int literal when the array is replaced: a literal or a constant declared before the
+  array (`N[i]`, `N[0 + 1]`, a constant declared after it, an index out of range: `Cannot insert const array
+  element. ...`, engine code `const-array-element`). Probes `probe-const-member-*`, `probe-const-array-*`; source
   `Const.xtend:60-120`, `KExpressionsDeclarationExtensions.xtend:318`.
 - **Initial values reach two levels into a struct, and every level of a class.** A class initialises its
   variables in a generated `_init` method that calls the `_init` of the classes inside it. A struct's values are

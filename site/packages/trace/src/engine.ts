@@ -72,12 +72,13 @@ const unpackedSuffix = (vo: ValuedObject, m: Declaration): string =>
 function memberDeclarations(prefix: string | undefined, members: Declaration[], out: PoolVariable[], name: (vo: ValuedObject, m: Declaration) => string = (vo) => vo.name, depth = 1): void {
     const member = (name: string, type: string): PoolVariable => ({ name, input: false, output: false, type, dims: [], late: true })
     for (const m of members) {
-        // KIELER replaces a const member by its value two levels deep; one further in stays a member.
+        // KIELER replaces a const member by its value two levels deep (counted with the classes unpacked); one
+        // further in stays a member.
         if (m.declKind === 'method' || (m.const && depth <= 2)) continue
         if (m.declKind === 'class' || m.declKind === 'struct') {
             if (unpacked(m) && m.valuedObjects.length === 1) {
                 const instance = m.valuedObjects[0]
-                memberDeclarations(prefix, m.members ?? [], out, (vo, mm) => `${name(instance, m)}${unpackedSuffix(vo, mm)}`, depth + 1)
+                memberDeclarations(prefix, m.members ?? [], out, (vo, mm) => `${name(instance, m)}${unpackedSuffix(vo, mm)}`, depth)
                 continue
             }
             if (m.className) memberDeclarations(prefix === undefined ? m.className : `${prefix}.${m.className}`, m.members ?? [], out, undefined, depth + 1)
@@ -164,7 +165,7 @@ export function poolVariables(result: Compiled): PoolVariable[] {
     for (const d of result.chart?.declarations ?? []) {
         // @UnpackClass makes the members plain variables (`<instance>_<member>`), which are in the pool.
         if ((d.declKind === 'class' || d.declKind === 'struct') && !d.host && d.className) {
-            memberDeclarations(unpacked(d) ? undefined : d.className, d.members ?? [], members)
+            memberDeclarations(unpacked(d) ? undefined : d.className, d.members ?? [], members, undefined, unpacked(d) ? 0 : 1)
         }
     }
     generatedMemberDeclarations(result, members)

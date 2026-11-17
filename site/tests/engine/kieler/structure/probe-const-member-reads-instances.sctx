@@ -1,0 +1,12 @@
+// In an array of instances the const's value reads the element's own member.
+scchart T {
+  class O {
+    int w = 2
+    const int N = w + 1
+    int x = N
+    int get() { return N + x }
+  } cs[2]
+  output int o
+  initial state I
+  do cs[1].w = 5; o = cs[1].get() go to I
+}

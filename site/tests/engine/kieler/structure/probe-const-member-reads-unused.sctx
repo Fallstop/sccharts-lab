@@ -1,0 +1,10 @@
+// Never used, such a const does no harm.
+scchart T {
+  class O {
+    int w = 2
+    const int N = w + 1
+  } a
+  output int o
+  initial state I
+  do o = a.w go to I
+}

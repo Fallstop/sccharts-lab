@@ -24,7 +24,7 @@ export const SIMULATOR_CODES: ReadonlySet<string> = new Set([
     // Structure passes (references, for-regions, dataflow, clocks, methods).
     'binding-expression', 'recursive-reference', 'for-counter-assignment', 'dataflow-for', 'unknown-type', 'shared-clock',
     'clock-variable', 'clock-array', 'timing-constraint', 'default-sleep', 'method-without-value', 'method-without-return', 'for-counter-method',
-    'inheritance-conflict', 'module-call', 'ode-member', 'method-twice', 'inline-loop', 'signal-member', 'unpack-instances', 'unpack-array-method', 'unpack-array-initial', 'outer-member', 'method-inlined-parameter',
+    'inheritance-conflict', 'module-call', 'ode-member', 'method-twice', 'inline-loop', 'signal-member', 'unpack-instances', 'unpack-array-method', 'unpack-array-initial', 'outer-member', 'method-inlined-parameter', 'array-cardinality', 'const-array-element',
     // Preemption passes (suspend, weak suspend, abort regions).
     'suspend-without-trigger', 'abort-region-order', 'abort-region-alone', 'abort-region-loop', 'abort-region-reincarnation',
     // Final polish (engine-5).

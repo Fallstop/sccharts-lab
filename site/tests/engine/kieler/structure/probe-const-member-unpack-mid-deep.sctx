@@ -1,0 +1,13 @@
+// Three levels in, the middle class unpacked: replaced.
+scchart T {
+  output int o
+  class O {
+    @UnpackClass
+    class P {
+      class Q { const int K = 5
+        int v = K } q
+    } p
+  } a
+  initial state I
+  do o = a.p.q.K + a.p.q.v go to I
+}

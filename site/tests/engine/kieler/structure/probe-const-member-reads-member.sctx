@@ -1,0 +1,10 @@
+// A const member whose value names another member, read through the instance: KIELER puts the expression there as written and its C code looks w up in the chart's data (gcc fails).
+scchart T {
+  class O {
+    int w = 2
+    const int N = w + 1
+  } a
+  output int o
+  initial state I
+  do o = a.N go to I
+}
