@@ -1,0 +1,10 @@
+// Inside an operator the inherited variable is redirected: x[k + 0] works.
+scchart T extends Base {
+  initial state I
+  do x[k + 0] = 5; o = x[k + 0] go to I
+}
+scchart Base {
+  int k = 1
+  int x[2]
+  output int o
+}

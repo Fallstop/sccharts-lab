@@ -17,6 +17,7 @@ import {
     allContainedStates, allRegions, allScopes, walkExpr, type CExpr, type CRef, type CRegion, type CState, type CStmt, type CVar,
 } from '../model'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
+import { inheritedDeclarations } from '../lower'
 import { rewriteScope } from '../structure/rewrite'
 
 interface Base {
@@ -73,9 +74,13 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
         })
         return false
     }
+    // Inside the copies of the bases, the bases' declarations are the inherited ones too (lower.ts inheritedIndex).
+    const replaced = inheritedDeclarations(chart, index)
     const bases: Base[] = allInherited(chart, find).map(b => {
         const prefix = `${state.origin ?? state.about ?? state.name}${REFERENCE_SEPARATOR}`
-        return { chart: b, prefix, root: lowerInstance(b, index, prefix).root }
+        const lowered = lowerInstance(b, index, prefix, undefined, replaced)
+        for (const d of lowered.reports) if (d.code === 'inherited-index') ctx.report(d)
+        return { chart: b, prefix, root: lowered.root }
     })
     if (!bases.length) return true
     // Variables of the bases by their source id (the inheriting chart's references carry those ids).

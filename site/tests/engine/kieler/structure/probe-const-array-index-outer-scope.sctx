@@ -1,0 +1,10 @@
+// The chart's constant as the index of an inner state's const array.
+scchart T {
+  const int K = 1
+  output int o
+  initial state S {
+    const int N[2] = {3,4}
+    initial state I
+    do o = N[K] go to I
+  }
+}

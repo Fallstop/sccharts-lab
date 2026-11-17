@@ -83,7 +83,33 @@ class Lowering {
     /** User schedules where the simulator does not apply them yet (passes/userSchedule.ts reports them). */
     readonly unsupportedSchedules: { what: string; span?: Span }[] = []
 
-    constructor(readonly index: ModelIndex | undefined) {}
+    constructor(readonly index: ModelIndex | undefined, private readonly inherited: ReadonlySet<string> = new Set()) {}
+
+    /** Index references already reported by inheritedIndex (by where they are written). */
+    private readonly lostIndices = new Set<string>()
+
+    /**
+     * An inherited declaration named alone as an index (`x[k]`, k declared in a base chart). KIELER's Inheritance
+     * processor redirects the references to its copies of the base's declarations except those directly inside
+     * another reference (replaceVOR skips them as if they were members, `a.b`), so the index still points into the
+     * base chart and the compilation fails. Inside an operator (`x[k + 0]`) it is redirected.
+     */
+    private inheritedIndex(r: Reference) {
+        for (let x: Reference | undefined = r; x; x = x.sub) {
+            for (const i of x.indices) {
+                if (i.kind !== 'ref' || !i.decl || !this.inherited.has(i.decl.split('/').pop()!)) continue
+                const key = `${i.span?.start}:${i.decl}`
+                if (this.lostIndices.has(key)) continue
+                this.lostIndices.add(key)
+                this.reports.push({
+                    severity: 'error', code: 'inherited-index', span: i.span ?? r.span,
+                    message: `\`${i.name}\` is inherited from a base chart, and KIELER cannot compile it as an index written alone (\`${x.name}[${i.name}]\`)`,
+                    kieler: `The valued object reference points to a valued object (${i.name}) that is not contained in the model!`,
+                    hint: `KIELER's compiler copies the base chart's declarations into this chart and misses a name that stands alone between the brackets. Write the index as an expression (\`${x.name}[${i.name} + 0]\`), or declare \`${i.name}\` in the chart that uses it.`,
+                })
+            }
+        }
+    }
 
     // ----- declarations -----
 
@@ -566,6 +592,7 @@ class Lowering {
     }
 
     private refExpr(r: Reference): CExpr {
+        this.inheritedIndex(r)
         const enumValue = this.enumValue(r)
         if (enumValue !== undefined) return { k: 'lit', t: 'int', v: enumValue, span: r.span }
         let v = r.decl ? this.vars.get(r.decl) : undefined
@@ -608,21 +635,51 @@ class Lowering {
 
     /**
      * The index of a const array's element, as KIELER's Const processor needs it: an int literal where the element
-     * is replaced. That is a literal, or a constant replaced before the array is: one declared before it (a
-     * constant of a class must also be written as a literal; only a scope's own constants are computed first).
+     * is replaced. That is a literal, or a constant replaced before the array is (`replacedBefore`); a constant of a
+     * class must also be written as a literal there, because only a scope's own constants are computed first
+     * (evaluateExpressions). Inside the value of a scope's own constant the index has been computed by then, from
+     * the constants before that one (`const int M = N[0 + 1]`).
      */
     private constIndex(i: Expression, array: CVar): number | undefined {
         if (i.kind === 'int') return i.value
-        if (i.kind !== 'ref' || i.indices.length) return undefined
+        const literal = (value: CExpr) => (value.k === 'lit' && typeof value.v === 'number' && Number.isInteger(value.v) ? value.v : undefined)
+        const within = [...this.inlining].pop()
+        if (within?.const) return this.computedBefore(i, within) ? literal(foldConstants(this.expr(i))) : undefined
+        if (i.kind !== 'ref') return undefined
         let last = i
         while (last.sub) last = last.sub
         const k = last === i ? (i.decl ? this.vars.get(i.decl) : undefined) : this.ref(i).v
-        if (!k || k.decl !== last.decl || !this.constSource.has(k)) return undefined
-        const source = this.constSource.get(k)!
-        if (!k.const && source.kind !== 'int') return undefined
-        if (k.scope === array.scope && (k.span?.start ?? 0) > (array.span?.start ?? 0)) return undefined
-        const value = this.constValue(k)
-        return value.k === 'lit' && typeof value.v === 'number' && Number.isInteger(value.v) ? value.v : undefined
+        if (!k || k.decl !== last.decl || !this.constSource.has(k) || !this.replacedBefore(k, array)) return undefined
+        if (!k.const) {
+            let written: Expression | undefined = this.constSource.get(k)
+            for (const x of last.indices) written = written?.kind === 'vector' && x.kind === 'int' ? written.values[x.value] : undefined
+            if (written?.kind !== 'int') return undefined
+        }
+        return literal(foldConstants(this.refExpr(i)))
+    }
+
+    /** KIELER replaces the constants scope by scope from the root, in each scope in the order they are declared. */
+    private replacedBefore(k: CVar, other: CVar): boolean {
+        if (k.scope === other.scope) return (k.span?.start ?? 0) < (other.span?.start ?? 0)
+        for (let scope: Scope | undefined = other.scope?.parent; scope; scope = scope.parent) if (scope === k.scope) return true
+        return false
+    }
+
+    /** Whether an expression names only constants KIELER has computed before the scope's constant `within`. */
+    private computedBefore(e: Expression, within: CVar): boolean {
+        switch (e.kind) {
+            case 'int': case 'bool': case 'float': return true
+            case 'op': return e.args.every(a => this.computedBefore(a, within))
+            case 'ref': {
+                let last = e
+                while (last.sub) last = last.sub
+                const k = last === e ? (e.decl ? this.vars.get(e.decl) : undefined) : this.ref(e).v
+                if (!k || k.decl !== last.decl || !this.constSource.has(k) || !this.replacedBefore(k, within)) return false
+                for (let x: Reference | undefined = e; x; x = x.sub) if (!x.indices.every(a => this.computedBefore(a, within))) return false
+                return true
+            }
+            default: return false
+        }
     }
 
     /**
@@ -648,6 +705,7 @@ class Lowering {
     }
 
     ref(r: Reference): CRef {
+        this.inheritedIndex(r)
         let v = r.decl ? this.vars.get(r.decl) : undefined
         if (!v) {
             // Not resolved (the front end reports it) or a member of a type the simulator does not model.
@@ -902,9 +960,36 @@ class Lowering {
     }
 }
 
-/** Lowers the scchart `chart` (with the resolved index from compile()). */
-export function lowerChart(chart: State, index: ModelIndex | undefined): LowerResult {
-    const l = new Lowering(index)
+/**
+ * The declarations KIELER's Inheritance processor replaces by copies in a chart: those of every base chart, of
+ * the chart itself and of the states inside it that extend one (by their ids in the source).
+ */
+export function inheritedDeclarations(chart: State, index: ModelIndex | undefined): Set<string> {
+    const out = new Set<string>()
+    const seen = new Set<State>()
+    const bases = (s: State) => {
+        for (const b of s.baseStates ?? []) {
+            const base = index?.charts.find(c => c.name === b.target)
+            if (!base || seen.has(base)) continue
+            seen.add(base)
+            for (const d of base.declarations) for (const vo of d.valuedObjects) out.add(vo.id.split('/').pop()!)
+            bases(base)
+        }
+    }
+    const visit = (s: State) => {
+        bases(s)
+        for (const r of s.regions) for (const c of r.states) visit(c)
+    }
+    visit(chart)
+    return out
+}
+
+/**
+ * Lowers the scchart `chart` (with the resolved index from compile()). `inherited`: for the copy of a base chart,
+ * the declarations inherited in the chart that extends it (inheritedDeclarations).
+ */
+export function lowerChart(chart: State, index: ModelIndex | undefined, inherited?: ReadonlySet<string>): LowerResult {
+    const l = new Lowering(index, new Set([...(inherited ?? []), ...inheritedDeclarations(chart, index)]))
     const root = l.state(chart, undefined)
     root.root = true
     l.contents(chart, root)

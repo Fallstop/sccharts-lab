@@ -1,0 +1,8 @@
+// An element of an earlier const array as the index.
+scchart T {
+  const int K[2] = {0, 1}
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[K[1]] go to I
+}

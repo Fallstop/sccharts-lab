@@ -1,0 +1,10 @@
+// Inherited constants with a literal index and outside an index.
+scchart T extends Base {
+  initial state I
+  do o = N[1] + K go to I
+}
+scchart Base {
+  const int K = 1
+  const int N[2] = {3,4}
+  output int o
+}

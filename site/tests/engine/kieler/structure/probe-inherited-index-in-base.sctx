@@ -1,0 +1,11 @@
+// The base chart's own x[k] is rejected as well once another chart extends it.
+scchart T extends Base {
+  region R2 { initial state J }
+}
+scchart Base {
+  const int K = 1
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[K] go to I
+}

@@ -1,0 +1,10 @@
+// An inherited constant as the index of an inherited variable array.
+scchart T extends Base {
+  initial state I
+  do x[K] = 5; o = x[K] go to I
+}
+scchart Base {
+  const int K = 1
+  int x[2]
+  output int o
+}

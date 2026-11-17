@@ -1,0 +1,9 @@
+// The same with a constant declared after the one being computed: still a name, rejected.
+scchart T {
+  const int N[2] = {3,4}
+  const int M = N[K]
+  const int K = 1
+  output int o
+  initial state I
+  do o = M go to I
+}

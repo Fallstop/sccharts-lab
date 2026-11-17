@@ -1,0 +1,14 @@
+// A referenced chart that extends another and uses x[k].
+scchart Top {
+  output int o
+  initial state W is T(o)
+}
+scchart T extends Base {
+  initial state I
+  do x[k] = 5; o = x[k] go to I
+}
+scchart Base {
+  int k = 1
+  int x[2]
+  output int o
+}

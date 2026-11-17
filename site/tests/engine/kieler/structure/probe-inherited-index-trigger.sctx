@@ -1,0 +1,10 @@
+// The same in a trigger.
+scchart T extends Base {
+  initial state I
+  if x[k] == 0 do o = 3 go to I
+}
+scchart Base {
+  int k = 1
+  int x[2]
+  output int o
+}

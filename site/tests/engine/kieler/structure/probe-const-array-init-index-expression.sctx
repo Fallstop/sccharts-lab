@@ -1,0 +1,8 @@
+// Inside the value of a scope's own constant the index is computed first (KIELER evaluates those values before it replaces anything): N[0 + 1] is 4.
+scchart T {
+  const int N[2] = {3,4}
+  const int M = N[0+1]
+  output int o
+  initial state I
+  do o = M go to I
+}

@@ -1,0 +1,10 @@
+// The chart's own variable as the index of an inherited array is fine.
+scchart T extends Base {
+  int j = 1
+  initial state I
+  do x[j] = 5; o = x[j] go to I
+}
+scchart Base {
+  int x[2]
+  output int o
+}

@@ -1,0 +1,10 @@
+// An inherited variable as the index of an instance's array member.
+scchart T extends Base {
+  initial state I
+  do c.arr[k] = 5; o = c.arr[k] go to I
+}
+scchart Base {
+  int k = 1
+  class C { int arr[2] } c
+  output int o
+}

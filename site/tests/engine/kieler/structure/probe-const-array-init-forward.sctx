@@ -1,0 +1,8 @@
+// A constant whose value names an array declared after it, with a literal index.
+scchart T {
+  const int M = N[1]
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = M go to I
+}

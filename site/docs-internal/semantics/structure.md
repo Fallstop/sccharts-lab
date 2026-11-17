@@ -1481,9 +1481,13 @@ declares a class and two instances. Inside a class:
   only inside the class itself (an initial value, a method, per element in an array of instances); read through
   the instance (`a.N`) or in a class inside, KIELER's C code looks `w` up in the chart's data (the chart's `w`, or
   gcc fails, engine code `outer-member`); in a struct it is the chart's `w` everywhere. An element of a const array
-  needs an index that is an int literal when the array is replaced: a literal or a constant declared before the
+  needs an index that is an int literal when the array is replaced: a literal or a constant replaced before the
   array (`N[i]`, `N[0 + 1]`, a constant declared after it, an index out of range: `Cannot insert const array
-  element. ...`, engine code `const-array-element`). Probes `probe-const-member-*`, `probe-const-array-*`; source
+  element. ...`, engine code `const-array-element`). The constants are replaced scope by scope from the root, in
+  each scope in the order they are declared: the chart's constant can index an inner state's const array, not the
+  other way round; an earlier const array's element (`N[K[1]]`) and a const member of an instance (`N[a[0].K]`)
+  are replaced by then. Inside the value of a scope's own constant the index is computed first (`const int M =
+  N[0 + 1]` is fine, from the constants declared before `M`); a class's constants are not computed first. Probes `probe-const-member-*`, `probe-const-array-*`; source
   `Const.xtend:60-120`, `KExpressionsDeclarationExtensions.xtend:318`.
 - **Initial values reach two levels into a struct, and every level of a class.** A class initialises its
   variables in a generated `_init` method that calls the `_init` of the classes inside it. A struct's values are
@@ -1650,6 +1654,15 @@ twice through the hierarchy is inherited once). Then:
   `private` one only in its own chart. Inherited private and protected fields are renamed `<Base>_<field>`
   (`134-protected-field`: `"s": {"St134Base_secret": 21}` in the pool); every inherited field has the interface
   property `inherited`.
+- **KIELER defect: an inherited declaration written alone as an index is lost.** The Inheritance processor
+  redirects the references to its copies of the bases' declarations, except references directly inside another
+  reference (`replaceVOR` skips them, meaning to skip members `a.b`; an index is inside its array's reference too).
+  So `x[k]` with `k` declared in a base chart (a variable or a constant; `x` inherited or not, a member's index
+  `c.arr[k]`, in a trigger or an effect, in the extending chart or in the base's own regions, at any number of
+  levels, also in a referenced chart that extends one) fails: `The valued object reference points to a valued
+  object (k) that is not contained in the model!` (engine code `inherited-index`). Inside an operator the name is
+  redirected (`x[k + 0]`), and so is the chart's own variable as the index of an inherited array, a literal
+  index, and a variable of a region of the base. Probes `probe-inherited-index*`; source `Inheritance.xtend:523-530`.
 - A chart with `extends` can be simulated itself or used as a class (`130-chart-class-inheritance`: the wiki's
   `TwoCounterApplication`, `ControlledCountingCounter extends CountingCounter extends Counter`, with `override
   region`, `region Counting is super.Counting` and methods `start()`/`stop()` called in entry and exit actions).
@@ -1659,6 +1672,7 @@ twice through the hierarchy is inherited once). Then:
 | an inherited method redefined without `override` | `Methods with the same signature is already inherited (value#0). Mark this declaration as override (keyword) to replace previous definitions. Note that method overloading is currently only supported for parameters of different length, not type.` and `Method (value) was redefined in the inheritance hierarchy but not marked as override.` (`132-err-redefined-without-override`) |
 | `override` with nothing to override | `No matching or visible method found with this signature to override.` |
 | an override with another return type | `Overriding methods must not declare a different return type (int vs. bool).` (`133-err-override-return-type`) |
+| an inherited variable or constant alone as an index (`x[k]`) | `The valued object reference points to a valued object (k) that is not contained in the model!` (`probe-inherited-index`) |
 | a field with the name of an inherited one | `This variable name is already used in a base state.` (+ `Variable v is declared again along the inheritance hierarchy.`), `136-err-extends-name-reuse` |
 | a region with the name of an inherited one, without `override` | `There is an inherited region with the same name, you may use the override keyword.` |
 | `override` on an anonymous region / on a region that is not inherited | `Cannot override anonymous region.` / `The is no region to override.` (sic) (source) |

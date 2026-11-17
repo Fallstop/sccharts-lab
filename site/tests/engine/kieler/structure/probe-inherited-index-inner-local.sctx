@@ -1,0 +1,13 @@
+// A variable of a region of the base is not replaced: its use as an index is fine.
+scchart T extends Base {
+  region R2 { initial state J }
+}
+scchart Base {
+  output int o
+  region R {
+    int k = 1
+    int x[2]
+    initial state I
+    do x[k] = 5; o = x[k] go to I
+  }
+}

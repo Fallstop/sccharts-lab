@@ -1,0 +1,8 @@
+// A const member of an element of an array of instances as the index: the whole a[0].K is replaced by 1.
+scchart T {
+  class O { const int K = 1 } a[2]
+  const int N[2] = {3,4}
+  output int o
+  initial state I
+  do o = N[a[0].K] go to I
+}

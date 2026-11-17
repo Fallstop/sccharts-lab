@@ -1,0 +1,10 @@
+// An inherited variable as the index of the extending chart's own array.
+scchart T extends Base {
+  int y[2]
+  initial state I
+  do y[k] = 5; o = y[k] go to I
+}
+scchart Base {
+  int k = 1
+  output int o
+}

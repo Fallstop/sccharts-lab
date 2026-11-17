@@ -1,0 +1,10 @@
+// A class's constants are not computed first: N[0 + 1] in a const member's value is rejected.
+scchart T {
+  class O {
+    const int N[2] = {3,4}
+    const int M = N[0+1]
+  } a
+  output int o
+  initial state I
+  do o = a.M go to I
+}
