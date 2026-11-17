@@ -1,0 +1,23 @@
+// The reincarnation fuzz profile, seed 1 (reduced): the content regions are a fork of their own inside the
+// sequential fork's thread; KIELER's surface/depth separation goes through it (the entry action of MCI, reached by
+// the region's own transition and by the restart, is two nodes).
+scchart F37 {
+  output int x = 0, y = 0, z = 0, entries = 0
+  initial state M {
+    region MC {
+      initial state MCI {
+        entry do y += 1
+      }
+      go to MCI
+    }
+    region MD {
+      initial state MDI
+    }
+    abort region MT {
+      initial state MTI
+      go to MTF
+      final state MTF
+    }
+  }
+  join to M
+}

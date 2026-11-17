@@ -13,7 +13,7 @@
 //    The topological order is the schedule the simulator runs.
 
 import type { Dependency } from './deps'
-import { predecessors, successors, type SCG, type SNode, type Thread } from './scg'
+import { predecessors, successors, type FlowSeq, type SCG, type SNode, type Thread } from './scg'
 import { revivals, type Revival } from './abortRegions'
 
 export type PathType = 'instantaneous' | 'potentially' | 'delayed' | 'disconnected'
@@ -1003,12 +1003,69 @@ function sequentialOrder(scg: SCG, fork: SNode, reached: Set<SNode>, add: (from:
             if (reached.has(last) && reached.has(next.entry)) add(last, next.entry)
         }
         const lastDepth = [...depth].filter(n => n.kind === 'surface' || n === t.exit)
-        // A node both a fresh start and a resumption reach, in a state that restarts within the tick, is two nodes in
-        // KIELER's graph (the copy on the restart path); the resuming copy alone is ordered before the next thread.
-        const lastDepthDuty = new Set(lastDepth.flatMap(n => preceding(n, t.entry)).filter(n => depth.has(n) && !(fork.reincarnation && surface.has(n))))
+        const lastDepthDuty = new Set(lastDepth.flatMap(n => preceding(n, t.entry)).filter(n => depth.has(n)))
         if (!lastDepthDuty.size) continue
         const firsts = new Set(threadNodes(scg, next).filter(n => n.kind === 'depth').flatMap(d => succeeding(d, next.exit)))
         for (const last of lastDepthDuty) for (const first of firsts) if (reached.has(last) && reached.has(first)) add(last, first)
+    }
+}
+
+/**
+ * KIELER's SequentialForkSurfaceDepthSeparatorProcessor (after the abort region processor, the clean-ups and the
+ * Methods processor): in a thread of a preemptive fork whose join leads back to it within a tick, an assignment or a
+ * condition reached both from the thread's entry (a start, or the restart) and from a pause (a resumption) is made
+ * two nodes. The flows from the resuming side go to a copy, which leads where the node leads. In a tick in which a
+ * region goes on (its own `go to` into a state with an entry action) and the state restarts, both run: the entry
+ * action runs twice (probe preemption/probe-reincarnation-double-entry).
+ */
+export function separateSurfaceDepth(scg: SCG): void {
+    type Slot = 'next' | 'then' | 'else'
+    const duty = (n: SNode) => n.kind === 'assign' || n.kind === 'cond'
+    const slots = (n: SNode): Slot[] => (n.kind === 'cond' ? (['then', 'else'] as Slot[]).filter(s => n[s]) : n.kind === 'fork' || n.kind === 'surface' ? [] : n.next ? ['next'] : [])
+    // Rewiring a flow appends it to its new target's incoming flows (scg.seq).
+    const retarget = (from: SNode, slot: Slot, to: SNode) => {
+        from[slot] = to
+        ;(from.seq ??= {})[slot] = scg.seq++
+    }
+    for (const fork of [...scg.nodes]) {
+        if (fork.kind !== 'fork' || !fork.preemptive || !fork.reincarnation) continue
+        for (const t of fork.threads!) {
+            const sd = surfaceDepth(t)
+            if (![...sd.surface].some(n => duty(n) && sd.depth.has(n))) continue
+            const visited = new Set<SNode>([t.entry])
+            // Depth copy -> the node it was copied from, which stays on the surface side.
+            const twin = new Map<SNode, SNode>()
+            // The targets of the surface's control flows, a fork's threads included (one entry per flow).
+            const targets = (n: SNode): SNode[] => (n.kind === 'fork' ? n.threads!.map(x => x.entry) : slots(n).map(slot => n[slot]!))
+            const check: SNode[] = targets(t.entry)
+            while (check.length) {
+                const node = check.shift()!
+                visited.add(node)
+                if (duty(node) && sd.depth.has(node)) {
+                    const incoming: { from: SNode; slot: Slot }[] = []
+                    for (const m of scg.nodes) for (const slot of slots(m)) if (m[slot] === node) incoming.push({ from: m, slot })
+                    if (incoming.length > 1) {
+                        const fromDepth = incoming.filter(f => sd.depth.has(f.from))
+                        const seq: FlowSeq = {}
+                        for (const slot of slots(node)) seq[slot] = scg.seq++
+                        const copy: SNode = { ...node, id: scg.nodes.length, copyOf: node, seq }
+                        scg.nodes.push(copy)
+                        addToThreadIndex(scg, [copy])
+                        for (const f of fromDepth) retarget(f.from, f.slot, copy)
+                        sd.depth.delete(node)
+                        sd.depth.add(copy)
+                        twin.set(copy, node)
+                        // A following node that was separated before: the surface side goes on to its surface twin.
+                        for (const slot of slots(node)) {
+                            const to = twin.get(node[slot]!)
+                            if (to) retarget(node, slot, to)
+                        }
+                    }
+                }
+                if (node === t.exit) continue
+                for (const to of targets(node)) if (!visited.has(to) && sd.surface.has(to)) check.push(to)
+            }
+        }
     }
 }
 

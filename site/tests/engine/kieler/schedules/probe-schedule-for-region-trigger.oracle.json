@@ -1,0 +1,86 @@
+{
+  "hash": "dcde96c4440d071734c44a3f15d689d9e3f5af8d",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-for-region-trigger.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _ForTrigger_local_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "i": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": false
+      },
+      "values": {
+        "i": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": true
+      },
+      "values": {
+        "i": true,
+        "n": 0
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": false
+      },
+      "values": {
+        "i": false,
+        "n": 1
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": true
+      },
+      "values": {
+        "i": true,
+        "n": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

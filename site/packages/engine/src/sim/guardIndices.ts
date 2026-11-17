@@ -276,7 +276,8 @@ export function droppedIndexDiagnostics(written: CExpr, g: GuardCondition, label
                 || (x.op === '+' && types.filter(pointer).length > 1)
                 || (x.op === '-' && !pointer(types[0]))
             if (bad) gcc = unary ? `wrong type argument to ${x.op === 'neg' ? 'unary minus' : 'bit-complement'}` : `invalid operands to binary ${symbol} (have ‘${types[0] ?? 'int'}’ and ‘${types[1] ?? other}’)`
-            else if (x.op === '?:' && types.slice(1).some(t => !pointer(t))) gcc = 'pointer/integer type mismatch in conditional expression [-Wint-conversion]'
+            // A literal 0 as the other branch is a null pointer, which C accepts.
+            else if (x.op === '?:' && x.args.slice(1).some((a, i) => !pointer(types[i + 1]) && !(a.k === 'lit' && a.v === 0))) gcc = 'pointer/integer type mismatch in conditional expression [-Wint-conversion]'
         }
         if ((x.op === '+' || x.op === '-') && at >= 0) return x.op === '-' && types.filter(pointer).length > 1 ? 'int' : types[at]
         if (x.op === '?:' && at >= 1) return types[at]

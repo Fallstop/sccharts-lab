@@ -1,0 +1,20 @@
+// The first abort region never ends, so the content region after it never starts and the par-or join can never fire.
+// KIELER's guard for 'no par-or join fired' is then !or(nothing), and its or of nothing is true: a pause in the state
+// only resumes in the tick after the state was entered. The abort region reacts once and is dead from then on.
+scchart DeferredDead {
+  input bool a, b
+  output int entries = 0, toggles = 0
+  initial state M {
+    entry do entries += 1
+    abort region {
+      initial state P
+      if b do toggles += 1 go to P
+    }
+    region {
+      initial state I
+      if a go to F
+      final state F
+    }
+  }
+  join to M deferred
+}

@@ -65,6 +65,8 @@ export const PROFILES: Record<string, Profile> = {
     signals: { features: [...BASE, 'signals', 'valued', 'pre'], weights: { regions: 1.5 } },
     preemption: { features: [...BASE, 'actions', 'count', 'suspend', 'weakSuspend', 'history', 'deferred', 'finalRegions', 'connectors'] },
     structure: { features: [...BASE, 'references', 'forRegions', 'dataflow', 'signals'] },
+    // A template of its own (reincarnationChart): states with abort regions entered again in the tick they finish.
+    reincarnation: { features: [...BASE, 'abortRegions', 'actions'] },
     abortRegions: { features: [...BASE, 'abortRegions', 'actions'], optional: ['signals', 'count', 'suspend', 'history'], optionalRate: 0.3, weights: { regions: 1.6 } },
     // The combinations.
     refAborts: { features: [...BASE, 'references', 'actions'], optional: ['signals', 'abortRegions', 'count'], optionalRate: 0.3, weights: { reference: 2, strong: 1.5, regions: 1.4 } },
@@ -589,6 +591,62 @@ export function inputsFor(rng: Rng, ticks: number, timed = false): Record<string
 }
 
 /** One random chart of a profile. */
+/**
+ * The `reincarnation` profile's chart: a state with abort regions that is entered again in the tick it finishes (its
+ * own `join to`, with or without an effect or `deferred`, through a second state, or as the inside of a state that
+ * restarts), with delayed regions so that KIELER accepts the restart. Varied: leading and trailing abort regions,
+ * one that never ends, self-loops and entry actions inside the regions (KIELER makes the resuming and the restarting
+ * side two nodes, which both run), a second content region, a superstate inside, a signal between the regions.
+ */
+function reincarnationChart(r: Rng, index: number): string {
+    const signal = r.chance(0.3)
+    const lines = [`scchart F${index} {`, '  input bool a, b, c, d', '  input int n', '  output int x = 0, y = 0, z = 0, entries = 0', ...(signal ? ['  signal S'] : [])]
+    const trigger = () => r.pick(['a', 'b', 'c', 'd', 'a', 'b', 'n > 1', 'c && d', ...(signal ? ['S'] : [])])
+    const effect = () => r.pick(['x += 1', 'y += 1', 'z += 1', 'x += 1; y += 1', ...(signal ? ['S', 'x += 1; S'] : [])])
+    const act = (rate: number) => (r.chance(rate) ? `do ${effect()} ` : '')
+    const state = (pad: string, name: string, kind = '') => (r.chance(0.3) ? [`${pad}${kind}state ${name} {`, `${pad}  entry do ${effect()}`, `${pad}}`] : [`${pad}${kind}state ${name}`])
+    const region = (pad: string, prefix: string, abort: boolean, end: boolean): string[] => {
+        const out = [`${pad}${abort ? 'abort region' : 'region'} ${prefix} {`, ...state(`${pad}  `, `${prefix}I`, 'initial ')]
+        if (r.chance(0.35)) out.push(`${pad}  if ${trigger()} ${act(0.5)}go to ${prefix}I`)
+        if (r.chance(0.3)) {
+            out.push(`${pad}  if ${trigger()} ${act(0.4)}go to ${prefix}J`, ...state(`${pad}  `, `${prefix}J`))
+            out.push(`${pad}  if ${trigger()} ${act(0.3)}go to ${r.pick([`${prefix}I`, end ? `${prefix}F` : `${prefix}I`])}`)
+        }
+        if (end) {
+            // Now and then the transition into the final state is on the second state only.
+            out.push(`${pad}  if ${trigger()} ${act(0.4)}go to ${prefix}F`, `${pad}  final state ${prefix}F`)
+        }
+        out.push(`${pad}}`)
+        return out
+    }
+    const restarting = (pad: string, name: string, kind: string): string[] => {
+        const out = [`${pad}${kind}state ${name} {`]
+        if (r.chance(0.55)) out.push(`${pad}  entry do entries += 1`)
+        const leading = r.chance(0.6)
+        const trailing = !leading || r.chance(0.5)
+        if (leading) out.push(...region(`${pad}  `, `${name}L`, true, !r.chance(0.12)))
+        out.push(...region(`${pad}  `, `${name}C`, false, !r.chance(0.1)))
+        if (r.chance(0.3)) out.push(...region(`${pad}  `, `${name}D`, false, true))
+        if (trailing) out.push(...region(`${pad}  `, `${name}T`, true, !r.chance(0.12)))
+        out.push(`${pad}}`)
+        return out
+    }
+    const shape = r.pick(['self', 'self', 'self', 'effect', 'deferred', 'through', 'outer', 'delayed'])
+    if (shape === 'outer') {
+        // The restarting state is the inside of a state whose own join enters it again.
+        lines.push('  initial state O {', ...restarting('    ', 'M', 'initial '), `    join to ${r.pick(['K', 'M'])}`, '    final state K', '  }', '  join to O')
+    } else {
+        lines.push(...restarting('  ', 'M', 'initial '))
+        if (shape === 'self') lines.push('  join to M')
+        else if (shape === 'effect') lines.push(`  do ${effect()} join to M`)
+        else if (shape === 'deferred') lines.push('  join to M deferred')
+        else if (shape === 'through') lines.push('  join to N', '  state N', `  immediate ${act(0.5)}go to M`)
+        else lines.push('  join to N', '  state N', `  if ${trigger()} go to M`)
+    }
+    lines.push('}')
+    return lines.join('\n') + '\n'
+}
+
 export function generate(seed: number, profileName: string, index: number, ticks = 14): Job {
     const profile = PROFILES[profileName] ?? PROFILES.mix
     const rng = new Rng(seed * 7919 + index * 104729 + 17)
@@ -597,6 +655,6 @@ export function generate(seed: number, profileName: string, index: number, ticks
     if (features.has('valued')) features.add('signals')
     if (features.has('timed')) features.add('clocks')
     const g = new Generator(rng, features, profile)
-    const model = g.chart(index)
+    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : g.chart(index)
     return { name: `${profileName}-${seed}-${index}`, model, inputs: inputsFor(rng, ticks, features.has('clocks')), profile: profileName, features: [...features].sort() }
 }

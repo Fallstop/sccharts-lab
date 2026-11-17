@@ -1,0 +1,21 @@
+// A region goes on by its own transition into a state with an entry action in the tick an abort region ends and the
+// state restarts: KIELER makes the entry action two nodes (its surface/depth separation of the sequential fork), one
+// for the resumption and one for the restart, and both run (x goes up by 2).
+scchart DoubleEntry {
+  input bool a, b, c
+  output int x = 0
+  initial state M {
+    abort region {
+      initial state W
+      if b go to F
+      final state F
+    }
+    region {
+      initial state I { entry do x += 1 }
+      if c go to I
+      if a go to F
+      final state F
+    }
+  }
+  join to M
+}

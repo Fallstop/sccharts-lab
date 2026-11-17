@@ -1,0 +1,19 @@
+// A trigger's schedule inside a for-region's copy: the copy has the copied schedule object, as the writer's clause has, so the writer (priority 1) comes after the trigger (priority 0).
+scchart ForTrigger {
+  input bool i
+  output int n = 0
+  region for k : 0 to 0 {
+    initial state S {
+      bool x = false
+      schedule s
+      region R1 {
+        initial state A
+        do x = i schedule s 1 go to A
+      }
+      region R2 {
+        initial state C
+        if x schedule s 0 do n++ go to C
+      }
+    }
+  }
+}

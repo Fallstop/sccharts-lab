@@ -1,0 +1,9 @@
+// (k > 0 ? arr[n] : 1) > k: the evaluation gives up at k, the first thing it meets, before it reaches the element, which keeps its index.
+scchart F {
+  input int n, k
+  output int y = 0
+  int arr[2] = {0, 5}
+  initial state A
+  if (k > 0 ? arr[n] : 1) > k do y++ go to B
+  state B
+}

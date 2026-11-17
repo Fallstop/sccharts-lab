@@ -223,6 +223,14 @@ export function generateLogic(input: LogicInput): LogicOutput {
             emit(`${D}${reg.guard} = ${D}${reg.guard} && ${grouped(kept) ? kept : `(${kept})`};`)
         }
     }
+    // Under a par-or join that can never fire, a pause only resumes when the restart revived it (exec.ts unjoined).
+    for (const k of exe.unjoined) {
+        const reg = out.registers.find(r => `${D}${r.guard}` === state[k]?.value)
+        if (!reg) continue
+        const r = exe.revival.get(k)
+        const revived = r && r.when >= 0 ? and([valueOf(r.when), ...(r.unless >= 0 ? [not(valueOf(r.unless))] : [])]) : '0'
+        emit(`${D}${reg.guard} = ${D}${reg.guard} && ${grouped(revived) ? revived : `(${revived})`};`)
+    }
     flush()
     return out
 }

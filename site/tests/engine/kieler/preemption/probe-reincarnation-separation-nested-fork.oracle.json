@@ -1,0 +1,278 @@
+{
+  "hash": "c389c1fed8670655d7e850669209ef450f904991",
+  "chart": "tests/engine/kieler/preemption/probe-reincarnation-separation-nested-fork.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 7,
+      "column": 12
+    },
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 13,
+      "column": 12
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 19,
+      "column": 19
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 19,
+      "column": 19
+    }
+  ],
+  "interface": {
+    "entries": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 3
+      },
+      "values": {
+        "entries": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0,
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 3
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 2
+      },
+      "values": {
+        "entries": 0,
+        "x": 0,
+        "y": 2,
+        "z": 0,
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 2
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "entries": 0,
+        "x": 0,
+        "y": 3,
+        "z": 0,
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 3
+      },
+      "values": {
+        "entries": 0,
+        "x": 0,
+        "y": 4,
+        "z": 0,
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 3
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 3
+      },
+      "values": {
+        "entries": 0,
+        "x": 0,
+        "y": 5,
+        "z": 0,
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 3
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "entries": 0,
+        "x": 0,
+        "y": 6,
+        "z": 0,
+        "a": true,
+        "b": false,
+        "c": true,
+        "d": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "entries": 0,
+        "x": 0,
+        "y": 7,
+        "z": 0,
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "entries": 0,
+        "x": 0,
+        "y": 8,
+        "z": 0,
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

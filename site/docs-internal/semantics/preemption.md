@@ -939,9 +939,16 @@ schizophrenic fork; the lab's wording).
 disagree.
 **Implementation.** As above (the engine follows KIELER's processor, including both guards and the reincarnation
 guards: analysis.ts `reincarnation`, abortRegions.ts `revivals`, exec.ts `starts`/`revives`, codegen/logic.ts).
-Where KIELER's graph has two copies of a node that a restart and a resumption both reach (an inner state's entry
-action, entered by its own `join to`), the engine's graph has one; the sequential order then leaves out the
-resumption's edge from it. Probes `tests/engine/kieler/preemption/probe-reincarnation-*`.
+KIELER's graph has two copies of a node that a restart and a resumption both reach (an inner state's entry action,
+entered by the region's own `go to` and by the restart): its `sequentialForkSurfaceDepthSeparator` copies every
+assignment and condition that the thread's entry and one of its pauses both lead to, and sends the pauses' flows to
+the copy. In a tick in which the region goes on and the state restarts, both run (`probe-reincarnation-double-entry`:
+the entry action counts twice). The engine separates them the same way (analysis.ts `separateSurfaceDepth`).
+A par-or join that can never fire (a dead block: an earlier region cannot end, so the later ones never start, and
+then nothing ends) leaves the pauses inside without KIELER's "no join fired" part: it is `!or([])`, and KIELER's `or`
+of an empty list is true. Such a pause resumes only when the restart revived it, which is in the tick after the
+state was entered: the region reacts once and is dead from then on (`probe-reincarnation-dead-join`; exec.ts
+`unjoined`). Probes `tests/engine/kieler/preemption/probe-reincarnation-*`.
 
 #### P-63 Final states and termination
 **Rule.** Reaching a final state in every region terminates the superstate in that tick (P-25) only if it has a

@@ -1,0 +1,96 @@
+{
+  "hash": "427f9a3be5e9745c2e1f0b7d93875bfa4d49af52",
+  "chart": "tests/engine/kieler/rare/probe-partial-eval-ternary-null.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "comparison between pointer and integer"
+  ],
+  "interface": {
+    "k": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "arr": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0,
+        "k": 0
+      },
+      "values": {
+        "k": 0,
+        "n": 0,
+        "y": 0,
+        "arr": [
+          0,
+          5
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 0,
+        "k": 0
+      },
+      "values": {
+        "k": 0,
+        "n": 0,
+        "y": 1,
+        "arr": [
+          0,
+          5
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 0,
+        "k": 0
+      },
+      "values": {
+        "k": 0,
+        "n": 0,
+        "y": 1,
+        "arr": [
+          0,
+          5
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

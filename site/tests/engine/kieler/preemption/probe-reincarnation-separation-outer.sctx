@@ -1,0 +1,31 @@
+// The reincarnation fuzz profile, seed 1 (reduced): the restarting state is the inside of a state whose join
+// enters it again; an entry action that emits a signal, reached by a transition of its region and by the restart.
+scchart F118 {
+  input bool a, b, c, d
+  signal S
+  initial state O {
+    initial state M {
+      abort region ML {
+        initial state MLI
+        go to MLJ
+        state MLJ
+        go to MLF
+        final state MLF
+      }
+      region MC {
+        initial state MCI {
+          entry do S
+        }
+        go to MCJ
+        state MCJ
+        if c && d go to MCI
+        go to MCF
+        final state MCF
+      }
+      region MD {
+        initial state MDI
+      }
+    }
+  }
+  join to O
+}

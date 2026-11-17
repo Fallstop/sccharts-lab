@@ -1,0 +1,9 @@
+// (true ? arr[n] : 0) > k: the element loses its index and is the array's address; 0 as the other branch is a null pointer, which gcc accepts.
+scchart F {
+  input int n, k
+  output int y = 0
+  int arr[2] = {0, 5}
+  initial state A
+  if (true ? arr[n] : 0) > k do y++ go to B
+  state B
+}

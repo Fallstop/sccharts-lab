@@ -1,0 +1,141 @@
+{
+  "hash": "4e115f18ed0b25d678af59dfe73cff7bf21a8cb6",
+  "chart": "tests/engine/kieler/preemption/probe-reincarnation-double-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "x": 1
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "x": 3
+      },
+      "taken": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "x": 5
+      },
+      "taken": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "x": 6
+      },
+      "taken": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "x": 7
+      },
+      "taken": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

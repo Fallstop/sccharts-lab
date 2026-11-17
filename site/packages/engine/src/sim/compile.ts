@@ -9,7 +9,7 @@ import { PIPELINE, type PassContext } from './passes'
 import { buildSCG, cloneSCG, successors, type SCG, type SNode } from './scg'
 import { abortRegionsSCG } from './abortRegions'
 import { concurrentThreads, dependencies, dependencyReach, type Access, type Dependency } from './deps'
-import { analyse, liveNodes, type Analysis } from './analysis'
+import { analyse, liveNodes, separateSurfaceDepth, type Analysis } from './analysis'
 import { conditionalWithoutElse, checkCodegen } from './codegen'
 import { removeSuperfluousForks } from './sfr'
 import { constantIndexWarnings } from './memory'
@@ -141,6 +141,8 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     diagnostics.push(...removeSuperfluousForks(scg, lowered.root))
     // KIELER's Methods processor (scg/processors/MethodProcessor.xtend) inlines simple methods into the SCG.
     diagnostics.push(...inlineMethods(scg))
+    // KIELER's SequentialForkSurfaceDepthSeparatorProcessor.
+    separateSurfaceDepth(scg)
     diagnostics.push(...crashingClashes(clashes, scg, lowered.root))
     diagnostics.push(...conditionalWithoutElse(scg.nodes))
     diagnostics.push(...conditionKeepsResult(scg))

@@ -1,0 +1,278 @@
+{
+  "hash": "25634d1e34d6a8ec5423cafd2bbe658163e50625",
+  "chart": "tests/engine/kieler/preemption/probe-reincarnation-separation-outer.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Every region should have a final state whenever its parent state has a termination transition.",
+      "line": 7,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 13,
+      "column": 21
+    },
+    {
+      "severity": 2,
+      "message": "All or none concurrent regions should have final states.",
+      "line": 23,
+      "column": 21
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "d": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "S": true,
+        "n": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 1
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "S": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 1
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "S": true,
+        "n": 1
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "S": false,
+        "n": 0
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "S": true,
+        "n": 0
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 1
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "S": false,
+        "n": 1
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 3
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": false,
+        "S": true,
+        "n": 3
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 3
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": false,
+        "S": false,
+        "n": 3
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

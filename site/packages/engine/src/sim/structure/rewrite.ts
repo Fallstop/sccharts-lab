@@ -24,7 +24,8 @@ export function rewriteExpr(e: CExpr, w: Rewriter): CExpr {
         if (x.k === 'ref') {
             // A bound or redirected reference keeps the read's schedules (Reference.xtend copies them).
             const out = w.read?.(x) ?? w.node?.(x)
-            if (out) return sched && !out.sched ? { ...out, sched } : out
+            // (A copy that only replaced the variable still has the read's own schedules: they are rewritten too.)
+            if (out) return sched && (!out.sched || out.sched === x.sched) ? { ...out, sched } : out
         } else {
             const out = w.node?.(x)
             if (out) return out

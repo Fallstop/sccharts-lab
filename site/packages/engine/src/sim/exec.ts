@@ -189,6 +189,13 @@ export class ExecutableChart {
     readonly rootEntry: number
     /** Thread reincarnation: a surface a fired par-or join does not end when `when` ran this tick and `unless` did not. */
     readonly revival = new Map<number, { when: number; unless: number }>()
+    /**
+     * Pauses inside a state with abort regions whose par-or join can never fire (a dead block): KIELER's guard for
+     * "no par-or join fired" is then `!or([])`, and its `or` of nothing is true, so such a pause only resumes when
+     * the restart revived it (`revives`), or never (SimpleGuardExpressions.createDepthBlockGuardExpression; probe
+     * preemption/probe-reincarnation-dead-join-*).
+     */
+    readonly unjoined: number[] = []
     /** Names of every variable in the pool (inputs or not). */
     readonly knownNames = new Set<string>()
     private readonly signalValues = new Map<string, CVar>()
@@ -372,6 +379,20 @@ export class ExecutableChart {
             this.goInits.push(index.get(n)!)
         }
         this.rootEntry = at(compiled.scg.root.entry)
+        for (const n of compiled.scg.nodes) {
+            if (n.kind !== 'surface') continue
+            let parOr = false
+            let live = false
+            for (let t: Thread | undefined = n.thread; t?.fork; t = t.parent) {
+                const join = t.fork.join
+                if (!join?.any) continue
+                parOr = true
+                const info = compiled.analysis.joins.get(join)
+                if (info && !info.dead) live = true
+            }
+            const i = at(n)
+            if (parOr && !live && i >= 0) this.unjoined.push(i)
+        }
         for (const [surface, r] of compiled.analysis.revival ?? []) {
             const i = at(surface)
             if (i >= 0) this.revival.set(i, { when: at(r.when), unless: r.unless ? at(r.unless) : -1 })
@@ -817,6 +838,8 @@ export class SimRunner {
                 }
                 // After a par-or join fired, nothing inside its threads resumes in the next tick (`!pre(join)`).
                 for (const j of parOr) for (const i of j.kill!) if (!exe.revives(i, act)) paused[i] = 0
+                // Under a par-or join that can never fire, a pause only resumes when the restart revived it.
+                for (const i of exe.unjoined) if (paused[i] && !exe.revives(i, act)) paused[i] = 0
                 s.paused = paused
                 s.started = true
                 if (terminatedNow) {
