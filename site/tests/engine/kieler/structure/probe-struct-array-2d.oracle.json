@@ -1,0 +1,114 @@
+{
+  "hash": "165e9f97b5ee17d74c79427c06b21bbc0b898aee",
+  "chart": "tests/engine/kieler/structure/probe-struct-array-2d.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads ps[0][1].x, so the compiler treats it as an update of ps[0][1].x (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. ps[0][1].x += 1.\nIt only matters when another region also writes ps[0][1].x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 7,
+      "column": 23
+    }
+  ],
+  "interface": {
+    "P.x": {
+      "type": "int",
+      "properties": []
+    },
+    "ps": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "ps": [
+          [
+            {
+              "x": 0
+            },
+            {
+              "x": 0
+            }
+          ],
+          [
+            {
+              "x": 0
+            },
+            {
+              "x": 0
+            }
+          ]
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "ps": [
+          [
+            {
+              "x": 0
+            },
+            {
+              "x": 3
+            }
+          ],
+          [
+            {
+              "x": 1
+            },
+            {
+              "x": 0
+            }
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "ps": [
+          [
+            {
+              "x": 0
+            },
+            {
+              "x": 6
+            }
+          ],
+          [
+            {
+              "x": 2
+            },
+            {
+              "x": 0
+            }
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

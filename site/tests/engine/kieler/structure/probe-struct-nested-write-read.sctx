@@ -1,0 +1,17 @@
+// One region reads l.b.x, a concurrent one writes l.a.x and l.b.x: is the read scheduled after the writes?
+scchart PrSnWr {
+  output int o
+  struct L {
+    struct P {
+      int x
+    } a, b
+  } l
+  region R1 {
+    initial state A
+    do o = l.b.x go to A
+  }
+  region R2 {
+    initial state B
+    do l.a.x += 1; l.b.x = l.a.x go to B
+  }
+}

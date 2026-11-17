@@ -1,0 +1,17 @@
+// A method KIELER does not inline (a loop) called on an element of an array of class instances chosen by an input.
+scchart PrCaLoop {
+  input int i, n
+  output int o
+  class C {
+    int v
+    int a[3]
+    void fill(int k) {
+      for (int j = 0; j < 3; j++) {
+        a[j] = a[j] + k * j;
+      }
+      v = a[2]
+    }
+  } cs[2]
+  initial state A
+  do cs[i].fill(n); o = cs[1].v + cs[0].v go to A
+}

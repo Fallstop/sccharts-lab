@@ -308,7 +308,7 @@ export interface TraceableVariable {
     inPool: boolean
     /** Added by KIELER (deltaT and sleepT of a timed chart). */
     added?: boolean
-    /** Member of a class or struct instance of the chart: the instance and the member. */
+    /** Member of a class or struct instance of the chart: the instance (`l.a` for a class inside a class) and the member. */
     member?: { instance: string; member: string }
     /**
      * A local of a state inside a for-region: each copy has its own, with a key of its own (`<declaration id>|<region
@@ -351,23 +351,28 @@ export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index'
         const n = constantValue(c, index)
         return typeof n === 'number' ? n : -1
     })
-    // Members of the chart's own instances (`struct Pt { int x } pt`): the pool has the object `pt`.
-    for (const d of chart.declarations) {
-        if ((d.declKind !== 'class' && d.declKind !== 'struct') || d.host) continue
-        for (const inst of d.valuedObjects) {
-            if (inst.cardinalities.length) continue
-            for (const m of d.members ?? []) {
-                if (m.declKind !== 'variable' || m.const) continue
-                for (const mvo of m.valuedObjects) {
-                    const type = m.type ?? 'pure'
-                    out.push({
-                        key: `${inst.name}.${mvo.name}`, name: `${inst.name}.${mvo.name}`, group: 'member', type,
-                        signal: m.signal, valued: m.signal && type !== 'pure', input: false, output: false, dims: dims(mvo),
-                        scope: chartScope, inPool: false, member: { instance: inst.name, member: mvo.name },
-                    })
-                }
+    // Members of the chart's own instances (`struct Pt { int x } pt`): the pool has the object `pt`. A class inside a
+    // class has its members under its own name (`l.a.x`); a member of an array of instances (`cs[2]`) is one array with
+    // the instances' dimensions in front of its own (`cs.v`, dims [2]).
+    const members = (d: Declaration, instance: string, outer: number[]) => {
+        for (const m of d.members ?? []) {
+            if (m.const) continue
+            for (const mvo of m.valuedObjects) {
+                const key = `${instance}.${mvo.name}`
+                if ((m.declKind === 'class' || m.declKind === 'struct') && !m.host) members(m, key, [...outer, ...dims(mvo)])
+                if (m.declKind !== 'variable') continue
+                const type = m.type ?? 'pure'
+                out.push({
+                    key, name: key, group: 'member', type,
+                    signal: m.signal, valued: m.signal && type !== 'pure', input: false, output: false, dims: [...outer, ...dims(mvo)],
+                    scope: chartScope, inPool: false, member: { instance, member: mvo.name },
+                })
             }
         }
+    }
+    for (const d of chart.declarations) {
+        if ((d.declKind !== 'class' && d.declKind !== 'struct') || d.host) continue
+        for (const inst of d.valuedObjects) members(d, inst.name, dims(inst))
     }
     // Locals of inner states and regions (not of referenced charts: their states are another chart's).
     type Copy = NonNullable<TraceableVariable['copy']>

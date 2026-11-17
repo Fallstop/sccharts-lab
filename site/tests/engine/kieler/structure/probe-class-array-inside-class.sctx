@@ -1,0 +1,12 @@
+// A class with an array of inner class instances.
+scchart PrCaIn {
+  output int o
+  class Outer {
+    class Inner {
+      int v
+    } ins[2]
+    int w
+  } ob
+  initial state A
+  do ob.ins[1].v++; o = ob.ins[1].v + ob.ins[0].v go to A
+}

@@ -26,7 +26,7 @@ import {
 } from './values'
 
 /** A value in KIELER's data pool: a class or struct instance is an object of its members (`"c": {"count": 3}`). */
-export type PoolValue = Value | { [member: string]: PoolValue }
+export type PoolValue = Value | PoolValue[] | { [member: string]: PoolValue }
 
 /** TickResult plus KIELER's data pool (the oracle's `values`, with KIELER's names: S, V, V_val, V_curval). */
 export interface SimTickResult extends TickResult {
@@ -115,8 +115,38 @@ interface PoolEntry {
     name: string
     v: CVar
     type: CType
-    /** A member of a class or struct instance: the instance's name (the pool has an object for it). */
-    of?: string
+    /**
+     * A member of a class or struct instance: the way to it from the pool, one step per instance and the member last,
+     * each with its own number of dimensions (`cs[2].v`: cs 1, v 0; the pool has an array of objects for `cs`).
+     */
+    path?: { key: string; dims: number }[]
+}
+
+/** The way from the pool to a member of an instance (`l.a.x`, `cs[i].v`): see PoolEntry.path. */
+function memberPath(v: CVar): { key: string; dims: number }[] {
+    const chain: CVar[] = []
+    for (let c: CVar | undefined = v; c; c = c.member?.of) chain.unshift(c)
+    return chain.map((c, i) => ({ key: i ? c.member!.name : c.name, dims: Math.max(0, c.dims.length - (c.member ? c.member.of.dims.length : 0)) }))
+}
+
+/** Puts a member's value into the pool's objects (and arrays of objects) of its instances. */
+function placeMember(container: Record<string, PoolValue>, path: { key: string; dims: number }[], value: PoolValue) {
+    const [step, ...rest] = path
+    if (!rest.length) {
+        container[step.key] = value
+        return
+    }
+    const build = (existing: PoolValue | undefined, dims: number, part: PoolValue): PoolValue => {
+        if (!dims) {
+            const object = (existing && typeof existing === 'object' && !Array.isArray(existing) ? existing : {}) as Record<string, PoolValue>
+            placeMember(object, rest, part)
+            return object
+        }
+        const list = (Array.isArray(existing) ? existing : []) as PoolValue[]
+        ;(part as PoolValue[]).forEach((element, i) => { list[i] = build(list[i], dims - 1, element) })
+        return list
+    }
+    container[step.key] = build(container[step.key], step.dims, value)
 }
 
 /** A traced value that is not a pool name (SimTickResult.trace). */
@@ -199,7 +229,7 @@ export class ExecutableChart {
         // KIELER's data pool: the root's declarations, without constants and generated helpers.
         for (const v of compiled.core.decls) {
             if (v.member && !v.const && !v.declKind) {
-                if (!v.tags.has('#const-member')) this.pool.push({ name: v.member.name, v, type: ctypeOf(v.type), of: v.member.of.name })
+                if (!v.tags.has('#const-member')) this.pool.push({ name: v.member.name, v, type: ctypeOf(v.type), path: memberPath(v) })
                 continue
             }
             if (v.const || v.declKind || v.name.startsWith('_')) continue
@@ -357,7 +387,7 @@ export class ExecutableChart {
         for (const p of this.pool) {
             const value = toValue(vals[this.slots.get(p.v)!.slot], p.type, true)
             if (value === null) continue
-            if (p.of) ((pool[p.of] ??= {}) as Record<string, PoolValue>)[p.name] = value
+            if (p.path) placeMember(pool, p.path, value)
             else pool[p.name] = value
         }
         const values: Record<string, Value> = {}

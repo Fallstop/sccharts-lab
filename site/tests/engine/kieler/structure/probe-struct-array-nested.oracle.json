@@ -1,0 +1,120 @@
+{
+  "hash": "bbe4366210e2a2ea1efb91baa7e9277f811d247b",
+  "chart": "tests/engine/kieler/structure/probe-struct-array-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "L.P.x": {
+      "type": "int",
+      "properties": []
+    },
+    "L.a": {
+      "type": "int",
+      "properties": []
+    },
+    "L.p": {
+      "type": "struct",
+      "properties": []
+    },
+    "ls": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "ls": [
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": {
+              "x": 0
+            }
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": {
+              "x": 0
+            }
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "ls": [
+          {
+            "a": [
+              0,
+              2
+            ],
+            "p": {
+              "x": 0
+            }
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": {
+              "x": 2
+            }
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "ls": [
+          {
+            "a": [
+              0,
+              4
+            ],
+            "p": {
+              "x": 0
+            }
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": {
+              "x": 4
+            }
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

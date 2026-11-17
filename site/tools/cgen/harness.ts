@@ -98,6 +98,33 @@ function printValue(access: string, v: CVariable, dims: number[], k: number): st
     }
 }
 
+/** An instance (or an array of instances) in the pool and its members; `leaf`: a member variable. */
+interface PoolNode {
+    dims: number[]
+    children: Map<string, PoolNode>
+    leaf?: CVariable
+}
+
+/** The C code that prints an instance, an array of instances or a member; `idx`: the instance indices so far. */
+function printNode(node: PoolNode, k: number, idx: string[]): string[] {
+    if (node.leaf) {
+        let n = 0
+        const access = `d.${node.leaf.member.replace(/\[\]/g, () => `[${idx[n++]}]`)}`
+        return printValue(access, node.leaf, node.dims, k)
+    }
+    if (node.dims.length) {
+        const i = `i${k}`
+        return [`putchar('['); for (int ${i} = 0; ${i} < ${node.dims[0]}; ${i}++) { if (${i}) putchar(',');`,
+            ...printNode({ ...node, dims: node.dims.slice(1) }, k + 1, [...idx, i]), `} putchar(']');`]
+    }
+    const out = ["putchar('{');"]
+    ;[...node.children].forEach(([key, child], n) => {
+        out.push(`${n ? "putchar(','); " : ''}fputs(${cString(JSON.stringify(key) + ':')}, stdout);`, ...printNode(child, k, idx))
+    })
+    out.push("putchar('}');")
+    return out
+}
+
 /** main.c: reset, then per tick the inputs, tick(), the pool. `taken`: print the cumulative counters too. */
 export function harness(gen: GeneratedC, ticks: Record<string, Value>[]): string {
     const S = gen.names.struct
@@ -130,14 +157,20 @@ export function harness(gen: GeneratedC, ticks: Record<string, Value>[]): string
         '  int first = 1;',
         '  putchar(\'{\');',
     ]
-    // Instances: one object each, with their members.
-    const objects = new Map<string, CVariable[]>()
+    // Instances: one object each (an array of objects for an array of instances), with their members.
+    const objects = new Map<string, PoolNode>()
     for (const v of gen.variables) {
         if (v.pool === undefined || v.type === 'host') continue
         if (v.poolObject) {
-            const list = objects.get(v.poolObject) ?? []
-            list.push(v)
-            objects.set(v.poolObject, list)
+            const path = v.poolPath ?? [{ key: v.poolObject, dims: [] }, { key: v.pool, dims: v.dims }]
+            let node: PoolNode | undefined = objects.get(path[0].key)
+            if (!node) objects.set(path[0].key, (node = { dims: path[0].dims, children: new Map() }))
+            for (const step of path.slice(1)) {
+                let next: PoolNode | undefined = node.children.get(step.key)
+                if (!next) node.children.set(step.key, (next = { dims: step.dims, children: new Map() }))
+                node = next
+            }
+            node.leaf = v
             continue
         }
         const access = `d.${v.member}`
@@ -151,10 +184,8 @@ export function harness(gen: GeneratedC, ticks: Record<string, Value>[]): string
         if (inst.pool === undefined || objects.has(inst.pool)) continue
         lines.push(`  { if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(inst.pool) + ':{}')}, stdout); }`)
     }
-    for (const [name, members] of objects) {
-        lines.push(`  { if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(name) + ':{')}, stdout);`)
-        members.forEach((m, i) => lines.push(`    ${i ? 'putchar(\',\'); ' : ''}fputs(${cString(JSON.stringify(m.pool) + ':')}, stdout); ${printValue(`d.${m.member}`, m, m.dims, 0).join(' ')}`))
-        lines.push('    putchar(\'}\'); }')
+    for (const [name, node] of objects) {
+        lines.push(`  { if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(name) + ':')}, stdout);`, `    ${printNode(node, 0, []).join(' ')}`, '  }')
     }
     if (gen.takenTransitions) {
         const n = Math.max(1, gen.takenTransitions.length)

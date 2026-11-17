@@ -1,0 +1,11 @@
+// An array of struct instances indexed by an input: ps[i].x = ps[i].x + 1 changes only element i.
+scchart PrSaIdx {
+  input int i
+  output int o
+  struct P {
+    int x = 5
+    int y
+  } ps[3]
+  initial state A
+  do ps[i].x = ps[i].x + 1; o = ps[1].x go to A
+}

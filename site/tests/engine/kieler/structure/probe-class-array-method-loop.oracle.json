@@ -1,0 +1,219 @@
+{
+  "hash": "f2cbc4903a672f0cb8955afd54e763753c5d5404",
+  "chart": "tests/engine/kieler/structure/probe-class-array-method-loop.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name fill is contained in the model but not in VariableStore.",
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.a": {
+      "type": "int",
+      "properties": []
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 0,
+        "n": 1
+      },
+      "values": {
+        "i": 0,
+        "n": 1,
+        "o": 0,
+        "cs": [
+          {
+            "a": [
+              0,
+              0,
+              0
+            ],
+            "v": 0
+          },
+          {
+            "a": [
+              0,
+              0,
+              0
+            ],
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 0,
+        "n": 1
+      },
+      "values": {
+        "i": 0,
+        "n": 1,
+        "o": 2,
+        "cs": [
+          {
+            "a": [
+              0,
+              1,
+              2
+            ],
+            "v": 2
+          },
+          {
+            "a": [
+              0,
+              0,
+              0
+            ],
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 1,
+        "n": 2
+      },
+      "values": {
+        "i": 1,
+        "n": 2,
+        "o": 6,
+        "cs": [
+          {
+            "a": [
+              0,
+              1,
+              2
+            ],
+            "v": 2
+          },
+          {
+            "a": [
+              0,
+              2,
+              4
+            ],
+            "v": 4
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": 1,
+        "n": 3
+      },
+      "values": {
+        "i": 1,
+        "n": 3,
+        "o": 12,
+        "cs": [
+          {
+            "a": [
+              0,
+              1,
+              2
+            ],
+            "v": 2
+          },
+          {
+            "a": [
+              0,
+              5,
+              10
+            ],
+            "v": 10
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "i": 0,
+        "n": 1
+      },
+      "values": {
+        "i": 0,
+        "n": 1,
+        "o": 14,
+        "cs": [
+          {
+            "a": [
+              0,
+              2,
+              4
+            ],
+            "v": 4
+          },
+          {
+            "a": [
+              0,
+              5,
+              10
+            ],
+            "v": 10
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "hash": "da252fecf09b16dafe53e6ce21ea7d74e40637dc",
+  "chart": "tests/engine/kieler/structure/probe-class-nested-inner-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Outer.Inner.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Outer.in": {
+      "type": "class",
+      "properties": []
+    },
+    "Outer.w": {
+      "type": "int",
+      "properties": []
+    },
+    "ob": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "ob": {
+          "in": {
+            "v": 3
+          },
+          "w": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "ob": {
+          "in": {
+            "v": 4
+          },
+          "w": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "ob": {
+          "in": {
+            "v": 5
+          },
+          "w": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "o": 6,
+        "ob": {
+          "in": {
+            "v": 6
+          },
+          "w": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+// A class with a method inside a class with a method: the outer method calls the inner instance's method.
+scchart PrCnM {
+  output int o
+  class Outer {
+    class Inner {
+      int v
+      void inc() {
+        v++
+      }
+    } in
+    int w
+    void bump() {
+      in.inc();
+      w = in.v * 10
+    }
+  } ob
+  initial state A
+  do ob.bump(); o = ob.w go to A
+}

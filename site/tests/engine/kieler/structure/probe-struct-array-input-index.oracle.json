@@ -1,0 +1,186 @@
+{
+  "hash": "db35686795d5e8e7b9dfb3caeac3f4f150e85d77",
+  "chart": "tests/engine/kieler/structure/probe-struct-array-input-index.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads ps[i].x, so the compiler treats it as an update of ps[i].x (a relative write, as in the deprecated old SC syntax).\nWrite it as ps[i].x += 1 to say so. In one region it means the same.\nIt only matters when another region also writes ps[i].x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 10,
+      "column": 6
+    }
+  ],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "P.x": {
+      "type": "int",
+      "properties": []
+    },
+    "P.y": {
+      "type": "int",
+      "properties": []
+    },
+    "ps": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "o": 0,
+        "ps": [
+          {
+            "x": 5,
+            "y": 0
+          },
+          {
+            "x": 5,
+            "y": 0
+          },
+          {
+            "x": 5,
+            "y": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "o": 6,
+        "ps": [
+          {
+            "x": 5,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 0
+          },
+          {
+            "x": 5,
+            "y": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 2
+      },
+      "values": {
+        "i": 2,
+        "o": 6,
+        "ps": [
+          {
+            "x": 5,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "o": 7,
+        "ps": [
+          {
+            "x": 5,
+            "y": 0
+          },
+          {
+            "x": 7,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "o": 8,
+        "ps": [
+          {
+            "x": 5,
+            "y": 0
+          },
+          {
+            "x": 8,
+            "y": 0
+          },
+          {
+            "x": 6,
+            "y": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

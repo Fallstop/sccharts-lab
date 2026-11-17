@@ -108,7 +108,10 @@ export function poolVariables(result: Compiled): PoolVariable[] {
     })
     for (const v of compiled.core.decls as CVar[]) {
         if (v.member && !v.const && !v.declKind) {
-            if (!v.tags.has('#const-member')) add(instance(v.member.of))
+            // The pool has the outermost instance (`l` for `l.a.x`).
+            let root = v.member.of
+            while (root.member) root = root.member.of
+            if (!v.tags.has('#const-member')) add(instance(root))
             continue
         }
         if (v.const || v.declKind || v.name.startsWith('_')) continue

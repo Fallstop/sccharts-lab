@@ -1,0 +1,15 @@
+// A method of a nested instance called from the chart: ob.in.inc().
+scchart PrCnIm {
+  output int o
+  class Outer {
+    class Inner {
+      int v = 3
+      void inc() {
+        v++
+      }
+    } in
+    int w
+  } ob
+  initial state A
+  do ob.in.inc(); o = ob.in.v go to A
+}

@@ -1,0 +1,14 @@
+// A nested member in a trigger: l.a.x counts up; the transition fires when it passes 2.
+scchart PrSnTrig {
+  output bool done
+  struct L {
+    struct P {
+      int x
+    } a
+    int w = 7
+  } l
+  initial state A
+  if l.a.x > 2 do done = true go to B
+  do l.a.x++ go to A
+  state B
+}

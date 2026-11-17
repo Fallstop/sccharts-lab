@@ -1,0 +1,11 @@
+// An array of structs containing a struct, and a struct member that is an array.
+scchart PrSaNest {
+  struct L {
+    struct P {
+      int x
+    } p
+    int a[2]
+  } ls[2]
+  initial state A
+  do ls[1].p.x += 2; ls[0].a[1] = ls[1].p.x go to A
+}

@@ -46,6 +46,13 @@ export interface CVariable {
     pool?: string
     /** For a member of a class or struct instance in the pool: the instance's pool key. */
     poolObject?: string
+    /**
+     * For a member of a class or struct instance in the pool: the way to it, from the instance's pool key to the
+     * member, each step with its own array sizes (`cs[2].v`: `[{ key: 'cs', dims: [2] }, { key: 'v', dims: [] }]`;
+     * the pool has an array of objects for `cs`). Inside an array of instances `member` has a `[]` for each
+     * instance index (`cs[].v`), and `dims` starts with the instances' sizes.
+     */
+    poolPath?: { key: string; dims: number[] }[]
     /** A valued signal's presence (`S`), value (`S_val`) or the value being emitted (`S_curval`). */
     signal?: 'presence' | 'value' | 'curval'
 }

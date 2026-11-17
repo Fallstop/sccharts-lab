@@ -1,0 +1,16 @@
+// Two regions write the same member (x) of two different nested instances (l.a, l.b) in the same tick.
+scchart PrSnConcSame {
+  struct L {
+    struct P {
+      int x
+    } a, b
+  } l
+  region R1 {
+    initial state A
+    do l.a.x = 1 go to A
+  }
+  region R2 {
+    initial state B
+    do l.b.x = 2 go to B
+  }
+}

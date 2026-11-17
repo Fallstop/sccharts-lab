@@ -44,6 +44,16 @@ export function simpleType(v: CVar): CVariable['type'] {
 
 export const dimsOf = (v: CVar): number[] => v.dims.map(d => (d.k === 'lit' && typeof d.v === 'number' ? d.v : 0))
 
+/** The dimensions of a member of an array of instances that are its own (`cs[2]` with `int a[3]`: `cs.a` has [2][3], its own [3]). */
+const ownDimsOf = (v: CVar): number[] => dimsOf(v).slice(v.member ? v.member.of.dims.length : 0)
+
+/** A member's place in the data pool, one step per instance (see CVariable.poolPath). */
+function poolPathOf(v: CVar): { key: string; dims: number[] }[] {
+    const chain: CVar[] = []
+    for (let c: CVar | undefined = v; c; c = c.member?.of) chain.unshift(c)
+    return chain.map((c, i) => ({ key: i ? c.member!.name : c.name, dims: ownDimsOf(c) }))
+}
+
 /** A C identifier made of the name (generated names are KIELER's already; this only guards against odd ones). */
 function identifier(name: string): string {
     const s = name.replace(/[^A-Za-z0-9_]/g, '_')
@@ -110,9 +120,9 @@ export class Layout {
                 const group = [v, ...(decl ? rootDecls.slice(i + 1).filter(w => w.declKind === v.declKind && declarationOf(w) === decl) : [])]
                 const names = group.map(w => {
                     const n = this.unique(identifier(w.name))
-                    this.instance(w, n, rootDecls)
+                    this.instance(w, n, rootDecls, n === w.name)
                     this.instances.push({ name: w.name, member: n, ctype: type })
-                    return n
+                    return n + dimsOf(w).map(k => `[${k}]`).join('')
                 })
                 this.lines.push(`${type} ${names.join(', ')};`)
                 continue
@@ -130,8 +140,8 @@ export class Layout {
                 const name = this.unique(`_${chartName}_local_${identifier(v.name)}`)
                 if (v.declKind === 'class' || v.declKind === 'struct') {
                     const type = this.classType(v, scope.decls, classes)
-                    this.instance(v, name, scope.decls)
-                    this.lines.push(`${type} ${name};`)
+                    this.instance(v, name, scope.decls, false)
+                    this.lines.push(`${type} ${name}${dimsOf(v).map(k => `[${k}]`).join('')};`)
                     continue
                 }
                 if (v.declKind) continue
@@ -204,35 +214,51 @@ export class Layout {
         })
     }
 
-    /** The members of a class or struct instance: `<instance>.<member>`. */
-    private instance(v: CVar, name: string, decls: CVar[]) {
+    /**
+     * The members of a class or struct instance: `<instance>.<member>`, and of the instances inside it
+     * (`l.a.x`). Inside an array of instances each instance index is a `[]` in the member (`cs[].v`), filled in by the
+     * reference's first indices (expr.ts ref).
+     */
+    private instance(v: CVar, name: string, decls: CVar[], root: boolean) {
         this.slots.set(v, { v, member: name })
+        const inner = `${name}${'[]'.repeat(ownDimsOf(v).length)}`
         for (const m of decls) {
-            if (m.member?.of !== v || m.declKind) continue
-            const member = `${name}.${identifier(m.member.name)}`
+            if (m.member?.of !== v || (m.declKind && m.declKind !== 'class' && m.declKind !== 'struct')) continue
+            const member = `${inner}.${identifier(m.member.name)}`
+            if (m.declKind) {
+                if (!m.tags.has('#host')) this.instance(m, member, decls, root)
+                continue
+            }
             this.slots.set(m, { v: m, member })
             if (m.tags.has('#const-member')) continue
+            const path = poolPathOf(m)
             this.variables.push({
-                name: `${v.name}.${m.member.name}`, member, ctype: ctypeOf(m), type: simpleType(m), dims: dimsOf(m),
-                input: false, output: false, pool: name === v.name ? m.member.name : undefined, poolObject: name === v.name ? v.name : undefined,
+                name: m.name, member, ctype: ctypeOf(m), type: simpleType(m), dims: dimsOf(m),
+                input: false, output: false, pool: root ? m.member.name : undefined, poolObject: root ? path[0].key : undefined,
+                ...(root ? { poolPath: path } : {}),
             })
         }
     }
 
-    /** The typedef of an instance's class (`<Chart>_<Class>`), declared once per class. */
+    /** The typedef of an instance's class (`<Chart>_<Class>`), declared once per class; a class inside it first. */
     private classType(v: CVar, decls: CVar[], classes: Map<string, string>): string {
         if (v.tags.has('#host') && v.hostType) return v.hostType
-        const members = decls.filter(m => m.member?.of === v && !m.declKind)
-        // The class's name: the member declarations' ids are `<Chart>$<Class>.<member>`.
+        const members = decls.filter(m => m.member?.of === v && (!m.declKind || m.declKind === 'class' || m.declKind === 'struct'))
+        // The class's name: the member declarations' ids are `<Chart>$<Class>.<member>`, `<Chart>$<Outer>.<Inner>$<member>`
+        // for a class inside a class, which KIELER names `<Chart>_<Chart>_<Outer>_<Inner>`.
         const id = members[0]?.decl ?? v.decl ?? v.name
-        const cls = /\$([^.$]+)\.[^.]*$/.exec(id)?.[1] ?? v.name
-        const key = `${cls}|${members.map(m => `${ctypeOf(m)} ${m.member!.name}${dimsOf(m).map(n => `[${n}]`).join('')}`).join(';')}`
+        const path = /^[^$]*\$(.+)[.$][^.$]*$/.exec(id)?.[1]?.split(/[.$]/) ?? [v.name]
+        const cls = path.length > 1 ? `${this.chartName}_${path.join('_')}` : path[0]
+        const fields = members.map(m => {
+            const type = m.declKind ? this.classType(m, decls, classes) : ctypeOf(m)
+            return `${type} ${identifier(m.member!.name)}${ownDimsOf(m).map(n => `[${n}]`).join('')};`
+        })
+        const key = `${cls}|${fields.join(' ')}`
         let type = classes.get(key)
         if (!type) {
             type = this.unique(`${this.chartName}_${identifier(cls)}`)
             classes.set(key, type)
-            const body = members.map(m => `  ${ctypeOf(m)} ${identifier(m.member!.name)}${dimsOf(m).map(n => `[${n}]`).join('')};`)
-            this.typedefs.push(`typedef struct {\n${body.map(b => `${b}\n`).join('')}} ${type};\n`)
+            this.typedefs.push(`typedef struct {\n${fields.map(f => `  ${f}\n`).join('')}} ${type};\n`)
         }
         return type
     }

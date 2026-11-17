@@ -1,0 +1,14 @@
+// Two regions write different elements of one array of struct instances in the same tick.
+scchart PrSaConc {
+  struct P {
+    int x
+  } ps[2]
+  region R1 {
+    initial state A
+    do ps[0].x = 1 go to A
+  }
+  region R2 {
+    initial state B
+    do ps[1].x = 2 go to B
+  }
+}
