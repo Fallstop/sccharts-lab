@@ -24,6 +24,9 @@ export type Feature =
      *  clock's declaration or variable, in any case, @NoSleep, @DeviationOutput, @IntegerClockType, @SimulateSleep, a
      *  chart's own `lag`, and `ode` actions on a float and an int. Implies clocks. Not in `mix`. */
     | 'timed'
+    /** Written schedules: `schedule {conflicting, commuting} s` declarations and `schedule s N` clauses on
+     *  writes of w in concurrent regions (absolute writes too, which only the schedule orders). Not in `mix`. */
+    | 'schedules'
 
 export const ALL_FEATURES: Feature[] = [
     'hierarchy', 'concurrency', 'connectors', 'immediate', 'pre', 'data', 'signals', 'valued', 'actions', 'aborts',
@@ -75,6 +78,8 @@ export const PROFILES: Record<string, Profile> = {
     rare: { features: [...BASE, 'rare'], optional: ['signals', 'count', 'actions', 'pre', 'classes'], optionalRate: 0.35, roots: [1, 2, 2], maxDepth: 1 },
     // The final polish's forms (engine-5) among ordinary behaviour.
     polish: { features: [...BASE, 'polish', 'pre'], optional: ['signals', 'count', 'actions', 'code'], optionalRate: 0.35, roots: [1, 2, 2], maxDepth: 1 },
+    // Written schedules ordering concurrent writes of w, in two or three regions.
+    schedules: { features: ['hierarchy', 'concurrency', 'data', 'immediate', 'joins', 'schedules'], optional: ['actions', 'signals', 'aborts', 'references'], optionalRate: 0.3, roots: [2, 2, 3], maxDepth: 1 },
     // Timed annotations and ode actions among clocks, suspension and references.
     timed: { features: ['hierarchy', 'data', 'immediate', 'joins', 'clocks', 'timed', 'actions'], optional: ['concurrency', 'aborts', 'count', 'suspend', 'references', 'signals', 'history'], optionalRate: 0.25, maxDepth: 1 },
 }
@@ -137,6 +142,8 @@ interface Scope {
     struct?: string
     /** A `ref Mode` variable of an enum Mode { IDLE, RUN, HALT }. */
     mode?: string
+    /** A written schedule object in scope (writes of w carry `schedule <sched> N`). */
+    sched?: string
     /** `ode` targets in scope (the chart's f and g; a referenced chart has none). */
     ode?: string[]
     /** Rare forms: a method reading `state(R0.R0s1)`, a chart with constants (`scchart(FK).K`), a primed constant. */
@@ -147,6 +154,7 @@ class Generator {
     private readonly on: (f: Feature) => boolean
     private readonly w: (k: keyof NonNullable<Profile['weights']>) => number
     private children: string[] = []
+    private priority = 0
     private childNames: string[] = []
 
     constructor(private readonly rng: Rng, readonly features: Set<Feature>, readonly profile: Profile) {
@@ -212,6 +220,12 @@ class Generator {
                 if (!s.conc) opts.push(`${o} = (${p}) ? n`, `${o} = 1 + ((${p}) ? pre(n, ${r.pick(s.bools)}))`, `ov[2] = ${o}`, `ovz = ov[n % 3]`)
             }
             if (this.on('code') && s.outs.length && r.chance(0.3)) opts.push(this.codeEffect(s))
+            if (s.sched) {
+                // Absolute and relative writes of w, ordered (or not) by the schedule's priorities.
+                // Mostly a priority of its own (a total order KIELER accepts), now and then a shared one.
+                const k = r.chance(0.8) ? this.priority++ : r.int(0, 2)
+                opts.push(...[`w = ${r.pick(['1', '2', 'w + 1', 'n'].filter(v => v !== 'n' || s.ints.length))} schedule ${s.sched} ${k}`, `w += 1 schedule ${s.sched} ${k}`, `w = w * 2 schedule ${s.sched} ${k}`].flatMap(x => [x, x]))
+            }
             if (opts.length) out.push(r.pick(opts))
         }
         return [...new Set(out)].join('; ')
@@ -480,6 +494,11 @@ class Generator {
             }
             lines.push('  } cnt')
         }
+        if (this.on('schedules')) {
+            const protocols = Array.from({ length: r.int(0, 3) }, () => r.pick(['conflicting', 'commuting', 'conflicting']))
+            const decl = r.chance(0.15) ? `"sch" global ${r.pick(['conflicting', 'commuting'])} ` : protocols.length ? `{${protocols.join(', ')}} ` : ''
+            lines.push(`  schedule ${decl}s`, '  output int w = 0')
+        }
         if (this.on('structs')) lines.push('  struct Pt {', '    int px = 0', '    int py = 0', '  } pt')
         if (this.on('enums')) lines.push('  enum Mode { IDLE, RUN, HALT }', '  ref Mode m = Mode.IDLE')
         const rare: NonNullable<Scope['rare']> = {}
@@ -503,7 +522,7 @@ class Generator {
             conc: false, depth: 0, bools: ['a', 'b', 'c', 'd'], ints: ['n'], outs: ['x', 'y', 'z'], signals, valued,
             clock: this.on('clocks') ? 't' : undefined, sharedClock: shared, object: this.on('classes') ? 'cnt' : undefined,
             struct: this.on('structs') ? 'pt' : undefined, mode: this.on('enums') ? 'm' : undefined,
-            rare: this.on('rare') ? rare : undefined, ode: this.on('timed') ? ['f', 'g'] : undefined,
+            rare: this.on('rare') ? rare : undefined, ode: this.on('timed') ? ['f', 'g'] : undefined, sched: this.on('schedules') ? 's' : undefined,
         }
         const roots = this.profile.roots ? r.pick(this.profile.roots) : this.on('concurrency') && r.chance(0.35) ? 2 : 1
         const rootDataflow = this.on('dataflow') && r.chance(0.6)
