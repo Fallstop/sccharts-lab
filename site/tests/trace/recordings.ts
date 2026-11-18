@@ -67,6 +67,21 @@ export function recordedCases(): Case[] {
 /** Features of KIELER's environment the engine emulates (scenario `needs`), as in the conformance test. */
 const EMULATED_NEEDS = new Set(['c-strings', 'c-random'])
 
+/**
+ * The recordings the engine is known not to reproduce yet (tests/conformance/engine-expected-failures.json, by the
+ * conformance test's ids): their traces differ from KIELER's as the engine's run does.
+ */
+const knownDifferences: string[] = (() => {
+    const file = path.join(site, 'tests/conformance/engine-expected-failures.json')
+    if (!fs.existsSync(file)) return []
+    return Object.keys(JSON.parse(fs.readFileSync(file, 'utf8')) as Record<string, string>).filter((k) => !k.startsWith('//'))
+})()
+
+function knownDifference(id: string): boolean {
+    const key = id.replace(/^tests\/engine\/kieler\//, 'kieler-probes/').replace(/^src\/examples\//, 'examples/').replace(/^tests\/conformance\//, '')
+    return knownDifferences.some((pattern) => (pattern.endsWith('*') ? key.startsWith(pattern.slice(0, -1)) : key === pattern))
+}
+
 /** Compiles a case the engine runs as KIELER did, or says why it is left out (the conformance test's reasons). */
 export function compileCase(c: Case): { result?: CompileResult; skip?: string } {
     const { scenario, recording } = c
@@ -74,6 +89,7 @@ export function compileCase(c: Case): { result?: CompileResult; skip?: string } 
     if ((scenario.needs ?? []).some((need) => !EMULATED_NEEDS.has(need))) return { skip: 'needs what the engine does not emulate' }
     if (!recording.ok) return { skip: 'KIELER rejects the chart' }
     if (scenario.kielerBug) return { skip: 'a KIELER bug the engine does not reproduce' }
+    if (knownDifference(c.id)) return { skip: 'a known engine difference (engine-expected-failures.json)' }
     const files: Record<string, string> = {}
     for (const f of scenario.imports ?? []) files[path.basename(f)] = fs.readFileSync(path.join(path.dirname(c.chart), f), 'utf8')
     const result = compile(fs.readFileSync(c.chart, 'utf8'), { files })

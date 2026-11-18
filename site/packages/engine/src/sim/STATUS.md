@@ -449,8 +449,9 @@ rejected), all agreeing; `tests/engine/generics.test.ts` pins the API around the
 ## Review fixes: dataflow regions, generic parameters, `extends`, the GO block
 
 Two reviews ran their own charts through official KIELER and found eleven disagreements; all are fixed, with the
-class of bug behind each (structure.md S-24, S-33, S-33a, S-44f, S-74, S-76; basics.md B-34). 182 probes recorded
-with the lab server (107 accepted, 75 rejected), cross-checked on official KIELER.
+class of bug behind each (structure.md S-24, S-33, S-33a, S-44f, S-74, S-76; basics.md B-34). 185 probes recorded
+with the lab server (110 accepted, 75 rejected; two of the accepted ones are the open cases below), cross-checked on
+official KIELER.
 
 - **Indices of members in dataflow regions** (passes/dataflow.ts): the pass walks every index at every level of a
   reference where it looks for the region's instances and for method calls (it looked at the outermost only).
@@ -497,10 +498,12 @@ with the lab server (107 accepted, 75 rejected), cross-checked on official KIELE
   `goBlock(scg, analysis?)`; codes `dataflow-array-port`, `method-in-member-index`, `array-as-value` (in
   `SIMULATOR_CODES`).
 - **Fuzz** (campaigns 22 to 24 below): the profiles `dataflowObjects` and `generics` draw the reviewed forms now.
-- **Open**: comparing two whole arrays (`p = a == b`) compares their addresses in KIELER's C (false for two
-  arrays), the engine compares them as values. A name declared in an `if` branch and used in that `if`'s condition
-  is the branch's local to KIELER (uninitialised there) and the outer variable to the engine, when nothing is
-  bound to the name (with a value bound, both reject).
+- **Open** (both recorded as probes in `tests/conformance/engine-expected-failures.json`): comparing two whole
+  arrays (`p = a == b`) compares their addresses in KIELER's C (never equal), the engine compares them as values
+  (`codegen/probe-array-compare-addresses`); a name declared in an `if` branch of a method body and used in that
+  `if`'s condition is the branch's local to KIELER (0 there: `if (N > 4) { int N = 1 ... } else { ... }` takes the
+  else branch) and the chart's variable to the engine's name resolution, when nothing is bound to the name
+  (`structure/probe-method-if-condition-names-branch-local`; with a value bound, both reject).
 
 ## The three workstreams together
 

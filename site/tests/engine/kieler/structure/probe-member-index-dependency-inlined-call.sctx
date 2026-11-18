@@ -1,0 +1,10 @@
+// A short method called as the whole index of an assigned member (k.a[ix()] += 1, ix returns x): KIELER copies the
+// method into place with the graph's own objects, so the read of x is seen and the concurrent write comes first.
+scchart Main {
+  output int o
+  int x = 0
+  class K { int a[2] int w = 0 } k
+  method int ix() { return x }
+  region { initial state A do k.a[ix()] += 1 go to A }
+  region { initial state B do x = 1 go to B }
+}

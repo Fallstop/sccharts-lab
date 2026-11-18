@@ -1,0 +1,3 @@
+// OPEN (engine-expected-failures.json): two whole arrays compared with == are two addresses in KIELER's C (never
+// equal: p stays 0); the engine compares them as values.
+scchart Main { int a[2] = {4, 7} int b[2] output int p initial state A do p = a == b go to A }
