@@ -1,0 +1,17 @@
+// An equation of the generic chart assigns its output of a primitive type parameter (s = a + 1 with output primitive
+// T s): to the validation the variable is a reference, and a scalar cannot be assigned to one.
+scchart GdPrim {
+  input int x
+  output int o
+  ref GdPrimCell<int> g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart GdPrimCell<T is primitive> {
+  input primitive T a
+  output primitive T s
+  dataflow { s = a + 1 }
+}

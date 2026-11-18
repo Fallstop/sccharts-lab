@@ -1,0 +1,19 @@
+// An OO dataflow instance of a chart that extends a generic base: the inherited input and output are its members.
+scchart GdInstExt {
+  input int x
+  output int o
+  ref GdInstExtSub g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart GdInstExtSub extends GdInstExtBase<4> {
+  int own = 1
+}
+scchart GdInstExtBase<K is int> {
+  input int a
+  output int s
+  dataflow { s = a * K }
+}

@@ -1,0 +1,17 @@
+// A binding by position on an OO dataflow instance of a generic chart is ignored (a stays a member with 0), the
+// generic argument is not (k is 3).
+scchart GdPos {
+  input int x
+  output int o
+  ref GdPosGain<3> g(x)
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = twice(g.s) + 1
+  }
+}
+scchart GdPosGain<K is int> {
+  input int a
+  output int s
+  int k = K
+  dataflow { s = a * K }
+}

@@ -656,6 +656,12 @@ class Validator {
                 this.add('error', 'dataflow-scalar-to-reference', eq.span, `\`${eq.target.name}\` is a referenced chart: assign one of its inputs (\`${eq.target.name}.input = ...\`) or a vector`,
                     'You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar.')
             }
+            // A variable of a generic type (`primitive T x`) is a reference declaration to KIELER until the type is given.
+            if (entry?.decl?.declKind === 'primitive' && !eq.target.sub && eq.expression.kind !== 'vector') {
+                this.add('error', 'dataflow-scalar-to-reference', eq.span, `\`${eq.target.name}\` has a generic type, and KIELER does not accept an equation that assigns such a variable`,
+                    'You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar.',
+                    `Assign \`${eq.target.name}\` in a transition or an action (\`do ${eq.target.name} = ...\`), or give it a fixed type. Reading it in an equation is fine.`)
+            }
         }
     }
 

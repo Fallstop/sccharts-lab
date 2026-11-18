@@ -55,9 +55,9 @@ export function prefixedChart(chart: State, prefix: string, span?: Span): State 
 }
 
 /** The chart, lowered as the body of one instance: a state (not a root) with the chart's declarations, actions, regions. */
-export function lowerInstance(chart: State, index: ModelIndex | undefined, prefix: string, span?: Span, inherited?: ReadonlySet<string>): LowerResult {
+export function lowerInstance(chart: State, index: ModelIndex | undefined, prefix: string, span?: Span, inherited?: ReadonlySet<string>, asClass = false): LowerResult {
     const copy = prefixedChart(chart, prefix, span)
-    const lowered = lowerChart({ ...copy, isRoot: true }, index, inherited)
+    const lowered = lowerChart({ ...copy, isRoot: true }, index, inherited, asClass)
     const root: CState = lowered.root
     root.root = false
     // No Taken Transition Signaling for instances: the marks stay as tracker hooks only, the reset goes.

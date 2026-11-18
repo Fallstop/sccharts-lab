@@ -1,0 +1,20 @@
+// A declared instance of a chart that declares an instance of a chart with a schedule: a class inside a class
+// too.
+scchart Top {
+  input int x
+  output int o
+  ref Mid m
+  region R1 { initial state A do o = m.get() go to A }
+  region R2 { initial state C do m.set() go to C }
+}
+scchart Mid {
+  ref Box b
+  method void set() { b.set() }
+  method int get() { return b.get() }
+}
+scchart Box {
+  schedule s
+  int v
+  method void set() { v = v + 2 }
+  method int get() { return v }
+}

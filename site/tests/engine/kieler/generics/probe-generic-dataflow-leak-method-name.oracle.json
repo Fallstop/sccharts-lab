@@ -1,0 +1,99 @@
+{
+  "hash": "140f13494a99c8f45d209f1b25b58da75013b43e",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-leak-method-name.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name get is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdLeakMethMid1.GdLeakMethLeaf1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakMethMid1.l": {
+      "type": "class",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 0,
+        "m": {
+          "l": {
+            "k": 3
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 9,
+        "m": {
+          "l": {
+            "k": 3
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 10,
+        "m": {
+          "l": {
+            "k": 3
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

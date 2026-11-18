@@ -1,0 +1,15 @@
+// An array of instances of a generic chart with a schedule (ref C<2> g[2]): KIELER refuses the schedule of a class
+// with an array of instances.
+scchart GsArr {
+  input int x
+  output int o
+  ref GsArrBox<2> g[2]
+  region R1 { initial state A do o = g[0].get() go to A }
+  region R2 { initial state C do g[1].set(x) go to C }
+}
+scchart GsArrBox<N is int> {
+  schedule s
+  int v
+  method void set(int a) schedule s 0 { v = a * N }
+  method int get() schedule s 1 { return v }
+}

@@ -1,0 +1,102 @@
+{
+  "hash": "a3c97eae6529b9dfc29b893bab170f6d631672ae",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-instance-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdArrGain1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "GdArrGain1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "gs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 11,
+        "gs": [
+          {
+            "a": 2,
+            "s": 5
+          },
+          {
+            "a": 5,
+            "s": 11
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 19,
+        "gs": [
+          {
+            "a": 4,
+            "s": 9
+          },
+          {
+            "a": 9,
+            "s": 19
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 27,
+        "gs": [
+          {
+            "a": 6,
+            "s": 13
+          },
+          {
+            "a": 13,
+            "s": 27
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

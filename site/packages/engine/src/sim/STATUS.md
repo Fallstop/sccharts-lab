@@ -285,7 +285,8 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `dataflow-instance-port`, `dataflow-instance-array`, `reference-array-size`; written schedules (S-27a):
   `schedule-nested-class`, `schedule-class-array`, `schedule-without-instance` (a clause in a class naming the class's
   own schedule), `contract-never-called`, `contract-sibling-call`, `schedule-inlined-call` (`User schedules are not
-  supported in combination with method inlining!`), and `kieler-crash` for a contract outside a class; generic
+  supported in combination with method inlining!`), `inherited-schedule` (a schedule declared at the top of a base
+  chart), and `kieler-crash` for a contract outside a class; generic
   parameters and inheritance (structure.md S-73 .. S-76, S-66): `unbound-generic` (a generic chart first in the
   file), `unbound-reference` (a parameter or bound input where KIELER does not replace it), `generic-type-unbound`,
   `generic-argument` (on `extends`), `generic-arguments-conflict`, `generic-method-type`, `generic-pre`,
@@ -447,6 +448,50 @@ rejected), all agreeing; `tests/engine/generics.test.ts` pins the API around the
 - Not improved here: the source-level configuration (`active`) does not list the states of an inherited region, for
   a chart that extends another as before and for an inner state that extends one (their transitions are in
   `taken`, and describeTick says "In the part inherited from B").
+
+## The three workstreams together
+
+Written schedules, dataflow regions and generic parameters were built side by side, and two of them rebuilt the same
+parts of KIELER's Reference processor. After the merge there is one of each (passes/reference.ts):
+
+- **One replacement mechanism**: KIELER's stack of replacements by name (structure/replacements.ts, from the generics
+  work). The instances of dataflow regions that call methods use it too: only explicit bindings are pushed
+  (`interfaceBindings`), and a port whose name is a key of the stack is no member of the instance (`instantiate`,
+  KIELER's `containsKey`), which is the leak of S-18a and one more case KIELER has: a port whose name is declared
+  again inside the instantiated chart is lost as well.
+- **One expansion of arrays of instances** (structure/instanceArray.ts, from the dataflow work): the chart is
+  expanded once per element, so every element's states have ids of their own; the size may be a constant
+  (`reference-array-size` otherwise).
+- **One class naming** (`classOf`, `CVar.className`, `CMethod.cls`; `@sccharts-lab/trace` reads it), with the rule
+  for instances declared together read from the lowered declaration, generic arguments of a variable included.
+- **Where the two had disagreed**: an element of an array of instances in a dataflow region. KIELER wires it in a
+  region that calls a method, and its C code does not compile in one that calls none (`dataflow-instance-array`,
+  reported for the classic translation now).
+
+The cross product was probed with KIELER (structure.md S-77): 69 probes recorded, 43 accepted and agreeing tick by
+tick, 26 rejected by both (`generics/probe-generic-dataflow-*` 28, `generics/probe-generic-schedule-*` 8,
+`schedules/probe-schedule-inherited-declaration*` 10, `schedules/probe-schedule-chart-instance-*` 16,
+`structure/probe-reference-empty-instance-*` 6, `structure/probe-reference-dataflow-port-redeclared-inside`), all
+through `pnpm cgen:check` too; `tests/engine/generics-dataflow-schedules.test.ts` pins the diagnostics. What they
+found, none of it special to generics, all fixed:
+
+- **A schedule declaration cannot be inherited** (`inherited-schedule`, S-27a): the engine accepted `scchart T
+  extends Base` with `schedule s` in `Base`, which KIELER cannot compile (`Unsupported type null for variable s`),
+  except inside a declared instance.
+- **The schedule of a chart used as a class**: `schedule g.s 1` with `ref C g` was an unknown member, and it runs
+  now (parser/resolve.ts, lower.ts `schedule`, redirected by the Reference pass); an array of instances of a chart
+  with a schedule, and a class or instance with a schedule inside the instantiated chart, are refused as KIELER
+  does (`schedule-class-array`, `schedule-nested-class`; the engine accepted them), and a schedule one class
+  further in is accepted as KIELER does (the engine refused it as it does for the chart alone; lower.ts lowers an
+  instance's classes one level deeper), also in an array of instances; every instance has such a schedule of its
+  own.
+- **An instance without fields** is an empty object in the pool only while one of its methods stays a C function
+  and is called (S-60; the engine showed `"b": {}` for every such instance).
+- **A member of a generic type** (`input primitive T a`) is found through the instance (`g.a` was an unknown
+  member), crashes KIELER's classic dataflow translation (`kieler-crash`), and cannot be assigned by an equation of
+  the generic chart (`dataflow-scalar-to-reference`).
+- **A lost port** says why (`dataflow-instance-port`: bound in the declaration, bound around the instance, or
+  declared again inside).
 
 ## Final polish (engine-5)
 
@@ -659,6 +704,8 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 17 (seeds 1 to 3, generics x 200, tuned towards charts that compile) | 600 | 185 | 413 | 1 | 0 | 0 | 1, fixed (below) |
 | 18 (seeds 1, 5, 6, generics x 200, after that fix) | 600 | 191 | 408 | 0 | 0 | 0 | 1, fixed (below) |
 | 19 (seeds 1, 7, 8, generics x 200, after both) | 600 | 209 | 390 | 0 | 0 | 1 | 0 |
+| 20 (seed 33, generics, dataflowObjects, schedules, structure, nested x 100, the merged engine) | 500 | 162 | 336 | 0 | 0 | 2 | 0 |
+| 21 (seed 34, the same five profiles x 100) | 500 | 157 | 337 | 0 | 0 | 6 | 0 |
 
 Campaigns 12 to 14 use the profile `dataflowObjects` (tools/fuzz/README.md): dataflow regions with chart instances,
 calls and schedules next to control flow. Campaign 12's three: a binding on an instance of a classic region, which
@@ -669,6 +716,16 @@ hid it). Campaign 13's one: a `;` after a call written as an equation does not s
 `-call-semicolon-*`). Campaign 15 runs the neighbouring profiles on the changed Reference, Dataflow and method
 inlining code: no disagreement. `pnpm cgen:check --fuzz 300 --profiles dataflowObjects`: 190 charts compiled and
 compared, no mismatch.
+
+Campaigns 20 and 21 run the profiles of the three workstreams and their neighbours on the merged engine (one
+Reference pass for all of them): no disagreement in 1000 charts. Per profile, seed 33: generics 32 match and 68
+rejected by both, dataflowObjects 66 and 34, schedules 7 and 91, structure 33 and 67, nested 24 and 76; seed 34:
+30 and 70, 60 and 40, 9 and 90, 31 and 67, 27 and 70. The eight charts KIELER did not answer within 40 s were run
+again alone with more time: one matches, three are rejected by both, and four KIELER does not finish compiling
+in 100 to 240 s (two with contradicting schedules or count delays under a self-loop, two with an abort trigger
+cycle), all four rejected by the engine. A second run of seed 33 on the final code agrees chart by chart except
+where KIELER itself differs (five more timeouts on a busy machine, two charts the engine flags as
+`kieler-nondeterministic` that KIELER accepted that time).
 
 Campaigns 16 to 19 (generic parameters, profile `generics`; run beside 12 to 15, on the generics branch): 17's disagreement is a constant passed as a generic
 argument to a chart that contains a chart whose local has the parameter's name and writes it: KIELER binds the

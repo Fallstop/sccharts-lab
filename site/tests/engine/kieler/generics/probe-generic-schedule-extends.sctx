@@ -1,0 +1,11 @@
+// A chart that extends a generic base with a schedule (extends Base<5>): KIELER cannot compile an inherited
+// schedule declaration (its simulation interface has a variable s without a type).
+scchart GsExt extends GsExtBase<5> {
+  input int x
+  region R2 { initial state C do w += x schedule s 1 go to C }
+}
+scchart GsExtBase<N is int> {
+  output int w
+  schedule s
+  region R1 { initial state A do w = N schedule s 0 go to A }
+}

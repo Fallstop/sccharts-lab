@@ -1,0 +1,16 @@
+// An instance of an OO dataflow region stays a declared instance: an inherited schedule declaration is fine.
+scchart Top {
+  input int x
+  output int o
+  ref Sub g
+  method int id(int v) { return v }
+  dataflow { g.a = id(x)  o = g.s }
+}
+scchart Sub extends Base {
+  input int a
+  dataflow { s = a + 1 }
+}
+scchart Base {
+  output int s
+  schedule q
+}

@@ -1,0 +1,22 @@
+// The instance of a chart type parameter wired in a classic dataflow region.
+scchart GdTypeC {
+  input int x
+  output int o
+  initial state S is GdTypeCMid<GdTypeCFast>(x, o)
+}
+scchart GdTypeCMid<W is GdTypeCWorker> {
+  input int x
+  output int o
+  ref W w
+  dataflow {
+    w.a = x
+    o = w.s
+  }
+}
+scchart GdTypeCWorker {
+  input int a
+  output int s
+}
+scchart GdTypeCFast extends GdTypeCWorker {
+  dataflow { s = a + 100 }
+}

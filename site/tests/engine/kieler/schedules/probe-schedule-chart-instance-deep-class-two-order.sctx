@@ -1,0 +1,14 @@
+// Two instances declared together write one output, each ordering its own two writes with the schedule deep in its
+// chart (o += 2 before o = 1): the instances do not share the schedule, so between them the absolute write still
+// comes first, and the orders contradict each other.
+scchart Top {
+  input int x
+  output int o
+  ref Box a(o), b(o)
+}
+scchart Box {
+  output int o
+  class A { class B { schedule s  int v = 0 } b } a
+  region R1 { initial state P do o = 1 schedule a.b.s 1 go to P }
+  region R2 { initial state Q do o += 2 schedule a.b.s 0 go to Q }
+}

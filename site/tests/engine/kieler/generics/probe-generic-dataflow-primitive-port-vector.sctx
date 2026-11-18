@@ -1,0 +1,15 @@
+// The same crash when only the output of the generic type is named (o = g.s) and the input is given by a vector.
+scchart GdPrim {
+  input int x
+  output int o
+  ref GdPrimCell<int> g
+  dataflow {
+    g = {x}
+    o = g.s
+  }
+}
+scchart GdPrimCell<T is primitive> {
+  input primitive T a
+  output primitive T s
+  initial state A do s = a + 1 go to A
+}

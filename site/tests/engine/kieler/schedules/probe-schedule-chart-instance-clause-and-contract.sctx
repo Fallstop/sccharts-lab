@@ -1,0 +1,17 @@
+// Contract methods of a chart used as a class and a clause naming the instance's schedule (schedule b.s 2): one
+// schedule orders all three.
+scchart Top {
+  input int x
+  output int o
+  int w = 0
+  ref Box b
+  region R1 { initial state A do b.set(x) go to A }
+  region R2 { initial state C do o = b.get() go to C }
+  region R3 { initial state E do w = b.v schedule b.s 2 go to E }
+}
+scchart Box {
+  schedule s
+  int v
+  method void set(int a) schedule s 0 { v = a * 2 }
+  method int get() schedule s 1 { return v }
+}

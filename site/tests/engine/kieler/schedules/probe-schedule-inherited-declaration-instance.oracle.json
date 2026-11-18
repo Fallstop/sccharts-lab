@@ -1,0 +1,59 @@
+{
+  "hash": "adca6b536e116a657e5c0786cd4eeca435cf0277",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-inherited-declaration-instance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name Sub1_g_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "w": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "w": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "w": 7
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "w": 8
+      },
+      "terminated": false
+    }
+  ]
+}

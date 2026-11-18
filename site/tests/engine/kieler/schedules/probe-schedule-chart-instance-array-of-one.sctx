@@ -1,0 +1,14 @@
+// The same with an array of one instance.
+scchart GsArr {
+  input int x
+  output int o
+  ref GsArrBox g[1]
+  region R1 { initial state A do o = g[0].get() go to A }
+  region R2 { initial state C do g[0].set(x) go to C }
+}
+scchart GsArrBox {
+  schedule s
+  int v
+  method void set(int a) schedule s 0 { v = a * 2 }
+  method int get() schedule s 1 { return v }
+}

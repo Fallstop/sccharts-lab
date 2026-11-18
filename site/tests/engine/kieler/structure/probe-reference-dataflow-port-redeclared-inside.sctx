@@ -1,0 +1,21 @@
+// An OO dataflow instance whose output s is declared again in an inner state of its chart: KIELER asks whether
+// the name is a key of its replacement stack, which the walk through the inner state has made it, and drops the port.
+// The equation that reads g.s has no target.
+scchart GdRedecl {
+  input int x
+  output int o
+  ref GdRedeclCell g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart GdRedeclCell {
+  input int a
+  output int s
+  initial state A {
+    int s = 5
+    initial state B do s += a go to B
+  }
+}

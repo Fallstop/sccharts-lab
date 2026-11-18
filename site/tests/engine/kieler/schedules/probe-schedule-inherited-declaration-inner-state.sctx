@@ -1,0 +1,13 @@
+// A superstate that extends a chart with a schedule declaration: rejected.
+scchart Top {
+  input int x
+  output int w
+  initial state T extends Base(w) {
+    region R2 { initial state C do w += x schedule s 1 go to C }
+  }
+}
+scchart Base {
+  output int w
+  schedule s
+  region R1 { initial state A do w = 5 schedule s 0 go to A }
+}

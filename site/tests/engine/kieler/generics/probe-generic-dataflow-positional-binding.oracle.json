@@ -1,0 +1,90 @@
+{
+  "hash": "db9c8204b5cb8b8d92f830ca623691894424132d",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-positional-binding.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdPosGain1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "GdPosGain1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "GdPosGain1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 1,
+        "g": {
+          "a": 0,
+          "k": 3,
+          "s": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 1,
+        "g": {
+          "a": 0,
+          "k": 3,
+          "s": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 1,
+        "g": {
+          "a": 0,
+          "k": 3,
+          "s": 0
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

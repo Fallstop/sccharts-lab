@@ -1,0 +1,80 @@
+{
+  "hash": "4dfc7088dab1977997cff8ff9884e33ef3a426dc",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-value-in-equation.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _GdEqV_local_q is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0__GdEqV_local_k_add_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdEqVAcc11.sum": {
+      "type": "int",
+      "properties": []
+    },
+    "lim": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 20,
+        "p": 13,
+        "lim": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 30,
+        "p": 24,
+        "lim": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 40,
+        "p": 35,
+        "lim": 2
+      },
+      "terminated": false
+    }
+  ]
+}

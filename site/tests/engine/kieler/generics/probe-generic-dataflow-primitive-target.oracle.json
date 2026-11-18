@@ -1,0 +1,21 @@
+{
+  "hash": "faa9253cf8075f4fa8312c89dbfcd6017917fbba",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-primitive-target.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "16:14 You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar."
+  ],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar.",
+      "line": 16,
+      "column": 14
+    }
+  ],
+  "ticks": []
+}

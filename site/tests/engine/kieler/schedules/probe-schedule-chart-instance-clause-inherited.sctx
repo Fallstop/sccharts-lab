@@ -1,0 +1,15 @@
+// The schedule named through the instance (schedule b.s N) is one the instance's chart inherits.
+scchart Top {
+  input int x
+  output int o
+  int w = 0
+  ref Sub b
+  region R1 { initial state A do w = x schedule b.s 0 go to A }
+  region R2 { initial state C do o = b.read() + w schedule b.s 1 go to C }
+}
+scchart Sub extends Base {
+  method int read() { return 2 }
+}
+scchart Base {
+  schedule s
+}

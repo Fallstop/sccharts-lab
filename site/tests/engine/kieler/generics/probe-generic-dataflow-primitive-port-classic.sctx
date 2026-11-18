@@ -1,0 +1,16 @@
+// The same in a region without a method call: KIELER's classic translation takes g.a for an instance too (its
+// declaration is a reference to the type parameter) and its compiler crashes.
+scchart GdPrim {
+  input int x
+  output int o
+  ref GdPrimCell<int> g
+  dataflow {
+    g.a = x
+    o = g.s
+  }
+}
+scchart GdPrimCell<T is primitive> {
+  input primitive T a
+  output primitive T s
+  initial state A do s = a + 1 go to A
+}

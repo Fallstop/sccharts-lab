@@ -1,0 +1,14 @@
+// The same with the priorities the other way round: get() runs before set().
+scchart GsContractRev {
+  input int x
+  output int o
+  ref GsContractRevBox<3, int> b
+  region R1 { initial state A do o = b.get() go to A }
+  region R2 { initial state C do b.set(x) go to C }
+}
+scchart GsContractRevBox<N is int, T is primitive> {
+  schedule s
+  primitive T v
+  method void set(primitive T a) schedule s 1 { v = a * N }
+  method primitive T get() schedule s 0 { return v + N }
+}

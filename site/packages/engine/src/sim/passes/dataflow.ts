@@ -117,6 +117,13 @@ function instanceRefs(eq: CEquation, expansion: Expansion): CRef[] {
     return out
 }
 
+/** The members a reference names after its variable (`g.t.a`: `t`, `a`). */
+function memberChain(r: CRef): CRef[] {
+    const out: CRef[] = []
+    for (let sub = r.sub; sub; sub = sub.sub) out.push(sub)
+    return out
+}
+
 function instancesOf(eq: CEquation, expansion: Expansion): CVar[] {
     return [...new Set(instanceRefs(eq, expansion).map(r => r.v))]
 }
@@ -301,6 +308,19 @@ function processRegion(df: CRegion, expansion: Expansion) {
     // Chart instances used in the equations, in order of first use.
     const instances: CVar[] = []
     for (const eq of eqs) for (const g of instancesOf(eq, expansion)) if (!instances.includes(g)) instances.push(g)
+    // A member of a generic type (`g.a` with `input primitive T a`): its declaration is a reference declaration to
+    // KIELER, so this translation takes `a` for an instance too and asks the type parameter for its declarations.
+    for (const r of eqs.flatMap(eq => instanceRefs(eq, expansion))) {
+        const typed = memberChain(r).find(m => m.v.declKind === 'unresolved' && declarationOf(m.v, expansion)?.declKind === 'primitive')
+        if (!typed) continue
+        expansion.ctx.report({
+            severity: 'error', code: 'kieler-crash', span: typed.span ?? r.span, related: r.v.decl ? [r.v.decl] : undefined,
+            message: `\`${r.v.name}.${typed.v.name}\` has a generic type: KIELER's compiler crashes on it in a dataflow region that calls no method`,
+            kieler: 'java.lang.ClassCastException: class de.cau.cs.kieler.kexpressions.impl.ValuedObjectImpl cannot be cast to class de.cau.cs.kieler.kexpressions.kext.DeclarationScope',
+            hint: `Give \`${typed.v.name}\` a fixed type in \`${r.v.instance!.target}\`, or wire the instance in a dataflow region that calls a method (it then stays an object and \`${r.v.name}.${typed.v.name}\` is its member).`,
+        })
+        return
+    }
     // An element of an array of instances (`gs[0].a`): this translation makes one instance of the whole array and
     // every element means its one set of variables; the index stays on them in KIELER's C code.
     const element = eqs.flatMap(eq => instanceRefs(eq, expansion)).find(r => r.idx.length)

@@ -1,0 +1,17 @@
+// ref C<2> gs[2] in an OO dataflow region: an array of objects, each element with the parameter's value.
+scchart GdArr {
+  input int x
+  output int o
+  ref GdArrGain<2> gs[2]
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    gs[0].a = twice(x)
+    gs[1].a = gs[0].s
+    o = gs[1].s
+  }
+}
+scchart GdArrGain<K is int> {
+  input int a
+  output int s
+  dataflow { s = a * K + 1 }
+}

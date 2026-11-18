@@ -1,0 +1,14 @@
+// Two instances declared together have a schedule each: a.s and b.s order nothing between them, so the two
+// regions run in their written order (w, then o).
+scchart Top {
+  input int x
+  output int o
+  int w = 0
+  ref Box a, b
+  region R1 { initial state A do w = x schedule a.s 1 go to A }
+  region R2 { initial state C do o = w schedule b.s 0 go to C }
+}
+scchart Box {
+  schedule s
+  method int read() { return 2 }
+}

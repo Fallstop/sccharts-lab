@@ -1,0 +1,17 @@
+// An instance of a generic chart in a dataflow region that calls a method (OO translation): an object in the pool,
+// the parameter is the value inside it.
+scchart GdOo {
+  input int x
+  output int o
+  ref GdOoGain<3> g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart GdOoGain<K is int> {
+  input int a
+  output int s
+  dataflow { s = a * K }
+}

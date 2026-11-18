@@ -1,0 +1,100 @@
+{
+  "hash": "d208434b71d7e0efce157c8112053abd126608dc",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-chart-instance-deep-class-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Box1.A.B.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.A.b": {
+      "type": "class",
+      "properties": []
+    },
+    "Box1.a": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 0,
+        "g": {
+          "a": {
+            "b": {
+              "v": 0
+            }
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 1,
+        "g": {
+          "a": {
+            "b": {
+              "v": 0
+            }
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 1,
+        "g": {
+          "a": {
+            "b": {
+              "v": 0
+            }
+          }
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

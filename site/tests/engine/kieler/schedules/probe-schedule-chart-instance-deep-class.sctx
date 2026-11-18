@@ -1,0 +1,14 @@
+// A schedule in a class inside a class of an instantiated chart (ref Box g): three classes deep from the instance,
+// where KIELER does not look. Accepted, although Box alone is refused (a schedule in a nested class).
+scchart Top {
+  input int x
+  output int o
+  ref Box g
+  region R1 { initial state A do o = g.get() go to A }
+  region R2 { initial state C do g.set(x) go to C }
+}
+scchart Box {
+  class A { class B { schedule s  int v = 0 } b } a
+  method void set(int n) { a.b.v = n * 2 }
+  method int get() { return a.b.v }
+}

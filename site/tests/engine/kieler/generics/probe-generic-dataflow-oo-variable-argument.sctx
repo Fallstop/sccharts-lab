@@ -1,0 +1,16 @@
+// The generic argument of an OO dataflow instance is a variable of the chart (ref Gain g<n>): the instance reads it.
+scchart GdOoVar {
+  input int x, n
+  output int o
+  ref GdOoVarGain g<n>
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart GdOoVarGain<K is int> {
+  input int a
+  output int s
+  dataflow { s = a * K }
+}

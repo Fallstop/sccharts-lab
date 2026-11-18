@@ -1,0 +1,16 @@
+// Methods of the elements of an array of instances of a generic chart, called by equations with a variable index.
+scchart GdArrCall {
+  input int n
+  output int o, p
+  ref GdArrCallAcc<3> accs[2]
+  dataflow {
+    accs[n % 2].add(1)
+    o = accs[0].get()
+    p = accs[1].get()
+  }
+}
+scchart GdArrCallAcc<Step is int> {
+  int sum = 0
+  method void add(int v) { sum += v * Step }
+  method int get() { return sum }
+}

@@ -1,0 +1,12 @@
+// Two instances declared together, each ordering its own writes of the shared output with that schedule.
+scchart Top {
+  input int x
+  output int o
+  ref Box a(o), b(o)
+}
+scchart Box {
+  output int o
+  class A { class B { schedule s  int v = 0 } b } a
+  region R1 { initial state P do o = 1 schedule a.b.s 0 go to P }
+  region R2 { initial state Q do o += 2 schedule a.b.s 1 go to Q }
+}

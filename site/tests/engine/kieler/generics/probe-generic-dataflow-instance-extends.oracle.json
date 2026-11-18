@@ -1,0 +1,96 @@
+{
+  "hash": "0c4f9c8369b6ab0c3cb4a2938fa35ea6abd7e85d",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-instance-extends.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "GdInstExtSub1.a": {
+      "type": "int",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "GdInstExtSub1.s": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdInstExtSub1.own": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 8,
+        "g": {
+          "a": 2,
+          "s": 8,
+          "own": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 16,
+        "g": {
+          "a": 4,
+          "s": 16,
+          "own": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 24,
+        "g": {
+          "a": 6,
+          "s": 24,
+          "own": 1
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

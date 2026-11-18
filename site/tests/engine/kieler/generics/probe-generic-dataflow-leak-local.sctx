@@ -1,0 +1,28 @@
+// The by-name leak with a generic argument: Mid<4> binds N, and the local N of the OO dataflow instance inside it
+// is taken for the parameter: it starts with 4 instead of 7 (s = a + 4).
+scchart GdLeak {
+  input int x
+  output int o
+  ref GdLeakMid<4> m
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    m.x = twice(x)
+    o = m.r
+  }
+}
+scchart GdLeakMid<N is int> {
+  input int x
+  output int r
+  ref GdLeakLeaf l
+  method int id(int v) { return v }
+  dataflow {
+    l.a = id(x)
+    r = l.s
+  }
+}
+scchart GdLeakLeaf {
+  input int a
+  output int s
+  int N = 7
+  dataflow { s = a + N }
+}

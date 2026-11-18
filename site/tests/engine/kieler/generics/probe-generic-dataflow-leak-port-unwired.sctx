@@ -1,0 +1,26 @@
+// The leak onto a port nobody wires, with a literal: the inner instance's N stays a member with the parameter's
+// value (s = 4 + 1).
+scchart GdLeakPortU {
+  input int x
+  output int o
+  ref GdLeakPortUMid<4> m
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    m.x = twice(x)
+    o = m.r
+  }
+}
+scchart GdLeakPortUMid<N is int> {
+  input int x
+  output int r
+  ref GdLeakPortULeaf l
+  method int id(int v) { return v }
+  dataflow {
+    r = l.s + id(x)
+  }
+}
+scchart GdLeakPortULeaf {
+  input int N
+  output int s
+  dataflow { s = N + 1 }
+}

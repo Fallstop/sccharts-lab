@@ -1,0 +1,87 @@
+{
+  "hash": "160a35abd4f3b06107c6e9386d4cb34c23e0dba4",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-inherited-declaration-dataflow-oo.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name Sub1_g_q is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_id_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "Sub1.s": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Sub1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 2,
+        "g": {
+          "s": 2,
+          "a": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 3,
+        "g": {
+          "s": 3,
+          "a": 2
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 4,
+        "g": {
+          "s": 4,
+          "a": 3
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

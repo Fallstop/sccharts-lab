@@ -1,0 +1,99 @@
+{
+  "hash": "f5b44016edcb263d634eed482716e3993688f67c",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-chart-instance-clause-and-contract.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name Box1_b_s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_b_set_a is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Box1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "b": {
+      "type": "class",
+      "properties": []
+    },
+    "w": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 0,
+        "b": {
+          "v": 0
+        },
+        "w": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 4,
+        "b": {
+          "v": 4
+        },
+        "w": 4
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 6,
+        "b": {
+          "v": 6
+        },
+        "w": 6
+      },
+      "taken": [
+        1,
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

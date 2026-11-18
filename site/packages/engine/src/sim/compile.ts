@@ -19,7 +19,7 @@ import { goBlock, goBlockDiagnostics, type GoBlock } from './goblock'
 import { stringConditions } from './stringConditions'
 import { stmts } from './passes/hostCode'
 import { formatExpression } from '../format'
-import { allActionSites, allScopes, allStates, effectExprs, readableName, walkExpr, type CEffect, type CExpr, type CState, type CStmt, CVar } from './model'
+import { allActionSites, allScopes, allStates, effectExprs, readableName, walkExpr, type CEffect, type CExpr, type CMethod, type CState, type CStmt, CVar } from './model'
 
 export interface CompiledChart {
     /** KIELER accepts the chart (no error diagnostics). */
@@ -142,6 +142,7 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     diagnostics.push(...removeSuperfluousForks(scg, lowered.root))
     // KIELER's Methods processor (scg/processors/MethodProcessor.xtend) inlines simple methods into the SCG.
     diagnostics.push(...inlineMethods(scg))
+    keptEmptyInstances(scg, lowered.root)
     // KIELER's SequentialForkSurfaceDepthSeparatorProcessor.
     separateSurfaceDepth(scg)
     diagnostics.push(...crashingClashes(clashes, scg, lowered.root))
@@ -1072,4 +1073,41 @@ function leftovers(root: CState): Diagnostic[] {
         message: `The guide's simulator cannot evaluate \`${found.what}\``,
         hint: 'This is a limit of the guide\'s simulator, not a mistake in the chart. The official KIELER tools may run it.',
     }]
+}
+
+/**
+ * A chart instance without fields (passes/reference.ts `emptyInstances`) is an object in KIELER's data pool only
+ * while its class has something left: a method that stays a C function and is called. One whose methods are all
+ * copied into place, or never called, is gone (structure.md S-60).
+ */
+function keptEmptyInstances(scg: SCG, root: CState) {
+    const names = root.ext.emptyInstances as string[] | undefined
+    if (!names?.length) return
+    const kept = new Set<string>()
+    const seen = new Set<CMethod>()
+    const visit = (e: CExpr | undefined) => walkExpr(e, x => {
+        const m = x.k === 'call' && !x.extern ? x.target?.v.method : undefined
+        if (!m || isInlined(m) || seen.has(m)) return
+        seen.add(m)
+        if (m.instance) kept.add(m.instance.name)
+        statements(m.body)
+    })
+    const statements = (list: CStmt[]) => {
+        for (const s of list) {
+            switch (s.k) {
+                case 'do': effectExprs(s.f).forEach(visit); break
+                case 'if': visit(s.cond); statements(s.then); if (s.else) statements(s.else); break
+                case 'while': visit(s.cond); statements(s.body); break
+                case 'for': statements(s.init); visit(s.cond); statements(s.update); statements(s.body); break
+                case 'return': visit(s.expr); break
+                case 'expr': visit(s.e); break
+                default: break
+            }
+        }
+    }
+    for (const n of scg.nodes) {
+        visit(n.expr)
+        if (n.effect) effectExprs(n.effect).forEach(visit)
+    }
+    root.ext.emptyInstances = names.filter(name => kept.has(name))
 }

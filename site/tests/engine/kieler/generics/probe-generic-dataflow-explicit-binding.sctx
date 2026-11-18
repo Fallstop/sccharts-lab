@@ -1,0 +1,15 @@
+// An OO dataflow instance of a generic chart with an explicit binding (x to a): the bound input is no member.
+scchart GdBind {
+  input int x
+  output int o
+  ref GdBindGain<3> g(x to a)
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = twice(g.s)
+  }
+}
+scchart GdBindGain<K is int> {
+  input int a
+  output int s
+  dataflow { s = a * K }
+}

@@ -1,0 +1,14 @@
+// The schedule of a chart used as a class, named through the instance on effects (schedule b.s N): the write of w
+// (priority 0) runs before the read (priority 1).
+scchart GsInst {
+  input int x
+  output int o
+  int w = 0
+  ref GsInstBox b
+  region R1 { initial state A do w = x schedule b.s 0 go to A }
+  region R2 { initial state C do o = b.read() + w schedule b.s 1 go to C }
+}
+scchart GsInstBox {
+  schedule s
+  method int read() { return 2 }
+}

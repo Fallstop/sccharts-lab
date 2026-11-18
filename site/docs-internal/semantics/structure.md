@@ -437,6 +437,15 @@ that has the name of something bound further out **is** that outer variable:
   to a valued object (a) that is not contained in the model!`. Without such an equation the chart compiles and the
   inner chart reads the outer variable.
 - `state S is Mid(x, o)` instead of a `ref` declaration has no such leak: the copy's declarations are pushed.
+- What KIELER asks before it keeps a port of an OO dataflow instance is whether the port's *name is a key* of the
+  stack (`replacements.containsKey`), and the walk over the copy leaves every name it pushed as a key. So a port is
+  also lost when a state or region inside the instantiated chart declares a variable of the port's name
+  (`structure/probe-reference-dataflow-port-redeclared-inside`: `output int s` and an inner `int s`, `o = g.s`
+  rejected).
+- A **literal** on the stack (a generic argument, S-74) does not remove the port: KIELER replaces the declaration
+  by a plain variable that starts with the literal, which stays a member an equation can wire
+  (`generics/probe-generic-dataflow-leak-port`, `-leak-port-unwired`); a variable given as the generic argument
+  removes it as above (`-leak-port-variable`, `-leak-port-variable-unwired`).
 
 - Evidence: `dataflow/probe-dataflow-nested-ref-name-leak`, `-instance-nested-name-leak` (rejected),
   `-instance-nested-name-leak-unused`, `-instance-nested-name-leak-output` (rejected),
@@ -647,6 +656,55 @@ class method, in `print`, and in the generic arguments of `state T is Inner<N>` 
 - Source: `processors/Inheritance.xtend:278-447` (bindings and replacement), `:449-508` (types);
   `extensions/SCChartsInheritanceExtensions.xtend:296-365` (overrides), `extensions/SCChartsGenericTypeExtensions.xtend`.
 - Implementation: `sim/passes/inheritance.ts` `bindInherited`.
+
+### S-77 Generic charts with dataflow instances and schedules
+
+Generic parameters, the two dataflow translations (S-33, S-33a) and written schedules (S-27a) are independent
+steps of one Reference processor, and combine as each rule says. Probed together
+(`tests/engine/kieler/generics/probe-generic-dataflow-*`, `probe-generic-schedule-*`):
+
+- **An instance of a generic chart in a dataflow region.** In the OO translation it is an object like any other,
+  with the parameter's value inside (`ref Gain<3> g`, `-oo-instance`; a variable as the argument, `ref Gain g<n>`:
+  the instance reads the variable, `-oo-variable-argument`; with an explicit binding, `-explicit-binding`; a binding
+  by position is ignored and the generic argument is not, `-positional-binding`). In the classic translation the
+  reference state takes the generic arguments of the declaration (`-classic-two`). Its methods are called by
+  equations (`-call`).
+- **Arrays.** `ref C<2> gs[2]` is an array of objects in an OO region (`-instance-array`, `-array-call`:
+  `accs[n % 2].add(1)`) and gcc's error in a classic one (`-instance-array-classic`, S-65). The size cannot be a
+  generic parameter of the chart around it: the validation wants a number or a constant
+  (`-array-size-parameter`).
+- **Type parameters.** `ref W w` with `<W is Worker>` is wired like a declared instance in both translations once
+  `W` is a chart (`-type-parameter`, `-type-parameter-classic`). A port of a primitive type parameter (`input
+  primitive T a`) is a member of an OO instance like any other (`-primitive-port`). The classic translation takes
+  `g.a` for an instance of its own, because a declaration of a generic type is a reference declaration to KIELER
+  until the type is given, and its compiler crashes on the type parameter (`java.lang.ClassCastException: ...
+  ValuedObjectImpl cannot be cast to ... DeclarationScope`; `-primitive-port-classic`, `-primitive-port-vector`;
+  engine `kieler-crash`). For the same reason the validation refuses an equation of the generic chart that
+  *assigns* a variable of a generic type (`s = a + 1` with `output primitive T s`: `You are assigning a scalar
+  value to a reference...`, `-primitive-target`, `-primitive-target-local`); reading one is fine
+  (`-primitive-read`).
+- **Inheritance.** A chart that `extends Base<3>` wires instances in both translations and calls the base's method
+  with the parameter's value in an equation (`-extends`); an OO instance of a chart that extends a generic base has
+  the inherited inputs and outputs as members (`-instance-extends`).
+- **The by-name leak (S-18a) with generic arguments.** `ref Mid<4> m` binds `N`; a local `N` of the OO dataflow
+  instance inside `Mid` starts with 4 (`-leak-local`), an input `N` of it becomes a plain member that starts with 4
+  and can still be wired (`-leak-port`, `-leak-port-unwired`). With a variable as the argument (`Mid<v>`) the port
+  is that variable and no member (`-leak-port-variable`: rejected; unwired the instance reads `v`,
+  `-leak-port-variable-unwired`). A method of the inner chart with the parameter's name keeps its calls
+  (`-leak-method-name`).
+- **Where a parameter is not replaced.** In a referenced chart's OO region the arguments of a call written as an
+  equation are replaced, the condition after it (`k.add(N) = x > L`) is not: the input and the parameter stay
+  behind (`-call-trigger`, rejected). Assignments, call arguments and scheduled equations are fine
+  (`-value-in-equation`).
+- **Schedules.** A generic chart used as a class has contracts like any class: the parameter's value in the
+  bodies, a primitive type parameter as a return and parameter type (`probe-generic-schedule-contract`, `-rev`);
+  two instances declared together have a schedule each (`-two-instances`); `schedule b.s N` with a variable given
+  as the generic argument (`-instance-clause`); scheduled writes of a generic value and of a variable given as an
+  argument in a chart referenced with `is` (`-referenced`). Rejected as without generics: a contract method nobody
+  calls (`-contract-never-called`), an array of instances (`-contract-array`), a schedule inherited from the
+  generic base (`-extends`).
+- Implementation: nothing of its own: passes/reference.ts (`interfaceBindings`, `bindGenerics`, `instantiate`),
+  passes/dataflow.ts and passes/contracts.ts on the one replacement stack (structure/replacements.ts).
 
 ---
 
@@ -914,6 +972,30 @@ clause naming a variable that is not a schedule crashes the dependency analysis 
   clause`). A `private schedule` can only be named inside the class. Inside the class, a clause on a *statement*
   naming the class's schedule is an error: `Referring to scheduling directive in classes without reference to
   instance (c)` (`-contract-body-clause`).
+- **Schedules of charts used as classes.** A declared instance (`ref C g`) is a class to KIELER after its Reference
+  processor, so a `schedule s` at the top of `C` is the schedule of that class: one per instance, named
+  `schedule g.s 1` in the declaring chart, on effects and beside contracts of `C`'s methods
+  (`-chart-instance-clause`, `-clause-and-contract`, `-clause-in-copy`, `-clause-two-instances`,
+  `-clause-inherited`: the schedule may be one `C` inherits). The refusals above follow: an array of instances of a
+  chart with a schedule, used or not, also an array of one (`-chart-instance-array`, `-array-unused`,
+  `-array-of-one`, `-array-in-copy`); a class with a schedule inside `C`, or an instance inside `C` of a chart with
+  a schedule, which are classes inside a class now (`-chart-instance-class-schedule`,
+  `-chart-instance-in-instance`). One level further in, KIELER does not look any more: a schedule in a class inside
+  a class of `C`, which `C` compiled alone is refused for, is accepted in the instance and stays an ordinary
+  schedule that orders what names it (`-chart-instance-deep-class`, `-deep-class-order`, `-deep-class-two`), also
+  in an array of instances (`-deep-class-array`); every instance has its own (`-deep-class-two-order`: two
+  instances that each order their writes of one output contradict each other).
+- **A schedule declaration cannot be inherited.** `scchart T extends Base` where `Base` declares `schedule s` at its
+  top is rejected, used or not: KIELER's Inheritance enters every variable it copies into its variable store, the
+  schedule without a type, and the simulation's interface fails (`Cannot serialize simulation interface.
+  Unsupported type null for variable s`; a private one: `Base_s`). The same for a base two charts up, a superstate
+  that extends, a chart referenced with `is` and the instance of a classic dataflow region (a referenced state)
+  (`-inherited-declaration`, `-unused`, `-two-levels`, `-private`, `-inner-state`, `-is`, `-dataflow-classic`). Not
+  inside a declared instance: there the copy that Inheritance entered is not the one that reaches the model (the
+  instance's root becomes a class whose schedule is moved out as a copy, its regions are cloned), and a store entry
+  whose variable is gone is left out (`-inherited-declaration-instance`, `-inner-state-in-instance`,
+  `-dataflow-oo`). A schedule in a class of the base chart is inherited without trouble
+  (`-inherited-instance-clause`). Engine code `inherited-schedule`.
 - **Contracts.** `void set(int x) schedule s 0 { ... }` in a class is the method's contract: the clause is copied
   onto what calls the method, marked with the method's name. The copy goes on the effect around the call (also a
   statement of a method body: `-contract-in-method-statement`), or on the trigger; a call in a condition or a
@@ -1943,7 +2025,10 @@ tick.`, `The SCG is NOT asc-schedulable!`).
 - Chart instances (S-65): `"c": {"counter": 2, "step": 1}` with the chart's fields, including private ones; a
   private or protected field inherited from a base chart appears as `<Base>_<field>` (`St134Base_secret`, S-66);
   the interface names the type entries after the copied chart (`QR01Counter1.counter`; official
-  0.3.0: `QR01Counter.counter`). An instance without fields appears as `{}` (`131`) or not at all (probe).
+  0.3.0: `QR01Counter.counter`). An instance without fields appears as `{}` only while its class has something
+  left: a method that stays a C function (S-44f) and is called (`131`, `structure/probe-reference-empty-instance-
+  kept-method`). With methods that are all copied into place, or never called, or without methods, it is not in
+  the pool at all (`-inlined-method`, `-kept-method-not-called`, `-method-not-called`, `-no-methods`, `-schedule`).
 
 - Evidence: `106`, `107`, `112`, `113-class-fields-methods`, `126-chart-class`, `134-protected-field`.
 - Teaching: the simulator's variable table shows an instance as a small table of its members.

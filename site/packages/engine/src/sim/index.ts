@@ -23,7 +23,7 @@ export const SIMULATOR_CODES: ReadonlySet<string> = new Set([
     'write-conflict', 'update-conflict', 'emission-conflict', 'val-cycle', 'abort-trigger-cycle', 'suspend-abort-cycle', 'period-abort-cycle',
     // Structure passes (references, for-regions, dataflow, clocks, methods).
     'binding-expression', 'recursive-reference', 'for-counter-assignment', 'dataflow-for', 'unknown-type', 'shared-clock',
-    'dataflow-instance-shared', 'dataflow-instance-port', 'reference-array-size',
+    'dataflow-instance-shared', 'dataflow-instance-port', 'reference-array-size', 'inherited-schedule',
     'clock-variable', 'clock-array', 'timing-constraint', 'default-sleep', 'method-without-value', 'method-without-return', 'for-counter-method',
     'inheritance-conflict', 'module-call', 'ode-member', 'method-twice', 'inline-loop', 'signal-member', 'unpack-instances', 'unpack-array-method', 'unpack-array-initial', 'outer-member', 'method-inlined-parameter', 'array-cardinality', 'const-array-element', 'inherited-index',
     // Generic parameters and the rest of the Inheritance processor (structure.md S-73, S-66).

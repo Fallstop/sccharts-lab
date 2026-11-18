@@ -1,0 +1,13 @@
+// Scheduled writes in a chart referenced with is: a generic value is written to the output, a variable given as a
+// generic argument is the written variable, the schedule is the referenced chart's own.
+scchart GsRef {
+  input int x
+  output int o
+  initial state S is GsRefBody<7, o>(x)
+}
+scchart GsRefBody<N is int, W is int> {
+  input int x
+  schedule s
+  region R1 { initial state A do W = N schedule s 0 go to A }
+  region R2 { initial state C do W += x schedule s 1 go to C }
+}

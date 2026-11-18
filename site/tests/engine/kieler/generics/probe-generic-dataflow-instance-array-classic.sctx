@@ -1,0 +1,15 @@
+// The same array read in a region without a method call: one instance for the whole array, gcc refuses the index.
+scchart GdArrClassic {
+  input int x
+  output int o
+  ref GdArrClassicGain<2> gs[2]
+  dataflow {
+    gs[0].a = x
+    o = gs[0].s
+  }
+}
+scchart GdArrClassicGain<K is int> {
+  input int a
+  output int s
+  dataflow { s = a * K + 1 }
+}

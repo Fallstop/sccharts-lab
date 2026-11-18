@@ -1,0 +1,27 @@
+// The same leak onto a port, with a literal: the inner instance's input N has the name of the generic parameter
+// bound for Mid<4>. A literal makes it a plain variable of the instance that starts with 4; the equation still wires it.
+scchart GdLeakPort {
+  input int x
+  output int o
+  ref GdLeakPortMid<4> m
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    m.x = twice(x)
+    o = m.r
+  }
+}
+scchart GdLeakPortMid<N is int> {
+  input int x
+  output int r
+  ref GdLeakPortLeaf l
+  method int id(int v) { return v }
+  dataflow {
+    l.N = id(x)
+    r = l.s
+  }
+}
+scchart GdLeakPortLeaf {
+  input int N
+  output int s
+  dataflow { s = N + 1 }
+}

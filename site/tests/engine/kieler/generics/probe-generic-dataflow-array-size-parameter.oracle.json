@@ -1,0 +1,22 @@
+{
+  "hash": "719b0c58b96cbfbbf87084dd74507978c9577020",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-array-size-parameter.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "11:24 Array cardinalities must be an int literal or a reference to a constant int object."
+  ],
+  "warnings": [
+    "ValuedObject with name _fn0__GdArrSize_local_twice_v is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Array cardinalities must be an int literal or a reference to a constant int object.",
+      "line": 11,
+      "column": 24
+    }
+  ],
+  "ticks": []
+}

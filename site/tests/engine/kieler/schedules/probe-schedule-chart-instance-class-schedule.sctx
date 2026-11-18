@@ -1,0 +1,14 @@
+// A declared instance of a chart that has a class with a schedule: the instance is a class itself, so the
+// schedule is one of a class inside a class, which KIELER refuses.
+scchart Top {
+  input int x
+  output int o
+  ref Box g
+  region R1 { initial state A do o = g.get() go to A }
+  region R2 { initial state C do g.set(x) go to C }
+}
+scchart Box {
+  class K { schedule s  int v = 0 } k
+  method void set(int a) { k.v = a * 2 }
+  method int get() { return k.v }
+}

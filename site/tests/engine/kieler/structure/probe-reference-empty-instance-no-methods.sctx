@@ -1,0 +1,9 @@
+// An instance of a chart without fields and without methods: no object in the pool.
+scchart Top {
+  output int o
+  ref Box b
+  initial state A do o = 1 go to A
+}
+scchart Box {
+  initial state X
+}

@@ -1,0 +1,23 @@
+// The size of an array of instances cannot be the generic parameter of the chart around it (ref C gs[N] in
+// Mid<N is int>): the validation wants a number or a constant.
+scchart GdArrSize {
+  input int x
+  output int o
+  initial state S is GdArrSizeMid<2>(x, o)
+}
+scchart GdArrSizeMid<N is int> {
+  input int x
+  output int o
+  ref GdArrSizeCell gs[N]
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    gs[0].a = twice(x)
+    gs[1].a = gs[0].s
+    o = gs[1].s
+  }
+}
+scchart GdArrSizeCell {
+  input int a
+  output int s
+  dataflow { s = a + 1 }
+}

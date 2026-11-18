@@ -1,0 +1,23 @@
+// The instance of a chart type parameter (ref W w in Mid<W is Worker>) wired in an OO dataflow region.
+scchart GdType {
+  input int x
+  output int o
+  initial state S is GdTypeMid<GdTypeFast>(x, o)
+}
+scchart GdTypeMid<W is GdTypeWorker> {
+  input int x
+  output int o
+  ref W w
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    w.a = twice(x)
+    o = w.s
+  }
+}
+scchart GdTypeWorker {
+  input int a
+  output int s
+}
+scchart GdTypeFast extends GdTypeWorker {
+  dataflow { s = a + 100 }
+}

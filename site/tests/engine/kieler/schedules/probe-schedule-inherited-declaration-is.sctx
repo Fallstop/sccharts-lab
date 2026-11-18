@@ -1,0 +1,15 @@
+// A referenced chart (state S is Sub) that inherits a schedule declaration: rejected as for the compiled chart.
+scchart Top {
+  input int x
+  output int w
+  initial state S is Sub(x, w)
+}
+scchart Sub extends Base {
+  input int x
+  region R2 { initial state C do w += x schedule s 1 go to C }
+}
+scchart Base {
+  output int w
+  schedule s
+  region R1 { initial state A do w = 5 schedule s 0 go to A }
+}

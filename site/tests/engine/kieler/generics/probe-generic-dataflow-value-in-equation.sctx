@@ -1,0 +1,24 @@
+// A generic value and a variable given as a generic argument in the equations of a referenced chart's OO dataflow
+// region: in a call's argument, in assignments, with schedules on the equations.
+scchart GdEqV {
+  input int x
+  output int o, p
+  int lim = 2
+  initial state S is GdEqVBody<10, lim>(x, o, p)
+}
+scchart GdEqVBody<N is int, L is int> {
+  input int x
+  output int o, p
+  schedule q
+  ref GdEqVAcc k
+  dataflow {
+    k.add(N)
+    o = k.get() + N schedule q 1
+    p = k.get() + L + x schedule q 0
+  }
+}
+scchart GdEqVAcc {
+  int sum = 0
+  method void add(int v) { sum += v }
+  method int get() { return sum }
+}

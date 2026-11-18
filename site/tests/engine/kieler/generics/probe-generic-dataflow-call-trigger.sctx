@@ -1,0 +1,24 @@
+// The condition after a call written as an equation (k.add(N) = x > L) in a referenced chart: KIELER's Reference
+// processor replaces the call's arguments but not the condition, so the input x and the parameter L stay behind.
+scchart GdEq {
+  input int x
+  output int o, p
+  int lim = 2
+  initial state S is GdEqBody<10, lim>(x, o, p)
+}
+scchart GdEqBody<N is int, L is int> {
+  input int x
+  output int o, p
+  schedule q
+  ref GdEqAcc k
+  dataflow {
+    k.add(N) = x > L
+    o = k.get() + N schedule q 1
+    p = k.get() schedule q 0
+  }
+}
+scchart GdEqAcc {
+  int sum = 0
+  method void add(int v) { sum += v }
+  method int get() { return sum }
+}

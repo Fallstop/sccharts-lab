@@ -1,0 +1,24 @@
+// A chart that extends a generic base (extends Base<3>) and wires instances in an OO and in a classic dataflow region.
+scchart GdExt extends GdExtBase<3> {
+  input int x
+  output int o, p
+  ref GdExtCell c
+  ref GdExtCell d
+  dataflow OO {
+    c.a = scale(x)
+    o = c.s
+  }
+  dataflow Classic {
+    d.a = x + k
+    p = d.s
+  }
+}
+scchart GdExtBase<K is int> {
+  int k = K
+  method int scale(int v) { return v * K }
+}
+scchart GdExtCell {
+  input int a
+  output int s
+  dataflow { s = a + 1 }
+}

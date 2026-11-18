@@ -1,0 +1,15 @@
+// The schedule of an instance of a generic chart on effects (schedule b.s N), ordering two writes of a variable
+// given as the generic argument.
+scchart GsInst {
+  input int x
+  output int o
+  int w = 0
+  ref GsInstBox<w> b
+  region R1 { initial state A do w = x schedule b.s 0 go to A }
+  region R2 { initial state C do o = b.read() schedule b.s 1 go to C }
+}
+scchart GsInstBox<V is int> {
+  schedule s
+  int reads = 0
+  method int read() { return V * 2 }
+}

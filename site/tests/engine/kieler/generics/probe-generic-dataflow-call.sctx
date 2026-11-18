@@ -1,0 +1,15 @@
+// A generic chart used as a class, its methods called by equations (k.add(x), o = k.get()).
+scchart GdCall {
+  input int x
+  output int o
+  ref GdCallAcc<10> k
+  dataflow {
+    k.add(x)
+    o = k.get()
+  }
+}
+scchart GdCallAcc<Step is int> {
+  int sum = 0
+  method void add(int v) { sum += v * Step }
+  method int get() { return sum }
+}

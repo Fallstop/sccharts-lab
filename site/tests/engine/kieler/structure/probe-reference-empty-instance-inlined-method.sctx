@@ -1,0 +1,9 @@
+// An instance of a chart without fields whose only method is copied into place: no object in the data pool.
+scchart Top {
+  output int o
+  ref Box b
+  initial state A do o = b.read() go to A
+}
+scchart Box {
+  method int read() { return 2 }
+}

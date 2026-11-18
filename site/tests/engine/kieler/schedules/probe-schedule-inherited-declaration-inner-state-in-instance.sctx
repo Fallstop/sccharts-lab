@@ -1,0 +1,19 @@
+// The same superstate inside a declared instance (ref Mid g) works: the regions of an instance are cloned, and the
+// copy KIELER's Inheritance entered into its variable store is not in the model any more.
+scchart Top {
+  input int x
+  output int w
+  ref Mid g(x, w)
+}
+scchart Mid {
+  input int x
+  output int w
+  initial state T extends Base(w) {
+    region R2 { initial state C do w += x schedule s 1 go to C }
+  }
+}
+scchart Base {
+  output int w
+  schedule s
+  region R1 { initial state A do w = 5 schedule s 0 go to A }
+}

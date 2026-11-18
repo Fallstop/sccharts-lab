@@ -1,0 +1,110 @@
+{
+  "hash": "f78da271e8c2f5fbc7d695abaf8e033a15aad4ea",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-leak-port.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_m_id_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdLeakPortMid1.GdLeakPortLeaf1.N": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakPortMid1.GdLeakPortLeaf1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakPortMid1.l": {
+      "type": "class",
+      "properties": []
+    },
+    "GdLeakPortMid1.r": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakPortMid1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 3,
+        "m": {
+          "l": {
+            "N": 2,
+            "s": 3
+          },
+          "r": 3,
+          "x": 2
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 5,
+        "m": {
+          "l": {
+            "N": 4,
+            "s": 5
+          },
+          "r": 5,
+          "x": 4
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 7,
+        "m": {
+          "l": {
+            "N": 6,
+            "s": 7
+          },
+          "r": 7,
+          "x": 6
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

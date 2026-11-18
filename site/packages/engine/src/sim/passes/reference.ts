@@ -28,14 +28,14 @@ import {
     addVar, allContainedStates, allRegions, allScopes, copyExpr, createEntryAction, effectExprs, isRegion, ref, sameExpr, setSource,
     setTarget, walkExpr, type CArg, type CExpr, type CGenericArg, type CRef, type CRegion, type CState, type CStmt, type CVar, type Scope,
 } from '../model'
-import { inheritedDeclarations, type CEquation } from '../lower'
+import { DEEP_SCHEDULE, inheritedDeclarations, type CEquation } from '../lower'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { declaredVars, rewriteScope } from '../structure/rewrite'
 import { Replacements, Replacer } from '../structure/replacements'
 import { arrayMembers, elementIndices, elementOf } from '../structure/instanceArray'
 import { foldConstants } from '../fold'
 import { DF_BINDING, DF_REMOVED, processDataflow } from './dataflow'
-import { inherit } from './inheritance'
+import { allInherited, inherit } from './inheritance'
 
 export const reference: Pass = {
     id: 'de.cau.cs.kieler.sccharts.processors.reference',
@@ -90,6 +90,10 @@ export class Expansion {
     private readonly classes = new Map<Scope, Map<string, { name: string; key: string }>>()
     private readonly classNumbers = new Map<string, number>()
     private classKeys = 0
+    /** How many `ref` instances are being expanded around the current place. */
+    private instanceDepth = 0
+    /** The ports an OO dataflow instance has lost, with why: bound in its declaration, bound around it, declared again inside. */
+    private readonly lostPorts = new Map<CVar, Map<string, 'bound' | 'outer' | 'inner'>>()
 
     constructor(ctx: PassContext) {
         this.ctx = { root: ctx.root, config: ctx.config, vars: ctx.vars, shared: ctx.shared, report: d => { if (!this.muted) ctx.report(d) } }
@@ -125,9 +129,11 @@ export class Expansion {
         // Inheritance first (inheritBaseStates): the states inside that extend a chart, then the chart itself.
         for (const s of allContainedStates(root).filter(x => x.ext.baseStates !== undefined)) {
             const source = this.sourceState(s)
+            if (source) this.inheritedSchedule(s, source)
             if (source) inherit(this.ctx, s, source, name => this.findChart(name), replacements)
         }
         const source = chart ?? this.sourceState(root)
+        if (root.ext.baseStates && source) this.inheritedSchedule(root, source)
         if (root.ext.baseStates && source) inherit(this.ctx, root, source, name => this.findChart(name), replacements)
         // The chart's own generic parameters, bound where it is instantiated (a `ref` declaration).
         const generics = root.ext.generics as CVar[] | undefined
@@ -153,6 +159,30 @@ export class Expansion {
         processDataflow(root, this)
         this.expandDeclarations(root, replacements)
         references()
+    }
+
+    /**
+     * A schedule declared at the top of a base chart (S-27a): KIELER's Inheritance enters every variable it copies
+     * into its variable store, and a schedule is one without a type there, which the simulation's interface cannot
+     * hold. Not inside a `ref` instance: the copy KIELER inherits in is not the one that reaches the model (the
+     * instance's root becomes a class, whose schedule is moved out as a copy, and its regions are cloned), and a
+     * variable of the store that is no longer in the model is left out.
+     */
+    private inheritedSchedule(state: CState, chart: State, span?: Span) {
+        if (this.instanceDepth) return
+        for (const base of allInherited(chart, name => this.findChart(name))) {
+            const d = base.declarations.find(x => x.declKind === 'schedule' && x.valuedObjects.length)
+            if (!d) continue
+            const vo = d.valuedObjects[0]
+            const name = d.access === undefined || d.access === 'public' ? vo.name : `${base.name}_${vo.name}`
+            this.ctx.report({
+                severity: 'error', code: 'inherited-schedule', span: span ?? (this.local(base) ? vo.nameSpan ?? vo.span : undefined), related: state.origin ? [state.origin] : undefined,
+                message: `\`${state.name}\` inherits the schedule \`${vo.name}\` from \`${base.name}\`, which KIELER cannot compile`,
+                kieler: `Cannot serialize simulation interface. Unsupported type: null\nCannot serialize simulation interface. Unsupported type null for variable ${name}`,
+                hint: `KIELER keeps an inherited schedule as a variable without a type in the simulation's interface. Declare the schedule in a class of \`${base.name}\` (\`class C { schedule ${vo.name} } c\`, named \`schedule c.${vo.name} 1\`), or in the chart that uses it.`,
+            })
+            return
+        }
     }
 
     /** The source (AST) state of a working state: an instance's copy has the ids of its chart behind a prefix. */
@@ -466,6 +496,7 @@ export class Expansion {
         const inst = lowered.root
         if (lowered.stateFlags.length) this.stateAccess(lowered.stateFlags[0], chart, id, call.span)
         // Inheritance of the copy, with what is bound further out (the bindings of this reference come after).
+        if (inst.ext.baseStates) this.inheritedSchedule(inst, chart, call.span)
         if (inst.ext.baseStates) inherit(this.ctx, inst, chart, name => this.findChart(name), replacements)
         const bindings = this.interfaceBindings(chart, call.args, s, replacements, id, call.span)
         for (const b of bindings) replacements.push(b.name, b.actual)
@@ -639,9 +670,10 @@ export class Expansion {
                     } finally {
                         if (x > 0) this.muted--
                     }
+                    if (x === 0) this.checkSchedules(v, inst, chart, sizes.length > 0)
                     // The chart is the instance's class: its own schedules are a class's (passes/contracts.ts).
                     for (const local of inst.decls) {
-                        if (local.declKind === 'schedule' && local.scheduleOf === undefined) {
+                        if (local.declKind === 'schedule' && local.scheduleOf === undefined && !local.tags.has(DEEP_SCHEDULE)) {
                             local.scheduleOf = v.name
                             local.display = `${v.name}.${local.name}`
                         }
@@ -703,7 +735,7 @@ export class Expansion {
         const id = v.decl ?? v.name
         const dataflow = v.tags.has(DF_BINDING)
         this.checkRecursion(chart, id, v.span)
-        const lowered = lowerInstance(chart, this.index, prefix, this.local(chart) ? undefined : v.span)
+        const lowered = lowerInstance(chart, this.index, prefix, this.local(chart) ? undefined : v.span, undefined, true)
         for (const d of lowered.reports) this.ctx.report(d)
         const inst = lowered.root
         // (Before the base charts' declarations join them.)
@@ -714,9 +746,11 @@ export class Expansion {
         this.bindGenerics(inst, v.instance!.generics, replacements)
         const implicit = !!(inst.ext.generics as CVar[] | undefined)?.length || !!inst.ext.baseStates
         this.stack.push(chart.name)
+        this.instanceDepth++
         try {
             this.expandRoot(inst, replacements, chart)
         } finally {
+            this.instanceDepth--
             this.stack.pop()
         }
         // Without base charts and generic parameters nothing has bound the interface yet. (The interface
@@ -735,6 +769,8 @@ export class Expansion {
             if (replacements.has(f.name)) {
                 this.removed.add(f)
                 inst.decls.splice(inst.decls.indexOf(f), 1)
+                if (!this.lostPorts.has(v)) this.lostPorts.set(v, new Map())
+                this.lostPorts.get(v)!.set(f.name, bindings.some(b => b.name === f.name) ? 'bound' : parent?.has(f.name) ? 'outer' : 'inner')
                 continue
             }
             // (KIELER's simulation interface still lists an inherited one as an input or output.)
@@ -762,6 +798,32 @@ export class Expansion {
             this.classes.get(scope)!.set(group, made)
         }
         return made
+    }
+
+    /**
+     * The instance is a class to KIELER from here on, so its chart's schedules are a class's (UserSchedule.xtend
+     * "Handle Class SDs", S-27a): one in an array of instances is refused, and so is one of a class or instance
+     * inside the chart, which is a class inside a class now.
+     */
+    private checkSchedules(v: CVar, inst: CState, chart: State, array: boolean) {
+        const nested = inst.decls.find(l => l.declKind === 'schedule' && l.scheduleOf !== undefined)
+        if (nested) {
+            this.ctx.report({
+                severity: 'error', code: 'schedule-nested-class', span: v.span, related: v.decl ? [v.decl] : undefined,
+                message: `KIELER cannot compile the schedule \`${nested.display ?? nested.name}\` of \`${chart.name}\` in the instance \`${v.name}\`: the instance is a class, and the schedule is declared in a class inside it`,
+                kieler: `Scheduling declarations in nested classes are not yet supported (${sourceName(nested)})`,
+                hint: `Declare the schedule in \`${chart.name}\` itself, or reference the chart with \`state S is ${chart.name}\` instead of declaring an instance.`,
+            })
+        }
+        const own = array ? inst.decls.find(l => l.declKind === 'schedule' && l.scheduleOf === undefined && !l.tags.has(DEEP_SCHEDULE)) : undefined
+        if (own) {
+            this.ctx.report({
+                severity: 'error', code: 'schedule-class-array', span: v.span, related: own.decl ? [own.decl] : undefined,
+                message: `KIELER cannot compile the schedule \`${own.name}\` of \`${chart.name}\` with an array of instances (\`${v.name}\`)`,
+                kieler: `Scheduling declarations in nested classes with cardinalities are not yet supported (${v.name})`,
+                hint: `Declare single instances (\`ref ${chart.name} a, b\`), or declare the schedule in the chart that declares \`${v.name}\`.`,
+            })
+        }
     }
 
     /**
@@ -927,11 +989,17 @@ export class Expansion {
         })
         if (lost.length && v.tags.has(DF_BINDING)) {
             const names = [...new Set(lost.map(r => r.sub!.v.name))]
+            const why = this.lostPorts.get(v)?.get(names[0]) ?? 'outer'
+            const chart = v.instance?.target ?? 'the chart'
             this.ctx.report({
                 severity: 'error', code: 'dataflow-instance-port', span: lost[0].span ?? v.span, related: v.decl ? [v.decl] : undefined,
-                message: `\`${v.name}.${names[0]}\` does not exist in KIELER's compiled chart: the chart around \`${v.name}\` is itself an instance, and a variable called \`${names[0]}\` is bound for it`,
+                message: why === 'bound' ? `\`${v.name}.${names[0]}\` does not exist in KIELER's compiled chart: the declaration of \`${v.name}\` binds \`${names[0]}\`, so it is no member of the instance`
+                    : why === 'inner' ? `\`${v.name}.${names[0]}\` does not exist in KIELER's compiled chart: \`${chart}\` declares another \`${names[0]}\` inside, and KIELER then takes its input or output \`${names[0]}\` for bound`
+                    : `\`${v.name}.${names[0]}\` does not exist in KIELER's compiled chart: the chart around \`${v.name}\` is itself an instance, and a variable called \`${names[0]}\` is bound for it`,
                 kieler: [...names.map(n => `The valued object reference points to a valued object (${n}) that is not contained in the model!`), 'References objects are not contained in the resource!'].join('\n'),
-                hint: `KIELER keeps what is bound for an instance by name, so inside it every chart's \`${names[0]}\` means the variable bound further out, and \`${v.name}\` loses its own. Rename \`${names[0]}\` in one of the two charts.`,
+                hint: why === 'bound' ? `An input or output bound in the declaration (\`x to ${names[0]}\`) is the bound variable. Wire it with the binding or with an equation, not both.`
+                    : why === 'inner' ? `KIELER keeps the names it has seen while it binds the instance, and a variable \`${names[0]}\` declared in a state or region of \`${chart}\` is one of them. Rename the inner \`${names[0]}\`.`
+                    : `KIELER keeps what is bound for an instance by name, so inside it every chart's \`${names[0]}\` means the variable bound further out, and \`${v.name}\` loses its own. Rename \`${names[0]}\` in one of the two charts.`,
             })
         }
     }
@@ -959,6 +1027,11 @@ function referenceCall(s: CState): ReferenceCall | undefined {
     const call = s.ext.reference as ScopeCall | undefined
     if (!call) return undefined
     return { target: call.target, args: (s.ext.args as CArg[] | undefined) ?? [], span: call.targetSpan ?? call.span, super: call.super }
+}
+
+/** A declaration's name as written (lowering renames the schedule of a class to `C_c_s`). */
+function sourceName(v: CVar): string {
+    return v.decl ? typeName(v.decl).split('.').pop()! : v.name
 }
 
 /** The name of a generic parameter from its declaration id (`<chart>$<name>`, behind an instance's prefix). */

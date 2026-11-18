@@ -1,0 +1,121 @@
+{
+  "hash": "fcb17c6798bb09b06edfc34a167e54e6a6bf59a4",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-array-call.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_accs_add_v is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdArrCallAcc1.sum": {
+      "type": "int",
+      "properties": []
+    },
+    "accs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 3,
+        "p": 0,
+        "accs": [
+          {
+            "sum": 3
+          },
+          {
+            "sum": 0
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 3,
+        "p": 3,
+        "accs": [
+          {
+            "sum": 3
+          },
+          {
+            "sum": 3
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 3,
+        "p": 6,
+        "accs": [
+          {
+            "sum": 3
+          },
+          {
+            "sum": 6
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "o": 6,
+        "p": 6,
+        "accs": [
+          {
+            "sum": 6
+          },
+          {
+            "sum": 6
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

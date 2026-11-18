@@ -1,0 +1,12 @@
+// A schedule declared at the top of a base chart, inherited by the compiled chart: KIELER's Inheritance enters
+// it into its variable store without a type, and the simulation interface cannot be made (Unsupported type null for
+// variable s).
+scchart GsExt extends GsExtBase {
+  input int x
+  region R2 { initial state C do w += x schedule s 1 go to C }
+}
+scchart GsExtBase {
+  output int w
+  schedule s
+  region R1 { initial state A do w = 5 schedule s 0 go to A }
+}

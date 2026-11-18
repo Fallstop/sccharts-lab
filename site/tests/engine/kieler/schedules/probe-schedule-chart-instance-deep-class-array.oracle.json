@@ -1,0 +1,147 @@
+{
+  "hash": "c272468bbe244027dd5d0760a18be62c644361cb",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-chart-instance-deep-class-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Box1.A.B.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.A.b": {
+      "type": "class",
+      "properties": []
+    },
+    "Box1.a": {
+      "type": "class",
+      "properties": []
+    },
+    "Box1.w": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 0,
+        "g": [
+          {
+            "a": {
+              "b": {
+                "v": 0
+              }
+            },
+            "w": 0
+          },
+          {
+            "a": {
+              "b": {
+                "v": 0
+              }
+            },
+            "w": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 2,
+        "g": [
+          {
+            "a": {
+              "b": {
+                "v": 0
+              }
+            },
+            "w": 1
+          },
+          {
+            "a": {
+              "b": {
+                "v": 0
+              }
+            },
+            "w": 1
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 2,
+        "g": [
+          {
+            "a": {
+              "b": {
+                "v": 0
+              }
+            },
+            "w": 1
+          },
+          {
+            "a": {
+              "b": {
+                "v": 0
+              }
+            },
+            "w": 1
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

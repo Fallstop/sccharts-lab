@@ -1,0 +1,115 @@
+{
+  "hash": "1ed5af1c74e5390fb396e263a5c742c251699d3f",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-leak-port-variable-unwired.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_twice_w is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_m_id_w is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdLeakVarUMid1.GdLeakVarULeaf1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakVarUMid1.l": {
+      "type": "class",
+      "properties": []
+    },
+    "GdLeakVarUMid1.r": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakVarUMid1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1,
+        "v": 5
+      },
+      "values": {
+        "v": 5,
+        "x": 1,
+        "o": 8,
+        "m": {
+          "l": {
+            "s": 6
+          },
+          "r": 8,
+          "x": 2
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2,
+        "v": 6
+      },
+      "values": {
+        "v": 6,
+        "x": 2,
+        "o": 11,
+        "m": {
+          "l": {
+            "s": 7
+          },
+          "r": 11,
+          "x": 4
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3,
+        "v": 7
+      },
+      "values": {
+        "v": 7,
+        "x": 3,
+        "o": 14,
+        "m": {
+          "l": {
+            "s": 8
+          },
+          "r": 14,
+          "x": 6
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

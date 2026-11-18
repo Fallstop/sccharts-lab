@@ -1,0 +1,13 @@
+// A local of a primitive type parameter assigned by an equation of the generic chart: rejected by the validation
+// like the output.
+scchart GdPrim {
+  input int x
+  output int o
+  initial state S is GdPrimCell<int>(x, o)
+}
+scchart GdPrimCell<T is primitive> {
+  input int a
+  output int s
+  primitive T k
+  dataflow { k = a + 1  s = k }
+}

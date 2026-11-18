@@ -1,0 +1,60 @@
+{
+  "hash": "8e404e6b8d149da443e20d757687d5b8055258c3",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-inherited-declaration-inner-state-in-instance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Explicit binding in inheritance hierachy (w -> ValuedObjectReferenceImpl@43acf924 w) was overridden by a higher level one (w -> ValuedObjectReferenceImpl@3af092f1 w).",
+    "ValuedObject with name _Top_local_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "w": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "w": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "w": 7
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "w": 8
+      },
+      "terminated": false
+    }
+  ]
+}

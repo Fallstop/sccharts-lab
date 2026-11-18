@@ -1,0 +1,16 @@
+// A method of the inner chart with the name of the generic parameter bound around it (l.N() in Mid<4>): the call
+// keeps its method, the parameter beside it is 4.
+scchart GdLeakMeth {
+  input int x
+  output int o
+  ref GdLeakMethMid<4> m
+  initial state A do o = m.get() + x go to A
+}
+scchart GdLeakMethMid<N is int> {
+  ref GdLeakMethLeaf l
+  method int get() { return l.N() + N }
+}
+scchart GdLeakMethLeaf {
+  int k = 3
+  method int N() { return k }
+}

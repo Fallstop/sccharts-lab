@@ -1,0 +1,13 @@
+// A variable of a primitive type parameter read in an equation of the generic chart: fine (the type is given
+// before the dataflow region is translated).
+scchart GdPrim {
+  input int x
+  output int o
+  initial state S is GdPrimCell<int>(x, o)
+}
+scchart GdPrimCell<T is primitive> {
+  input int a
+  output int s
+  primitive T k = 2
+  dataflow { s = a + k }
+}

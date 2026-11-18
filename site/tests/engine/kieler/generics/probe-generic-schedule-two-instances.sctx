@@ -1,0 +1,15 @@
+// Two instances of a generic chart, declared together, each with a contract: one class, the schedule of each
+// instance orders its own calls.
+scchart GsTwo {
+  input int x
+  output int o, p
+  ref GsTwoBox<2> a, b
+  region R1 { initial state A do o = a.get(); p = b.get() go to A }
+  region R2 { initial state C do a.set(x); b.set(x + 1) go to C }
+}
+scchart GsTwoBox<N is int> {
+  schedule s
+  int v
+  method void set(int a) schedule s 0 { v = a * N }
+  method int get() schedule s 1 { return v }
+}

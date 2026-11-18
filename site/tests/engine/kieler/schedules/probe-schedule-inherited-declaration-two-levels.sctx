@@ -1,0 +1,12 @@
+// A schedule declared two base charts up, unused: rejected.
+scchart Top extends Mid {
+  input int x
+  region R2 { initial state C do w += x go to C }
+}
+scchart Mid extends Base {
+  int k
+}
+scchart Base {
+  output int w
+  schedule s
+}

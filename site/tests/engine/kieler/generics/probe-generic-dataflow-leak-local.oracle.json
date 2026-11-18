@@ -1,0 +1,117 @@
+{
+  "hash": "da79f4ebd4fd2de5d684ec16175124a048f6f165",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-leak-local.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_m_id_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdLeakMid1.GdLeakLeaf1.N": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakMid1.GdLeakLeaf1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakMid1.GdLeakLeaf1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakMid1.l": {
+      "type": "class",
+      "properties": []
+    },
+    "GdLeakMid1.r": {
+      "type": "int",
+      "properties": []
+    },
+    "GdLeakMid1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 6,
+        "m": {
+          "l": {
+            "N": 4,
+            "a": 2,
+            "s": 6
+          },
+          "r": 6,
+          "x": 2
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 8,
+        "m": {
+          "l": {
+            "N": 4,
+            "a": 4,
+            "s": 8
+          },
+          "r": 8,
+          "x": 4
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 10,
+        "m": {
+          "l": {
+            "N": 4,
+            "a": 6,
+            "s": 10
+          },
+          "r": 10,
+          "x": 6
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

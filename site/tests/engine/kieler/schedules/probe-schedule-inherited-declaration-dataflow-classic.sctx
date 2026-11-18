@@ -1,0 +1,16 @@
+// An instance of a classic dataflow region is a referenced state: its chart must not inherit a schedule
+// declaration.
+scchart Top {
+  input int x
+  output int o
+  ref Sub g
+  dataflow { g.a = x  o = g.s }
+}
+scchart Sub extends Base {
+  input int a
+  dataflow { s = a + 1 }
+}
+scchart Base {
+  output int s
+  schedule q
+}

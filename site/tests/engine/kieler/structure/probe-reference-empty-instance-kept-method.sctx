@@ -1,0 +1,9 @@
+// An instance without fields whose method stays a C function (a loop) and is called: an empty object in the pool.
+scchart Top {
+  output int o
+  ref Box b
+  initial state A do o = b.read() go to A
+}
+scchart Box {
+  method int read() { int r = 0; for (int i = 0; i < 2; i++) { r += 1 } return r }
+}

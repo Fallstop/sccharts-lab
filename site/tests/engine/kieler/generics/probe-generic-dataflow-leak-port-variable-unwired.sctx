@@ -1,0 +1,25 @@
+// The same without the equation: the inner instance reads the variable given for the parameter (s = v + 1).
+scchart GdLeakVarU {
+  input int x, v
+  output int o
+  ref GdLeakVarUMid<v> m
+  method int twice(int w) { return w * 2 }
+  dataflow {
+    m.x = twice(x)
+    o = m.r
+  }
+}
+scchart GdLeakVarUMid<N is int> {
+  input int x
+  output int r
+  ref GdLeakVarULeaf l
+  method int id(int w) { return w }
+  dataflow {
+    r = l.s + id(x)
+  }
+}
+scchart GdLeakVarULeaf {
+  input int N
+  output int s
+  dataflow { s = N + 1 }
+}

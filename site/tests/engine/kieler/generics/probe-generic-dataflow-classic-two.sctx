@@ -1,0 +1,18 @@
+// Two instances of a generic chart with different arguments in a classic dataflow region.
+scchart GdClassicTwo {
+  input int x
+  output int o, p
+  ref GdClassicTwoGain<2> a
+  ref GdClassicTwoGain<5> b
+  dataflow {
+    a.i = x
+    b.i = a.s
+    o = a.s
+    p = b.s
+  }
+}
+scchart GdClassicTwoGain<K is int> {
+  input int i
+  output int s
+  dataflow { s = i * K }
+}

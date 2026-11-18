@@ -1,0 +1,17 @@
+// Inputs and outputs of a primitive type parameter are members of an OO dataflow instance like any other (g.a,
+// g.s with input primitive T a).
+scchart GdPrim {
+  input int x
+  output int o
+  ref GdPrimCell<int> g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart GdPrimCell<T is primitive> {
+  input primitive T a
+  output primitive T s
+  initial state A do s = a + 1 go to A
+}

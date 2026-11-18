@@ -1,0 +1,13 @@
+// A contract method of a generic chart used as a class that nobody calls.
+scchart GsNever {
+  input int x
+  output int o
+  ref GsNeverBox<2> b
+  initial state A do b.set(x); o = b.v go to A
+}
+scchart GsNeverBox<N is int> {
+  schedule s
+  int v
+  method void set(int a) schedule s 0 { v = a * N }
+  method int get() schedule s 1 { return v }
+}

@@ -1,0 +1,10 @@
+// A private schedule of the base chart: rejected, under its inherited name (Base_s).
+scchart Top extends Base {
+  input int x
+  region R2 { initial state C do w += x go to C }
+}
+scchart Base {
+  output int w
+  private schedule s
+  region R1 { initial state A do w = 5 schedule s 0 go to A }
+}

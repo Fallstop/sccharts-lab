@@ -1,0 +1,18 @@
+// schedule b.s N in a referenced chart that declares the instance: the read (priority 0) runs before the write.
+scchart Top {
+  input int x
+  output int o
+  initial state S is Mid(x, o)
+}
+scchart Mid {
+  input int x
+  output int o
+  int w = 0
+  ref Box b
+  region R1 { initial state A do w = x schedule b.s 1 go to A }
+  region R2 { initial state C do o = b.read() + w schedule b.s 0 go to C }
+}
+scchart Box {
+  schedule s
+  method int read() { return 2 }
+}

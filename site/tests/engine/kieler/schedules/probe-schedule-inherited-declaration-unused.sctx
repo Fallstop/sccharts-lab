@@ -1,0 +1,10 @@
+// The same with a schedule nothing names.
+scchart GsExt extends GsExtBase<5> {
+  input int x
+  output int w
+  region R2 { initial state C do w += x + k go to C }
+}
+scchart GsExtBase<N is int> {
+  int k = N
+  schedule s
+}

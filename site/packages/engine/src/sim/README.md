@@ -335,7 +335,7 @@ KIELER recording in `tests/engine/kieler/` (part of the conformance run, area `k
 | `tracker.ts`, `describe.ts` | source-level configuration, plain-English tick descriptions |
 | `describeStructure.ts` | descriptions of instances, for-region copies, clocks, periods and dataflow |
 | `preemptionLog.ts`, `describePreemption.ts` | the preemption passes' log events and notes (history, deferred entries, weak suspend, suspended states) and describeTick's sentences for aborts, count delays and suspension |
-| `structure/` | the structure passes' helpers: instances (`instance.ts`), deep copies (`copy.ts`), rewriting every expression (`rewrite.ts`), the tracker's view (`track.ts`), `->`/`fby`/`sfby` helpers (`delays.ts`), methods (`methods.ts`: inlining and running), KIELER's replacement stack and the walk that binds by name (`replacements.ts`) |
+| `structure/` | the structure passes' helpers: instances (`instance.ts`), deep copies (`copy.ts`), rewriting every expression (`rewrite.ts`), the tracker's view (`track.ts`), `->`/`fby`/`sfby` helpers (`delays.ts`), methods (`methods.ts`: inlining and running), KIELER's replacement stack and the walk that binds by name (`replacements.ts`), arrays of chart instances (`instanceArray.ts`) |
 | `STATUS.md` | what works now |
 | `tests/engine/kieler/` | probe charts for the KIELER defects above, with recordings |
 | `../../../tools/fuzz/` | the differential fuzzer (generator, runner, reducer) |

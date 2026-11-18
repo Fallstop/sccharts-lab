@@ -1,0 +1,83 @@
+{
+  "hash": "520cffce43bce71f1b4d5d8b2703fd180e92168c",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-primitive-port.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdPrimCell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "GdPrimCell1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 0,
+        "g": {
+          "a": 2,
+          "s": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 5,
+        "g": {
+          "a": 4,
+          "s": 5
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 7,
+        "g": {
+          "a": 6,
+          "s": 7
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

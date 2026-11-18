@@ -1,0 +1,15 @@
+// A generic chart used as a class whose contract methods use the parameters: a value in the bodies, a primitive
+// type as a return and parameter type.
+scchart GsContract {
+  input int x
+  output int o
+  ref GsContractBox<3, int> b
+  region R1 { initial state A do o = b.get() go to A }
+  region R2 { initial state C do b.set(x) go to C }
+}
+scchart GsContractBox<N is int, T is primitive> {
+  schedule s
+  primitive T v
+  method void set(primitive T a) schedule s 0 { v = a * N }
+  method primitive T get() schedule s 1 { return v + N }
+}

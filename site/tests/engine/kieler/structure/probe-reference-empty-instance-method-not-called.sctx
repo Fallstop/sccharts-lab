@@ -1,0 +1,9 @@
+// An instance without fields whose short method is never called: no object in the pool.
+scchart Top {
+  output int o
+  ref Box b
+  initial state A do o = 1 go to A
+}
+scchart Box {
+  method int two() { return 2 }
+}

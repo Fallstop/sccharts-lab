@@ -1,0 +1,14 @@
+// An array of instances of a chart with a schedule in a class inside a class: KIELER does not see the schedule, so
+// the array is fine, and every element orders its own writes with it (w += 2 before w = 1).
+scchart Top {
+  input int x
+  output int o
+  ref Box g[2]
+  initial state A do o = g[0].w + g[1].w go to A
+}
+scchart Box {
+  int w
+  class A { class B { schedule s  int v = 0 } b } a
+  region R1 { initial state P do w = 1 schedule a.b.s 1 go to P }
+  region R2 { initial state Q do w += 2 schedule a.b.s 0 go to Q }
+}

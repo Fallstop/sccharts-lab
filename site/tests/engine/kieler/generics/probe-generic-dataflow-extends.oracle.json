@@ -1,0 +1,101 @@
+{
+  "hash": "2659b862b5bab742b245af6225b9cea2c4574153",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow-extends.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_scale_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "GdExtCell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "GdExtCell1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "k": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 4,
+        "p": 5,
+        "c": {
+          "a": 3,
+          "s": 4
+        },
+        "k": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 7,
+        "p": 6,
+        "c": {
+          "a": 6,
+          "s": 7
+        },
+        "k": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 10,
+        "p": 7,
+        "c": {
+          "a": 9,
+          "s": 10
+        },
+        "k": 3
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+// The leak with a variable as the generic argument (Mid<v>): the inner instance's input N is the variable v, no
+// member any more, and the equation that wires it has no target.
+scchart GdLeakVar {
+  input int x, v
+  output int o
+  ref GdLeakVarMid<v> m
+  method int twice(int w) { return w * 2 }
+  dataflow {
+    m.x = twice(x)
+    o = m.r
+  }
+}
+scchart GdLeakVarMid<N is int> {
+  input int x
+  output int r
+  ref GdLeakVarLeaf l
+  method int id(int w) { return w }
+  dataflow {
+    l.N = id(x)
+    r = l.s
+  }
+}
+scchart GdLeakVarLeaf {
+  input int N
+  output int s
+  dataflow { s = N + 1 }
+}

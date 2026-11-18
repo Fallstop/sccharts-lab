@@ -1,0 +1,16 @@
+// A declared instance (ref Sub g) of a chart that inherits a schedule declaration works: the instance is a
+// class, whose schedule KIELER moves out as a copy.
+scchart Top {
+  input int x
+  output int w
+  ref Sub g(x, w)
+}
+scchart Sub extends Base {
+  input int x
+  region R2 { initial state C do w += x schedule s 1 go to C }
+}
+scchart Base {
+  output int w
+  schedule s
+  region R1 { initial state A do w = 5 schedule s 0 go to A }
+}
