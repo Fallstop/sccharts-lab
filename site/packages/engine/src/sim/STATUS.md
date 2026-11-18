@@ -389,11 +389,8 @@ tick by tick, 33 rejected), all through `pnpm cgen:check` too.
   own `self`, as a class's method does: no order with a concurrent write of the field, and the kept method of two
   instances declared together is one method (a conflict in two regions; two declarations are two classes and fine).
   deps.ts `innerAccesses` knows the instance of such a method now (`CMethod.instance`).
-- **Open**: a `dataflow once` region that calls a method, in a state entered in tick 1 that a transition which can
-  never fire leads back to (`initial state S { dataflow once { o = twice(x)  m = o + 1 } } join to T` with `state T
-  ... go to S`): KIELER's GO block reaches the equations (the dead way back does not end it) and B-34 reorders them
-  (`m = 1`), the engine's GO block ends at `S`, so it computes `m = 3` and does not warn (`kieler-bug`). Without the
-  dead transition it warns as for any B-34 pattern.
+- **After the review** (below, "Review fixes"): indices at every level, array ports of classic instances, `dataflow
+  for`, vectors after calls, and the `dataflow once` case that was open here (the GO block).
 
 
 ## Generic parameters and the rest of Inheritance
@@ -448,6 +445,55 @@ rejected), all agreeing; `tests/engine/generics.test.ts` pins the API around the
 - Not improved here: the source-level configuration (`active`) does not list the states of an inherited region, for
   a chart that extends another as before and for an inner state that extends one (their transitions are in
   `taken`, and describeTick says "In the part inherited from B").
+
+## Review fixes: dataflow regions, generic parameters, `extends`, the GO block
+
+Two reviews ran their own charts through official KIELER and found eleven disagreements; all are fixed, with the
+class of bug behind each (structure.md S-24, S-33, S-33a, S-44f, S-74, S-76; basics.md B-34). 160 probes recorded
+with the lab server (87 accepted, 73 rejected), cross-checked on official KIELER.
+
+- **Indices of members in dataflow regions** (passes/dataflow.ts): the pass walks every index at every level of a
+  reference where it looks for the region's instances and for method calls (it looked at the outermost only).
+  `c.a[ix()] = 7` now selects the OO translation (`c` is an object in the pool); `c.a[ix.n] = 7` makes `ix` an
+  instance of the classic region.
+- **Array ports are single variables in the classic translation**: KIELER's local for a port has no size and the
+  member's index is dropped, never evaluated. The engine gave the locals the port's size and kept the index (a
+  runtime error on `c.a[ix.n]`, an index error KIELER does not have). A chart that indexes its own port, or gives an
+  array output a vector, is rejected (`dataflow-array-port`, gcc's messages).
+- **`dataflow for`** runs once per tick in both translations and is rejected (`dataflow-for`, one KIELER message
+  per use) only where the counter is still named afterwards; the range is not validated (parser/validate.ts).
+- **A vector after a call equation** drops the call (and sets a chart instance's inputs); after an extern
+  function's call it is KIELER's NullPointerException (`kieler-crash`).
+- **A method call in the index of an assigned member** is found by KIELER only as the whole index and by its name
+  alone: `c.a[ix() + 0] = 7`, `c.a[arr[ix()]] = 7`, `c.a[g.one()] = 7` are rejected (`method-in-member-index`,
+  sim/codegen.ts), in any effect, not only in dataflow regions.
+- **Method bodies in the replacement walk** (structure/replacements.ts; lower.ts numbers the SCL blocks): a local
+  hides a bound name inside its block only; the initial value of a body's declaration is not visited
+  (`unbound-reference`), a `for` loop's own is; an `if` condition naming a local of its branch while the name
+  stands for a value crashes KIELER (`kieler-crash`). For generic parameters and ordinary bindings alike.
+- **`extends` bindings** (passes/inheritance.ts): a surplus argument is KIELER's NullPointerException
+  (`kieler-crash`; it was dropped silently); the exception texts name the value's class. The lost index of a
+  two-level binding was already ported, but its consequence was not checked:
+- **A whole array used as a number** (`p = a`, `p = a + 1`, a row of a two-dimensional array) is gcc's
+  `-Wint-conversion` error in KIELER's C (`array-as-value`, sim/codegen.ts), wherever it is written.
+- **Cycles of base charts** end in `inheritance-cycle` (parser/generics.ts `interfaceOf` recursed without a path and
+  overflowed the stack on a cycle with bindings); the name clash an inner state would get through a cycle is not
+  reported, as KIELER's validator overflows there.
+- **The GO block** (goblock.ts, called after the analysis; basics.md B-34 "Which code is the block"): read off
+  KIELER's sequence (guards equal to `_GO`, halt states removed, the conditional merger's two rules) instead of the
+  root entry's basic block. New in the block: entry code of a state whose way back is dead (the `dataflow once`
+  case), and the first-tick code of regions as far as KIELER merges it. Input assignments there now run before the
+  first inputs as in KIELER; B-34's reordering there gets the `kieler-bug` warning (the values stay the intended
+  ones, as for every B-34 pattern). Checked against KIELER's generated C: the statements of `reset()` and of the
+  first `if (_GO)` are the engine's block for 131 charts (27 written, 104 accepted ones of 300 random charts).
+- **API**: additions only. `CMethod.scope`, `CStmt` `scope`/`elseScope`/`blocks`, `CVar.block` (internal model);
+  `goBlock(scg, analysis?)`; codes `dataflow-array-port`, `method-in-member-index`, `array-as-value` (in
+  `SIMULATOR_CODES`).
+- **Fuzz** (campaign 20 below): the profiles `dataflowObjects` and `generics` draw the reviewed forms now.
+- **Open**: comparing two whole arrays (`p = a == b`) compares their addresses in KIELER's C (false for two
+  arrays), the engine compares them as values. A name declared in an `if` branch and used in that `if`'s condition
+  is the branch's local to KIELER (uninitialised there) and the outer variable to the engine, when nothing is
+  bound to the name (with a value bound, both reject).
 
 ## The three workstreams together
 

@@ -622,9 +622,16 @@ class Generator {
                 // (A wrong argument, or a parameter list that leaves the output open, now and then.)
                 lines[0] = base === 'plain'
                     ? `scchart F${index} extends GB<${r.chance(0.04) ? 'true' : arg}> {`
-                    : `scchart F${index} extends GBB<${arg}>(${r.chance(0.08) ? 'a' : 'a, gy'}) {`
+                    : `scchart F${index} extends GBB<${arg}>(${r.chance(0.08) ? 'a' : r.chance(0.06) ? 'a, gy, gz' : 'a, gy'}) {`
                 if (base === 'plain') {
-                    this.helper('GB', ['scchart GB<M is int> {', '  output int gb = 0, gq = 0', '  region GBR {', '    initial state GBs0', `    if gb < M + ${r.pick([2, 5])} do gb += M go to GBs0`,
+                    // Now and then a method whose body declares the parameter's name again (in a loop, in a block:
+                    // the parameter is the argument again afterwards) or takes it as a local's initial value (rejected).
+                    const scoping = r.pick(['none', 'none', 'none', 'for', 'block', 'init'])
+                    const method = scoping === 'for' ? ['  method int gm() { int s = 0 for (int M = 0; M < 2; M++) { s += 1 } return s + M }']
+                        : scoping === 'block' ? ['  method int gm() { int s = 0 { int M = 7 s = M } return s + M }']
+                        : scoping === 'init' ? ['  method int gm() { int s = M return s }'] : []
+                    const bound = scoping === 'none' ? 'M' : 'gm()'
+                    this.helper('GB', ['scchart GB<M is int> {', '  output int gb = 0, gq = 0', ...method, '  region GBR {', '    initial state GBs0', `    if gb < ${bound} + ${r.pick([2, 5])} do gb += M go to GBs0`,
                         '    if gb > 20 go to GBs1', '    state GBs1', '    do gb = 0 go to GBs0', '  }',
                         '  region GBQ {', '    initial state GBq0', '    if gb > 3 do gq += 1 go to GBq0', '  }', '}'].join('\n'))
                 } else {
@@ -840,7 +847,8 @@ function reincarnationChart(r: Rng, index: number): string {
  * assigned to arrays; sequences with `;`; `dataflow once` in a state entered late; schedules on equations and on
  * regions against a transition's scheduled write; an explicit binding; a transition that writes an instance's input.
  * Now and then what KIELER rejects: an instance shared by a classic and an OO region, a schedule clause the classic
- * translation loses, a positional binding too many.
+ * translation loses, a positional binding too many. A third region now and then: an array or an instance's array port
+ * indexed by an instance's output or a call, a `dataflow for` region, a vector after a call equation.
  */
 function dataflowObjectsChart(r: Rng, index: number): string {
     const lines = [`scchart F${index} {`, '  input bool a, b, c, d', '  input int n', '  output int x = 0, y = 0, z = 0', '  output int o1 = 0, o2 = 0, o3 = 0, o4 = 0', '  output int arr[3] = {0, 0, 0}']
@@ -930,7 +938,28 @@ function dataflowObjectsChart(r: Rng, index: number): string {
     } else control.push(`    if ${trigger()} do ${effect()} go to A`)
     control.push('  }')
     const regions = r.chance(0.5) ? [...first, ...second, ...control] : [...control, ...first, ...second]
-    lines.push(...regions, '}')
+    // Forms two reviews found untested (drawn last, so the charts of earlier seeds only gain a region): a port or
+    // an array indexed by an instance's output or a call, in a member's index too (the classic translation makes one
+    // variable of an array port and drops the index; a call nested in an assigned member's index is rejected); a
+    // dataflow for-region with or without its counter in an equation; a vector after a call equation.
+    const third: string[] = []
+    const form = r.pick(['none', 'none', 'index', 'index', 'for', 'vector'])
+    if (form !== 'none') lines.splice(5, 0, '  output int o5 = 0')
+    if (form === 'index') {
+        children.push(`scchart C${index} {\n  input int v[2]\n  output int w = 0\n  ${r.chance(0.25) ? 'initial state CA do w = v[1] go to CA' : 'initial state CA do w += 1 go to CA'}\n}`)
+        lines.splice(6, 0, `  ref C${index} cell`, '  int ia[2] = {0, 1}')
+        // (Every index stays inside its array: `ia` only ever holds 0 and 1, the inputs are not negative.)
+        const index1 = r.pick(['n % 2', 'cell.w % 2', 'twice(n) % 2', 'twice(1) - 1', 'ia[n % 2]', 'ia[twice(1) - 2]', 'k.get() % 2'])
+        const port = r.chance(0.65)
+        const target = port ? `cell.v[${index1}]` : `ia[${index1}]`
+        third.push('  dataflow D3 {', `    ${target} = ${port ? r.pick(['n', '7', 'twice(n)']) : r.pick(['0', '1', 'n % 2', 'twice(n) % 2'])}`,
+            `    o5 = ${r.pick(['cell.v[1]', 'cell.v[0] + cell.w', `ia[${r.pick(['1', 'cell.w % 2', 'twice(1) - 1'])}]`])}`, '  }')
+    } else if (form === 'for') {
+        third.push(`  dataflow D3 for i : 0 to ${r.pick([1, 2])} {`, `    ${r.pick(['o5 += 1', 'o5 = twice(n)', 'acc.add(1)', 'o5 = n + i', 'arr[i] = twice(n)', 'o5 = n'])}`, '  }')
+    } else if (form === 'vector') {
+        third.push('  dataflow D3 {', `    ${r.pick(['acc.add(1) = {a}', 'k.add(n) = {true, false}', 'twice(n) = {a}'])}`, `    o5 = ${r.pick(['acc.get()', 'k.get()', 'twice(n)'])}`, '  }')
+    }
+    lines.push(...regions, ...third, '}')
     return [lines.join('\n'), ...children].join('\n\n') + '\n'
 }
 

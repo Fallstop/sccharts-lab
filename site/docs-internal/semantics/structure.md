@@ -573,6 +573,31 @@ and pops them when it leaves; a nested reference starts from a **copy of the who
   - a chart with such a variable that binds an inner reference **by name** crashes the compiler
     (`IllegalStateException: There is a matching valued object on the replacement stack for an implicitly bound
     variable ( N). ...`, `-implicit-crash`).
+- **Method bodies and code blocks** are walked scope by scope (`replaceValuedObjectReferencesInSclScope`): the
+  body pushes its parameters and its top-level declarations, an `if` branch, an `else` branch, a loop and a plain
+  `{ ... }` block push their own, all at once and for as long as the block is walked. So a local hides a bound name
+  **inside its block only**: after `for (int N = 0; N < 1; N++) { }` the name `N` is the argument again (`return N`
+  gives 5, not the counter's last value), and likewise after a `while`, a block, an `else` (`-method-scope-*`,
+  `binding-method-scope-*` for an input bound to a variable). Two things the walk does not do:
+  - it does **not visit the initial values of the declarations in a body** (`int x = N`): the name stays and points
+    at a parameter (or an input) that is gone, `The valued object reference points to a valued object (N) that is
+    not contained in the model!` (`-method-local-initial-value*`, `-code-effect-local-initial-value`,
+    `binding-method-local-initial-value`, also with a literal bound). The one exception is the initial value of a
+    `for` loop's own declaration, which it visits with the loop's condition and step
+    (`-method-for-initial-value`). A chart's own variable there is fine (`method-local-initial-value-own-variable`);
+  - it replaces the condition of an `if` **before** it pushes the branch's declarations, while KIELER's scoping
+    puts that condition inside the branch's scope: `if (N > 4) { int N = 1 ... }` names the local in the condition,
+    the stack still has the argument for the name, and with a value KIELER tries to give the local that value as
+    its initial value and casts the local's container, the `if`, to a chart scope: `ClassCastException: class
+    de.cau.cs.kieler.scl.impl.ConditionalImpl cannot be cast to class de.cau.cs.kieler.sccharts.Scope`
+    (`-method-scope-if-condition`; engine `kieler-crash`).
+  Source: `Reference.xtend:638-682`, `:771-787` (`replaceReferenceWithLiteral`: `oldDeclaration.eContainer.asScope`).
+  Implementation: the lowering numbers the SCL blocks (`CMethod.scope`, `CStmt.scope`/`elseScope`/`blocks`, a
+  local's `block`), `Replacer.method` pushes and pops block by block.
+- The exception KIELER throws for an assignment to a parameter that stands for a value names the value's class:
+  `IntValueImpl`, `BoolValueImpl`, `FloatValueImpl` (`-assigned-int`, `-assigned-bool`, `-assigned-float`; through
+  `extends`: `parity/probe-extends-generic-assigned-*`, `-binding-assigned-bool`). A string is no generic argument
+  (`-assigned-string`: a literal of type UNKNOWN).
 - `scchart(G).K` reads a constant of a generic chart, and works inside one (`-static-access-of`, `-static-access-in`);
   a constant whose value is the parameter stays behind (`-static-access-parameter`, S-70).
 - `state(S)` in a method works in the chart KIELER compiles and in instances declared with `ref`, **not** in a
@@ -650,6 +675,30 @@ class method, in `print`, and in the generic arguments of `state T is Inner<N>` 
   `ref W w` in the base is replaced, `state S is W` is **not** (`Invalid reference W!`, `-extends-chart-type`).
 - A chart that extends a generic base can be referenced, declared with `ref` and extended further like any other
   (`-extends-referenced`, `-decl-of-extending`).
+- **The parameter list of `extends`** (inputs and outputs of the base, S-66) through two levels: when the lower
+  level binds an **element** (`Mid extends Base(b[1], q)`) and the upper level binds that array (`Main extends
+  Mid(a, p)`), KIELER replaces the `b` of `b[1]` by the whole binding of `b` and the index is lost
+  (`replacement = bindingReplacements.get(replacement.valuedObject)`): `x` is the array `a`, and `y = x` is gcc's
+  `assignment to 'int' from 'int *' makes integer from pointer without a cast` (`parity/probe-extends-binding-index-
+  lost*`, `-extends-inner-binding-index-lost`; engine `array-as-value`, a check of any whole array used as a
+  number, `codegen/probe-array-as-value*`). One level keeps the index (`-extends-binding-index`), and so does an
+  element bound on the upper level and passed on by name (`-index-upper`).
+- **One argument too many** (`extends Base(2, 4)` with one input, an argument for a base without inputs or
+  outputs, at the root, on an inner state, in the base of a base, in a referenced chart): the binding has no
+  target and the Inheritance processor asks it for one, a `NullPointerException` (`... because the return value of
+  "...Binding.getTargetValuedObject()" is null` for a literal, `... because "valuedObject" is null` for a
+  variable; `parity/probe-extends-binding-surplus-*`, `-extends-inner-binding-surplus`; engine `kieler-crash`). One
+  too few is the crash of S-66.
+- **Cycles.** Charts that extend each other are the validator's `Inconsistent inheritance hierarchy! Cycle
+  including base state: B` on every reference of the cycle, with or without bindings and generic arguments, also
+  when the simulated chart uses none of them. With bindings the validator's own binding check never comes back
+  (`Error executing EValidator` at 1:1; official KIELER then does not answer the compilation at all, the lab server
+  stops with `The compiler ran out of stack space during Reference Expansion`). The name clash check asks every
+  base for its visible inherited declarations as soon as it has found a clash, and overflows on a cycle the same
+  way, so a clash through the cycle (an inner state that extends one of the charts) is not reported.
+  `parity/probe-extends-cycle-*` (11); cycles of references (`is`, `ref`) are `Recursive reference: ...`
+  (`parity/probe-reference-cycle-*`). The engine reports `inheritance-cycle` / `recursive-reference` for all of
+  them (it used to overflow its own stack on a cycle with bindings).
 - Generic charts of an imported file work like those of the same file (S-20; `-import`: a value parameter, a chart
   type parameter and a generic base from one imported library; `-import-wrong`: the binding error across files).
 
@@ -796,7 +845,7 @@ updates of the same variable in region order (`32`: regions First, R (3 to 1), L
 | assigning the counter (`i = 5`) | `Cannot replace left hand side of assignment by a value. (Trying to replace ... i by ... (value: 1) in ... i = 5)` |
 | `for i : A` with `A[0]` | `Error executing EValidator` (probe) |
 | `for i : -1 to 1` | parse error `no viable alternative at input '-'` (probe) |
-| `dataflow for i : ...` | `The valued object reference points to a valued object (i) that is not contained in the model!` |
+| `dataflow for i : ...` whose counter is still named after the translation | `The valued object reference points to a valued object (i) that is not contained in the model!` once per use, then `References objects are not contained in the resource!` (below) |
 
 A declaration at the top of a for-region is a region declaration: it moves to the parent state (H-4 in
 `concurrency.md`), so all copies share **one** variable. With an initial value that does not use the counter
@@ -821,6 +870,17 @@ region is not determinable. The array cardinalities of you array must be an int 
 ---
 
 ## 5. Dataflow
+
+**`dataflow for`.** KIELER's Dataflow processor ignores the loop: it turns the region into control flow once,
+without copying it, and removes the region with its counter. So the equations run **once per tick**, whatever the
+range says (`dataflow for i : 0 to 1 { add() }` calls `add()` once in every tick), and the range itself is never
+looked at: the validator's range check is for control-flow regions (`checkForRegion(ControlflowRegion)`), so a
+constant as the end, or a variable that is no array as the range, is accepted there. The chart is rejected only
+when something still names the counter afterwards (an equation's expression or index, a call's argument, the
+expression after a call's `=`, the initial value of a declaration of the region): one message per use. A use that
+the translation drops on the way does not count: the index of an instance's port in the classic translation
+(S-33), a call removed with the vector after it (S-33a). Probes `dataflow/probe-dataflow-for-*` (16: 11 accepted,
+5 rejected); the fuzz profile `dataflowObjects` draws the form.
 
 ### S-25 A dataflow region recomputes all its equations in every tick
 
@@ -1176,7 +1236,9 @@ the helper should simply be the target's.
 | two equations for one variable that are both absolute writes with different right-hand sides (`X = I`, `X = I + 1`), or relative writes whose operators do not commute (`X = X + I` with `X += 2`, `59-err-dataflow-update-conflict`) | `Can't schedule from _g2 to _g6`, `Can't schedule from _g6 to _g2`, `The SCG is NOT asc-schedulable!`, `Circular dependency prevents scheduling this tick.` (+ warnings `Potential instantaneous loop.`) |
 | an instantaneous cycle (`X = Y + I; Y = X`) | the same four errors |
 | a scalar assigned to an instance (`g = X`) | `You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar.` |
-| `dataflow for` | see S-24 |
+| `dataflow for` whose counter is used | see S-24 |
+| a chart that indexes its own array port, wired in a classic region | gcc: `subscripted value is neither array nor pointer nor vector` (S-33) |
+| a vector after the call of an extern function (`f(1) = {true}`) | `java.lang.NullPointerException: Cannot invoke "...DeclarationScope.getDeclarations()" because the return value of "...asDeclarationScope(...)" is null` (S-33a) |
 | `false -> (level > 3)` and similar mixed operands | see S-30a |
 | `dataflow once` in a state with a self-loop; `join to` from a dataflow state into a state with an entry action | see S-32 |
 | `g(X, Y).O` (call syntax on an instance) | parse error `mismatched input '.' expecting '}'` (probe) |
@@ -1260,6 +1322,18 @@ never set keep their default (0/false). Each instance becomes a concurrent regio
 - An array of instances (`ref C gs[2]`) is one instance to the classic translation: `gs[0].a` and `gs[1].a` both
   write the one local `__df_gs_a`, a conflict (`-instance-array-classic`, rejected). It works in a region that calls
   a method (S-33a).
+- **Every index at every level counts for finding the instances, and a port's index is dropped.** The instances
+  of a region are those named anywhere in an equation (`allAssignmentReferences`: the references with everything
+  they contain), so `c.a[ix.n] = 7` makes `ix` an instance although it is named in an index only. The replacement
+  then puts the local in place of `c` and removes the member after it (`reference.valuedObject = replacement;
+  reference.subReference = null`), and the local is a new valued object with the port's name and **no array size**
+  (`createValuedObject => [name = ...]`): an array port of an instance is ONE variable, `c.a[1]`, `c.a[0]` and
+  `c.a[i / 0]` are all `__df_c_a`, and the index is never evaluated (no index error, no division by zero; an
+  instance's output named only there is read nowhere, the instance runs all the same). A tuple sets the port as a
+  single value (`c = {7}`). The referenced chart is bound to that single variable: if it indexes the port itself
+  (`s = a[1]`, `b[1] = 4`) gcc rejects the subscript, and an array output with a vector as its initial value is
+  `expected expression before '{' token`; a chart that only passes the array on, or never names it, is fine.
+  Probes `dataflow/probe-dataflow-index-*`, `-array-port-*` (20). Source: `Dataflow.xtend:340-348, 400-411, 513-522`.
 - What this section describes is KIELER's **classic** translation, used for a region in which no equation calls a
   method. Otherwise: S-33a.
 - Teaching: instances are like logic gates on a schematic: wire their inputs, read their outputs.
@@ -1268,9 +1342,9 @@ never set keep their default (0/false). Each instance becomes a concurrent regio
 
 ### S-33a A dataflow region that calls a method: instances stay objects (KIELER's "OO" translation)
 
-As soon as anything inside a dataflow region calls a method (in an equation, an index, a call's argument, a
-condition, the initial value of a declaration of the region), KIELER compiles **that region** differently
-(`processDataflowRegionOO`; decided per region):
+As soon as anything inside a dataflow region calls a method (in an equation, an index at any level, also the index
+of a target's member as in `c.a[ix()] = 7`, a call's argument, a condition, the initial value of a declaration of the
+region), KIELER compiles **that region** differently (`processDataflowRegionOO`; decided per region):
 
 - The region becomes one state whose **immediate during actions** are the equations in written order (entry
   actions for `dataflow once`, whose state is not final: a `join to` on the enclosing state never fires). Each
@@ -1317,7 +1391,17 @@ condition, the initial value of a declaration of the region), KIELER compiles **
   `Mid1.Two1.a` with the instance `Mid1.t`; KIELER numbers them in the order it finishes them (an inner instance
   before the one around it). The inherited inputs and outputs of an instance of an extending chart are still listed
   as inputs and outputs there, and come first among the object's members.
-- A `dataflow for` region that calls a method is rejected like a classic one (S-24).
+- **A vector after a call's `=`** (`add() = {true}`): the tuple handling, which both translations run on every
+  equation whose expression is a vector, takes the call's first name for its target, since the call is its own
+  reference. A method is neither a referenced chart nor an array, so nothing is made of it, and the equation is
+  removed with the vector: **the call never runs** (`o` stays 0), whatever the vector holds, while the equations
+  around it (and a `;` sequence through it) go on as written. When the first name is a chart instance
+  (`t.poke() = {3, 4}`), the vector sets the instance's inputs in order as for `t = {3, 4}` (`_` skips one) and
+  the call is still dropped. When it is an extern function, KIELER asks the function's declaration for a chart's
+  declarations and throws a NullPointerException. Probes `dataflow/probe-dataflow-call-vector-*` (9).
+  Source: `Dataflow.xtend:181-228` (`eq.value.reference.valuedObject`, `removeList += eq.value`).
+- A `dataflow for` region runs once per tick in this translation too and is rejected only when its counter is still
+  named afterwards (S-24).
 - In tick 1, a `dataflow once` region of this kind is a straight sequence of entry actions and so subject to B-34
   (KIELER runs the equations that read no input first).
 
@@ -1747,6 +1831,20 @@ accepted (probe, `--system priority`).
   asc-schedulable!`), while the same loop updating another variable is accepted (probes
   `tests/engine/kieler/structure/probe-method-inner-update-conflict`, `-other-variable`; engine code
   `update-conflict`).
+- **A method called in the index of an assigned member is found only as the whole index and by its name alone.**
+  When KIELER builds the SCG it converts an assignment's own indices and its expression properly, but copies the
+  indices of the target's **members** as they are and only redirects an index that is itself a plain reference to
+  the SCG's variables (`SCGTransformation.xtend:590-597`: `ref.indices += sccSub.indices.map[copy]`, then
+  `ref.indices.filter(ValuedObjectReference)...`). Anything deeper still names the chart's objects, so the method
+  inliner does not know a call there: it neither copies the method into place nor keeps it, the method is removed
+  as unused, and gcc finds no such function (`implicit declaration of function 'ix'`; the statement is also
+  emitted twice). So `c.a[ix()] = 7` works (also for a method that stays a function, and at two levels,
+  `k.l.a[ix()]`), while `c.a[ix() + 0] = 7`, `c.a[arr[ix()]] = 7` and `c.a[g.one()] = 7` (a method reached
+  through an instance) are rejected, in a transition's effect as in a dataflow region, and inside a chart used
+  as an instance even the plain `k.a[one()] = 7` (the method is the instance's class's there). On the right-hand
+  side, in the index of a plain array and in the index of the instance itself (`ks[ix() + 0].a = 7`) every form
+  works. Probes `structure/probe-method-member-index-*`, `-method-index-*` (17: 9 rejected); engine
+  `method-in-member-index`. Found while fixing the dataflow pass's own walk over member indices.
 - **A class's method that stays a function reads the class's members through its own `self` parameter**
   (`MethodProcessor` adds it; `SCGMethodExtensions` `ANNOTATION_METHOD_REQUIRES_SELF`). To the dependency analysis
   `self.v` of one method is a variable of its own: it is the same for every instance the method is called on,
