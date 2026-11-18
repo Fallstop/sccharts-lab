@@ -134,7 +134,8 @@ The structure passes (structure.md) are KIELER's processors too, so their quirks
   generic arguments are pushed, every scope pushes its own declarations as themselves while it is walked, nested
   references are expanded on the way with a copy of the stack. A chart's generic parameters are variables of no
   scope (`root.ext.generics`) until then; type parameters are replaced first (`replaceGenericTypes`). What the walk
-  does not visit (a for-region range, class members, `print`, the generic arguments of `is C<N>`) is left pointing
+  does not visit (a for-region range, class members, `print`, the initial value of a method's local variable, the
+  generic arguments of `is C<N>`) is left pointing
   at a parameter or a removed input, and the pass's `validate` rejects it as KIELER's does. `extends Base<3>(i, p)`
   is bound in passes/inheritance.ts (`bindInherited`), which replaces every use, and an inner state that extends a
   chart goes through the same code; `region Q is R` is a copy bound like a referenced chart (`expandRegion`).
@@ -173,8 +174,12 @@ The structure passes (structure.md) are KIELER's processors too, so their quirks
   a chart used as a class is a class by then), in the Methods processor's bodies (structure/methods.ts bodyProblems)
   and on the accesses of the dependency analysis (deps.ts scheduleCasts).
 - **Charts used as classes** (passes/reference.ts redirectMembers, structure.md S-65): `ref C c` without bindings
-  expands an instance of C; `c.x` and `c.m()` in the declaring chart mean the instance's field and method; an
-  instance without fields is `{}` in the pool. Inheritance (passes/inheritance.ts) renames inherited private and
+  expands an instance of C; `c.x` and `c.m()` in the declaring chart mean the instance's field and method. An array
+  of instances is expanded once per element (structure/instanceArray.ts), a vector bound to a scalar constant input
+  of such an array is spread over the elements (structure/spread.ts, S-18b). Which objects are in the pool, `{}` and
+  `[]` included, is one rule for the simulator, the C generator and the traces (structure/poolShape.ts, S-60); the
+  classes are named by a port of KIELER's cache of unique names (structure/classNames.ts, S-65a); how KIELER
+  initialises class objects, and where it does not or cannot, is structure/classInit.ts (S-60a). Inheritance (passes/inheritance.ts) renames inherited private and
   protected fields `<Base>_<field>` and makes an override replace the base method in the base's own bodies, except
   when the override calls `super` (KIELER's defect, S-66).
 - **Static and global** (static.ts): moved to the root, statics under KIELER's hierarchical name (in the pool).
@@ -338,7 +343,7 @@ KIELER recording in `tests/engine/kieler/` (part of the conformance run, area `k
 | `tracker.ts`, `describe.ts` | source-level configuration, plain-English tick descriptions |
 | `describeStructure.ts` | descriptions of instances, for-region copies, clocks, periods and dataflow |
 | `preemptionLog.ts`, `describePreemption.ts` | the preemption passes' log events and notes (history, deferred entries, weak suspend, suspended states) and describeTick's sentences for aborts, count delays and suspension |
-| `structure/` | the structure passes' helpers: instances (`instance.ts`), deep copies (`copy.ts`), rewriting every expression (`rewrite.ts`), the tracker's view (`track.ts`), `->`/`fby`/`sfby` helpers (`delays.ts`), methods (`methods.ts`: inlining and running), KIELER's replacement stack and the walk that binds by name (`replacements.ts`), arrays of chart instances (`instanceArray.ts`) |
+| `structure/` | the structure passes' helpers: instances (`instance.ts`), deep copies (`copy.ts`), rewriting every expression (`rewrite.ts`), the tracker's view (`track.ts`), `->`/`fby`/`sfby` helpers (`delays.ts`), methods (`methods.ts`: inlining and running), KIELER's replacement stack and the walk that binds by name (`replacements.ts`), arrays of chart instances (`instanceArray.ts`), vectors spread over them (`spread.ts`), the class objects of the data pool (`poolShape.ts`), KIELER's unique class names (`classNames.ts`), the initialisation of class objects (`classInit.ts`) |
 | `STATUS.md` | what works now |
 | `tests/engine/kieler/` | probe charts for the KIELER defects above, with recordings |
 | `../../../tools/fuzz/` | the differential fuzzer (generator, runner, reducer) |

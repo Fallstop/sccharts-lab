@@ -293,7 +293,10 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   parameters and inheritance (structure.md S-73 .. S-76, S-66): `unbound-generic` (a generic chart first in the
   file), `unbound-reference` (a parameter or bound input where KIELER does not replace it), `generic-type-unbound`,
   `generic-argument` (on `extends`), `generic-arguments-conflict`, `generic-method-type`, `generic-pre`,
-  `generic-pure-type`, `bound-const-written`, `state-access-copy`.
+  `generic-pure-type`, `bound-const-written`, `state-access-copy`; chart instances and class objects (structure.md
+  S-18b, S-60a): `spread-binding` (a vector spread over an array of instances that KIELER refuses: its size, a
+  variable in it, its range), `binding-vector` (a vector bound to a single constant: gcc's error where it is read),
+  `empty-class-init` (a class whose `_init` has no statement: gcc's `implicit declaration`).
 - **The guide's notes**: `unsupported` (info: the simulator cannot run it), `kieler-quirk` (info or warning),
   `kieler-bug` (warning), `kieler-divergence` (warning), `kieler-loop-warning` (info), `internal` (error: an engine
   bug).
@@ -495,7 +498,8 @@ parts of KIELER's Reference processor. After the merge there is one of each (pas
   expanded once per element, so every element's states have ids of their own; the size may be a constant
   (`reference-array-size` otherwise).
 - **One class naming** (`classOf`, `CVar.className`, `CMethod.cls`; `@sccharts-lab/trace` reads it), with the rule
-  for instances declared together read from the lowered declaration, generic arguments of a variable included.
+  for instances declared together read from the lowered declaration, generic arguments of a variable included
+  (since the reviews below: named by a port of KIELER's cache of unique names, structure/classNames.ts).
 - **Where the two had disagreed**: an element of an array of instances in a dataflow region. KIELER wires it in a
   region that calls a method, and its C code does not compile in one that calls none (`dataflow-instance-array`,
   reported for the classic translation now).
@@ -520,12 +524,68 @@ found, none of it special to generics, all fixed:
   every schedule of its chart (`CVar.scheduleDepth`) and passes/contracts.ts decides (the section on written
   schedules above).
 - **An instance without fields** is an empty object in the pool only while one of its methods stays a C function
-  and is called (S-60; the engine showed `"b": {}` for every such instance).
+  and is called (S-60; the engine showed `"b": {}` for every such instance). That is the rule at the top of the
+  chart; the whole rule is in the next section.
 - **A member of a generic type** (`input primitive T a`) is found through the instance (`g.a` was an unknown
   member), crashes KIELER's classic dataflow translation (`kieler-crash`), and cannot be assigned by an equation of
   the generic chart (`dataflow-scalar-to-reference`).
 - **A lost port** says why (`dataflow-instance-port`: bound in the declaration, bound around the instance, or
   declared again inside).
+
+## Chart instances, their arrays, the data pool and the trace columns (after two reviews)
+
+Two independent reviews (of the dataflow and of the generics work, before the two were merged) ran their own charts
+through official KIELER and found fourteen disagreements about chart instances (`ref C g`). All are fixed, each
+with the class of bug behind it, and each rule is KIELER's own, read from its processors and confirmed with the
+compiler: 184 probes recorded with the lab server (148 accepted and agreeing tick by tick, 36 rejected by both; the
+same verdicts and values with the official jar), all through `pnpm cgen:check` and, for the trace columns,
+`tests/trace/engine-traces.test.ts`; `tests/engine/instances.test.ts` pins the API around them. Before that the
+branch of review fixes for the written schedules was merged (one mechanism per feature: the section on written
+schedules above).
+
+- **Instances declared together and dataflow** (S-65): using one instance in a dataflow region that calls a method
+  made only that instance keep its ports. KIELER's mark is on the declaration: every instance declared with it
+  keeps them, and when one has arguments only the first variable does, whichever the region uses
+  (passes/dataflow.ts; `structure/probe-instance-dataflow-*`).
+- **Initial values in arrays of instances** (S-60a): an initial value reads its own element's fields and methods
+  (the simulator read the whole array, and the generated C did not compile for an array in an inner state).
+  KIELER initialises a class object in an `_init` method, per element, and never for an array of one element or
+  none: such members start at 0 whatever they declare and are not reset when their state is entered again, for
+  class objects and chart instances alike (structure/classInit.ts `neverInitialised`, structure/instanceArray.ts;
+  `probe-instance-array-init-*`, `-array-of-one-*`, `probe-class-array-of-one-*`).
+- **Vectors spread over an array of instances** (S-18b, new: it was `unsupported`): `ref Cell c[2]({3, 8})` with a
+  scalar `input const`. A port of KIELER's handling (structure/spread.ts): a field assigned on entry when the class
+  names the constant, each element's value in its copy of the regions otherwise, with KIELER's errors
+  (`spread-binding`) and gcc's for a vector that is not spread (`binding-vector`). Under it, an `input const`
+  without a value now runs at all: it is what a reference binds to it, and an ordinary input of the simulated chart
+  (`probe-instance-spread-*`, `probe-input-const-*`); a class inside the chart that names the constant gets KIELER's
+  copy of it (`Cell1_k`, `probe-instance-spread-inner-class*`).
+- **The class objects of the pool** (S-60): one rule in one place, structure/poolShape.ts, read by the simulator
+  (exec.ts), the C generator (codegen/layout.ts, `GeneratedC.poolObjects`) and the traces. A chart that declares
+  nothing has no class; at the top an object needs a field, a called C function or an object inside; inside another
+  object it is there even when empty; arrays are arrays of objects, `[]` without elements (the engine dropped that
+  array and its class from the pool and the interface, and showed a scalar `{}` for an array of fieldless
+  instances). An array without elements still gets KIELER's two copies of its regions; where they name a field the
+  engine says `unsupported`, because KIELER's code then writes behind the empty array
+  (`probe-instance-pool-*`, `probe-class-pool-*`, `probe-instance-array-zero*`).
+- **Class names** (S-65a): the classes KIELER makes of `ref` declarations and the ones it moves to the root are
+  named by one port of its cache of unique names (structure/classNames.ts), seeded with every name of the file, so
+  a class, variable, state or annotation called `Cell1` moves the instance's class on, and instances declared
+  together in an inner state are one class there too (`@sccharts-lab/trace` had a cache of its own for the second
+  half, keyed by instance; `probe-instance-class-name-*`).
+- **Fields starting with an underscore** are in `traceableVariables` and `SimTickResult.trace` (a field the chart
+  declares is told from a helper by a tag, not by its name; `probe-instance-underscore-field*`).
+- **Class objects and chart instances inside the elements of an array of instances** work (a first-tick crash and
+  an instance that lost its owner: both fixed by the merge's one expansion of arrays; `probe-instance-array-class-
+  field`, `-array-nested-instance`).
+- **Found on the way**: a class whose `_init` has no statement is rejected as gcc rejects KIELER's code
+  (`empty-class-init`, S-60a; 28 probes `probe-class-init-*`, and `schedules/probe-schedule-ref-three-refs-empty`
+  left the expected failures); a class or struct object of a chart instance is reached from outside (`c.q.w`,
+  `c.q.get()`: the front end did not know the member; `probe-instance-object-*`); a variable of a host type is not
+  in the pool or the interface (`probe-*-pool-host-*`); a bound input or generic parameter in the initial value of a method's local variable
+  is not replaced (`unbound-reference`; structure/replacements.ts); the front end reports the binding error of a
+  declaration that KIELER checks variable by variable at the variable (parser/validate.ts).
+- **Fuzz**: the profile `dataflowObjects` makes these forms now (tools/fuzz/README.md); campaign 22 below.
 
 ## Final polish (engine-5)
 

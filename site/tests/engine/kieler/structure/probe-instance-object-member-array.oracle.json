@@ -1,0 +1,103 @@
+{
+  "hash": "d1fa2120581384210f15af03f787e158350f18d0",
+  "chart": "tests/engine/kieler/structure/probe-instance-object-member-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.In.w": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.q": {
+      "type": "class",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": [
+          {
+            "q": {
+              "w": 4
+            }
+          },
+          {
+            "q": {
+              "w": 4
+            }
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "c": [
+          {
+            "q": {
+              "w": 9
+            }
+          },
+          {
+            "q": {
+              "w": 4
+            }
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "c": [
+          {
+            "q": {
+              "w": 9
+            }
+          },
+          {
+            "q": {
+              "w": 4
+            }
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

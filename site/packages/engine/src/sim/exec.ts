@@ -271,13 +271,14 @@ export class ExecutableChart {
             return list.length ? list : undefined
         }
 
-        // KIELER's data pool: the root's declarations, without constants and generated helpers.
+        // KIELER's data pool: the root's declarations, without constants, generated helpers and variables of a host
+        // type (which its simulation cannot write as JSON).
         for (const v of compiled.core.decls) {
             if (v.member && !v.const && !v.declKind) {
-                if (!v.tags.has('#const-member')) this.pool.push({ name: v.member.name, v, type: ctypeOf(v.type), path: memberPath(v) })
+                if (!v.tags.has('#const-member') && v.type !== 'host') this.pool.push({ name: v.member.name, v, type: ctypeOf(v.type), path: memberPath(v) })
                 continue
             }
-            if (v.const || v.declKind || v.name.startsWith('_')) continue
+            if (v.const || v.declKind || v.name.startsWith('_') || v.type === 'host') continue
             this.pool.push({ name: v.name, v, type: ctypeOf(v.type) })
             this.knownNames.add(v.name)
             if (v.input && !v.generated) this.inputs.push({ v, name: v.name, type: ctypeOf(v.type) })

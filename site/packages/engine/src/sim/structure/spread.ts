@@ -9,10 +9,12 @@
 //   and actions read the field. Until that entry action runs the field is 0, also in the initial values that read it.
 // - nothing in the class names it: the field is removed, and the copy of the chart's regions and actions that KIELER
 //   makes for element i has the i-th value in its place.
-// A class inside the chart that names the constant gets a field of its own (`<Class>_<name>`): not simulated.
+// - a class inside the chart names it (a method or an initial value of `class In { ... } q`): that class gets a field
+//   of its own, `<the instance's class>_<name>` (`Cell1_k`), assigned on entry too. KIELER only does that for a
+//   single object of the class.
 
 import type { Diagnostic } from '../../types'
-import { copyExpr, type CExpr, type CState, type CVar } from '../model'
+import { copyExpr, CVar, type CExpr, type CState } from '../model'
 import { foldConstants } from '../fold'
 import { rewriteScope, rewriteVar } from './rewrite'
 
@@ -76,22 +78,44 @@ function names(vars: CVar[], formal: CVar): boolean {
 
 /**
  * Applies the spread bindings of the copy `inst` made for element `x`. Returns the fields that stay with the class
- * and their values (the caller assigns them on entry, once the members are arrays).
+ * and their values (the caller assigns them on entry, once the members are arrays). `cls`: the class KIELER makes of
+ * the instance; `objects`: how many objects the declaration of a class object declares.
  */
-export function applySpreads(inst: CState, spreads: SpreadBinding[], x: number, size: number, instance: CVar, report: (d: Diagnostic) => void): { field: CVar; values: CExpr[] }[] {
+export function applySpreads(
+    inst: CState, spreads: SpreadBinding[], x: number, size: number, instance: CVar, cls: string, objects: (v: CVar) => number, report: (d: Diagnostic) => void,
+): { field: CVar; values: CExpr[] }[] {
     const kept: { field: CVar; values: CExpr[] }[] = []
     for (const s of spreads) {
         const values = spreadValues(s, size, instance, report)
         if (!values) continue
         const f = s.formal
-        // (A code block of a transition or action is a method here and part of the regions in KIELER.)
-        if (names(inst.decls.filter(l => l.member), f)) {
-            report({
-                severity: 'info', code: 'unsupported', span: s.vector.span ?? instance.span, related: instance.decl ? [instance.decl] : undefined,
-                message: `The guide's simulator cannot give every instance of \`${instance.name}\` its own \`${f.name}\` inside a class of the chart yet`,
-                hint: `A method or initial value of a class inside the chart names \`${f.name}\`, for which KIELER makes a copy of the constant in that class. The official KIELER tools can run this chart. Reading \`${f.name}\` in a method of the chart itself works here.`,
-            })
+        // The classes inside the chart whose methods or initial values name the constant: a copy of it in each.
+        const users = inst.decls.filter(l => l.member && names([l], f))
+        for (const owner of new Set(users.map(l => l.member!.of))) {
+            const around: CVar[] = []
+            for (let c: CVar | undefined = owner; c; c = c.member?.of) around.push(c)
+            if (around.some(c => c.dims.length > 0 || objects(c) > 1)) {
+                report({
+                    severity: 'error', code: 'spread-binding', span: s.vector.span ?? instance.span, related: owner.decl ? [owner.decl] : undefined,
+                    message: `\`${f.name}\` is spread over the instances of \`${instance.name}\` and named in the class of \`${owner.display ?? owner.name}\`, which has several objects: KIELER cannot compile that`,
+                    kieler: 'NOT YET SUPPORTED',
+                    hint: `KIELER copies the constant into a class inside the chart only when the class has a single object. Read \`${f.name}\` in a method of the chart itself and pass it on.`,
+                })
+                break
+            }
+            const name = `${cls}_${f.name}`
+            const mirror = new CVar(`${owner.name}.${name}`, f.type)
+            mirror.member = { of: owner, name }
+            mirror.display = `${owner.display ?? owner.name}.${name}`
+            mirror.scope = f.scope
+            mirror.span = f.span
+            const mine = users.filter(l => l.member!.of === owner)
+            const last = Math.max(...inst.decls.map((l, i) => (l.member?.of === owner ? i : -1)))
+            inst.decls.splice(last + 1, 0, mirror)
+            for (const l of mine) rewriteVar(l, { read: r => (r.v === f ? { ...r, v: mirror } : undefined) })
+            kept.push({ field: mirror, values })
         }
+        // (A code block of a transition or action is a method here and part of the regions in KIELER.)
         if (names(inst.decls.filter(l => !l.member && !l.generated), f)) {
             kept.push({ field: f, values })
             continue

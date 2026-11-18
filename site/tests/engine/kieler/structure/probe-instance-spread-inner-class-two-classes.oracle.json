@@ -1,0 +1,139 @@
+{
+  "hash": "f9f402045f6a3eba75ca6975eb1569832e512638",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-inner-class-two-classes.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.In.Cell1_k": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.Two.Cell1_k": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.q": {
+      "type": "class",
+      "properties": []
+    },
+    "Cell1.t": {
+      "type": "class",
+      "properties": []
+    },
+    "Cell1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": [
+          {
+            "q": {
+              "Cell1_k": 3
+            },
+            "t": {
+              "Cell1_k": 3
+            },
+            "x": 0
+          },
+          {
+            "q": {
+              "Cell1_k": 8
+            },
+            "t": {
+              "Cell1_k": 8
+            },
+            "x": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 17,
+        "c": [
+          {
+            "q": {
+              "Cell1_k": 3
+            },
+            "t": {
+              "Cell1_k": 3
+            },
+            "x": 7
+          },
+          {
+            "q": {
+              "Cell1_k": 8
+            },
+            "t": {
+              "Cell1_k": 8
+            },
+            "x": 17
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 17,
+        "c": [
+          {
+            "q": {
+              "Cell1_k": 3
+            },
+            "t": {
+              "Cell1_k": 3
+            },
+            "x": 7
+          },
+          {
+            "q": {
+              "Cell1_k": 8
+            },
+            "t": {
+              "Cell1_k": 8
+            },
+            "x": 17
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

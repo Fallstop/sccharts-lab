@@ -1,0 +1,2 @@
+// A struct member with a host type is not in the pool.
+scchart Main { output int o struct T { host "int" h int w } t initial state A do o = 1 go to B state B }

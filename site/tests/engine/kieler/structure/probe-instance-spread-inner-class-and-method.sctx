@@ -1,0 +1,3 @@
+// A spread constant named by a method of the chart and by a class inside it: the chart's field and the class's copy.
+scchart Main { output int o ref Cell c[2]({3, 8}) initial state A do o = c[1].x + c[1].get() go to A }
+scchart Cell { input const int k int x method int get() { return k } class In { int get() { return k * 2 } } q region R { initial state B do x = q.get() go to B } }

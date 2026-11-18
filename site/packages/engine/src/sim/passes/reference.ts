@@ -693,15 +693,16 @@ export class Expansion {
                         // (A code block of the chart's own actions is no method of the class: KIELER moves it out with them.)
                         if (local.method && !local.member && !local.generated) local.classInstance = v
                     }
-                    const spread = applySpreads(inst, (inst.ext.spreads as SpreadBinding[] | undefined) ?? [], x, elements.length, v, d => { if (x === 0) this.ctx.report(d) })
+                    if (x === 0 && !this.muted) {
+                        const cls = this.classOf(v, scope, chart)
+                        v.className = cls.name
+                        v.classKey = cls.key
+                    }
+                    const spread = applySpreads(inst, (inst.ext.spreads as SpreadBinding[] | undefined) ?? [], x, elements.length, v, v.className ?? `${chart.name}1`,
+                        o => this.index?.vos.get(sourceId(o.decl ?? ''))?.decl?.valuedObjects.length ?? 1, d => { if (x === 0) this.ctx.report(d) })
                     if (x === 0) {
                         members = [...inst.decls]
-                        if (!this.muted) {
-                            const cls = this.classOf(v, scope, chart)
-                            v.className = cls.name
-                            v.classKey = cls.key
-                            for (const l of members) if (l.method) l.method = { ...l.method, cls: cls.key, instance: v }
-                        }
+                        if (!this.muted) for (const l of members) if (l.method) l.method = { ...l.method, cls: v.classKey, instance: v }
                         this.checkSignals(v, inst, chart)
                         this.redirectMembers(v, prefix, inst, root, sizes.length)
                     }
@@ -1001,7 +1002,16 @@ export class Expansion {
             // (Inside a referenced chart's copy the member's id carries that copy's prefix.)
             const id = r.sub.v.decl
             const m = (id ? byDecl.get(id) ?? byDecl.get(sourceId(id)) : undefined) ?? (r.sub.v.declKind === 'unresolved' ? named(r.sub.v.name, args) : undefined)
-            return m ? { ...r.sub, v: m, idx: [...r.idx, ...r.sub.idx] } : undefined
+            if (!m) return undefined
+            let out: CRef = { ...r.sub, v: m, idx: [...r.idx, ...r.sub.idx] }
+            // A class or struct object of the chart (`g.q.w`, `g.q.get()`): on to its member, a variable of its own.
+            while (out.sub && (out.v.declKind === 'class' || out.v.declKind === 'struct')) {
+                const next = out.sub.v.decl === undefined ? undefined : sourceId(out.sub.v.decl)
+                const inner = inst.decls.find(l => l.member?.of === out.v && l.decl !== undefined && sourceId(l.decl) === next)
+                if (!inner) break
+                out = { ...out.sub, v: inner, idx: [...out.idx, ...out.sub.idx] }
+            }
+            return out
         }
         // What is left without its member afterwards: a port that is a variable bound further out (instantiate).
         const lost: CRef[] = []
@@ -1017,8 +1027,12 @@ export class Expansion {
                 if (e.k !== 'call' || !e.target) return undefined
                 const t = member(e.target, e.args.length)
                 if (!t) return undefined
-                // A method of an element of an array of instances takes the element's indices as its first arguments.
-                if (dimensions && t.v.method) return { ...e, target: { ...t, idx: t.idx.slice(dimensions) }, name: t.v.name, args: [...t.idx.slice(0, dimensions), ...e.args] }
+                // A method of an element of an array of instances takes the element's indices as its first arguments
+                // (a method of a class object inside it: the indices of every array on the way).
+                if (t.v.method && (t.v.member ? t.idx.length : dimensions)) {
+                    const own = t.v.member ? t.idx.length : dimensions
+                    return { ...e, target: { ...t, idx: t.idx.slice(own) }, name: t.v.name, args: [...t.idx.slice(0, own), ...e.args] }
+                }
                 return { ...e, target: t, name: t.v.name }
             },
         })

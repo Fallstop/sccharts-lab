@@ -1,0 +1,78 @@
+{
+  "hash": "7ba50a233a7aac056bac57e00c0dc1451d825f7a",
+  "chart": "tests/engine/kieler/structure/probe-instance-struct-member.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.T.x": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.t": {
+      "type": "struct",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "t": {
+            "x": 6
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 6,
+        "c": {
+          "t": {
+            "x": 6
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 6,
+        "c": {
+          "t": {
+            "x": 6
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

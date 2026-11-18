@@ -975,8 +975,71 @@ function dataflowObjectsChart(r: Rng, index: number): string {
     } else control.push(`    if ${trigger()} do ${effect()} go to A`)
     control.push('  }')
     const regions = r.chance(0.5) ? [...first, ...second, ...control] : [...control, ...first, ...second]
-    lines.push(...regions, '}')
-    return [lines.join('\n'), ...children].join('\n\n') + '\n'
+    // (Drawn last, so that the charts of earlier campaigns keep the rest of their shape.)
+    const forms = instanceForms(r, index, counterRef.includes('k2'))
+    lines.push(...forms.decls, ...regions, ...forms.region, '}')
+    return [lines.join('\n'), ...children, ...forms.children].join('\n\n') + '\n'
+}
+
+/**
+ * What two reviews of the chart instances found the template never made: an array of instances whose fields start
+ * from sibling fields (of two, one or three elements, with a class object or an instance inside), a vector spread
+ * over the constant input of an array of instances (read by a method, a region, an initial value or a class inside
+ * the chart; now and then a vector KIELER refuses), instances without fields (a short method, a C function, called or not, also inside another
+ * instance, which KIELER cannot initialise when that one has no field either), the second instance of a declaration
+ * used outside the dataflow region, a class that has the name KIELER would give an instance's class, a field whose
+ * name starts with an underscore. A region RX reads them into `u`, one transition per form.
+ */
+function instanceForms(r: Rng, index: number, second: boolean): { decls: string[]; region: string[]; children: string[] } {
+    const decls: string[] = []
+    const children: string[] = []
+    const terms: string[] = []
+    if (r.chance(0.35)) {
+        const size = r.pick([2, 2, 2, 1, 3])
+        const inner = r.chance(0.3)
+        const leaf = !inner && r.chance(0.3)
+        children.push([`scchart QA${index} {`, `  int a = ${r.pick([4, 1])}`, `  int b = ${r.pick(['a + 2', 'a + 2', 'a * 2', 'get() + a'])}`,
+            ...(r.chance(0.15) ? ['  int _h = 1'] : []), ...(inner ? ['  class QI { int w = 3 } qi'] : []), ...(leaf ? [`  ref QL${index} leaf`] : []),
+            `  method int get() { return ${inner ? 'a + qi.w' : leaf ? 'a + leaf.x' : 'a'} }`,
+            ...(r.chance(0.5) ? [`  region QT { initial state QS do ${leaf ? 'leaf.x += 1' : 'a += 1'} go to QS }`] : []), '}'].join('\n'))
+        if (leaf) children.push(`scchart QL${index} { int x = 3 }`)
+        if (r.chance(0.2)) decls.push(`  class QA${index}1 { int a = 2 } clash`)
+        decls.push(`  ref QA${index} qa[${size}]`)
+        terms.push(r.pick([`qa[${size - 1}].get()`, `qa[${size - 1}].b`, 'qa[0].b + 1']))
+    }
+    if (r.chance(0.3)) {
+        const use = r.pick(['method', 'region', 'both', 'init', 'inner'])
+        children.push([`scchart QV${index} {`, '  input const int k', `  int x = ${use === 'init' ? 'k + 1' : '0'}`,
+            ...(use === 'method' || use === 'both' ? ['  method int get() { return k }'] : []),
+            ...(use === 'inner' ? ['  class QW { int w() { return k } } qw', '  method int get() { return qw.w() }'] : []),
+            ...(use === 'region' || use === 'both' ? ['  region VT { initial state VS do x = k go to VS }'] : []), '}'].join('\n'))
+        decls.push(`  ref QV${index} qv[2](${r.pick(['{3, 8}', '{3, 8}', '{3, 8}', '{1 + 2, 8}', '{0 to 2}', '{3, n}', '{3, 8, 9}'])})`)
+        terms.push(use === 'method' || use === 'inner' || (use === 'both' && r.chance(0.5)) ? 'qv[1].get()' : 'qv[1].x')
+    }
+    if (r.chance(0.35)) {
+        const kind = r.pick(['short', 'kept', 'both', 'none'])
+        children.push([`scchart QE${index} {`, ...(kind === 'short' || kind === 'both' ? ['  method int two() { return 2 }'] : []),
+            ...(kind === 'kept' || kind === 'both' ? ['  method int big() { int t = 0; for (int j = 0; j < 2; j++) { t += 1 } return t }'] : []),
+            '  region ET { initial state ES }', '}'].join('\n'))
+        const call = kind === 'none' ? undefined : kind === 'short' ? 'two()' : kind === 'kept' ? 'big()' : r.pick(['two()', 'big()'])
+        if (r.chance(0.3)) {
+            // Inside another instance, now and then one without a field of its own (KIELER's code does not compile then).
+            children.push([`scchart QM${index} {`, ...(r.chance(0.8) ? ['  int w = 5'] : []), `  ref QE${index} e`, ...(call ? [`  method int run() { return e.${call} }`] : []), '}'].join('\n'))
+            decls.push(`  ref QM${index} qm`)
+            if (call && r.chance(0.8)) terms.push('qm.run()')
+        } else {
+            const array = r.chance(0.3)
+            decls.push(`  ref QE${index} qe${array ? '[2]' : ''}`)
+            if (call && r.chance(0.7)) terms.push(`qe${array ? '[1]' : ''}.${call}`)
+        }
+    }
+    if (second && r.chance(0.5)) terms.push('k2.get()')
+    if (!terms.length) return { decls, region: [], children }
+    decls.push('  output int u = 0')
+    const region = ['  region RX {']
+    terms.forEach((t, i) => region.push(`    ${i ? '' : 'initial '}state X${i}`, `    do u ${i ? '+=' : '='} ${t} go to X${(i + 1) % terms.length}`))
+    region.push('  }')
+    return { decls, region, children }
 }
 
 export function generate(seed: number, profileName: string, index: number, ticks = 14): Job {

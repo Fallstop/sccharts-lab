@@ -1,0 +1,96 @@
+{
+  "hash": "b2b06cce2b60f50b020c6745c31539cd77036529",
+  "chart": "tests/engine/kieler/structure/probe-instance-object-array-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.In.w": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.q": {
+      "type": "class",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "q": [
+            {
+              "w": 4
+            },
+            {
+              "w": 4
+            }
+          ]
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 9,
+        "c": {
+          "q": [
+            {
+              "w": 4
+            },
+            {
+              "w": 4
+            }
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 9,
+        "c": {
+          "q": [
+            {
+              "w": 4
+            },
+            {
+              "w": 4
+            }
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

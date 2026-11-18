@@ -199,12 +199,15 @@ Inside the copy, every occurrence of a bound formal is replaced by its actual. C
 
 - **Where KIELER does not look.** The substitution walks declarations (sizes, initial values, method bodies,
   the arguments of `ref` declarations), actions, transitions, reference arguments and dataflow equations. It skips
-  the range of a for-region, the members of a class (initial values and methods), and the arguments of `print`
-  (and of host calls: expression types the processor "ignores"). An input or output named there keeps pointing at
+  the range of a for-region, the members of a class (initial values and methods), the arguments of `print`
+  (and of host calls: expression types the processor "ignores"), and the **initial value of a local variable of a
+  method body** (`int r = q`: the walk goes through a body's statements, and a declaration is none; `int r = 0; r =
+  q` and a `for` loop's own declaration are replaced). An input or output named there keeps pointing at
   the declaration that is removed afterwards: `The valued object reference points to a valued object (x) that is
   not contained in the model!` (rejected; engine code `unbound-reference`). Probes
-  `structure/probe-reference-interface-print`, `-interface-class-method`, `-interface-for-range`. The same holds for
-  generic parameters (S-74). Source: `processors/Reference.xtend:447-560` (the walk), `:814-818` (ignored
+  `structure/probe-reference-interface-print`, `-interface-class-method`, `-interface-for-range`,
+  `structure/probe-method-local-init-bound-input*`, `generics/probe-generic-method-local-init`. The same holds for
+  generic parameters (S-74). Source: `processors/Reference.xtend:447-560` (the walk), `:637-680` (method bodies), `:814-818` (ignored
   expression types), `:900-925` (`validate`).
 - Teaching: an instance works directly on the variables you pass it; nothing is copied in at the start or out
   at the end of a tick. Plain English: "inside the instance, its `beep` simply *is* your `speaker`."
@@ -458,6 +461,50 @@ that has the name of something bound further out **is** that outer variable:
   starts an instance's stack from a copy of the stack of the instance around it and walks the copy's root without
   pushing its declarations. An OO dataflow instance's port whose name is on that stack is removed
   (`instantiate`, KIELER's `containsKey`).
+
+### S-18b A vector bound to a constant input of an array of instances is spread
+
+`ref Cell c[2]({3, 8})` with `input const int k` in `Cell` gives the first instance 3 and the second 8. KIELER's
+Reference processor recognises exactly this form: an array of instances with **one** dimension, a **scalar**
+`input const`, a **vector** as the argument (by position, or `{3, 8} to k`; in a dataflow region that calls a
+method only the explicit form is applied at all). Such a binding is not substituted like the others. The constant
+becomes an ordinary public variable of the class KIELER makes of the chart (S-65), and then:
+
+- **Something in the class names it** (a method of the chart, a field's initial value): it stays a field
+  (`"c": [{"k": 3}, {"k": 8}]`), and an entry action of the declaring state assigns every element its value. The
+  chart's regions and actions read the field. Until that entry action runs the field is 0, so `int x = k + 1`
+  starts at 1 in every element (`probe-instance-spread-method`, `-initial-value`, `-initial-value-and-region`,
+  `-array-of-one`: the assignment also reaches an array of one instance, which nothing else initialises, S-60a).
+- **Nothing in the class names it** (only regions and actions do): the field is removed, and the copy of the
+  chart's regions and actions for element *i* has the *i*-th value in its place (`-region`, `-entry`, `-two`,
+  `-two-states`, `-bool`, `-generic`, `-inner-state`, `-two-arrays`, `-nested`).
+- **A class inside the chart names it** (a method or an initial value of `class In { ... } q`): KIELER gives that
+  class a field of its own, named after the instance's class, `<Class>_<name>` (`"q": {"Cell1_k": 3}`), assigned on
+  entry too; the chart's own field stays only if the chart's own methods or initial values name the constant as
+  well (`-inner-class*`). Only for a single object of the class: with two objects or an array of them KIELER stops
+  with `NOT YET SUPPORTED` (`-inner-class-two-objects`, `-array`; `-and-method`, `-two-deep`, `-initial-value`,
+  `-two-classes`, `-and-region` run).
+
+The values may be numbers, constants and expressions (`{Y, 8}`, `{1 + 2, 8}`); a range counts up to, not
+including, its end (`{0 to 3}` is 0, 1, 2: `-range`).
+
+| Chart | Message |
+| --- | --- |
+| another number of values than instances | `Cannot spread vector with different size than target array` (`-size`) |
+| a variable among the values | `Cannot bind non-constant variable to constant input (via spread vector)` (`-variable`) |
+| a range for a constant that is no int, or with other bounds than numbers | `Cannot spread vector range to non integer variable`, `End value of spread vector range must be a constant integer variable` (source) |
+| a vector for the constant of a single instance or of a two-dimensional array | not spread: gcc's `expected expression before '{' token` where the constant is read (`probe-instance-vector-to-constant*`) |
+| a vector for an ordinary scalar input of an array of instances | not spread: the same gcc error (`probe-instance-vector-to-input`) |
+
+An `input const` that a reference binds to one value is that value wherever the chart names it
+(`probe-input-const-literal-method`, `-region`, `-array`: a constant array bound to a vector, indexed in the
+chart). In the simulated chart itself it is an input like any other, in the pool and settable
+(`probe-input-const-root`, `-root-value`). In a dataflow region that calls a method, a constant input that
+nothing binds explicitly is a field that stays 0 (`probe-instance-constant-input-dataflow-*`).
+
+- Source: `processors/Reference.xtend:972-986` (detection), `1019-1176` (the field, its mirrors in inner classes,
+  the entry action), `1255-1280` (the value in each element's copy).
+- Engine: `sim/structure/spread.ts`, codes `spread-binding`, `binding-vector`.
 
 ### S-19 `state S calls C(...)` runs as a reference
 
@@ -2102,7 +2149,10 @@ tick.`, `The SCG is NOT asc-schedulable!`).
   its members, `"p": {"x": 1, "y": 5, "seen": false}`; a nested struct or inner class is a nested object
   (`"l": {"a": {"x": 3, "y": 0}, ...}`), an array member an array, an array of instances an array of objects
   (`"ps": [{"x": 1}, {"x": 2}]`). Private fields of a class are included. `const` members are left out
-  (`157-struct-const-member`; official 0.3.0 includes them, S-68).
+  (`157-struct-const-member`; official 0.3.0 includes them, S-68), and so is every variable of a **host type**
+  (`host "int" h`), at the top of the chart and as a member, in the pool and in the interface
+  (`probe-pool-host-variable`, `probe-class-pool-host-member`, `probe-struct-pool-host-member`,
+  `probe-instance-pool-host-field`).
 - The **interface** lists the instance with type `struct` or `class` and one entry per member type,
   `<Type>.<member>` (`Point.x`, type `int`, no properties; nested: `Line.Point.x`, `Line.a` of type `struct`).
 - An instance declared in a **nested state** is hidden from the pool, like the state's other locals
@@ -2111,15 +2161,72 @@ tick.`, `The SCG is NOT asc-schedulable!`).
 - Chart instances (S-65): `"c": {"counter": 2, "step": 1}` with the chart's fields, including private ones; a
   private or protected field inherited from a base chart appears as `<Base>_<field>` (`St134Base_secret`, S-66);
   the interface names the type entries after the copied chart (`QR01Counter1.counter`; official
-  0.3.0: `QR01Counter.counter`). An instance without fields, of a class or of a chart, appears as `{}` while one of
-  its methods is still a C function (`131`), and not at all otherwise: KIELER's Methods processor removes a class
-  that is left without content once the short methods are copied into place and the ones nobody calls are dropped,
-  and a schedule is no content (`kieler/structure/probe-instance-pool-*`, `probe-reference-empty-instance-*`:
-  a kept method that is called, methods copied into place, never called, none, a schedule only).
+  0.3.0: `QR01Counter.counter`).
+- **Which objects are in the pool** is decided by what is left of the class. A chart instance (S-65) becomes a class
+  in KIELER's Reference processor, with the chart's declarations as its own, and a class **without any declaration**
+  is removed there, wherever it is: an instance of a chart that declares nothing (or only inputs and outputs that
+  are all bound) is not in the pool, alone, in an array or inside another instance
+  (`probe-instance-pool-array-none`, `-nested-none`, `-nested-only-nothing`, `-bound-output-only`). Much later
+  the Methods processor removes the methods it copied into place and the ones nobody calls, and then the classes left
+  without a declaration, but only at the **top of the chart**. So:
+  - at the top, an object is there while its class has something left: a field, a method that is still a C function
+    and is called, or an object inside (constants and schedules are gone by then). `{}` for an instance with only a
+    called C function, nothing for one whose methods are copied into place or never called, for a class with only
+    a constant, for an empty class (`131`, `probe-instance-pool-*`, `probe-reference-empty-instance-*`,
+    `probe-instance-pool-constant-only`, `probe-class-pool-nothing`, `-constant-only`; `-method-arguments`: with
+    bound arguments too);
+  - inside another object, every object whose class was not removed at the start is there, `{}` when it has no
+    fields: `"m": {"c": {}, "w": 5}` for an inner instance with only a method (called or not, copied into place or
+    not) or only a constant, and for an empty class inside a class (`probe-instance-pool-nested-*`,
+    `probe-class-pool-nested-*`);
+  - an array of objects follows the same rule and is an array of them: `"c": [{}, {}]`, `"m": {"c": [{}, {}]}`,
+    `[{}]` for an array of one (`probe-instance-pool-array-*`, `-array-of-one-*`, `-nested-array-*`,
+    `-array-nested-*`);
+  - an array **without elements** is `[]`, and its class is still in the interface (`"c": []`, `Cell1.v`:
+    `probe-instance-array-zero*`, `probe-class-array-zero`). KIELER's loop over the elements, from 0 to their number
+    minus one, counts down in Xtend, so it makes **two** copies of the chart's regions and actions for such an
+    array, both for element 0 (`-zero-two-copies`: a bound output grows by 2 a tick). Where they name a field,
+    they read and write behind the empty array, in the probes the counter of the taken transition
+    (`-zero-entry`, `-zero-region`; the engine reports `unsupported`).
+  The interface lists an instance inside a chart instance as a member of the outer class, with or without fields
+  (`Mid1.c` of type `class`).
 
 - Evidence: `106`, `107`, `112`, `113-class-fields-methods`, `126-chart-class`, `134-protected-field`.
 - Teaching: the simulator's variable table shows an instance as a small table of its members.
 - Implementation: report root-level instances as objects of their (non-const) members under the instance name.
+
+### S-60a How class objects are initialised, and when they are not
+
+KIELER's Initialization processor gives a class with a variable or an object inside a method `_init`: one
+assignment per variable that has an initial value (after the implicit initialisation every variable has one, except
+those whose name starts with `_`), in declaration order, and one call of the `_init` of every class object inside.
+The declaring scope's entry action calls it: once for a single object, once per element for an array. A struct is
+assigned from outside instead, member by member, two levels deep (S-59). The class of a chart instance (S-65) is a
+class like any other here. What follows from it:
+
+- **Initial values are per object and in order.** In an array of instances `int b = a + 2` reads the element's own
+  `a`, an initial value that calls a method of the chart runs it on the element, and a field that reads a sibling
+  declared after it reads 0 (`probe-instance-array-init-sibling*`, `-init-method`, `-init-sibling-declared-later`).
+- **An array of one object, or of none, is never initialised.** `createAllIndices` lists the elements' indices only
+  when there is more than one, so no `_init` is called: `class C { int x = 3 } c[1]` and `ref Box g[1]` start at
+  0, and so does everything inside (a class object inside the one instance; `[1][1]` is one element too, a
+  `const` size of 1 as well). In a state that is entered again such members keep their values. A class array
+  inside a class of several objects behaves the same (`probe-class-array-of-one-*`, `probe-instance-array-of-one-*`,
+  `-class-array-of-one-inside-init`, `-reentry` probes; `probe-struct-array-of-one-init`: a struct is not affected).
+- **An `_init` without a statement is called but never generated.** KIELER makes `_init` for every class with a
+  variable or an object inside, and its C code fails when there is nothing to put in it: `implicit declaration of
+  function 'Main_Mid1__init'` (two classes deep: `Main_Main_O_C__init`). That is a class whose only content is an
+  object of a class without variables (`ref Mid m` where `Mid` only declares an instance of a chart with methods),
+  an array of one object, or variables whose names start with `_` and have no value; the same inside a struct
+  member with such a name. It does not fail when the object itself is an array of one (its `_init` is never
+  called) or when a value is given (`int _h = 2`). A member of a host type has no value to set either (`class O {
+  host "int" h } x` fails the same way). In an inner state KIELER fails earlier (`Cannot serialize
+  simulation interface. Unsupported type null for variable _init`). Probes `probe-class-init-*` (28: 20 rejected,
+  8 controls); engine code `empty-class-init`.
+
+- Source: `processors/Initialization.xtend:107-141` (implicit initialisation), `233-265` (`_init` and its calls),
+  `367-398` (`createAllIndices`).
+- Engine: `sim/structure/classInit.ts`.
 
 ### S-61 Classes: fields and methods
 
@@ -2323,14 +2430,21 @@ More, found with the dataflow probes (`tests/engine/kieler/dataflow/`):
 - **A chart with a signal cannot be instantiated** this way: `Signals in class declarations not yet supported`
   (KIELER's Signal processor refuses a signal in the class the instance has become; a local signal of the chart, or,
   for an OO dataflow instance, an input or output signal). `-chart-instance-signal`, `-instance-signal-ports`.
-- **Class names.** KIELER makes one class per `ref` declaration, named after the chart with a running number
-  (`Cnt1`, the next declaration of `Cnt`: `Cnt2`); the instances of one declaration share it (unless one of them has
-  bindings: then every further instance gets a class of its own). The simulation interface lists the members under
-  these names (`Cnt1.v`), a class of an inner state with a further number (`Cnt11`, `Cnt21`).
+- **Class names** (S-65a). KIELER makes one class per `ref` declaration, named after the chart with the next free
+  number (`Cnt1`, the next declaration of `Cnt`: `Cnt2`); the instances of one declaration share it (unless one of
+  them has bindings: then every further instance gets a class of its own). The simulation interface lists the
+  members under these names (`Cnt1.v`), a class of an inner state with a further number (`Cnt11`, `Cnt21`).
   `-instances-two-declarations`, `-instances-inner-states`, `-instances-root-and-inner-state`,
   `-instances-nested-class-names`, `-instances-one-declaration-*`.
 - `ref Cnt c, d` with only one of them used in a dataflow region: the validator warns (`This reference declaration
   contains some valued objects that are used in dataflow regions and some not. ...`). `-instances-one-declaration-one-used`.
+  When that region calls a method (S-33a), KIELER's mark that an instance keeps its inputs and outputs is on the
+  **declaration**: both instances keep them as fields, so `d.a` is the input's own initial value and not the
+  chart's `a` (`structure/probe-instance-dataflow-together`, `-three`, `-port-written`, `-inner-state`; two
+  declarations are independent, `-two-declarations`). When one of the instances has arguments, the Reference
+  processor gives every variable after the first a declaration of its own, without the mark: then only the
+  **first** variable keeps its ports, whichever of them the region uses (`-other-arguments`, `-first-arguments`,
+  `-used-arguments`: the instance the region names is bound by name and position like one outside dataflow).
 - **Entered again.** An instance declared in a state starts again when the state is entered again (with or without
   `history`), and its fields start again too: those with an initial value at that value, those without at 0 (KIELER's
   implicit initialisation of the class's members), as a state's own locals do. For an OO dataflow instance (S-33a)
@@ -2351,6 +2465,17 @@ with constant cardinality` (source, engine code `reference-array-size`). Probes 
 (`-regions`, `-bound`, `-2d`, `-method-calls-method`, `-variable-index`, `-inner-state`, `-const-size`, `-of-one`,
 `-member-array`, `-dataflow`), `generics/probe-generic-decl-array*`; source `processors/Reference.xtend:1221-1296`.
 
+**Objects of the chart, from outside.** A class or struct object that the chart declares is reached through the
+instance like a field: `c.q.w`, `c.q.get()`, `c.t.x`, also through arrays on either side and two classes deep
+(`c[1].q.w = 9`, `c.q[1].get()`, `c.p.q.w`); a `private class` is not visible, and in a dataflow region only the
+instance's inputs and outputs are (`probe-instance-object-*`, `probe-instance-struct-member`).
+
+An array of one instance or of none is never initialised (S-60a), an array of none is `[]` in the pool (S-60), a
+class object or a chart instance inside the elements belongs to its element (`probe-instance-array-class-field`,
+`-array-nested-instance`: `g[1].inc()` writes `g[1].b.x` only), and a field whose name starts with `_` is a field
+like any other, in the pool and the interface (`probe-instance-underscore-field*`; without an initial value KIELER
+does not initialise it).
+
 - Evidence: `126-chart-class` (methods and a public field), `127`, `128`, `129`, `130-chart-class-inheritance`.
 - Source: `processors/Reference.xtend:927-1000` (`handleSCChartsDatatype`), `SCTXValidator.xtend:180-189`
   (`NO_ASSIGNMENTS_TO_REF`).
@@ -2359,6 +2484,28 @@ with constant cardinality` (source, engine code `reference-array-size`). Probes 
 - Implementation: expand each instance as a copy of the chart (S-4) whose locals are the instance's fields
   (reported as the object `c` in the pool) and whose methods are callable as `c.m()`; its regions are concurrent
   regions of the declaring state.
+
+### S-65a The names of the classes KIELER makes
+
+kicool keeps one cache of names for a compilation, filled with **every name of the compiled file** (states, regions,
+variables, classes, charts, annotations: every named object) and with every name it hands out. Making a name unique
+appends the next free number, counted per name. Two places use it for classes:
+
+- The Reference processor names the class of a `ref C g` declaration after the chart: `C` is taken by the chart, so
+  it is `C1`, the next declaration's `C2`. Anything in the file that is called `C1` already moves both on: a class
+  `Cell1`, a variable `Cell1`, states `Cell1` and `Cell2` (then `Cell3`), an annotation `@Cell1`, a class of another
+  chart of the file (`probe-instance-class-name-taken`, `-variable`, `-states`, `-annotation`, `-other-chart`,
+  `-taken-nested`: inside a chart used as a class, `Mid1.Cell1.a` next to `Mid1.Cell2.v`).
+- A class of an inner state moves to the root under a unique name: `C` becomes `C1`, a chart instance's class
+  `Cell1` becomes `Cell11`. Instances declared together are one class and move once (`ref Cell c, d` in an inner
+  state: `Cell11.v` only; two declarations: `Cell11.v` and `Cell21.v`; `-together-inner-state`,
+  `-two-inner-state`, `-two-inner-states`, `-root-and-inner`, `-array-inner-state`, `-taken-inner-state`). Every
+  copy of a for-region's state has its own (`dataflow/probe-dataflow-instance-in-for-region`: `Two11`, `Two12`).
+
+- Source: `annotations/extensions/UniqueNameCache.xtend`, `kicool/.../UniqueNameCachePopulation.xtend`,
+  `Reference.xtend:1016` (`classDecl.uniqueName`).
+- Engine: `sim/structure/classNames.ts` (one cache for the Reference pass and for the classes that move to the
+  root; `@sccharts-lab/trace` reads the names).
 
 ### S-66 Inheritance between charts: `extends`, `override`, `super`, `protected`
 

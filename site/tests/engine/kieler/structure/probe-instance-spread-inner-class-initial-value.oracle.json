@@ -1,0 +1,113 @@
+{
+  "hash": "b5e3580ff4be9e01492ecac1b11423ce098f09d4",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-inner-class-initial-value.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.In.Cell1_k": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.In.w": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.q": {
+      "type": "class",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": [
+          {
+            "q": {
+              "Cell1_k": 3,
+              "w": 1
+            }
+          },
+          {
+            "q": {
+              "Cell1_k": 8,
+              "w": 1
+            }
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "c": [
+          {
+            "q": {
+              "Cell1_k": 3,
+              "w": 1
+            }
+          },
+          {
+            "q": {
+              "Cell1_k": 8,
+              "w": 1
+            }
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "c": [
+          {
+            "q": {
+              "Cell1_k": 3,
+              "w": 1
+            }
+          },
+          {
+            "q": {
+              "Cell1_k": 8,
+              "w": 1
+            }
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

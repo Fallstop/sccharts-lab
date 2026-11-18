@@ -83,7 +83,7 @@ function memberDeclarations(prefix: string | undefined, members: Declaration[], 
             }
             if (m.className) memberDeclarations(prefix === undefined ? m.className : `${prefix}.${m.className}`, m.members ?? [], out, undefined, depth + 1)
             if (prefix !== undefined) for (const vo of m.valuedObjects) out.push(member(`${prefix}.${name(vo, m)}`, m.declKind))
-        } else if (m.declKind === 'variable' && prefix !== undefined) {
+        } else if (m.declKind === 'variable' && prefix !== undefined && !m.hostType) {
             for (const vo of m.valuedObjects) out.push(member(`${prefix}.${name(vo, m)}`, typeName(m.type, m.hostType)))
         }
     }
@@ -137,7 +137,7 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
                 })
                 continue
             }
-            if (v.declKind) continue
+            if (v.declKind || v.type === 'host') continue
             const { of } = v.member
             const type = (of.declKind === 'reference' && of.instance) || (nested && local(of)) ? rootType(of, scope) : undefined
             if (!type) continue
@@ -185,7 +185,7 @@ export function poolVariables(result: Compiled): PoolVariable[] {
             if (!v.tags.has('#const-member')) add(instance(root))
             continue
         }
-        if (v.const || v.declKind || v.name.startsWith('_')) continue
+        if (v.const || v.declKind || v.name.startsWith('_') || v.type === 'host') continue
         const info = declared.get(v.name) ?? (v.of ? declared.get(v.of.name) : undefined)
         const type = typeName(v.type, v.hostType)
         const dims = info?.dims ?? []

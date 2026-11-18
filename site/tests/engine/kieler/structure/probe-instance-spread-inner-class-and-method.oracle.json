@@ -1,0 +1,123 @@
+{
+  "hash": "75da0975825bf6d9995602d32cdd30e690636fa3",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-inner-class-and-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.In.Cell1_k": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.q": {
+      "type": "class",
+      "properties": []
+    },
+    "Cell1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": [
+          {
+            "k": 3,
+            "q": {
+              "Cell1_k": 3
+            },
+            "x": 0
+          },
+          {
+            "k": 8,
+            "q": {
+              "Cell1_k": 8
+            },
+            "x": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 24,
+        "c": [
+          {
+            "k": 3,
+            "q": {
+              "Cell1_k": 3
+            },
+            "x": 6
+          },
+          {
+            "k": 8,
+            "q": {
+              "Cell1_k": 8
+            },
+            "x": 16
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 24,
+        "c": [
+          {
+            "k": 3,
+            "q": {
+              "Cell1_k": 3
+            },
+            "x": 6
+          },
+          {
+            "k": 8,
+            "q": {
+              "Cell1_k": 8
+            },
+            "x": 16
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -323,8 +323,8 @@ function bodyProblems(work: SNode[], remaining: Set<CVar>): Diagnostic[] {
     const values = new Set<CVar>()
     /** KIELER's name for a schedule: an instance's is `<Class>_<instance>_<name>` in the chart. */
     const cName = (v: CVar) => {
-        const chart = v.scheduleInstance?.instance?.target
-        return chart ? `${chart}1_${v.scheduleInstance!.name}_${(v.display ?? v.name).split('.').pop()}` : v.name
+        const inst = v.scheduleInstance
+        return inst?.instance ? `${inst.className ?? `${inst.instance.target}1`}_${inst.name}_${(v.display ?? v.name).split('.').pop()}` : v.name
     }
     const read = (x: CExpr) => {
         if (x.k !== 'ref' || x.v.declKind !== 'schedule' || values.has(x.v)) return

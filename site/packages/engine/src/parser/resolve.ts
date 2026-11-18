@@ -969,8 +969,8 @@ class Resolver {
             for (const m of target.declarations) if (m.declKind === 'method') add(m)
             for (const base of this.allInherited(target)) for (const m of base.declarations) if (!isPrivate(m)) add(m)
             for (const m of target.declarations) {
-                // (`input primitive T a`: a variable of a generic type.)
-                if (m.declKind !== 'variable' && m.declKind !== 'reference' && m.declKind !== 'primitive') continue
+                // (`input primitive T a`: a variable of a generic type. A class or struct object of the chart: `g.q.w`.)
+                if (m.declKind !== 'variable' && m.declKind !== 'reference' && m.declKind !== 'primitive' && ((m.declKind !== 'class' && m.declKind !== 'struct') || dataflow)) continue
                 if (dataflow ? (m.input || m.output) : isPublic(m)) add(m)
             }
             return out
