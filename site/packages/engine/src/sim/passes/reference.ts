@@ -1003,13 +1003,15 @@ export class Expansion {
             const id = r.sub.v.decl
             const m = (id ? byDecl.get(id) ?? byDecl.get(sourceId(id)) : undefined) ?? (r.sub.v.declKind === 'unresolved' ? named(r.sub.v.name, args) : undefined)
             if (!m) return undefined
-            let out: CRef = { ...r.sub, v: m, idx: [...r.idx, ...r.sub.idx] }
+            // (An array named without its index on the way stays marked: codegen.ts.)
+            const unindexed = r.unindexed ?? r.sub.unindexed
+            let out: CRef = { ...r.sub, v: m, idx: [...r.idx, ...r.sub.idx], ...(unindexed ? { unindexed } : {}) }
             // A class or struct object of the chart (`g.q.w`, `g.q.get()`): on to its member, a variable of its own.
             while (out.sub && (out.v.declKind === 'class' || out.v.declKind === 'struct')) {
                 const next = out.sub.v.decl === undefined ? undefined : sourceId(out.sub.v.decl)
                 const inner = inst.decls.find(l => l.member?.of === out.v && l.decl !== undefined && sourceId(l.decl) === next)
                 if (!inner) break
-                out = { ...out.sub, v: inner, idx: [...out.idx, ...out.sub.idx] }
+                out = { ...out.sub, v: inner, idx: [...out.idx, ...out.sub.idx], ...(out.unindexed ?? out.sub.unindexed ? { unindexed: out.unindexed ?? out.sub.unindexed } : {}) }
             }
             return out
         }

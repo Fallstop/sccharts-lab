@@ -176,6 +176,16 @@ scchart Cell { class In { int w = 4 int get() { return w + 1 } } q struct T { in
         expect(errors('scchart Main { output int o ref Cell c dataflow { o = c.q.w + c.q.get() } }\nscchart Cell { class In { int w = 4 int get() { return 1 } } q }').map(d => d.code)).toContain('unknown-variable')
     })
 
+    it('rejects a member of an array of objects that is named without the array\'s index', () => {
+        const codes = (source: string) => errors(source).map(d => d.code)
+        expect(codes('scchart Main { output int o ref Cell c[2] initial state A do o = c.v go to A }\nscchart Cell { int v = 3 }')).toEqual(['object-array-index'])
+        expect(codes('scchart Main { output int o ref Cell c[2] initial state A do o = c.get() go to A }\nscchart Cell { int v = 3 method int get() { return v } }')).toEqual(['object-array-index'])
+        expect(codes('scchart Main { output int o class In { int w = 4 int get() { return w } } q[2] initial state A do o = q.get() go to A }')).toEqual(['object-array-index'])
+        expect(codes('scchart Main { output int o ref Cell c[2] initial state A do o = c[1].q.w go to A }\nscchart Cell { int z class In { int w = 4 } q[2] }')).toEqual(['object-array-index'])
+        expect(codes('scchart Main { output int o ref Cell c[2] initial state A do o = c[1].q[0].w go to A }\nscchart Cell { int z class In { int w = 4 } q[2] }')).toEqual([])
+        expect(SIMULATOR_CODES.has('object-array-index')).toBe(true)
+    })
+
     it('leaves a variable of a host type out of the pool and the trace columns', () => {
         const source = 'scchart Main { output int o host "int" h ref Cell c initial state A do o = 1 go to A }\nscchart Cell { host "int" g int w }'
         expect(run(source).ticks[0].pool).toEqual({ o: 0, c: { w: 0 } })

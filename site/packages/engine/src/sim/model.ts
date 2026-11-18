@@ -156,6 +156,11 @@ export interface CRef {
     span?: Span
     /** The schedules of this read (a trigger `if A schedule s 1`; KIELER keeps them on the reference). */
     sched?: SchedEntry[]
+    /**
+     * Written through an array of objects without its index (`q.w`, `g.get()` with `q[2]`, `ref C g[2]`): the array's
+     * name. KIELER's C code takes the array's address there, which is no object (codegen.ts).
+     */
+    unindexed?: string
 }
 
 /** A trigger written `if a > 0 schedule s 1` keeps its schedule on the expression (KIELER's BoolScheduleExpression);

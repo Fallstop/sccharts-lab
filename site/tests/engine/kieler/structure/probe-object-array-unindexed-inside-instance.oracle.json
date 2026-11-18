@@ -1,0 +1,16 @@
+{
+  "hash": "85da9c58eff187dcc465fe27d2fadca1cb086e34",
+  "chart": "tests/engine/kieler/structure/probe-object-array-unindexed-inside-instance.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "‘(Main_Main_Cell1_In *)&d->c[1].q’ is a pointer; did you mean to use ‘->’?",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "ticks": []
+}

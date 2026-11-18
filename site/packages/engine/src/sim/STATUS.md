@@ -296,7 +296,8 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `generic-pure-type`, `bound-const-written`, `state-access-copy`; chart instances and class objects (structure.md
   S-18b, S-60a): `spread-binding` (a vector spread over an array of instances that KIELER refuses: its size, a
   variable in it, its range), `binding-vector` (a vector bound to a single constant: gcc's error where it is read),
-  `empty-class-init` (a class whose `_init` has no statement: gcc's `implicit declaration`).
+  `empty-class-init` (a class whose `_init` has no statement: gcc's `implicit declaration`), `object-array-index` (a
+  member of an array of objects named without the array's index: gcc's `is a pointer`).
 - **The guide's notes**: `unsupported` (info: the simulator cannot run it), `kieler-quirk` (info or warning),
   `kieler-bug` (warning), `kieler-divergence` (warning), `kieler-loop-warning` (info), `internal` (error: an engine
   bug).
@@ -537,7 +538,7 @@ found, none of it special to generics, all fixed:
 Two independent reviews (of the dataflow and of the generics work, before the two were merged) ran their own charts
 through official KIELER and found fourteen disagreements about chart instances (`ref C g`). All are fixed, each
 with the class of bug behind it, and each rule is KIELER's own, read from its processors and confirmed with the
-compiler: 186 probes recorded with the lab server (150 accepted and agreeing tick by tick, 36 rejected by both; the
+compiler: 194 probes recorded with the lab server (150 accepted and agreeing tick by tick, 44 rejected by both; the
 same verdicts and values with the official jar), all through `pnpm cgen:check` and, for the trace columns,
 `tests/trace/engine-traces.test.ts`; `tests/engine/instances.test.ts` pins the API around them. Before that the
 branch of review fixes for the written schedules was merged (one mechanism per feature: the section on written
@@ -582,7 +583,9 @@ schedules above).
   (`empty-class-init`, S-60a; 28 probes `probe-class-init-*`, and `schedules/probe-schedule-ref-three-refs-empty`
   left the expected failures); a class or struct object of a chart instance is reached from outside (`c.q.w`,
   `c.q.get()`: the front end did not know the member; `probe-instance-object-*`); a variable of a host type is not
-  in the pool or the interface (`probe-*-pool-host-*`); a bound input or generic parameter in the initial value of a method's local variable
+  in the pool or the interface (`probe-*-pool-host-*`); a member or method of an array of objects (of a class, a
+  struct or a chart) named without the array's index is rejected as gcc rejects KIELER's code
+  (`object-array-index`; the engine accepted it and read the first element; `probe-object-array-unindexed-*`); a bound input or generic parameter in the initial value of a method's local variable
   is not replaced (`unbound-reference`; structure/replacements.ts); the front end reports the binding error of a
   declaration that KIELER checks variable by variable at the variable (parser/validate.ts).
 - **Fuzz**: the profile `dataflowObjects` makes these forms now (tools/fuzz/README.md); campaign 22 below (500
@@ -908,7 +911,10 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 
 ## Not yet (charts get the `unsupported` info and cannot be simulated)
 
-Nothing of the language itself is left here. Never (no C compiler in the browser): host code (backticks), `extern` functions, host
+One form: an array of **no** chart instances (`ref C g[0]`) whose chart's regions or actions name a field. KIELER makes
+two copies of them, and they read and write behind the empty array in its C data (the counters of the taken
+transitions in `structure/probe-instance-array-zero-entry` and `-zero-region`), which the engine does not lay out; an
+empty array of a chart whose regions name no field runs (S-60). Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".
 
 ## Known differences

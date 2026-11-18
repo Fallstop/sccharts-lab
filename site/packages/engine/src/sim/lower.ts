@@ -942,7 +942,27 @@ class Lowering {
         }
         const out: CRef = { k: 'ref', v, idx, span: r.span }
         if (sub) out.sub = this.ref(sub)
+        const unindexed = this.equations ? undefined : this.unindexedObject(r)
+        if (unindexed) out.unindexed = unindexed
         return out
+    }
+
+    /** Set while a dataflow equation is lowered (KIELER translates the instances named there in its own ways). */
+    private equations = false
+
+    /**
+     * The first array of objects (of a class, a struct or a chart) that a reference goes through without its index:
+     * `q` of `q.w` with `class In { ... } q[2]`, `c` of `c.get()` with `ref C c[2]`.
+     */
+    private unindexedObject(r: Reference): string | undefined {
+        for (let x: Reference | undefined = r; x?.sub; x = x.sub) {
+            const entry = x.decl && this.index ? entryOf(this.index, x.decl) : undefined
+            const d = entry?.decl
+            if (!d || !entry?.vo || d.host || d.extern) continue
+            const object = d.declKind === 'class' || d.declKind === 'struct' || (d.declKind === 'reference' && !this.enumOf(d))
+            if (object && entry.vo.cardinalities.length > x.indices.length) return x.name
+        }
+        return undefined
     }
 
     /**
@@ -1128,6 +1148,7 @@ class Lowering {
             if (r.reference?.parameters.length) cr.ext.args = this.args(r.reference.parameters)
             if (r.regionType === 'dataflow') {
                 // Equations, lowered like effects (passes/dataflow.ts turns them into control flow, structure.md S-25).
+                this.equations = true
                 const eqs: CEquation[] = r.equations.map(eq => {
                     const call = eq.callArgs !== undefined
                     const out: CEquation = {
@@ -1139,6 +1160,7 @@ class Lowering {
                     if (schedule) out.schedule = schedule
                     return out
                 })
+                this.equations = false
                 cr.ext.eqs = eqs
             }
             this.actionContents(r.actions, cr.actions, target)

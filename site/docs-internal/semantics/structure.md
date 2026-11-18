@@ -2343,6 +2343,7 @@ the get sees the value before the inc.
 | a typed method without any `return` | `The method does not return any value!`, `119-err-method-missing-return` |
 | `return e` in a method without return type | `Return statement is used but no return type is declared in method signature.` |
 | a method that calls itself | lab: `The compiler ran out of stack space during Dependency.`; official KIELER never answers |
+| a member or method of an **array** of objects named without the array's index (`q.w`, `q.get()` with `class In { ... } q[2]`; the same for an array of structs, an array of chart instances `ref C c[2]`, and an array inside another object, `c.q.w`) | gcc: `'(Main_In *)&d->q' is a pointer; did you mean to use '->'?` (`kieler/structure/probe-object-array-unindexed-*`; engine code `object-array-index`) |
 
 - Source: `SCTXValidator.xtend:342-371` (`checkMethodCall`, `NO_METHOD_REFERENCE`),
   `kexpressions/.../extensions/KExpressionsOverloadingExtensions.xtend:52-58`,

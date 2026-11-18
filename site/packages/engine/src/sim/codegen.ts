@@ -473,10 +473,27 @@ function cText(root: CState): Diagnostic[] {
             hint: `KIELER's C code looks up \`${v.name}\` among the chart's own variables, not in the outer class. Pass the value as a parameter of the method, or move the member (or the method) so that both are in the same class.`,
         })
     })
+    // A member of an array of objects named without the array's index (`q.w`, `q.get()` with `q[2]`; `c.v` with
+    // `ref C c[2]`): KIELER's C code takes the array's address and then a member of it (probes
+    // structure/probe-object-array-unindexed-*).
+    const unindexedSeen = new Set<string>()
+    const unindexed = (e: CExpr | undefined, related?: string[]) => walkExpr(e, x => {
+        const r = x.k === 'ref' ? x : x.k === 'call' ? x.target : undefined
+        let name: string | undefined
+        for (let y = r; y && !name; y = y.sub) name = y.unindexed
+        if (!r || !name || unindexedSeen.has(`${name}|${r.span?.start}`)) return
+        unindexedSeen.add(`${name}|${r.span?.start}`)
+        out.push({
+            severity: 'error', code: 'object-array-index', span: r.span, related,
+            message: `\`${name}\` is an array of objects, and a member of it is named without saying which object: KIELER's C code does not compile`,
+            kieler: `\u2018(${root.name}_... *)&d->${name}\u2019 is a pointer; did you mean to use \u2018->\u2019?\n${GCC_FAILED}`,
+            hint: `Give the index of the object: \`${name}[0]\` and so on.`,
+        })
+    })
     {
         const reaching = reachingC(root)
-        for (const { e, related } of reaching.exprs) outerMember(e, related)
-        const targets = (list: CEffect[], related?: string[]) => { for (const f of list) if (f.k === 'assign' || f.k === 'emit') outerMember(f.ref, related) }
+        for (const { e, related } of reaching.exprs) { outerMember(e, related); unindexed(e, related) }
+        const targets = (list: CEffect[], related?: string[]) => { for (const f of list) if (f.k === 'assign' || f.k === 'emit') { outerMember(f.ref, related); unindexed(f.ref, related) } }
         for (const site of allActionSites(root)) targets((site.transition ?? site.action!).effects)
         const statements = (list: CStmt[], acc: CEffect[] = []): CEffect[] => {
             for (const st of list) {
