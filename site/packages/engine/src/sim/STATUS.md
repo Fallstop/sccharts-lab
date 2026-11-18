@@ -455,7 +455,10 @@ with the lab server (87 accepted, 73 rejected), cross-checked on official KIELER
 - **Indices of members in dataflow regions** (passes/dataflow.ts): the pass walks every index at every level of a
   reference where it looks for the region's instances and for method calls (it looked at the outermost only).
   `c.a[ix()] = 7` now selects the OO translation (`c` is an object in the pool); `c.a[ix.n] = 7` makes `ix` an
-  instance of the classic region.
+  instance of the classic region. The same flaw was in the rewriter every structure pass shares
+  (structure/rewrite.ts `rewriteTarget`): an instance's own member in the index of its assigned member
+  (`cell.v[cell.w % 2] = ...` in an OO region) was left as it was, a runtime error; found by `pnpm cgen:check
+  --fuzz` on the extended `dataflowObjects` profile.
 - **Array ports are single variables in the classic translation**: KIELER's local for a port has no size and the
   member's index is dropped, never evaluated. The engine gave the locals the port's size and kept the index (a
   runtime error on `c.a[ix.n]`, an index error KIELER does not have). A chart that indexes its own port, or gives an
@@ -489,7 +492,7 @@ with the lab server (87 accepted, 73 rejected), cross-checked on official KIELER
 - **API**: additions only. `CMethod.scope`, `CStmt` `scope`/`elseScope`/`blocks`, `CVar.block` (internal model);
   `goBlock(scg, analysis?)`; codes `dataflow-array-port`, `method-in-member-index`, `array-as-value` (in
   `SIMULATOR_CODES`).
-- **Fuzz** (campaign 20 below): the profiles `dataflowObjects` and `generics` draw the reviewed forms now.
+- **Fuzz** (campaigns 22 and 23 below): the profiles `dataflowObjects` and `generics` draw the reviewed forms now.
 - **Open**: comparing two whole arrays (`p = a == b`) compares their addresses in KIELER's C (false for two
   arrays), the engine compares them as values. A name declared in an `if` branch and used in that `if`'s condition
   is the branch's local to KIELER (uninitialised there) and the outer variable to the engine, when nothing is
@@ -752,6 +755,8 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 19 (seeds 1, 7, 8, generics x 200, after both) | 600 | 209 | 390 | 0 | 0 | 1 | 0 |
 | 20 (seed 33, generics, dataflowObjects, schedules, structure, nested x 100, the merged engine) | 500 | 162 | 336 | 0 | 0 | 2 | 0 |
 | 21 (seed 34, the same five profiles x 100) | 500 | 157 | 337 | 0 | 0 | 6 | 0 |
+| 22 (seed 43, dataflowObjects, generics, structure, dataflowControl, basics, mix x 100, after the review fixes) | 600 | 250 | 339 | 3 | 0 | 4 | 4, explained (below) |
+| 23 (seed 43, dataflowObjects x 100, with the corrected generator) | 100 | 49 | 51 | 0 | 0 | 0 | 0 |
 
 Campaigns 12 to 14 use the profile `dataflowObjects` (tools/fuzz/README.md): dataflow regions with chart instances,
 calls and schedules next to control flow. Campaign 12's three: a binding on an instance of a classic region, which
@@ -772,6 +777,16 @@ in 100 to 240 s (two with contradicting schedules or count delays under a self-l
 cycle), all four rejected by the engine. A second run of seed 33 on the final code agrees chart by chart except
 where KIELER itself differs (five more timeouts on a busy machine, two charts the engine flags as
 `kieler-nondeterministic` that KIELER accepted that time).
+
+Campaign 22 runs the profiles around the review fixes ("Review fixes" above) with the forms the reviews found
+untested added to `dataflowObjects` and `generics`. Per profile: dataflowObjects 46 match and 50 rejected by both,
+generics 28 and 72, structure 36 and 61 (3 timeouts), dataflowControl 45 and 55, basics 58 and 40 (2
+nondeterministic), mix 37 and 61 (1 nondeterministic, 1 timeout). Its four disagreements are all in the new form of
+`dataflowObjects`, whose first version drew indices outside the array (`ia[twice(1)] = n` with `int ia[2]`,
+`cell.v[twice(1)] = 7`, `ia[ia[n % 2]] = n` after `ia` took an input's value): KIELER's C code writes past the
+array, the engine stops with its index error where it cannot lay out what lies there (basics.md B-28). The
+generator keeps those indices inside their arrays now; campaign 23 is the same seed and profile with it: no
+disagreement.
 
 Campaigns 16 to 19 (generic parameters, profile `generics`; run beside 12 to 15, on the generics branch): 17's disagreement is a constant passed as a generic
 argument to a chart that contains a chart whose local has the parameter's name and writes it: KIELER binds the

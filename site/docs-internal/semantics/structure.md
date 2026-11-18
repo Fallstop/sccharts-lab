@@ -879,8 +879,10 @@ constant as the end, or a variable that is no array as the range, is accepted th
 when something still names the counter afterwards (an equation's expression or index, a call's argument, the
 expression after a call's `=`, the initial value of a declaration of the region): one message per use. A use that
 the translation drops on the way does not count: the index of an instance's port in the classic translation
-(S-33), a call removed with the vector after it (S-33a). Probes `dataflow/probe-dataflow-for-*` (16: 11 accepted,
-5 rejected); the fuzz profile `dataflowObjects` draws the form.
+(S-33), a call removed with the vector after it (S-33a). Official KIELER gives the same message for the counter
+as an index or a call's argument and does not answer within 60 s when it is in an expression, a trigger or a
+declaration (the lab server reports the message there too). Probes `dataflow/probe-dataflow-for-*` (18: 11
+accepted, 7 rejected); the fuzz profile `dataflowObjects` draws the form.
 
 ### S-25 A dataflow region recomputes all its equations in every tick
 
