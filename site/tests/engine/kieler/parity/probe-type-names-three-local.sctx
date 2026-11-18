@@ -1,0 +1,8 @@
+// Three inner states' classes of one name with different members: C1.v, C2.v, C3.w.
+scchart ThreeLocal { output int o  output int p output int q
+  region R1 { initial state S { class C { int v = 0 } c
+      initial state A do c.v = 5 go to B state B do o = c.v go to B } }
+  region R2 { initial state T { class C { int v = 0 } c
+      initial state A do c.v = 6 go to B state B do p = c.v go to B } }
+  region R3 { initial state U { class C { int w = 0 } d
+      initial state A do d.w = 7 go to B state B do q = d.w go to B } } }

@@ -1,0 +1,65 @@
+{
+  "hash": "511052f3e58450c8bd76fe7a6d8c0e37b3d13cf0",
+  "chart": "tests/engine/kieler/parity/probe-type-names-name-clash.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C1": {
+      "type": "int",
+      "properties": []
+    },
+    "C2.v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "C1": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "C1": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 6,
+        "C1": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

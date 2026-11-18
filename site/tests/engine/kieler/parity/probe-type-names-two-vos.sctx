@@ -1,0 +1,6 @@
+// Two instances declared together are one class (C1); a struct of the same name in another state is C2.
+scchart TwoVos { output int o  output int p
+  region R1 { initial state S { class C { int v = 0 } a, b
+      initial state A do a.v = 5; b.v = 6 go to B state B do o = a.v + b.v go to B } }
+  region R2 { initial state T { struct C { int w = 0 } c
+      initial state A do c.w = 6 go to B state B do p = c.w go to B } } }

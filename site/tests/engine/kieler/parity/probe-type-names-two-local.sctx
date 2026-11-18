@@ -1,0 +1,6 @@
+// A class of the same name in two inner states: C1 and C2.
+scchart TwoLocal { output int o  output int p
+  region R1 { initial state S { class C { int v = 0 } c
+      initial state A do c.v = 5 go to B state B do o = c.v go to B } }
+  region R2 { initial state T { class C { int v = 0 } c
+      initial state A do c.v = 6 go to B state B do p = c.v go to B } } }

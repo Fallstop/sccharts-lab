@@ -98,31 +98,63 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
     const compiled = result.sim!
     /** The class of a chart instance: `<Chart>1`, or the number KIELER gave its declaration (`<Chart>2`). */
     const classOf = (c: CVar) => c.className ?? `${c.instance!.target}1`
-    // A class declared in an inner state moves to the root under a name made unique again: a further number, counted
-    // per name (`Two11`, and `Two12` for the next state's, such as the next copy of a for-region's state).
-    const risen = new Map<string, Map<string, number>>()
-    const rootType = (root: CVar, scope: { uid: number }, nested: boolean): string => {
-        const name = classOf(root)
-        if (!nested) return name
-        const copies = risen.get(name) ?? new Map<string, number>()
-        risen.set(name, copies)
-        const key = `${root.uid}|${scope.uid}`
-        if (!copies.has(key)) copies.set(key, copies.size + 1)
-        return `${name}${copies.get(key)}`
+    const declarationOf = (c: CVar) => result.index?.vos.get(c.decl ?? '') ?? result.index?.vos.get((c.decl ?? '').split('/').pop()!)
+    const local = (c: CVar) => c.declKind === 'class' || c.declKind === 'struct'
+    // KIELER moves a class declared in an inner state to the root and makes its name unique: among every name of the
+    // file (a variable called `C1` takes that name) and the names it gave before, counting on per name. So a class `C`
+    // of an inner state is `C1`, the next declaration of that name `C2` (in another state, or in the next copy of a
+    // referenced chart), and a chart instance's class `Two1` in an inner state `Two11`.
+    const taken = new Set<string>()
+    const collect = (value: unknown) => {
+        if (Array.isArray(value)) { value.forEach(collect); return }
+        if (!value || typeof value !== 'object') return
+        for (const [k, v] of Object.entries(value)) {
+            if ((k === 'name' || k === 'className') && typeof v === 'string') taken.add(v)
+            else if (k !== 'span' && v && typeof v === 'object') collect(v)
+        }
     }
-    for (const scope of allScopes(compiled.core)) {
+    collect(result.index?.programs[0] ?? result.chart)
+    const scopes = allScopes(compiled.core)
+    for (const scope of scopes) for (const v of scope.decls as CVar[]) if (v.declKind === 'reference' && v.instance) taken.add(classOf(v))
+    for (const scope of scopes) for (const v of scope.decls as CVar[]) for (let c: CVar | undefined = v.member?.of; c; c = c.member?.of) if (c.declKind === 'reference' && c.instance) taken.add(classOf(c))
+    const highest = new Map<string, number>()
+    const unique = (base: string): string => {
+        let n = (highest.get(base) ?? 0) + 1
+        while (taken.has(`${base}${n}`)) n++
+        highest.set(base, n)
+        taken.add(`${base}${n}`)
+        return `${base}${n}`
+    }
+    const risen = new Map<string, string>()
+    const declarations = new Map<object, number>()
+    const declarationId = (d: object) => declarations.get(d) ?? declarations.set(d, declarations.size).get(d)!
+    /** The type of the instance `root` declared in `scope`: its class's name, made unique when the state is an inner one. */
+    const rootType = (root: CVar, scope: { uid: number }, nested: boolean): string | undefined => {
+        const reference = root.declKind === 'reference' && !!root.instance
+        const name = reference ? classOf(root) : declarationOf(root)?.decl?.className
+        if (!name || !nested) return name
+        // Instances declared together are one class.
+        const key = reference ? `${root.uid}|${scope.uid}` : `${declarationId(declarationOf(root)?.decl ?? root)}|${scope.uid}`
+        if (!risen.has(key)) risen.set(key, unique(name))
+        return risen.get(key)
+    }
+    for (const scope of scopes) {
         for (const v of scope.decls as CVar[]) {
             if (!v.member || v.const || v.tags.has('#const-member')) continue
             const nested = scope !== compiled.core
-            // A member of a class or struct instance declared inside a chart used by `ref C c`: the chart's type, the
-            // classes on the way, the member (`Counter1.O.P.v`; the instances themselves too, `Counter1.os`). A chart
-            // instance inside the chart is such a class (`Mid1.Two1.a`, and the instance `Mid1.t`).
+            // A member of a class or struct instance declared inside a chart used by `ref C c`, or inside a class of an
+            // inner state: the type, the classes on the way, the member (`Counter1.O.P.v`, `C1.D.x`; the instances
+            // themselves too, `Counter1.os`, `C1.d`). A chart instance inside the chart is such a class
+            // (`Mid1.Two1.a`, and the instance `Mid1.t`).
             const chain: CVar[] = []
             for (let c: CVar | undefined = v; c; c = c.member?.of) chain.unshift(c)
             const root = chain[0]
+            const reference = root.declKind === 'reference' && !!root.instance
             if (chain.length > 2 || (v.declKind && chain.length === 2)) {
-                if (root.declKind !== 'reference' || !root.instance || (v.declKind && v.declKind !== 'class' && v.declKind !== 'struct')) continue
+                // (A class of the chart itself is listed from its declaration, memberDeclarations.)
+                if (!(reference || (nested && local(root))) || (v.declKind && !local(v))) continue
                 const top = rootType(root, scope, nested)
+                if (!top) continue
                 const classes = chain.slice(1, -1).map((c) => (c.declKind === 'reference' && c.instance
                     ? classOf(c)
                     : result.index?.vos.get((c.decl ?? '').split('/').pop()!)?.decl?.className ?? c.member!.name))
@@ -138,11 +170,8 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
             }
             if (v.declKind) continue
             const { of } = v.member
-            let type: string | undefined
-            if (of.declKind === 'reference' && of.instance) type = rootType(of, scope, nested)
-            // An inherited instance's id has the base chart's copy in front (`…/Base$a`).
-            else if (nested && (of.declKind === 'class' || of.declKind === 'struct')) type = `${(result.index?.vos.get(of.decl ?? '') ?? result.index?.vos.get((of.decl ?? '').split('/').pop()!))?.decl?.className}1`
-            if (!type || type === 'undefined1') continue
+            const type = (of.declKind === 'reference' && of.instance) || (nested && local(of)) ? rootType(of, scope, nested) : undefined
+            if (!type) continue
             // An OO dataflow instance's inherited inputs and outputs are still listed as such.
             out.push({ name: `${type}.${v.member.name}`, input: v.tags.has('#port-input'), output: v.tags.has('#port-output'), type: typeName(v.type, v.hostType), dims: [], late: true })
         }

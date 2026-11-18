@@ -1,0 +1,6 @@
+// Two copies of a referenced chart with a class: KIELER moves each copy's class to the root under a name made unique (C1, C2), which its simulation interface lists.
+scchart TmpTwo { output int o  output int p
+  region R1 { initial state S is Sub(o) }  region R2 { initial state T is Sub(p) } }
+scchart Sub { output int r
+  class C { int v = 0  void set(int x) { v = x }  int get() { return v } } c
+  initial state A do c.set(5) go to B state B do r = c.get() go to B }

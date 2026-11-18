@@ -1,0 +1,6 @@
+// Three copies: C1, C2, C3.
+scchart TmpThree { output int o  output int p  output int q
+  region R1 { initial state S is Sub(o) }  region R2 { initial state T is Sub(p) }  region R3 { initial state U is Sub(q) } }
+scchart Sub { output int r
+  class C { int v = 0  void set(int x) { v = x }  int get() { return v } } c
+  initial state A do c.set(5) go to B state B do r = c.get() go to B }

@@ -1,0 +1,86 @@
+{
+  "hash": "3b570480dda9e417bdd9d399805945f7d1d66fd3",
+  "chart": "tests/engine/kieler/parity/probe-type-names-nested-inner.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C1.D.x": {
+      "type": "int",
+      "properties": []
+    },
+    "C1.d": {
+      "type": "class",
+      "properties": []
+    },
+    "C1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "C2.D.x": {
+      "type": "int",
+      "properties": []
+    },
+    "C2.d": {
+      "type": "class",
+      "properties": []
+    },
+    "C2.v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 7
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

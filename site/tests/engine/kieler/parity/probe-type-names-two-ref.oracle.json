@@ -1,0 +1,62 @@
+{
+  "hash": "83b94ae82ad4bd83687dcb244db8bf661af48674",
+  "chart": "tests/engine/kieler/parity/probe-type-names-two-ref.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn1__TmpTwo_local_c_set_x is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn4__TmpTwo_local_c1_set_x is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "C2.v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "p": 5
+      },
+      "terminated": false
+    }
+  ]
+}

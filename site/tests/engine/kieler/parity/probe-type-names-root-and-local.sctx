@@ -1,0 +1,5 @@
+// The chart's own class keeps its name (C.v), an inner state's class of the same name is C1.
+scchart RootAndLocal { output int o
+  class C { int v = 0 } r
+  region R1 { initial state S { class C { int v = 0 } c
+      initial state A do c.v = 5; r.v = 1 go to B state B do o = c.v + r.v go to B } } }

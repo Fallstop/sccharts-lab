@@ -1,0 +1,6 @@
+// A class with a class inside, in two inner states: the inner class and its instance are listed under the risen name (C1.D.x, C1.d).
+scchart NestedInner { output int o
+  region R1 { initial state S { class C { int v = 0  class D { int x = 0 } d } c
+      initial state A do c.v = 5; c.d.x = 2 go to B state B do o = c.v + c.d.x go to B } }
+  region R2 { initial state T { class C { int v = 0  class D { int x = 0 } d } c
+      initial state A do c.v = 6 go to B state B } } }

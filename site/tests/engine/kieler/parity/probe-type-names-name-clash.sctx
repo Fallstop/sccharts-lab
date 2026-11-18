@@ -1,0 +1,5 @@
+// A variable called C1 takes that name: the inner state's class C is C2.
+scchart NameClash { output int o
+  int C1 = 0
+  region R1 { initial state S { class C { int v = 0 } c
+      initial state A do c.v = 5; C1 = 1 go to B state B do o = c.v + C1 go to B } } }
