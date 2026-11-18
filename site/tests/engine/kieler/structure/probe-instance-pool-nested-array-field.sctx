@@ -1,0 +1,4 @@
+// An array of instances inside an instance whose chart has a field.
+scchart Main { output int o ref Mid m initial state A do o = 1 go to B state B }
+scchart Mid { int w = 5 ref Cell c[2] region RM { initial state B } }
+scchart Cell { int v = 1 region RC { initial state B } }

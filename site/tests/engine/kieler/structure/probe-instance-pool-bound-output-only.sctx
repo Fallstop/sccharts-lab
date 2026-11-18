@@ -1,0 +1,3 @@
+// An instance of a chart that only has a bound output: no class, not in the pool.
+scchart Main { output int o ref Cell c(o) initial state A }
+scchart Cell { output int q initial state B do q = 2 go to B }

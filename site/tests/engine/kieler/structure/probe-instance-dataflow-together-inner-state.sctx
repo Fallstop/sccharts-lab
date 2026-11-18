@@ -1,0 +1,3 @@
+// Declared together in an inner state, one used in its dataflow region: both keep their ports.
+scchart Main { int a = 9 output int o, p initial state S { ref Cell c, d dataflow { o = c.get() } region R { initial state A immediate do p = d.get() go to B state B } } }
+scchart Cell { input int a = 3 method int get() { return a } }

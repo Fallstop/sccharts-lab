@@ -1,0 +1,8 @@
+// A vector bound to the scalar constant input of an array of instances, in a dataflow region that calls a method: KIELER spreads
+// it, c[0].k is 3 and c[1].k is 8.
+scchart Main {
+  output int o
+  ref Cell c[2]({3, 8} to k)
+  dataflow { o = c[1].get() }
+}
+scchart Cell { input const int k method int get() { return k } }

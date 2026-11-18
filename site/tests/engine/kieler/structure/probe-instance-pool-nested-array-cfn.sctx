@@ -1,0 +1,4 @@
+// An array of instances inside an instance, their method called through the outer one: empty objects inside.
+scchart Main { output int o ref Mid m initial state A do o = m.run() go to B state B }
+scchart Mid { int w = 5 ref Cell c[2] method int run() { return c[1].big() } }
+scchart Cell { method int big() { int r = 0; for (int i = 0; i < 2; i++) { r += 1 } return r } }

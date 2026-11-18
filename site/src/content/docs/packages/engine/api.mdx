@@ -404,6 +404,7 @@ C code for a compiled chart, in the shape of KIELER's netlist-based compilation.
 | `names` | `CNaming` | The names used for the functions and the struct. |
 | `variables` | `CVariable[]` | The chart's variables in the struct, in struct order. |
 | `instances` | `{ name: string; member: string; ctype: string; pool?: string }[]` | Instances of classes and structs: the struct member and its type. |
+| `poolObjects?` | `{ path: { key: string; dims: number[] }[] }[]` | The class objects of KIELER's data pool, each by the way to it from its pool key (`m`, `c` for an instance `c` inside the instance `m`), every step with its own array sizes. An object is in the pool with or without fields: `{}`, an array of `{}`, `[]` for an array without elements. |
 | `diagnostics` | `Diagnostic[]` | Why there is no code, or what to know about it. |
 | `hostCode` | `boolean` | The chart uses host code, which the C code carries as written. |
 | `simulated` | `boolean` | The engine's simulation runs the chart too. `false` for host code and recursive methods, which only C can run. |

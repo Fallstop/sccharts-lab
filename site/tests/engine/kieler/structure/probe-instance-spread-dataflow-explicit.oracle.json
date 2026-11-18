@@ -1,0 +1,60 @@
+{
+  "hash": "a07c9fca243cf689cdbc58f508841cf52cdd2add",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-dataflow-explicit.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 8,
+        "c": [
+          {
+            "k": 3
+          },
+          {
+            "k": 8
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 8,
+        "c": [
+          {
+            "k": 3
+          },
+          {
+            "k": 8
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

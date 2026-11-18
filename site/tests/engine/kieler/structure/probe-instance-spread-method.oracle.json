@@ -1,0 +1,66 @@
+{
+  "hash": "19702063e944b6c9139690ed8c39159014bc8f64",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 8,
+        "c": [
+          {
+            "k": 3
+          },
+          {
+            "k": 8
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 8,
+        "c": [
+          {
+            "k": 3
+          },
+          {
+            "k": 8
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

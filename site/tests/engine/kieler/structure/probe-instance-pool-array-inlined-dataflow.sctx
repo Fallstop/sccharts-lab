@@ -1,0 +1,7 @@
+// An array of fieldless instances whose method is copied into place, called in a dataflow region: not in the pool.
+scchart Main {
+  output int o
+  ref Cell c[2]
+  dataflow { o = c[0].get() }
+}
+scchart Cell { method int get() { return 3 } }

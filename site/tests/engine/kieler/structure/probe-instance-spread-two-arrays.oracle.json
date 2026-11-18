@@ -1,0 +1,117 @@
+{
+  "hash": "5b216fac4e3f526cfc5f3617748ed7b60efeb7b4",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-two-arrays.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell2.k": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "d": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": [
+          {
+            "k": 3
+          },
+          {
+            "k": 8
+          }
+        ],
+        "d": [
+          {
+            "k": 1
+          },
+          {
+            "k": 2
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 10,
+        "c": [
+          {
+            "k": 3
+          },
+          {
+            "k": 8
+          }
+        ],
+        "d": [
+          {
+            "k": 1
+          },
+          {
+            "k": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 10,
+        "c": [
+          {
+            "k": 3
+          },
+          {
+            "k": 8
+          }
+        ],
+        "d": [
+          {
+            "k": 1
+          },
+          {
+            "k": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

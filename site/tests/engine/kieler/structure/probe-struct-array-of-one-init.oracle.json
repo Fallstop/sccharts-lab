@@ -1,0 +1,60 @@
+{
+  "hash": "c180bceb94c6b0e377736f6f205268fc9f865563",
+  "chart": "tests/engine/kieler/structure/probe-struct-array-of-one-init.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "T.x": {
+      "type": "int",
+      "properties": []
+    },
+    "t": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "t": [
+          {
+            "x": 3
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "t": [
+          {
+            "x": 3
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

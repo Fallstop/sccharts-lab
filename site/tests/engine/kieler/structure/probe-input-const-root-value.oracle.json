@@ -1,0 +1,58 @@
+{
+  "hash": "04817e72b249746505f64f7d4521b6bba5904b3a",
+  "chart": "tests/engine/kieler/structure/probe-input-const-root-value.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "k": 4
+      },
+      "values": {
+        "o": 0,
+        "k": 4
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "k": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "k": 6
+      },
+      "values": {
+        "o": 2,
+        "k": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

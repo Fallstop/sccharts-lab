@@ -1,0 +1,76 @@
+{
+  "hash": "3b8542b851481e2f4c6faef64816b30d3d13245f",
+  "chart": "tests/engine/kieler/structure/probe-instance-class-name-taken-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name get is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid1.Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.Cell2.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.c": {
+      "type": "class",
+      "properties": []
+    },
+    "Mid1.k": {
+      "type": "class",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "m": {
+          "c": {
+            "v": 3
+          },
+          "k": {
+            "a": 2
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "m": {
+          "c": {
+            "v": 3
+          },
+          "k": {
+            "a": 2
+          }
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

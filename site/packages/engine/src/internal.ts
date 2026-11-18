@@ -2,3 +2,5 @@
 // engine's exact version, so this may change in any release.
 
 export { allScopes, type CVar } from './sim/model'
+export type { PoolObject } from './sim/structure/poolShape'
+export { typeKey } from './sim/structure/classNames'

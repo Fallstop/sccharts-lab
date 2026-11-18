@@ -1,0 +1,127 @@
+{
+  "hash": "8fd262788deb76344b352fe9aad9fde6e08e5185",
+  "chart": "tests/engine/kieler/structure/probe-instance-dataflow-together-three.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This reference declaration contains some valued objects that are used in dataflow regions and some not. This might cause problems since reference valued objects not used in dataflow will be instaciated as class instances.",
+      "line": 2,
+      "column": 45
+    }
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "d": {
+      "type": "class",
+      "properties": []
+    },
+    "e": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "p": 3,
+        "q": 3,
+        "a": 9,
+        "c": {
+          "a": 3
+        },
+        "d": {
+          "a": 3
+        },
+        "e": {
+          "a": 3
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "p": 3,
+        "q": 3,
+        "a": 9,
+        "c": {
+          "a": 3
+        },
+        "d": {
+          "a": 3
+        },
+        "e": {
+          "a": 3
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "p": 3,
+        "q": 3,
+        "a": 9,
+        "c": {
+          "a": 3
+        },
+        "d": {
+          "a": 3
+        },
+        "e": {
+          "a": 3
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

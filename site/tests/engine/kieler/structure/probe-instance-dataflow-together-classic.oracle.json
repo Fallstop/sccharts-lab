@@ -1,0 +1,28 @@
+{
+  "hash": "cb0cbc13132434a2fdfec7057e219dfa9ebfbe4c",
+  "chart": "tests/engine/kieler/structure/probe-instance-dataflow-together-classic.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:54 The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: s",
+    "There are binding errors in a state with reference declaration of d!\nValued object in the referenced scope was not bound properly: s",
+    "The valued object reference points to a valued object (s) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This reference declaration contains some valued objects that are used in dataflow regions and some not. This might cause problems since reference valued objects not used in dataflow will be instaciated as class instances.",
+      "line": 3,
+      "column": 42
+    },
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: s",
+      "line": 3,
+      "column": 54
+    }
+  ],
+  "ticks": []
+}

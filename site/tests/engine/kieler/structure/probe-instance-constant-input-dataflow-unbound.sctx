@@ -1,0 +1,3 @@
+// A constant input nothing binds, in a dataflow region that calls a method: a field that stays 0.
+scchart Main { output int o ref Cell c dataflow { o = c.get() } }
+scchart Cell { input const int k method int get() { return k + 1 } }

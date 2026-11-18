@@ -1,0 +1,78 @@
+{
+  "hash": "30fdccb7485c94d3e01ba7e9e7cb86b98328fc6b",
+  "chart": "tests/engine/kieler/structure/probe-class-init-struct-inside.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O.T.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.t": {
+      "type": "struct",
+      "properties": []
+    },
+    "x": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": {
+          "t": {
+            "v": 0
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": {
+          "t": {
+            "v": 0
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": {
+          "t": {
+            "v": 0
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

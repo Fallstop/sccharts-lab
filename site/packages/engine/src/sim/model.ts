@@ -93,6 +93,8 @@ export class CVar {
     }
     /** The class KIELER makes of a `ref` declaration's chart (`Counter1`, the next declaration's `Counter2`). */
     className?: string
+    /** The same class by identity: instances declared together have one (`ref Counter a, b`). */
+    classKey?: string
     /**
      * A generic parameter of a chart (declKind 'generic', structure.md S-73): kept apart from the chart's
      * declarations until the Reference pass binds it. `type`: the chart a type or instance parameter names.

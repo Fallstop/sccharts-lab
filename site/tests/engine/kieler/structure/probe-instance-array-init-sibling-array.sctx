@@ -1,0 +1,3 @@
+// A field starting from an element of a sibling array, in an array of instances.
+scchart Main { output int o ref Box g[2] initial state A do o = g[1].s go to A }
+scchart Box { int a[2] = {1, 2} int s = a[1] + 5 }

@@ -1,0 +1,3 @@
+// A spread constant read only by the chart's regions: no field, each element's copy of the regions has its value.
+scchart Main { ref Box g[2]({4,7}) initial state A }
+scchart Box { input const int i int x = 0 initial state A do x = i go to A }

@@ -1,0 +1,62 @@
+{
+  "hash": "388bbd6890d16ada8c5930b048067bbe4b387925",
+  "chart": "tests/engine/kieler/structure/probe-instance-class-name-taken.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell2.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "local": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "c": {
+          "v": 3
+        },
+        "local": {
+          "a": 2
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "c": {
+          "v": 3
+        },
+        "local": {
+          "a": 2
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -10,8 +10,8 @@
 // then locals. Values are the pool after each tick; a name missing from a tick's pool keeps its value.
 
 import type { CompileResult, Simulation, SimTickResult } from '@sccharts-lab/engine'
-import { allScopes } from '@sccharts-lab/engine/internal'
-import type { CVar } from '@sccharts-lab/engine/internal'
+import { allScopes, typeKey } from '@sccharts-lab/engine/internal'
+import type { CVar, PoolObject } from '@sccharts-lab/engine/internal'
 import type { Declaration, State, Value, ValuedObject } from '@sccharts-lab/engine/types'
 import { compareTraces } from './trace-compare'
 import type { TraceComparison } from './trace-compare'
@@ -96,48 +96,17 @@ function memberDeclarations(prefix: string | undefined, members: Declaration[], 
  */
 function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): void {
     const compiled = result.sim!
-    /** The class of a chart instance: `<Chart>1`, or the number KIELER gave its declaration (`<Chart>2`). */
+    /** The class of a chart instance: the name KIELER's Reference processor gave its declaration (`<Chart>1`). */
     const classOf = (c: CVar) => c.className ?? `${c.instance!.target}1`
-    const declarationOf = (c: CVar) => result.index?.vos.get(c.decl ?? '') ?? result.index?.vos.get((c.decl ?? '').split('/').pop()!)
     const local = (c: CVar) => c.declKind === 'class' || c.declKind === 'struct'
-    // KIELER moves a class declared in an inner state to the root and makes its name unique: among every name of the
-    // file (a variable called `C1` takes that name) and the names it gave before, counting on per name. So a class `C`
-    // of an inner state is `C1`, the next declaration of that name `C2` (in another state, or in the next copy of a
-    // referenced chart), and a chart instance's class `Two1` in an inner state `Two11`.
-    const taken = new Set<string>()
-    const collect = (value: unknown) => {
-        if (Array.isArray(value)) { value.forEach(collect); return }
-        if (!value || typeof value !== 'object') return
-        for (const [k, v] of Object.entries(value)) {
-            if ((k === 'name' || k === 'className') && typeof v === 'string') taken.add(v)
-            else if (k !== 'span' && v && typeof v === 'object') collect(v)
-        }
-    }
-    collect(result.index?.programs[0] ?? result.chart)
+    // The engine names KIELER's classes as KIELER does (classNames.ts in its sim/structure): the class of a chart
+    // instance, and the name a class of an inner state gets when KIELER moves it to the root (`C` is `C1`, a chart
+    // instance's class `Two1` in an inner state `Two11`).
+    const typeNames = (compiled.core.ext.typeNames as Map<string, string> | undefined) ?? new Map<string, string>()
     const scopes = allScopes(compiled.core)
-    for (const scope of scopes) for (const v of scope.decls as CVar[]) if (v.declKind === 'reference' && v.instance) taken.add(classOf(v))
-    for (const scope of scopes) for (const v of scope.decls as CVar[]) for (let c: CVar | undefined = v.member?.of; c; c = c.member?.of) if (c.declKind === 'reference' && c.instance) taken.add(classOf(c))
-    const highest = new Map<string, number>()
-    const unique = (base: string): string => {
-        let n = (highest.get(base) ?? 0) + 1
-        while (taken.has(`${base}${n}`)) n++
-        highest.set(base, n)
-        taken.add(`${base}${n}`)
-        return `${base}${n}`
-    }
-    const risen = new Map<string, string>()
-    const declarations = new Map<object, number>()
-    const declarationId = (d: object) => declarations.get(d) ?? declarations.set(d, declarations.size).get(d)!
-    /** The type of the instance `root` declared in `scope`: its class's name, made unique when the state is an inner one. */
-    const rootType = (root: CVar, scope: { uid: number }, nested: boolean): string | undefined => {
-        const reference = root.declKind === 'reference' && !!root.instance
-        const name = reference ? classOf(root) : declarationOf(root)?.decl?.className
-        if (!name || !nested) return name
-        // Instances declared together are one class.
-        const key = reference ? `${root.uid}|${scope.uid}` : `${declarationId(declarationOf(root)?.decl ?? root)}|${scope.uid}`
-        if (!risen.has(key)) risen.set(key, unique(name))
-        return risen.get(key)
-    }
+    /** The type of the instance `root` with members in `scope`: its class's name, the unique one in an inner state. */
+    const rootType = (root: CVar, scope: { uid: number }): string | undefined =>
+        typeNames.get(typeKey(root, scope)) ?? (root.declKind === 'reference' && root.instance ? classOf(root) : undefined)
     for (const scope of scopes) {
         for (const v of scope.decls as CVar[]) {
             if (!v.member || v.const || v.tags.has('#const-member')) continue
@@ -153,7 +122,7 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
             if (chain.length > 2 || (v.declKind && chain.length === 2)) {
                 // (A class of the chart itself is listed from its declaration, memberDeclarations.)
                 if (!(reference || (nested && local(root))) || (v.declKind && !local(v))) continue
-                const top = rootType(root, scope, nested)
+                const top = rootType(root, scope)
                 if (!top) continue
                 const classes = chain.slice(1, -1).map((c) => (c.declKind === 'reference' && c.instance
                     ? classOf(c)
@@ -170,11 +139,26 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
             }
             if (v.declKind) continue
             const { of } = v.member
-            const type = (of.declKind === 'reference' && of.instance) || (nested && local(of)) ? rootType(of, scope, nested) : undefined
+            const type = (of.declKind === 'reference' && of.instance) || (nested && local(of)) ? rootType(of, scope) : undefined
             if (!type) continue
             // An OO dataflow instance's inherited inputs and outputs are still listed as such.
             out.push({ name: `${type}.${v.member.name}`, input: v.tags.has('#port-input'), output: v.tags.has('#port-output'), type: typeName(v.type, v.hostType), dims: [], late: true })
         }
+    }
+    // An instance inside a chart instance is a member of the outer one's class, with or without fields of its own
+    // (`Mid1.c`): the pool's objects know the ones without.
+    for (const o of (compiled.core.ext.poolObjects as PoolObject[] | undefined) ?? []) {
+        if (o.path.length < 2) continue
+        const chain: CVar[] = []
+        for (let c: CVar | undefined = o.v; c; c = c.member?.of) chain.unshift(c)
+        const root = chain[0]
+        if (root.declKind !== 'reference' || !root.instance) continue
+        const top = rootType(root, compiled.core)
+        if (!top) continue
+        const classes = chain.slice(1, -1).map((c) => (c.declKind === 'reference' && c.instance
+            ? classOf(c)
+            : result.index?.vos.get((c.decl ?? '').split('/').pop()!)?.decl?.className ?? c.member!.name))
+        out.push({ name: [top, ...classes, o.v.member!.name].join('.'), input: false, output: false, type: o.v.declKind === 'struct' ? 'struct' : 'class', dims: [], late: true })
     }
 }
 
@@ -209,11 +193,8 @@ export function poolVariables(result: Compiled): PoolVariable[] {
         const late = type === 'string' && dims.length === 0 && info?.initialValue == null
         add({ name: v.name, input: v.input, output: v.output, type, dims, late })
     }
-    const instances = (compiled.core.ext.emptyInstances as string[] | undefined) ?? []
-    for (const name of instances) {
-        const v = (compiled.core.decls as CVar[]).find((d) => d.name === name)
-        add(v ? instance(v) : { name, input: false, output: false, type: 'class', dims: [], late: false })
-    }
+    // The class objects of the pool, with or without fields (the engine's structure/poolShape.ts).
+    for (const o of (compiled.core.ext.poolObjects as PoolObject[] | undefined) ?? []) if (o.path.length === 1) add(instance(o.v))
     const members: PoolVariable[] = []
     // The chart's own types and those of the charts it extends (their declarations are the chart's).
     const charts: State[] = []

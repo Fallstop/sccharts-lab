@@ -1,0 +1,12 @@
+// An array of chart instances with a chart instance inside: a method of one element writes its own inner instance.
+scchart Main {
+  output int p
+  ref Box<2> g[2]
+  initial state A do g[1].inc(); p = g[1].get() go to A
+}
+scchart Box<N is int> {
+  ref Leaf b
+  method void inc() { b.x += N }
+  method int get() { return b.x }
+}
+scchart Leaf { int x = 3 }

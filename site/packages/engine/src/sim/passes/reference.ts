@@ -32,7 +32,10 @@ import { inheritedDeclarations, type CEquation } from '../lower'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { declaredVars, rewriteScope } from '../structure/rewrite'
 import { Replacements, Replacer } from '../structure/replacements'
-import { arrayMembers, elementIndices, elementOf } from '../structure/instanceArray'
+import { arrayMembers, elementIndices, elementOf, usesFields } from '../structure/instanceArray'
+import { chartInstancesOf, DECLARED_MEMBER, type ChartInstance } from '../structure/poolShape'
+import { applySpreads, isSpread, type SpreadBinding } from '../structure/spread'
+import { fileNames, type UniqueNames } from '../structure/classNames'
 import { foldConstants } from '../fold'
 import { DF_BINDING, DF_REMOVED, processDataflow } from './dataflow'
 import { allInherited, inherit } from './inheritance'
@@ -54,12 +57,6 @@ export interface InstanceRecord {
     chart: State
     /** A `ref` declaration's instance (its regions join the declaring state's), not a referencing state. */
     declaration?: boolean
-}
-
-/** A chart instance without fields at the top of the simulated chart, and its methods (compile.ts emptyInstances). */
-export interface EmptyCandidate {
-    name: string
-    methods: CVar[]
 }
 
 /** A reference to expand: a state's `is C(args)`, or one the Dataflow processor made. */
@@ -92,9 +89,9 @@ export class Expansion {
     readonly ctx: PassContext
     /** While set, nothing is reported (the further elements of an array of instances repeat the first's reports). */
     private muted = 0
-    /** KIELER's classes for `ref` declarations: one per declaration, named after the chart with a running number. */
+    /** KIELER's classes for `ref` declarations: one per declaration, named after the chart (structure/classNames.ts). */
     private readonly classes = new Map<Scope, Map<string, { name: string; key: string }>>()
-    private readonly classNumbers = new Map<string, number>()
+    private readonly names: UniqueNames
     private classKeys = 0
     /** How many `ref` instances are being expanded around the current place. */
     private instanceDepth = 0
@@ -106,6 +103,7 @@ export class Expansion {
         this.index = ctx.shared.index as ModelIndex | undefined
         ctx.shared.instances = this.records
         this.failed = (ctx.shared.failedVars ??= new Set<CVar>()) as Set<CVar>
+        this.names = (ctx.shared.uniqueNames ??= fileNames(this.index?.programs[0])) as UniqueNames
     }
 
     run() {
@@ -663,11 +661,18 @@ export class Expansion {
                     continue
                 }
                 const elements = elementIndices(sizes as number[])
+                // An array without elements (`ref C g[0]`) still has its class, and KIELER's loop over the elements, from
+                // 0 to their number minus one, counts down in Xtend: two copies of the chart's regions and actions,
+                // for the elements 0 and -1, both working on element 0 (emptyArrayBehaviour).
+                const none = !elements.length
+                const zero = sizes.map(() => 0)
+                const copies = none ? [{ at: zero, tag: '0' }, { at: zero, tag: '-1' }] : elements.map(at => ({ at, tag: at.join('][') }))
                 const target = isRegion(scope) ? scope.parent : scope
                 /** The first element's declarations: the members of every element. */
                 let members: CVar[] = []
-                elements.forEach((at, x) => {
-                    const prefix = sizes.length ? `${id}[${at.join('][')}]${REFERENCE_SEPARATOR}` : id + REFERENCE_SEPARATOR
+                let outside = false
+                copies.forEach(({ at, tag }, x) => {
+                    const prefix = sizes.length ? `${id}[${tag}]${REFERENCE_SEPARATOR}` : id + REFERENCE_SEPARATOR
                     // What lowering and expanding the chart reports is the same for every element: once.
                     if (x > 0) this.muted++
                     let inst: CState
@@ -688,42 +693,59 @@ export class Expansion {
                         // (A code block of the chart's own actions is no method of the class: KIELER moves it out with them.)
                         if (local.method && !local.member && !local.generated) local.classInstance = v
                     }
+                    const spread = applySpreads(inst, (inst.ext.spreads as SpreadBinding[] | undefined) ?? [], x, elements.length, v, d => { if (x === 0) this.ctx.report(d) })
                     if (x === 0) {
                         members = [...inst.decls]
                         if (!this.muted) {
                             const cls = this.classOf(v, scope, chart)
                             v.className = cls.name
+                            v.classKey = cls.key
                             for (const l of members) if (l.method) l.method = { ...l.method, cls: cls.key, instance: v }
                         }
                         this.checkSignals(v, inst, chart)
                         this.redirectMembers(v, prefix, inst, root, sizes.length)
-                        // A chart class instance without fields is still an (empty) object in KIELER's data pool while
-                        // one of its methods is a C function (structure.md S-60, conformance structure/131; compile.ts
-                        // emptyInstances).
-                        if (target === this.ctx.root && !v.instance!.args.length && !inst.decls.some(l => !l.declKind)) {
-                            ((this.ctx.root.ext.emptyCandidates ??= []) as EmptyCandidate[]).push({ name: v.name, methods: inst.decls.filter(l => l.method && !l.generated) })
-                        }
                     }
                     if (sizes.length) elementOf(inst, members, at, x === 0)
                     if (x === 0) {
-                        if (sizes.length) arrayMembers(members, v.dims, sizes as number[])
+                        // The class KIELER makes of the instance (structure/poolShape.ts): the chart's declarations,
+                        // the chart instances declared in it as classes inside (objects inside this instance's object).
+                        const inside = chartInstancesOf(inst)
+                        const all = (list: ChartInstance[]): CVar[] => list.flatMap(c => [c.v, ...all(c.inside)])
+                        if (sizes.length) arrayMembers(members, v.dims, sizes as number[], all(inside))
+                        // What is spread over the elements and stays a field: assigned when the declaring state is entered.
+                        if (spread.length) {
+                            const entry = createEntryAction(target, 0)
+                            for (const { field, values } of spread) {
+                                values.forEach((value, i) => entry.effects.push({
+                                    k: 'assign', ref: { k: 'ref', v: field, idx: [{ k: 'lit', t: 'int', v: i }] }, op: '=', expr: copyExpr(value),
+                                    o: { by: field.decl, span: field.span },
+                                }))
+                            }
+                        }
+                        for (const c of inside) c.v.member = { of: v, name: c.v.name }
+                        chartInstancesOf(target).push({
+                            v, inside, methods: inst.decls.filter(l => l.method && !l.generated),
+                            declared: inst.decls.some(l => !l.generated) || inside.some(c => c.declared),
+                        })
                         // The instance's locals become hidden members of the declaring state (in KIELER's data pool:
                         // members of an object named after the declaration, `"g": {"k": 0}`).
                         for (const local of [...inst.decls]) {
                             // A member of an instance inside the chart keeps its instance; the instance is the member.
                             if (!local.member && (!local.declKind || local.declKind === 'class' || local.declKind === 'struct')) local.member = { of: v, name: local.name }
-                            // A chart instance inside the chart is no declaration any more: it is the member (an
-                            // object inside this instance's object in the pool).
-                            let top = local.member?.of
-                            while (top?.member) top = top.member.of
-                            if (top && top !== v && top.declKind === 'reference') top.member = { of: v, name: top.name }
                             // In messages: the member as the declaring chart writes it (`g.a`).
+                            // (Written in the chart, whatever its name: `int _a` is a field like any other.)
+                            if (!local.generated) local.tags.add(DECLARED_MEMBER)
                             if (!local.generated && !local.display) local.display = `${v.name}.${local.name}`
                             local.name = `_${v.name}_${local.name}`
                             local.generated = true
                             addVar(target, local)
                         }
                     }
+                    if (none && x === 0 && usesFields(inst, members)) {
+                        outside = true
+                        this.emptyArrayBehaviour(v, chart)
+                    }
+                    if (outside) return
                     for (const r of [...inst.regions]) {
                         r.name = `${v.name}${elements.length > 1 ? x : ''}_${r.name ?? 'default'}`
                         r.parent = target
@@ -735,6 +757,19 @@ export class Expansion {
                 scope.decls.splice(scope.decls.indexOf(v), 1)
             }
         }
+    }
+
+    /**
+     * `ref C g[0]` of a chart whose regions or actions name a field. The two copies KIELER makes of them work on the
+     * element 0 that the array does not have, so on whatever lies behind it in KIELER's C data (the counters of the
+     * taken transitions in the probes structure/probe-reference-instance-array-zero-*).
+     */
+    private emptyArrayBehaviour(v: CVar, chart: State) {
+        this.ctx.report({
+            severity: 'info', code: 'unsupported', span: v.span, related: v.decl ? [v.decl] : undefined,
+            message: `The guide's simulator cannot run \`${v.name}\`, an array of no instances of \`${chart.name}\`, whose regions and actions KIELER still runs on the fields of an instance that is not there`,
+            hint: `KIELER makes two copies of \`${chart.name}\`'s regions and actions for an array without elements, and their reads and writes of \`${chart.name}\`'s fields go to memory behind the empty array. Give the array at least one element, or remove the declaration.`,
+        })
     }
 
     /**
@@ -752,7 +787,14 @@ export class Expansion {
         const own = new Set(inst.decls)
         const replacements = new Replacements(parent)
         const bindings = this.interfaceBindings(chart, v.instance!.args, scope, replacements, id, v.span, dataflow)
-        for (const b of bindings) replacements.push(b.name, b.actual)
+        // A vector bound to a scalar constant input of an array of instances is spread over them, not substituted.
+        const spreads: SpreadBinding[] = []
+        for (const b of bindings) {
+            const formal = inst.decls.find(l => l.name === b.name && (l.input || l.output))
+            if (isSpread(v, formal, b.actual)) spreads.push({ formal: formal!, vector: b.actual })
+            else replacements.push(b.name, b.actual)
+        }
+        inst.ext.spreads = spreads
         this.bindGenerics(inst, v.instance!.generics, replacements)
         const implicit = !!(inst.ext.generics as CVar[] | undefined)?.length || !!inst.ext.baseStates
         this.stack.push(chart.name)
@@ -766,6 +808,11 @@ export class Expansion {
         // Without base charts and generic parameters nothing has bound the interface yet. (The interface
         // declarations go with their initial values: no entry actions here.)
         if (!implicit) this.replacer(replacements, id, false).state(inst)
+        // (A spread constant is an ordinary variable of the class from here on.)
+        for (const s of spreads) {
+            s.formal.input = false
+            s.formal.const = false
+        }
         if (!dataflow) {
             this.removeInterface(inst)
             return inst
@@ -787,22 +834,26 @@ export class Expansion {
             if (!own.has(f) && !f.declKind) f.tags.add(f.input ? '#port-input' : '#port-output')
             f.input = false
             f.output = false
+            // (A constant input that nothing binds is a variable that stays 0: there is no value to put in its place.)
+            if (f.const && !f.init) f.const = false
         }
         return inst
     }
 
     /**
      * The class KIELER makes of the instance's declaration (createPolicyClassDeclaration, uniqueName): `<Chart>1`,
-     * the next declaration of that chart `<Chart>2`. Instances declared together share it, unless one of them has
-     * arguments (separateReferenceDeclarationsWithIndividualBindingsInVOs gives every further one its own).
+     * the next declaration of that chart `<Chart>2`, past every name the file has already (a class `<Chart>1`).
+     * Instances declared together share it, unless one of them has arguments
+     * (separateReferenceDeclarationsWithIndividualBindingsInVOs gives every further one its own).
      */
     private classOf(v: CVar, scope: Scope, chart: State): { name: string; key: string } {
         const group = v.instance?.separate ? undefined : v.instance?.group
         const known = group !== undefined ? this.classes.get(scope)?.get(group) : undefined
         if (known) return known
-        const n = (this.classNumbers.get(chart.name) ?? 0) + 1
-        this.classNumbers.set(chart.name, n)
-        const made = { name: `${chart.name}${n}`, key: `${chart.name}${n}#${++this.classKeys}` }
+        // (The chart's own name is taken: it is in the file, or in a file it imports.)
+        this.names.add(chart.name)
+        const name = this.names.unique(chart.name)
+        const made = { name, key: `${name}#${++this.classKeys}` }
         if (group !== undefined) {
             if (!this.classes.has(scope)) this.classes.set(scope, new Map())
             this.classes.get(scope)!.set(group, made)

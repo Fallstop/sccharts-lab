@@ -1,0 +1,4 @@
+// A class called Cell1 in another chart of the file takes the name too.
+scchart Main { output int o ref Cell c dataflow { o = c.get() } }
+scchart Cell { int v = 3 method int get() { return v } }
+scchart Other { class Cell1 { int a } z }

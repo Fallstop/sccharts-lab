@@ -1,0 +1,60 @@
+{
+  "hash": "515e2b505f8ec06328b8c8ce096c74afd9c49a14",
+  "chart": "tests/engine/kieler/structure/probe-instance-init-sibling-declared-later.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Box1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "g": {
+          "a": 4,
+          "b": 2
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "g": {
+          "a": 4,
+          "b": 2
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+// A variable called Cell1 takes the name: the instance's class is Cell2.
+scchart Main { output int o int Cell1 = 7 ref Cell c dataflow { o = c.get() + Cell1 } }
+scchart Cell { int v = 3 method int get() { return v } }

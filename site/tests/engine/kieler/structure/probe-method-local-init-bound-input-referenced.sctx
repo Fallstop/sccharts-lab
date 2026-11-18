@@ -1,0 +1,3 @@
+// The same in a chart referenced by a state.
+scchart Main { input int i output int o initial state S is Cell(i, o) }
+scchart Cell { input int q output int o method int big() { int r = q; return r + 1 } initial state A do o = big() go to A }

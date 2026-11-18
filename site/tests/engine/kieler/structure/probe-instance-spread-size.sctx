@@ -1,0 +1,3 @@
+// A spread vector with another number of values than the array has instances.
+scchart Main { output int o ref Cell c[2]({3, 8, 9}) initial state A do o = c[1].get() go to A }
+scchart Cell { input const int k method int get() { return k } }

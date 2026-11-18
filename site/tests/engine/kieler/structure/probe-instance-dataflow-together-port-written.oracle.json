@@ -1,0 +1,108 @@
+{
+  "hash": "f1b95373c43a3bee58ca4c5180f7c39d42c9ccd5",
+  "chart": "tests/engine/kieler/structure/probe-instance-dataflow-together-port-written.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This reference declaration contains some valued objects that are used in dataflow regions and some not. This might cause problems since reference valued objects not used in dataflow will be instaciated as class instances.",
+      "line": 2,
+      "column": 42
+    }
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "d": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "p": 0,
+        "a": 9,
+        "c": {
+          "a": 3
+        },
+        "d": {
+          "a": 3
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "p": 0,
+        "a": 9,
+        "c": {
+          "a": 3
+        },
+        "d": {
+          "a": 5
+        }
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "p": 5,
+        "a": 9,
+        "c": {
+          "a": 3
+        },
+        "d": {
+          "a": 5
+        }
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

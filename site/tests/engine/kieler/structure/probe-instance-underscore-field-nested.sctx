@@ -1,0 +1,4 @@
+// A field starting with an underscore in an instance inside an instance.
+scchart Main { output int o ref Mid m initial state A do o = m.get() go to A }
+scchart Mid { ref Cell c method int get() { return c._a } int w }
+scchart Cell { int _a = 3 }

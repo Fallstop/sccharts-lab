@@ -1,0 +1,94 @@
+{
+  "hash": "8d5713e7ac1e78aa13090d0155366c6fc4738a34",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-range.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": [
+          {
+            "x": 0
+          },
+          {
+            "x": 0
+          },
+          {
+            "x": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "c": [
+          {
+            "x": 0
+          },
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "c": [
+          {
+            "x": 0
+          },
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+// An array of chart instances whose field starts from a sibling field: each element reads its own (b is a + 2 = 6).
+scchart Main {
+  output int o
+  ref Cell c[2]
+  dataflow { o = c[1].get() }
+}
+scchart Cell { int a = 4 int b = a + 2 method int get() { return b } }

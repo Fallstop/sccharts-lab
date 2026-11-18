@@ -1,0 +1,74 @@
+{
+  "hash": "b4dad02e30bb0a49aa6833f5f75958a0a8dc8bf1",
+  "chart": "tests/engine/kieler/structure/probe-instance-pool-array-nested-cfnu.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid1.c": {
+      "type": "class",
+      "properties": []
+    },
+    "Mid1.w": {
+      "type": "int",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "m": [
+          {
+            "c": {},
+            "w": 5
+          },
+          {
+            "c": {},
+            "w": 5
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "m": [
+          {
+            "c": {},
+            "w": 5
+          },
+          {
+            "c": {},
+            "w": 5
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

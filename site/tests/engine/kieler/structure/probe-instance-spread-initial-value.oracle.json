@@ -1,0 +1,95 @@
+{
+  "hash": "be54084219c2b0642d15313b8a97fcb2bea5578f",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-initial-value.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": [
+          {
+            "k": 3,
+            "x": 1
+          },
+          {
+            "k": 8,
+            "x": 1
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "c": [
+          {
+            "k": 3,
+            "x": 1
+          },
+          {
+            "k": 8,
+            "x": 1
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "c": [
+          {
+            "k": 3,
+            "x": 1
+          },
+          {
+            "k": 8,
+            "x": 1
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

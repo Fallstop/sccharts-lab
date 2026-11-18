@@ -1,0 +1,3 @@
+// Declared together, one with an argument: two classes.
+scchart Main { output int o, p ref Cell c, d(p) dataflow { o = c.get() } }
+scchart Cell { output int q int v = 3 method int get() { return v } }

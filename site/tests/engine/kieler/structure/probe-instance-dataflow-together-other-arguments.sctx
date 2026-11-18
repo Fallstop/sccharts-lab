@@ -1,0 +1,4 @@
+// Declared together, the second with an argument: KIELER gives it a declaration of its own, without the dataflow mark, so it is
+// bound to a (p is 9) and only c keeps its ports.
+scchart Main { int a = 9 output int o, p ref Cell c, d(a) dataflow { o = c.get() } region R { initial state A immediate do p = d.get() go to B state B } }
+scchart Cell { input int a = 3 method int get() { return a } }

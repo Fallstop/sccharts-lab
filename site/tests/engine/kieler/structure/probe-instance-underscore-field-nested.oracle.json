@@ -1,0 +1,71 @@
+{
+  "hash": "b44595b472898f1be9ca8e20521e88e37978d3b8",
+  "chart": "tests/engine/kieler/structure/probe-instance-underscore-field-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid1.Cell1._a": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.c": {
+      "type": "class",
+      "properties": []
+    },
+    "Mid1.w": {
+      "type": "int",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "m": {
+          "c": {
+            "_a": 3
+          },
+          "w": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "m": {
+          "c": {
+            "_a": 3
+          },
+          "w": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

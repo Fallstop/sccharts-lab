@@ -1,0 +1,65 @@
+{
+  "hash": "82446b806ad8355c14093133b57d4d62922321c1",
+  "chart": "tests/engine/kieler/structure/probe-instance-pool-nested-only-field.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid1.Cell1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.c": {
+      "type": "class",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "m": {
+          "c": {
+            "v": 1
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "m": {
+          "c": {
+            "v": 1
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

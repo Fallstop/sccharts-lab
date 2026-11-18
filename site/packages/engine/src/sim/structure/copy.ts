@@ -35,6 +35,8 @@ export function copyVar(v: CVar): CVar {
     if (v.instance) c.instance = { ...v.instance, args: v.instance.args.map(a => ({ ...a, expr: copyExpr(a.expr) })) }
     c.typeParam = v.typeParam
     c.generic = v.generic
+    c.className = v.className
+    c.classKey = v.classKey
     return c
 }
 

@@ -1,0 +1,16 @@
+{
+  "hash": "b4040da1b379a9f2a0082f1eba18ef54bb506fa2",
+  "chart": "tests/engine/kieler/structure/probe-class-init-empty-two-deep.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "implicit declaration of function ‘Main_Main_O_C__init’; did you mean ‘Main_O__init’? [-Wimplicit-function-declaration]",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "ticks": []
+}

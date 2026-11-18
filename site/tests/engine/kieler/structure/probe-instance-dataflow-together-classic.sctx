@@ -1,0 +1,4 @@
+// Declared together, one wired by a dataflow region that calls no method (the classic translation): the other is left with an
+// output nothing binds.
+scchart Main { int a = 9 output int o, p ref Cell c, d dataflow { o = c.s } region R { initial state A immediate do p = d.get() go to B state B } }
+scchart Cell { input int a = 3 output int s method int get() { return a } dataflow { s = a + 1 } }

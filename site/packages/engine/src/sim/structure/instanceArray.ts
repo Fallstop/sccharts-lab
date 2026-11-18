@@ -7,7 +7,7 @@
 // parameters.
 
 import { CVar, copyExpr, ref, type CExpr, type CRef, type CState } from '../model'
-import { rewriteScope, rewriteStatements } from './rewrite'
+import { rewriteExpr, rewriteScope, rewriteStatements, type Rewriter } from './rewrite'
 
 /** The index tuples of an array's elements in KIELER's order (the last dimension runs fastest); `[[]]` for no array. */
 export function elementIndices(sizes: number[]): number[][] {
@@ -24,21 +24,8 @@ export function elementIndices(sizes: number[]): number[][] {
  * gives the methods of an array of class instances).
  */
 export function elementOf(inst: CState, first: CVar[], at: number[], isFirst: boolean) {
-    const literals = (): CExpr[] => at.map(i => ({ k: 'lit', t: 'int', v: i }))
     const members = new Map<CVar, CVar>(inst.decls.map((l, i) => [l, first[i] ?? l]))
-    const element = (prefix: () => CExpr[]) => {
-        const member = (r: CRef): CRef | undefined => {
-            const m = members.get(r.v)
-            return m && !m.method ? { ...r, v: m, idx: [...prefix(), ...r.idx] } : undefined
-        }
-        return {
-            read: member, target: member,
-            node: (e: CExpr): CExpr | undefined => {
-                const m = e.k === 'call' && e.target ? members.get(e.target.v) : undefined
-                return e.k === 'call' && m?.method ? { ...e, target: { ...e.target!, v: m }, args: [...prefix(), ...e.args] } : undefined
-            },
-        }
-    }
+    const element = (prefix: () => CExpr[]) => elementRewriter(members, prefix)
     if (isFirst) {
         for (const l of inst.decls) {
             if (l.method) {
@@ -57,21 +44,58 @@ export function elementOf(inst: CState, first: CVar[], at: number[], isFirst: bo
     // The regions and actions only: the declarations are the first element's (rewritten above, once).
     const decls = inst.decls
     inst.decls = []
-    rewriteScope(inst, element(literals))
+    rewriteScope(inst, element(() => literals(at)))
     inst.decls = decls
 }
 
-/** After every element is there: the members of an array of instances get its dimensions and one value per element. */
-export function arrayMembers(first: CVar[], dims: CExpr[], count: number[]) {
-    const repeat = (value: CExpr, depth = 0): CExpr =>
-        depth === count.length ? copyExpr(value) : { k: 'vector', values: Array.from({ length: count[depth] }, () => repeat(value, depth + 1)), span: value.span }
-    const nested = new Set<CVar>()
+/** Do the regions and actions of a copy (made an element by elementOf) read or write a field of the instance? */
+export function usesFields(inst: CState, first: CVar[]): boolean {
+    const fields = new Set(first.filter(l => !l.method))
+    let found = false
+    const visit = (r: CRef): undefined => {
+        if (fields.has(r.v)) found = true
+        return undefined
+    }
+    const decls = inst.decls
+    inst.decls = []
+    rewriteScope(inst, { read: visit, target: visit })
+    inst.decls = decls
+    return found
+}
+
+const literals = (at: number[]): CExpr[] => at.map(i => ({ k: 'lit', t: 'int', v: i }))
+
+/** What a copy's own declarations are in the element with the indices `prefix`: the member's element, the method with the indices. */
+function elementRewriter(members: Map<CVar, CVar>, prefix: () => CExpr[]): Rewriter {
+    const member = (r: CRef): CRef | undefined => {
+        const m = members.get(r.v)
+        return m && !m.method ? { ...r, v: m, idx: [...prefix(), ...r.idx] } : undefined
+    }
+    return {
+        read: member, target: member,
+        node: (e: CExpr): CExpr | undefined => {
+            const m = e.k === 'call' && e.target ? members.get(e.target.v) : undefined
+            return e.k === 'call' && m?.method ? { ...e, target: { ...e.target!, v: m }, args: [...prefix(), ...e.args] } : undefined
+        },
+    }
+}
+
+/**
+ * After every element is there: the members of an array of instances get its dimensions and one value per element.
+ * KIELER initialises each element in the class's `_init` method, so a field or method of the chart that an initial
+ * value names (`int b = a + 2`, `int c = get()`) is that element's. `instances`: the chart instances inside the chart.
+ */
+export function arrayMembers(first: CVar[], dims: CExpr[], count: number[], instances: CVar[] = []) {
+    const self = new Map<CVar, CVar>(first.map(l => [l, l]))
+    const repeat = (value: CExpr, at: number[] = []): CExpr =>
+        at.length === count.length
+            ? rewriteExpr(copyExpr(value), elementRewriter(self, () => literals(at)))
+            : { k: 'vector', values: Array.from({ length: count[at.length] }, (_, i) => repeat(value, [...at, i])), span: value.span }
     for (const l of first) {
-        // A chart instance inside the chart (no declaration any more): its members name it.
-        for (let of = l.member?.of; of; of = of.member?.of) if (!first.includes(of)) nested.add(of)
         if (l.method) continue
         l.dims = [...dims.map(d => copyExpr(d)), ...l.dims]
         if (l.init) l.init = repeat(l.init)
     }
-    for (const of of nested) of.dims = [...dims.map(d => copyExpr(d)), ...of.dims]
+    // The chart instances inside the chart (no declarations any more): their members name them.
+    for (const of of instances) of.dims = [...dims.map(d => copyExpr(d)), ...of.dims]
 }

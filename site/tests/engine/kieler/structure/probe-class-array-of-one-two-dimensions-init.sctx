@@ -1,0 +1,2 @@
+// An array [1][1] of class objects is one element too: never initialised.
+scchart Main { output int o class C { int x = 3 } c[1][1] initial state A do o = c[0][0].x go to B state B }

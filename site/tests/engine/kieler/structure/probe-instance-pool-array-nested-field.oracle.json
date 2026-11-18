@@ -1,0 +1,88 @@
+{
+  "hash": "41485845c81d80b0f310df3fcd189847b7dca5ba",
+  "chart": "tests/engine/kieler/structure/probe-instance-pool-array-nested-field.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid1.Cell1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.c": {
+      "type": "class",
+      "properties": []
+    },
+    "Mid1.w": {
+      "type": "int",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "m": [
+          {
+            "c": {
+              "v": 1
+            },
+            "w": 5
+          },
+          {
+            "c": {
+              "v": 1
+            },
+            "w": 5
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "m": [
+          {
+            "c": {
+              "v": 1
+            },
+            "w": 5
+          },
+          {
+            "c": {
+              "v": 1
+            },
+            "w": 5
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

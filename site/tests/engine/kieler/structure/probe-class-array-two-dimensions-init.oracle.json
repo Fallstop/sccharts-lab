@@ -1,0 +1,70 @@
+{
+  "hash": "f181d031dd230ac8620614bf5817b923c11ed733",
+  "chart": "tests/engine/kieler/structure/probe-class-array-two-dimensions-init.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.x": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": [
+          [
+            {
+              "x": 3
+            },
+            {
+              "x": 3
+            }
+          ]
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "c": [
+          [
+            {
+              "x": 3
+            },
+            {
+              "x": 3
+            }
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+// The same as an array of one object: _init is never called, so nothing fails.
+scchart Main { output int o class O { int _h } x[1] initial state A do o = 1 go to B state B }

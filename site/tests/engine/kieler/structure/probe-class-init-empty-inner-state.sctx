@@ -1,0 +1,2 @@
+// The same class in an inner state: KIELER fails earlier, on the _init it moves to the root.
+scchart Main { output int o initial state S { class O { class C { int get() { return 3 } } c } x initial state A do o = 1 go to B state B } }

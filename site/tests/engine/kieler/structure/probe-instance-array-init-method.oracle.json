@@ -1,0 +1,76 @@
+{
+  "hash": "c60e9a268346a117b177d75e0f8608cd54d6ad00",
+  "chart": "tests/engine/kieler/structure/probe-instance-array-init-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Box1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "g": [
+          {
+            "a": 4,
+            "b": 12
+          },
+          {
+            "a": 4,
+            "b": 12
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 12,
+        "g": [
+          {
+            "a": 4,
+            "b": 12
+          },
+          {
+            "a": 4,
+            "b": 12
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

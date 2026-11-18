@@ -226,7 +226,12 @@ function processRegionOO(df: CRegion, expansion: Expansion, eqs: CEquation[]) {
     const instances: CVar[] = []
     for (const eq of eqs) for (const g of instancesOf(eq, expansion)) if (!instances.includes(g)) instances.push(g)
     for (const g of instances) {
-        g.tags.add(DF_BINDING)
+        // KIELER's mark is on the declaration, so every instance declared with this one keeps its ports too, used here
+        // or not. When one of them has arguments, the Reference processor gives every variable after the first a
+        // declaration of its own, without the mark: only the first keeps its ports then, whichever was used here.
+        const { group, separate } = g.instance!
+        if (group === undefined) g.tags.add(DF_BINDING)
+        else for (const other of g.scope?.decls ?? []) if (other.instance?.group === group && (!separate || other.decl === group)) other.tags.add(DF_BINDING)
         // KIELER would restart an instance declared in the region itself, but looks for the declaration after it has
         // moved it to the new state: no instance is ever restarted.
         const chart = expansion.findChart(g.instance!.target)

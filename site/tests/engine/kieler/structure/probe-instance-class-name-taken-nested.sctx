@@ -1,0 +1,4 @@
+// A class Cell1 inside a chart used as a class, next to an instance of Cell: Mid1.Cell1 and Mid1.Cell2.
+scchart Main { output int o ref Mid m dataflow { o = m.get() } }
+scchart Mid { class Cell1 { int a = 2 } k ref Cell c method int get() { return c.get() + k.a } }
+scchart Cell { int v = 3 method int get() { return v } }

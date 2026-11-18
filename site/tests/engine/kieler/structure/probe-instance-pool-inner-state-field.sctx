@@ -1,0 +1,3 @@
+// An instance declared in an inner state is not in the pool.
+scchart Main { output int o initial state S { ref Cell c initial state A do o = 1 go to B state B } }
+scchart Cell { int v = 1 region RC { initial state B } }

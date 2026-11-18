@@ -1,0 +1,96 @@
+{
+  "hash": "49ec46609bbb7f23e78e3fe9ff4f77d10eb51d20",
+  "chart": "tests/engine/kieler/structure/probe-class-init-array-inside.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "O.C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "O.c": {
+      "type": "class",
+      "properties": []
+    },
+    "x": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": {
+          "c": [
+            {
+              "v": 0
+            },
+            {
+              "v": 0
+            }
+          ]
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": {
+          "c": [
+            {
+              "v": 0
+            },
+            {
+              "v": 0
+            }
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": {
+          "c": [
+            {
+              "v": 0
+            },
+            {
+              "v": 0
+            }
+          ]
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+// A spread constant next to a generic parameter.
+scchart Main { output int o ref Cell<2> c[2]({3, 8}) initial state A do o = c[1].x go to A }
+scchart Cell<N is int> { input const int k int x region R { initial state B do x = k + N go to B } }

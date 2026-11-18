@@ -1,0 +1,3 @@
+// A vector of one value spread over an array of one instance: the field is assigned on entry although nothing initialises it.
+scchart Main { output int o ref Cell c[1]({3}) initial state A do o = c[0].get() go to A }
+scchart Cell { input const int k method int get() { return k } }

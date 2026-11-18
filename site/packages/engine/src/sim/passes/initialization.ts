@@ -4,14 +4,21 @@
 // default (implicit initialisation: not for inputs, not for generated names starting with `_`).
 
 import type { Pass, PassContext } from './context'
+import type { ModelIndex } from '../../parser/resolve'
 import { allScopes, createEntryAction, initialState, isRegion, ref, type CExpr, type CVar, type Scope } from '../model'
+import { emptyInits, neverInitialised } from '../structure/classInit'
 
 export const initialization: Pass = {
     id: 'de.cau.cs.kieler.sccharts.processors.initialization',
     name: 'Initialization',
     owner: 'core',
     run(ctx: PassContext) {
+        const index = ctx.shared.index as ModelIndex | undefined
+        // The class of an object as KIELER names it: a chart instance's, or the declared one.
+        const className = (v: CVar) => v.className ?? (index?.vos.get(v.decl ?? '') ?? index?.vos.get((v.decl ?? '').split('/').pop()!))?.decl?.className
         for (const scope of allScopes(ctx.root)) {
+            for (const d of emptyInits(scope, ctx.root.name, className)) ctx.report(d)
+            for (const v of scope.decls) if (!v.declKind && neverInitialised(v)) v.init = undefined
             implicitInitialization(scope)
             transformInitialization(scope, ctx)
         }
@@ -33,7 +40,7 @@ function implicitInitialization(scope: Scope) {
         if (v.input || v.declKind) continue
         // (A field of a chart instance, `ref C g`, is `_g_n` here and `n` in the class KIELER makes of the instance.)
         const name = v.member && v.member.of.declKind === 'reference' ? v.member.name : v.name
-        if (v.init || name.startsWith('_')) continue
+        if (v.init || name.startsWith('_') || neverInitialised(v)) continue
         const init = defaultFor(v)
         if (!init) continue
         let value: CExpr = init

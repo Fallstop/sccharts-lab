@@ -1,0 +1,10 @@
+// Two instances of one declaration, one used in a dataflow region that calls a method: KIELER marks the declaration, so both keep
+// their inputs as fields (c.a and d.a are 3) and d is not bound to the chart's a.
+scchart Main {
+  int a = 9
+  output int o, p
+  ref Cell c, d
+  dataflow { o = c.get() }
+  region R { initial state A immediate do p = d.get() go to B state B }
+}
+scchart Cell { input int a = 3 method int get() { return a } }

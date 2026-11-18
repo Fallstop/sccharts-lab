@@ -1,0 +1,7 @@
+// A spread constant read by a method of the chart: it stays a field of every instance, assigned on entry.
+scchart Main {
+  output int o
+  ref Cell c[2]({3, 8})
+  region R { initial state A immediate do o = c[1].get() go to B state B }
+}
+scchart Cell { input const int k method int get() { return k } }

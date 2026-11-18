@@ -1,0 +1,5 @@
+// An instance inside an instance whose method is called through the outer one: an empty object inside, whether KIELER copies
+// the method into place or keeps it.
+scchart Main { output int o ref Mid m initial state A do o = m.run() go to B state B }
+scchart Mid { int w = 5 ref Cell c method int run() { return c.get() } }
+scchart Cell { method int get() { return 3 } }

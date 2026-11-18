@@ -1,0 +1,4 @@
+// A method of an instance inside an instance cannot be named from outside (m.c.get()).
+scchart Main { output int o ref Mid m initial state A do o = m.c.get() go to B state B }
+scchart Mid { int w = 5 ref Cell c }
+scchart Cell { method int get() { return 3 } }

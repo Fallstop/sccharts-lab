@@ -8,6 +8,7 @@
 
 import type { CompiledChart } from '../sim/compile'
 import { allScopes, walkExpr, type CEffect, type CExpr, type CStmt, type CVar } from '../sim/model'
+import type { PoolObject } from '../sim/structure/poolShape'
 import type { CVariable } from './types'
 
 export interface Slot {
@@ -79,6 +80,8 @@ export class Layout {
     readonly variables: CVariable[] = []
     /** Instances of classes, structs and charts used as classes (KIELER's data pool reports each as an object). */
     readonly instances: { name: string; member: string; ctype: string; pool?: string }[] = []
+    /** The class objects of KIELER's data pool, each by the way to it (GeneratedC.poolObjects). */
+    poolObjects: { path: { key: string; dims: number[] }[] }[] = []
     private readonly used = new Set<string>()
     private readonly maxSuffix = new Map<string, number>()
 
@@ -101,7 +104,11 @@ export class Layout {
         // Charts used as classes and `ref C g(...)` instances (passes/reference.ts): their fields are variables whose
         // instance is no declaration any more; one without fields is known by name only.
         const rootSet = new Set(rootDecls)
-        const empty = new Set((core.ext.emptyInstances as string[] | undefined) ?? [])
+        // The class objects of KIELER's data pool (sim/structure/poolShape.ts), there with or without fields.
+        const objects = (core.ext.poolObjects as PoolObject[] | undefined) ?? []
+        this.poolObjects = objects.map(o => ({ path: o.path.map(step => ({ key: step.key, dims: step.sizes })) }))
+        const fieldless = objects.filter(o => o.path.length === 1 && o.v.declKind === 'reference' && !rootDecls.some(m => topChartInstance(m, rootSet) === o.v))
+        const empty = new Set(fieldless.map(o => o.v.name))
         const chartInstanceOf = (v: CVar): string | undefined => {
             // (A chart instance inside a chart instance is a member of the outer one: the outermost names the object.)
             const top = topChartInstance(v, rootSet)
@@ -160,7 +167,7 @@ export class Layout {
                 this.plain(v, name, false)
             }
         }
-        for (const inst of empty) if (!placed.has(inst)) this.chartInstance(inst, rootDecls, classes)
+        for (const o of fieldless) if (!placed.has(o.v.name)) this.chartInstance(o.v.name, rootDecls, classes, o.v)
         for (const v of extra) if (!this.slots.has(v) && !v.declKind) this.plain(v, this.unique(identifier(v.name)), false)
     }
 
@@ -169,14 +176,15 @@ export class Layout {
      * array of instances (`ref C cs[2]`) is an array of the struct; a chart instance declared in the chart is a struct
      * inside it.
      */
-    private chartInstance(inst: string, decls: CVar[], classes: Map<string, string>) {
+    private chartInstance(inst: string, decls: CVar[], classes: Map<string, string>, fieldless?: CVar) {
         const rootSet = new Set(decls)
-        const of = decls.map(m => topChartInstance(m, rootSet)).find(t => t?.name === inst)
+        const of = fieldless ?? decls.map(m => topChartInstance(m, rootSet)).find(t => t?.name === inst)
         const type = this.chartType(of, inst, decls, classes)
         const outer = of ? dimsOf(of) : []
         const name = this.unique(identifier(inst))
         this.lines.push(`${type} ${name}${outer.map(n => `[${n}]`).join('')};`)
-        this.instances.push({ name: inst, member: name, ctype: type, pool: inst })
+        // (An instance whose chart only has constants has a struct here and no object in KIELER's pool.)
+        this.instances.push({ name: inst, member: name, ctype: type, ...(this.poolObjects.some(o => o.path.length === 1 && o.path[0].key === inst) ? { pool: inst } : {}) })
         if (of) this.chartMembers(of, `${name}${'[]'.repeat(outer.length)}`, decls, inst)
     }
 

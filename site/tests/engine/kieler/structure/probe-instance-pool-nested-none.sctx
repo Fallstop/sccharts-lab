@@ -1,0 +1,4 @@
+// An instance inside an instance (with a field) whose chart declares nothing: no object.
+scchart Main { output int o ref Mid m initial state A do o = 1 go to B state B }
+scchart Mid { int w = 5 ref Cell c region RM { initial state B } }
+scchart Cell {  region RC { initial state B } }

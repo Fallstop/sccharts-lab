@@ -1,0 +1,3 @@
+// An annotation called Cell1 takes the name too.
+scchart Main { output int o @Cell1 ref Cell c dataflow { o = c.get() } }
+scchart Cell { int v = 3 method int get() { return v } }

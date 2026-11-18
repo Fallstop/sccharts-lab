@@ -1,0 +1,4 @@
+// A spread constant read by a field's initial value, a method and a region: it is a field, still 0 when the initial values
+// are computed (x starts at 1), and the region reads the field.
+scchart Main { output int o ref Cell c[2]({3, 8}) initial state A do o = c[1].x + c[1].get() go to A }
+scchart Cell { input const int k int x = k + 1 method int get() { return k } region R { initial state B do x += k go to B } }

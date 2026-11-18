@@ -1,0 +1,9 @@
+// The same in an inner state: each element reads its own sibling field.
+scchart Main {
+  output int o
+  initial state S {
+    ref Cell c[2]
+    dataflow { o = c[1].get() }
+  }
+}
+scchart Cell { int a = 4 int b = a + 2 method int get() { return b } }

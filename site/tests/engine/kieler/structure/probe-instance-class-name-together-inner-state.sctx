@@ -1,0 +1,9 @@
+// Two instances declared together in an inner state are one class, Cell1, which moves to the root as Cell11.
+scchart Main {
+  output int o, p
+  initial state S {
+    ref Cell c, d
+    dataflow { o = c.get() p = d.get() }
+  }
+}
+scchart Cell { int v = 3 method int get() { return v } }

@@ -1,0 +1,3 @@
+// A class Cell1 and an instance of Cell in an inner state: Cell11 and Cell21.
+scchart Main { output int o initial state S { class Cell1 { int a = 2 } k ref Cell c dataflow { o = c.get() + k.a } } }
+scchart Cell { int v = 3 method int get() { return v } }

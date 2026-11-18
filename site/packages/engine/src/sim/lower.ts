@@ -710,6 +710,8 @@ class Lowering {
             v = last === r ? v : this.ref(r).v
             if (!this.constSource.has(v) || v.decl !== last.decl) v = undefined
         }
+        // An `input const` has no value of its own: it is whatever a reference binds to it (passes/reference.ts).
+        if (v?.const && v.input && !this.constSource.has(v)) v = undefined
         if (v) {
             let value = this.constValue(v)
             for (const i of last.indices) {

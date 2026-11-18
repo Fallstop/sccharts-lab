@@ -1,0 +1,3 @@
+// Control: two declarations at the root are Cell1 and Cell2.
+scchart Main { output int o, p ref Cell c ref Cell d dataflow { o = c.get() p = d.get() } }
+scchart Cell { int v = 3 method int get() { return v } }

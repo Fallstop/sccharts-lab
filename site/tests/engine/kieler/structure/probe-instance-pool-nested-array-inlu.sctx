@@ -1,0 +1,4 @@
+// An array of instances inside an instance whose chart has a short method nobody calls: an empty object inside the outer one.
+scchart Main { output int o ref Mid m initial state A do o = 1 go to B state B }
+scchart Mid { int w = 5 ref Cell c[2] region RM { initial state B } }
+scchart Cell { method int get() { return 3 } region RC { initial state B } }

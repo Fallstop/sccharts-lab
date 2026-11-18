@@ -1,0 +1,4 @@
+// An array of no instances of a chart that only writes a bound output: KIELER's loop from 0 to -1 makes two copies of the
+// region, so o grows by 2 a tick.
+scchart Main { output int o ref Cell c[0](o) initial state A }
+scchart Cell { output int q initial state B do q += 1 go to B }

@@ -1,0 +1,3 @@
+// An array of instances in an inner state: Cell11.
+scchart Main { output int o initial state S { ref Cell c[2] dataflow { o = c[1].get() } } }
+scchart Cell { int v = 3 method int get() { return v } }

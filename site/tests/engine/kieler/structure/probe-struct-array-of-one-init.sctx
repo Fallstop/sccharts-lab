@@ -1,0 +1,2 @@
+// Control: an array of one struct is initialised (a struct is assigned from outside, member by member).
+scchart Main { output int o struct T { int x = 3 } t[1] initial state A do o = t[0].x go to B state B }

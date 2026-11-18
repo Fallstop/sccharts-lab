@@ -1,0 +1,2 @@
+// An array of one class object in a state entered again: its members keep their values, with or without an initial value.
+scchart Main { output int o initial state S { class C { int x = 3 int z } c[1] initial state A do o = c[0].x; c[0].x += 1; c[0].z += 2 go to B final state B } join to S }

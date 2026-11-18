@@ -171,6 +171,16 @@ export function harness(gen: GeneratedC, ticks: Record<string, Value>[], seeds: 
     ]
     // Instances: one object each (an array of objects for an array of instances), with their members.
     const objects = new Map<string, PoolNode>()
+    // The objects themselves first: one without fields is still `{}`, an array without elements `[]`.
+    for (const o of gen.poolObjects ?? []) {
+        let node: PoolNode | undefined = objects.get(o.path[0].key)
+        if (!node) objects.set(o.path[0].key, (node = { dims: o.path[0].dims, children: new Map() }))
+        for (const step of o.path.slice(1)) {
+            let next: PoolNode | undefined = node.children.get(step.key)
+            if (!next) node.children.set(step.key, (next = { dims: step.dims, children: new Map() }))
+            node = next
+        }
+    }
     for (const v of gen.variables) {
         if (v.pool === undefined || v.type === 'host') continue
         if (v.poolObject) {
@@ -191,8 +201,8 @@ export function harness(gen: GeneratedC, ticks: Record<string, Value>[], seeds: 
         const skip = v.type === 'string' && !v.dims.length ? `if (${access}) ` : ''
         lines.push(`  ${skip}{ if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(v.pool) + ':')}, stdout); ${body.join(' ')} }`)
     }
-    // Instances without fields are empty objects in KIELER's data pool.
-    for (const inst of gen.instances) {
+    // Instances without fields are empty objects in KIELER's data pool (poolObjects has them when it is given).
+    for (const inst of gen.poolObjects ? [] : gen.instances) {
         if (inst.pool === undefined || objects.has(inst.pool)) continue
         lines.push(`  { if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(inst.pool) + ':{}')}, stdout); }`)
     }

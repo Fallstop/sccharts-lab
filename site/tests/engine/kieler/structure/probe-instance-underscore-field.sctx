@@ -1,0 +1,3 @@
+// A field of a chart instance whose name starts with an underscore is a field like any other.
+scchart Main { output int o ref Cell c dataflow { o = c.get() } }
+scchart Cell { int _a = 3 method int get() { return _a } }

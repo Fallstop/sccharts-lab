@@ -1,0 +1,4 @@
+// An instance inside every element of an array, its method called through the element: empty objects inside.
+scchart Main { output int o ref Mid m[2] initial state A do o = m[1].run() go to B state B }
+scchart Mid { int w = 5 ref Cell c method int run() { return c.get() } }
+scchart Cell { method int get() { return 3 } }

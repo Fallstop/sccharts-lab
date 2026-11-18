@@ -1,0 +1,4 @@
+// An instance whose chart only declares an instance with a field.
+scchart Main { output int o ref Mid m initial state A do o = 1 go to B state B }
+scchart Mid { ref Cell c region RM { initial state B } }
+scchart Cell { int v = 1 region RC { initial state B } }

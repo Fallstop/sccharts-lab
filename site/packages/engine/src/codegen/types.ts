@@ -75,6 +75,12 @@ export interface GeneratedC {
      * data pool reports the instance as an object under this key even when it has no fields (`{}`).
      */
     instances: { name: string; member: string; ctype: string; pool?: string }[]
+    /**
+     * The class objects of KIELER's data pool, each by the way to it from the pool's key, every step with its own array
+     * sizes (`m.c` for an instance `c` inside the instance `m`: `[{ key: 'm', dims: [] }, { key: 'c', dims: [2] }]`).
+     * An object is in the pool with or without fields: `{}`, an array of `{}`, `[]` for an array without elements.
+     */
+    poolObjects?: { path: { key: string; dims: number[] }[] }[]
     /** Why there is no code (errors), or what to know about it (warnings, infos). */
     diagnostics: Diagnostic[]
     /** The chart uses host code (backticks, `extern`, host types, `#hostcode`): the C code carries it as written. */

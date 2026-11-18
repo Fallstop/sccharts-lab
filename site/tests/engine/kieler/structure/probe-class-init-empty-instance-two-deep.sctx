@@ -1,0 +1,5 @@
+// Three charts deep: the middle instance has nothing to initialise.
+scchart Main { output int o ref Mid m initial state A do o = 1 go to B state B }
+scchart Mid { int w ref Leaf z }
+scchart Leaf { ref Cell c }
+scchart Cell { method int get() { return 3 } }

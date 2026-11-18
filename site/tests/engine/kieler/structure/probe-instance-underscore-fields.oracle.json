@@ -1,0 +1,60 @@
+{
+  "hash": "c34bed35ef155d80d5e69e4c53aaf732f1f0cec7",
+  "chart": "tests/engine/kieler/structure/probe-instance-underscore-fields.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1._a": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1._b": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "_a": 3,
+          "_b": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "c": {
+          "_a": 3,
+          "_b": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

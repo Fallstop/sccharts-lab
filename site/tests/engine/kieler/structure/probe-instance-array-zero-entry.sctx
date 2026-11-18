@@ -1,0 +1,4 @@
+// An array of no instances whose chart has an entry action writing a field: KIELER makes two copies and both write behind the
+// empty array (here into the counter of the taken transition).
+scchart Main { output int o int after = 7 ref Cell c[0] initial state A do o = after go to A }
+scchart Cell { int v entry do v = 5 }

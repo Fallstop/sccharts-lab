@@ -1,0 +1,3 @@
+// A chart instance whose only field starts with an underscore and has an initial value.
+scchart Main { output int o ref Box g initial state A do o = 1 go to B state B }
+scchart Box { int _h = 4 }

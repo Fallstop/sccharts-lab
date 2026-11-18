@@ -1,0 +1,4 @@
+// A bound input named in the initial value of a local variable of a method: KIELER's replacement walks the statements of a
+// body, and a local declaration is none, so the name points out of the model.
+scchart Main { input int i output int o ref Cell c(i) initial state A do o = c.big() go to B state B }
+scchart Cell { input int q method int big() { int r = q; for (int j = 0; j < 2; j++) { r += 1 } return r } }

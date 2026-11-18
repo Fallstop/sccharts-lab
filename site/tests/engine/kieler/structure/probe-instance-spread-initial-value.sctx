@@ -1,0 +1,3 @@
+// A spread constant read only by a field's initial value: it stays a field, and the initial value reads 0.
+scchart Main { output int o ref Cell c[2]({3, 8}) initial state A do o = c[1].x go to A }
+scchart Cell { input const int k int x = k + 1 }

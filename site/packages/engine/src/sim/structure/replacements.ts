@@ -191,14 +191,17 @@ export class Replacer {
         for (const p of frame) this.replacements.pop(p.name)
     }
 
-    private statements(list: CStmt[]): CStmt[] {
+    /** `declarations`: the initial values of local declarations are replaced too (a `for` loop's own declaration). */
+    private statements(list: CStmt[], declarations = false): CStmt[] {
         return list.map((s): CStmt => {
             switch (s.k) {
-                case 'do': return { ...s, f: this.effect(s.f) }
+                // The initial value of a local declaration is not visited (replaceValuedObjectReferencesInSclScope
+                // walks the statements, and a declaration is none): a bound name left there points out of the model.
+                case 'do': return s.init && !declarations ? s : { ...s, f: this.effect(s.f) }
                 case 'if': return { ...s, cond: this.expr(s.cond), then: this.statements(s.then), else: s.else ? this.statements(s.else) : undefined }
                 case 'while': return { ...s, cond: this.expr(s.cond), body: this.statements(s.body) }
                 case 'for': return {
-                    ...s, init: this.statements(s.init), cond: s.cond ? this.expr(s.cond) : undefined,
+                    ...s, init: this.statements(s.init, true), cond: s.cond ? this.expr(s.cond) : undefined,
                     update: this.statements(s.update), body: this.statements(s.body),
                 }
                 case 'return': return { ...s, expr: s.expr ? this.expr(s.expr) : undefined }
@@ -302,6 +305,16 @@ export class Replacer {
             if (hasVariableDeclaration(r.v) && !(bound.k === 'lit' && bound.konst !== undefined)) {
                 if (!this.options.literals.has(r.v)) {
                     this.options.literals.add(r.v)
+                    // A vector as the value of a single constant: KIELER's Const processor writes it where the
+                    // constant is named, which is no C expression.
+                    if (bound.k === 'vector' && r.v.const && !r.v.dims.length) {
+                        this.options.report({
+                            severity: 'error', code: 'binding-vector', span: bound.span ?? r.span, related: this.options.owner ? [this.options.owner] : undefined,
+                            message: `\`${r.v.name}\` is a single constant, and a vector is bound to it`,
+                            kieler: 'expected expression before \u2018{\u2019 token\nCompiler did not return success (exit value != 0)',
+                            hint: `Bind one value to \`${r.v.name}\`. A vector gives every instance its own value only for an array of instances with one dimension (\`ref C c[2]({3, 8})\`).`,
+                        })
+                    }
                     r.v.input = false
                     r.v.output = false
                     r.v.signal = false

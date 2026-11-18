@@ -183,7 +183,7 @@ export function generateC(result: CompileResult, options: GenerateCOptions = {})
     return {
         ok: true, chart: chartName, header: `${fileName}.h`, source: `${fileName}.c`,
         files: { [`${fileName}.h`]: header, [`${fileName}.c`]: source },
-        names, variables: layout.variables, instances: layout.instances, diagnostics, simulated,
+        names, variables: layout.variables, instances: layout.instances, poolObjects: layout.poolObjects, diagnostics, simulated,
         hostCode: usesHostCode(compiled, exe, functions.length ? methods : [], chart, result),
         takenTransitions: options.takenTransitions ? compiled.lowered.takenOrder : undefined,
     }

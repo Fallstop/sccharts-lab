@@ -1,0 +1,4 @@
+// An instance inside an instance whose chart has only a constant: an empty object inside.
+scchart Main { output int o ref Mid m initial state A do o = 1 go to B state B }
+scchart Mid { int w = 5 ref Cell c }
+scchart Cell { const int K = 4 region R { initial state B } }

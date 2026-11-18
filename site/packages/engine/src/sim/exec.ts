@@ -19,6 +19,7 @@ import { copyNotes, copyStates, trackView } from './structure/track'
 import { historyRecordReader, hookEvents, isHook, StateNames, suspendEvents, takeNotes, takeOptions, type HookMark } from './preemptionLog'
 import type { SuspendInfo } from './passes/suspend'
 import type { HistoryRecord } from './passes/history'
+import { DECLARED_MEMBER, type PoolObject } from './structure/poolShape'
 import { lookupSource, readProbes, seenText, sourceElements, triggerProbes, type Probe } from './reasons'
 import {
     cloneValue, convert, ctypeOf, defaultValue, doubleToInt, freshString, INT_MAX, INT_MIN, isCString, makeArray,
@@ -132,7 +133,9 @@ interface PoolEntry {
  * or undefined for anything else (the compiler's helpers inside an instance too).
  */
 export function chartInstanceMember(v: CVar): string | undefined {
-    if (!v.member || v.const || v.declKind || v.tags.has('#const-member') || v.member.name.startsWith('_')) return undefined
+    if (!v.member || v.const || v.declKind || v.tags.has('#const-member')) return undefined
+    // (A helper the compiler put inside the instance, not a field such as `int _a` that the chart declares.)
+    if (v.member.name.startsWith('_') && !v.tags.has(DECLARED_MEMBER)) return undefined
     const chain: CVar[] = []
     for (let c: CVar | undefined = v; c; c = c.member?.of) chain.unshift(c)
     if (chain[0].declKind !== 'reference' || !chain[0].instance) return undefined
@@ -166,6 +169,22 @@ function placeMember(container: Record<string, PoolValue>, path: { key: string; 
     container[step.key] = build(container[step.key], step.dims, value)
 }
 
+/** Puts a class object into the pool: `{}`, or the arrays of its dimensions with `{}` for every element. */
+function placeObject(container: Record<string, PoolValue>, path: PoolObject['path']) {
+    const [step, ...rest] = path
+    const build = (existing: PoolValue | undefined, sizes: number[]): PoolValue => {
+        if (!sizes.length) {
+            const object = (existing && typeof existing === 'object' && !Array.isArray(existing) ? existing : {}) as Record<string, PoolValue>
+            if (rest.length) placeObject(object, rest)
+            return object
+        }
+        const list = (Array.isArray(existing) ? existing : []) as PoolValue[]
+        for (let i = 0; i < sizes[0]; i++) list[i] = build(list[i], sizes.slice(1))
+        return list
+    }
+    container[step.key] = build(container[step.key], step.sizes)
+}
+
 /** A traced value that is not a pool name (SimTickResult.trace). */
 interface TraceEntry {
     key: string
@@ -189,8 +208,8 @@ export class ExecutableChart {
     readonly slots = new Map<CVar, VarInfo>()
     readonly pool: PoolEntry[] = []
     readonly traced: TraceEntry[] = []
-    /** Instances without fields: an empty object in the pool. */
-    readonly emptyObjects: string[]
+    /** The class objects of the pool (structure/poolShape.ts): there with or without fields, `[]` for an empty array. */
+    readonly objects: PoolObject[]
     readonly inputs: { v: CVar; name: string; type: CType }[] = []
     readonly goInits: number[] = []
     /** Slots of the conditions' guard variables (XNode.mem), which start at 0 like every member of KIELER's struct. */
@@ -267,7 +286,7 @@ export class ExecutableChart {
             else if (!v.role) this.plain.set(v.name, v)
         }
 
-        this.emptyObjects = (compiled.core.ext.emptyInstances as string[] | undefined) ?? []
+        this.objects = (compiled.core.ext.poolObjects as PoolObject[] | undefined) ?? []
         // What a reader may trace beyond the pool: members of the root's instances, locals of inner scopes.
         const rootDecls = new Set(compiled.core.decls)
         const traceKeys = new Set<string>()
@@ -450,7 +469,7 @@ export class ExecutableChart {
         const trace: Record<string, Value> = {}
         for (const t of this.traced) trace[t.key] = toValue(vals[this.slots.get(t.v)!.slot], t.type, false)
         const pool: Record<string, PoolValue> = { ...extra }
-        for (const name of this.emptyObjects) pool[name] = {}
+        for (const o of this.objects) placeObject(pool, o.path)
         for (const p of this.pool) {
             const value = toValue(vals[this.slots.get(p.v)!.slot], p.type, true)
             if (value === null) continue

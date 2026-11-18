@@ -1,0 +1,2 @@
+// An array of one class object: its members are never initialised (x is 0, not 3).
+scchart Main { output int o class C { int x = 3 } c[1] initial state A do o = c[0].x go to B state B }

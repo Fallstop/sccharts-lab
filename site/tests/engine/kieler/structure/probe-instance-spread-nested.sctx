@@ -1,0 +1,4 @@
+// A spread binding inside a chart that is itself an instance: the assignments on entry come along.
+scchart Main { output int o ref Mid m initial state A do o = m.run() go to A }
+scchart Mid { ref Cell c[2]({3, 8}) method int run() { return c[1].get() } }
+scchart Cell { input const int k method int get() { return k } }

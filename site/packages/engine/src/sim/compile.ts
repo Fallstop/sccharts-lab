@@ -6,7 +6,8 @@ import type { Declaration, Diagnostic, SclStatement, Span, State } from '../type
 import type { ModelIndex } from '../parser/resolve'
 import { lowerChart, type LowerResult } from './lower'
 import { PIPELINE, type PassContext } from './passes'
-import type { EmptyCandidate } from './passes/reference'
+import { poolObjects } from './structure/poolShape'
+import { fileNames, typeNames, type UniqueNames } from './structure/classNames'
 import { buildSCG, cloneSCG, successors, type SCG, type SNode } from './scg'
 import { abortRegionsSCG } from './abortRegions'
 import { concurrentThreads, dependencies, dependencyReach, entryReach, type Access, type Dependency } from './deps'
@@ -55,6 +56,8 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     const diagnostics: Diagnostic[] = []
     const t0 = now()
     const lowered = lowerChart(chart, index)
+    // An `input const` of the simulated chart has no value to put in its place: an input like any other to KIELER.
+    for (const v of lowered.root.decls) if (v.const && v.input && !v.init) v.const = false
     const t1 = now()
     for (const p of lowered.problems) {
         diagnostics.push({ severity: 'error', code: 'internal', message: p.message, span: p.span })
@@ -87,6 +90,12 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
             })
         }
     }
+    // The final names of KIELER's classes (structure/classNames.ts): the ones that moved to the root get theirs now.
+    const declarationOf = (v: CVar) => {
+        const entry = index?.vos.get(v.decl ?? '') ?? index?.vos.get((v.decl ?? '').split('/').pop()!)
+        return entry?.decl ? { declaration: entry.decl, className: entry.decl.className } : undefined
+    }
+    lowered.root.ext.typeNames = typeNames(lowered.root, (ctx.shared.uniqueNames ??= fileNames(index?.programs[0] ?? chart)) as UniqueNames, declarationOf)
     // An expression the lowering could not represent would only fail when a tick evaluates it: say so now.
     if (!diagnostics.some(d => d.severity === 'error' || d.code === 'unsupported')) diagnostics.push(...leftovers(lowered.root))
     const t2 = now()
@@ -146,7 +155,7 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     const refused = new Set(diagnostics.filter(d => d.code === 'schedule-without-instance').map(d => d.span?.start))
     const functions = new Set<CVar>()
     diagnostics.push(...inlineMethods(scg, functions).filter(d => d.code !== 'schedule-value' || !refused.has(d.span?.start)))
-    lowered.root.ext.emptyInstances = emptyInstances(lowered.root, functions)
+    lowered.root.ext.poolObjects = poolObjects(lowered.root, functions)
     // KIELER's SequentialForkSurfaceDepthSeparatorProcessor.
     separateSurfaceDepth(scg)
     diagnostics.push(...crashingClashes(clashes, scg, lowered.root))
@@ -264,26 +273,6 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
 // ---------------------------------------------------------------------------------------------------
 // Diagnostics
 // ---------------------------------------------------------------------------------------------------
-
-/**
- * The instances without fields that are an (empty) object in KIELER's data pool (structure.md S-60): a class instance
- * or a chart used as a class at the top of the chart is one while a method of it is still a C function. Once KIELER's
- * Methods processor has copied the short methods into place and dropped the ones nobody calls, it removes a class
- * without content, and a schedule is no content (User Schedule moved it into the chart). Probes
- * structure/probe-instance-pool-*.
- */
-function emptyInstances(root: CState, functions: ReadonlySet<CVar>): string[] {
-    const out: string[] = []
-    for (const c of (root.ext.emptyCandidates as EmptyCandidate[] | undefined) ?? []) if (c.methods.some(m => functions.has(m))) out.push(c.name)
-    const inside = (v: CVar, inst: CVar): boolean => { for (let m = v.member?.of; m; m = m.member?.of) if (m === inst) return true; return false }
-    for (const inst of root.decls) {
-        if (inst.declKind !== 'class' || inst.member || inst.dims.length || inst.tags.has('#host')) continue
-        const members = root.decls.filter(v => inside(v, inst))
-        if (members.some(v => !v.declKind && !v.tags.has('#const-member'))) continue
-        if (members.some(v => v.method && functions.has(v))) out.push(inst.name)
-    }
-    return out
-}
 
 /** A schedule clause naming a variable that is not a schedule, where it has something to order (deps.ts scheduleCasts). */
 function notASchedule(entry: SchedEntry): Diagnostic {

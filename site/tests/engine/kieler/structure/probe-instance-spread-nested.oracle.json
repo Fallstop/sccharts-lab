@@ -1,0 +1,99 @@
+{
+  "hash": "6e5d4d004b35469eb72740703793cc0859921254",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name run is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid1.Cell1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.c": {
+      "type": "class",
+      "properties": []
+    },
+    "m": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "m": {
+          "c": [
+            {
+              "k": 3
+            },
+            {
+              "k": 8
+            }
+          ]
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 8,
+        "m": {
+          "c": [
+            {
+              "k": 3
+            },
+            {
+              "k": 8
+            }
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 8,
+        "m": {
+          "c": [
+            {
+              "k": 3
+            },
+            {
+              "k": 8
+            }
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

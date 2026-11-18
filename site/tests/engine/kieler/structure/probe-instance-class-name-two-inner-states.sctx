@@ -1,0 +1,3 @@
+// One declaration in each of two inner states: Cell11 and Cell21.
+scchart Main { output int o, p region R1 { initial state S { ref Cell c dataflow { o = c.get() } } } region R2 { initial state T { ref Cell c dataflow { p = c.get() } } } }
+scchart Cell { int v = 3 method int get() { return v } }

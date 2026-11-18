@@ -1,0 +1,3 @@
+// An array of no instances with a region that names no field, and a method called on element 0.
+scchart Main { output int o ref Cell c[0] initial state A do o = c[0].get() go to A }
+scchart Cell { int v method int get() { return 3 } region R { initial state B go to C state C } }

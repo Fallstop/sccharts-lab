@@ -1,0 +1,8 @@
+// A class called Cell1 in the chart: the class of the instance of Cell is Cell2 (KIELER makes names unique against the file).
+scchart Main {
+  output int o
+  class Cell1 { int a = 2 } local
+  ref Cell c
+  dataflow { o = c.get() + local.a }
+}
+scchart Cell { int v = 3 method int get() { return v } }

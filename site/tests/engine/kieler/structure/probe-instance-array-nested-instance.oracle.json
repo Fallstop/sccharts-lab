@@ -1,0 +1,80 @@
+{
+  "hash": "f32c8a077fd9a15f6c838b67a138eccce4263d47",
+  "chart": "tests/engine/kieler/structure/probe-instance-array-nested-instance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Box1.Leaf1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.b": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "g": [
+          {
+            "b": {
+              "x": 3
+            }
+          },
+          {
+            "b": {
+              "x": 3
+            }
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 5,
+        "g": [
+          {
+            "b": {
+              "x": 3
+            }
+          },
+          {
+            "b": {
+              "x": 5
+            }
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -818,13 +818,14 @@ class Validator {
                 'KIELER treats the instances a dataflow region uses differently from the others. Declare them separately (one `ref` line for the dataflow instances, one for the rest).')
         }
         const first = check[0]
-        const each = usedInDataflow.size > 0 || (d.valuedObjects.length > 1 && d.valuedObjects.some(v => v.parameters?.length || v.genericArguments?.length))
+        const each = check.length < d.valuedObjects.length || (d.valuedObjects.length > 1 && d.valuedObjects.some(v => v.parameters?.length || v.genericArguments?.length))
         for (const vo of each ? check : [first]) {
             const generics = vo.genericArguments?.length ? vo.genericArguments : d.genericArguments
             const errors = [...this.bindingErrors(target, vo.parameters ?? [], owner, undefined, undefined, generics), ...this.genericErrors(target, generics)]
             if (errors.length) {
-                // KIELER marks the referenced chart's name (referenceDeclaration_Reference).
-                this.add('error', 'binding-error', d.referenceSpan ?? vo.span, `The bindings of \`${vo.name}\` to \`${target.name}\` are wrong: ${errors[0]}`,
+                // KIELER marks the referenced chart's name (referenceDeclaration_Reference) when it checks the declaration
+                // once, and the variable when it checks each one (some are used in dataflow, or one has arguments).
+                this.add('error', 'binding-error', each ? vo.nameSpan ?? vo.span : d.referenceSpan ?? vo.span, `The bindings of \`${vo.name}\` to \`${target.name}\` are wrong: ${errors[0]}`,
                     'The referencing binding is erroneous!\n' + errors.join('\n'), genericHint(errors[0]) ?? (errors.length > 1 ? errors.slice(1).join(' ') : undefined))
             }
         }

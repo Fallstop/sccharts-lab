@@ -1,0 +1,4 @@
+// Declared together, the first with an argument, the second used in the dataflow region: the mark stays with the first variable's
+// declaration, so d keeps its ports (its argument is not applied) and c, the one used, is bound by name.
+scchart Main { int a = 9 output int o, p ref Cell d(a), c dataflow { o = c.get() } region R { initial state A immediate do p = d.get() go to B state B } }
+scchart Cell { input int a = 3 method int get() { return a } }

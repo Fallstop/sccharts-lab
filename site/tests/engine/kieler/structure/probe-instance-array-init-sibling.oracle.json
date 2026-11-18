@@ -1,0 +1,50 @@
+{
+  "hash": "214ab0f6267f935deaefdd1aea485c95dda41235",
+  "chart": "tests/engine/kieler/structure/probe-instance-array-init-sibling.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 6,
+        "c": [
+          {
+            "a": 4,
+            "b": 6
+          },
+          {
+            "a": 4,
+            "b": 6
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

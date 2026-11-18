@@ -1,0 +1,3 @@
+// An array of ONE chart instance: KIELER never calls the class's _init for it, so x starts at 0, not 3.
+scchart Main { ref Box g[1] initial state A }
+scchart Box { int x = 3 region R { initial state B do x += 1 go to B } }

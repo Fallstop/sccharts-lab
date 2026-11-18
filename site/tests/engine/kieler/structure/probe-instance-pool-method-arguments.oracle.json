@@ -1,0 +1,76 @@
+{
+  "hash": "93b23c63365639aad9ab944ca92e1790e557811d",
+  "chart": "tests/engine/kieler/structure/probe-instance-pool-method-arguments.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name big is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 4
+      },
+      "values": {
+        "i": 4,
+        "o": 0,
+        "c": {}
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "i": 4,
+        "o": 6,
+        "c": {}
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 6
+      },
+      "values": {
+        "i": 6,
+        "o": 6,
+        "c": {}
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

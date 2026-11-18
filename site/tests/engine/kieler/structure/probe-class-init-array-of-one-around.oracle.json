@@ -1,0 +1,93 @@
+{
+  "hash": "5fce4339d6e8f1138437fede9f9562bc9a6280bd",
+  "chart": "tests/engine/kieler/structure/probe-class-init-array-of-one-around.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Box1.C.x": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.c": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "g": [
+          {
+            "c": [
+              {
+                "x": 0
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "g": [
+          {
+            "c": [
+              {
+                "x": 0
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "g": [
+          {
+            "c": [
+              {
+                "x": 0
+              }
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

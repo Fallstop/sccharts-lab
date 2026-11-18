@@ -1,0 +1,3 @@
+// Declared together, the second with an argument and used in the dataflow region: the first keeps its ports, the used one is bound.
+scchart Main { int a = 9 output int o, p ref Cell c, d(a) dataflow { o = d.get() } region R { initial state A immediate do p = c.get() go to B state B } }
+scchart Cell { input int a = 3 method int get() { return a } }

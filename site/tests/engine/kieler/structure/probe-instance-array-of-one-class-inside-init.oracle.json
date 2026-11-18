@@ -1,0 +1,54 @@
+{
+  "hash": "33391307779111d309909e02f8d926f55b9b5b77",
+  "chart": "tests/engine/kieler/structure/probe-instance-array-of-one-class-inside-init.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "Box1.C.x": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.c": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "g": [
+          {
+            "c": {
+              "x": 0
+            }
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "g": [
+          {
+            "c": {
+              "x": 0
+            }
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

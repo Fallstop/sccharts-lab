@@ -1,0 +1,3 @@
+// A constant input bound to a number and read by a method.
+scchart Main { output int o ref Cell c(3) initial state A do o = c.get() go to A }
+scchart Cell { input const int k method int get() { return k } }

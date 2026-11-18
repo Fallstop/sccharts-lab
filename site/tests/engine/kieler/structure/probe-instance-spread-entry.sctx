@@ -1,0 +1,3 @@
+// A spread constant read by an entry action of the chart.
+scchart Main { output int o ref Cell c[2]({3, 8}) initial state A do o = c[1].x go to A }
+scchart Cell { input const int k int x entry do x = k * 2 }
