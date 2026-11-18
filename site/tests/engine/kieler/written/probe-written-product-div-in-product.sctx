@@ -1,0 +1,2 @@
+// A quotient at the start of a product inside a product: KIELER writes 100 * i / 3 * 2, and C multiplies first.
+scchart Main { input int i input float g output int x output float f  initial state A do x = 100 * (i / 3 * 2) go to A }

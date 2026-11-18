@@ -1,0 +1,103 @@
+{
+  "hash": "d61583d8ee8c6a9fc49ef3257cddddfd472f189a",
+  "chart": "tests/engine/kieler/written/probe-written-product-index.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "g": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 0,
+        "a": [
+          4,
+          7
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 4,
+        "a": [
+          4,
+          7
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 4,
+        "g": 0.1
+      },
+      "values": {
+        "g": 0.1,
+        "i": 4,
+        "f": 0,
+        "x": 4,
+        "a": [
+          4,
+          7
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

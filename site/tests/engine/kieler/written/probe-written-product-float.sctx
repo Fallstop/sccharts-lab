@@ -1,0 +1,2 @@
+// Floats: the product inside a product is multiplied from the left, with that rounding.
+scchart Main { input int i input float g output int x output float f  initial state A do f = g * (g * 3.3 * 1.7) go to A }

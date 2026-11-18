@@ -261,6 +261,8 @@ export function binaryRule(o: string, a: Typed, b: Typed): BinaryRule | { error:
             }
             if (isPtr(x) && isPtr(y) && sameTy(x.to, y.to)) {
                 const size = sizeOf(x.to)
+                // (Rows without elements, `int m[2][0]`: nothing to count the distance in.)
+                if (size === 0) return { error: 'arithmetic on pointer to an empty aggregate' }
                 return {
                     t: { t: LONG },
                     run: (u, v, base, folded) => {

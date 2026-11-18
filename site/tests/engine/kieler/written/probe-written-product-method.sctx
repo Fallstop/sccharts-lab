@@ -1,0 +1,2 @@
+// A short method whose value is a quotient times a number, called as a factor: its expression is copied into the product without parentheses.
+scchart Main { input int i input float g output int x output float f method int half(int n) { return n / 3 * 2 } initial state A do x = 100 * half(i) go to A }

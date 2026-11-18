@@ -1,0 +1,66 @@
+{
+  "hash": "dd254b54db9bac67f1061f130be49443731f82ce",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-bool-array-string.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "s": {
+      "type": "string",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "bool",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "a": [
+          false,
+          false
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "s": "A",
+        "a": [
+          true,
+          false
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "s": "A",
+        "a": [
+          true,
+          false
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

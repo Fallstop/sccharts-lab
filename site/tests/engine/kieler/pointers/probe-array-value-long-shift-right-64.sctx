@@ -1,0 +1,2 @@
+// A distance gcc knows shifted right by 64: 0.
+scchart Main { int a[2] output bool y initial state A do y = (a + 1 - a) >> 64 == 0 go to A }

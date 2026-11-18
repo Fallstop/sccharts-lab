@@ -84,14 +84,43 @@ export function additiveChain(e: Op): Chain {
     return { terms: chain(e), regrouped }
 }
 
-/** The operands of a product as C reads KIELER's text: a product inside a product has no parentheses. */
-export function productOperands(e: Op): CExpr[] {
-    const out: CExpr[] = []
-    for (const a of e.args) {
-        if (a.k === 'op' && a.op === '*' && a.args.length >= 2) out.push(...productOperands(a))
-        else out.push(a)
+const MULTIPLICATIVE = new Set(['*', '/', '%'])
+export const isMultiplicative = (e: CExpr): e is Op => e.k === 'op' && MULTIPLICATIVE.has(e.op) && e.args.length >= 2
+
+/**
+ * A product, quotient or remainder as C reads KIELER's text of it. By the same rule as for sums (requiresParenthesis),
+ * an operand of the same binding strength has no parentheses in the first place, and a product inside a product has
+ * none anywhere; a quotient or remainder in a later place keeps them. So
+ *
+ *   100 * (i / 3 * 2)   is written   100 * i / 3 * 2     (C multiplies first: 100 * i / 3 * 2, not 100 * (i / 3) * 2)
+ *   a * (b * c)         is written   a * b * c           (the same number for ints, another rounding for floats)
+ *
+ * `tree`: the expression grouped as C reads the text, from the left (the expression itself when nothing moves);
+ * `changes`: a division or remainder moved, so the value can be another one.
+ */
+export function multiplicative(e: Op): { tree: Op; regrouped: boolean; changes: boolean } {
+    let regrouped = false
+    let changes = false
+    type Step = { op: string; atom: CExpr }
+    const chain = (x: Op): { first: CExpr; rest: Step[] } => {
+        const a0: CExpr = x.args[0]
+        const head = isMultiplicative(a0) ? chain(a0) : { first: a0, rest: [] as Step[] }
+        const rest = [...head.rest]
+        for (const a of x.args.slice(1) as CExpr[]) {
+            if (x.op === '*' && isMultiplicative(a) && a.op === '*') {
+                const inner = chain(a)
+                regrouped = true
+                if (inner.rest.some(st => st.op !== '*')) changes = true
+                rest.push({ op: '*', atom: inner.first }, ...inner.rest)
+            } else rest.push({ op: x.op, atom: a })
+        }
+        return { first: head.first, rest }
     }
-    return out
+    const c = chain(e)
+    if (!regrouped) return { tree: e, regrouped, changes }
+    let tree: CExpr = c.first
+    for (const st of c.rest) tree = { k: 'op', op: st.op as Op['op'], args: [tree, st.atom], span: e.span }
+    return { tree: tree as Op, regrouped, changes }
 }
 
 /** What `--x` counts down: a variable or an element (not an array, not a value). */
@@ -129,10 +158,12 @@ export function writtenDiagnostics(code: WrittenCode): Diagnostic[] {
             const { terms, regrouped } = additiveChain(e)
             const span: Span | undefined = e.span
             const key = `${span?.start ?? text(e)}`
-            const twice = terms.find(t => t.signs >= 2)
+            // (The first pair gcc refuses, if any: a count-down that works in front of it does not hide it.)
+            const refused = (t: Term) => t.signs > 2 || !countedDown(t.atom) || lowermostArray(t.atom)
+            const twice = terms.find(t => t.signs >= 2 && refused(t)) ?? terms.find(t => t.signs >= 2)
             if (!seen.has(key) && (regrouped || twice)) {
                 seen.add(key)
-                if (twice && (twice.signs > 2 || !countedDown(twice.atom) || lowermostArray(twice.atom))) {
+                if (twice && refused(twice)) {
                     out.push({
                         severity: 'error', code: 'c-decrement', span, related,
                         message: `KIELER writes the minus signs in front of \`${text(twice.atom)}\` next to each other, \`${asWritten(terms)}\`, which is C's count-down operator \`--\` with nothing to count down`,
@@ -161,6 +192,19 @@ export function writtenDiagnostics(code: WrittenCode): Diagnostic[] {
     /** The parts of an expression that is no sum or difference itself. */
     const atomParts = (e: CExpr, related: string[] | undefined) => {
         if (e.k === 'op' && isAdditive(e)) { visit(e, related); return }
+        if (isMultiplicative(e)) {
+            const m = multiplicative(e)
+            const key = `*${e.span?.start ?? text(e)}`
+            if (m.changes && !seen.has(key)) {
+                seen.add(key)
+                out.push({
+                    severity: 'warning', code: 'kieler-quirk', span: e.span, related,
+                    message: `KIELER's C code leaves out the parentheses of \`${text(e)}\`: it computes \`${text(m.tree)}\``,
+                    hint: 'KIELER writes a product inside a product without its parentheses, and C then multiplies and divides from the left. The guide\'s simulation does the same. Divide first and keep the result in a variable, or put the division last.',
+                })
+            }
+            if (m.regrouped) { atomParts(m.tree, related); return }
+        }
         if (e.k === 'op' || e.k === 'call') e.args.forEach(a => visit(a, related))
         else if (e.k === 'ref') { for (let r: typeof e | undefined = e; r; r = r.sub) r.idx.forEach(i => visit(i, related)) }
         else if (e.k === 'vector') e.values.forEach(a => visit(a, related))

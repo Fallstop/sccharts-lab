@@ -102,7 +102,7 @@ function tickDifferences(sim: Simulation, actual: SimTickResult, expected: Oracl
  * (a random number may show in nothing but the path). Undefined when no choice of seeds gives the recording (the
  * engine differs from KIELER somewhere else too), or when the engine cannot run the chart.
  */
-export function resolveSeeds(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>): (number[] | undefined)[] | undefined {
+export function resolveSeeds(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>, address?: number): (number[] | undefined)[] | undefined {
     const result = compile(model, { files })
     if (!rec.ok || !result.ok || result.diagnostics.some(d => d.code === 'unsupported')) return undefined
     const window = (i: number): number[] => {
@@ -116,6 +116,7 @@ export function resolveSeeds(model: string, inputs: Record<string, Value>[], rec
     /** Calls of the last tick run that had no chosen seed yet. */
     let open = 0
     const sim = createSimulation(result, {
+        address,
         seed: ({ tick, index }) => {
             const known = chosen[tick - 1]?.[index]
             if (known === undefined) open++
@@ -162,7 +163,7 @@ export function resolveAddress(model: string, inputs: Record<string, Value>[], r
     const zero = 0x555500000000
     /** The numbers that differ (KIELER's, the engine's) up to the first tick that differs, and whether the run is the
      *  recorded one. */
-    const run = (address: number): { pairs: [number, number][]; same: boolean } => {
+    const run = (address: number | undefined): { pairs: [number, number][]; same: boolean } => {
         const sim = createSimulation(result, { address, seed })
         const pairs: [number, number][] = []
         let other = false
@@ -181,11 +182,16 @@ export function resolveAddress(model: string, inputs: Record<string, Value>[], r
         return { pairs, same: !other && !pairs.length }
     }
     const first = run(zero)
-    if (first.same) return null
+    // The trial address gives the recording: no address shows, unless the engine's own default would show one.
+    if (first.same) return run(undefined).same ? null : zero
+    // KIELER's struct comes from malloc: its address is a multiple of 16 (an odd one would fit any number).
+    const aligned = (low: number) => low % 16 === 0
     // A value is the address plus or minus something the engine knows (the first tick that shows it tells).
     for (const [k, e] of first.pairs.slice(0, 4)) {
-        for (const low of [(k - e) >>> 0, (e - k) >>> 0]) {
-            if (run(zero + low).same) return zero + low
+        // (Twice the address too, `x *= fa` from 2: half the difference, with either top bit.)
+        const half = ((k - e) >>> 0) % 2 === 0 ? [((k - e) >>> 0) / 2, ((k - e) >>> 0) / 2 + 0x80000000] : []
+        for (const low of [(k - e) >>> 0, (e - k) >>> 0, ...half]) {
+            if (aligned(low) && run(zero + low).same) return zero + low
         }
     }
     // The address shows in nothing but the path taken (a trigger compares it): one of each sign and size.
@@ -193,6 +199,28 @@ export function resolveAddress(model: string, inputs: Record<string, Value>[], r
         if (run(zero + low).same) return zero + low
     }
     return undefined
+}
+
+/**
+ * The seeds and the address of a recorded run together. A chart can show both (a random number and an address in
+ * one pool): then neither is found without the other, so the address is looked for with the clock's own seconds as
+ * the seeds, and the seeds with that address.
+ */
+export function resolveRun(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>): { seeds?: (number[] | undefined)[]; address?: number | null } {
+    const seeded = rec.ticks.some(t => t.clock) && /\brandomize\b/.test([model, ...Object.values(files ?? {})].join('\n'))
+    if (!seeded) return { address: resolveAddress(model, inputs, rec, files) }
+    const seeds = resolveSeeds(model, inputs, rec, files)
+    if (seeds) {
+        const address = resolveAddress(model, inputs, rec, files, replaySeeds(seeds.map(x => ({ seeds: x }))))
+        if (address !== undefined) return { seeds, address }
+    }
+    for (const pick of [0, 1]) {
+        const address = resolveAddress(model, inputs, rec, files, call => rec.ticks[call.tick - 1]?.clock?.[pick])
+        if (typeof address !== 'number') continue
+        const both = resolveSeeds(model, inputs, rec, files, address)
+        if (both) return { seeds: both, address }
+    }
+    return { seeds, address: undefined }
 }
 
 export function compareWithOracle(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>): Outcome {
@@ -220,10 +248,10 @@ export function compareWithOracle(model: string, inputs: Record<string, Value>[]
     let sim
     try {
         // KIELER seeded each randomize() with its clock: the engine gets the seconds that give KIELER's run, if any do.
-        const seeds = rec.ticks.some(t => t.clock) && /\brandomize\b/.test([model, ...Object.values(files ?? {})].join('\n')) ? resolveSeeds(model, inputs, rec, files) : undefined
-        const seed = seeds ? replaySeeds(seeds.map(s => ({ seeds: s }))) : undefined
         // A chart that shows an address: the one KIELER's struct had in the recorded run.
-        sim = createSimulation(result, { seed, address: resolveAddress(model, inputs, rec, files, seed) ?? undefined })
+        const { seeds, address } = resolveRun(model, inputs, rec, files)
+        const seed = seeds ? replaySeeds(seeds.map(s => ({ seeds: s }))) : undefined
+        sim = createSimulation(result, { seed, address: address ?? undefined })
     } catch (e) {
         return { kind: 'engine-crash', detail: `createSimulation threw: ${(e as Error).message}` }
     }

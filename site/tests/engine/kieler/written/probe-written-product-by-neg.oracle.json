@@ -1,0 +1,87 @@
+{
+  "hash": "3118e85bd9951c7dd3da84f3eb6dbfa4d597bca1",
+  "chart": "tests/engine/kieler/written/probe-written-product-by-neg.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "g": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": -166
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 7,
+        "g": 0.1
+      },
+      "values": {
+        "g": 0.1,
+        "i": 7,
+        "f": 0,
+        "x": -233
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

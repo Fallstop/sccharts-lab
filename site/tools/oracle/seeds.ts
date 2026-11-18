@@ -16,7 +16,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { compile } from '@sccharts-lab/engine'
-import { resolveAddress, resolveSeeds, type OracleResult } from '../fuzz/compare'
+import { resolveRun, type OracleResult } from '../fuzz/compare'
 
 let failures = 0
 for (const chart of process.argv.slice(2)) {
@@ -32,7 +32,7 @@ for (const chart of process.argv.slice(2)) {
     const compiled = compile(model, { files })
     if (!compiled.ok || compiled.diagnostics.some(d => d.code === 'unsupported')) continue
     if (compiled.diagnostics.some(d => d.code === 'c-address-value')) {
-        const address = resolveAddress(model, scenario.ticks.map(t => t.inputs ?? {}), rec, files)
+        const address = resolveRun(model, scenario.ticks.map(t => t.inputs ?? {}), rec, files).address
         if (address === undefined) {
             failures++
             console.error(`✗ address  ${chart}: no address of KIELER's struct gives its recorded run`)
@@ -45,7 +45,7 @@ for (const chart of process.argv.slice(2)) {
         }
     }
     if (!rec.ticks.some(t => t.clock)) continue
-    const seeds = resolveSeeds(model, scenario.ticks.map(t => t.inputs ?? {}), rec, files)
+    const seeds = resolveRun(model, scenario.ticks.map(t => t.inputs ?? {}), rec, files).seeds
     if (!seeds) {
         failures++
         console.error(`✗ seeds    ${chart}: no clock seconds give KIELER's recorded run`)

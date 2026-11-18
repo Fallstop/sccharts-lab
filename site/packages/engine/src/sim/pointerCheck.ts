@@ -370,6 +370,16 @@ class Checker {
         }
         const gcc = assignRule(target, result)
         if (gcc) this.misplaced(gcc, target, result, rhs, { how: 'assign' }, where)
+        // A bool array (C's char array) assigned to a string compiles: the string is then whatever characters the
+        // array holds up to its first 0, and changes with it. The simulator's strings are values of their own.
+        else if (v.type === 'string' && isPtr(target) && isPtr(result.t) && result.t.to.k === 'char' && !result.str && !result.zero) {
+            const { name } = this.pointerName(rhs)
+            this.add({
+                severity: 'info', code: 'unsupported', span: 'span' in rhs ? rhs.span : undefined,
+                message: `The guide's simulator cannot run a string made of the bool array \`${name}\``,
+                hint: `In KIELER's C code a bool array is an array of characters, so \`${label(v)}\` points at the array and reads as its elements up to the first false one, also after the array changes. The official KIELER tools run this chart. Assign a string.`,
+            })
+        }
     }
 
     /** A pointer made a number: the address of KIELER's struct shows, which changes with every start. */

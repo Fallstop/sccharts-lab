@@ -1,0 +1,87 @@
+{
+  "hash": "00d959dde78bed7457f08ddfa1eddf1de1e46b00",
+  "chart": "tests/engine/kieler/written/probe-written-product-mod-in-product.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "g": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 7,
+        "g": 0.1
+      },
+      "values": {
+        "g": 0.1,
+        "i": 7,
+        "f": 0,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

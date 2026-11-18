@@ -17,7 +17,7 @@ import {
     referenceType, sizeOf, stackAddress, stringAddress, type CTy, type Typed,
 } from './pointers'
 import type { Place } from './structLayout'
-import { additiveChain, countedDown, isAdditive, productOperands } from './written'
+import { additiveChain, countedDown, isAdditive, isMultiplicative, multiplicative } from './written'
 import {
     convert, doubleToInt, INT_MIN, isCString, literalString, printfValue, toChar,
     type CString, type CType, type RValue,
@@ -86,6 +86,10 @@ export interface Compiled {
     big?: (rt: Runtime) => bigint
     /** A pointer gcc knows when it compiles the code (pointers.ts constantPointer). */
     konst?: boolean
+    /** A long gcc computes when it compiles the code: the distance of two pointers it knows (`a + 1 - a`). */
+    folds?: boolean
+    /** A pointer gcc knows, moved by numbers it knows (`a + 1`). */
+    moved?: boolean
 }
 
 const truthy = (v: RValue): boolean => (typeof v === 'number' ? v !== 0 : v !== null)
@@ -172,7 +176,10 @@ export class ExprCompiler {
             case 'op':
                 // A sum, a difference or a product as C reads KIELER's text of it (written.ts).
                 if (isAdditive(e)) return this.additive(e)
-                if (e.op === '*' && e.args.some(a => a.k === 'op' && a.op === '*')) return this.op('*', productOperands(e), e.span)
+                if (isMultiplicative(e)) {
+                    const m = multiplicative(e)
+                    if (m.regrouped) return this.compile(m.tree)
+                }
                 return this.op(e.op, e.args, e.span)
             case 'random': return { fn: rt => random(rt.rand), type: 'f32' }
             case 'vector': {
@@ -308,7 +315,13 @@ export class ExprCompiler {
             for (let i = 2; i < c.length; i++) acc = this.binary(o, acc, c[i], span, this.divisorName(args[i]), constantInt(args[i]))
             return acc
         }
-        if (c.length === 2 && o !== '?:') return this.binary(o, c[0], c[1], span, this.divisorName(args[1]), constantInt(args[1]))
+        if (c.length === 2 && o !== '?:') {
+            // Both operands written as numbers: gcc computes the shift itself, and a right shift by the width or more
+            // is then 0 (-1 for a negative number), not what the machine's masked count gives (`1 >> 32`).
+            const [left, right] = [constantInt(args[0]), constantInt(args[1])]
+            if (o === '>>' && left !== undefined && right !== undefined && right >= 32) return { fn: () => (left < 0 ? -1 : 0), type: 'int' }
+            return this.binary(o, c[0], c[1], span, this.divisorName(args[1]), right)
+        }
         return this.unary(o, c, span)
     }
 
@@ -394,12 +407,16 @@ export class ExprCompiler {
                     throw e
                 }
             }
-            if (c?.k === 'long') return { fn: rt => Number(value(rt)), type: 'int', c, big: rt => BigInt(value(rt)) }
+            if (c?.k === 'long') return { fn: rt => Number(value(rt)), type: 'int', c, big: rt => BigInt(value(rt)), folds: (!!a.konst || !!a.moved) && (!!b.konst || !!b.moved) }
             // (A pointer moved by a literal 0 is still one gcc knows: pointers.ts constantPointer.)
-            return { fn: rt => value(rt) as number, type: 'int', c, konst: known === 0 && !!a.konst && (o === '+' || o === '-') }
+            return { fn: rt => value(rt) as number, type: 'int', c, konst: known === 0 && !!a.konst && (o === '+' || o === '-'), moved: known !== undefined && (!!a.konst || !!a.moved) && (o === '+' || o === '-') }
         }
         if (rule.long) {
             const [x, y] = [exact(a), exact(b)]
+            // A literal count of 64 or more: gcc folds the left shift to 0, as it does for an int at 32.
+            if (o === '<<' && known !== undefined && known >= 64) return { fn: rt => (x(rt), 0), type: 'int', c: LONG, big: rt => (x(rt), 0n) }
+            // (To the right, gcc only folds when it knows the left operand too: a pointer moved by literals.)
+            if (o === '>>' && known !== undefined && known >= 64 && a.folds) return { fn: () => 0, type: 'int', c: LONG, big: () => 0n }
             const value = (rt: Runtime): bigint => {
                 const r = longOperation(o, x(rt), y(rt))
                 if (r === 'zero') throw divisionByZero(span, divisor)
@@ -407,6 +424,16 @@ export class ExprCompiler {
                 return r
             }
             return { fn: rt => Number(value(rt)), type: 'int', c: LONG, big: value }
+        }
+        // Two whole numbers, one of them a long: compared exactly (a double has 53 bits).
+        const whole = (x: Compiled) => x.type !== 'float' && x.type !== 'f32' && (typeof x.c !== 'object' || !isPtr(x.c))
+        const compare: Record<string, (p: bigint, q: bigint) => boolean> = {
+            '==': (p, q) => p === q, '!=': (p, q) => p !== q, '<': (p, q) => p < q, '<=': (p, q) => p <= q, '>': (p, q) => p > q, '>=': (p, q) => p >= q,
+        }
+        if (compare[o] && (a.big || b.big) && whole(a) && whole(b) && isNumeric(a.type) && isNumeric(b.type)) {
+            const [x, y] = [exact(a), exact(b)]
+            const test = compare[o]
+            return { fn: rt => (test(x(rt), y(rt)) ? 1 : 0), type: 'int' }
         }
         // A long beside a float, in a comparison or under && and ||: a number like any other.
         return this.binary(o, plain(a), plain(b), span, divisor, known)

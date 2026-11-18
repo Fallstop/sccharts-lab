@@ -1,0 +1,2 @@
+// A distance only known at run time shifted right by 64: the machine masks the count.
+scchart Main { input int i int a[4] output int y initial state A do y = ((a + i) - a) >> 64 == 0 go to A }

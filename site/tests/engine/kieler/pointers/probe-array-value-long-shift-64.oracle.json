@@ -1,0 +1,70 @@
+{
+  "hash": "215b46333fc4c537b723419b80435d8ac3b2fc0b",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-long-shift-64.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "left shift count >= width of type [-Wshift-count-overflow]",
+    "result of ‘1 << 64’ requires 66 bits to represent, but ‘long int’ only has 64 bits [-Wshift-overflow=]"
+  ],
+  "interface": {
+    "y": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "y": false,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "y": true,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "y": true,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

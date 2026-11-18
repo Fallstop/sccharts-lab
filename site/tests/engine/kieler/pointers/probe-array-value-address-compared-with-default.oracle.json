@@ -1,0 +1,77 @@
+{
+  "hash": "b5267cfd654032e17c382b2645ad5158dda874a7",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-address-compared-with-default.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "cast from pointer to integer of different size [-Wpointer-to-int-cast]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads x, so the compiler treats it as an update of x (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. x += 1.\nIt only matters when another region also writes x in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 2,
+      "column": 68
+    }
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "fa": {
+      "type": "float",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "fa": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "fa": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "fa": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

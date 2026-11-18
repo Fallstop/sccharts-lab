@@ -365,6 +365,16 @@ arrays' contents (39 of 61 probed expressions disagreed); it now has C's typing 
 - **Tests**: `tests/engine/pointers.test.ts`; probes `tests/engine/kieler/pointers/` (425: 276 accepted, 149
   rejected) and `tests/engine/kieler/written/` (47: 41 accepted, 6 rejected), all recorded with KIELER and all
   through gcc with the generated C (no mismatch); the fuzz profile `pointers` (campaign 34).
+- **After a review** (41 probes): a product inside a product loses its parentheses as a difference does, with the
+  quotient or remainder at its start (`100 * (i / 3 * 2)` is `100 * i / 3 * 2`; written.ts `multiplicative`, used
+  by the simulator, the constant folding and the C generator; a `kieler-quirk` warning where a division moves); the
+  generated C keeps the parentheses of a negated product as a divisor; the first pair of minus signs gcc refuses
+  decides; rows without elements cannot be subtracted (gcc's `arithmetic on pointer to an empty aggregate`, it was
+  a crash at run time); two longs are compared exactly; a literal shift count of 64 or more folds as it does at 32;
+  a bool array assigned to a string is `unsupported` (C's char array: the string reads the array); the address
+  recovery of the tools keeps an address it verified, takes aligned addresses only, finds twice an address, and
+  finds a seed and an address together (tools/fuzz/compare.ts `resolveRun`). Left as it is: the distance of two
+  pointers more than half a megabyte apart in one array stops with the simulator's "unrelated places" error.
 - **API**: additions only. `SimulationOptions.address`; codes `array-operands`, `array-index`,
   `conditional-mismatch`, `const-array-value`, `string-as-value`, `string-assignment`, `c-address-value`,
   `array-address`, `c-decrement` (in `SIMULATOR_CODES`); internal: `Compiled.c`, `.big`, `.konst`,

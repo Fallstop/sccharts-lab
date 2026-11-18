@@ -5,7 +5,7 @@
 // precedence, with the extra ones gcc's -Wparentheses asks for.
 
 import { isFloatExpression } from '../sim/eval'
-import { additiveChain, isAdditive, productOperands } from '../sim/written'
+import { additiveChain, isAdditive, isMultiplicative, multiplicative } from '../sim/written'
 import type { CEffect, CExpr, CRef, CVar } from '../sim/model'
 
 export interface ExprEnv {
@@ -107,7 +107,10 @@ export function expr(e: CExpr, env: ExprEnv): Out {
         case 'op':
             // A sum, a difference or a product without the parentheses KIELER leaves out (sim/written.ts).
             if (isAdditive(e)) return additive(e, env)
-            if (e.op === '*' && e.args.some(a => a.k === 'op' && a.op === '*')) return op('*', productOperands(e), env)
+            if (isMultiplicative(e)) {
+                const m = multiplicative(e)
+                if (m.regrouped) return expr(m.tree, env)
+            }
             return op(e.op, e.args, env)
         case 'random':
             env.includes.add('<stdlib.h>')
@@ -149,7 +152,12 @@ function additive(e: Extract<CExpr, { k: 'op' }>, env: ExprEnv): Out {
         const inner = atomic && !(t.signs && a.text.startsWith('-')) ? a.text : wrap(a)
         return `${i ? (t.minus ? ' - ' : ' + ') : ''}${'-'.repeat(t.signs)}${inner}`
     }).join('')
-    if (terms.length === 1) return { text, prec: terms[0].signs ? UNARY : expr(terms[0].atom, env).prec }
+    if (terms.length === 1) {
+        const inner = expr(terms[0].atom, env)
+        // `-i * 2` (KIELER's text of -(i * 2)) is a product to C: it needs parentheses where a product does.
+        const product = terms[0].signs > 0 && inner.prec === PREC['*'] && !text.includes('(' + inner.text + ')')
+        return { text, prec: !terms[0].signs ? inner.prec : product ? PREC['*'] : UNARY, ...(product ? { op: '*' } : {}) }
+    }
     return { text, prec: PREC['+'], op: terms.some(t => t.minus) ? '-' : '+' }
 }
 

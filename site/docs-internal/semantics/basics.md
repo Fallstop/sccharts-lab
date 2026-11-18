@@ -656,13 +656,21 @@ minus signs meet as C's `--`:
 | `- -i`, `-(-i)`, `-(-(i - 2))` | `--d->i`, `--d->i - 2` | C counts `i` down by one and gives the new value, every time the expression is computed (an input too, a trigger every tick) |
 | `- -5`, `- -(i + 1)`, `- - -i`, `- -N` for a constant N, `- -a` for an array | `--5`, `--(d->i + 1)`, `---d->i` | rejected: `lvalue required as decrement operand` |
 | `a + (b + c)`, `a * (b * c)` | `a + b + c`, `a * b * c` | regrouped only (the last bit of a float may differ) |
+| `100 * (i / 3 * 2)`, `100 * (i % 3 * 2)` | `100 * d->i / 3 * 2`, `100 * d->i % 3 * 2` | a product inside a product loses its parentheses too, and its first operand with it: C multiplies first (332 for i = 5, not 200; found by a review) |
+| `100 * (i / 3)`, `100 / (i * 2)`, `100 / -(i * 2)` | parentheses kept (another operator): `100 / (-d->i * 2)` | as written |
 
 It holds wherever an expression reaches C: effects, compound assignments, triggers, indices, method bodies (copied
 into place or kept as functions), referenced charts, dataflow equations, initial values. KIELER does not fold
 constants before it writes the code: `10 - (K - 2)` with `const int K = 4` is `10 - 4 - 2`, and `output int x = 10 -
 (4 - 2)` starts at 4.
 
-**Evidence.** Probes `tests/engine/kieler/written/probe-written-*` (47: 41 accepted, 6 rejected), all with the
+The same goes for a short method copied into place: with `method int half(int n) { return n / 3 * 2 }`,
+`100 * half(i)` is `100 * d->i / 3 * 2` (`probe-written-product-method`, `-method-arg`). Where several pairs of minus
+signs meet, the first one gcc refuses decides (`- -i - - -3`: `probe-written-decrement-second`). A right shift by
+the width or more is 0 when gcc knows both operands (`1 >> 32`), and the machine's masked count otherwise
+(`probe-written-shift-right-*`).
+
+**Evidence.** Probes `tests/engine/kieler/written/probe-written-*` (73: 66 accepted, 7 rejected), all with the
 generated C read (`d->x = 10 - d->i - 2;`); the same verdicts and values on official KIELER.
 
 **Source.** `kexpressions/.../extensions/KExpressionsSerializeHRExtensions.xtend` 162-193 (`requiresParenthesis`:

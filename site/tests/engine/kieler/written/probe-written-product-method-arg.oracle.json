@@ -1,0 +1,89 @@
+{
+  "hash": "eadd195d5edc4ca3d4d9f1055a1565b808b4fc1d",
+  "chart": "tests/engine/kieler/written/probe-written-product-method-arg.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_n is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "g": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 332
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 7,
+        "g": 0.1
+      },
+      "values": {
+        "g": 0.1,
+        "i": 7,
+        "f": 0,
+        "x": 466
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

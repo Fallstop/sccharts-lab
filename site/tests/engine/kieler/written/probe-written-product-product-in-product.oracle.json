@@ -1,0 +1,87 @@
+{
+  "hash": "5f97a222c64551a9570d35a9ede7ec6406a9cffa",
+  "chart": "tests/engine/kieler/written/probe-written-product-product-in-product.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "g": {
+      "type": "float",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 5,
+        "g": 1.5
+      },
+      "values": {
+        "g": 1.5,
+        "i": 5,
+        "f": 0,
+        "x": 3000
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 7,
+        "g": 0.1
+      },
+      "values": {
+        "g": 0.1,
+        "i": 7,
+        "f": 0,
+        "x": 4200
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

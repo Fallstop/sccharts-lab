@@ -1,0 +1,2 @@
+// A right shift of an input by 32: the machine masks the count.
+scchart Main { input int i output int y initial state A do y = i >> 32 go to A }
