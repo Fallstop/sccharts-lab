@@ -1,0 +1,70 @@
+{
+  "hash": "1dde8b9d1bc3cae67eeb7b34bfc9c2b400bb40ac",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-outside-never-called.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

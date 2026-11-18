@@ -1,0 +1,8 @@
+// One argument: the schedule is lost, so the two writes conflict.
+scchart B40 {
+  output int o
+  schedule s
+  method void f(int a) { o = a }
+  region R1 { initial state A do f(1) schedule s 1 go to B state B }
+  region R2 { initial state C do o = 2 schedule s 0 go to D state D }
+}

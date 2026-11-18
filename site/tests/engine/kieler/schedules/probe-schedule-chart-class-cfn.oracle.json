@@ -1,0 +1,83 @@
+{
+  "hash": "0472d79e916f6636c96ea1f15541ddd7b0eb0286",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-chart-class-cfn.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name a is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name set is contained in the model but not in VariableStore.",
+    "ValuedObject with name a is contained in the model but not in VariableStore.",
+    "ValuedObject with name get is contained in the model but not in VariableStore.",
+    "ValuedObject with name Sub1_x_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Sub1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "x": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": {
+          "v": 5
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": {
+          "v": 5
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

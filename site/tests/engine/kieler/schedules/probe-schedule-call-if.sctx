@@ -1,0 +1,9 @@
+// A schedule on a call of a method whose body tests a variable: the condition is not scheduled.
+scchart B03 {
+  output int o
+  int x
+  schedule s
+  method void setIt() { if x > 0 { o = 1 } }
+  region R1 { initial state A immediate do setIt() schedule s 0 go to B state B }
+  region R2 { initial state C immediate do x = 2 schedule s 1 go to D state D }
+}

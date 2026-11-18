@@ -1,0 +1,13 @@
+// The contract orders the calls, whatever they touch: the methods share no variable.
+scchart C28 {
+  output int o
+  int x
+  class C {
+    schedule s
+    void first() schedule s 0 { x = 1 }
+    void second() schedule s 1 { o = 7 }
+  } c
+  region R1 { initial state A do c.second() go to B state B }
+  region R2 { initial state C2 do c.first() go to D state D }
+  region R3 { initial state E if o == 7 && x == 0 do o = 100 go to F state F }
+}

@@ -1,0 +1,10 @@
+// A scheduled assignment whose value is a call with two returns (a return variable).
+scchart E30 {
+  input bool a
+  output int o
+  int x
+  schedule s
+  method int pick() { if a { return x } return 0 - x }
+  region R1 { initial state A do o = pick() schedule s 0 go to B state B }
+  region R2 { initial state C2 do x = 2 schedule s 1 go to D state D }
+}

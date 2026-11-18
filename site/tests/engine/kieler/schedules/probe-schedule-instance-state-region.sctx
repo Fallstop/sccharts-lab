@@ -1,0 +1,7 @@
+// The schedule of an instance on a region and on a state.
+scchart D04 {
+  output int o
+  class C { schedule s  int v = 0 } c
+  region R1 schedule c.s 1 { initial state A do o = 1 go to B state B }
+  region R2 { initial state C2 schedule c.s 0 { initial state X do o = 2 go to Y state Y } }
+}

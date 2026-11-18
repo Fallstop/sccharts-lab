@@ -1,0 +1,13 @@
+// A contract method in the trigger of a strong abort.
+scchart G09 {
+  input bool a
+  output int o
+  class C {
+    schedule s
+    int v = 0
+    void set(int x) schedule s 0 { v = x }
+    bool isSet() schedule s 1 { return v > 0 }
+  } c
+  region R1 { initial state A { region { initial state X do o += 1 go to X } } if c.isSet() abort to B state B }
+  region R2 { initial state C2 if a do c.set(5) go to D state D }
+}

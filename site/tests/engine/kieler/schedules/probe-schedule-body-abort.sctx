@@ -1,0 +1,8 @@
+// Scheduled statements in a code block of a state that a strong abort leaves.
+scchart H15 {
+  input bool a
+  output int o
+  schedule s
+  region R1 { initial state A { during do { o += 1 schedule s 1 } } if a abort to B state B }
+  region R2 { initial state C { during do o = 10 schedule s 0 } }
+}

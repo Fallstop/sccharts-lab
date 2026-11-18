@@ -55,6 +55,13 @@ export class CVar {
     tags = new Set<string>()
     /** A schedule (declKind 'schedule'): the protocol of each priority, `conflicting` or `commuting`. */
     priorities?: string[]
+    /**
+     * A schedule declared in a class (`class C { schedule s } c`): the instance it belongs to. KIELER's User Schedule
+     * processor moves it into the chart, one per instance (`C_c_s`), and only such a schedule can be a method's contract.
+     */
+    scheduleOf?: string
+    /** A method of a chart used as a class (`ref C x`, passes/reference.ts): the instance `x`. */
+    classInstance?: CVar
     /** The source declaration kind when it is not a plain variable (method, class, ...): handled by other passes. */
     declKind?: string
     /** A method (declKind 'method', or a code effect's generated `_effect<n>`): its parameters and SCL body. */
@@ -92,6 +99,15 @@ export interface SchedEntry {
     priority: number
     /** Where it is written, for a schedule clause naming a variable that is not a schedule (passes/userSchedule.ts). */
     span?: Span
+    /**
+     * A method's contract (`void set(int x) schedule s 0 { ... }`) copied onto what calls the method
+     * (passes/contracts.ts): the method's name. KIELER marks such a clause as method specific, and the dependency
+     * analysis only gives it to the call's own accesses, or to every access once the call was inlined (deps.ts).
+     */
+    method?: string
+    /** The schedule is not known yet: an inherited one (`schedule c.s 1`, `c` declared in a base chart), as the
+     *  reference the Inheritance pass redirects (structure/rewrite.ts); `group` is a placeholder until then. */
+    ref?: CRef
 }
 
 export interface CRef {
@@ -100,6 +116,9 @@ export interface CRef {
     idx: CExpr[]
     /** `a.b`: member access. */
     sub?: CRef
+    /** Read by the value a method returned, copied into a trigger (structure/methods.ts): the trigger's schedule
+     *  stayed on the call KIELER replaced, so it does not reach this reference. */
+    inlined?: boolean
     span?: Span
     /** The schedules of this read (a trigger `if A schedule s 1`; KIELER keeps them on the reference). */
     sched?: SchedEntry[]
@@ -113,7 +132,8 @@ export type CExpr = { sched?: SchedEntry[] } & (
     | CRef
     | { k: 'op'; op: OperatorType; args: CExpr[]; span?: Span }
     | { k: 'vector'; values: CExpr[]; range?: boolean; span?: Span }
-    | { k: 'call'; name: string; args: CExpr[]; extern?: boolean; target?: CRef; paramAccess?: ('&' | '!&' | null)[]; span?: Span }
+    /** `bare`: a method of a class instance called by its name alone, from inside the class (passes/contracts.ts). */
+    | { k: 'call'; name: string; args: CExpr[]; extern?: boolean; target?: CRef; paramAccess?: ('&' | '!&' | null)[]; bare?: boolean; span?: Span }
     | { k: 'random'; span?: Span }
     | { k: 'host'; text: string; span?: Span }
     | { k: 'ignore'; span?: Span }
@@ -173,8 +193,8 @@ export type CEffect =
 
 /** A statement of an SCL body (methods, and code effects `do { ... }`, which KIELER turns into methods). */
 export type CStmt =
-    /** An effect statement: assignment, `x++`, call, print, ... */
-    | { k: 'do'; f: CEffect }
+    /** An effect statement: assignment, `x++`, call, print, ... `init`: the initial value of a local declaration. */
+    | { k: 'do'; f: CEffect; init?: boolean }
     | { k: 'if'; cond: CExpr; then: CStmt[]; else?: CStmt[]; span?: Span }
     | { k: 'while'; cond: CExpr; body: CStmt[]; span?: Span }
     | { k: 'for'; init: CStmt[]; cond?: CExpr; update: CStmt[]; body: CStmt[]; span?: Span }
@@ -205,6 +225,9 @@ export interface CMethod {
     by?: string
     /** `@inline`: KIELER inlines every call of it, whatever its size (SCGAnnotations.ANNOTATION_METHOD_INLINING). */
     inline?: boolean
+    /** The contract written on the declaration (`schedule s 0` before the body), until passes/contracts.ts copies it
+     *  onto the calls (`span`: where it is written). */
+    schedule?: SchedEntry[]
     span?: Span
 }
 
@@ -675,6 +698,7 @@ export function copyExpr<E extends CExpr | undefined>(e: E): E {
 export function copyRef(r: CRef): CRef {
     const c: CRef = { k: 'ref', v: r.v, idx: r.idx.map(i => copyExpr(i)), sub: r.sub ? copyRef(r.sub) : undefined, span: r.span }
     if (r.sched) c.sched = r.sched
+    if (r.inlined) c.inlined = true
     return c
 }
 

@@ -1,0 +1,9 @@
+// A scheduled call with two arguments of a method KIELER copies into place.
+scchart B34 {
+  output int o
+  int x
+  schedule s
+  method void set2(int a, int b) { o = a + b }
+  region R1 { initial state A do set2(x, 0) schedule s 0 go to B state B }
+  region R2 { initial state C do x = 2 schedule s 1 go to D state D }
+}

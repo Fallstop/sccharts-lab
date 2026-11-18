@@ -1,0 +1,90 @@
+{
+  "hash": "10b93abd063e2c7b22504392cab2db6195ef9d93",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-abort.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_c_set_x is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "o": 0,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "o": 0,
+        "c": {
+          "v": 5
+        }
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": true,
+        "o": 0,
+        "c": {
+          "v": 5
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

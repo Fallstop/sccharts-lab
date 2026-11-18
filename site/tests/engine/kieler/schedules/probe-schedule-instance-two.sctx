@@ -1,0 +1,7 @@
+// Two instances have two schedules.
+scchart D02 {
+  output int o
+  class C { schedule s  int v = 0 } c, d
+  region R1 { initial state A do o = 1 schedule c.s 1 go to B state B }
+  region R2 { initial state C2 do o = 2 schedule d.s 0 go to D state D }
+}

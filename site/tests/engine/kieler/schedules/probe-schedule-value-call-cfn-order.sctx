@@ -1,0 +1,10 @@
+// Two scheduled assignments reading one C function: ordered by the schedule through the function.
+scchart E03 {
+  output int o
+  output int p
+  int n
+  schedule s
+  method int next() { for (int i = 0; i < 1; i++) { n += 1 } return n }
+  region R1 { initial state A do o = next() schedule s 1 go to B state B }
+  region R2 { initial state C2 do p = next() schedule s 0 go to D state D }
+}

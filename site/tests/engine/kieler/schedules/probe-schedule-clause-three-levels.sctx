@@ -1,0 +1,7 @@
+// The schedule of an instance three classes deep: an ordinary schedule.
+scchart G06 {
+  output int o
+  class L1 { class L2 { class L3 { schedule s  int v = 0 } c3 } c2 } c1
+  region R1 { initial state A do o = 1 schedule c1.c2.c3.s 1 go to B state B }
+  region R2 { initial state C do o = 2 schedule c1.c2.c3.s 0 go to D state D }
+}

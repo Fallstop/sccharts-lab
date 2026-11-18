@@ -1,0 +1,12 @@
+// A class with a schedule, as an array of instances.
+scchart C09 {
+  output int o
+  class C {
+    schedule s
+    int v = 0
+    void set(int x) schedule s 0 { v = x }
+    int get() schedule s 1 { return v }
+  } cs[2]
+  region R1 { initial state A do o = cs[0].get() go to B state B }
+  region R2 { initial state C2 do cs[0].set(5) go to D state D }
+}

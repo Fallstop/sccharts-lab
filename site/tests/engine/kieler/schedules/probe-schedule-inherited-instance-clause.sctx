@@ -1,0 +1,9 @@
+// The schedule of an instance declared in a base chart, named in the extending chart.
+scchart H07 extends Base {
+  region R1 { initial state A do o = 1 schedule c.s 1 go to B state B }
+  region R2 { initial state C2 do o = 2 schedule c.s 0 go to D state D }
+}
+scchart Base {
+  output int o
+  class C { schedule s  int v = 0 } c
+}

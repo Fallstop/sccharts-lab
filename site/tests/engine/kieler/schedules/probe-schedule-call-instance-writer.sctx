@@ -1,0 +1,12 @@
+// A scheduled call of an instance's C function writes the instance: ordered against a scheduled member write.
+scchart E01 {
+  output int o
+  schedule s
+  class C {
+    int v = 0
+    int w = 0
+    void m(int a, int b) { for (int i = 0; i < 2; i++) { w = a + b } }
+  } c
+  region R1 { initial state A do c.m(1, 0) schedule s 1 go to B state B }
+  region R2 { initial state C2 do c.v = 2 schedule s 0; o = c.w go to D state D }
+}

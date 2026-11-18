@@ -1,0 +1,13 @@
+// A contract method whose body tests a member: the condition is not scheduled.
+scchart E14 {
+  output int o
+  class C {
+    schedule s
+    int v = 0
+    int w = 0
+    void set(int x) schedule s 1 { v = x }
+    void test() schedule s 0 { if v > 0 { w = 1 } }
+  } c
+  region R1 { initial state A do c.test(); o = c.w go to B state B }
+  region R2 { initial state C2 do c.set(5) go to D state D }
+}

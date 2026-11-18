@@ -1,0 +1,9 @@
+// A host class with two methods, one never called.
+scchart E10 {
+  output int o
+  host class "Thing" {
+    void start()
+    void stop()
+  } t
+  initial state A do t.start() go to B state B
+}

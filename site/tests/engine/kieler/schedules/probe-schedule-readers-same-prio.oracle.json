@@ -1,0 +1,19 @@
+{
+  "hash": "4e7285f1f0af96c56c2b6ca9c1b7a73aafc0508d",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-readers-same-prio.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g2b to _g7b",
+    "Can't schedule from _g7b to _g2b",
+    "Can't schedule from _g2b to _g3",
+    "Can't schedule from _g7b to _g8",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving p, o prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through o, p.",
+    "Potential instantaneous loop through o, p."
+  ],
+  "ticks": []
+}

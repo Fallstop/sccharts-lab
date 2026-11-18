@@ -1,0 +1,8 @@
+// One method with a scheduled assignment called from two regions, at a commuting priority.
+scchart A09 {
+  output int o
+  schedule {commuting, commuting} s
+  method void setIt(int v) { o = v schedule s 1 }
+  region R1 { initial state A immediate do setIt(1) go to B state B }
+  region R2 { initial state C immediate do setIt(2) go to D state D }
+}

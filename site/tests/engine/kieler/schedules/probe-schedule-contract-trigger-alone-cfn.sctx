@@ -1,0 +1,12 @@
+// A contract C function as a whole trigger.
+scchart E09 {
+  output int o
+  class C {
+    schedule s
+    bool v = true
+    void set(bool x) schedule s 1 { for (int i = 0; i < 1; i++) { v = x } }
+    bool get() schedule s 0 { bool r = false; for (int i = 0; i < 1; i++) { r = v } return r }
+  } c
+  region R1 { initial state A if c.get() do o = 1 go to B state B }
+  region R2 { initial state C2 do c.set(false) go to D state D }
+}

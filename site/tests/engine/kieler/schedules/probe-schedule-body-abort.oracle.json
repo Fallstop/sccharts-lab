@@ -1,0 +1,66 @@
+{
+  "hash": "ce90d5f2beaff9a67f112ffc0f1d202d202de079",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-body-abort.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": false
+      },
+      "values": {
+        "a": false,
+        "o": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true
+      },
+      "values": {
+        "a": true,
+        "o": 10
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "a": true,
+        "o": 10
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

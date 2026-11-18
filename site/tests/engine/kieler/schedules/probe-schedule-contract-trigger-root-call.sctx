@@ -1,0 +1,12 @@
+// A contract call in a trigger next to a call of a short chart method: the copy lands on that call.
+scchart H04 {
+  output int o
+  int x
+  class C {
+    schedule s
+    int v = 0
+    int get() schedule s 1 { return v }
+  } c
+  method bool pos() { return x >= 0 }
+  initial state A if c.get() >= 0 && pos() do o = 1 go to B state B
+}

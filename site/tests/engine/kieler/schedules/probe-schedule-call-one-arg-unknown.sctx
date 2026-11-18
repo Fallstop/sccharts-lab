@@ -1,0 +1,6 @@
+// A call with one argument and a schedule that does not exist.
+scchart B36 {
+  output int o
+  method void f(int a) { o = a }
+  initial state A do f(1) schedule nosuch 1 go to B state B
+}

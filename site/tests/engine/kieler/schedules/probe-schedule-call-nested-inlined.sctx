@@ -1,0 +1,9 @@
+// A scheduled call of a method that calls another (not simple: it contains a call).
+scchart B20 {
+  output int o
+  schedule s
+  method void inner() { o = 1 }
+  method void outer() { inner() }
+  region R1 { initial state A immediate do outer() schedule s 1 go to B state B }
+  region R2 { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}

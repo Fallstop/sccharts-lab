@@ -1,0 +1,11 @@
+// A scheduled call (chart schedule) of an instance's short method.
+scchart E22 {
+  output int o
+  schedule s
+  class C {
+    int v = 0
+    void set2(int a, int b) { v = a + b }
+  } c
+  region R1 { initial state A do c.set2(5, 0) schedule s 0 go to B state B }
+  region R2 { initial state C2 do c.v = 2 schedule s 1 go to D state D }
+}

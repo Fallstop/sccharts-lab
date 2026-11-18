@@ -1,0 +1,8 @@
+// Scheduled assignments around a goto in a code block.
+scchart A19 {
+  input bool a
+  output int o
+  schedule s
+  region R1 { initial state A immediate do { if a { goto l } o = 1 schedule s 1; l: o += 5 schedule s 1 } go to B state B }
+  region R2 { initial state C immediate do o = 10 schedule s 0 go to D state D }
+}

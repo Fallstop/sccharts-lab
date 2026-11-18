@@ -1,0 +1,10 @@
+// A scheduled condition in a method body reading a signal's presence through a bool.
+scchart H16 {
+  input signal I
+  output int o
+  bool seen
+  schedule s
+  method void note() { if seen schedule s 1 { o = 1 } }
+  region R1 { initial state A do note() go to B state B }
+  region R2 { initial state C if I do seen = true schedule s 0 go to D state D }
+}

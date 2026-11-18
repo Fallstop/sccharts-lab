@@ -1,0 +1,8 @@
+// A schedule on an if condition and on the assignment inside a code block.
+scchart SCodeBlockIf {
+  input bool a
+  output int o
+  schedule s
+  region R1 { initial state A immediate do { if a schedule s 1 { o = 1 schedule s 1 } } go to B state B }
+  region R2 { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}

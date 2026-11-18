@@ -1,0 +1,6 @@
+// A schedule three classes deep that nothing names: KIELER does not look that far.
+scchart F08 {
+  output int o
+  class L1 { class L2 { class L3 { schedule s  int v = 0 } c3 } c2 } c1
+  initial state A do o = 1 go to B state B
+}

@@ -1,0 +1,8 @@
+// A scheduled assignment inside a method with a loop (a C function), against a scheduled assignment (priorities the other way round).
+scchart A03 {
+  output int o
+  schedule s
+  method void setIt() { o = 1 schedule s 0 }
+  region R1 { initial state A immediate do setIt() go to B state B }
+  region R2 { initial state C immediate do o = 2 schedule s 1 go to D state D }
+}

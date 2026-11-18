@@ -1,0 +1,12 @@
+// A contract C function as a whole initial value.
+scchart E07 {
+  output int o
+  class C {
+    schedule s
+    int v = 3
+    void set(int x) schedule s 0 { v = x }
+    int get() schedule s 1 { int r = 0; for (int i = 0; i < 1; i++) { r = v } return r }
+  } c
+  region R1 { initial state A go to B state B { int k = c.get() initial state X do o = k go to Y state Y } }
+  region R2 { initial state C2 do c.set(5) go to D state D }
+}

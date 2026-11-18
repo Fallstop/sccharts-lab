@@ -1,0 +1,7 @@
+// The schedule of an instance inside a code block.
+scchart D05 {
+  output int o
+  class C { schedule s  int v = 0 } c
+  region R1 { initial state A do { o = 1 schedule c.s 1 } go to B state B }
+  region R2 { initial state C2 do o = 2 schedule c.s 0 go to D state D }
+}

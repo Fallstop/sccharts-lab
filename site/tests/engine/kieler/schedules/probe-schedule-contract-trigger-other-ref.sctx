@@ -1,0 +1,12 @@
+// A contract call in a trigger next to a variable: the contract's copy also orders the variable's read.
+scchart H03 {
+  output int o
+  int x
+  class C {
+    schedule s
+    int v = 0
+    int get() schedule s 1 { return v }
+  } c
+  region R1 { initial state A if c.get() >= 0 && x == 0 do o = 1 go to B state B }
+  region R2 { initial state C2 do x = 1 schedule c.s 2 go to D state D }
+}

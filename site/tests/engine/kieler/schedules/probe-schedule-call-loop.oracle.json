@@ -1,0 +1,19 @@
+{
+  "hash": "129250b39215e895eb9090acdfcbddc9955fc45f",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-call-loop.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g1b to _g5b",
+    "Can't schedule from _g5b to _g1b",
+    "Can't schedule from _g1b to _g2",
+    "Can't schedule from _g5b to _g6",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving o prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through o.",
+    "Potential instantaneous loop through o."
+  ],
+  "ticks": []
+}

@@ -1,0 +1,6 @@
+// A call with two arguments keeps its schedule clause: an unknown schedule is an error.
+scchart B37 {
+  output int o
+  method void f(int a, int b) { o = a }
+  initial state A do f(1, 2) schedule nosuch 1 go to B state B
+}

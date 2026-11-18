@@ -1,0 +1,10 @@
+// A schedule on an if condition inside a method (priorities the other way round).
+scchart A05 {
+  input bool a
+  output int o
+  int x
+  schedule s
+  method void setIt() { if x > 0 schedule s 0 { o = 1 } }
+  region R1 { initial state A immediate do setIt() go to B state B }
+  region R2 { initial state C immediate do x = 2 schedule s 1 go to D state D }
+}

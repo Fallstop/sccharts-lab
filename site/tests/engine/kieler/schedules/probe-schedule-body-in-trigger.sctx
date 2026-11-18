@@ -1,0 +1,9 @@
+// A method with a scheduled assignment called in a trigger.
+scchart E21 {
+  output int o
+  int n
+  schedule s
+  method bool bump() { n = 1 schedule s 1; return true }
+  region R1 { initial state A if bump() do o = n go to B state B }
+  region R2 { initial state C2 do n = 5 schedule s 0 go to D state D }
+}

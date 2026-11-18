@@ -1,0 +1,9 @@
+// A clause in a code block naming a schedule declared in the state around it.
+scchart H12 {
+  output int o
+  initial state S {
+    schedule t
+    region R1 { initial state A do { o = 1 schedule t 1 } go to B state B }
+    region R2 { initial state C do o = 2 schedule t 0 go to D state D }
+  }
+}

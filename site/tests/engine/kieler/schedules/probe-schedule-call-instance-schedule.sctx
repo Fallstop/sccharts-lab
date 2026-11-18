@@ -1,0 +1,11 @@
+// A scheduled call naming the instance's own schedule.
+scchart E23 {
+  output int o
+  class C {
+    schedule s
+    int v = 0
+    void set2(int a, int b) { v = a + b }
+  } c
+  region R1 { initial state A do c.set2(5, 0) schedule c.s 0 go to B state B }
+  region R2 { initial state C2 do c.v = 2 schedule c.s 1 go to D state D }
+}

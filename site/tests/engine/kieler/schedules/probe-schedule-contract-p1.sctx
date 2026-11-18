@@ -1,0 +1,12 @@
+// Priority 1 quirk with contracts: += in one method, = in the other, both priority 1.
+scchart C19 {
+  output int o
+  class C {
+    schedule {commuting, commuting} s
+    int v = 0
+    void set(int x) schedule s 1 { v = x }
+    void bump() schedule s 1 { v += 1 }
+  } c
+  region R1 { initial state A do c.bump() go to B state B }
+  region R2 { initial state C2 do c.set(5) go to D state D }
+}

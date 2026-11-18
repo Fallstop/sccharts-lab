@@ -1,0 +1,8 @@
+// The schedule of an instance named inside a C function (a loop).
+scchart D15 {
+  output int o
+  class C { schedule s  int v = 0 } c
+  method void setIt() { for (int i = 0; i < 2; i++) { o = 1 schedule c.s 1 } }
+  region R1 { initial state A do setIt() go to B state B }
+  region R2 { initial state C2 do o = 2 schedule c.s 0 go to D state D }
+}

@@ -1,0 +1,71 @@
+{
+  "hash": "21598172a87842ef009420d65ddb6d7a2a1e4c8e",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-sequential.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_c_set_x is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "c": {
+          "v": 5
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "c": {
+          "v": 5
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

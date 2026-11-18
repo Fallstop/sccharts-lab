@@ -1,0 +1,7 @@
+// A state's schedule reaches the statements of a code block inside it.
+scchart E24 {
+  output int o
+  schedule s
+  region R1 { initial state S schedule s 1 { initial state A do { o = 1 } go to B state B } }
+  region R2 { initial state C2 do o = 2 schedule s 0 go to D state D }
+}

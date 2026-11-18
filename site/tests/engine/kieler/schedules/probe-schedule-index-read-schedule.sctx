@@ -1,0 +1,8 @@
+// The index of a scheduled assignment's target: is its read scheduled.
+scchart E19 {
+  output int o[2]
+  int i = 0
+  schedule s
+  region R1 { initial state A do o[i] = 7 schedule s 0 go to B state B }
+  region R2 { initial state C2 do i = 1 schedule s 1 go to D state D }
+}

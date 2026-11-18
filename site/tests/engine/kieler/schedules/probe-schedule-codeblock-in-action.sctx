@@ -1,0 +1,7 @@
+// Scheduled statements in the code blocks of entry and during actions.
+scchart E32 {
+  output int o
+  schedule s
+  region R1 { initial state A { entry do { o = 1 schedule s 1 } during do { o += 1 schedule s 1 } } }
+  region R2 { initial state C2 { during do o = 10 schedule s 0 } }
+}

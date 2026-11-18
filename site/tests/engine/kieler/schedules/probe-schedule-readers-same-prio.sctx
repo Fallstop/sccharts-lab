@@ -1,0 +1,10 @@
+// Two scheduled assignments reading one C function at one priority.
+scchart F02 {
+  output int o
+  output int p
+  int n = 4
+  schedule s
+  method int peek() { int r = 0; for (int i = 0; i < 1; i++) { r = n } return r }
+  region R1 { initial state A do o = peek() schedule s 0 go to B state B }
+  region R2 { initial state C2 do p = peek() schedule s 0 go to D state D }
+}

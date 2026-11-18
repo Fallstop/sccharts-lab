@@ -1,0 +1,8 @@
+// A call with one argument in an entry action loses its schedule clause too.
+scchart H09 {
+  output int o
+  schedule s
+  method void f(int a) { o = a }
+  region R1 { initial state A go to B state B { entry do f(1) schedule s 1 } }
+  region R2 { initial state C go to D state D { entry do o = 2 schedule s 0 } }
+}

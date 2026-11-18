@@ -1,0 +1,98 @@
+{
+  "hash": "01935358364934e14c041975f3f1ca162054febc",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-two-instances.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore.",
+    "ValuedObject with name C_d_s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn2_c_set_x is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn3_d_set_x is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "d": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "p": 0,
+        "c": {
+          "v": 0
+        },
+        "d": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "p": 6,
+        "c": {
+          "v": 5
+        },
+        "d": {
+          "v": 6
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "p": 6,
+        "c": {
+          "v": 5
+        },
+        "d": {
+          "v": 6
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

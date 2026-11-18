@@ -39,6 +39,13 @@ export function rewriteSchedule(list: SchedEntry[] | undefined, w: Rewriter): Sc
     if (!list || !w.read) return list
     let changed = false
     const out = list.map(e => {
+        if (e.ref) {
+            // An inherited schedule, named through the reference that is redirected to the base chart's copy.
+            const r = w.read!(e.ref)
+            if (r?.k !== 'ref' || r.sub || r.v.declKind !== 'schedule') return e
+            changed = true
+            return { group: r.v, priority: e.priority, ...(e.method ? { method: e.method } : {}) }
+        }
         if (!(e.group instanceof CVar)) return e
         const r = w.read!({ k: 'ref', v: e.group, idx: [] })
         if (r?.k !== 'ref' || r.v === e.group) return e
@@ -99,6 +106,7 @@ export function rewriteVar(v: CVar, w: Rewriter) {
     if (v.method) {
         for (const p of v.method.params) p.dims = p.dims.map(d => rewriteExpr(d, w))
         v.method.body = rewriteStatements(v.method.body, w)
+        if (v.method.schedule) v.method.schedule = rewriteSchedule(v.method.schedule, w)
     }
     if (v.instance) v.instance = { ...v.instance, args: rewriteArgs(v.instance.args, w) }
 }

@@ -1,0 +1,6 @@
+// A schedule declared in a class that nothing names.
+scchart C17 {
+  output int o
+  class C { schedule s  int v = 0 } c
+  initial state A do c.v = 3; o = c.v go to B state B
+}

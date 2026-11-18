@@ -1,0 +1,10 @@
+// A class method whose contract names a schedule of the chart, never called: accepted.
+scchart F06 {
+  output int o
+  schedule s
+  class C {
+    int v = 0
+    void set(int x) schedule s 0 { v = x }
+  } c
+  initial state A do o = 1 go to B state B
+}

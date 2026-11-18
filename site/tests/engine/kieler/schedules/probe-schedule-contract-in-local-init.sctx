@@ -1,0 +1,12 @@
+// A contract method as the initial value of a local variable of a code block: refused with inlining.
+scchart F13 {
+  output int o
+  class C {
+    schedule s
+    int v = 0
+    void set(int x) schedule s 1 { v = x }
+    int get() schedule s 0 { return v }
+  } c
+  region R1 { initial state A do { int k = c.get(); o = k } go to B state B }
+  region R2 { initial state C2 do c.set(5) go to D state D }
+}

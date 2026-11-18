@@ -1,0 +1,7 @@
+// The schedule of a class with an array of instances: refused.
+scchart D08 {
+  output int o
+  class C { schedule s  int v = 0 } cs[2]
+  region R1 { initial state A do o = 1 schedule cs.s 1 go to B state B }
+  region R2 { initial state C2 do o = 2 schedule cs.s 0 go to D state D }
+}
