@@ -2210,7 +2210,9 @@ class like any other here. What follows from it:
 - **An array of one object, or of none, is never initialised.** `createAllIndices` lists the elements' indices only
   when there is more than one, so no `_init` is called: `class C { int x = 3 } c[1]` and `ref Box g[1]` start at
   0, and so does everything inside (a class object inside the one instance; `[1][1]` is one element too, a
-  `const` size of 1 as well). In a state that is entered again such members keep their values. A class array
+  `const` size of 1 as well). A number bound to an input of such an instance is lost with it: the input becomes a
+  field whose initial value is the number, and stays 0 (`probe-instance-array-of-one-literal-input`). In a state that
+  is entered again such members keep their values. A class array
   inside a class of several objects behaves the same (`probe-class-array-of-one-*`, `probe-instance-array-of-one-*`,
   `-class-array-of-one-inside-init`, `-reentry` probes; `probe-struct-array-of-one-init`: a struct is not affected).
 - **An `_init` without a statement is called but never generated.** KIELER makes `_init` for every class with a

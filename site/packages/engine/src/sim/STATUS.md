@@ -537,7 +537,7 @@ found, none of it special to generics, all fixed:
 Two independent reviews (of the dataflow and of the generics work, before the two were merged) ran their own charts
 through official KIELER and found fourteen disagreements about chart instances (`ref C g`). All are fixed, each
 with the class of bug behind it, and each rule is KIELER's own, read from its processors and confirmed with the
-compiler: 184 probes recorded with the lab server (148 accepted and agreeing tick by tick, 36 rejected by both; the
+compiler: 186 probes recorded with the lab server (150 accepted and agreeing tick by tick, 36 rejected by both; the
 same verdicts and values with the official jar), all through `pnpm cgen:check` and, for the trace columns,
 `tests/trace/engine-traces.test.ts`; `tests/engine/instances.test.ts` pins the API around them. Before that the
 branch of review fixes for the written schedules was merged (one mechanism per feature: the section on written
@@ -585,7 +585,8 @@ schedules above).
   in the pool or the interface (`probe-*-pool-host-*`); a bound input or generic parameter in the initial value of a method's local variable
   is not replaced (`unbound-reference`; structure/replacements.ts); the front end reports the binding error of a
   declaration that KIELER checks variable by variable at the variable (parser/validate.ts).
-- **Fuzz**: the profile `dataflowObjects` makes these forms now (tools/fuzz/README.md); campaign 22 below.
+- **Fuzz**: the profile `dataflowObjects` makes these forms now (tools/fuzz/README.md); campaign 22 below (500
+  charts, seed 41, no disagreement).
 
 ## Final polish (engine-5)
 
@@ -800,6 +801,7 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 19 (seeds 1, 7, 8, generics x 200, after both) | 600 | 209 | 390 | 0 | 0 | 1 | 0 |
 | 20 (seed 33, generics, dataflowObjects, schedules, structure, nested x 100, the merged engine) | 500 | 162 | 336 | 0 | 0 | 2 | 0 |
 | 21 (seed 34, the same five profiles x 100) | 500 | 157 | 337 | 0 | 0 | 6 | 0 |
+| 22 (seed 41, the same five profiles x 100, after the reviews of the chart instances) | 500 | 175 | 320 | 2 | 0 | 3 | 0 |
 
 Campaigns 12 to 14 use the profile `dataflowObjects` (tools/fuzz/README.md): dataflow regions with chart instances,
 calls and schedules next to control flow. Campaign 12's three: a binding on an instance of a classic region, which
@@ -820,6 +822,14 @@ in 100 to 240 s (two with contradicting schedules or count delays under a self-l
 cycle), all four rejected by the engine. A second run of seed 33 on the final code agrees chart by chart except
 where KIELER itself differs (five more timeouts on a busy machine, two charts the engine flags as
 `kieler-nondeterministic` that KIELER accepted that time).
+
+Campaign 22 runs the same five profiles after the fixes for the chart instances, `dataflowObjects` with the forms the
+reviews found missing (tools/fuzz/README.md): no disagreement in 500 charts. Per profile: dataflowObjects 67 match
+and 33 rejected by both, generics 28 and 71, schedules 15 and 83, structure 41 and 58, nested 24 and 75. The two
+charts the engine flags as `kieler-nondeterministic` (generics-41-56, nested-41-27) were run again 5 and 18 times:
+KIELER rejects 2 of 5 and 4 of 18 runs. Of the three charts KIELER did not answer within 40 s, one is rejected by
+both with 200 s, and two (a schedule read as a value among contradicting schedules, a causality cycle) KIELER does
+not finish compiling in 200 s; the engine rejects both.
 
 Campaigns 16 to 19 (generic parameters, profile `generics`; run beside 12 to 15, on the generics branch): 17's disagreement is a constant passed as a generic
 argument to a chart that contains a chart whose local has the parameter's name and writes it: KIELER binds the

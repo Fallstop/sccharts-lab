@@ -1,0 +1,3 @@
+// Control: a number bound to an input of an array of two instances is each element's field with that value.
+scchart Main { output int o ref Box g[2](5) initial state A do o = g[1].x go to A }
+scchart Box { input int i int x region R { initial state B do x = i go to B } }

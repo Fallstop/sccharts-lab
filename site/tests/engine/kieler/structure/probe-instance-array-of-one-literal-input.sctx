@@ -1,0 +1,4 @@
+// A number bound to an input of an array of one instance: the input becomes a field with the number as its initial value, which
+// is never applied (S-60a), so it stays 0.
+scchart Main { output int o ref Box g[1](5) initial state A do o = g[0].x go to A }
+scchart Box { input int i int x region R { initial state B do x = i go to B } }

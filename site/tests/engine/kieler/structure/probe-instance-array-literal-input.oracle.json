@@ -1,0 +1,95 @@
+{
+  "hash": "3912fa0eee0ac50fe168d7f3ac16a9074ba56723",
+  "chart": "tests/engine/kieler/structure/probe-instance-array-literal-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Box1.i": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "g": [
+          {
+            "i": 5,
+            "x": 0
+          },
+          {
+            "i": 5,
+            "x": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "g": [
+          {
+            "i": 5,
+            "x": 5
+          },
+          {
+            "i": 5,
+            "x": 5
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 5,
+        "g": [
+          {
+            "i": 5,
+            "x": 5
+          },
+          {
+            "i": 5,
+            "x": 5
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}
