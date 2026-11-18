@@ -1,0 +1,74 @@
+{
+  "hash": "58fdbfe38f845d702677165a0870bfc4fe6cfde7",
+  "chart": "tests/engine/kieler/random/probe-randomize-include-unreachable-seed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 6,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "n": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false,
+      "clock": [
+        1794960195,
+        1794960195
+      ]
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "n": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false,
+      "clock": [
+        1794960195,
+        1794960195
+      ]
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "n": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false,
+      "clock": [
+        1794960195,
+        1794960195
+      ]
+    }
+  ]
+}

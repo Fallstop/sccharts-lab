@@ -51,6 +51,27 @@ const defaultPool: PoolReader = (tick, keys) => {
     return out
 }
 
+/**
+ * The `seed` option of the simulation a panel builds, and `replaying`: while `run` replays an edited chart's ticks,
+ * each randomize() gets the seed it had in `history`. Afterwards the script's seeds apply again (while it is in
+ * control), and anything else, a restart included, takes the clock: it is a new run.
+ */
+export function panelSeeds(script: TourScript | undefined, scripted: () => boolean) {
+    const fromScript = scriptSeeds(script, scripted)
+    let earlier: readonly { seeds?: readonly number[] }[] | undefined
+    return {
+        seed: (call: { tick: number; index: number }): number | undefined => (earlier ? earlier[call.tick - 1]?.seeds?.[call.index] : undefined) ?? fromScript(call),
+        replaying<T>(history: readonly { seeds?: readonly number[] }[], run: () => T): T {
+            earlier = history
+            try {
+                return run()
+            } finally {
+                earlier = undefined
+            }
+        },
+    }
+}
+
 export class Timeline {
     /** The tick shown: 0 before the first tick, else 1..sim.tick. */
     cursor = 0

@@ -1,0 +1,7 @@
+// random() only in a method nothing calls: KIELER does not write the method out, so gcc rejects srand.
+scchart Main {
+  output int n
+  method float never() { return random() }
+  initial state A
+    do randomize(); n += 1 go to A
+}

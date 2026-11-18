@@ -1,0 +1,7 @@
+// random() only in a class method nothing calls.
+scchart Main {
+  output int n
+  class D { float roll() { return random() } } d
+  initial state A
+    do randomize(); n += 1 go to A
+}

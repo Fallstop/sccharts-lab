@@ -1,0 +1,8 @@
+// random() only in the trigger of a state that cannot be reached: KIELER has no code for the state.
+scchart Main {
+  output int n
+  initial state A
+    do randomize(); n += 1 go to A
+  state Never
+    if random() < 0.5 go to A
+}

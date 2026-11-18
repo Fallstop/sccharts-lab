@@ -764,12 +764,25 @@ is `time(NULL)`, the clock in whole seconds when the call runs: two calls within
 sequence twice (`random/probe-randomize-twice-in-tick`: a = b; `-every-tick`: a during action that seeds in
 every tick draws one number four ticks running). The engine takes the clock by default
 (`SimulationOptions.seed` overrides it), reports each tick's seeds (`TickResult.seeds`) and gives a tick run
-again after `rewind()` the seeds it had, so a run can be repeated (`replaySeeds`). A recording of such a chart
+again after `rewind()` the seeds it had (without asking the option again), so a run can be repeated
+(`replaySeeds`). Tick 1's unconditional code, which KIELER runs in `reset()` (B-7), draws and seeds there, in
+written order, also where it assigns an input (`probe-random-reset-input*`, `probe-randomize-reset-method`: a
+`randomize()` inside a method that is a C function compiles in the reset code).
+
+**Which code counts for `<stdlib.h>`.** Only what is in the C file: the compiled chart with the charts it
+references, instantiates or extends (`probe-randomize-include-reference`, `-instance`, `-base`), and the methods
+that are called, through other methods too (`-called-chain`, `-called-kept`). Another chart of the file
+(`-unused-chart`, `-unused-random`), a method nothing calls, short or with a loop, in a class or not
+(`-uncalled-method`, `-uncalled-kept`, `-uncalled-chain`, `-class-uncalled`, `-uncalled-seed`) and a state that
+cannot be reached (`-unreachable`, `-unreachable-seed`) do not count, for `random()` and for `randomize()`
+alike. A recording of such a chart
 keeps the clock around every tick (`ticks[].clock`, written by `pnpm oracle:record` for charts that name
 `randomize`); `tools/oracle/seeds.ts` finds the seconds in those windows for which the engine's run is the
-recorded one and writes them into the scenario (`ticks[].seeds`). The conformance test, `pnpm cgen:check`
+recorded one, in the data pool and in the transitions taken, choosing one call at a time (how many calls a tick
+makes can depend on a seed: `probe-randomize-seed-decides-calls`; the numbers may show only in the path:
+`probe-randomize-paths-only`), and writes them into the scenario (`ticks[].seeds`). The conformance test, `pnpm cgen:check`
 (its harness defines `time()` to answer with those seeds) and the guide's tours replay them, so these charts
-are compared with KIELER number for number: `tests/engine/kieler/random/probe-randomize-*` (9 probes: later,
+are compared with KIELER number for number: `tests/engine/kieler/random/` (28 probes, among them: later,
 triggered in tick 1, twice in a tick, every tick, in a method and a code block, in a class method, in two
 ticks, with a `random()` trigger, without `random()`), `examples/advanced/methods/dice-reseeded`.
 

@@ -5,6 +5,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { compile, createSimulation, describeTick, replaySeeds } from '@sccharts-lab/engine'
 import { newRandState, rand } from '@sccharts-lab/engine/sim/random'
+import fs from 'node:fs'
+import path from 'node:path'
+import { compareWithOracle, resolveSeeds, type OracleResult } from '../../tools/fuzz/compare'
 
 // From tick 2 on, R draws a number in every tick; `seed` seeds first (the Seed region comes first).
 const CHART = `scchart Dice {
@@ -112,6 +115,43 @@ describe('randomize()', () => {
         expect(sim.step({ seed: true }).seeds).toEqual([2000])
     })
 
+    it('a tick run again does not ask the seed function again', () => {
+        let n = 41
+        const sim = createSimulation(result, { seed: () => ++n })
+        sim.step({ seed: true })
+        const before = sim.step({ seed: true })
+        expect(before.seeds).toEqual([42])
+        sim.rewind(1)
+        const again = sim.step({ seed: true })
+        expect(again.seeds).toEqual([42])
+        expect(again.values).toEqual(before.values)
+        // A tick that was not run before asks.
+        expect(sim.step({ seed: true }).seeds).toEqual([43])
+    })
+
+    it('odd seeds are read as C reads them (srand takes an unsigned int)', () => {
+        const seeds = [-1, 1.9, Number.NaN]
+        const sim = createSimulation(result, { seed: ({ tick }) => seeds[tick - 2] })
+        sim.step({ seed: true })
+        expect([sim.step({ seed: true }), sim.step({ seed: true }), sim.step({ seed: true })].map(t => t.seeds)).toEqual([[4294967295], [1], [0]])
+    })
+
+    it('the first tick\'s reset code draws and seeds once, in written order (KIELER runs it before the inputs)', () => {
+        // `o` is an input, so KIELER's reset() sets it; the method is a C function, so randomize() compiles there.
+        const go = compile('scchart Go {\n  input float o\n  output float x\n  method float draw(int n) {\n    while (n > 0) {\n      randomize()\n      n--\n    }\n    return random()\n  }\n  entry do x = random(); o = draw(1)\n  initial state A\n    do x = random() go to A\n}')
+        expect(go.ok).toBe(true)
+        const sim = createSimulation(go, { seed: 42 })
+        const t = sim.step()
+        expect(t.seeds).toEqual([42])
+        expect(t.values.x).toBe(0.8401877284049988)
+        expect(t.values.o).toBe(first(42))
+        expect(t.log.some(e => e.kind === 'note' && e.text.includes('seed 42'))).toBe(true)
+        // The generator goes on from where the reset code left it: the second number after srand(42).
+        const state = newRandState(42)
+        rand(state)
+        expect(sim.step().values.x).toBe(Math.fround(Math.fround(rand(state)) / Math.fround(2147483647)))
+    })
+
     it('replaySeeds repeats a run in another simulation', () => {
         vi.useFakeTimers()
         vi.setSystemTime(new Date(5000_000))
@@ -136,5 +176,43 @@ describe('randomize()', () => {
         const note = t.log.find(e => e.kind === 'note')
         expect(note).toMatchObject({ kind: 'note', text: 'randomize() seeded the random numbers from the clock (seed 7): random() starts a new sequence.' })
         expect(describeTick(t, result.program!).join(' ')).toContain('seed 7')
+    })
+})
+
+describe('the seeds of a recorded KIELER run (tools/oracle/seeds.ts)', () => {
+    const dir = path.resolve('tests/engine/kieler/random')
+    const recorded = fs.readdirSync(dir).filter(f => f.endsWith('.oracle.json')).map(f => f.slice(0, -'.oracle.json'.length))
+        .map(name => ({ name, rec: JSON.parse(fs.readFileSync(path.join(dir, `${name}.oracle.json`), 'utf8')) as OracleResult }))
+        .filter(c => c.rec.ok && c.rec.ticks.some(t => t.clock))
+
+    it('are found from the clock the recording keeps, for every probe', () => {
+        expect(recorded.length).toBeGreaterThan(15)
+        for (const { name, rec } of recorded) {
+            const model = fs.readFileSync(path.join(dir, `${name}.sctx`), 'utf8')
+            const scenario = JSON.parse(fs.readFileSync(path.join(dir, `${name}.scenario.json`), 'utf8')) as { ticks: { inputs?: Record<string, never>; seeds?: number[] }[] }
+            const inputs = scenario.ticks.map(t => t.inputs ?? {})
+            const seeds = resolveSeeds(model, inputs, rec)
+            expect(seeds, name).toBeDefined()
+            // The scenario has them, and the run they give is KIELER's.
+            expect(seeds!.map(s => s ?? null), name).toEqual(scenario.ticks.map(t => t.seeds ?? null))
+            expect(compareWithOracle(model, inputs, rec).kind, name).toBe('match')
+        }
+    })
+
+    it('a number that shows only in the transitions taken still decides the seed', () => {
+        const { rec } = recorded.find(c => c.name === 'probe-randomize-paths-only')!
+        expect(rec.ticks.every(t => Object.keys(t.values).length === 0)).toBe(true)
+        // Without the transitions a wrong second would do: with the clock moved a second on, nothing fits.
+        const moved = { ...rec, ticks: rec.ticks.map(t => ({ ...t, clock: [t.clock![0] + 600, t.clock![1] + 600] as [number, number] })) }
+        const model = fs.readFileSync(path.join(dir, 'probe-randomize-paths-only.sctx'), 'utf8')
+        expect(resolveSeeds(model, rec.ticks.map(() => ({})), moved)).toBeUndefined()
+    })
+
+    it('a tick whose number of calls depends on the seed is solved call by call', () => {
+        const { rec } = recorded.find(c => c.name === 'probe-randomize-seed-decides-calls')!
+        const model = fs.readFileSync(path.join(dir, 'probe-randomize-seed-decides-calls.sctx'), 'utf8')
+        // Whatever the first second tried gives, the search finds the recorded run: also from a window that starts early.
+        const early = { ...rec, ticks: rec.ticks.map(t => ({ ...t, clock: [t.clock![0] - 1, t.clock![1]] as [number, number] })) }
+        expect(resolveSeeds(model, rec.ticks.map(() => ({})), early)).toBeDefined()
     })
 })

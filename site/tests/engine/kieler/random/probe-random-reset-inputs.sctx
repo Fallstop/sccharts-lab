@@ -1,0 +1,9 @@
+// As probe-random-reset-input with two inputs, one of them given by the environment in tick 1, and a sum of two draws.
+scchart GoMixed2 {
+  input float o
+  input float p
+  output float x, y, z
+  entry do o = random(); x = random(); p = random(); y = random() + random()
+  initial state A
+    do z = random() go to A
+}

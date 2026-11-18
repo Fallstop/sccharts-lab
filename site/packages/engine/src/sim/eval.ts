@@ -479,8 +479,13 @@ export function compileEffect(f: CEffect, ec: ExprCompiler): EffectFn {
         }
         case 'randomize': return rt => {
             if (!rt.seed) return undefined
-            const seed = rt.seed()
-            seedRandState(rt.rand, seed)
+            // A call that already ran in KIELER's reset code (exec.ts) seeded then: here it only says so.
+            const done = rt.rand.replay?.length ? rt.rand.replay.shift() : undefined
+            const seed = done ?? rt.seed()
+            if (done === undefined) {
+                seedRandState(rt.rand, seed)
+                rt.rand.tape?.push(seed)
+            }
             const say = (c: (s: string) => string) => `${c('randomize()')} seeded the random numbers from the clock (seed ${seed}): ${c('random()')} starts a new sequence.`
             ;(rt.notes ??= []).push({ text: say(s => s), markdown: say(s => '`' + s + '`') })
             return undefined

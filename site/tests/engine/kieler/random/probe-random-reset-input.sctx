@@ -1,0 +1,8 @@
+// Tick 1's unconditional code draws three numbers, the second into an input: KIELER's reset code draws them in written order.
+scchart GoMixed {
+  input float o
+  output float x, y, z
+  entry do x = random(); o = random(); y = random()
+  initial state A
+    do z = random() go to A
+}

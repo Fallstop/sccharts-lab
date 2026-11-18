@@ -1,0 +1,11 @@
+// random() in a referenced chart counts: its code is in the C file.
+scchart Main {
+  output float p
+  region R1 { initial state A do randomize() go to A }
+  region R2 { initial state S is Roller(p) }
+}
+scchart Roller {
+  output float o
+  initial state A
+    do o = random() go to A
+}

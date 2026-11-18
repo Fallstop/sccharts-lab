@@ -67,9 +67,9 @@ export interface SimulationOptions {
     /**
      * What `randomize()` seeds the random numbers with: a number for every call, or a function asked for each call
      * (`tick` it runs in, `index` among the tick's calls, from 0; undefined leaves that call to the default). Default:
-     * the clock in whole seconds, as KIELER's `srand(time(NULL))`. A tick run again after `rewind()` gets the seeds
-     * it had; `reset()` forgets them. A tick's seeds are in its result (`TickResult.seeds`): give them to another
-     * simulation to repeat a run.
+     * the clock in whole seconds, as KIELER's `srand(time(NULL))`. A seed is C's `unsigned int` (the low 32 bits). A
+     * tick run again after `rewind()` gets the seeds it had, without asking again; `reset()` forgets them. A tick's
+     * seeds are in its result (`TickResult.seeds`): give them to another simulation to repeat a run.
      */
     seed?: number | ((call: SeedCall) => number | undefined)
 }
@@ -98,8 +98,11 @@ export function createSimulation(result: SimulationInput, options: SimulationOpt
     // The seeds of the ticks run so far, kept across rewind(): a tick run again is the tick it was.
     const seeds: number[][] = []
     runner.seedSource = (tick, index) => {
+        const had = seeds[tick - 1]?.[index]
+        if (had !== undefined) return had
         const given = typeof options.seed === 'function' ? options.seed({ tick, index }) : options.seed
-        const seed = given ?? seeds[tick - 1]?.[index] ?? Math.floor(Date.now() / 1000)
+        // C's unsigned int, as srand() takes it.
+        const seed = (given ?? Math.floor(Date.now() / 1000)) >>> 0
         ;(seeds[tick - 1] ??= [])[index] = seed
         return seed
     }

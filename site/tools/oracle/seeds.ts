@@ -5,11 +5,13 @@
 //
 //   node --experimental-transform-types --no-warnings --import ./tools/fuzz/register.mjs tools/oracle/seeds.ts chart.sctx ...
 //
-// `pnpm oracle:record` runs it for what it records. Exit code 1 when no seeds give a recording (the engine and
-// KIELER then differ in something else too).
+// `pnpm oracle:record` runs it for every recording under its paths that keeps the clock (it changes a scenario only
+// when its seeds change). Exit code 1 when no seeds give a recording (the engine and KIELER then differ in something
+// else too).
 
 import fs from 'node:fs'
 import path from 'node:path'
+import { compile } from '@sccharts-lab/engine'
 import { resolveSeeds, type OracleResult } from '../fuzz/compare'
 
 let failures = 0
@@ -21,16 +23,22 @@ for (const chart of process.argv.slice(2)) {
     const rec = JSON.parse(fs.readFileSync(`${base}.oracle.json`, 'utf8')) as OracleResult
     if (!rec.ok || !rec.ticks.some(t => t.clock)) continue
     const files = Object.fromEntries((scenario.imports ?? []).map(f => [f, fs.readFileSync(path.join(path.dirname(chart), f), 'utf8')]))
-    const seeds = resolveSeeds(fs.readFileSync(chart, 'utf8'), scenario.ticks.map(t => t.inputs ?? {}), rec, files)
+    const model = fs.readFileSync(chart, 'utf8')
+    // A chart the engine does not run (host code, say) has no run to give seeds to.
+    const compiled = compile(model, { files })
+    if (!compiled.ok || compiled.diagnostics.some(d => d.code === 'unsupported')) continue
+    const seeds = resolveSeeds(model, scenario.ticks.map(t => t.inputs ?? {}), rec, files)
     if (!seeds) {
         failures++
         console.error(`✗ seeds    ${chart}: no clock seconds give KIELER's recorded run`)
         continue
     }
+    const before = JSON.stringify(scenario.ticks.map(t => t.seeds ?? null))
     scenario.ticks.forEach((t, i) => {
         if (seeds[i]) t.seeds = seeds[i]
         else delete t.seeds
     })
+    if (JSON.stringify(scenario.ticks.map(t => t.seeds ?? null)) === before) continue
     // The file's own indentation.
     const indent = /^( +)"/m.exec(text)?.[1].length ?? 2
     fs.writeFileSync(scenarioFile, JSON.stringify(scenario, null, indent) + '\n')

@@ -1,0 +1,10 @@
+// random() only in a chart the compiled chart does not use: KIELER's C code has no <stdlib.h>, gcc rejects srand.
+scchart Main {
+  initial state A
+    do randomize() go to A
+}
+scchart Unused {
+  output float o
+  initial state A
+    do o = random() go to A
+}

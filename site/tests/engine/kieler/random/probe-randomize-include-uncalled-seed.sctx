@@ -1,0 +1,7 @@
+// randomize() only in a method nothing calls: not in the C code.
+scchart Main {
+  output int n
+  method void never() { randomize() }
+  initial state A
+    do n += 1 go to A
+}

@@ -1,0 +1,8 @@
+// random() in the base chart counts.
+scchart Main extends Base {
+  region R1 { initial state A do randomize() go to A }
+}
+scchart Base {
+  output float o
+  region R0 { initial state B do o = random() go to B }
+}

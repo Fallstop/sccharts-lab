@@ -6,6 +6,10 @@ export interface RandState {
     ring: number[]
     /** Index of the next value to compute (i in r[i]). */
     i: number
+    /** While set: every number drawn and every seed taken is noted here, in order (exec.ts: KIELER's reset code). */
+    tape?: number[]
+    /** While it has entries: they are given again, in order, in place of drawing and seeding. */
+    replay?: number[]
 }
 
 /**
@@ -50,7 +54,10 @@ function step(state: RandState): number {
 
 /** The next rand() result (0 .. 2147483647). */
 export function rand(state: RandState): number {
-    return step(state) >>> 1
+    if (state.replay?.length) return state.replay.shift()!
+    const v = step(state) >>> 1
+    state.tape?.push(v)
+    return v
 }
 
 /** KIELER's random(): ((float) rand() / RAND_MAX), computed in single precision. */

@@ -1,7 +1,7 @@
 // Compares the engine with one oracle result (tools/oracle/oracle.mjs): acceptance, KIELER's data pool, the
 // taken-transition counters and the termination tick, tick by tick (as tests/conformance/engine.test.ts does).
 
-import { compile, createSimulation, replaySeeds, SIMULATOR_CODES, type PoolValue } from '@sccharts-lab/engine'
+import { compile, createSimulation, replaySeeds, SIMULATOR_CODES, type PoolValue, type Simulation, type SimTickResult } from '@sccharts-lab/engine'
 import type { Value } from '@sccharts-lab/engine/types'
 
 export interface OracleResult {
@@ -80,50 +80,73 @@ export function engineVerdict(model: string, files?: Record<string, string>): st
     }
 }
 
+/** What differs between a tick of the engine and KIELER's recording of it: the data pool and the taken counters. */
+function tickDifferences(sim: Simulation, actual: SimTickResult, expected: OracleResult['ticks'][number], tick: number): string[] {
+    const diffs: string[] = []
+    for (const [key, value] of Object.entries(expected.values)) {
+        if (!same(actual.pool[key], value)) diffs.push(`tick ${tick}: ${key} KIELER ${show(value)}, engine ${show(actual.pool[key])}`)
+    }
+    for (const [key, value] of Object.entries(actual.pool)) {
+        if (!(key in expected.values) && value !== null) diffs.push(`tick ${tick}: ${key} = ${show(value)} is not in KIELER's pool`)
+    }
+    if (expected.taken) {
+        const counts = sim.takenCounts(actual)
+        if (!same(counts, expected.taken)) diffs.push(`tick ${tick}: taken KIELER ${JSON.stringify(expected.taken)}, engine ${JSON.stringify(counts)}`)
+    }
+    return diffs
+}
+
 /**
- * The seeds KIELER's randomize() calls used in a recorded run, per tick (undefined: no call): the clock seconds
- * around each tick (`clock`) for which the engine's run has the recorded data pool. Undefined when no choice of
- * seeds gives the recording (the engine differs from KIELER somewhere else too), or when the chart does not compile.
+ * The seeds KIELER's randomize() calls used in a recorded run, per tick (undefined: no call): clock seconds around
+ * each tick (`clock`) for which the engine's run is the recorded one, in the data pool and in the transitions taken
+ * (a random number may show in nothing but the path). Undefined when no choice of seeds gives the recording (the
+ * engine differs from KIELER somewhere else too), or when the engine cannot run the chart.
  */
 export function resolveSeeds(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>): (number[] | undefined)[] | undefined {
     const result = compile(model, { files })
     if (!rec.ok || !result.ok || result.diagnostics.some(d => d.code === 'unsupported')) return undefined
-    const chosen: (number[] | undefined)[] = []
     const window = (i: number): number[] => {
-        // A second of slack on either side: the oracle's clock and the simulation's are read at different moments.
+        // The seconds the oracle saw around the tick first, then a second of slack on either side: its clock and the
+        // simulation's are read at different moments.
         const [from, to] = rec.ticks[i].clock ?? [0, 0]
-        return Array.from({ length: to - from + 3 }, (_, k) => from - 1 + k)
+        return [...Array.from({ length: to - from + 1 }, (_, k) => from + k), to + 1, from - 1]
     }
-    const sim = createSimulation(result, { seed: ({ tick, index }) => chosen[tick - 1]?.[index] ?? window(tick - 1)[0] })
-    const matches = (i: number): number | undefined => {
-        sim.rewind(i)
-        const actual = sim.step(inputs[i] ?? {})
-        if (actual.error) return undefined
-        const expected = rec.ticks[i].values
-        for (const [key, value] of Object.entries(expected)) if (!same(actual.pool[key], value)) return undefined
-        return actual.seeds?.length ?? 0
+    /** The seeds chosen so far, per tick and call. */
+    const chosen: number[][] = []
+    /** Calls of the last tick run that had no chosen seed yet. */
+    let open = 0
+    const sim = createSimulation(result, {
+        seed: ({ tick, index }) => {
+            const known = chosen[tick - 1]?.[index]
+            if (known === undefined) open++
+            return known ?? rec.ticks[tick - 1].clock?.[0] ?? 0
+        },
+    })
+    let runs = 0
+    /** Tick i + 1 of a fresh run with the chosen seeds (a simulation keeps the seeds of the ticks it ran). */
+    const run = (i: number): SimTickResult => {
+        runs++
+        sim.reset()
+        for (let k = 0; k < i; k++) sim.step(inputs[k] ?? {})
+        open = 0
+        return sim.step(inputs[i] ?? {})
     }
-    /** Seeds in the order the calls ran: time does not go backwards within a tick. */
-    function* tuples(candidates: number[], length: number, from = 0): Generator<number[]> {
-        if (!length) { yield []; return }
-        for (let k = from; k < candidates.length; k++) for (const rest of tuples(candidates, length - 1, k)) yield [candidates[k], ...rest]
-    }
-    const solve = (i: number): boolean => {
-        if (i >= rec.ticks.length) return true
+    // One call at a time: how many calls a tick makes can depend on the seeds of the calls before.
+    const attempt = (i: number, seeds: number[]): boolean => {
+        if (runs > 20000) return false
         chosen.length = i
-        // A first run tells how many calls the tick makes (with seeds that may be wrong).
-        sim.rewind(i)
-        const calls = sim.step(inputs[i] ?? {}).seeds?.length ?? 0
-        if (!calls) return matches(i) === 0 && solve(i + 1)
-        for (const seeds of tuples(window(i), calls)) {
-            chosen.length = i
-            chosen[i] = seeds
-            if (matches(i) === calls && solve(i + 1)) return true
+        chosen[i] = seeds
+        const actual = run(i)
+        if (open > 0) {
+            // Time does not go backwards, within a tick or from one tick to the next.
+            const earliest = Math.max(-Infinity, ...chosen.slice(0, i + 1).flat())
+            return window(i).some(second => second >= earliest && attempt(i, [...seeds, second]))
         }
-        chosen.length = i
-        return false
+        return !actual.error && tickDifferences(sim, actual, rec.ticks[i], i + 1).length === 0 && solve(i + 1)
     }
-    return solve(0) ? Array.from({ length: rec.ticks.length }, (_, i) => chosen[i]) : undefined
+    const solve = (i: number): boolean => i >= rec.ticks.length || attempt(i, [])
+    if (!solve(0)) return undefined
+    return Array.from({ length: rec.ticks.length }, (_, i) => (chosen[i]?.length ? chosen[i] : undefined))
 }
 
 export function compareWithOracle(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>): Outcome {
@@ -175,16 +198,7 @@ export function compareWithOracle(model: string, inputs: Record<string, Value>[]
             if (!kielerTickError) diffs.push(`tick ${tick}: engine runtime error ${actual.error.message}`)
             break
         }
-        for (const [key, value] of Object.entries(expected.values)) {
-            if (!same(actual.pool[key], value)) diffs.push(`tick ${tick}: ${key} KIELER ${show(value)}, engine ${show(actual.pool[key])}`)
-        }
-        for (const [key, value] of Object.entries(actual.pool)) {
-            if (!(key in expected.values) && value !== null) diffs.push(`tick ${tick}: ${key} = ${show(value)} is not in KIELER's pool`)
-        }
-        if (expected.taken) {
-            const counts = sim.takenCounts(actual)
-            if (!same(counts, expected.taken)) diffs.push(`tick ${tick}: taken KIELER ${JSON.stringify(expected.taken)}, engine ${JSON.stringify(counts)}`)
-        }
+        diffs.push(...tickDifferences(sim, actual, expected, tick))
         if (expected.terminated && kt < 0) kt = tick
         if (actual.terminatedNow && et < 0) et = tick
         if (diffs.length > before && first === undefined) first = tick

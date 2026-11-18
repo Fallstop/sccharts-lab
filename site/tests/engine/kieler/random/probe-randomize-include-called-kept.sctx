@@ -1,0 +1,9 @@
+// random() in a called method with a loop counts.
+scchart Main {
+  output float o
+  method float roll() { float r = 0
+    for (int j = 0; j < 2; j++) { r = random(); }
+    return r }
+  initial state A
+    do randomize(); o = roll() go to A
+}

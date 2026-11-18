@@ -1,0 +1,14 @@
+// How many randomize() calls a tick makes depends on the number the first seed gives.
+scchart Dynamic {
+  output float o
+  method float draw(int n) {
+    while (n > 0) {
+      randomize()
+      if (random() < 0.5) { randomize() }
+      n--
+    }
+    return random()
+  }
+  initial state A
+    do o = draw(1) go to A
+}

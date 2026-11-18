@@ -1,0 +1,11 @@
+// The random numbers show in nothing but the transitions taken: the data pool is empty.
+scchart Paths {
+  initial state A
+    do randomize() go to B
+  state B
+    if random() < 0.5 go to B
+    go to C
+  state C
+    if random() < 0.5 go to B
+    go to C
+}

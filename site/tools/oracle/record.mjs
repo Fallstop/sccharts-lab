@@ -63,14 +63,15 @@ const stale = jobs.filter(j => j.stale)
 console.error(`${jobs.length} scenarios, ${stale.length} to record`)
 let failures = 0
 const oracle = stale.length ? await startOracle() : undefined
-/** Charts recorded now whose run calls randomize(): their scenarios get the seeds KIELER's clock gave. */
+/** Recordings that keep the clock (the chart calls randomize()): their scenarios get the seeds KIELER's clock gave. */
 const reseeded = []
 try {
     for (const job of jobs) {
         let result = job.previous
         if (job.stale) {
             const inputs = (job.scenario.ticks ?? []).map(t => t.inputs ?? {})
-            const seeded = [job.model, ...Object.values(job.imports)].some(text => /\brandomize\b/.test(text))
+            // (Comments aside. A string that says "randomize" only costs the recording its clock.)
+            const seeded = [job.model, ...Object.values(job.imports)].some(text => /\brandomize\b/.test(text.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '')))
             const raw = await oracle.run({ name: path.relative(root, job.chart), model: job.model, inputs, ticks: inputs.length, system: job.scenario.system, imports: job.imports, fileName: path.basename(job.chart) })
             result = {
                 hash: job.hash,
@@ -85,8 +86,9 @@ try {
                 ticks: raw.ticks.map(({ takenTotal, clock, ...t }) => (seeded ? { ...t, clock } : t)),
             }
             fs.writeFileSync(job.out, JSON.stringify(result, null, 2) + '\n')
-            if (seeded && raw.ok) reseeded.push(job.chart)
         }
+        // Also for a recording made earlier: a search for seeds that failed is tried again.
+        if (result?.ok && result.ticks?.some(t => t.clock)) reseeded.push(job.chart)
         const expect = job.scenario.expect ?? 'ok'
         let problem
         if (expect === 'ok' && !result.ok) problem = `expected to compile, KIELER rejects it: ${result.errors.join(' | ').slice(0, 400)}`

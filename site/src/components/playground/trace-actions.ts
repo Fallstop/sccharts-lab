@@ -109,13 +109,17 @@ export function planReplay(result: CompileResult, trace: TraceRecord, label: str
     for (const m of outcome.mismatches) byTick.set(m.tick, [...(byTick.get(m.tick) ?? []), m])
     const { ticks } = runInputs(result, history as TickResult[])
     const errorTick = history.findIndex(t => t.error)
+    // A trace file has no seeds: a model that calls randomize() draws this run's numbers, not the file's.
+    let seeded = false
     const scenario: Scenario = {
         expect: 'ok',
         ticks: ticks.map((inputs, i) => {
             const diffs = byTick.get(i + 1)
             const error = history[i]?.error
             const seeds = history[i]?.seeds
-            return { inputs, note: error ? `The model stopped: ${error.message}` : diffs ? tickNote(diffs) : 'The outputs are the same as in the file.', ...(seeds ? { seeds } : {}) }
+            seeded ||= !!seeds
+            const why = diffs && seeded ? ` The model has called ${code('randomize()')}, which seeds ${code('random()')} from the clock: its numbers are those of this run, not of the run in the file.` : ''
+            return { inputs, note: error ? `The model stopped: ${error.message}` : diffs ? tickNote(diffs) + why : 'The outputs are the same as in the file.', ...(seeds ? { seeds } : {}) }
         }),
     }
     const renamedFile = replay.replay.trace

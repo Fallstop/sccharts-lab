@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
-import { Timeline } from '../../src/components/sim/timeline'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { compile, createSimulation } from '@sccharts-lab/engine'
+import { panelSeeds, scriptSeeds, Timeline } from '../../src/components/sim/timeline'
 import { fakeSim } from './fake-sim'
 
 const init = { levels: { A: false, N: 0 }, pulses: [] as string[] }
@@ -240,5 +241,45 @@ describe('Timeline.replace (an edited chart)', () => {
         const next = t.replace(fakeSim(), init, false)
         expect(next.cursor).toBe(0)
         expect(next.controls().levels).toEqual({ A: true, N: 2 })
+    })
+})
+
+describe('randomize(): which seeds a panel\'s simulation gets', () => {
+    afterEach(() => vi.useRealTimers())
+    const die = compile('scchart Die {\n  output float o\n  initial state A\n    do randomize(); o = random() go to A\n}')
+    const none = { levels: {}, pulses: [] as string[] }
+
+    it('a tour\'s ticks have the script\'s seeds; a reader who took over has the clock', () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(new Date(5000_000))
+        const script = { ticks: [{ inputs: {} }, { inputs: {}, seeds: [42] }, { inputs: {}, seeds: [43] }] }
+        const t: Timeline = new Timeline(createSimulation(die, { seed: scriptSeeds(script, () => t.tour) }), none, script)
+        t.step()
+        t.step()
+        expect(t.history[1].seeds).toEqual([42])
+        t.takeOver()
+        t.step()
+        expect(t.history[2].seeds).toEqual([5000])
+    })
+
+    it('an edited chart replays with the seeds it had, and a restart after it is a new run', () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(new Date(1000_000))
+        const seeds = panelSeeds(undefined, () => false)
+        const first = new Timeline(createSimulation(die, { seed: seeds.seed }), none)
+        first.step()
+        first.step()
+        expect(first.history[1].seeds).toEqual([1000])
+        vi.setSystemTime(new Date(2000_000))
+        // The panel builds a new simulation for the edited chart and replays the ticks so far.
+        const edited = panelSeeds(undefined, () => false)
+        const sim = createSimulation(die, { seed: edited.seed })
+        const next = edited.replaying(first.history.slice(0, first.cursor), () => first.replace(sim, none, true))
+        expect(next.history[1].seeds).toEqual([1000])
+        expect(next.history[1].values).toEqual(first.history[1].values)
+        next.reset()
+        next.step()
+        next.step()
+        expect(next.history[1].seeds).toEqual([2000])
     })
 })

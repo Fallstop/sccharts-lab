@@ -1,0 +1,14 @@
+// An entry action of tick 1 that sets an input from a method that seeds and draws: KIELER runs it in its reset code, before the first inputs (the method is a C function, so the call is not written out as null).
+scchart Go {
+  input float o
+  method float draw(int n) {
+    while (n > 0) {
+      randomize()
+      n--
+    }
+    return random()
+  }
+  initial state A {
+    entry do o = draw(1)
+  }
+}

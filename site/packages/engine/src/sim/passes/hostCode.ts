@@ -33,7 +33,8 @@ function hostUses(root: CState): Construct[] {
     return out
 }
 
-function* stmts(list: CStmt[]): Generator<CStmt> {
+/** Every statement of a body, the nested ones too. */
+export function* stmts(list: CStmt[]): Generator<CStmt> {
     for (const s of list) {
         yield s
         if (s.k === 'if') { yield* stmts(s.then); if (s.else) yield* stmts(s.else) }

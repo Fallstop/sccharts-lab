@@ -1,0 +1,12 @@
+// random() in a chart used as an instance in a dataflow region counts.
+scchart Main {
+  output float p
+  ref Roller2 r
+  region R1 { initial state A do randomize() go to A }
+  dataflow { p = r.o }
+}
+scchart Roller2 {
+  output float o
+  initial state A
+    do o = random() go to A
+}

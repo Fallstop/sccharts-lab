@@ -1,0 +1,8 @@
+// random() in a method called through another method counts.
+scchart Main {
+  output float o
+  method float inner() { return random() }
+  method float outer() { return inner() }
+  initial state A
+    do randomize(); o = outer() go to A
+}

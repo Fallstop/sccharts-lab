@@ -17,6 +17,7 @@ import { droppedIndexDiagnostics, guardCondition } from './guardIndices'
 import { inlineMethods, isInlined } from './structure/methods'
 import { goBlock, goBlockDiagnostics, type GoBlock } from './goblock'
 import { stringConditions } from './stringConditions'
+import { stmts } from './passes/hostCode'
 import { formatExpression } from '../format'
 import { allActionSites, allScopes, allStates, effectExprs, readableName, walkExpr, type CEffect, type CExpr, type CState, type CStmt, type CVar } from './model'
 
@@ -106,11 +107,11 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     }
 
     diagnostics.push(...checkCodegen(lowered.root))
-    diagnostics.push(...randomizeInclude(chart, index))
     const clashes = labelClashes(chart)
     diagnostics.push(...constantIndexWarnings(lowered.root, chart, lowered.takenOrder.length))
 
     const scg = buildSCG(lowered.root, lowered.takenOrder.length)
+    diagnostics.push(...randomizeInclude(scg, index))
     const sameBranches = scg.problems.find(p => p.message === 'same-branches')
     if (sameBranches) {
         const st = sameBranches.states[0]
@@ -545,24 +546,36 @@ function nondeterminism(analysis: Analysis, pristine: Snapshot | undefined, lowe
 /**
  * randomize() is srand(time(NULL)), and current KIELER includes <stdlib.h> in its C code only for random() (basics.md
  * B-29, structure.md S-50): a chart that seeds without calling random() anywhere fails in gcc, unless a `#hostcode`
- * pragma includes the header.
+ * pragma includes the header. Only what reaches the C code counts: the graph's nodes (a state that cannot be reached
+ * has none) and the methods they call, not a method nothing calls nor another chart of the file.
  */
-function randomizeInclude(chart: State, index: ModelIndex | undefined): Diagnostic[] {
-    const programs = index?.programs ?? []
+function randomizeInclude(scg: SCG, index: ModelIndex | undefined): Diagnostic[] {
     let seed: Span | undefined
+    let seeds = false
     let random = false
-    const visit = (value: unknown) => {
-        if (random) return
-        if (Array.isArray(value)) { value.forEach(visit); return }
-        if (!value || typeof value !== 'object') return
-        const obj = value as Record<string, unknown>
-        if (obj.kind === 'random') { random = true; return }
-        if (obj.kind === 'randomize' && !seed) seed = obj.span as Span
-        for (const [k, v] of Object.entries(obj)) if (k !== 'span' && v && typeof v === 'object') visit(v)
+    const methods = new Set<CVar>()
+    const work: CVar[] = []
+    const expr = (e: CExpr | undefined) => walkExpr(e, x => {
+        if (x.k === 'random') random = true
+        else if (x.k === 'call' && !x.extern && x.target?.v.method && !methods.has(x.target.v)) { methods.add(x.target.v); work.push(x.target.v) }
+    })
+    const effect = (f: CEffect) => {
+        if (f.k === 'randomize') { seeds = true; seed ??= f.o.span }
+        effectExprs(f).forEach(expr)
     }
-    visit(programs.length ? programs.flatMap(p => p.charts) : [chart])
-    if (!seed || random) return []
-    const included = programs.some(p => p.pragmas.some(pr => pr.name.toLowerCase().startsWith('hostcode') && pr.values.some(v => v.includes('stdlib.h'))))
+    for (const n of scg.nodes) {
+        if (n.effect) effect(n.effect)
+        expr(n.expr)
+    }
+    while (work.length) {
+        for (const st of stmts(work.pop()!.method!.body)) {
+            if (st.k === 'do') effect(st.f)
+            else if (st.k === 'if' || st.k === 'while' || st.k === 'for') expr(st.cond)
+            else if (st.k === 'return' || st.k === 'expr') expr(st.k === 'return' ? st.expr : st.e)
+        }
+    }
+    if (!seeds || random) return []
+    const included = (index?.programs ?? []).some(p => p.pragmas.some(pr => pr.name.toLowerCase().startsWith('hostcode') && pr.values.some(v => v.includes('stdlib.h'))))
     if (included) return []
     return [{
         severity: 'error', code: 'randomize-stdlib', span: seed,

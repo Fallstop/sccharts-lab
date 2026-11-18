@@ -31,7 +31,10 @@ if (result.ok) {
 - **randomize() (basics.md B-29):** seeds glibc's generator as KIELER's `srand(time(NULL))` does (it was a no-op: a
   chart kept the unseeded sequence). `createSimulation(result, { seed })`: a number for every call, or a function of
   `{ tick, index }` (`SeedCall`; undefined: the default, the clock in whole seconds). `TickResult.seeds`: the seeds a
-  tick's calls used. A tick run again after `rewind()` has the seeds it had; `reset()` forgets them.
+  tick's calls used. A tick run again after `rewind()` has the seeds it had (the option is not asked again);
+  `reset()` forgets them. Tick 1's reset code (B-7) draws and seeds on the real generator, in written order, and an
+  assignment the tick runs again gets the numbers it drew there (exec.ts, `RandState.tape`/`replay`).
+  `randomize-stdlib` looks at what reaches the C code (the graph's nodes and the methods they call), not at the file.
   `replaySeeds(history)` is the `seed` option that repeats a run in another simulation. The tick's log has a note
   ("randomize() seeded the random numbers from the clock (seed n): ..."). Recorded runs: `ticks[].clock` in the
   recording, `ticks[].seeds` in the scenario (tools/oracle/seeds.ts, run by `pnpm oracle:record`), replayed by the

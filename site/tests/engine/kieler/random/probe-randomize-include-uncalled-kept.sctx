@@ -1,0 +1,9 @@
+// random() only in an uncalled method with a loop (one KIELER would keep as a C function): not written out either.
+scchart Main {
+  output int n
+  method float never() { float r = 0
+    for (int j = 0; j < 2; j++) { r = random(); }
+    return r }
+  initial state A
+    do randomize(); n += 1 go to A
+}

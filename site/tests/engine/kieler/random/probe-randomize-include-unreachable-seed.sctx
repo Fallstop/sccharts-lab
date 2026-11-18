@@ -1,0 +1,8 @@
+// randomize() only in a state that cannot be reached: not in the C code.
+scchart Main {
+  output int n
+  initial state A
+    do n += 1 go to A
+  state Never
+    do randomize() go to A
+}

@@ -1,0 +1,8 @@
+// randomize() in another chart of the file that the compiled chart does not use: not in the C code, so no srand to declare.
+scchart Main {
+  initial state A
+}
+scchart Unused {
+  initial state A
+    do randomize() go to A
+}

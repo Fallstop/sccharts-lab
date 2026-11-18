@@ -659,12 +659,24 @@ export class SimRunner {
         const act = new Uint8Array(nodes.length)
         const condValue = new Uint8Array(nodes.length)
         let ranWith: Record<string, Value> | undefined
+        /** Per node of KIELER's reset code that the tick runs again: the random numbers and seeds it had there. */
+        const drawn = new Map<number, number[]>()
         try {
             if (!s.started && exe.goInits.length) {
                 // KIELER's reset() runs the GO block's input-free assignments before the first inputs are read
                 // (B-7). Only what they do to inputs matters here: the rest runs in tick 1, in written order.
-                const scratch: Runtime = { vals: s.vals.map(cloneValue), rand: cloneRandState(s.rand) }
-                for (const i of exe.goInits) nodes[i].run!(scratch, [])
+                // The random numbers are drawn (and seeded) now, in this order: an assignment that runs again in
+                // the tick gets the numbers it drew here.
+                const scratch: Runtime = { vals: s.vals.map(cloneValue), rand: s.rand, seed: rt.seed }
+                for (const i of exe.goInits) {
+                    if (!nodes[i].goInit) s.rand.tape = []
+                    scratch.notes = []
+                    nodes[i].run!(scratch, [])
+                    if (s.rand.tape?.length) drawn.set(i, s.rand.tape)
+                    s.rand.tape = undefined
+                    // An assignment to an input does not run again in the tick: its notes are said here.
+                    if (nodes[i].goInit) for (const n of scratch.notes) log.push({ kind: 'note', text: n.text, markdown: n.markdown, related: nodes[i].src.effect?.o.by ? [nodes[i].src.effect!.o.by!] : undefined })
+                }
                 for (const input of exe.inputs) {
                     const slot = exe.slots.get(input.v)!.slot
                     s.vals[slot] = scratch.vals[slot]
@@ -780,7 +792,9 @@ export class SimRunner {
                                 break
                             }
                             const seenBefore = x.probes && x.log?.suspendFlag ? readProbes(x.probes, rt) : undefined
+                            if (drawn.size) rt.rand.replay = drawn.get(i)
                             const w = x.run!(rt, printed)
+                            rt.rand.replay = undefined
                             if (rt.notes?.length) {
                                 for (const n of rt.notes) log.push({ kind: 'note', text: n.text, markdown: n.markdown, related: x.src.effect?.o.by ? [x.src.effect.o.by] : undefined })
                                 rt.notes = []
