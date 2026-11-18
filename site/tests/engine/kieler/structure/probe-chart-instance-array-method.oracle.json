@@ -1,0 +1,88 @@
+{
+  "hash": "3814f2473b84744ca98dc97cd3f58a695e5f26d2",
+  "chart": "tests/engine/kieler/structure/probe-chart-instance-array-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Sub1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "x": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": [
+          {
+            "v": 0
+          },
+          {
+            "v": 0
+          }
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": [
+          {
+            "v": 0
+          },
+          {
+            "v": 4
+          }
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "x": [
+          {
+            "v": 0
+          },
+          {
+            "v": 4
+          }
+        ]
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+// A clause naming a variable that is no schedule, on a transition of a state that is never entered.
+scchart Test {
+  output int o
+  int s
+  initial state A do o = 2 go to B state B
+  state X do o = 1 schedule s 0 go to B
+}

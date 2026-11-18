@@ -1,0 +1,64 @@
+{
+  "hash": "fe50327a9d862abdb7985ea6ff26f33da8242f0f",
+  "chart": "tests/engine/kieler/structure/probe-instance-pool-ref-schedule-method-cfn.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name big is contained in the model but not in VariableStore.",
+    "ValuedObject with name Sub1_x_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": {}
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "x": {}
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "x": {}
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

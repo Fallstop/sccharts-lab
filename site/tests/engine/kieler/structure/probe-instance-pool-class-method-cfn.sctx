@@ -1,0 +1,6 @@
+// A class with only a C function, which is called.
+scchart Test {
+  output int o
+  class C { int big() { int r = 0; for (int i = 0; i < 2; i++) { r += 1 } return r } } c
+  initial state A do o = c.big() go to B state B
+}

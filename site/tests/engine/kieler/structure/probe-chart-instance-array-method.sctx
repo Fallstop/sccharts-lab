@@ -1,0 +1,7 @@
+// Control: an array of instances of a referenced chart with a method that is called.
+scchart Test {
+  output int o
+  ref Sub x[2]
+  initial state A do x[1].set() go to B state B do o = x[1].v go to C state C
+}
+scchart Sub { int v method void set() { v = 4 } }

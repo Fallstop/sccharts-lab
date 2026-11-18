@@ -1,0 +1,7 @@
+// A contract method as a local variable's initial value in a code block of a state that is never entered.
+scchart T {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 3 } } c
+  initial state A do o = c.get() go to B state B
+  state X do { int k = c.get(); o = k } go to B
+}

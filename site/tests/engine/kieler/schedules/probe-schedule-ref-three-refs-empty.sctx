@@ -1,0 +1,9 @@
+// A schedule of a chart used as a class three instances deep, in a chart without fields: KIELER's C code calls an _init it never generates.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = 1 go to B state B
+}
+scchart Sub { ref Mid y }
+scchart Mid { ref Leaf z }
+scchart Leaf { schedule s }

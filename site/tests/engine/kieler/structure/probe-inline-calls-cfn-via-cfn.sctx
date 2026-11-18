@@ -1,0 +1,9 @@
+// A method marked @inline calls a C function that another C function calls too.
+scchart T {
+  output int o
+  method void inner() { for (int i = 0; i < 1; i++) { o += 1 } }
+  method void other() { for (int i = 0; i < 1; i++) { inner() } }
+  @inline
+  method void outer() { inner() }
+  initial state A do outer() go to B state B do other() go to C state C
+}

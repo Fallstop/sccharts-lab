@@ -49,6 +49,12 @@ export interface InstanceRecord {
     declaration?: boolean
 }
 
+/** A chart instance without fields at the top of the simulated chart, and its methods (compile.ts emptyInstances). */
+export interface EmptyCandidate {
+    name: string
+    methods: CVar[]
+}
+
 /** A reference to expand: a state's `is C(args)`, or one the Dataflow processor made. */
 export interface ReferenceCall {
     target: string
@@ -320,21 +326,33 @@ export class Expansion {
                 }
                 this.bind(instance)
                 this.redirectMembers(v, prefix, inst)
-                // The chart is the instance's class: its own schedules are a class's (passes/contracts.ts).
+                // The chart is the instance's class: one more class around every schedule declared in it, and its own
+                // schedules are the instance's (passes/contracts.ts classSchedules reports what KIELER refuses).
                 for (const local of inst.decls) {
-                    if (local.declKind === 'schedule' && local.scheduleOf === undefined) {
-                        local.scheduleOf = v.name
-                        local.display = `${v.name}.${local.name}`
+                    if (local.declKind === 'schedule') {
+                        local.scheduleDepth = (local.scheduleDepth ?? 0) + 1
+                        local.scheduleOf = local.scheduleDepth === 1 ? v.name : undefined
+                        local.scheduleInstance = local.scheduleDepth === 1 ? v : undefined
+                        if (local.scheduleDepth === 1) local.display = `${v.name}.${local.name}`
                     }
-                    if (local.method && !local.member) local.classInstance = v
+                    // (A code block of the chart's own actions is no method of the class: KIELER moves it out with them.)
+                    if (local.method && !local.member && !local.generated) local.classInstance = v
+                }
+                // KIELER makes one copy of the chart's regions per element of an array of instances.
+                if (v.dims.length) {
+                    this.ctx.report({
+                        severity: 'info', code: 'unsupported', span: v.span, related: v.decl ? [v.decl] : undefined,
+                        message: `The guide's simulator cannot run an array of chart instances (\`ref ${v.instance.target} ${v.name}[...]\`) yet`,
+                        hint: 'Declare single instances (`ref C a, b`). The official KIELER tools can run this chart.',
+                    })
                 }
                 const target = isRegion(scope) ? scope.parent : scope
                 // The instance's locals become hidden members of the declaring state (in KIELER's data pool: members
                 // of an object named after the declaration, `"g": {"k": 0}`).
-                // A chart class instance without fields is still an (empty) object in KIELER's data pool (structure.md
-                // S-60, conformance structure/131).
+                // A chart class instance without fields is still an (empty) object in KIELER's data pool while one of
+                // its methods is a C function (structure.md S-60, conformance structure/131; compile.ts emptyInstances).
                 if (target === this.ctx.root && !v.instance.args.length && !inst.decls.some(l => !l.declKind)) {
-                    ((this.ctx.root.ext.emptyInstances ??= []) as string[]).push(v.name)
+                    ((this.ctx.root.ext.emptyCandidates ??= []) as EmptyCandidate[]).push({ name: v.name, methods: inst.decls.filter(l => l.method && !l.generated) })
                 }
                 for (const local of [...inst.decls]) {
                     // A member of an instance inside the chart keeps its instance; the instance is the member.
@@ -366,7 +384,8 @@ export class Expansion {
         if (!byDecl.size) return
         const member = (r: CRef): CRef | undefined => {
             if (r.v !== v || !r.sub) return undefined
-            const m = r.sub.v.decl ? byDecl.get(r.sub.v.decl) : undefined
+            // (Written inside an instance of a referencing chart, the member's id has that instance's prefix.)
+            const m = r.sub.v.decl ? byDecl.get(r.sub.v.decl.split(REFERENCE_SEPARATOR).pop()!) : undefined
             return m ? { ...r.sub, v: m, idx: [...r.idx, ...r.sub.idx] } : undefined
         }
         rewriteScope(this.ctx.root, {

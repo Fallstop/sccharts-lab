@@ -1,0 +1,8 @@
+// A state and a region scheduled with the schedule of a chart used as a class.
+scchart Test {
+  output int o
+  ref Sub x
+  region R schedule x.s 1 { initial state A do o = 1 go to B state B }
+  region S { initial state P schedule x.s 0 { initial state C do o = 2 go to D state D } }
+}
+scchart Sub { schedule s }

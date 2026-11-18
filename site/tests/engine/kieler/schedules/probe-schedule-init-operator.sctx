@@ -1,0 +1,6 @@
+// A contract method called inside an operator of a local variable's initial value.
+scchart T {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 3 } } c
+  initial state A do { int k = c.get() + 1; o = k } go to B state B
+}

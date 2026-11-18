@@ -1,0 +1,54 @@
+{
+  "hash": "f093bc1f44fd46172d924d560afc9a1d383fcfa6",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-init-arg-uncalled.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Cannot serialize model with variable initialization (k) affected by scheduling directives. If you want to save this model, please move the initialization into a separated assignment.",
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "hash": "0a1bd37d9e17949276af47108e9e125159f7036e",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-init-dead-state.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Cannot serialize model with variable initialization (k) affected by scheduling directives. If you want to save this model, please move the initialization into a separated assignment.",
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 6,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

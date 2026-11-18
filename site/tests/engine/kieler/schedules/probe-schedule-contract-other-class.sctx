@@ -1,0 +1,7 @@
+// A contract of a class method that names the schedule of another class's instance: KIELER's compiler crashes.
+scchart T {
+  output int o
+  class C { schedule s int v } c
+  class D { void set() schedule c.s 0 { o = 1 } } d
+  initial state A do d.set() go to B state B
+}

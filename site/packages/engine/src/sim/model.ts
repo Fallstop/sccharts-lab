@@ -60,6 +60,14 @@ export class CVar {
      * processor moves it into the chart, one per instance (`C_c_s`), and only such a schedule can be a method's contract.
      */
     scheduleOf?: string
+    /** The instance `scheduleOf` names (KIELER refuses the schedule of a class with an array of instances). */
+    scheduleInstance?: CVar
+    /**
+     * How many classes are around a schedule's declaration, a chart used as a class (`ref C x`) counting as one
+     * (passes/reference.ts adds it): 1 is an instance's schedule (`scheduleOf`), 2 is refused, and KIELER does not look
+     * further in (passes/contracts.ts classSchedules).
+     */
+    scheduleDepth?: number
     /** A method of a chart used as a class (`ref C x`, passes/reference.ts): the instance `x`. */
     classInstance?: CVar
     /** The source declaration kind when it is not a plain variable (method, class, ...): handled by other passes. */
@@ -97,8 +105,10 @@ export class CVar {
 export interface SchedEntry {
     group: object
     priority: number
-    /** Where it is written, for a schedule clause naming a variable that is not a schedule (passes/userSchedule.ts). */
+    /** Where the clause is written. */
     span?: Span
+    /** Written through an instance (`schedule c.s 1`); without it, inside a class, KIELER cannot tell the instance. */
+    qualified?: boolean
     /**
      * A method's contract (`void set(int x) schedule s 0 { ... }`) copied onto what calls the method
      * (passes/contracts.ts): the method's name. KIELER marks such a clause as method specific, and the dependency
@@ -132,8 +142,12 @@ export type CExpr = { sched?: SchedEntry[] } & (
     | CRef
     | { k: 'op'; op: OperatorType; args: CExpr[]; span?: Span }
     | { k: 'vector'; values: CExpr[]; range?: boolean; span?: Span }
-    /** `bare`: a method of a class instance called by its name alone, from inside the class (passes/contracts.ts). */
-    | { k: 'call'; name: string; args: CExpr[]; extern?: boolean; target?: CRef; paramAccess?: ('&' | '!&' | null)[]; bare?: boolean; span?: Span }
+    /**
+     * `bare`: a method called by its name alone (inside a class: a method of the same instance; passes/contracts.ts).
+     * `contract`: the whole initial value of a local variable of a body, with a contract's copy on it: KIELER puts the
+     * copy on the call itself, where its Methods processor refuses to copy the method into place (structure/methods.ts).
+     */
+    | { k: 'call'; name: string; args: CExpr[]; extern?: boolean; target?: CRef; paramAccess?: ('&' | '!&' | null)[]; bare?: boolean; contract?: boolean; span?: Span }
     | { k: 'random'; span?: Span }
     | { k: 'host'; text: string; span?: Span }
     | { k: 'ignore'; span?: Span }

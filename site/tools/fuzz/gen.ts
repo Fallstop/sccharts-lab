@@ -26,7 +26,8 @@ export type Feature =
     | 'timed'
     /** Written schedules: `schedule {conflicting, commuting} s` declarations and `schedule s N` clauses on
      *  writes of w in concurrent regions (absolute writes too, which only the schedule orders), on calls, inside
-     *  method bodies and code blocks, the contracts of a class's methods and the schedule of its instance. Not in `mix`. */
+     *  method bodies and code blocks, the contracts of a class's methods and the schedule of its instance, a chart used
+     *  as a class with a schedule. Not in `mix`. */
     | 'schedules'
     /** Nested instances: a struct inside a struct (`ln.a.qx`), a class inside a class (`box.in.v`, a method of the
      *  inner one), an array of class instances with a method (`cells[1].inc()`, `cells[n % 2].v`), an array member of
@@ -170,6 +171,8 @@ class Generator {
     /** The `schedules` profile declared the class `Tk` with contract methods (instance `tk`), and a region that calls them all. */
     private contracts = false
     private contractRegion = false
+    /** The `schedules` profile declared `ref SK<n> rk`, a chart used as a class with a schedule `q` and contracts. */
+    private refClass = false
     private childNames: string[] = []
 
     constructor(private readonly rng: Rng, readonly features: Set<Feature>, readonly profile: Profile) {
@@ -272,7 +275,20 @@ class Generator {
                     opts.push('tk.put(2)', 'tk.add()', `tk.v = 2 schedule tk.q ${r.int(0, 2)}`)
                     if (!s.conc) opts.push(`w = 1 schedule tk.q ${k}`)
                     if (s.outs.length) opts.push(`${r.pick(s.outs)} = tk.get()`)
+                    // A contract method in an argument of a C function that is a local variable's initial value.
+                    if (!s.conc && s.outs.length && r.chance(0.3)) opts.push(`{ int k2 = idLoop(tk.get(), 0); ${r.pick(s.outs)} = k2; }`)
                 }
+                if (this.refClass && (!s.conc || r.chance(0.25))) {
+                    opts.push('rk.put(2)', `w = 1 schedule rk.q ${r.int(0, 2)}`)
+                    if (s.outs.length) opts.push(`${r.pick(s.outs)} = rk.get()`)
+                }
+                // Methods reached through other methods, and a condition that is a call of a C function.
+                if (r.chance(0.2)) opts.push(r.pick(['viaW()', 'loopVia()', `{ if isWLoop() schedule ${s.sched} ${k} { w += 1 schedule ${s.sched} ${k}; } }`]))
+                // A clause naming a variable that is no schedule: nothing to order on a constant print.
+                if (r.chance(0.1)) opts.push('print("p") schedule nsq 0')
+                // Refused by KIELER, rarely: the cast on an assignment, a scheduled condition that is a short method's
+                // call, a schedule read as a value.
+                if (r.chance(0.03)) opts.push(r.pick(['w = 1 schedule nsq 0', `{ if isW() schedule ${s.sched} ${k} { w += 1 schedule ${s.sched} ${k}; } }`, `w = ${s.sched}`]))
             }
             if (opts.length) out.push(r.pick(opts))
         }
@@ -567,6 +583,34 @@ class Generator {
                 // Every contract method has to be called somewhere: mostly a region of its own does.
                 this.contractRegion = r.chance(0.92)
             }
+            // Forms a review found missing: methods reached through other methods, a variable that is no schedule, a
+            // scheduled condition that is a call, C functions for a local variable's initial value.
+            lines.push(
+                '  int nsq = 0',
+                '  method void viaW() {', '    inW()', '  }',
+                '  method void loopVia() {', '    for (int j = 0; j < 1; j++) {', '      inW();', '    }', '  }',
+                '  method bool isW() {', '    return w > 0', '  }',
+                '  method bool isWLoop() {', '    bool q2 = false', '    for (int j = 0; j < 1; j++) {', '      q2 = w > 0;', '    }', '    return q2', '  }',
+                '  method int idLoop(int a, int b) {', '    int q3 = 0', '    for (int j = 0; j < 1; j++) {', '      q3 = a + b;', '    }', '    return q3', '  }')
+            // A chart used as a class: its schedule is the instance's (`schedule rk.q N`), its contracts order the
+            // calls; now and then what KIELER refuses (a class's schedule named without the instance in a method, a
+            // schedule one class further in, an array of instances, the schedule read as a value).
+            this.refClass = r.chance(0.4)
+            if (this.refClass) {
+                const bad = r.chance(0.15) ? r.pick(['bare', 'nested', 'array', 'sibling', 'value']) : undefined
+                const order = r.chance(0.6) ? [0, 1] : [r.int(0, 2), r.int(0, 2)]
+                lines.push(`  ref SK${index} rk${bad === 'array' ? '[2]' : ''}`)
+                if (bad === 'array') this.refClass = false
+                this.children.push([
+                    `scchart SK${index} {`, '  schedule {commuting, commuting, commuting} q', '  int v = 0',
+                    `  method void put(int a) schedule q ${order[0]} {`, `    v = a${bad === 'bare' ? ' schedule q 0' : ''}`, '  }',
+                    `  method int get() schedule q ${order[1]} {`, `    return ${bad === 'value' ? 'v + q' : 'v'}`, '  }',
+                    ...(bad === 'sibling' ? ['  method void both() {', '    put(1)', '  }'] : []),
+                    ...(bad === 'nested' ? ['  class In {', '    schedule t', '    int u = 0', '  } in'] : []),
+                    // (Clauses naming its own schedule are fine in its regions: KIELER moves them into the declaring chart.)
+                    ...(r.chance(0.3) ? ['  region {', '    initial state SKa', `    do v += 1 schedule q ${r.int(0, 2)} go to SKb`, '    state SKb', '  }'] : []),
+                    '}'].join('\n'))
+            }
         }
         if (this.on('nested')) {
             lines.push(
@@ -620,6 +664,7 @@ class Generator {
         if (this.contracts && this.contractRegion) {
             lines.push('  region RK {', '    initial state K0', '    do tk.put(n) go to K1', '    state K1', '    do z = tk.get() go to K2', '    state K2', '    do tk.add() go to K0', '  }')
         }
+        if (this.refClass) lines.push('  region RS {', '    initial state S0', '    do rk.put(n) go to S1', '    state S1', '    do y = rk.get() go to S0', '  }')
         lines.push('}')
         return [lines.join('\n'), ...this.children].join('\n\n') + '\n'
     }

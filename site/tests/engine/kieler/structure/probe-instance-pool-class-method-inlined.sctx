@@ -1,0 +1,6 @@
+// A class with only a short method, which is called.
+scchart Test {
+  output int o
+  class C { int one() { return 1 } } c
+  initial state A do o = c.one() go to B state B
+}

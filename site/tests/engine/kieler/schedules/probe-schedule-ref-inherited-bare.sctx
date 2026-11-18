@@ -1,0 +1,9 @@
+// A chart instance declared in a base chart whose method statement names the chart's own schedule.
+scchart Test extends Base {
+  initial state A do x.set() go to B state B
+}
+scchart Base {
+  output int o
+  ref Sub x
+}
+scchart Sub { schedule s int v method void set() { v = 1 schedule s 0 } }

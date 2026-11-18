@@ -1,0 +1,6 @@
+// A clause naming a member of a class instance that is no schedule.
+scchart T {
+  output int o
+  class C { int s } c
+  initial state A do o = 1 schedule c.s 0 go to B state B
+}

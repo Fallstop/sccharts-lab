@@ -595,7 +595,18 @@ signal parameter of a referenced chart), whose reference is replaced by a new on
 `pre(V)`, `val(V) > 1`, a count `2 V`), and so does a base chart's signal tested alone in the extending chart
 (`probe-schedule-signal-*`, `-inherited-signal-trigger`, `-binding-*`). A
 clause naming a variable that is not a schedule crashes the dependency analysis (`java.lang.ClassCastException:
-... VariableDeclarationImpl cannot be cast to ... ScheduleDeclaration`) as soon as it is on an effect or trigger.
+... VariableDeclarationImpl cannot be cast to ... ScheduleDeclaration`) **where it has something to order**: KIELER
+casts the declaration for every access it makes with the clause. So it crashes on an assignment (its write, also
+`o = random()`), on anything that reads a variable (`print(o)`, a trigger), and on a call of a C function (the
+scheduled call is a writer); it is silently accepted on `print("x")`, on a trigger without a variable (`if true`,
+a constant) and on a call of a short method that only prints (`-not-a-schedule-print-const`, `-print-var`,
+`-print-index`, `-print-const-decl`, `-trigger-const`, `-call-cfn`, `-call-print`, `-randomize`). A clause on a
+state reaches the counters of the taken transitions inside, which are assignments (`-not-a-schedule-state-print`,
+`-state-idle` crash; `-state-empty`, without a transition inside, and `-referenced-state-print`, whose referenced
+chart's transitions are not counted, do not). Only the code KIELER's dependency search visits counts: not a state
+that is never entered (`-dead-state`, `-dead-state-call`), not a method nobody calls or that only such methods
+call (`-chain-uncalled`); a method reached through other methods does, however deep, its own local variables
+included (`-not-a-schedule-transitive`, `-three-deep`, `-cfn-in-cfn`, `-class-chain`, `-trigger-chain`, `-local`).
 
 - **Priority 1 quirk.** A scheduled access's priority replaces its access class in KIELER's dependency analysis,
   and 1 is the class of a relative write: two assignments at priority 1 whose operators do not commute (`w += 1`
@@ -622,7 +633,12 @@ clause naming a variable that is not a schedule crashes the dependency analysis 
     `-state-schedule-cfn`, `-block-call-noparam-sched-cfn`: two writes conflict). The scheduled call itself reads and
     writes the *method* (for `c.m()`: reads `m`, writes the instance `c`) in that schedule, so two scheduled calls of
     one function are ordered by priority, and at one priority each reads what the other writes: a circle
-    (`-call-same-cfn`, `-call-same-cfn-rev`, `-call-same-cfn-same-prio`, `-call-two-cfn`, `-call-instance-writer`);
+    (`-call-same-cfn`, `-call-same-cfn-rev`, `-call-same-cfn-same-prio`, `-call-two-cfn`, `-call-instance-writer`),
+    unless the priority is commuting (`-call-same-cfn-commuting`, `-noarg`, `-p1`, `-call-instance-cfn-commuting`,
+    `-value-call-cfn-commuting-write`; two functions that write one variable still conflict inside:
+    `-call-two-cfn-commuting`). A C function called by a C function gives its scheduled statements to the calling
+    effect too, and a clause on the inner call statement reaches neither body (`-cfn-in-cfn`, `-rev`, `-value`,
+    `-class`, `-two-callers`, `-call-clause`, `-cfn-statement-call`);
   - **exactly one argument: the clause is lost.** `f(1) schedule s 1` parses as a valued emission, and the converter
     that makes it a call again copies the target and the value only. The clause's names are never looked up
     (`schedule nosuch 1` is accepted). Zero or two arguments keep it; so do calls in code blocks, and what a state
@@ -636,7 +652,14 @@ clause naming a variable that is not a schedule crashes the dependency analysis 
   combination with method inlining!` (the trigger's schedule is put on every reference of the trigger, and the call
   is one). A C function is fine; a member call `c.get()` is fine too, because the schedule sits on `get` and is lost
   when the call is replaced (`-call-in-trigger`, `-call-in-trigger-loop`, `-trigger-call-op`,
-  `-trigger-call-alone-cfn`).
+  `-trigger-call-alone-cfn`, `-trigger-member-call-scheduled`).
+- **A scheduled condition of a body that is a call of a short method** is refused with the same message, a member
+  call too: in a body the clause sits on the condition itself, so `if yes() schedule s 0` puts it on the call, and
+  an operator around the call is fine (`if yes() && o == 0 schedule s 0`), as is a call of a C function
+  (`-cfn-cond-call`, `-member`, `-codeblock`, `-op`, `-cfn`, `-plain`). KIELER's Methods processor only meets the
+  call in the bodies it works on: the C functions the tick calls and the ones they call in turn, and the bodies it
+  copies into place (`@inline`); not a method nobody calls and not a state that is never entered
+  (`-cfn-cond-call-transitive`, `-inline-anno`, `-uncalled`, `-dead-state`).
 - **The index of a scheduled target** is read without the clause when the target is a plain array (`o[i] = 7 schedule
   s 0` reads `i` in initialise-update-read) and with it when the target is a member (`c.arr[i] = 7 schedule s 0`)
   (`-index-read-schedule`, `-member-index-schedule`).
@@ -650,9 +673,47 @@ clause naming a variable that is not a schedule crashes the dependency analysis 
   (`-instance-nested`, `-instance-nested-unused`, `-instance-array`, `-instance-array-unused`, `-contract-array`,
   `-contract-nested`). KIELER looks two classes deep: a schedule further in stays one ordinary schedule
   (`-three-levels`, `-clause-three-levels`). In an unpacked class (@UnpackClass) it is the chart's (`-unpack-instance-
-  clause`). A `private schedule` can only be named inside the class. Inside the class, a clause on a *statement*
-  naming the class's schedule is an error: `Referring to scheduling directive in classes without reference to
-  instance (c)` (`-contract-body-clause`).
+  clause`). A `private schedule` can only be named inside the class. Inside the class, **every reference to the
+  class's schedule that does not go through an instance** is an error, whether the method is called or not:
+  `Referring to scheduling directive in classes without reference to instance (c)`, once per instance. That is a
+  clause on a statement or a condition of a method (`-contract-body-clause`, `-class-bare-unused`,
+  `-class-bare-clause-on-call`, `-class-two-instances-bare`, `-class-inner-bare-outer`: a class inside the class
+  naming the outer one's) and the schedule read as a value, in a method or in a member's initial value
+  (`-class-schedule-value`, `-value-uncalled`, `-print`, `-condition`, `-value-init`). Through the instance it is
+  fine, inside the class too (`void set() { v = 1 schedule c.s 0 }`: `-class-method-clause-qualified`).
+- **A chart used as a class** (`ref Sub x`, S-65) is the class of `x` by the time KIELER looks: Sub's declarations
+  are the members, its regions and actions belong to the declaring chart. So:
+  - Sub's schedule is the instance's: `schedule x.s 1` names it on anything a clause can stand on, also from a
+    chart that is itself referenced, with a binding, for a `private schedule` and for one Sub inherits; two
+    instances have two schedules (`-ref-clause`, `-rev`, `-trigger`, `-state-region`, `-codeblock`, `-two`,
+    `-commuting`, `-conflict`, `-and-contract`, `-bound`, `-in-referenced`, `-ref-private-schedule`,
+    `-ref-clause-sub-inherits`, `-ref-in-state-clause`, `-ref-and-state`). After `x.` a schedule clause sees only
+    schedules: a variable `s` of Sub, a class of Sub (`x.c.s`) and anything behind a `ref` inherited from a base
+    chart do not resolve (`-ref-clause-not-a-schedule`, `-nested-class`, `-inherited`); `o = x.s` does not either.
+  - A class of Sub is a class inside a class: its schedule is refused, used or not, also when `x` is declared in an
+    inner state, in a base chart or in a chart referenced by a state, and for a chart instance inside Sub; three
+    levels deep is not looked at (`-ref-nested-class`, `-ref-nested-ref`, `-inherited`, `-in-referenced`,
+    `-sub-inherits`, `-class-in-state-nested-ref`, `-ref-array-nested`; `-ref-three-levels`, `-ref-three-refs`). The
+    same Sub referenced by a state (`state S is Sub`) keeps its class at the first level (`-ref-nested-class-state`),
+    and a class declared in an inner state of Sub is not a member of the class of `x` (`-ref-inner-state-class`).
+  - An array of instances (`ref Sub x[2]`) of a chart with a schedule is refused like a class's
+    (`... with cardinalities are not yet supported (x)`: `-ref-array`, `-contract`, `-clause`, `-bare`,
+    `-ref-inherited-array`).
+  - Sub's own name for its schedule is rewritten to `x.s` where KIELER moves code out of the class: on its
+    transitions, triggers, states, regions and actions, in code blocks there and in the methods of its inner
+    states, and a call of its contract method by its name alone from a transition becomes `x.set()`
+    (`-ref-bare-effect`, `-trigger`, `-state-clause`, `-region-clause`, `-codeblock-transition`, `-codeblock-entry`,
+    `-inner-state-method`, `-call-in-transition`, `-ref-contract-bare-trigger`). In the methods Sub declares at its
+    top, and in the methods of its classes, the name stays bare: the error above with `(x)`, called or not
+    (`-ref-bare-statement`, `-uncalled`, `-inherited`, `-in-middle`, `-ref-bare-class-method`, `-ref-two-bare`,
+    `-ref-inherited-bare`); so does a call of a contract method by its name alone from another method
+    (`-ref-sibling-call`; in a condition it gets no contract and is fine: `-ref-sibling-in-condition`) and the
+    schedule read as a value in a method or an initial value (`-ref-schedule-value`, `-value-init`).
+- **A schedule read as a value** where no class is in the way (`o = s`, `o = c.s`, a chart's schedule read in a
+  class method, Sub's own on one of its transitions) is a variable KIELER's C code never declares: gcc fails
+  (`'TickData' has no member named 's'`, `C_c_s`, `Sub1_x_s`), in the tick and in a C function, not in a method
+  nobody calls or a state never entered (`-chart-schedule-value`, `-cfn`, `-trigger`, `-uncalled`, `-dead-state`,
+  `-instance-schedule-value`, `-class-schedule-value-chart-schedule`, `-ref-schedule-value-transition`).
 - **Contracts.** `void set(int x) schedule s 0 { ... }` in a class is the method's contract: the clause is copied
   onto what calls the method, marked with the method's name. The copy goes on the effect around the call (also a
   statement of a method body: `-contract-in-method-statement`), or on the trigger; a call in a condition or a
@@ -679,13 +740,34 @@ clause naming a variable that is not a schedule crashes the dependency analysis 
     the method is called anywhere, reachable or not (`java.lang.NullPointerException ... getEnclosingClass(...) is
     null`: `-method-decl`, `-contract-outside-schedule`, `-contract-unpack`, `-root-contract-dead-call`,
     `-referenced-root-contract`; never called it is accepted: `-contract-noncalled-root`,
-    `-contract-outside-never-called`); a contract method that is never called (`Referring to scheduling directive in
-    classes without reference to instance (c)`: `-contract-never-called`, `-chart-class-never-called`; a call in a
-    method nobody calls counts: `-contract-called-in-dead-method`); a call by the method's name alone in a statement
-    of another method of the class (`-contract-sibling-call`); a contract method that KIELER copies into place as the
-    whole initial value of a local variable of a body (`User schedules are not supported in combination with method
-    inlining!`: `-contract-in-local-init`; a C function is fine: `-local-init-cfn`; the initial value of a state's
-    variable is an entry action by then and fine: `-contract-init-rev`, `-contract-init-alone`).
+    `-contract-outside-never-called`); a contract that names its schedule through an instance (`schedule c.s 0`: of
+    another object, of a chart used as a class, even of the method's own instance) or names something that is no
+    schedule, again once the method is called, also from a method nobody calls (`java.lang.ClassCastException:
+    PolicyClassDeclarationImpl`, or `VariableDeclarationImpl`, `cannot be cast to ... ScheduleDeclaration`: KIELER
+    takes the declaration of the first name as the schedule's; `-contract-other-object`, `-other-class`,
+    `-other-object-dead`, `-contract-ref-object`, `-contract-qualified-own`, `-contract-not-a-schedule`, `-root`;
+    never called all of these are accepted: `-contract-other-object-uncalled`, `-qualified-own-uncalled`,
+    `-not-a-schedule-uncalled`, `-ref-contract-uncalled-qualified-root`); a contract method that is never called
+    (`Referring to scheduling directive in classes without reference to instance (c)`: `-contract-never-called`,
+    `-chart-class-never-called`, `-ref-in-referenced-contract-uncalled`, `-ref-inherited-contract-uncalled`; a call
+    in a method nobody calls or in a state never entered counts: `-contract-called-in-dead-method`,
+    `-contract-dead-state-only`); a call by the method's name alone in a statement of another method of the class
+    (`-contract-sibling-call`, `-order-twoclass*`).
+  - **In the initial value of a local variable of a body** the copy goes on the value itself, that is on its
+    outermost expression. When that is a call of a method KIELER copies into place, the Methods processor refuses
+    (`User schedules are not supported in combination with method inlining!`), whichever call below it brought
+    the contract: `int k = c.get()`, `int k = wrap(c.get())` with a short `wrap`, `d.id(c.get())`
+    (`-contract-in-local-init`, `-init-arg-inlined`, `-init-arg-member-inlined`, `-init-contract-cfn-arg`,
+    `-init-nested-used`, `-init-in-inline-anno`). It is fine when the outermost call is a C function (the contract
+    then orders the block's statement: `-init-arg-cfn`, `-order`, `-method`, `-twice`, `-local-init-cfn`), when the
+    value is an operator (`-init-operator`, `-init-operator-cfn`, `-init-top-extern`), and in a body the Methods
+    processor never works on: a method nobody calls, a code block of a state that is never entered
+    (`-init-arg-uncalled`, `-init-dead-state`). The initial value of a state's variable is an entry action by then
+    and fine (`-contract-init-rev`, `-contract-init-alone`).
+  - Inside C functions the copies work as on effects: on a statement that assigns, calls or passes the contract
+    method's value they order the calling effect against the object's other contracts, in a condition or a
+    `return` there is none (`-order-assign*`, `-witharg*`, `-withcall*`, `-withcond*`, `-withreturn*`,
+    `-contract-in-class-cfn*`, `-contract-own-cfn-*`).
 - **Host classes** get a schedule of their own when a method has none and there is another method: one priority per
   method, in the order declared. Every method then has a contract: a method that is never called is the error above
   (`-host-two-methods`), and two concurrent calls of one method are a circle (`-host-typedef-same-method`).
@@ -699,18 +781,26 @@ clause naming a variable that is not a schedule crashes the dependency analysis 
   `SCGTransformation.xtend:632-657`, `AbstractDependencyAnalysis.xtend:160-375` (the accesses per schedule, method
   specific matches, artificial writers), `400-526` (processDependencies, accessType),
   `MethodSpecificSchedulingDirectiveUtil.xtend`, `DependencyTransformationV2.xtend:178-232` (inner accesses),
-  `MethodProcessor.xtend:219, 288-300`, `SCLToSCGTransformation.xtend:484-493`,
+  `MethodProcessor.xtend:89-128 (process: remaining calls), 150-177 (inlineCalls), 219, 288-312`,
+  `ValuedObjectAccess.xtend:62-73` (the cast), `Reference.xtend:927-1010` (a referenced chart becomes a class),
+  `SCLToSCGTransformation.xtend:484-493`,
   `KEffectsEmissionReferenceCallConverter.xtend:62-112`, `processors/Signal.xtend:233-309`.
 - Teaching: rarely needed; data dependencies order most charts. Shows that "who goes first" is a compiler decision
   the programmer can override. A contract says it once, on the method, for every call.
 - Implementation: lowering keeps clauses on effects (`o.schedule`), triggers and `if` conditions (`sched`), states
   and regions (`ext.userSchedule`) and method declarations (`CMethod.schedule`), and makes a class's schedule one
-  variable per instance (lower.ts classSchedule); passes/contracts.ts copies the contracts onto the calls, then
-  passes/userSchedule.ts spreads the clauses of states and regions; structure/methods.ts passes a calling effect's
-  clauses to the copied body; deps.ts gives every access the clauses of its place (`schedule`: method specific
-  matches, the object, the method a call names) and orders them. Not simulated (`unsupported`): clauses on equations
-  and dataflow regions. Open: charts with host classes are not analysed, so two concurrent calls of one host method
-  are not rejected.
+  variable per instance (lower.ts classSchedule). The lowering only records (how many classes are around a schedule,
+  whether a clause is written through an instance, whether a method is called by its name alone); what KIELER
+  refuses is decided where KIELER decides it, on the model after the Reference pass made every chart used as a
+  class the class of its instance: passes/contracts.ts (classSchedules: nesting, arrays, a class's schedule without
+  its instance; then the contracts are copied onto the calls), then passes/userSchedule.ts spreads the clauses of
+  states and regions; structure/methods.ts passes a calling effect's clauses to the copied body and ports the
+  Methods processor's view of the bodies (bodyProblems: the functions that remain, a call with a schedule that
+  cannot be copied into place, a schedule read as a value); deps.ts gives every access the clauses of its place
+  (`schedule`: method specific matches, the object, the method a call names), orders them, and finds the clause
+  that names no schedule where an access is made with it (scheduleCasts). Not simulated (`unsupported`): clauses on
+  equations and dataflow regions, and arrays of chart instances (`ref C x[2]`). Open: charts with host classes are
+  not analysed, so two concurrent calls of one host method are not rejected.
 
 ### S-28 Delays: `->`, `fby`, `pre`, `sfby`
 
@@ -1256,7 +1346,10 @@ method called as `inlined(a)` turns the input `a` from 4 into 9), and calling su
 expression as the argument crashes the compiler (`151-err-scl-assign-literal-parameter`: lab `The compiler
 failed during compilation setup.`, official KIELER never answers). In a C function the parameter is a copy (`b`
 stays 4). `@inline` on a method with a loop inlines the loop and is rejected as an instantaneous loop
-(`155-err-scl-inline-loop`: `Can't schedule …`, `The SCG is NOT asc-schedulable!`). The priority compiler, which
+(`155-err-scl-inline-loop`: `Can't schedule …`, `The SCG is NOT asc-schedulable!`). An `@inline` method that calls a
+C function loses it: KIELER notes the functions the tick and the kept functions call, not the ones a body it copies
+into place calls, drops the function as unused and gcc fails on the call (`implicit declaration of function
+'inner'`), unless something else calls it too (`kieler/structure/probe-inline-calls-cfn*`). The priority compiler, which
 inlines every method and runs loops at run time, differs in both: there `b` becomes 9 too, and `155` is
 accepted (probe, `--system priority`).
 
@@ -1526,7 +1619,10 @@ tick.`, `The SCG is NOT asc-schedulable!`).
 - Chart instances (S-65): `"c": {"counter": 2, "step": 1}` with the chart's fields, including private ones; a
   private or protected field inherited from a base chart appears as `<Base>_<field>` (`St134Base_secret`, S-66);
   the interface names the type entries after the copied chart (`QR01Counter1.counter`; official
-  0.3.0: `QR01Counter.counter`). An instance without fields appears as `{}` (`131`) or not at all (probe).
+  0.3.0: `QR01Counter.counter`). An instance without fields, of a class or of a chart, appears as `{}` while one of
+  its methods is still a C function (`131`), and not at all otherwise: KIELER's Methods processor removes a class
+  that is left without content once the short methods are copied into place and the ones nobody calls are dropped,
+  and a schedule is no content (`kieler/structure/probe-instance-pool-*`).
 
 - Evidence: `106`, `107`, `112`, `113-class-fields-methods`, `126-chart-class`, `134-protected-field`.
 - Teaching: the simulator's variable table shows an instance as a small table of its members.

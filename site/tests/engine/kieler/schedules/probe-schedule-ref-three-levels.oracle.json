@@ -1,0 +1,94 @@
+{
+  "hash": "811a85e800dff5539e282ef6fbda0d301b740028",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-ref-three-levels.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Sub1.A1.B1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Sub1.A1.b": {
+      "type": "class",
+      "properties": []
+    },
+    "Sub1.a": {
+      "type": "class",
+      "properties": []
+    },
+    "x": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "x": {
+          "a": {
+            "b": {
+              "v": 0
+            }
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": {
+          "a": {
+            "b": {
+              "v": 0
+            }
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": {
+          "a": {
+            "b": {
+              "v": 0
+            }
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

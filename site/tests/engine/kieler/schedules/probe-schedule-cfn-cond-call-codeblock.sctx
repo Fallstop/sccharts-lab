@@ -1,0 +1,7 @@
+// A scheduled condition that calls a short method, inside a code block with a loop.
+scchart T {
+  output int o
+  schedule s
+  method bool yes() { return true }
+  initial state A do { for (int i = 0; i < 1; i++) { if yes() schedule s 0 { o = 1 } } } go to B state B
+}

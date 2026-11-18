@@ -1,0 +1,9 @@
+// Two scheduled calls of one C function of a class instance at one commuting priority.
+scchart B34 {
+  output int o
+  schedule {commuting} s
+  class C { int v void f() { for (int i = 0; i < 2; i++) { v += 1 } } } c
+  region R1 { initial state A do c.f() schedule s 0 go to B state B }
+  region R2 { initial state C2 do c.f() schedule s 0 go to D state D }
+  region R3 { initial state E go to F state F do o = c.v go to G state G }
+}

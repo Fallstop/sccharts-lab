@@ -1,0 +1,12 @@
+// A scheduled condition with an operator around the call of a short method, inside a C function.
+scchart T {
+  output int o
+  schedule s
+  method bool yes() { return true }
+  method void inner() {
+    for (int i = 0; i < 1; i++) {
+      if yes() && o == 0 schedule s 0 { o = 1 }
+    }
+  }
+  initial state A do inner() go to B state B
+}

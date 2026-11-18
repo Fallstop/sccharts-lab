@@ -1,0 +1,11 @@
+// A chart used as a class whose schedule is only declared: fine.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do x.set() go to B state B
+}
+scchart Sub {
+  schedule s
+  int v
+  method void set() { v = 1 }
+}

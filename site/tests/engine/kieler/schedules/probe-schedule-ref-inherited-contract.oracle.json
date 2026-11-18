@@ -1,0 +1,36 @@
+{
+  "hash": "64c10017cdf7a6ab0507e972c325e3cc10a63054",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-ref-inherited-contract.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:40 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@42233d47{file:///tmp/sccharts-oracle-iXvjiT/m171/probe-schedule-ref-inherited-contract.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@expression/@subReference}' must be set",
+    "Couldn't resolve reference to ValuedObject 'get'.",
+    "Couldn't resolve reference to ValuedObject 'set'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'get'.",
+      "line": 3,
+      "column": 40,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'set'.",
+      "line": 4,
+      "column": 36,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@42233d47{file:///tmp/sccharts-oracle-iXvjiT/m171/probe-schedule-ref-inherited-contract.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@expression/@subReference}' must be set",
+      "line": 3,
+      "column": 40,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

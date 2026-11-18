@@ -1,0 +1,6 @@
+// A class instance's schedule read as a value from the chart.
+scchart T {
+  output int o
+  class C { schedule s int v } c
+  initial state A do o = c.s go to B state B
+}

@@ -1,0 +1,8 @@
+// A C function of a class with a statement that calls a void contract method of another object: the other order.
+scchart B44 {
+  output int o
+  class D { schedule s int w = 0 void set() schedule s 0 { w = 5 } int get() schedule s 1 { return w } } d
+  class C { int v void big() { for (int i = 0; i < 1; i++) { d.set() } } } c
+  region R1 { initial state A do c.big() go to B state B }
+  region R2 { initial state C2 do o = d.get() go to D2 state D2 }
+}

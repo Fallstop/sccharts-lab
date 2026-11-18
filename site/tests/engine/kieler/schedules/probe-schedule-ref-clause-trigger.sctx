@@ -1,0 +1,9 @@
+// A trigger scheduled with the schedule of a chart used as a class.
+scchart Test {
+  output int o
+  int g = 0
+  ref Sub x
+  region R { initial state A if g == 1 schedule x.s 1 do o = 1 go to B state B }
+  region S { initial state C do g = 1 schedule x.s 0 go to D state D }
+}
+scchart Sub { schedule s }

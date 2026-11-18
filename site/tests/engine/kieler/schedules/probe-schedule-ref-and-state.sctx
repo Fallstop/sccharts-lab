@@ -1,0 +1,9 @@
+// One chart used as a class and referenced by a state: the instance's schedule and the state's own.
+scchart Test {
+  output int o
+  ref Sub x
+  region R { initial state A do o = 1 schedule x.s 1 go to B state B }
+  region S { initial state C do o = 2 schedule x.s 0 go to D state D }
+  region T { initial state P is Sub }
+}
+scchart Sub { schedule s int v = 0 }

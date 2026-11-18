@@ -462,7 +462,7 @@ class Resolver {
 
     /** `schedule s 1`: the schedule object `s` is a valued object of the scope (KIELER's ScheduleObjectReference). */
     private resolveSchedule(list: ScheduleRef[] | undefined, scope: Scope) {
-        for (const s of list ?? []) this.resolveReference(s.ref, scope, {})
+        for (const s of list ?? []) this.resolveReference(s.ref, scope, { schedule: true })
     }
 
     private resolveEquation(eq: Equation, scope: Scope) {
@@ -742,7 +742,7 @@ class Resolver {
         return undefined
     }
 
-    private resolveReference(ref: Reference, scope: Scope, opts: { callable?: boolean; dataflow?: boolean; args?: number; super?: boolean }) {
+    private resolveReference(ref: Reference, scope: Scope, opts: { callable?: boolean; dataflow?: boolean; args?: number; super?: boolean; schedule?: boolean }) {
         const vo = opts.super ? this.lookupSuper(ref.name, scope)
             : opts.callable && opts.args !== undefined ? scope.lookupCall(ref.name, opts.args) : scope.lookup(ref.name, !!opts.callable)
         for (const i of ref.indices) this.resolveExpression(i, scope, opts.dataflow)
@@ -752,12 +752,15 @@ class Resolver {
             return
         }
         ref.decl = vo.id
-        if (ref.sub) this.resolveSub(ref.sub, vo, scope, !!opts.dataflow, opts.args)
+        if (ref.sub) this.resolveSub(ref.sub, vo, scope, !!opts.dataflow, opts.args, opts.schedule)
     }
 
-    /** `args`: a call's number of arguments, for choosing among overloaded methods of the last member. */
-    private resolveSub(sub: Reference, parentVO: ValuedObject, scope: Scope, dataflow: boolean, args?: number) {
-        const members = this.membersOf(parentVO, dataflow)
+    /**
+     * `args`: a call's number of arguments, for choosing among overloaded methods of the last member. `schedule`: the
+     * reference of a schedule clause (`schedule x.s 1`).
+     */
+    private resolveSub(sub: Reference, parentVO: ValuedObject, scope: Scope, dataflow: boolean, args?: number, schedule?: boolean) {
+        const members = this.membersOf(parentVO, dataflow, schedule)
         if (!members) {
             const entry = this.index.vos.get(parentVO.id)
             this.unresolved('ValuedObject', sub.name, sub.span, `\`${parentVO.name}\` has no members`,
@@ -798,8 +801,12 @@ class Resolver {
         return decls.filter(m => m.declKind === 'method').flatMap(m => m.valuedObjects.map(v => ({ vo: v, decl: m })))
     }
 
-    /** Members visible through `vo.` (KExtScopeProvider.getScopeForReferencedDeclarationFromSubReference). */
-    private membersOf(vo: ValuedObject, dataflow: boolean): Map<string, ValuedObject> | undefined {
+    /**
+     * Members visible through `vo.` (KExtScopeProvider.getScopeForReferencedDeclarationFromSubReference). `schedule`:
+     * in a schedule clause, where a referenced chart shows its schedules (private and inherited ones too) and nothing
+     * else (probes schedules/probe-schedule-ref-clause-*).
+     */
+    private membersOf(vo: ValuedObject, dataflow: boolean, schedule = false): Map<string, ValuedObject> | undefined {
         const entry = this.index.vos.get(vo.id)
         const d = entry?.decl
         if (!d) return undefined
@@ -813,6 +820,11 @@ class Resolver {
             const target = this.index.refTargets.get(d)
             if (!target) return undefined
             if (target.kind === 'declaration') return structMembers(target)
+            if (schedule) {
+                for (const m of target.declarations) if (m.declKind === 'schedule') add(m)
+                for (const base of this.allInherited(target)) for (const m of base.declarations) if (m.declKind === 'schedule' && !isPrivate(m)) add(m)
+                return out
+            }
             // A referenced chart: its methods, then its (public / input-output) declarations, then inherited ones.
             for (const m of target.declarations) if (m.declKind === 'method') add(m)
             for (const base of this.allInherited(target)) for (const m of base.declarations) if (!isPrivate(m)) add(m)

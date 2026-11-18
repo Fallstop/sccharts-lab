@@ -1,0 +1,7 @@
+// A referencing state scheduled with a variable that is no schedule; the referenced chart writes a variable.
+scchart Test {
+  output int o
+  int s
+  initial state A is Sub schedule s 0
+}
+scchart Sub { int v initial state P do v = 1 go to Q state Q }

@@ -6,9 +6,10 @@ import type { Declaration, Diagnostic, SclStatement, Span, State } from '../type
 import type { ModelIndex } from '../parser/resolve'
 import { lowerChart, type LowerResult } from './lower'
 import { PIPELINE, type PassContext } from './passes'
+import type { EmptyCandidate } from './passes/reference'
 import { buildSCG, cloneSCG, successors, type SCG, type SNode } from './scg'
 import { abortRegionsSCG } from './abortRegions'
-import { concurrentThreads, dependencies, dependencyReach, type Access, type Dependency } from './deps'
+import { concurrentThreads, dependencies, dependencyReach, entryReach, type Access, type Dependency } from './deps'
 import { analyse, liveNodes, separateSurfaceDepth, type Analysis } from './analysis'
 import { conditionalWithoutElse, checkCodegen } from './codegen'
 import { removeSuperfluousForks } from './sfr'
@@ -19,7 +20,7 @@ import { goBlock, goBlockDiagnostics, type GoBlock } from './goblock'
 import { stringConditions } from './stringConditions'
 import { stmts } from './passes/hostCode'
 import { formatExpression } from '../format'
-import { allActionSites, allScopes, allStates, effectExprs, readableName, walkExpr, type CEffect, type CExpr, type CState, type CStmt, CVar } from './model'
+import { allActionSites, allScopes, allStates, effectExprs, readableName, walkExpr, type CEffect, type CExpr, type CState, type CStmt, CVar, type SchedEntry } from './model'
 
 export interface CompiledChart {
     /** KIELER accepts the chart (no error diagnostics). */
@@ -141,7 +142,11 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     diagnostics.push(...abortRegionProblems)
     diagnostics.push(...removeSuperfluousForks(scg, lowered.root))
     // KIELER's Methods processor (scg/processors/MethodProcessor.xtend) inlines simple methods into the SCG.
-    diagnostics.push(...inlineMethods(scg))
+    // (A class's schedule read inside the class was refused before: passes/contracts.ts.)
+    const refused = new Set(diagnostics.filter(d => d.code === 'schedule-without-instance').map(d => d.span?.start))
+    const functions = new Set<CVar>()
+    diagnostics.push(...inlineMethods(scg, functions).filter(d => d.code !== 'schedule-value' || !refused.has(d.span?.start)))
+    lowered.root.ext.emptyInstances = emptyInstances(lowered.root, functions)
     // KIELER's SequentialForkSurfaceDepthSeparatorProcessor.
     separateSurfaceDepth(scg)
     diagnostics.push(...crashingClashes(clashes, scg, lowered.root))
@@ -154,7 +159,9 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     diagnostics.push(...goBlockDiagnostics(go))
     // KIELER's search for accesses ends at a flow into a state without nodes (deps.ts dependencyReach).
     const reach = dependencyReach(scg)
-    const { deps, accesses } = dependencies(scg.nodes, reach?.stop ? reach.reached : undefined, isInlined)
+    const casts = { visited: reach?.reached ?? entryReach(scg), found: [] as SchedEntry[] }
+    const { deps, accesses } = dependencies(scg.nodes, reach?.stop ? reach.reached : undefined, isInlined, casts)
+    if (casts.found.length) diagnostics.push(notASchedule(casts.found[0]))
     const unordered = reach ? lostDependencies(reach, deps, scg, index) : []
     if (reach?.crash) diagnostics.push(...unordered)
     // The curing changes the graph; keep a copy in case the order of cures needs a second look (nondeterminism).
@@ -256,6 +263,38 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
 // ---------------------------------------------------------------------------------------------------
 // Diagnostics
 // ---------------------------------------------------------------------------------------------------
+
+/**
+ * The instances without fields that are an (empty) object in KIELER's data pool (structure.md S-60): a class instance
+ * or a chart used as a class at the top of the chart is one while a method of it is still a C function. Once KIELER's
+ * Methods processor has copied the short methods into place and dropped the ones nobody calls, it removes a class
+ * without content, and a schedule is no content (User Schedule moved it into the chart). Probes
+ * structure/probe-instance-pool-*.
+ */
+function emptyInstances(root: CState, functions: ReadonlySet<CVar>): string[] {
+    const out: string[] = []
+    for (const c of (root.ext.emptyCandidates as EmptyCandidate[] | undefined) ?? []) if (c.methods.some(m => functions.has(m))) out.push(c.name)
+    const inside = (v: CVar, inst: CVar): boolean => { for (let m = v.member?.of; m; m = m.member?.of) if (m === inst) return true; return false }
+    for (const inst of root.decls) {
+        if (inst.declKind !== 'class' || inst.member || inst.dims.length || inst.tags.has('#host')) continue
+        const members = root.decls.filter(v => inside(v, inst))
+        if (members.some(v => !v.declKind && !v.tags.has('#const-member'))) continue
+        if (members.some(v => v.method && functions.has(v))) out.push(inst.name)
+    }
+    return out
+}
+
+/** A schedule clause naming a variable that is not a schedule, where it has something to order (deps.ts scheduleCasts). */
+function notASchedule(entry: SchedEntry): Diagnostic {
+    const v = entry.group as CVar
+    const name = v.display ?? v.name
+    return {
+        severity: 'error', code: 'kieler-crash', span: entry.span, related: v.decl ? [v.decl] : undefined,
+        message: `\`${name}\` is not a schedule, so KIELER's compiler crashes on \`schedule ${name} ${entry.priority}\``,
+        kieler: 'java.lang.ClassCastException: class de.cau.cs.kieler.kexpressions.impl.VariableDeclarationImpl cannot be cast to class de.cau.cs.kieler.kexpressions.ScheduleDeclaration',
+        hint: 'After `schedule` comes the name of a schedule object, declared as `schedule t`.',
+    }
+}
 
 /**
  * KIELER looks up the label of a `goto` by name among the labels whose innermost named container (a state, a named

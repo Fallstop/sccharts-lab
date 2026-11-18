@@ -1,0 +1,8 @@
+// A clause naming a variable that is no schedule, in a C function called by a C function.
+scchart Test {
+  output int o
+  int s
+  method void inner() { for (int i = 0; i < 1; i++) { o = 1 schedule s 0 } }
+  method void outer() { for (int i = 0; i < 1; i++) { inner() } }
+  initial state A do outer() go to B state B
+}

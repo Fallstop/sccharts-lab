@@ -1,0 +1,7 @@
+// The schedule of a chart used as a class as the initial value of one of its variables.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = 1 go to B state B
+}
+scchart Sub { schedule s int v = s }

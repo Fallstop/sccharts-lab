@@ -1,0 +1,12 @@
+// A method of a chart used as a class calls a contract method of the chart by its name alone: refused (found by a review).
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do x.run() go to B state B
+}
+scchart Sub {
+  schedule s
+  int v
+  method void set() schedule s 0 { v = 1 }
+  method void run() { set() }
+}

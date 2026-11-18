@@ -1,0 +1,9 @@
+// Scheduled calls of two C functions that write one variable, at one commuting priority.
+scchart B33 {
+  output int o
+  schedule {commuting} s
+  method void f() { for (int i = 0; i < 2; i++) { o = 1 } }
+  method void g() { for (int i = 0; i < 2; i++) { o = 2 } }
+  region R1 { initial state A do f() schedule s 0 go to B state B }
+  region R2 { initial state C do g() schedule s 0 go to D state D }
+}

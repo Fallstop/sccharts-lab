@@ -1,0 +1,9 @@
+// A C function of a class calls a contract method of another object: the other order.
+scchart B41 {
+  output int o
+  class D { schedule s int w = 0 void set() schedule s 1 { w = 5 } int get() schedule s 0 { return w } } d
+  class C { int v void big() { for (int i = 0; i < 1; i++) { v = d.get() } } } c
+  region R1 { initial state A do c.big() go to B state B }
+  region R2 { initial state C2 do d.set() go to D2 state D2 }
+  region R3 { initial state E go to F state F do o = c.v go to G state G }
+}

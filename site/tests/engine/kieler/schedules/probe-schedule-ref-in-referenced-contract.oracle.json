@@ -1,0 +1,49 @@
+{
+  "hash": "054273fe4dcc1967a194f02f6e679a84c6bf730b",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-ref-in-referenced-contract.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name Sub1_x_s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1__Test_local_x_set_a is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Sub11.v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 5
+      },
+      "terminated": false
+    }
+  ]
+}

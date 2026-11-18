@@ -1,0 +1,7 @@
+// The chart's schedule read as a value inside a class method.
+scchart T {
+  output int o
+  schedule t
+  class C { int v void set() { v = t } } c
+  initial state A do c.set() go to B state B
+}

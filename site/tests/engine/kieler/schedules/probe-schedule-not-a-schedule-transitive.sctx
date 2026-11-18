@@ -1,0 +1,8 @@
+// A clause naming a variable that is no schedule, in a method called through another method (found by a review).
+scchart Test {
+  output int o
+  int s
+  method void inner() { o = 1 schedule s 0 }
+  method void outer() { inner() }
+  initial state A do outer() go to B state B
+}

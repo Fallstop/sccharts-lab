@@ -1,0 +1,8 @@
+// A contract method as a local variable's initial value in a short method that a C function calls.
+scchart T {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 2 } } c
+  method void inner() { int k = c.get(); o = k }
+  method void outer() { inner() }
+  initial state A do outer() go to B state B
+}

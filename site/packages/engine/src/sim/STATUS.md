@@ -278,9 +278,13 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `abort-region-order`, `abort-region-alone`, `binding-expression`, `recursive-reference`, `for-counter-assignment`,
   `for-counter-method`, `dataflow-for`, `unknown-type`, `shared-clock`, `clock-variable`, `clock-array`,
   `timing-constraint`, `default-sleep`, `inheritance-conflict`, `module-call`; written schedules (S-27a):
-  `schedule-nested-class`, `schedule-class-array`, `schedule-without-instance` (a clause in a class naming the class's
-  own schedule), `contract-never-called`, `contract-sibling-call`, `schedule-inlined-call` (`User schedules are not
-  supported in combination with method inlining!`), and `kieler-crash` for a contract outside a class.
+  `schedule-nested-class`, `schedule-class-array`, `schedule-without-instance` (a class's own schedule named inside
+  the class without its instance: a clause in a method, or the schedule read as a value), `contract-never-called`,
+  `contract-sibling-call`, `schedule-inlined-call` (`User schedules are not supported in combination with method
+  inlining!`), `schedule-value` (a schedule read as a value reaches the C code), `kieler-crash` for a contract
+  outside a class, one that names its schedule through an instance or names no schedule, and a clause that names no
+  schedule where it has something to order; `method-dropped` (an `@inline` method calls a C function nothing else
+  calls: gcc's `implicit declaration`).
 - **The guide's notes**: `unsupported` (info: the simulator cannot run it), `kieler-quirk` (info or warning),
   `kieler-bug` (warning), `kieler-divergence` (warning), `kieler-loop-warning` (info), `internal` (error: an engine
   bug).
@@ -290,14 +294,17 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
 
 ## Written schedules in bodies, on calls and of classes
 
-Structure.md S-27a has the rules; 163 probes recorded with KIELER (`tests/engine/kieler/schedules/`, 111 accepted,
-52 rejected), all agreeing, the generated C too. Fuzz profile `schedules` (extended with these forms), 400 charts,
-seed 1: 47 match, 347 rejected by both, 6 that KIELER never finishes compiling (charts with many contradicting
-schedules; the engine rejects all six), no disagreement.
+Structure.md S-27a has the rules; 422 probes recorded with KIELER in `tests/engine/kieler/schedules/` (163 from the
+first round of this work, 198 after a review, the others older), and 20 more under `structure/` for what the review
+touched next to schedules. Fuzz profile `schedules` (extended with the forms the review found missing), 800 charts
+(seeds 1 and 2): 65 match, 722 rejected by both, 11 that KIELER never finishes compiling (charts with many
+contradicting schedules; the engine rejects all eleven), 2 whose outcome in KIELER changes from run to run (its cure
+order, which the engine reports), no disagreement.
 
-- **What runs now** (it was `unsupported`): `schedule s N` on the statements and `if` conditions of code blocks and
-  method bodies, on call effects, on the methods of a class (contracts) and the schedule of a class instance
-  (`schedule c.s 1`). Clauses on dataflow equations and dataflow regions stay `unsupported` (the dataflow workstream).
+- **What runs** (it was `unsupported`): `schedule s N` on the statements and `if` conditions of code blocks and
+  method bodies, on call effects, on the methods of a class (contracts), the schedule of a class instance
+  (`schedule c.s 1`) and of a chart used as a class (`schedule x.s 1`, `ref Sub x`). Clauses on dataflow equations
+  and dataflow regions stay `unsupported` (the dataflow workstream).
 - **How.** KIELER's `UserSchedule.transformContracts` is passes/contracts.ts (the contract of a method is copied onto
   the effects and triggers that call it, marked with the method's name); a class's schedule is one variable per
   instance (lower.ts classSchedule, KIELER's `C_c_s`); the inliner passes a calling effect's clauses to the copied
@@ -306,20 +313,47 @@ schedules; the engine rejects all six), no disagreement.
   access of the node, and each such access is registered for the object too (`only` accesses: a method, an instance);
   a scheduled call effect writes what it calls; the accesses inside a C function keep the clauses written there and
   never get the calling effect's.
+- **Where the checks are made** (the review's root cause: ten defects, most from checks made while lowering, before
+  a chart used through `ref Sub x` is the class of `x`). The lowering records and reports nothing: a schedule's
+  class depth (`CVar.scheduleDepth`, one more per `ref` instance around it: passes/reference.ts), a clause written
+  through an instance (`SchedEntry.qualified`), a call by the method's name alone. passes/contracts.ts decides on the
+  expanded model, where KIELER's User Schedule processor does: a schedule two classes deep, a class or chart with an
+  array of instances, a class's schedule named or read without its instance in a method or a member's initial value,
+  a contract that is not its own class's schedule named alone. structure/methods.ts follows KIELER's Methods
+  processor: the C functions that remain (the tick's and the ones they call), a call with a schedule of its own that
+  cannot be copied into place (a condition that is the call, the outermost call of an initial value with a contract),
+  a schedule read as a value. deps.ts finds the clause that names no schedule where KIELER's dependency analysis
+  makes an access with it, in the code its search reaches.
 - **Quirks reproduced, each with probes.** A call with exactly one argument loses its clause (KIELER parses it as a
   valued emission and rebuilds the call without it); a clause on a call of a C function orders nothing inside it; two
   effects at one conflicting priority that only *read* one object or call one method are a circle; a contract method
   nobody calls, a contract outside a class and a schedule in a nested class or an array of instances reject the
-  chart; a scheduled trigger must not call a short chart method.
-- **Two corrections to what ran before**, found on the way: the index of a scheduled assignment to a plain array is
+  chart; a scheduled trigger must not call a short chart method, and a scheduled condition of a body must not *be* a
+  call of a short method; a clause naming an `int` is harmless on `print("x")` and a crash on an assignment; a
+  chart used as a class may name its own schedule on its transitions but not in its methods; the code of a state
+  that is never entered and of a method nobody calls is not looked at by the Methods processor and the dependency
+  analysis, but it is by the User Schedule processor (a contract call there counts as a call).
+- **Corrections to what ran before**, found on the way: the index of a scheduled assignment to a plain array is
   read without the schedule (`o[i] = 7 schedule s 0`; `-index-read-schedule`), and a scheduled assignment whose value
   is a call of a C function does not schedule the reads inside the function (`-call-value-loop`). The methods of a
-  chart used as a class read its variables through `self`, like a class's (`-chart-class-cfn`).
+  chart used as a class read its variables through `self`, like a class's (`-chart-class-cfn`). After the review: a
+  field or method of a chart instance named inside a chart that a state references is found (it was looked up under
+  the wrong id; `structure/probe-chart-instance-in-referenced`); an instance without fields is `{}` in the pool only
+  while one of its methods is a C function (`structure/probe-instance-pool-*`); an `@inline` method that calls a C
+  function nothing else calls is rejected as gcc does (`method-dropped`, `structure/probe-inline-calls-cfn*`).
 - **Open.** Charts with host classes are not analysed (`unsupported`), so KIELER's default schedule of a host class is
   only applied as far as the never-called rule goes (`-host-two-methods` is rejected); two concurrent calls of one
   host method, which KIELER cannot schedule, are accepted (`-host-typedef-same-method`, skipped by the conformance
   run). Contracts from `policy` regions (KIELER's static approximation of a policy automaton) are not modelled; a
-  policy that orders nothing behaves the same (`tests/corpus/probes/adv-policy.sctx`).
+  policy that orders nothing behaves the same (`tests/corpus/probes/adv-policy.sctx`). Found by the review and not
+  schedules (engine-expected-failures.json has each with its reason): an array of chart instances (`ref Sub x[2]`)
+  is now `unsupported` instead of a crash in the first tick (KIELER runs it: `structure/probe-chart-instance-array*`);
+  a chart instance inside a chart instance is reported at the top of the pool instead of inside the outer one
+  (`structure/probe-chart-instance-nested`, `-ref-three-refs`); a short class method called in the index of an
+  assigned member array (`d.a[c.get()] = 3`) is accepted where KIELER's C code does not compile
+  (`structure/probe-index-call-member-target`, `-contract-in-member-index`); a chart instance three deep whose chart
+  declares only a schedule is accepted where KIELER's C code calls an `_init` it never generates
+  (`-ref-three-refs-empty`).
 
 ## Final polish (engine-5)
 

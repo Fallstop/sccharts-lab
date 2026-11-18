@@ -1,0 +1,14 @@
+// A chart used as a class inside a chart referenced by a state names its own schedule in a method statement.
+scchart Test {
+  output int o
+  initial state A is Mid
+}
+scchart Mid {
+  ref Sub x
+  initial state P do x.set() go to Q state Q
+}
+scchart Sub {
+  schedule s
+  int v
+  method void set() { v = 1 schedule s 0 }
+}

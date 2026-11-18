@@ -1,0 +1,7 @@
+// A short method called in the index of an array of the chart that is assigned.
+scchart Test {
+  output int o
+  int a[2]
+  method int get() { return 1 }
+  initial state A do a[get()] = 3 go to B state B
+}

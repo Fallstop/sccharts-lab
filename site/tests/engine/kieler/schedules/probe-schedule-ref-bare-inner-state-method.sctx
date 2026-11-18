@@ -1,0 +1,14 @@
+// A method declared in an inner state of a chart used as a class names the chart's own schedule in a statement.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = 1 go to B state B
+}
+scchart Sub {
+  schedule s
+  int v
+  initial state P {
+    method void set() { v = 1 schedule s 0 }
+    initial state P1 do set() go to P2 state P2
+  }
+}

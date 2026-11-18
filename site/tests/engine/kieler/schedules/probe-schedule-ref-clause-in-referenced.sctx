@@ -1,0 +1,12 @@
+// The schedule of a chart instance, named inside a chart that is itself referenced by a state.
+scchart Test {
+  output int o
+  initial state P is Mid(o)
+}
+scchart Mid {
+  output int r
+  ref Sub x
+  region R { initial state A do r = 1 schedule x.s 1 go to B state B }
+  region S { initial state C do r = 2 schedule x.s 0 go to D state D }
+}
+scchart Sub { schedule s }

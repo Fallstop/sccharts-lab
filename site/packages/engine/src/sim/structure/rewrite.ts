@@ -44,7 +44,7 @@ export function rewriteSchedule(list: SchedEntry[] | undefined, w: Rewriter): Sc
             const r = w.read!(e.ref)
             if (r?.k !== 'ref' || r.sub || r.v.declKind !== 'schedule') return e
             changed = true
-            return { group: r.v, priority: e.priority, ...(e.method ? { method: e.method } : {}) }
+            return { group: r.v, priority: e.priority, ...(e.method ? { method: e.method } : {}), ...(e.span ? { span: e.span } : {}), ...(e.qualified ? { qualified: true } : {}) }
         }
         if (!(e.group instanceof CVar)) return e
         const r = w.read!({ k: 'ref', v: e.group, idx: [] })

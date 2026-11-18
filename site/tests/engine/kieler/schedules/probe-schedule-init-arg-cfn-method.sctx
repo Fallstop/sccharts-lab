@@ -1,0 +1,12 @@
+// A contract method in an argument of a C function as an initial value, in a method that is called.
+scchart T {
+  output int o
+  class C { schedule s int v = 3 int get() schedule s 0 { return v } void set() schedule s 1 { v = 7 } } c
+  method int wrap(int x) {
+    for (int i = 0; i < 1; i++) { x += 1 }
+    return x
+  }
+  method void run() { int k = wrap(c.get()); o = k }
+  region R { initial state A do run() go to B state B }
+  region S { initial state C do c.set() go to D state D }
+}

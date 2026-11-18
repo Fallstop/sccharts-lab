@@ -1,0 +1,9 @@
+// Inside a C function, a scheduled statement that calls another C function: the clause does not reach the inner body.
+scchart B52 {
+  output int o
+  schedule s
+  method void inner() { for (int i = 0; i < 1; i++) { o = 1 } }
+  method void outer() { for (int i = 0; i < 1; i++) { inner() schedule s 1 } }
+  region R1 { initial state A do outer() go to B state B }
+  region R2 { initial state C do o = 2 schedule s 0 go to D state D }
+}

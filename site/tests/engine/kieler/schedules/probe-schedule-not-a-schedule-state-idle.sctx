@@ -1,0 +1,6 @@
+// A state scheduled with a variable that is no schedule whose inside has nothing to order but a transition counter.
+scchart Test {
+  output int o
+  int s
+  initial state A schedule s 0 { initial state P go to Q state Q }
+}

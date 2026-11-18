@@ -1,0 +1,14 @@
+// A chart used as a class with a class that declares a schedule in one of its inner states.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = 1 go to B state B
+}
+scchart Sub {
+  int w
+  initial state P {
+    class C { schedule s int v } c
+    region R { initial state P1 do w = 1 schedule c.s 1 go to P2 state P2 }
+    region S { initial state Q1 do w = 2 schedule c.s 0 go to Q2 state Q2 }
+  }
+}

@@ -1,0 +1,7 @@
+// A contract method called in an argument of a short method that is a local variable's initial value: refused.
+scchart T {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 3 } } c
+  method int wrap(int x) { return x }
+  initial state A do { int k = wrap(c.get()); o = k } go to B state B
+}

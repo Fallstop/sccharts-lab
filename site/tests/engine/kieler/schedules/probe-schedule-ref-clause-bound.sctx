@@ -1,0 +1,9 @@
+// The schedule of a referenced chart with a binding, named through the instance.
+scchart Test {
+  output int o
+  int i
+  ref Sub x(i)
+  region R { initial state A do o = 1 schedule x.s 1 go to B state B }
+  region S { initial state C do o = 2 schedule x.s 0 go to D state D }
+}
+scchart Sub { input int i schedule s }

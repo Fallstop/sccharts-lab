@@ -1,0 +1,7 @@
+// A schedule in a class inside a chart used as a class, inside a chart referenced by a state.
+scchart Test {
+  output int o
+  initial state A is Mid
+}
+scchart Mid { ref Sub x }
+scchart Sub { class Inner { schedule s int v } c }

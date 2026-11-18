@@ -30,6 +30,8 @@ export function copyVar(v: CVar): CVar {
     c.declKind = v.declKind
     c.priorities = v.priorities
     c.scheduleOf = v.scheduleOf
+    c.scheduleInstance = v.scheduleInstance
+    c.scheduleDepth = v.scheduleDepth
     if (v.instance) c.instance = { ...v.instance, args: v.instance.args.map(a => ({ ...a, expr: copyExpr(a.expr) })) }
     return c
 }

@@ -1,0 +1,6 @@
+// A clause naming a variable that is no schedule on a trigger that reads nothing.
+scchart Test {
+  output int o
+  int s
+  initial state A if true schedule s 0 do o = 1 go to B state B
+}

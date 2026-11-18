@@ -1,0 +1,6 @@
+// A clause naming a variable that is no schedule on a print of a constant: nothing to order, accepted (found by a review).
+scchart Test {
+  output int o
+  int s
+  initial state A do print("test") schedule s 0 go to B state B
+}

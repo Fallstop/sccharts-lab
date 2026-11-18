@@ -1,0 +1,99 @@
+{
+  "hash": "50493346f284b5158a48328d1a86d4da138aabaa",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-in-class-cfn-rev.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name big is contained in the model but not in VariableStore.",
+    "ValuedObject with name D_d_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "D.w": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "d": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        },
+        "d": {
+          "w": 0
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        },
+        "d": {
+          "w": 5
+        }
+      },
+      "taken": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        },
+        "d": {
+          "w": 5
+        }
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

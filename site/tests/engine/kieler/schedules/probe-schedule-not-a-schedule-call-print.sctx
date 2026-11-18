@@ -1,0 +1,7 @@
+// A clause naming a variable that is no schedule on a call of a short method that only prints a constant.
+scchart Test {
+  output int o
+  int s
+  method void say() { print("test") }
+  initial state A do say() schedule s 0 go to B state B
+}

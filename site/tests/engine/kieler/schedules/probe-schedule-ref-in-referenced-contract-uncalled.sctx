@@ -1,0 +1,15 @@
+// A chart used as a class inside a chart referenced by a state, with a contract method nobody calls.
+scchart Test {
+  output int o
+  initial state P is Mid(o)
+}
+scchart Mid {
+  output int r
+  ref Sub x
+  initial state A do r = 1 go to B state B
+}
+scchart Sub {
+  schedule s
+  int v = 0
+  method void set(int a) schedule s 0 { v = a }
+}

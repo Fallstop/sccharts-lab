@@ -1,0 +1,7 @@
+// A contract method called only from a state that is never entered.
+scchart T {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 3 } } c
+  initial state A do o = 1 go to B state B
+  state X do o = c.get() go to B
+}

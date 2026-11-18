@@ -1,0 +1,7 @@
+// A chart's schedule read as a value inside a C function.
+scchart T {
+  output int o
+  schedule s
+  method void f() { for (int i = 0; i < 1; i++) { o = s } }
+  initial state A do f() go to B state B
+}

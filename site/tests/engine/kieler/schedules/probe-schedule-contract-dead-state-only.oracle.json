@@ -1,0 +1,64 @@
+{
+  "hash": "50ed0802cfc44b8364ed0b96ed5c7ef8f62d41a8",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-dead-state-only.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 6,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+// A C function called by a C function: the other order.
+scchart B51 {
+  output int o
+  schedule s
+  method void inner() { for (int i = 0; i < 1; i++) { o = 1 schedule s 0 } }
+  method void outer() { for (int i = 0; i < 1; i++) { inner() } }
+  region R1 { initial state A do outer() go to B state B }
+  region R2 { initial state C do o = 2 schedule s 1 go to D state D }
+}

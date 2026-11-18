@@ -1,0 +1,12 @@
+// A C function of a class calls a contract method (priority 1) of its own class by its name alone, next to a concurrent contract call (priority 0): refused (a reviewer's chart).
+scchart T {
+  output int p, o
+  int n
+  class C { schedule s int v
+    int get() schedule s 1 { return v }
+    void run() { for (int i = 0; i < 1; i++) { p = get() } }
+    void set() schedule s 0 { v = 1 }
+  } c
+  region R { initial state A do c.run() go to B state B }
+  region S { initial state X do c.set() go to Y state Y }
+}

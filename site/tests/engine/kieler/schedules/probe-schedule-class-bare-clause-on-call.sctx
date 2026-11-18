@@ -1,0 +1,6 @@
+// A call statement with one argument inside a class method, with a clause naming the class's own schedule.
+scchart Test {
+  output int o
+  class C { schedule s int v void set(int a) { v = a } void run() { set(2) schedule s 0 } } c
+  initial state A do c.run() go to B state B
+}

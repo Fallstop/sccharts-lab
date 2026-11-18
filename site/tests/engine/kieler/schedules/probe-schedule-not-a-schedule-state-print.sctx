@@ -1,0 +1,6 @@
+// A state scheduled with a variable that is no schedule, containing only a constant print.
+scchart Test {
+  output int o
+  int s
+  initial state A schedule s 0 { initial state P do print("test") go to Q state Q }
+}

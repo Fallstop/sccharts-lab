@@ -314,8 +314,10 @@ export function nodeAccesses(node: SNode): Access[] {
  * They keep the schedules written inside the body and never get the calling node's (a schedule on a call of a C
  * function orders nothing inside it; probes schedules/probe-schedule-call-cfn-*).
  */
-export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean, buckets = new Map<string, object>()): Access[] {
+export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean, buckets = new Map<string, object>(), locals?: SchedEntry[]): Access[] {
     const out: Access[] = []
+    /** KIELER makes the accesses of a method's own variables too, with their schedules, before it drops them. */
+    const local = (where: Where | undefined) => { if (locals && where?.entries) locals.push(...where.entries) }
     const op: AssignOperator | '++' | '--' | undefined = node.kind === 'assign' && node.effect?.k === 'assign' ? node.effect.op : node.kind === 'assign' ? '=' : undefined
     // The calling node's expression: KIELER's check for two writes of one value compares the nodes (isConfluentTo).
     const expr = node.kind === 'assign' ? (node.effect?.k === 'assign' ? node.effect.expr : node.effect?.k === 'call' ? node.effect.call : undefined) : undefined
@@ -354,14 +356,15 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean, b
         return { entries, called }
     }
     const calls = (e: CExpr | undefined, local: Set<CVar>, passed?: SchedEntry[]) => walkExpr(e, x => { if (x.k === 'call' && !x.extern && x.target?.v.method) method(x.target.v, local, isInlined(x.target.v.method) ? passed : undefined) })
-    const read = (e: CExpr | undefined, local: Set<CVar>, where?: Where) => {
+    const read = (e: CExpr | undefined, own: Set<CVar>, where?: Where) => {
         walkExpr(e, x => {
-            if (x.k !== 'ref' || local.has(x.v)) return
+            if (x.k !== 'ref') return
+            if (own.has(x.v)) return local(where)
             add({ node, v: x.v, ...key(x), cls: 'read', span: x.span, ...(x.sched ? { sched: x.sched } : {}), ...tag() }, x, where)
         })
-        calls(e, local)
+        calls(e, own)
     }
-    const statements = (list: CStmt[], local: Set<CVar>, passed?: SchedEntry[]) => {
+    const statements = (list: CStmt[], own: Set<CVar>, passed?: SchedEntry[]) => {
         for (const st of list) {
             switch (st.k) {
                 case 'do': {
@@ -374,30 +377,32 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean, b
                         walkExpr(f.expr, x => { if (x.k === 'ref') rhs.push({ a: { node, v: x.v, ...key(x), cls: 'read', span: x.span, ...(x.sched ? { sched: x.sched } : {}) }, r: x }) })
                         const isTarget = (a: Access) => a.v === low.v && a.sig === lowKey.sig
                         const ownReads = rhs.filter(x => isTarget(x.a)).length
-                        for (const x of rhs) if (!isTarget(x.a) && !local.has(x.a.v)) add({ ...x.a, ...tag() }, x.r, where)
-                        calls(f.expr, local, where?.entries)
-                        for (const i of low.idx) read(i, local, low.v.member ? where : undefined)
-                        if (local.has(low.v)) break
+                        for (const x of rhs) if (!isTarget(x.a) && !own.has(x.a.v)) add({ ...x.a, ...tag() }, x.r, where)
+                        calls(f.expr, own, where?.entries)
+                        for (const i of low.idx) read(i, own, low.v.member ? where : undefined)
+                        if (own.has(low.v)) { local(where); break }
                         let cls: AccessClass = 'write'
                         if (ownReads === 1 && f.op === '=') cls = 'relative'
                         if (f.op !== '=' && ownReads === 0) cls = 'relative'
                         add({ node, v: low.v, ...lowKey, cls, op, expr, span: f.o.span, ...tag() }, low, where)
                     } else if (f.k === 'print') {
                         const where = placed(f.o.schedule, passed, f.args)
-                        f.args.forEach(a => read(a, local, where))
+                        f.args.forEach(a => read(a, own, where))
                     } else if (f.k === 'call') {
                         const where = placed(f.o.schedule, passed, [f.call])
-                        f.call.args.forEach(a => read(a, local, where))
-                        calls(f.call, local, where?.entries)
-                    } else if (f.k === 'emit') read(f.value, local, placed(f.o.schedule, passed, [f.value]))
+                        // (A scheduled call is a writer of what it calls, whatever the function touches.)
+                        local(where)
+                        f.call.args.forEach(a => read(a, own, where))
+                        calls(f.call, own, where?.entries)
+                    } else if (f.k === 'emit') read(f.value, own, placed(f.o.schedule, passed, [f.value]))
                     break
                 }
-                case 'if': read(st.cond, local, st.cond.sched ? { entries: st.cond.sched, trigger: true } : undefined); statements(st.then, local, passed); if (st.else) statements(st.else, local, passed); break
-                case 'while': read(st.cond, local); statements(st.body, local, passed); break
-                case 'for': statements(st.init, local, passed); read(st.cond, local); statements(st.update, local, passed); statements(st.body, local, passed); break
+                case 'if': read(st.cond, own, st.cond.sched ? { entries: st.cond.sched, trigger: true } : undefined); statements(st.then, own, passed); if (st.else) statements(st.else, own, passed); break
+                case 'while': read(st.cond, own); statements(st.body, own, passed); break
+                case 'for': statements(st.init, own, passed); read(st.cond, own); statements(st.update, own, passed); statements(st.body, own, passed); break
                 // The value of a method inlined into a statement becomes part of that statement's expression.
-                case 'return': read(st.expr, local, passed?.length ? { entries: passed } : undefined); break
-                case 'expr': read(st.e, local); break
+                case 'return': read(st.expr, own, passed?.length ? { entries: passed } : undefined); break
+                case 'expr': read(st.e, own); break
                 default: break
             }
         }
@@ -662,17 +667,51 @@ export function dependencyReach(scg: SCG): { reached: Set<SNode>; stop?: SNode; 
 }
 
 /**
- * The concurrent dependencies among the given nodes (only those matter for scheduling; dependencies within one
- * thread are ordered by its control flow). `reached`: only these nodes' accesses count (dependencyReach).
+ * The clauses of a node that name a variable which is not a schedule, where KIELER's dependency analysis crashes on
+ * them: it casts the declaration of a clause's schedule for every access it makes with the clause (ValuedObjectAccess),
+ * so such a clause is harmless where there is nothing to order (`print("x") schedule s 0`, `if true schedule s 0`)
+ * and a crash anywhere else: on an assignment (its write), on a read of a variable, on a call of a C function (the
+ * scheduled call is a writer), on the counter of a taken transition that a state's clause was passed down to, and on
+ * the statements of the C functions the node calls, their own variables included. Probes
+ * schedules/probe-schedule-not-a-schedule-*.
  */
-export function dependencies(nodes: SNode[], reached?: Set<SNode>, isInlined: (m: CMethod) => boolean = () => true): { deps: Dependency[]; accesses: Map<SNode, Access[]> } {
+function scheduleCasts(node: SNode, accesses: Access[], locals: SchedEntry[]): SchedEntry[] {
+    const wrong = (e: SchedEntry) => e.group instanceof CVar && e.group.declKind !== 'schedule'
+    const out = locals.filter(wrong)
+    for (const a of accesses) for (const e of a.sched ?? []) if (wrong(e)) out.push(e)
+    const f = node.kind === 'assign' ? node.effect : undefined
+    if (f?.k === 'mark' && f.m.kind === 'take' && f.m.index >= 0) out.push(...(f.o.schedule ?? []).filter(wrong))
+    return out
+}
+
+/** Control flow from the root's entry: the nodes KIELER's search for accesses visits when nothing stops it. */
+export function entryReach(scg: SCG): Set<SNode> {
+    const reached = new Set<SNode>()
+    const work: SNode[] = [scg.root.entry]
+    while (work.length) {
+        const n = work.pop()!
+        if (reached.has(n)) continue
+        reached.add(n)
+        for (const m of [n.next, n.then, n.else, n.join, n.depth, ...(n.threads ?? []).map(t => t.entry)]) if (m && !reached.has(m)) work.push(m)
+    }
+    return reached
+}
+
+/**
+ * The concurrent dependencies among the given nodes (only those matter for scheduling; dependencies within one
+ * thread are ordered by its control flow). `reached`: only these nodes' accesses count (dependencyReach). `casts`
+ * collects, for the nodes KIELER's search visits, the clauses its analysis crashes on (scheduleCasts).
+ */
+export function dependencies(nodes: SNode[], reached?: Set<SNode>, isInlined: (m: CMethod) => boolean = () => true, casts?: { visited: Set<SNode>; found: SchedEntry[] }): { deps: Dependency[]; accesses: Map<SNode, Access[]> } {
     const accesses = new Map<SNode, Access[]>()
     // The accesses KIELER compares with each other: those of one variable, or of one method's `self` member.
     const byVar = new Map<object, Access[]>()
     const buckets = new Map<string, object>()
     for (const n of nodes) {
-        const list = [...nodeAccesses(n), ...innerAccesses(n, isInlined, buckets)]
+        const locals: SchedEntry[] | undefined = casts ? [] : undefined
+        const list = [...nodeAccesses(n), ...innerAccesses(n, isInlined, buckets, locals)]
         accesses.set(n, list)
+        if (casts?.visited.has(n)) casts.found.push(...scheduleCasts(n, list, locals!))
         if (reached && !reached.has(n)) continue
         for (const a of list) {
             const bucket = a.bucket ?? a.v

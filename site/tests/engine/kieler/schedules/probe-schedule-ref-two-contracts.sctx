@@ -1,0 +1,15 @@
+// Two instances of a chart used as a class: their contracts do not order each other.
+scchart Test {
+  output int o
+  ref Sub x, y
+  region R1 { initial state A do o = x.get() go to B state B }
+  region R2 { initial state C do y.set(5) go to D state D }
+  region R3 { initial state E do x.set(3) go to F state F }
+  region R4 { initial state G do o = y.get() go to H state H }
+}
+scchart Sub {
+  schedule s
+  int v = 0
+  method void set(int a) schedule s 0 { v = a }
+  method int get() schedule s 1 { return v }
+}

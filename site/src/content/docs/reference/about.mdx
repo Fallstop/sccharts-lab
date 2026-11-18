@@ -86,8 +86,10 @@ simulation controls. Its diagram and code are still there, and SCCharts Lab and 
 - **Host code**: C code in backticks, `extern` functions, and host classes and enums. Running them takes
   a C compiler, which a browser does not have. The playground's C code tab still gives their C, ready to
   build ([below](#the-c-code)).
-- **Schedules written inside code blocks, methods or dataflow equations** (a `schedule` on a transition,
-  an action, a state or a region runs).
+- **Schedules written on dataflow equations or dataflow regions** (a `schedule` anywhere else runs: on a
+  transition, an action, a state, a region or a call, in a method, in a code block, and as a class
+  method's contract).
+- **An array of instances of a chart** (`ref Counter c[2]`; single instances run, `ref Counter c1, c2`).
 - **A few rare combinations**, such as a chart that `extends` another with generic parameters.
 
 The engine follows KIELER's default system only. KIELER's other systems, such as

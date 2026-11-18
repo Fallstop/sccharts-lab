@@ -1,0 +1,13 @@
+// A scheduled statement that is a call of a short method, inside a C function.
+scchart T {
+  output int o
+  schedule s
+  method void one() { o = 1 }
+  method void inner() {
+    for (int i = 0; i < 1; i++) {
+      one() schedule s 1
+    }
+  }
+  region R { initial state A do inner() go to B state B }
+  region S { initial state C do o = 2 schedule s 0 go to D state D }
+}
