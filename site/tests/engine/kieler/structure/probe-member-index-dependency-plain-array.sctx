@@ -1,0 +1,9 @@
+// The index of a plain array on the left is seen (arr[x + 0] += 5).
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do arr[x + 0] += 5 go to A }
+  region { initial state B do x = 1 go to B }
+}

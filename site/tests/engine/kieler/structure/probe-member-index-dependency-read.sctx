@@ -1,0 +1,9 @@
+// On the right-hand side every read in a member's index is seen (o = k.a[x + 0] + 10).
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do o = k.a[x + 0] + 10 go to A }
+  region { initial state B do x = 1; k.a[1] = 5 go to B }
+}

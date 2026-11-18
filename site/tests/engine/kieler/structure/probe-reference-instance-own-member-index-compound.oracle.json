@@ -1,0 +1,106 @@
+{
+  "hash": "acb359d7348d21fd5b5863d416712e410959d0d1",
+  "chart": "tests/engine/kieler/structure/probe-reference-instance-own-member-index-compound.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K21.a": {
+      "type": "int",
+      "properties": []
+    },
+    "K21.w": {
+      "type": "int",
+      "properties": []
+    },
+    "K21.z": {
+      "type": "int",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "k": {
+          "a": [
+            0,
+            0
+          ],
+          "w": 1,
+          "z": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 2,
+        "k": {
+          "a": [
+            0,
+            2
+          ],
+          "w": 1,
+          "z": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 5,
+        "k": {
+          "a": [
+            0,
+            5
+          ],
+          "w": 1,
+          "z": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

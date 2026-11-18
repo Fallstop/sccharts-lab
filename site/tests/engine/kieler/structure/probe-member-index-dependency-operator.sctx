@@ -1,0 +1,11 @@
+// The variable inside an operator in the index (k.a[x + 0] += 1): KIELER's SCG copied the index as written and its
+// dependency analysis does not see the read, so the regions run in written order and a[0] is counted first, with
+// the old x.
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do k.a[x + 0] += 1 go to A }
+  region { initial state B do x = 1 go to B }
+}

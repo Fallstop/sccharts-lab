@@ -1,0 +1,10 @@
+// An instance's member as the whole index (k.a[k.w] += 1) next to a write of k.w: not seen either, the old k.w is
+// used.
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do k.a[k.w] += 1 go to A }
+  region { initial state B do k.w = 1 go to B }
+}

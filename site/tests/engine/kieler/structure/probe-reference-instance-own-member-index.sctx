@@ -1,0 +1,9 @@
+// A chart used as a class: its own field in the index of its assigned array field (k.a[k.w] = n) in a transition's
+// effect.
+scchart Main {
+  input int n
+  output int o
+  ref K2 k
+  initial state A do k.a[k.w] = n; o = k.a[1] go to A
+}
+scchart K2 { int a[2] int w = 1 }

@@ -1,0 +1,9 @@
+// The index of the instance itself (ks[x + 0].w += 1) is converted properly: the read of x is seen.
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do ks[x + 0].w += 1 go to A }
+  region { initial state B do x = 1 go to B }
+}

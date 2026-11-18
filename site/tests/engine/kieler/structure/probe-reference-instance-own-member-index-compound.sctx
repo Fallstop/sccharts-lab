@@ -1,0 +1,8 @@
+// The same with an expression of two of its fields as the index and a compound assignment.
+scchart Main {
+  input int n
+  output int o
+  ref K2 k
+  initial state A do k.a[k.w - k.z] += n; o = k.a[1] go to A
+}
+scchart K2 { int a[2] int w = 1 int z = 0 }

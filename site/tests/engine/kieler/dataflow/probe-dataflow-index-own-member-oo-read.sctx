@@ -1,0 +1,9 @@
+// The same index on the right-hand side (o = cell.v[cell.w % 2]).
+scchart Main {
+  input int n
+  output int o
+  ref Cell cell
+  method int twice(int j) { return j * 2 }
+  dataflow { cell.v[0] = twice(n) cell.v[1] = n o = cell.v[cell.w % 2] }
+}
+scchart Cell { input int v[2] output int w = 0 initial state CA do w += 1 go to CA }

@@ -1,0 +1,8 @@
+// With the writing region written first the unseen read gets the new value: only the written order decides.
+scchart Main {
+  output int o
+  int x = 0
+  class K { int a[2] int w = 0 } k
+  region { initial state B do x = 1 go to B }
+  region { initial state A do k.a[x + 0] += 1 go to A }
+}

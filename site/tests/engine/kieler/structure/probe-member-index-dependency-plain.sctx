@@ -1,0 +1,10 @@
+// A plain variable as the whole index of an assigned member (k.a[x] += 1) next to a region that writes x: KIELER's
+// dependency analysis sees the read, the write comes first and a[1] is counted.
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do k.a[x] += 1 go to A }
+  region { initial state B do x = 1 go to B }
+}

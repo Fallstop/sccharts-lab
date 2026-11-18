@@ -1847,6 +1847,18 @@ accepted (probe, `--system priority`).
   side, in the index of a plain array and in the index of the instance itself (`ks[ix() + 0].a = 7`) every form
   works. Probes `structure/probe-method-member-index-*`, `-method-index-*` (17: 9 rejected); engine
   `method-in-member-index`. Found while fixing the dataflow pass's own walk over member indices.
+- **The dependency analysis does not see what such an index reads either.** For the same reason only a plain
+  variable written as the whole index of an assigned member is a read to KIELER (`k.a[x] += 1` waits for a
+  concurrent `x = 1`, and `k.a[x] = 1` next to `x = k.a[0]` is a cycle; an array as the whole index is seen too,
+  `k.a[arr[1]]` waits for `arr[1] = 0`). A variable inside an operator or inside another index (`k.a[x + 0]`,
+  `k.a[arr[x]]`), and a member even as the whole index (`k.a[k.w]`, `cell.v[cell.w % 2]` for an instance's own
+  output), is **not** a read: the write is not ordered before it, the regions run in written order (the reading
+  region first: the old value is used; the writing region first: the new one), and a cycle through it is none
+  (`k.a[x + 0] = 1` next to `x = k.a[0]` is accepted). The indices of the instance itself (`ks[x + 0].w`), of a
+  plain array and everything on the right-hand side are seen. Probes `structure/probe-member-index-dependency-*`
+  (12), `dataflow/probe-dataflow-index-own-member-oo*`; the engine leaves those reads out of a target's accesses
+  (deps.ts `nodeAccesses`). Teaching: compute an index into a variable first when another region writes what it
+  reads.
 - **A class's method that stays a function reads the class's members through its own `self` parameter**
   (`MethodProcessor` adds it; `SCGMethodExtensions` `ANNOTATION_METHOD_REQUIRES_SELF`). To the dependency analysis
   `self.v` of one method is a variable of its own: it is the same for every instance the method is called on,

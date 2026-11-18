@@ -114,6 +114,43 @@ describe('a method call in the index of an assigned member', () => {
     })
 })
 
+describe('reads in the index of an assigned member', () => {
+    const chart = (reader: string, writer: string) => `scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k
+  region { initial state A do ${reader} go to A }
+  region { initial state B do ${writer} go to B }
+}`
+    const a = (reader: string, writer: string) => run(chart(reader, writer), [{}, {}, {}]).map(t => (t.pool.k as { a: number[] }).a)
+
+    it('are ordered after a concurrent write only for a plain variable written as the whole index', () => {
+        expect(a('k.a[x] += 1', 'x = 1')).toEqual([[0, 0], [0, 1], [0, 2]])
+        // Not seen by KIELER's dependency analysis: the reading region is written first and uses the old value.
+        expect(a('k.a[x + 0] += 1', 'x = 1')).toEqual([[0, 0], [1, 0], [1, 1]])
+        expect(a('k.a[k.w] += 1', 'k.w = 1')).toEqual([[0, 0], [1, 0], [1, 1]])
+        expect(a('k.a[arr[x]] += 1', 'x = 1')).toEqual([[0, 0], [1, 0], [1, 1]])
+    })
+
+    it('are a cycle with a concurrent write only where KIELER sees them', () => {
+        expect(codes(chart('k.a[x] = 1', 'x = k.a[0]'))).toEqual(['causality-cycle'])
+        expect(codes(chart('k.a[x + 0] = 1', 'x = k.a[0]'))).toEqual([])
+    })
+
+    it('are rewritten at every level: an instance\'s own output in the index of its assigned port', () => {
+        const ticks = run(`scchart Main {
+  input int n
+  output int o
+  ref Cell cell
+  method int twice(int j) { return j * 2 }
+  dataflow { cell.v[cell.w % 2] = twice(n) o = cell.v[1] }
+}
+scchart Cell { input int v[2] output int w = 0 initial state CA do w += 1 go to CA }`, [{ n: 1 }, { n: 2 }, { n: 3 }])
+        expect(ticks.map(t => t.pool.cell)).toEqual([{ v: [2, 0], w: 0 }, { v: [4, 0], w: 1 }, { v: [4, 6], w: 2 }])
+    })
+})
+
 describe('method bodies in the replacement walk', () => {
     const generic = (method: string) => `scchart Main { output int p initial state S is G<5>(p) }
 scchart G<N is int> {

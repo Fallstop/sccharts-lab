@@ -449,8 +449,8 @@ rejected), all agreeing; `tests/engine/generics.test.ts` pins the API around the
 ## Review fixes: dataflow regions, generic parameters, `extends`, the GO block
 
 Two reviews ran their own charts through official KIELER and found eleven disagreements; all are fixed, with the
-class of bug behind each (structure.md S-24, S-33, S-33a, S-44f, S-74, S-76; basics.md B-34). 160 probes recorded
-with the lab server (87 accepted, 73 rejected), cross-checked on official KIELER.
+class of bug behind each (structure.md S-24, S-33, S-33a, S-44f, S-74, S-76; basics.md B-34). 182 probes recorded
+with the lab server (107 accepted, 75 rejected), cross-checked on official KIELER.
 
 - **Indices of members in dataflow regions** (passes/dataflow.ts): the pass walks every index at every level of a
   reference where it looks for the region's instances and for method calls (it looked at the outermost only).
@@ -470,6 +470,10 @@ with the lab server (87 accepted, 73 rejected), cross-checked on official KIELER
 - **A method call in the index of an assigned member** is found by KIELER only as the whole index and by its name
   alone: `c.a[ix() + 0] = 7`, `c.a[arr[ix()]] = 7`, `c.a[g.one()] = 7` are rejected (`method-in-member-index`,
   sim/codegen.ts), in any effect, not only in dataflow regions.
+- **Reads in the index of an assigned member** are invisible to KIELER's dependency analysis unless the index is
+  one plain variable (the same copied indices; structure.md S-44f): `k.a[x + 0] += 1`, `k.a[k.w] += 1` and
+  `cell.v[cell.w % 2] = e` use the value from before a concurrent write when their region is written first, and
+  are no cycle with one (deps.ts `nodeAccesses`; the engine ordered the write first and rejected the cycle).
 - **Method bodies in the replacement walk** (structure/replacements.ts; lower.ts numbers the SCL blocks): a local
   hides a bound name inside its block only; the initial value of a body's declaration is not visited
   (`unbound-reference`), a `for` loop's own is; an `if` condition naming a local of its branch while the name
