@@ -1,0 +1,11 @@
+// An array element with a computed index as the generic argument.
+scchart X17b {
+  input int i
+  int a[3] = {5, 7, 9}
+  output int p
+  initial state S is X17bG<a[i + 1]>(p)
+}
+scchart X17bG<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

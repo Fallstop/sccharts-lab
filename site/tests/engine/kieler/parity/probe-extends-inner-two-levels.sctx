@@ -1,0 +1,16 @@
+// An inner state extends a chart that extends another one.
+scchart I16 {
+  output int p
+  initial state T extends I16M(p) {
+  }
+}
+scchart I16M extends I16B {
+  region R2 { initial state B do o += 10 go to B }
+}
+scchart I16B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

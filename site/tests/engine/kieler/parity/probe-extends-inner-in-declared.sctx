@@ -1,0 +1,17 @@
+// An inner state with a base chart, inside a chart instantiated with a ref declaration: inherited.
+scchart X31 {
+  output int p
+  ref X31M g(p)
+}
+scchart X31M {
+  output int o
+  initial state T extends X31B(o) {
+  }
+}
+scchart X31B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

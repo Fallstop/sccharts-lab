@@ -1,0 +1,10 @@
+// extends Base(i to x, p to o).
+scchart E02 extends E02B(i to x, p to o) {
+  input int i
+  output int p
+}
+scchart E02B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

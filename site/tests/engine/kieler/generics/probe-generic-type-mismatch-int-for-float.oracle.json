@@ -1,0 +1,23 @@
+{
+  "hash": "847373e8c7db0767d2de3c033c38b4aab2eaec27",
+  "chart": "tests/engine/kieler/generics/probe-generic-type-mismatch-int-for-float.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "4:22 The referencing binding is erroneous!\nType mismatch! Generic parameter F of type float cannot take literal of type int.",
+    "There are binding errors in a referenced state!\nType mismatch! Generic parameter F of type float cannot take literal of type int.",
+    "The valued object reference points to a valued object (F) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nType mismatch! Generic parameter F of type float cannot take literal of type int.",
+      "line": 4,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nType mismatch! Generic parameter F of type float cannot take literal of type int."
+    }
+  ],
+  "ticks": []
+}

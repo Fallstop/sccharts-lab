@@ -1,0 +1,12 @@
+// region Q is R(p): what R names is bound in the order it is first named, so the copy writes p.
+scchart R10 extends R10B {
+  output int p
+  region Q is R(p)
+}
+scchart R10B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

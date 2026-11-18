@@ -1,0 +1,9 @@
+// pre(N) with the literal 4 for N: gcc refuses KIELER's code.
+scchart X15 {
+  output int p
+  initial state S is X15G<4>(p)
+}
+scchart X15G<N is int> {
+  output int o = 0
+  initial state A do o += pre(N) go to A
+}

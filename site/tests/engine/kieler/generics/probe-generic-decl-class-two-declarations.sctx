@@ -1,0 +1,11 @@
+// Two ref declarations of one chart are two classes to KIELER (C1 and C2 in the interface).
+scchart K01 {
+  output int p
+  ref K01C a
+  ref K01C b
+  initial state A do a.inc(); b.inc(); b.inc(); p = a.n + 10 * b.n go to A
+}
+scchart K01C {
+  int n = 0
+  method void inc() { n += 1 }
+}

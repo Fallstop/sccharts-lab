@@ -1,0 +1,8 @@
+// The generic base chart uses its parameter in a method.
+scchart X36 extends X36B<3> {
+}
+scchart X36B<N is int> {
+  output int o = 0
+  method int twice() { return 2 * N }
+  initial state A do o += twice() go to A
+}

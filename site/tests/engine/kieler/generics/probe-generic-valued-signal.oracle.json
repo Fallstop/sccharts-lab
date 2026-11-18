@@ -1,0 +1,84 @@
+{
+  "hash": "9598d749f2ca620d07fa16e6a6eedbbe86c2fc87",
+  "chart": "tests/engine/kieler/generics/probe-generic-valued-signal.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "s": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "s_val": {
+      "type": "int",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "s_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "s": false,
+        "s_val": 0,
+        "s_curval": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "s": true,
+        "s_val": 4,
+        "s_curval": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 8,
+        "s": true,
+        "s_val": 4,
+        "s_curval": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

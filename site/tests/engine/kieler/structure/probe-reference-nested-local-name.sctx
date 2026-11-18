@@ -1,0 +1,17 @@
+// A nested referenced chart declares a local with the name of an input of the chart around it: renamed, it keeps
+// its own value.
+scchart X01 {
+  output int p
+  int a = 3
+  initial state S is X01O(a, p)
+}
+scchart X01O {
+  input int x
+  output int o
+  initial state T is X01I(o)
+}
+scchart X01I {
+  output int o = 0
+  int x = 100
+  initial state A do o += x go to A
+}

@@ -1,0 +1,52 @@
+{
+  "hash": "62442e7e56739b31f8e6c0de97404d16a33d1056",
+  "chart": "tests/engine/kieler/generics/probe-generic-extends-inner-forward.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Explicit binding in inheritance hierachy (o -> ValuedObjectReferenceImpl@44d55ae3 o) was overridden by a higher level one (o -> ValuedObjectReferenceImpl@7c3cd824 p)."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 4
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 8
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "p": 12
+      },
+      "terminated": false
+    }
+  ]
+}

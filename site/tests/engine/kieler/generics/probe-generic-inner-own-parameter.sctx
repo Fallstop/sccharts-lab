@@ -1,0 +1,13 @@
+// A nested generic chart with a parameter of the same name gets its own argument.
+scchart G39 {
+  output int p
+  initial state S is G39O<3>(p)
+}
+scchart G39O<N is int> {
+  output int o
+  initial state T is G39I<5>(o)
+}
+scchart G39I<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,10 @@
+// ref C<i> g(p) with an input as the generic argument.
+scchart D05 {
+  input int i
+  output int p
+  ref D05G<i> g(p)
+}
+scchart D05G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

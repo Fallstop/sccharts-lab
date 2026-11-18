@@ -1,0 +1,52 @@
+{
+  "hash": "55ae75a6bd01ec97050ed564ee871d3615e4c41f",
+  "chart": "tests/engine/kieler/generics/probe-generic-nested-argument-shift.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "4:22 The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: q\nType mismatch! Generic parameter W cannot take a reference that is not a type.",
+    "4:27 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@75ab9776{file:///tmp/sccharts-oracle-uWnO0G/m97/probe-generic-nested-argument-shift.sctx#//@rootStates.0/@regions.0/@states.0/@reference/@genericParameters.0/@expression}' must be set",
+    "8:22 The referencing binding is erroneous!\nThere is no parameter given for generic parameter declaration of N.",
+    "mismatched input '<' expecting '>'",
+    "Couldn't resolve reference to ValuedObject 'B06Box'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "mismatched input '<' expecting '>'",
+      "line": 4,
+      "column": 33,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax"
+    },
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'B06Box'.",
+      "line": 4,
+      "column": 27,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: q\nType mismatch! Generic parameter W cannot take a reference that is not a type.",
+      "line": 4,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: q\nType mismatch! Generic parameter W cannot take a reference that is not a type."
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@75ab9776{file:///tmp/sccharts-oracle-uWnO0G/m97/probe-generic-nested-argument-shift.sctx#//@rootStates.0/@regions.0/@states.0/@reference/@genericParameters.0/@expression}' must be set",
+      "line": 4,
+      "column": 27,
+      "code": "org.eclipse.emf.ecore.1"
+    },
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nThere is no parameter given for generic parameter declaration of N.",
+      "line": 8,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nThere is no parameter given for generic parameter declaration of N."
+    }
+  ],
+  "ticks": []
+}

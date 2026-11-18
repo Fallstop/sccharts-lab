@@ -1,0 +1,10 @@
+// A generic parameter is never bound by name: a variable N of the referencing chart does not count.
+scchart A20 {
+  output int o
+  int N = 7
+  initial state S is A20G
+}
+scchart A20G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

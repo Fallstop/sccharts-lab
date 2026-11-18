@@ -1,0 +1,9 @@
+// A value parameter in print in a referenced generic chart: not replaced.
+scchart G20b {
+  output int p
+  initial state S is G20bG<3>(p)
+}
+scchart G20bG<N is int> {
+  output int o = 0
+  initial state A do o += N; print("v", N) go to A
+}

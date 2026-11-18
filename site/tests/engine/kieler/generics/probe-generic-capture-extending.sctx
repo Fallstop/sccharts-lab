@@ -1,0 +1,16 @@
+// The nested chart inherits the local N from a base chart: taken for the enclosing chart's parameter too.
+scchart G40 {
+  output int p
+  initial state S is G40O<3>(p)
+}
+scchart G40O<N is int> {
+  output int o
+  initial state T is G40X(o)
+}
+scchart G40X extends G40B {
+}
+scchart G40B {
+  output int o = 0
+  int N = 100
+  initial state A do o += N go to A
+}

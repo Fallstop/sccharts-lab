@@ -1,0 +1,9 @@
+// extends Base<int>: the base chart's input and output of type T become plain variables, the input is not read from
+// the environment.
+scchart Y03 extends Y03B<int> {
+}
+scchart Y03B<T is primitive> {
+  input primitive T x
+  output primitive T y
+  initial state A do y += x go to A
+}

@@ -1,0 +1,10 @@
+// A generic chart used as a class: its method uses the value parameter.
+scchart D04 {
+  output int p
+  ref D04G<3> g
+  initial state A do g.bump(); p = g.n go to A
+}
+scchart D04G<N is int> {
+  int n = 0
+  method void bump() { n += N }
+}

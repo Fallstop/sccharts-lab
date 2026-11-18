@@ -1,0 +1,8 @@
+// extends Base(5, 7) binds a literal to the output, which the base chart writes: KIELER's compiler crashes.
+scchart G24 extends G24B(5, 7) {
+}
+scchart G24B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

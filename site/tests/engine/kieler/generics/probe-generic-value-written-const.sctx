@@ -1,0 +1,11 @@
+// The chart assigns its value parameter, which stands for a constant: "Cannot replace left hand side of assignment
+// by a value."
+scchart K14 {
+  const int K = 4
+  output int p
+  initial state S is K14G<K>(p)
+}
+scchart K14G<N is int> {
+  output int o = 0
+  initial state A do o += N; N += 1 go to A
+}

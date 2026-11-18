@@ -1,0 +1,8 @@
+// pre(B) with the literal true given through extends.
+scchart N08 extends N08G<true> {
+}
+scchart N08G<B is bool> {
+  output int o
+  initial state A if pre(B) do o += 1 go to A
+  do o += 10 go to A
+}

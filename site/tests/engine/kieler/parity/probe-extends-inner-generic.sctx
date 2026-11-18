@@ -1,0 +1,10 @@
+// An inner state extends a generic chart (state T extends B<3>(p)).
+scchart I05 {
+  output int p
+  initial state T extends I05B<3>(p) {
+  }
+}
+scchart I05B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

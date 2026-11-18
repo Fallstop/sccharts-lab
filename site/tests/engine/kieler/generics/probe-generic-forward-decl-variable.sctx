@@ -1,0 +1,13 @@
+// The same after the variable (ref Inner g<M>): replaced.
+scchart D06b {
+  output int p
+  initial state S is D06bM<4>(p)
+}
+scchart D06bM<M is int> {
+  output int o
+  ref D06bG g<M>(o)
+}
+scchart D06bG<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,8 @@
+// extends Base<pure>: the variable of type T would be pure.
+scchart H12 extends H12B<pure> {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart H12B<T is primitive> {
+  primitive T x
+}

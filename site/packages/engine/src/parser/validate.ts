@@ -8,11 +8,12 @@
 
 import { importTargets } from './imports'
 import type {
-    Declaration, Diagnostic, Effect, Equation, Expression, LocalAction, Pragma, Program, Reference, Region, ScopeCall, SclStatement, Span,
-    State, Transition, ValuedObject,
+    Declaration, Diagnostic, Effect, Equation, Expression, GenericArgument, LocalAction, Pragma, Program, Reference, Region, ScopeCall,
+    SclStatement, Span, State, Transition, ValuedObject,
 } from '../types'
 import type { ModelIndex, VOEntry } from './resolve'
 import { lowermost } from './resolve'
+import { genericBindings, inheritedReferences, interfaceOf, visibleInheritedRegions } from './generics'
 import { groupSpans, referenceName } from './parser'
 
 type Severity = Diagnostic['severity']
@@ -246,8 +247,33 @@ class Validator {
                     repl.errors.push(`Methods with the same signature is already inherited (${signature(d)}). Mark this declaration as override (keyword) to replace previous definitions. Note that method overloading is currently only supported for parameters of different length, not type.`)
                 }
                 if (r.override) {
-                    if (returnType(d) !== returnType(r)) repl.errors.push(`Overriding methods must not declare a different return type (${returnType(d)} vs. ${returnType(r)}).`)
-                    if ((d.parameters?.length ?? 0) !== (r.parameters?.length ?? 0)) repl.errors.push(`Overriding methods must not declare a parameter with a different length (${d.parameters?.length ?? 0} vs. ${r.parameters?.length ?? 0}).`)
+                    // The type a base chart's generic type parameter was given on the way to this state
+                    // (SCChartsGenericTypeExtensions.inferGenericType: the first base reference to that chart).
+                    const inferred = (parameter: string | undefined): string | undefined => {
+                        const i = base.genericParameterDeclarations?.findIndex(g => g.valuedObject.id === parameter) ?? -1
+                        const ref = i < 0 ? undefined : levelled.find(x => targetOf(x.call) === base)?.call
+                        return ref?.genericArguments?.[i]?.valueType
+                    }
+                    if (returnType(d) !== returnType(r)) {
+                        if (returnType(d) === 'primitive') {
+                            const actual = inferred(d.returnParameter)
+                            if (!actual) repl.errors.push(`Overriding methods must not declare a different return type (${returnType(d)} vs. ${returnType(r)}). Generic types must be kept generic until concretized.`)
+                            else if (actual !== returnType(r)) repl.errors.push(`Overriding methods must not declare a different return type than the given generic type argument (${actual} vs. ${returnType(r)}).`)
+                        } else repl.errors.push(`Overriding methods must not declare a different return type (${returnType(d)} vs. ${returnType(r)}).`)
+                    }
+                    const oPs = d.parameters ?? []
+                    const rPs = r.parameters ?? []
+                    if (oPs.length !== rPs.length) repl.errors.push(`Overriding methods must not declare a parameter with a different length (${oPs.length} vs. ${rPs.length}).`)
+                    else {
+                        // A parameter of a generic type (`primitive T v`) may be overridden with the type T was given.
+                        oPs.forEach((oP, i) => {
+                            const rP = rPs[i]
+                            if (oP.declKind !== 'primitive' || rP.declKind !== 'variable') return
+                            const actual = inferred(oP.referenceParameter)
+                            if (!actual) repl.errors.push(`Overriding methods must not declare a parameter with a different type (index ${i}). Generic types must be kept generic until concretized.`)
+                            else if (actual !== rP.type) repl.errors.push(`Overriding methods must not declare a different return type than the given generic type argument (index ${i}: ${actual} vs. ${rP.type}).`)
+                        })
+                    }
                 }
                 repl.overriding = true
             }
@@ -424,9 +450,64 @@ class Validator {
                     'There is an inherited region with the same name, you may use the override keyword.', undefined, [region.id])
             }
         }
+        if (region.reference && !region.reference.super) this.checkRegionReference(region, parent)
         for (const eq of region.equations) this.equation(eq)
         if (region.regionType === 'dataflow') this.checkDataflowVectorAssignment(region)
         for (const s of region.states) this.state(s)
+    }
+
+    /**
+     * `region Q is R(args)` (KIELER's checkScopeCall with createBindings for a region): what the inherited region R
+     * names is its interface, in the order it is first named. It is bound to the arguments and otherwise to the
+     * variable of the same name around Q: a declaration of R's own, or a generic parameter of the base chart, has none.
+     */
+    private checkRegionReference(region: Region, parent: State) {
+        const call = region.reference!
+        let holder: State | undefined = parent
+        while (holder && !holder.baseStates?.length) {
+            const r = this.index.parentRegion.get(holder)
+            holder = r ? this.index.parentState.get(r) : undefined
+        }
+        const target = holder ? this.allInherited(holder).flatMap(s => s.regions).find(r => r.name === call.target) : undefined
+        if (!target) return
+        const targets: ValuedObject[] = []
+        const visit = (value: unknown) => {
+            if (Array.isArray(value)) return value.forEach(visit)
+            if (!value || typeof value !== 'object') return
+            const node = value as { kind?: string; decl?: string }
+            if (node.kind === 'ref' && node.decl) {
+                const vo = this.vo(node.decl)?.vo
+                if (vo && !targets.includes(vo)) targets.push(vo)
+            }
+            for (const [key, child] of Object.entries(value)) if (key !== 'span' && key !== 'nameSpan') visit(child)
+        }
+        visit(target)
+        const errors: string[] = []
+        const bound = new Set<ValuedObject>()
+        let ptr = 0
+        for (const p of call.parameters) {
+            if (p.binding !== undefined) {
+                const i = targets.findIndex(v => v.name === p.binding)
+                if (i < 0) {
+                    errors.push(`Explicit binding could not be resolved! The valued object is unknown! ${p.binding}`)
+                    continue
+                }
+                ptr = i
+            }
+            if (ptr > targets.length - 1) {
+                errors.push(`A Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced scope: ${this.text(p.expression.span)}`)
+                continue
+            }
+            bound.add(targets[ptr])
+            ptr++
+        }
+        const names = this.nameMap(region)
+        for (const vo of targets) if (!bound.has(vo) && !names.has(vo.name)) errors.push(`Valued object in the referenced scope was not bound properly: ${vo.name}`)
+        if (errors.length) {
+            this.add('error', 'binding-error', call.targetSpan ?? call.span, `The region \`${call.target}\` cannot be used here: ${errors[0]}`,
+                'The referencing binding is erroneous!\n' + errors.join('\n'),
+                `\`region ... is ${call.target}\` copies the inherited region, and every name the copy uses must be a variable of this chart. A variable declared inside \`${call.target}\` and a generic parameter of its chart are not: write \`region is super.${call.target}\` inside an \`override region\` instead.`, [region.id])
+        }
     }
 
     private inheritedRegions(state: State, directOverride: boolean): Region[] {
@@ -547,6 +628,8 @@ class Validator {
                     'The range of the counter variable of the for region is not determinable. The array cardinalities of you array must be an int or a const int.',
                     `\`for ${loop.variable} : ${loop.from.name}\` loops over the indices of the array \`${loop.from.name}\`, whose size must be a number or a \`const int\`. To count from 0, write \`for ${loop.variable} : 0 to 3\`.`, [region.id])
             }
+        } else if (loop.from.kind === 'int' && loop.to?.kind === 'ref' && this.vo(loop.to.decl)?.generic) {
+            // A generic parameter: what it stands for is known when the chart is used (passes/inheritance.ts).
         } else if (loop.from.kind === 'int' && loop.to?.kind !== 'int') {
             // Reported by the KIELER fork's For processor (KIELER itself fails on this range).
             this.add('error', 'for-range', loop.to?.span ?? loop.span, loop.to ? `The end of a for range must be a number` : 'This for range has a start but no end',
@@ -700,8 +783,16 @@ class Validator {
             }
         }
         if (target.kind !== 'state' || d.annotations.some(a => a.name === 'noBindingCheck')) return
+        for (const vo of d.valuedObjects) {
+            if (vo.genericArguments?.length && d.genericArguments?.length) {
+                this.add('error', 'generic-arguments-twice', vo.genericArguments[0].span, `\`${vo.name}\` has generic arguments of its own, and so has the declaration`, 'Cannot mix generic parameters in variables and declaration',
+                    `Write the arguments once: after the chart (\`ref ${d.referenceTarget}<...> ${vo.name}\`) for all variables, or after each variable (\`ref ${d.referenceTarget} ${vo.name}<...>\`).`)
+            }
+        }
         if (d.input) {
             for (const vo of d.valuedObjects) if (vo.parameters?.length) this.add('error', 'input-reference-parameters', vo.span, 'An input reference cannot have parameters', 'An input reference must not have parameters!')
+            if (d.genericArguments?.length) this.add('error', 'input-reference-parameters', d.span, 'An input reference cannot have generic arguments', 'An input reference must not have generic parameters!')
+            for (const vo of d.valuedObjects) if (vo.genericArguments?.length) this.add('error', 'input-reference-parameters', vo.span, 'An input reference cannot have generic arguments', 'An input reference must not have generic parameters!')
             return
         }
         // Valued objects instantiated by dataflow regions are not checked.
@@ -721,13 +812,14 @@ class Validator {
                 'KIELER treats the instances a dataflow region uses differently from the others. Declare them separately (one `ref` line for the dataflow instances, one for the rest).')
         }
         const first = check[0]
-        const each = usedInDataflow.size > 0 || (d.valuedObjects.length > 1 && d.valuedObjects.some(v => v.parameters?.length))
+        const each = usedInDataflow.size > 0 || (d.valuedObjects.length > 1 && d.valuedObjects.some(v => v.parameters?.length || v.genericArguments?.length))
         for (const vo of each ? check : [first]) {
-            const errors = this.bindingErrors(target, vo.parameters ?? [], owner)
+            const generics = vo.genericArguments?.length ? vo.genericArguments : d.genericArguments
+            const errors = [...this.bindingErrors(target, vo.parameters ?? [], owner, undefined, undefined, generics), ...this.genericErrors(target, generics)]
             if (errors.length) {
                 // KIELER marks the referenced chart's name (referenceDeclaration_Reference).
                 this.add('error', 'binding-error', d.referenceSpan ?? vo.span, `The bindings of \`${vo.name}\` to \`${target.name}\` are wrong: ${errors[0]}`,
-                    'The referencing binding is erroneous!\n' + errors.join('\n'), errors.length > 1 ? errors.slice(1).join(' ') : undefined)
+                    'The referencing binding is erroneous!\n' + errors.join('\n'), genericHint(errors[0]) ?? (errors.length > 1 ? errors.slice(1).join(' ') : undefined))
             }
         }
     }
@@ -738,10 +830,21 @@ class Validator {
         const call = state.reference!
         if (call.super) {
             if (call.parameters.length) this.add('error', 'super-reference-parameters', call.span, 'A reference to a super scope cannot have parameters', 'A reference to a super scope must not have parameters!')
+            if (call.genericArguments?.length) this.add('error', 'super-reference-parameters', call.span, 'A reference to a super scope cannot have generic arguments', 'A reference to a super scope must not have generic parameters!')
             return
         }
         const target = this.index.scopeTargets.get(call)
-        if (!target) return
+        if (!target) {
+            // A chart type parameter without a chart (`<X>`): nothing to bind, and no generic arguments to give.
+            if (call.targetParameter) {
+                const errors = this.genericErrors(undefined, call.genericArguments)
+                if (errors.length) {
+                    this.add('error', 'binding-error', call.span, `The bindings of \`${state.name}\` to \`${call.target}\` are wrong: ${errors[0]}`,
+                        'The referencing binding is erroneous!\n' + errors.join('\n'), genericHint(errors[0]), [state.id])
+                }
+            }
+            return
+        }
         const parentRegion = this.index.parentRegion.get(state)
         for (const p of call.parameters) {
             if (p.expression.kind === 'this') {
@@ -753,10 +856,10 @@ class Validator {
         }
         // An explicit binding that does not resolve is reported by the linker only.
         if (call.parameters.some(p => p.binding !== undefined && !p.bindingDecl)) return
-        const errors = this.bindingErrors(target, call.parameters, parentRegion ? state : undefined, state)
+        const errors = [...this.bindingErrors(target, call.parameters, parentRegion ? state : undefined, state, undefined, call.genericArguments), ...this.genericErrors(target, call.genericArguments)]
         if (errors.length) {
             this.add('error', 'binding-error', call.span, `The bindings of \`${state.name}\` to \`${target.name}\` are wrong: ${errors[0]}`,
-                'The referencing binding is erroneous!\n' + errors.join('\n'), errors.length > 1 ? errors.slice(1).join(' ') : undefined, [state.id])
+                'The referencing binding is erroneous!\n' + errors.join('\n'), genericHint(errors[0]) ?? (errors.length > 1 ? errors.slice(1).join(' ') : undefined), [state.id])
         } else {
             const implicit = this.implicitBindings(target, call.parameters)
             if (implicit.length) {
@@ -778,17 +881,23 @@ class Validator {
         return region.states.filter(s => s.final)
     }
 
-    /** Interface of a referenced chart in binding order: its inputs and outputs, then inherited ones. */
+    /** Interface of a referenced chart in binding order (parser/generics.ts interfaceOf). */
     private interfaceOf(target: State): ValuedObject[] {
-        const out: ValuedObject[] = []
-        for (const d of target.declarations) if (d.input || d.output) out.push(...d.valuedObjects)
-        for (const base of this.allInherited(target)) for (const d of base.declarations) if ((d.input || d.output) && d.access !== 'private') out.push(...d.valuedObjects)
-        return out
+        return interfaceOf(target, this.index)
+    }
+
+    /**
+     * The messages of KIELER's createGenericParameterBindings for `<...>` against the generic parameters of the
+     * chart it is given to (structure.md S-73).
+     */
+    private genericErrors(target: State | undefined, args: GenericArgument[] | undefined): string[] {
+        return genericBindings(target?.genericParameterDeclarations ?? [], args ?? [], this.index).flatMap(b => b.errors)
     }
 
     /** KIELER's createBindings (SCChartsReferenceExtensions) error messages. */
-    private bindingErrors(target: State, parameters: State['reference'] extends infer _ ? NonNullable<State['reference']>['parameters'] : never, scopeState: State | Region | undefined, referencing?: State, parentNames?: Map<string, ValuedObject>): string[] {
+    private bindingErrors(target: State, parameters: State['reference'] extends infer _ ? NonNullable<State['reference']>['parameters'] : never, scopeState: State | Region | undefined, referencing?: State, parentNames?: Map<string, ValuedObject>, generics?: GenericArgument[]): string[] {
         const errors: string[] = []
+        this.bindingGenerics = { target, args: generics ?? [] }
         const targetVOs = this.interfaceOf(target)
         const bound = new Set<ValuedObject>()
         let ptr = 0
@@ -863,23 +972,55 @@ class Validator {
         return map
     }
 
+    /** The reference whose bindings are being checked: its chart and generic arguments (for a `primitive T` formal). */
+    private bindingGenerics: { target: State; args: GenericArgument[] } | undefined
+
     private typeCompatibility(source: Expression, target: ValuedObject): string[] {
+        const out: string[] = []
         if (source.kind === 'ref') {
             const sv = this.vo(source.decl)?.vo
             if (!sv) return []
             const isArrayRef = source.indices.length > 0
             if (isArrayRef) {
-                if (!sv.cardinalities.length) return [`It is not possible to bind an array reference of the scalar ${sv.name}`]
+                if (!sv.cardinalities.length) out.push(`It is not possible to bind an array reference of the scalar ${sv.name}`)
             } else if (sv.cardinalities.length && !target.cardinalities.length) {
-                return [`It is not possible to bind array ${sv.name} to scalar ${target.name}!`]
+                out.push(`It is not possible to bind array ${sv.name} to scalar ${target.name}!`)
             }
-            return []
-        }
-        if (isLiteral(source)) {
+        } else if (isLiteral(source)) {
             const decl = this.vo(target.id)?.decl
-            if (decl?.declKind === 'variable' && decl.output) return [`It is not possible to bind the literal ${this.text(source.span)} \n                    to the output ${target.name} !`]
+            if (decl?.declKind === 'variable' && decl.output) out.push(`It is not possible to bind the literal ${this.text(source.span)} \n                    to the output ${target.name} !`)
         }
-        return []
+        const problem = this.primitiveFormalProblem(source, target)
+        if (problem) out.push(problem)
+        return out
+    }
+
+    /**
+     * An input or output declared with a generic type (`input primitive T x`), SCChartsTypeExtensions
+     * checkForSubtypeProblem(ReferenceDeclaration, ...): only a literal of the type given for `T` can be bound to it,
+     * never a variable (KIELER compares the declarations, and a variable's is not a generic one).
+     */
+    private primitiveFormalProblem(source: Expression, target: ValuedObject): string | undefined {
+        const decl = this.vo(target.id)?.decl
+        if (decl?.declKind !== 'primitive') return undefined
+        const type = decl.referenceTarget ?? ''
+        if (source.kind === 'ref') {
+            const entry = this.vo(source.decl)
+            if (!entry || entry.generic) return undefined
+            const sd = entry.decl
+            if (!sd) return undefined
+            if (sd.declKind === 'reference' || sd.declKind === 'primitive') return 'Cannot substitute type ValuedObjectImpl with ValuedObjectImpl'
+            if (sd.declKind === 'class' || sd.declKind === 'struct') return `Cannot substitute reference of type ${type} by native class of type ${sd.className ?? ''}`
+            return `Cannot substitute reference of type ${type} by valued object of type ${sd.declKind === 'variable' ? sd.type ?? 'pure' : 'DeclarationImpl'}`
+        }
+        if (!isLiteral(source) || source.kind === 'vector') return undefined
+        // The type given for T where the chart is referenced.
+        const owner = this.bindingGenerics?.target
+        const position = owner?.genericParameterDeclarations?.findIndex(g => g.valuedObject.id === decl.referenceParameter) ?? -1
+        const actual = position >= 0 ? this.bindingGenerics?.args[position]?.valueType : undefined
+        if (!actual) return `Cannot determine type of ${type}`
+        const given = source.kind === 'bool' || source.kind === 'int' || source.kind === 'float' || source.kind === 'string' ? source.kind : undefined
+        return given === actual ? undefined : `Type of literal value ${given} does not match generic type argument ${actual} for ${type}`
     }
 
     /**
@@ -902,7 +1043,7 @@ class Validator {
             const target = this.index.scopeTargets.get(call)
             if (!target || target === state) continue
             if (call.parameters.some(p => p.binding !== undefined && !p.bindingDecl)) continue
-            const errors = this.bindingErrors(target, call.parameters, undefined, undefined, names)
+            const errors = [...this.bindingErrors(target, call.parameters, undefined, undefined, names, call.genericArguments), ...this.genericErrors(target, call.genericArguments)]
             if (!errors.length) continue
             this.add('error', 'binding-error', call.span, `\`${state.name}\` extends \`${target.name}\` without binding all of its inputs and outputs: ${errors[0]}`,
                 'The binding of inherited variables is erroneous!\n' + errors.join('\n'),
@@ -910,7 +1051,67 @@ class Validator {
         }
     }
 
+    /**
+     * KIELER's checkInheritedVONameClash and checkInheritedRegionNameClash: a name two base references give the state
+     * (also one chart reached through two of them: a diamond), and a region name two base charts have.
+     */
+    private checkInheritanceClashes(state: State) {
+        const direct = state.baseStates ?? []
+        const refs = inheritedReferences(state, this.index)
+        const plain = (s: State) => s.declarations.filter(d => d.declKind !== 'method' && d.access !== 'private').flatMap(d => d.valuedObjects).map(v => v.name)
+        const byName = new Map<string, typeof refs>()
+        for (const r of refs) for (const name of new Set(plain(r.target))) byName.set(name, [...(byName.get(name) ?? []), r])
+        // What each of the state's own base references brings in from further up.
+        const indirect = direct.map(b => {
+            const target = this.index.scopeTargets.get(b)
+            return new Set(target ? this.allInherited(target).flatMap(plain) : [])
+        })
+        for (const [name, list] of byName) {
+            if (list.length < 2) continue
+            const marked = new Set<number>()
+            const kieler = `There is a name clash between declared valued object in inheritance hierarchy. Valued object with name ${name} is declared multiple times (${list.map(r => r.target.name).join(', ')}).`
+            const mark = (i: number) => {
+                if (i < 0 || marked.has(i)) return
+                marked.add(i)
+                const once = new Set(list.map(r => r.target)).size === 1
+                this.add('error', 'inheritance-clash', direct[i].targetSpan ?? direct[i].span,
+                    once ? `\`${list[0].target.name}\` is inherited along two paths, so its \`${name}\` would be declared twice` : `\`${name}\` is declared in ${[...new Set(list.map(r => `\`${r.target.name}\``))].join(' and ')}, which this chart both inherits`,
+                    kieler, once ? `KIELER does not merge a base chart that is reached twice. Extend \`${list[0].target.name}\` along one path only.` : 'Rename one of them, or make one private.', [state.id])
+            }
+            for (const r of list) {
+                if (r.holder === state) mark(direct.indexOf(r.ref))
+                else indirect.forEach((names, i) => { if (names.has(name)) mark(i) })
+            }
+        }
+        // Regions: the visible inherited regions of one name in different charts.
+        const find = (name: string) => this.index.charts.find(c => c.name === name)
+        const owners = new Map<string, State[]>()
+        for (const { base, region } of visibleInheritedRegions(state, find)) {
+            if (!region.name) continue
+            const list = owners.get(region.name) ?? []
+            if (!list.includes(base)) list.push(base)
+            owners.set(region.name, list)
+        }
+        const bases = direct.map(b => this.index.scopeTargets.get(b))
+        for (const [name, list] of owners) {
+            if (list.length < 2) continue
+            const kieler = `There is a name clash between regions IDs in inheritance hierarchy. Region with name ${name} is declared multiple times (${list.map(s => s.name).join(', ')}).`
+            const marked = new Set<number>()
+            const mark = (i: number) => {
+                if (i < 0 || marked.has(i)) return
+                marked.add(i)
+                this.add('error', 'inheritance-clash', direct[i].targetSpan ?? direct[i].span, `The region \`${name}\` exists in ${list.map(s => `\`${s.name}\``).join(' and ')}, which this chart both inherits`,
+                    kieler, 'Rename one of the regions, or override it in one of the charts.', [state.id])
+            }
+            for (const owner of list) {
+                if (bases.includes(owner)) mark(bases.indexOf(owner))
+                else bases.forEach((b, i) => { if (b && visibleInheritedRegions(b, find).some(x => x.region.name === name)) mark(i) })
+            }
+        }
+    }
+
     private checkInheritance(state: State) {
+        this.checkInheritanceClashes(state)
         // Cycles in the inheritance hierarchy (KIELER's getHierarchyCycles: a depth-first search from this state).
         const refs = state.baseStates ?? []
         const cycles = new Map<State, Set<number>>()
@@ -1326,6 +1527,18 @@ class UnresolvedTarget {}
 
 /** Identity of the valued object a reference names: its id, or one shared key for every unresolved reference (in
  *  KIELER they all have a null valued object, so they compare equal). */
+/** A hint for KIELER's generic binding messages (structure.md S-73). */
+function genericHint(message: string): string | undefined {
+    if (message.startsWith('There is no parameter given for generic parameter')) return 'The chart has generic parameters (`scchart C<N is int>`): give a value for each, as in `is C<4>(...)` or `ref C<4> c`.'
+    if (message.startsWith('There is no declaration for the given generic parameter')) return 'There are more generic arguments here than the chart has generic parameters.'
+    if (message.includes('cannot take literal of type UNKNOWN')) return 'KIELER cannot pass a string literal as a generic argument. Put the text into a string variable and pass the variable.'
+    if (message.startsWith('Type mismatch!') || message.startsWith('Expressions as generic parameters')) return 'A value parameter (`N is int`) takes a literal or a variable of that type; a type parameter (`T is primitive`) takes a type such as `int`; a chart parameter takes a chart.'
+    if (message.startsWith('Generic parameter') && message.includes('primitive type restriction')) return 'A primitive type parameter takes `int`, `bool`, `float` or `pure`, written out: it cannot be passed on from another generic parameter.'
+    if (message.startsWith('Cannot substitute reference of type')) return 'An input or output declared with a generic type (`input primitive T x`) cannot be bound to a variable: KIELER only accepts a literal for it. Declare the interface with a concrete type instead.'
+    if (message.includes('in not a subtype of') || message.includes('in not a valid subtype of')) return 'The chart given for a chart parameter must be the parameter\'s chart or extend it, without adding inputs or outputs.'
+    return undefined
+}
+
 function voKey(r: Reference): string {
     return r.decl ?? '?'
 }

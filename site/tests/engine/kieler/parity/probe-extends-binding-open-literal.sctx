@@ -1,0 +1,9 @@
+// extends Base(5) leaves the output o open: the same crash.
+scchart GExtBinding3 extends GBaseB3(5) {
+  input int i
+}
+scchart GBaseB3 {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

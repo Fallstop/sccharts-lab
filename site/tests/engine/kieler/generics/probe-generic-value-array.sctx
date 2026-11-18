@@ -1,0 +1,10 @@
+// A whole array as the generic argument of an int parameter: accepted, and the chart indexes the parameter (N[1]).
+scchart A07c {
+  int a[2] = {5, 7}
+  output int p
+  initial state S is A07cG<a>(p)
+}
+scchart A07cG<N is int> {
+  output int o = 0
+  initial state A do o += N[1] go to A
+}

@@ -1,0 +1,9 @@
+// A float literal for a float parameter.
+scchart B00float {
+  output float p
+  initial state S is B00Gfloat<1.5>(p)
+}
+scchart B00Gfloat<V is float> {
+  output float o
+  initial state A do o = V go to A
+}

@@ -470,6 +470,7 @@ A chart, a state or a superstate. Its most used members:
 | `regions` | `Region[]` | Its regions. Empty for a simple state. States written directly inside a superstate form one region. |
 | `transitions` | `Transition[]` | Its outgoing transitions, in priority order. |
 | `reference?` | `ScopeCall` | `state S is Other(...)`: the chart it is an instance of. |
+| `genericParameterDeclarations?` | `GenericParameterDeclaration[]` | A chart's generic parameters: `scchart C<N is int, T is primitive>`. |
 | `doc?` | `string` | Its `/** ... */` comment. |
 | `nameSpan` | `Span` | Where its name is, for renaming and go-to-definition. |
 
@@ -502,6 +503,38 @@ A chart, a state or a superstate. Its most used members:
 | `effects` | `Effect[]` | Its effects. |
 | `history?` | `'reset' \| 'shallow' \| 'deep'` | A history transition. |
 | `label?` | `string` | Its display label. |
+
+### `GenericParameterDeclaration`
+
+A generic parameter of a chart: `scchart C<N is int, T is primitive, W is Worker, V is ref Worker, X>`. `N` is a
+value parameter (a name the chart uses like a variable), `T` a primitive type parameter (`primitive T x`), `W`
+and `X` are chart type parameters (`state S is W(...)`, `ref W w`), and `V` is an instance parameter
+(`V.method()`).
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `kind` | `'genericParameter'` | |
+| `valuedObject` | `ValuedObject` | The parameter as a declared name: references to it inside the chart resolve to its id. |
+| `valueType?` | `ValueType \| 'primitive'` | `is int`, `is bool` and so on (a value parameter), or `is primitive` (a primitive type parameter). |
+| `typeName?` | `string` | `is Chart` or `is ref Chart`: the chart's name. |
+| `typeSpan?` | `Span` | Where that name is. |
+| `reference?` | `boolean` | `is ref Chart`: the argument is an instance (`ref Chart x`), not a chart. |
+| `annotations` | `Annotation[]` | Its annotations. |
+
+### `GenericArgument`
+
+A generic argument: `<4>`, `<int>`, `<Worker>`, `<Box<4>>`, `<x>`, `<a[1]>`. A `ScopeCall` (`is C<4>`,
+`extends C<4>`), a `ref` declaration (`ref C<4> g`) and its variables (`ref C g<4>`) have them in
+`genericArguments`, one per entry of `genericParameters` (the same arguments as written).
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `kind` | `'genericArgument'` | |
+| `text` | `string` | The argument as written. |
+| `valueType?` | `ValueType` | A value type: `<int>`. |
+| `expression?` | `Expression` | A literal, or a reference to a variable or to a generic parameter of the chart around it. |
+| `typeName?` | `string` | A chart by name (`Worker`, `Box<4>`). A bare name is parsed as both a type and a reference, and name resolution keeps the one it is. |
+| `typeArguments?` | `GenericArgument[]` | The chart's own generic arguments: the `<4>` of `Box<4>`. |
 
 ### Other node types
 

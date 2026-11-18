@@ -31,6 +31,8 @@ export function copyVar(v: CVar): CVar {
     c.priorities = v.priorities
     c.scheduleOf = v.scheduleOf
     if (v.instance) c.instance = { ...v.instance, args: v.instance.args.map(a => ({ ...a, expr: copyExpr(a.expr) })) }
+    c.typeParam = v.typeParam
+    c.generic = v.generic
     return c
 }
 

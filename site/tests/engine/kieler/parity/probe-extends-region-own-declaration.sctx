@@ -1,0 +1,12 @@
+// region Q is R where R declares a variable: the copy's name for it has nothing to bind to.
+scchart R07 extends R07B {
+  region Q is R
+}
+scchart R07B {
+  output int o
+  region R {
+    int k = 1
+    initial state S
+    do o += k; k += 1 go to S
+  }
+}

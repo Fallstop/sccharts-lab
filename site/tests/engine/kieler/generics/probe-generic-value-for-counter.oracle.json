@@ -1,0 +1,23 @@
+{
+  "hash": "3d50a479d6968c403bdab75a614e2aeb3e4f791b",
+  "chart": "tests/engine/kieler/generics/probe-generic-value-for-counter.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "5:24 The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take valued object declared with type null.",
+    "There are binding errors in a referenced state!\nType mismatch! Generic parameter N of type int cannot take valued object declared with type null.",
+    "The valued object reference points to a valued object (N) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take valued object declared with type null.",
+      "line": 5,
+      "column": 24,
+      "code": "The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take valued object declared with type null."
+    }
+  ],
+  "ticks": []
+}

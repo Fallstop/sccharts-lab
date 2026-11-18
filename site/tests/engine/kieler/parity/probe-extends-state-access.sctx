@@ -1,0 +1,12 @@
+// state(S) in a method of the base chart: the flag is made in the base chart, which is not compiled.
+scchart H03 extends H03G {
+}
+scchart H03G {
+  output int o = 0
+  method bool inB() { return state(R.B) }
+  region R {
+    initial state A do o += 1 go to B
+    state B do o += 100 go to A
+  }
+  region Watch { initial state W if inB() do o += 1000 go to W }
+}

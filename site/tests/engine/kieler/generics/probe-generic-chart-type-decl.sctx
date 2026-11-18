@@ -1,0 +1,17 @@
+// <W is Worker> with ref W w: the instance is of the chart given for W, a chart that extends Worker.
+scchart GRefChartDecl {
+  output int p
+  initial state S is GHolderD<GWorkerB>(p)
+}
+scchart GHolderD<W is GWorkerA> {
+  output int q
+  ref W w
+  dataflow { q = w.o }
+}
+scchart GWorkerA {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart GWorkerB extends GWorkerA {
+  region R2 { initial state B do o += 10 go to B }
+}

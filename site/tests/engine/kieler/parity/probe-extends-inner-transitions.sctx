@@ -1,0 +1,16 @@
+// An inner state that extends a chart is left and entered again: the inherited region restarts.
+scchart I04 {
+  output int p
+  initial state T extends I04B(p) {
+  }
+  if p >= 2 go to U
+  state U
+  do p = 100 go to T
+}
+scchart I04B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

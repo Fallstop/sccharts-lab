@@ -1,0 +1,12 @@
+// A value parameter in triggers, effects and the initial value of a local.
+scchart A10 {
+  output int p
+  initial state S is A10G<2>(p)
+}
+scchart A10G<N is int> {
+  output int o = 0
+  int k = N
+  initial state A if o < N + 1 do o += 1; k += N go to A
+  if o >= N do o = k go to B
+  state B
+}

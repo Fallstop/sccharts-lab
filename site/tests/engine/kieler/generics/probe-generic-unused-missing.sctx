@@ -1,0 +1,9 @@
+// A parameter the chart never names still needs an argument.
+scchart X40 {
+  output int p
+  initial state S is X40G(p)
+}
+scchart X40G<N is int> {
+  output int o = 0
+  initial state A do o += 1 go to A
+}

@@ -1,0 +1,11 @@
+// A value parameter in the value of a constant and in an array's initial values.
+scchart A10g {
+  output int p
+  initial state S is A10gG<3>(p)
+}
+scchart A10gG<N is int> {
+  const int K = N + 1
+  output int o = 0
+  int a[2] = {N, K}
+  initial state A do o += K + a[0] go to A
+}

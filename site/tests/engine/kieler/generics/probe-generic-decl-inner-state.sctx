@@ -1,0 +1,12 @@
+// A ref declaration with a generic argument in an inner state.
+scchart D10 {
+  output int p
+  initial state A {
+    ref D10G<2> g(p)
+    initial state X
+  }
+}
+scchart D10G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

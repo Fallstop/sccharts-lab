@@ -1,0 +1,15 @@
+// The captured local of probe-generic-capture is a variable that starts with the parameter's value: the chart can
+// write it.
+scchart G07 {
+  output int p
+  initial state S is G07O<3>(p)
+}
+scchart G07O<N is int> {
+  output int o
+  initial state T is G07I(o)
+}
+scchart G07I {
+  output int o = 0
+  int N = 100
+  initial state A do o += N; N += 1 go to A
+}

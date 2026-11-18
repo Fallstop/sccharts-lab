@@ -1,0 +1,11 @@
+// A declared instance of a generic chart that uses its parameter as a for-region range: not replaced there.
+scchart G22 {
+  output int p
+  ref G22G<3> g(p)
+}
+scchart G22G<N is int> {
+  output int o = 0
+  region R for i : 0 to N {
+    initial state A do o += i go to A
+  }
+}

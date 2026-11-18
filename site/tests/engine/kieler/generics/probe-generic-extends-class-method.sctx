@@ -1,0 +1,9 @@
+// Through extends, a parameter in a method of a class is replaced.
+scchart G19 extends G19B<3> {
+}
+scchart G19B<N is int> {
+  output int o = 0
+  class C { int v = 0
+    void add() { v += N } } c
+  initial state A do c.add(); o = c.v go to A
+}

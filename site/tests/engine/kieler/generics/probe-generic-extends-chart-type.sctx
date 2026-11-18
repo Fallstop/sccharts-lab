@@ -1,0 +1,15 @@
+// extends Base<Worker2> where the base chart has state S is W: the Inheritance processor does not put the chart in
+// ("Invalid reference W!").
+scchart C11 extends C11B<C11W2> {
+}
+scchart C11B<W is C11W> {
+  output int q
+  initial state S is W(q)
+}
+scchart C11W {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart C11W2 extends C11W {
+  region R2 { initial state B do o += 10 go to B }
+}

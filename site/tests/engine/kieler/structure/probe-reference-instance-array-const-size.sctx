@@ -1,0 +1,11 @@
+// An array of chart instances whose size is a constant.
+scchart M08 {
+  const int K = 2
+  output int p
+  ref M08C g[K]
+  initial state A do g[1].inc(); p = g[0].n + 10 * g[1].n go to A
+}
+scchart M08C {
+  int n = 0
+  method void inc() { n += 1 }
+}

@@ -1,0 +1,18 @@
+// A reference inside a referenced chart is bound by name to the outer chart's input, that is to what the input is
+// bound to (a), not to a variable of that name further out.
+scchart X06 {
+  output int p
+  int a = 3
+  int x = 50
+  initial state S is X06O(a to x, p to o)
+}
+scchart X06O {
+  input int x
+  output int o
+  initial state T is X06I
+}
+scchart X06I {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

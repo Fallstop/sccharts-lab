@@ -1,0 +1,17 @@
+// An instance of a subtype given for <V is ref Worker>: the override is called.
+scchart G13 {
+  output int p
+  ref G13W2 w
+  initial state S is G13H<w>(p)
+}
+scchart G13H<V is ref G13W> {
+  output int q
+  initial state A do V.inc(); q = V.n go to A
+}
+scchart G13W {
+  int n = 0
+  method void inc() { n += 1 }
+}
+scchart G13W2 extends G13W {
+  override method void inc() { n += 10 }
+}

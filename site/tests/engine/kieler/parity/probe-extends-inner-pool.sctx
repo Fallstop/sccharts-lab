@@ -1,0 +1,16 @@
+// The declarations an inner state inherits are locals: not in the data pool.
+scchart I10 {
+  output int p
+  int k = 50
+  initial state T extends I10B {
+    during do p = k
+  }
+}
+scchart I10B {
+  int k = 0
+  private int h = 1
+  region R {
+    initial state S
+    do k += h go to S
+  }
+}

@@ -1,0 +1,10 @@
+// A value parameter as an array index, read and written.
+scchart A25 {
+  output int p
+  initial state S is A25G<1>(p)
+}
+scchart A25G<N is int> {
+  output int o = 0
+  int a[3] = {10, 20, 30}
+  initial state A do o += a[N]; a[N] += 1 go to A
+}

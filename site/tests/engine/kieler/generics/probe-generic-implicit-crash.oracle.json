@@ -1,0 +1,27 @@
+{
+  "hash": "dcac4c93f7d22753d1d49e4cd70a43a6fe8a2979",
+  "chart": "tests/engine/kieler/generics/probe-generic-implicit-crash.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "java.lang.IllegalStateException: There is a matching valued object on the replacement stack for an implicitly bound variable ( N).However, the binding is not a valued object reference, so the type does not match.\njava.lang.IllegalStateException: There is a matching valued object on the replacement stack for an implicitly bound variable ( N).However, the binding is not a valued object reference, so the type does not match.\n\tde.cau.cs.kieler.sccharts.extensions.SCChartsReferenceExtensions.createBindings(SCChartsReferenceExtensions.java:247)\n\tde.cau.cs.kieler.sccharts.extensions.SCChartsReferenceExtensions.createBindings(SCChartsReferenceExtensions.java:134)\n\tde.cau.cs.kieler.sccharts.processors.Reference.expandReferencedScope(Reference.java:483)\n\tde.cau.cs.kieler.sccharts.processors.Reference.replaceValuedObjectReferencesInState(Reference.java:763)\n\tde.cau.cs.kieler.sccharts.processors.Reference.replaceValuedObjectReferences(Reference.java:732)\n\tde.cau.cs.kieler.sccharts.processors.Reference.replaceValuedObjectReferencesInRegion(Reference.java:799)\n\tde.cau.cs.kieler.sccharts.processors.Reference.replaceValuedObjectReferences(Reference.java:727)\n\tde.cau.cs.kieler.sccharts.processors.Reference.replaceValuedObjectReferencesInState(Reference.java:768)\n\tde.cau.cs.kieler.sccharts.processors.Reference.expandReferencedScope(Reference.java:526)\n\tde.cau.cs.kieler.sccharts.processors.Reference.expandRoot(Reference.java:379)\n\tde.cau.cs.kieler.sccharts.processors.Reference.process(Reference.java:295)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:304)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:777)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:256)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:210)\n\tde.cau.cs.kieler.language.server.kicool.CompilationThread.run(CompilationThread.java:46)"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Valued Objects are bound implicitly!\no, ",
+      "line": 5,
+      "column": 22,
+      "code": "Valued Objects are bound implicitly!\no, "
+    },
+    {
+      "severity": 2,
+      "message": "Valued Objects are bound implicitly!\no, ",
+      "line": 10,
+      "column": 22,
+      "code": "Valued Objects are bound implicitly!\no, "
+    }
+  ],
+  "ticks": []
+}

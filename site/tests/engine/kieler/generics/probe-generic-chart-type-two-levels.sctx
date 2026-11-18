@@ -1,0 +1,19 @@
+// A chart two levels below Worker given for <W is Worker>.
+scchart X26 {
+  output int p
+  initial state S is X26H<X26W2>(p)
+}
+scchart X26H<W is X26W> {
+  output int q
+  initial state S is W(q)
+}
+scchart X26W {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart X26W1 extends X26W {
+  region R1 { initial state B do o += 10 go to B }
+}
+scchart X26W2 extends X26W1 {
+  region R2 { initial state B do o += 100 go to B }
+}

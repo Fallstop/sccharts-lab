@@ -11,14 +11,17 @@
 //   with constant folding in scopes that declare constants, so constants never exist at run time.
 
 import type {
-    AssignOperator, Declaration, Diagnostic, Effect, Expression, LocalAction, Reference, Region, ScheduleRef, ScopeParameter, SclStatement, Span,
-    State, Transition, ValuedObject, ValueType,
+    AssignOperator, Declaration, Diagnostic, Effect, Expression, GenericArgument, LocalAction, Reference, Region, ScheduleRef, ScopeParameter,
+    SclStatement, Span, State, Transition, ValuedObject, ValueType,
 } from '../types'
 import type { ModelIndex } from '../parser/resolve'
 import {
-    CAction, CRegion, CState, CTransition, CVar, copyExpr, mapExpr, setTarget, type CArg, type CExpr, type CEffect, type CMethod, type CRef,
-    type CStmt, type EffectOrigin, type SchedEntry, type Scope,
+    CAction, CRegion, CState, CTransition, CVar, copyExpr, mapExpr, setTarget, type CArg, type CExpr, type CEffect, type CGenericArg,
+    type CMethod, type CRef, type CStmt, type EffectOrigin, type SchedEntry, type Scope,
 } from './model'
+import { genericKind } from '../parser/resolve'
+import { entryOf, sourceId } from '../parser/generics'
+import { originalOf } from './structure/instance'
 import { foldConstants } from './fold'
 
 /** A dataflow equation (`x = e`, `x += e`, `g.A = e`, `g = {e1, e2}`), lowered; `sequential`: ends with `;`/`seq`. */
@@ -51,6 +54,8 @@ export interface LowerResult {
     reports: Diagnostic[]
     /** The members of every class and struct instance, by the member's declaration id (passes/inheritance.ts). */
     instances: Map<CVar, Map<string, CVar>>
+    /** The flags of `state(S)` in method bodies (KIELER's MethodSignaling only makes them for the chart it compiles). */
+    stateFlags: CVar[]
 }
 
 class Lowering {
@@ -129,15 +134,16 @@ class Lowering {
      */
     private enumOf(d: Declaration): Declaration | undefined {
         if (d.declKind !== 'reference') return undefined
-        const target = this.index?.refTargets.get(d)
+        // (Inside a copy of a chart the declaration is a copy too: name resolution knows the original.)
+        const target = this.index?.refTargets.get(originalOf(d))
         return target && target.kind === 'declaration' && target.declKind === 'enum' && !target.host ? target : undefined
     }
 
     private enumValue(r: Reference): number | undefined {
         if (!r.decl || !r.sub?.decl || !this.index) return undefined
-        const e = this.index.vos.get(r.decl)?.decl
+        const e = entryOf(this.index, r.decl)?.decl
         if (!e || e.declKind !== 'enum' || e.host) return undefined
-        const i = (e.members?.[0]?.valuedObjects ?? []).findIndex(vo => vo.id === r.sub!.decl)
+        const i = (e.members?.[0]?.valuedObjects ?? []).findIndex(vo => vo.id === sourceId(r.sub!.decl!))
         return i < 0 ? undefined : i
     }
 
@@ -161,6 +167,7 @@ class Lowering {
                 v.span = vo.nameSpan ?? vo.span
                 v.scope = scope
                 if (d.declKind !== 'variable' && !enumRef) v.declKind = d.declKind
+                if (d.declKind === 'primitive') v.typeParam = d.referenceParameter
                 if (d.declKind === 'schedule') v.priorities = d.priorities ?? []
                 // Annotations of the declaration (`@Passive clock t`), as `@name` tags.
                 for (const a of [...d.annotations, ...(vo.annotations ?? [])]) v.tags.add(`@${a.name}`)
@@ -409,7 +416,16 @@ class Lowering {
             }
             if (d.declKind === 'reference' && d.referenceTarget && !d.extern && !this.enumOf(d)) {
                 for (const vo of d.valuedObjects) {
-                    this.vars.get(vo.id)!.instance = { target: d.referenceTarget, args: this.args(vo.parameters ?? []) }
+                    const own = !!vo.genericArguments?.length
+                    const generics = this.genericArgs(own ? vo.genericArguments : d.genericArguments)
+                    this.vars.get(vo.id)!.instance = {
+                        target: d.referenceTarget, args: this.args(vo.parameters ?? []),
+                        group: d.valuedObjects[0].id,
+                        // (separateReferenceDeclarationsWithIndividualBindingsInVOs)
+                        ...(d.valuedObjects.length > 1 && d.valuedObjects.some(x => x.parameters?.length || x.genericArguments?.length) ? { separate: true } : {}),
+                        ...(generics.length ? { generics, declGenerics: !own } : {}),
+                        ...(d.referenceParameter ? { typeParam: d.referenceParameter } : {}),
+                    }
                 }
             }
             if (d.declKind === 'method' && d.valuedObjects.length) {
@@ -421,7 +437,46 @@ class Lowering {
 
     /** Arguments of a reference, lowered in the referencing scope (structure.md S-6). */
     args(parameters: ScopeParameter[]): CArg[] {
-        return parameters.map(p => ({ expr: this.expr(p.expression), binding: p.binding, span: p.span }))
+        return parameters.map(p => ({ expr: this.argument(p.expression), binding: p.binding, span: p.span }))
+    }
+
+    /**
+     * An argument of a reference. A constant's name is its value here (constants are inlined while lowering), but
+     * KIELER's Reference processor runs before its Const processor and binds the name: the literal remembers it.
+     */
+    private argument(e: Expression): CExpr {
+        const value = this.expr(e)
+        return e.kind === 'ref' && value.k === 'lit' ? { ...value, konst: e.name } : value
+    }
+
+    /** Generic arguments, lowered where they are written (structure.md S-73). */
+    genericArgs(list: GenericArgument[] | undefined): CGenericArg[] {
+        return (list ?? []).map((a): CGenericArg => {
+            const at = { text: a.text, span: a.span }
+            if (a.valueType) return { ...at, k: 'type', type: a.valueType }
+            if (a.expression) return { ...at, k: 'expr', expr: this.argument(a.expression), ...(a.expression.kind === 'ref' ? { named: true } : {}) }
+            return { ...at, k: 'chart', name: a.typeName ?? '', args: this.genericArgs(a.typeArguments) }
+        })
+    }
+
+    /**
+     * The chart's generic parameters as variables of no scope (`root.ext.generics`): the chart's body names them,
+     * and the Reference pass puts the arguments in their place.
+     */
+    private generics(root: CState, chart: State) {
+        const list: CVar[] = []
+        for (const g of chart.genericParameterDeclarations ?? []) {
+            const kind = genericKind(g)
+            const v = new CVar(g.valuedObject.name, kind === 'value' ? g.valueType as ValueType : 'host')
+            v.declKind = 'generic'
+            v.generic = { kind, ...(g.typeName !== undefined ? { type: g.typeName } : {}) }
+            v.decl = g.valuedObject.id
+            v.span = g.valuedObject.span
+            v.scope = root
+            this.vars.set(g.valuedObject.id, v)
+            list.push(v)
+        }
+        if (list.length) root.ext.generics = list
     }
 
     // ----- methods and SCL code (structure.md S-43, S-44) -----
@@ -437,6 +492,7 @@ class Lowering {
                 v.span = vo.nameSpan ?? vo.span
                 v.generated = true
                 v.role = 'frame'
+                if (d.declKind === 'primitive') v.typeParam = d.referenceParameter
                 this.vars.set(vo.id, v)
                 into.push(v)
             }
@@ -463,7 +519,10 @@ class Lowering {
         const returnType: CMethod['returnType'] = !rt || rt === 'void' ? 'void'
             : (['bool', 'int', 'float', 'string', 'pure', 'host'] as const).find(t => t === rt) ?? 'host'
         const inline = d.annotations.some(a => a.name.toLowerCase() === 'inline')
-        return { params, locals, body, returnType, by, span: d.span, ...(inline ? { inline } : {}), ...(contract ? { schedule: contract } : {}) }
+        return {
+            params, locals, body, returnType, by, span: d.span, ...(inline ? { inline } : {}), ...(contract ? { schedule: contract } : {}),
+            ...(d.returnParameter ? { returnParam: d.returnParameter } : {}),
+        }
     }
 
     /** An SCL block: its declarations (initialisations become statements where they are written), then statements. */
@@ -538,7 +597,7 @@ class Lowering {
      */
     private staticConst(e: Extract<Expression, { kind: 'special' }>): CExpr {
         const sub = e.sub!
-        const entry = sub.decl ? this.index?.vos.get(sub.decl) : undefined
+        const entry = sub.decl && this.index ? entryOf(this.index, sub.decl) : undefined
         const init = entry?.vo?.initialValue
         if (!entry?.decl?.const || !init) return { k: 'unsupported', what: e.text, span: e.span }
         const names = new Set<string>()
@@ -581,7 +640,7 @@ class Lowering {
     private stateFlag(state: string, text: string): CVar {
         let v = this.stateFlags.get(state)
         if (!v) {
-            const source = this.index?.states.get(state)
+            const source = this.index?.states.get(state) ?? this.index?.states.get(sourceId(state))
             const region = source ? this.index?.parentRegion.get(source) : undefined
             v = new CVar(`_${region?.name || 'default'}_${source?.name ?? state}_active`, 'bool')
             v.generated = true
@@ -1009,6 +1068,7 @@ class Lowering {
         if (s.callsReference) c.ext.calls = true
         if (s.baseStates?.length) c.ext.baseStates = s.baseStates
         this.states.set(s.id, c)
+        this.generics(c, s)
         this.declare(c, s.declarations)
         // After the declarations: `state S schedule s 0 { schedule s ... }` names the state's own schedule.
         const schedule = this.schedule(s.schedule)
@@ -1070,7 +1130,15 @@ class Lowering {
     /** Lowers the triggers and effects of every action and transition (second step). */
     contents(source: State, target: CState) {
         this.initialise(source.declarations)
-        if (source.reference) target.ext.args = this.args(source.reference.parameters)
+        if (source.reference) {
+            target.ext.args = this.args(source.reference.parameters)
+            const generics = this.genericArgs(source.reference.genericArguments)
+            if (generics.length) target.ext.genericArgs = generics
+        }
+        // `extends Base<...>(...)`: the arguments, lowered in this state (passes/inheritance.ts binds them).
+        if (source.baseStates?.length) {
+            target.ext.baseArgs = source.baseStates.map(b => ({ args: this.args(b.parameters), generics: this.genericArgs(b.genericArguments) }))
+        }
         this.actionContents(source.actions, target.actions, target)
         source.regions.forEach((r, i) => {
             const cr = target.regions[i]
@@ -1080,6 +1148,8 @@ class Lowering {
                 cr.ext.forFrom = this.expr(r.forLoop.from)
                 if (r.forLoop.to) cr.ext.forTo = this.expr(r.forLoop.to)
             }
+            // `region Q is R(args)`: the arguments, lowered in the state around the region.
+            if (r.reference?.parameters.length) cr.ext.args = this.args(r.reference.parameters)
             if (r.regionType === 'dataflow') {
                 // Equations, lowered like effects (passes/dataflow.ts turns them into control flow, structure.md S-25).
                 const eqs: CEquation[] = r.equations.map(eq => {
@@ -1218,7 +1288,7 @@ export function lowerChart(chart: State, index: ModelIndex | undefined, inherite
         })
     }
 
-    return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports, instances: l.instanceMembers() }
+    return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports, instances: l.instanceMembers(), stateFlags: [...l.stateFlags.values()] }
 }
 
 function markActions(scope: Scope) {

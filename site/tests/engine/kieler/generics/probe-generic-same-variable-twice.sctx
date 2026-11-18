@@ -1,0 +1,10 @@
+// One variable given for two parameters.
+scchart X38 {
+  input int i
+  output int p
+  initial state S is X38G<i, i>(p)
+}
+scchart X38G<N is int, M is int> {
+  output int o = 0
+  initial state A do o += N * M go to A
+}

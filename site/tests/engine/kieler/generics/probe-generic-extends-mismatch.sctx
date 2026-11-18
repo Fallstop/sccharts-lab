@@ -1,0 +1,7 @@
+// extends Base<true> for an int parameter: "Errornous generic parameter. Paramter N of ... was not set correcly."
+scchart C03 extends C03B<true> {
+}
+scchart C03B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,10 @@
+// One ref declaration with two variables is one class (C1).
+scchart K01b {
+  output int p
+  ref K01bC a, b
+  initial state A do a.inc(); b.inc(); b.inc(); p = a.n + 10 * b.n go to A
+}
+scchart K01bC {
+  int n = 0
+  method void inc() { n += 1 }
+}

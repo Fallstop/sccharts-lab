@@ -1,0 +1,44 @@
+{
+  "hash": "f9002e3be3a549fded2603cb67c776f69dac3b45",
+  "chart": "tests/engine/kieler/parity/probe-extends-binding-inherited-name.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "2:26 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@2b48a229{file:///tmp/sccharts-oracle-uWnO0G/m179/probe-extends-binding-inherited-name.sctx#//@rootStates.0/@baseStateReferences.0/@parameters.0/@expression}' must be set",
+    "2:29 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@2c859bae{file:///tmp/sccharts-oracle-uWnO0G/m179/probe-extends-binding-inherited-name.sctx#//@rootStates.0/@baseStateReferences.0/@parameters.1/@expression}' must be set",
+    "Couldn't resolve reference to ValuedObject 'x'.",
+    "Couldn't resolve reference to ValuedObject 'o'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'x'.",
+      "line": 2,
+      "column": 26,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'o'.",
+      "line": 2,
+      "column": 29,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@2b48a229{file:///tmp/sccharts-oracle-uWnO0G/m179/probe-extends-binding-inherited-name.sctx#//@rootStates.0/@baseStateReferences.0/@parameters.0/@expression}' must be set",
+      "line": 2,
+      "column": 26,
+      "code": "org.eclipse.emf.ecore.1"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@2c859bae{file:///tmp/sccharts-oracle-uWnO0G/m179/probe-extends-binding-inherited-name.sctx#//@rootStates.0/@baseStateReferences.0/@parameters.1/@expression}' must be set",
+      "line": 2,
+      "column": 29,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

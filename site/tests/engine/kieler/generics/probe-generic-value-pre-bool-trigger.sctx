@@ -1,0 +1,10 @@
+// pre(B) in a trigger with the literal false for B: KIELER's compiler fails.
+scchart N01 {
+  output int p
+  initial state S is N01G<false>(p)
+}
+scchart N01G<B is bool> {
+  output int o
+  initial state A if pre(B) do o += 1 go to A
+  do o += 10 go to A
+}

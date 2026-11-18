@@ -1,0 +1,14 @@
+// <V is ref Worker> given an instance (ref Worker w): the generic chart calls its method and reads its field.
+scchart B05 {
+  output int p
+  ref B05W w
+  initial state S is B05H<w>(p)
+}
+scchart B05H<V is ref B05W> {
+  output int q
+  initial state A do V.inc(); q = V.n go to A
+}
+scchart B05W {
+  int n = 0
+  method void inc() { n += 1 }
+}

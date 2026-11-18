@@ -1,0 +1,10 @@
+// <T is primitive> given int.
+scchart B01int {
+  output int p
+  initial state S is B01Gint<int>(p)
+}
+scchart B01Gint<T is primitive> {
+  output int o = 0
+  primitive T x
+  initial state A do o += 1; x = x go to A
+}

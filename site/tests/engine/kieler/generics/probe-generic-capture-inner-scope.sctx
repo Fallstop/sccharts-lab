@@ -1,0 +1,16 @@
+// The same with the local declared in an inner state: it keeps its own value.
+scchart A17b {
+  output int p
+  initial state S is A17bO<3>(p)
+}
+scchart A17bO<N is int> {
+  output int o
+  initial state T is A17bI(o)
+}
+scchart A17bI {
+  output int o = 0
+  initial state A {
+    int N = 100
+    initial state X do o += N go to X
+  }
+}

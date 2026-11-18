@@ -1,0 +1,12 @@
+// A value parameter as the end of a for-region range in a referenced chart: KIELER does not replace it there ("not
+// contained in the model").
+scchart A10b {
+  output int p
+  initial state S is A10bG<3>(p)
+}
+scchart A10bG<N is int> {
+  output int o = 0
+  region R for i : 0 to N {
+    initial state A do o += i go to A
+  }
+}

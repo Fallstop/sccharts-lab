@@ -1,0 +1,10 @@
+// <P is pure> given a pure signal: the chart tests the signal.
+scchart A02 {
+  input signal g
+  output int o
+  initial state S is A02G<g>(o)
+}
+scchart A02G<P is pure> {
+  output int o
+  initial state A if P do o += 1 go to A
+}

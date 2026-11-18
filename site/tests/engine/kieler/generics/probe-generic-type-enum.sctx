@@ -1,0 +1,10 @@
+// <E is Color> with an enum: only a chart can be named after "is".
+scchart X22 {
+  output int p
+  initial state S is X22H<3>(p)
+}
+scchart X22H<E is Color> {
+  enum Color { RED, GREEN }
+  output int q
+  initial state A do q += 1 go to A
+}

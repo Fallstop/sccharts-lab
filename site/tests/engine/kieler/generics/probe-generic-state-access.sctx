@@ -1,0 +1,14 @@
+// state(R.B) in a method of a referenced generic chart: KIELER only translates it in the chart it compiles.
+scchart G27 {
+  output int p
+  initial state S is G27G<2>(p)
+}
+scchart G27G<N is int> {
+  output int o = 0
+  method bool inB() { return state(R.B) }
+  region R {
+    initial state A do o += N go to B
+    state B do o += 100 go to A
+  }
+  region Watch { initial state W if inB() do o += 1000 go to W }
+}

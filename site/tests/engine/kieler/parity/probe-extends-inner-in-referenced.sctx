@@ -1,0 +1,19 @@
+// An inner state with a base chart, inside a chart referenced with "is": accepted, but the state gets nothing from
+// the base chart.
+scchart G02 {
+  output int p
+  initial state S is G02M(p)
+}
+scchart G02M {
+  output int o
+  initial state T extends G02B {
+    during do o += 1
+  }
+}
+scchart G02B {
+  int k = 0
+  region R {
+    initial state S
+    do k += 1 go to S
+  }
+}

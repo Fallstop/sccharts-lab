@@ -1,0 +1,9 @@
+// extends Base(i to x) leaves the output o open: the same crash.
+scchart GExtBinding2 extends GBaseB2(i to x) {
+  input int i
+}
+scchart GBaseB2 {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

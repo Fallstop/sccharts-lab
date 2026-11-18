@@ -1,0 +1,10 @@
+// ref C g<2>, h<5>: each variable of the declaration has its own generic argument.
+scchart GDeclRefVo {
+  output int p, q
+  ref GInnerV g<2>, h<5>
+  dataflow { p = g.o  q = h.o }
+}
+scchart GInnerV<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

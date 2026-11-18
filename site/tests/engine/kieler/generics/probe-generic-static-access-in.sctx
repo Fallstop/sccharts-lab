@@ -1,0 +1,12 @@
+// scchart(C).K inside a referenced generic chart.
+scchart X19b {
+  output int p
+  initial state S is X19bG<2>(p)
+}
+scchart X19bG<N is int> {
+  output int o = 0
+  initial state A do o += N + scchart(X19bC).K go to A
+}
+scchart X19bC {
+  const int K = 6
+}

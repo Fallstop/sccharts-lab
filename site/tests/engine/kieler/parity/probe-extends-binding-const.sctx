@@ -1,0 +1,10 @@
+// extends Base(K, p) with a constant for the input.
+scchart K17 extends K17B(K, p) {
+  const int K = 4
+  output int p
+}
+scchart K17B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

@@ -1,0 +1,13 @@
+// Holder<Box<4>>: the two closing brackets are a shift operator, a syntax error.
+scchart B06 {
+  output int p
+  initial state S is B06H<B06Box<4>>(p)
+}
+scchart B06H<W is B06Box> {
+  output int q
+  initial state S is W(q)
+}
+scchart B06Box<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

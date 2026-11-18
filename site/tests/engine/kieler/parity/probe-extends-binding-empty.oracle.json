@@ -1,0 +1,59 @@
+{
+  "hash": "bcda0794bf972644e496bb37147ed76c38b0d6d5",
+  "chart": "tests/engine/kieler/parity/probe-extends-binding-empty.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 2
+      },
+      "values": {
+        "x": 2,
+        "o": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 5
+      },
+      "terminated": false
+    }
+  ]
+}

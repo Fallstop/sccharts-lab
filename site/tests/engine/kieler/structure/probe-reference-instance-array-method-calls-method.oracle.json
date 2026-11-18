@@ -1,0 +1,106 @@
+{
+  "hash": "42ab1fe14450f779967d7ff96605d92a9adab3cd",
+  "chart": "tests/engine/kieler/structure/probe-reference-instance-array-method-calls-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name twice is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "M04C1.n": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "g": [
+          {
+            "n": 0
+          },
+          {
+            "n": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 12,
+        "g": [
+          {
+            "n": 2
+          },
+          {
+            "n": 1
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 24,
+        "g": [
+          {
+            "n": 4
+          },
+          {
+            "n": 2
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "p": 36,
+        "g": [
+          {
+            "n": 6
+          },
+          {
+            "n": 3
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

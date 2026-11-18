@@ -1,0 +1,9 @@
+// Through extends, a parameter as the end of a for-region range is replaced by the literal.
+scchart G18 extends G18B<3> {
+}
+scchart G18B<N is int> {
+  output int o = 0
+  region R for i : 0 to N {
+    initial state A do o += i go to A
+  }
+}

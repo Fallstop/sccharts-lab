@@ -1,0 +1,12 @@
+// The same with named bindings of an input and an output.
+scchart I03 {
+  input int i
+  output int p
+  initial state T extends I03B(p to o, i to x) {
+  }
+}
+scchart I03B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

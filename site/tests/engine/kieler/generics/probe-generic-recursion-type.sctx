@@ -1,0 +1,10 @@
+// A chart with a type parameter that references itself.
+scchart B14 {
+  output int p
+  initial state S is B14R<int>(p)
+}
+scchart B14R<T is primitive> {
+  output int o = 0
+  initial state A do o += 1 go to B
+  state B is B14R<T>(o)
+}

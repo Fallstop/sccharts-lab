@@ -16,8 +16,8 @@
 // errors with KIELER's linking message in `kieler` and a beginner-oriented message and hint.
 
 import type {
-    Declaration, Diagnostic, Effect, Equation, Expression, LocalAction, Program, Reference, Region, ScheduleRef, ScopeCall, SclStatement,
-    State, Transition, ValuedObject,
+    Declaration, Diagnostic, Effect, Equation, Expression, GenericArgument, GenericParameterDeclaration, LocalAction, Program, Reference,
+    Region, ScheduleRef, ScopeCall, SclStatement, State, Transition, ValuedObject,
 } from '../types'
 import { counterId } from './ids'
 import { referenceName } from './parser'
@@ -32,6 +32,8 @@ export interface VOEntry {
     counter?: boolean
     /** Member of a class, struct or enum (the type's declaration). */
     memberOf?: Declaration
+    /** A generic parameter of the chart `owner` (`scchart C<N is int>`); `decl` is undefined. */
+    generic?: GenericParameterDeclaration
 }
 
 /** Everything the validator and the simulator need to know about the resolved model. */
@@ -59,6 +61,16 @@ export interface ModelIndex {
 const isCallable = (d: Declaration | undefined) => !!d && (d.declKind === 'method' || (d.declKind === 'reference' && !!d.extern))
 const isPublic = (d: Declaration) => d.access === undefined || d.access === 'public'
 const isPrivate = (d: Declaration) => d.access === 'private' || (!isPublic(d) && d.access !== 'protected')
+
+/**
+ * The kinds of generic parameter (KExpressionsGenericParameterExtensions): a chart type (`W is Chart`, or no `is` at
+ * all), a primitive type (`T is primitive`), a value (`N is int`) or an instance (`V is ref Chart`).
+ */
+export function genericKind(g: GenericParameterDeclaration): 'type' | 'primitive' | 'value' | 'reference' {
+    if (g.typeName !== undefined) return g.reference ? 'reference' : 'type'
+    if (g.valueType === undefined) return 'type'
+    return g.valueType === 'primitive' ? 'primitive' : 'value'
+}
 
 class Scope {
     readonly names = new Map<string, ValuedObject>()
@@ -174,6 +186,14 @@ class Resolver {
         if (parent) this.index.parentRegion.set(state, parent)
         if (!this.index.incoming.has(state)) this.index.incoming.set(state, [])
         this.registerDeclarations(state.declarations, state)
+        for (const g of state.genericParameterDeclarations ?? []) {
+            this.index.vos.set(g.valuedObject.id, { vo: g.valuedObject, owner: state, generic: g })
+            // `<W is Chart>`: only a chart can be named (SCTXScopeProvider.getScopeForGenericParameterDeclaration).
+            if (!external && g.typeName !== undefined && !this.chartsByName.has(g.typeName)) {
+                this.unresolved('NamedObject', g.typeName, g.typeSpan ?? g.span, `There is no scchart called \`${g.typeName}\``,
+                    `After \`is\` comes a value type (\`int\`, \`bool\`, ...), \`primitive\`, or the name of a chart. ${this.chartHint(g.typeName)}`, 'unknown-chart')
+            }
+        }
         for (const d of state.lateDeclarations ?? []) for (const vo of d.valuedObjects) if (!this.declaredLate.has(vo.name)) this.declaredLate.set(vo.name, { owner: state, line: d.span.line })
         for (const r of state.regions) {
             this.index.regions.set(r.id, r)
@@ -307,22 +327,102 @@ class Resolver {
                 for (const d of base.declarations) if (!isPrivate(d)) for (const vo of d.valuedObjects) scope.add(vo, d)
             }
         }
+        // Value and instance parameters are names of the chart, after its declarations (a declaration of the same
+        // name is found first; SCTXScopeProvider.getScopeHierarchical).
+        for (const g of state.genericParameterDeclarations ?? []) {
+            const kind = genericKind(g)
+            if (kind === 'value' || kind === 'reference') scope.add(g.valuedObject, undefined)
+        }
         this.stateScopes.set(state, scope)
         return scope
+    }
+
+    /**
+     * The names an argument of `extends Base<...>(...)` sees: the state's own declarations and generic parameters and
+     * what the bases written before this one give it, not what it inherits from this base or a later one.
+     */
+    private baseReferenceScope(state: State, parent: Scope | undefined, before: number): Scope {
+        const scope = new Scope(parent, state, `state ${state.name}`)
+        for (const d of state.declarations) for (const vo of d.valuedObjects) scope.add(vo, d)
+        for (const b of (state.baseStates ?? []).slice(0, before)) {
+            const base = this.index.scopeTargets.get(b)
+            if (!base) continue
+            for (const s of [base, ...this.allInherited(base)]) for (const d of s.declarations) if (!isPrivate(d)) for (const vo of d.valuedObjects) scope.add(vo, d)
+        }
+        for (const g of state.genericParameterDeclarations ?? []) {
+            const kind = genericKind(g)
+            if (kind === 'value' || kind === 'reference') scope.add(g.valuedObject, undefined)
+        }
+        return scope
+    }
+
+    /** The chart a scope belongs to. */
+    private rootOf(scope: Scope): State | undefined {
+        let root: State | undefined
+        for (let s: Scope | undefined = scope; s; s = s.parent) if (s.owner?.kind === 'state' && s.owner.isRoot) root = s.owner
+        return root
+    }
+
+    /** A generic type parameter of the chart by name: a chart type (`W is Chart`, `X`) or a primitive type (`T is primitive`). */
+    private typeParameter(root: State | undefined, name: string, kinds: ('type' | 'primitive')[]): GenericParameterDeclaration | undefined {
+        return root?.genericParameterDeclarations?.find(g => g.valuedObject.name === name && (kinds as string[]).includes(genericKind(g)))
+    }
+
+    /**
+     * Generic arguments `<4, int, Worker, Box<2>, x, a[1]>` (SCTXScopeProvider.getScopeForGenericTypeReference and
+     * KExtGenericParamterConverter): a bare name is a chart first, then a type parameter of the chart around it, then
+     * a variable.
+     */
+    private resolveGenericArguments(args: GenericArgument[] | undefined, scope: Scope) {
+        for (const a of args ?? []) {
+            if (a.typeArguments) {
+                if (!this.chartsByName.has(a.typeName!)) {
+                    this.unresolved('NamedObject', a.typeName!, a.span, `There is no scchart called \`${a.typeName}\``, this.chartHint(a.typeName!), 'unknown-chart')
+                }
+                this.resolveGenericArguments(a.typeArguments, scope)
+                continue
+            }
+            if (!a.expression) continue
+            if (a.typeName !== undefined && a.expression.kind === 'ref') {
+                if (this.chartsByName.has(a.typeName)) {
+                    delete a.expression
+                    continue
+                }
+                const param = this.typeParameter(this.rootOf(scope), a.expression.name, ['type', 'primitive'])
+                if (param) {
+                    delete a.typeName
+                    a.expression.decl = param.valuedObject.id
+                    continue
+                }
+                if (!scope.lookup(a.expression.name)) {
+                    // Unknown: it stays the type reference KIELER's parser made of it.
+                    const name = a.expression.name
+                    delete a.expression
+                    const s = closest(name, [...this.chartsByName.keys(), ...scope.visible()])
+                    this.unresolved('NamedObject', name, a.span, `Unknown name \`${name}\` in the generic arguments`,
+                        s ? `Did you mean \`${s}\`? A generic argument is a value, a type, a chart or a variable.` : 'A generic argument is a value (`4`), a type (`int`), a chart or a variable of this chart.', 'unknown-variable')
+                    continue
+                }
+                delete a.typeName
+            }
+            this.resolveExpression(a.expression, scope)
+        }
     }
 
     private resolveState(state: State, parent: Scope | undefined) {
         const scope = this.stateScope(state, parent)
         if (state.baseStates) {
-            for (const b of state.baseStates) {
+            state.baseStates.forEach((b, i) => {
                 const target = this.index.scopeTargets.get(b)
+                const own = this.baseReferenceScope(state, parent, i)
+                this.resolveGenericArguments(b.genericArguments, own)
                 if (!target) {
                     this.unresolved('State', b.target, b.targetSpan ?? b.span, `There is no scchart called \`${b.target}\` to extend`, this.chartHint(b.target), 'unknown-chart')
-                    for (const p of b.parameters) this.resolveExpression(p.expression, scope)
+                    for (const p of b.parameters) this.resolveExpression(p.expression, own)
                 } else {
-                    this.resolveScopeParameters(b, target, scope)
+                    this.resolveScopeParameters(b, target, own)
                 }
-            }
+            })
         }
         this.resolveDeclarations(state.declarations, scope)
         for (const a of state.actions) this.resolveAction(a, scope)
@@ -352,6 +452,23 @@ class Resolver {
         if (call.super) {
             // `is super.X` only in regions; on a state it refers to an inherited state (rare): leave it.
             for (const p of call.parameters) this.resolveExpression(p.expression, scope)
+            return
+        }
+        this.resolveGenericArguments(call.genericArguments, scope)
+        // A chart type parameter of the chart comes before the charts (SCTXScopeProvider.getScopeForScopeCall).
+        const param = this.typeParameter(this.rootOf(scope), call.target, ['type'])
+        if (param) {
+            call.targetParameter = param.valuedObject.id
+            const type = param.typeName !== undefined ? this.chartsByName.get(param.typeName) : undefined
+            if (type) {
+                this.index.scopeTargets.set(call, type)
+                this.resolveScopeParameters(call, type, scope)
+            } else {
+                for (const p of call.parameters) {
+                    this.resolveExpression(p.expression, scope)
+                    if (p.binding !== undefined) this.unresolved('ValuedObject', p.binding, p.bindingSpan ?? p.span, `Cannot bind \`${p.binding}\`: the type parameter \`${call.target}\` names no chart`, `Declare the parameter with a chart (\`<${call.target} is SomeChart>\`) to bind its inputs and outputs by name.`, 'unknown-binding')
+                }
+            }
             return
         }
         const target = this.chartsByName.get(call.target)
@@ -407,7 +524,9 @@ class Resolver {
                 const r = this.index.parentRegion.get(holder)
                 holder = r ? this.index.parentState.get(r) : undefined
             }
-            const inherited = holder ? this.allInherited(holder).flatMap(s => s.regions) : []
+            // Without `super.`, a region the state overrides itself is hidden (getAllVisibleInheritedRegions).
+            const overridden = new Set(region.reference.super || !holder ? [] : holder.regions.filter(r => r.override && r.name).map(r => r.name))
+            const inherited = holder ? this.allInherited(holder).flatMap(s => s.regions).filter(r => !overridden.has(r.name)) : []
             const target = inherited.find(r => r.name === region.reference!.target)
             if (!target) {
                 this.unresolved('NamedObject', region.reference.target, region.reference.targetSpan ?? region.reference.span, `There is no inherited region called \`${region.reference.target}\``,
@@ -487,15 +606,14 @@ class Resolver {
             }
             if (d.declKind === 'reference' && !d.extern && d.referenceTarget) this.resolveRefDeclaration(d, scope)
             if (d.declKind === 'primitive' && d.referenceTarget) {
-                // `primitive T x` refers to a primitive generic type parameter of the root state: <T is primitive>.
-                let root: State | undefined
-                for (let s: Scope | undefined = scope; s; s = s.parent) if (s.owner?.kind === 'state' && s.owner.isRoot) root = s.owner
-                const generic = root?.genericParameters?.map(g => /^\s*([A-Za-z_^][\w']*)\s*(?:is\s+(.*))?$/.exec(g)).find(m => m?.[1] === d.referenceTarget)
-                const kind = generic?.[2]?.trim()
-                if (!generic || !kind || !/^(primitive|pure|bool|int|float|string|clock|clock-time)$/.test(kind)) {
+                // `primitive T x` names a primitive type parameter of the chart: <T is primitive>.
+                const generic = this.typeParameter(this.rootOf(scope), d.referenceTarget, ['primitive'])
+                if (generic) d.referenceParameter = generic.valuedObject.id
+                else {
                     this.unresolved('EObject', d.referenceTarget, d.referenceSpan ?? d.span, `There is no primitive type parameter \`${d.referenceTarget}\``,
-                        `\`primitive ${d.referenceTarget} x\` needs a generic parameter of the chart declared as \`<${d.referenceTarget} is primitive>\`.`, 'unknown-type')
+                        `\`primitive ${d.referenceTarget} x\` needs a generic parameter of the chart declared as \`<${d.referenceTarget} is primitive>\`.`, 'unknown-generic-type')
                 }
+                for (const vo of d.valuedObjects) for (const p of vo.parameters ?? []) this.resolveExpression(p.expression, scope)
             }
             if (d.members) {
                 const classScope = new Scope(scope, undefined, `class ${d.className ?? ''}`)
@@ -519,6 +637,22 @@ class Resolver {
             }
         } else {
             target = this.chartsByName.get(d.referenceTarget!) ?? this.findTypeInScopeChain(scope, d.referenceTarget!)
+        }
+        for (const args of [d.genericArguments, ...d.valuedObjects.map(vo => vo.genericArguments)]) this.resolveGenericArguments(args, scope)
+        if (!target && !d.referenceContainer) {
+            // A chart type parameter of the chart (`ref W w`), after the charts and the chart's own types.
+            const param = this.typeParameter(this.rootOf(scope), d.referenceTarget!, ['type'])
+            if (param) {
+                d.referenceParameter = param.valuedObject.id
+                const type = param.typeName !== undefined ? this.chartsByName.get(param.typeName) : undefined
+                if (type) {
+                    this.index.refTargets.set(d, type)
+                    for (const vo of d.valuedObjects) if (vo.parameters) this.resolveScopeParameters({ parameters: vo.parameters }, type, scope)
+                } else {
+                    for (const vo of d.valuedObjects) for (const p of vo.parameters ?? []) this.resolveExpression(p.expression, scope)
+                }
+                return
+            }
         }
         if (!target) {
             this.unresolved('EObject', d.referenceTarget!, d.referenceSpan ?? d.span, `There is no scchart, class or enum called \`${d.referenceTarget}\``, this.chartHint(d.referenceTarget!), 'unknown-chart')
@@ -552,6 +686,23 @@ class Resolver {
         for (const p of d.parameters ?? []) for (const vo of p.valuedObjects) methodScope.add(vo, p)
         for (const p of d.parameters ?? []) for (const vo of p.valuedObjects) if (vo.initialValue) this.resolveExpression(vo.initialValue, methodScope)
         this.resolveSchedule(d.schedule, scope)
+        if (d.returnType === 'primitive' && d.returnHostType) {
+            const generic = this.typeParameter(this.rootOf(scope), d.returnHostType, ['primitive'])
+            if (generic) d.returnParameter = generic.valuedObject.id
+            else {
+                this.unresolved('NamedObject', d.returnHostType, d.span, `There is no primitive type parameter \`${d.returnHostType}\``,
+                    `\`method primitive ${d.returnHostType} ...\` needs a generic parameter of the chart declared as \`<${d.returnHostType} is primitive>\`.`, 'unknown-generic-type')
+            }
+        }
+        for (const p of d.parameters ?? []) {
+            if (p.declKind !== 'primitive' || !p.referenceTarget) continue
+            const generic = this.typeParameter(this.rootOf(scope), p.referenceTarget, ['primitive'])
+            if (generic) p.referenceParameter = generic.valuedObject.id
+            else {
+                this.unresolved('EObject', p.referenceTarget, p.referenceSpan ?? p.span, `There is no primitive type parameter \`${p.referenceTarget}\``,
+                    `\`primitive ${p.referenceTarget} x\` needs a generic parameter of the chart declared as \`<${p.referenceTarget} is primitive>\`.`, 'unknown-generic-type')
+            }
+        }
         if (d.body) this.resolveBlock(d.body.declarations, d.body.statements, methodScope)
     }
 
@@ -790,9 +941,11 @@ class Resolver {
 
     /** The methods reachable as members of `vo` (a class or struct instance, or a referenced chart). */
     private memberMethods(vo: ValuedObject): { vo: ValuedObject; decl: Declaration }[] {
-        const d = this.index.vos.get(vo.id)?.decl
-        if (!d) return []
-        const target = d.declKind === 'reference' && !d.extern ? this.index.refTargets.get(d) : d
+        const entry = this.index.vos.get(vo.id)
+        const d = entry?.decl
+        const generic = entry?.generic?.typeName !== undefined ? this.chartsByName.get(entry.generic.typeName) : undefined
+        if (!d && !generic) return []
+        const target = generic ?? (d!.declKind === 'reference' && !d!.extern ? this.index.refTargets.get(d!) : d!)
         if (!target) return []
         const decls = target.kind === 'declaration' ? target.members ?? [] : target.declarations
         return decls.filter(m => m.declKind === 'method').flatMap(m => m.valuedObjects.map(v => ({ vo: v, decl: m })))
@@ -802,9 +955,23 @@ class Resolver {
     private membersOf(vo: ValuedObject, dataflow: boolean): Map<string, ValuedObject> | undefined {
         const entry = this.index.vos.get(vo.id)
         const d = entry?.decl
-        if (!d) return undefined
         const out = new Map<string, ValuedObject>()
         const add = (decl: Declaration) => { for (const v of decl.valuedObjects) if (!out.has(v.name)) out.set(v.name, v) }
+        // An instance parameter (`V is ref Chart`): the members of the chart it names.
+        const chartMembers = (target: State) => {
+            for (const m of target.declarations) if (m.declKind === 'method') add(m)
+            for (const base of this.allInherited(target)) for (const m of base.declarations) if (!isPrivate(m)) add(m)
+            for (const m of target.declarations) {
+                if (m.declKind !== 'variable' && m.declKind !== 'reference') continue
+                if (dataflow ? (m.input || m.output) : isPublic(m)) add(m)
+            }
+            return out
+        }
+        if (entry?.generic) {
+            const type = entry.generic.typeName !== undefined ? this.chartsByName.get(entry.generic.typeName) : undefined
+            return type ? chartMembers(type) : undefined
+        }
+        if (!d) return undefined
         const structMembers = (cls: Declaration) => {
             for (const m of cls.members ?? []) if (isPublic(m)) add(m)
             return out
@@ -814,13 +981,7 @@ class Resolver {
             if (!target) return undefined
             if (target.kind === 'declaration') return structMembers(target)
             // A referenced chart: its methods, then its (public / input-output) declarations, then inherited ones.
-            for (const m of target.declarations) if (m.declKind === 'method') add(m)
-            for (const base of this.allInherited(target)) for (const m of base.declarations) if (!isPrivate(m)) add(m)
-            for (const m of target.declarations) {
-                if (m.declKind !== 'variable' && m.declKind !== 'reference') continue
-                if (dataflow ? (m.input || m.output) : isPublic(m)) add(m)
-            }
-            return out
+            return chartMembers(target)
         }
         if (d.declKind === 'class' || d.declKind === 'struct' || d.declKind === 'enum') return structMembers(d)
         return undefined

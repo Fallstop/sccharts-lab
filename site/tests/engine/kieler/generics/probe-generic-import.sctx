@@ -1,0 +1,8 @@
+// Generic charts of an imported file: a value parameter, a chart type parameter given a chart of the imported file,
+// and a base chart with a generic argument.
+import "probe-generic-import-library"
+scchart ProbeGenericImport extends ProbeGenericImportBase<3> {
+  output int p, q
+  region One { initial state S is ProbeGenericImportCounter<4>(p) }
+  region Two { initial state T is ProbeGenericImportHolder<ProbeGenericImportFast>(q) }
+}

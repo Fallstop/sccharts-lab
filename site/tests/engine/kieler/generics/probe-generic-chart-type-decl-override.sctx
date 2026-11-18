@@ -1,0 +1,17 @@
+// ref W w with a subtype that overrides a method: the calls reach the override.
+scchart B12 {
+  output int p
+  initial state S is B12H<B12W2>(p)
+}
+scchart B12H<W is B12W> {
+  output int q
+  ref W w
+  initial state A do w.inc(); q = w.n go to A
+}
+scchart B12W {
+  int n = 0
+  method void inc() { n += 1 }
+}
+scchart B12W2 extends B12W {
+  override method void inc() { n += 10 }
+}

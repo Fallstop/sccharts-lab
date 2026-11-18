@@ -1,0 +1,7 @@
+// extends Base<3> for two parameters.
+scchart H19 extends H19G<3> {
+}
+scchart H19G<N is int, M is int> {
+  output int o = 0
+  initial state A do o += N + M go to A
+}

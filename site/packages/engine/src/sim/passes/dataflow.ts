@@ -103,9 +103,9 @@ function isInstance(v: CVar, expansion: Expansion): boolean {
  * references; a call written as an equation is its own target, with its arguments, and the expression is what
  * follows its `=`).
  */
-function instancesOf(eq: CEquation, expansion: Expansion): CVar[] {
-    const out: CVar[] = []
-    const add = (r: CRef) => { if (isInstance(r.v, expansion) && !out.includes(r.v)) out.push(r.v) }
+function instanceRefs(eq: CEquation, expansion: Expansion): CRef[] {
+    const out: CRef[] = []
+    const add = (r: CRef) => { if (isInstance(r.v, expansion)) out.push(r) }
     const visit = (e: CExpr | undefined) => walkExpr(e, x => {
         if (x.k === 'ref') add(x)
         else if (x.k === 'call' && x.target) add(x.target)
@@ -115,6 +115,10 @@ function instancesOf(eq: CEquation, expansion: Expansion): CVar[] {
     visit(eq.expr)
     visit(eq.trigger)
     return out
+}
+
+function instancesOf(eq: CEquation, expansion: Expansion): CVar[] {
+    return [...new Set(instanceRefs(eq, expansion).map(r => r.v))]
 }
 
 /** KIELER's canTerminate: every region of the chart (and of its base charts) has a final state, no during actions. */
@@ -297,6 +301,17 @@ function processRegion(df: CRegion, expansion: Expansion) {
     // Chart instances used in the equations, in order of first use.
     const instances: CVar[] = []
     for (const eq of eqs) for (const g of instancesOf(eq, expansion)) if (!instances.includes(g)) instances.push(g)
+    // An element of an array of instances (`gs[0].a`): this translation makes one instance of the whole array and
+    // every element means its one set of variables; the index stays on them in KIELER's C code.
+    const element = eqs.flatMap(eq => instanceRefs(eq, expansion)).find(r => r.idx.length)
+    if (element) {
+        expansion.ctx.report({
+            severity: 'error', code: 'dataflow-instance-array', span: element.span ?? element.v.span, related: element.v.decl ? [element.v.decl] : undefined,
+            message: `An element of the array of instances \`${element.v.name}\` cannot be wired in a dataflow region that calls no method`,
+            kieler: 'subscripted value is neither array nor pointer nor vector\nCompiler did not return success (exit value != 0)',
+            hint: `Without a method call in the region, KIELER's dataflow translation makes one instance of \`${element.v.name}\` for the whole array, and its C code then indexes a plain variable. Declare the instances one by one (\`ref ${element.v.instance!.target} g0, g1\`); a dataflow region that calls a method keeps the array as objects and can wire its elements.`,
+        })
+    }
     const locals = new Map<CVar, Map<string, CVar>>()
     instances.forEach((g, i) => {
         const chart = expansion.findChart(g.instance!.target)
@@ -327,7 +342,8 @@ function processRegion(df: CRegion, expansion: Expansion) {
             args.push({ expr: ref(local) })
         }
         locals.set(g, own)
-        const call: ReferenceCall = { target: g.instance!.target, args, span: g.span }
+        // (Dataflow.xtend: the reference takes the generic arguments of the variable, or of its declaration.)
+        const call: ReferenceCall = { target: g.instance!.target, args, span: g.span, ...(g.instance!.generics ? { generics: g.instance!.generics } : {}) }
         refState.ext.call = call
         // The declaration's own bindings come first and the locals after them, one for every input and output: with
         // any binding there is one argument too many (KIELER's createBindings runs out of ports).

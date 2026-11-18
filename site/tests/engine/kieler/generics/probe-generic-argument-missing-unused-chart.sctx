@@ -1,0 +1,14 @@
+// A missing generic argument on a reference in a chart the simulated chart does not use: rejected, the validation
+// checks every chart.
+scchart H15 {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart H15U {
+  output int p
+  initial state S is H15G(p)
+}
+scchart H15G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

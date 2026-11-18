@@ -12,6 +12,17 @@ import type { ModelIndex } from '../../parser/resolve'
 import { lowerChart, type LowerResult } from '../lower'
 import { allScopes, allTransitions, type CState } from '../model'
 
+/** Fields name resolution sets to a declaration id of the same chart (they move with the copy). */
+const RESOLVED_IDS = ['bindingDecl', 'targetParameter', 'referenceParameter', 'returnParameter'] as const
+
+/** The declaration (as name resolution saw it) that a declaration inside a copy of a chart was copied from. */
+const ORIGINALS = new WeakMap<object, object>()
+
+/** A node of the source model as name resolution knows it: for a node inside a copy, what it was copied from. */
+export function originalOf<T extends object>(node: T): T {
+    return (ORIGINALS.get(node) as T | undefined) ?? node
+}
+
 /** Separates a reference state's id from the ids of the chart drawn (and simulated) inside it. */
 export const REFERENCE_SEPARATOR = '/'
 
@@ -25,6 +36,7 @@ export function prefixedChart(chart: State, prefix: string, span?: Span): State 
         if (!value || typeof value !== 'object') return value
         const obj = value as Record<string, unknown>
         const out: Record<string, unknown> = {}
+        if (obj.kind === 'declaration') ORIGINALS.set(out, originalOf(obj))
         for (const [k, v] of Object.entries(obj)) {
             if (k === 'span' || k === 'nameSpan' || k === 'targetSpan' || k === 'bindingSpan' || k === 'referenceSpan') out[k] = span ?? v
             else out[k] = visit(v)
@@ -36,7 +48,7 @@ export function prefixedChart(chart: State, prefix: string, span?: Span): State 
         }
         if (obj.kind === 'ref' && typeof obj.decl === 'string') out.decl = prefix + obj.decl
         if (obj.kind === 'special' && typeof obj.state === 'string') out.state = prefix + obj.state
-        if (typeof obj.bindingDecl === 'string') out.bindingDecl = prefix + obj.bindingDecl
+        for (const key of RESOLVED_IDS) if (typeof obj[key] === 'string') out[key] = prefix + obj[key]
         return out
     }
     return { ...(visit(chart) as State), isRoot: false }

@@ -1,0 +1,10 @@
+// A constant of the referencing chart as the generic argument.
+scchart A06 {
+  const int K = 3
+  output int p
+  initial state S is A06G<K>(p)
+}
+scchart A06G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

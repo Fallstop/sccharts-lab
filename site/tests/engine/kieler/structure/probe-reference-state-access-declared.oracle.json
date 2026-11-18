@@ -1,0 +1,70 @@
+{
+  "hash": "c3d61aba0049e2700c85f746af73327ab21d8f2c",
+  "chart": "tests/engine/kieler/structure/probe-reference-state-access-declared.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "H02G1._R_B_active": {
+      "type": "bool",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "g": {
+          "_R_B_active": false
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 1001,
+        "g": {
+          "_R_B_active": true
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 1101,
+        "g": {
+          "_R_B_active": false
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "p": 2102,
+        "g": {
+          "_R_B_active": true
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

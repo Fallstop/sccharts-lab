@@ -1,0 +1,13 @@
+// A parameter list that leaves an output open, in a chart the simulated chart does not use: accepted.
+scchart H17 {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart H17U extends H17G(i) {
+  input int i
+}
+scchart H17G {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

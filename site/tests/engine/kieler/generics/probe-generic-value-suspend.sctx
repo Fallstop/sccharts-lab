@@ -1,0 +1,14 @@
+// Value parameters in a suspend trigger and a during action.
+scchart G35 {
+  input bool s
+  output int p
+  initial state S is G35G<s, 2>(p)
+}
+scchart G35G<B is bool, N is int> {
+  output int o = 0
+  initial state A {
+    suspend if B
+    during do o += N
+    initial state X
+  }
+}

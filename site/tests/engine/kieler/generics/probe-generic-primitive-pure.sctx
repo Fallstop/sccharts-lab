@@ -1,0 +1,10 @@
+// <T is primitive> given pure: accepted by the validation, but the simulation cannot hold a pure variable.
+scchart B01pure {
+  output int p
+  initial state S is B01Gpure<pure>(p)
+}
+scchart B01Gpure<T is primitive> {
+  output int o = 0
+  primitive T x
+  initial state A do o += 1; x = x go to A
+}

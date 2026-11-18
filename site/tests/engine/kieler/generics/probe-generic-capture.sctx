@@ -1,0 +1,15 @@
+// The referenced chart (not generic) declares a local N at its top, inside an instance of a chart whose parameter N
+// is 3: the local starts with 3, not with its own 100.
+scchart A17 {
+  output int p
+  initial state S is A17O<3>(p)
+}
+scchart A17O<N is int> {
+  output int o
+  initial state T is A17I(o)
+}
+scchart A17I {
+  output int o = 0
+  int N = 100
+  initial state A do o += N go to A
+}

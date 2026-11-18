@@ -1,0 +1,15 @@
+// region is super.R inside a state of an ordinary region.
+scchart R11 extends R11B {
+  region Mine {
+    initial state X {
+      region is super.R
+    }
+  }
+}
+scchart R11B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

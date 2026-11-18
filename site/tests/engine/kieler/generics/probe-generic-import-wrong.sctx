@@ -1,0 +1,6 @@
+// A generic chart of an imported file referenced without its generic argument: the validation's binding error.
+import "probe-generic-import-library"
+scchart ProbeGenericImportWrong {
+  output int p
+  initial state S is ProbeGenericImportCounter(p)
+}

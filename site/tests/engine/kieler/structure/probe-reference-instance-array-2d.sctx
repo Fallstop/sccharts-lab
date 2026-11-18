@@ -1,0 +1,10 @@
+// A two-dimensional array of chart instances.
+scchart M03 {
+  output int p
+  ref M03C g[2][2]
+  initial state A do g[1][0].inc(); g[1][1].inc(); g[1][1].inc(); p = g[0][0].n + 10 * g[1][0].n + 100 * g[1][1].n go to A
+}
+scchart M03C {
+  int n = 0
+  method void inc() { n += 1 }
+}

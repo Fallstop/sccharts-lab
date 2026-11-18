@@ -1,0 +1,12 @@
+// Through extends, a parameter in the arguments of ref Inner<N> g is replaced (the Inheritance processor replaces
+// every use).
+scchart G16 extends G16B<3> {
+}
+scchart G16B<N is int> {
+  output int o
+  ref G16I<N> g(o)
+}
+scchart G16I<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

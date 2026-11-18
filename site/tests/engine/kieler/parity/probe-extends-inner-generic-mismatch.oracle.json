@@ -1,0 +1,22 @@
+{
+  "hash": "7402c63e28798005a449c0f566dbf5ea031b9c21",
+  "chart": "tests/engine/kieler/parity/probe-extends-inner-generic-mismatch.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "4:27 The binding of inherited variables is erroneous!\nType mismatch! Generic parameter N of type int cannot take literal of type bool.",
+    "Errornous generic parameter. Paramter N of H18G was not set correcly. Type mismatch! Generic parameter N of type int cannot take literal of type bool.",
+    "The valued object reference points to a valued object (N) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The binding of inherited variables is erroneous!\nType mismatch! Generic parameter N of type int cannot take literal of type bool.",
+      "line": 4,
+      "column": 27
+    }
+  ],
+  "ticks": []
+}

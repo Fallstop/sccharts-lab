@@ -1,0 +1,72 @@
+{
+  "hash": "330d114d3001f86eb48e2c290e5181dee20a0476",
+  "chart": "tests/engine/kieler/parity/probe-extends-inner-override-super.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Abort transitions should have a trigger.",
+      "line": 9,
+      "column": 7
+    }
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 12
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "p": 18
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

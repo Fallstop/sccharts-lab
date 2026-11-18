@@ -1,0 +1,64 @@
+{
+  "hash": "3cbe20f1f80e7bd585558daa4fc9dbcc48d6fac3",
+  "chart": "tests/engine/kieler/parity/probe-extends-inner-binding-named.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 2
+      },
+      "values": {
+        "i": 2,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 3,
+        "p": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "i": 3,
+        "p": 6
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "i": 3,
+        "p": 9
+      },
+      "terminated": false
+    }
+  ]
+}

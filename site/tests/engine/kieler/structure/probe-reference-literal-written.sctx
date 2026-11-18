@@ -1,0 +1,10 @@
+// A literal bound to an input that the referenced chart writes: the input is a local that starts with the literal.
+scchart K13b {
+  output int p
+  initial state S is K13bS(4, p)
+}
+scchart K13bS {
+  input int x
+  output int o = 0
+  initial state A do o += x; x += 1 go to A
+}

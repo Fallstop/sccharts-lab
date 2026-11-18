@@ -1,0 +1,10 @@
+// An output as the generic argument, written through the parameter.
+scchart A24 {
+  output int p
+  output int k
+  initial state S is A24G<k>(p)
+}
+scchart A24G<N is int> {
+  output int o = 0
+  initial state A do N = o + 1; o += N go to A
+}

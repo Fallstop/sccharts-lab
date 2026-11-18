@@ -1,0 +1,9 @@
+// Two generic parameters of one name: accepted, the last argument wins.
+scchart A22 {
+  output int p
+  initial state S is A22G<3, 4>(p)
+}
+scchart A22G<N is int, N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

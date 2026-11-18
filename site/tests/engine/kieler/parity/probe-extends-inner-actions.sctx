@@ -1,0 +1,14 @@
+// An inner state inherits entry, during and exit actions: the base's come first.
+scchart I14 {
+  output int p
+  initial state T extends I14B(p) {
+    entry do p += 100
+  }
+  if p > 104 go to T
+}
+scchart I14B {
+  output int o
+  entry do o += 1
+  during do o += 2
+  exit do o = 0
+}

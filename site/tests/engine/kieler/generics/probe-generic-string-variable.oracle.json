@@ -1,0 +1,48 @@
+{
+  "hash": "a8122be380ed085f4c064da8bf25e9f728efb669",
+  "chart": "tests/engine/kieler/generics/probe-generic-string-variable.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "p": {
+      "type": "string",
+      "properties": [
+        "output"
+      ]
+    },
+    "s": {
+      "type": "string",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "s": "hi"
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": "hi",
+        "s": "hi"
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": "hi",
+        "s": "hi"
+      },
+      "terminated": false
+    }
+  ]
+}

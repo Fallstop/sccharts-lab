@@ -1,0 +1,11 @@
+// ref C<int> g with a primitive type parameter.
+scchart D09 {
+  output int p
+  ref D09G<int> g
+  dataflow { p = g.o }
+}
+scchart D09G<T is primitive> {
+  output int o = 0
+  primitive T x = 1
+  initial state A do x += 1; o += x go to A
+}

@@ -1,0 +1,73 @@
+{
+  "hash": "3c02e488817765cdef8c44ad518d8657d449fc5e",
+  "chart": "tests/engine/kieler/generics/probe-generic-value-array-element-variable.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "p": 0,
+        "a": [
+          5,
+          7
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "p": 7,
+        "a": [
+          5,
+          7
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "p": 12,
+        "a": [
+          5,
+          7
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

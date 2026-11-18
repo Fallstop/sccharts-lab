@@ -1,0 +1,12 @@
+// An input and an output declared with a generic type (input primitive T x) cannot be bound to variables: "Cannot
+// substitute reference of type T by valued object of type int".
+scchart GRefType {
+  input int i
+  output int p
+  initial state S is GInnerT<int>(i, p)
+}
+scchart GInnerT<T is primitive> {
+  input primitive T x
+  output primitive T y
+  initial state A do y = x go to A
+}

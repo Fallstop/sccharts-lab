@@ -1,0 +1,10 @@
+// A variable of a generic type with an initial value, read and written.
+scchart B01b {
+  output int p
+  initial state S is B01bG<int>(p)
+}
+scchart B01bG<T is primitive> {
+  output int o = 0
+  primitive T x = 2
+  initial state A do x += 1; o += x go to A
+}

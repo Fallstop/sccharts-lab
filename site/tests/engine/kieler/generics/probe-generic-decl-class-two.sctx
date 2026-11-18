@@ -1,0 +1,10 @@
+// Two instances of a generic chart used as a class, with different arguments.
+scchart D04b {
+  output int p
+  ref D04bG g<3>, h<10>
+  initial state A do g.bump(); h.bump(); p = g.n + h.n go to A
+}
+scchart D04bG<N is int> {
+  int n = 0
+  method void bump() { n += N }
+}

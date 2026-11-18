@@ -1,0 +1,10 @@
+// A generic chart that references itself.
+scchart A18 {
+  output int p
+  initial state S is A18G<3>(p)
+}
+scchart A18G<N is int> {
+  output int o = 0
+  initial state A do o += N go to B
+  state B is A18G<N>(o)
+}

@@ -1,0 +1,11 @@
+// An array size named by a value parameter (int a[N]): the validation rejects it, a size must be an int literal or
+// a const int.
+scchart GArraySize {
+  output int p
+  initial state S is GArr<3>(p)
+}
+scchart GArr<N is int> {
+  output int o = 0
+  int a[N]
+  initial state A do a[N - 1] += 1; o = a[N - 1] go to A
+}

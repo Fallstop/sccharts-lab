@@ -1,0 +1,11 @@
+// pre(B) of a literal in a referenced chart whose state cannot be reached: no code is made for it, accepted (found
+// by the generics fuzz profile, seed 5).
+scchart N11 {
+  output int p
+  initial state A do p += 1 go to A
+  state U is N11G<false>(p)
+}
+scchart N11G<B is bool> {
+  output int o
+  initial state X if pre(B) do o += 100 go to X
+}

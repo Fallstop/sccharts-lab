@@ -1,0 +1,17 @@
+// region is R inside a state of the extending chart: the copy restarts with the state.
+scchart R03 extends R03B {
+  region Mine {
+    initial state X {
+      region is R
+    }
+    if o > 3 go to Y
+    state Y
+  }
+}
+scchart R03B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

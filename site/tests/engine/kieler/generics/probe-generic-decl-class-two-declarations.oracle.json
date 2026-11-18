@@ -1,0 +1,85 @@
+{
+  "hash": "ee8fbdf4a7368e401eb23eff6ee18c27910f1315",
+  "chart": "tests/engine/kieler/generics/probe-generic-decl-class-two-declarations.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K01C1.n": {
+      "type": "int",
+      "properties": []
+    },
+    "K01C2.n": {
+      "type": "int",
+      "properties": []
+    },
+    "a": {
+      "type": "class",
+      "properties": []
+    },
+    "b": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "a": {
+          "n": 0
+        },
+        "b": {
+          "n": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 21,
+        "a": {
+          "n": 1
+        },
+        "b": {
+          "n": 2
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 42,
+        "a": {
+          "n": 2
+        },
+        "b": {
+          "n": 4
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

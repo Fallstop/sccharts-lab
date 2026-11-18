@@ -1,0 +1,15 @@
+// A value parameter as the index of an argument (state T is Inner(a[N], o)).
+scchart X12 {
+  output int p
+  initial state S is X12O<1>(p)
+}
+scchart X12O<N is int> {
+  output int o
+  int a[2] = {5, 7}
+  initial state T is X12I(a[N], o)
+}
+scchart X12I {
+  input int x
+  output int y = 0
+  initial state A do y += x go to A
+}

@@ -1,0 +1,9 @@
+// ref C g<2>(p), h<3>(q).
+scchart D02b {
+  output int p, q
+  ref D02bG g<2>(p), h<3>(q)
+}
+scchart D02bG<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

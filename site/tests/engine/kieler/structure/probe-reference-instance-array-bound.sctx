@@ -1,0 +1,10 @@
+// An array of chart instances bound to one output: every element writes it.
+scchart M02 {
+  output int p = 0
+  ref M02C g[3](p)
+}
+scchart M02C {
+  output int o
+  int k = 1
+  initial state S do o += k; k += 1 go to S
+}

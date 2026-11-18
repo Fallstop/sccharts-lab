@@ -1,0 +1,10 @@
+// extends Base<i> where the parameter is a for-region range: the range must be an int literal.
+scchart H05 extends H05B<i> {
+  input int i
+}
+scchart H05B<N is int> {
+  output int o = 0
+  region R for i2 : 0 to N {
+    initial state A do o += i2 go to A
+  }
+}

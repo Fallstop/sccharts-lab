@@ -1,0 +1,9 @@
+// A string literal for a string parameter: refused ("cannot take literal of type UNKNOWN").
+scchart B00string {
+  output string p
+  initial state S is B00Gstring<"hi">(p)
+}
+scchart B00Gstring<V is string> {
+  output string o
+  initial state A do o = V go to A
+}

@@ -68,10 +68,30 @@ export class CVar {
     method?: CMethod
     /** A member of a class or struct instance (lower.ts declareMembers): the instance and the member's name. */
     member?: { of: CVar; name: string }
-    /** `ref Chart x(args)` (declKind 'reference'): the chart it instantiates (structure.md S-18, S-33). */
-    instance?: { target: string; args: CArg[] }
+    /**
+     * `ref Chart x(args)` (declKind 'reference'): the chart it instantiates (structure.md S-18, S-33), with its
+     * generic arguments (`ref Chart<4> x`: `declGenerics`, the declaration's; `ref Chart x<4>`: the variable's own).
+     * `typeParam`: the chart is a generic type parameter of the chart around it (`ref W w`), by its declaration id.
+     */
+    instance?: {
+        target: string
+        args: CArg[]
+        generics?: CGenericArg[]
+        declGenerics?: boolean
+        typeParam?: string
+        /** The declaration's first variable (its id), and whether KIELER gives each variable a declaration of its own. */
+        group?: string
+        separate?: boolean
+    }
     /** The class KIELER makes of a `ref` declaration's chart (`Counter1`, the next declaration's `Counter2`). */
     className?: string
+    /**
+     * A generic parameter of a chart (declKind 'generic', structure.md S-73): kept apart from the chart's
+     * declarations until the Reference pass binds it. `type`: the chart a type or instance parameter names.
+     */
+    generic?: { kind: 'type' | 'primitive' | 'value' | 'reference'; type?: string }
+    /** `primitive T x` (declKind 'primitive'): the generic type parameter that gives the variable its type. */
+    typeParam?: string
     /** A declaration of a state inside a for-region copy (passes/forRegion.ts): the source region and the counter's
      *  value in that copy. */
     forCopy?: { region: string; counter: string; value: number }
@@ -129,7 +149,9 @@ export interface CRef {
 /** A trigger written `if a > 0 schedule s 1` keeps its schedule on the expression (KIELER's BoolScheduleExpression);
  *  an expression built around it later does not have it. */
 export type CExpr = { sched?: SchedEntry[] } & (
-    | { k: 'lit'; t: 'bool' | 'int' | 'float' | 'string'; v: boolean | number | string; span?: Span }
+    /** `konst`: an argument of a reference that names a constant (its value is here already, but KIELER still has the
+     *  name when it binds the argument, structure.md S-74). */
+    | { k: 'lit'; t: 'bool' | 'int' | 'float' | 'string'; v: boolean | number | string; span?: Span; konst?: string }
     | { k: 'null'; span?: Span }
     | CRef
     | { k: 'op'; op: OperatorType; args: CExpr[]; span?: Span }
@@ -215,6 +237,17 @@ export interface CArg {
     span?: Span
 }
 
+/** A generic argument (`<4>`, `<int>`, `<Worker>`, `<Box<2>>`, `<x>`), lowered where it is written. */
+export type CGenericArg = {
+    text: string
+    span?: Span
+    /** Written as a name (a variable, a constant): KIELER still has the name where an int literal is asked for. */
+    named?: boolean
+} & (
+    | { k: 'type'; type: ValueType }
+    | { k: 'chart'; name: string; args: CGenericArg[] }
+    | { k: 'expr'; expr: CExpr })
+
 /** A method's signature and body. Parameters and locals are variables of no scope (method frames). */
 export interface CMethod {
     params: CVar[]
@@ -223,6 +256,8 @@ export interface CMethod {
     body: CStmt[]
     /** Return type as written ('void' when there is none). */
     returnType: ValueType | 'void'
+    /** `method primitive T f()`: the generic type parameter that gives the return type. */
+    returnParam?: string
     /** The source element the body comes from (method declaration or code effect's action/transition). */
     by?: string
     /** `@inline`: KIELER inlines every call of it, whatever its size (SCGAnnotations.ANNOTATION_METHOD_INLINING). */

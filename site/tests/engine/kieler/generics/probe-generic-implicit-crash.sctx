@@ -1,0 +1,15 @@
+// A generic chart with a variable of its parameter's name binds an inner reference by name: KIELER's compiler
+// crashes (IllegalStateException).
+scchart X10 {
+  output int o
+  initial state S is X10O<3>
+}
+scchart X10O<N is int> {
+  output int o
+  int N = 50
+  initial state T is X10I
+}
+scchart X10I {
+  output int o = 0
+  initial state A do o += 1 go to A
+}

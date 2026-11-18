@@ -1,0 +1,16 @@
+// An inner state with a region of its own next to the inherited one.
+scchart I06 {
+  output int p, q
+  initial state T extends I06B(p) {
+    region Own {
+      initial state X do q += 2 go to X
+    }
+  }
+}
+scchart I06B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

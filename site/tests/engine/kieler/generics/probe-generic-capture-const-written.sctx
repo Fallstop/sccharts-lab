@@ -1,0 +1,16 @@
+// The same with the nested chart writing its local: an assignment to the constant (found by the generics fuzz
+// profile, seed 1).
+scchart K15b {
+  const int K = 4
+  output int p
+  initial state S is K15bO<K>(p)
+}
+scchart K15bO<N is int> {
+  output int o
+  initial state T is K15bI(o)
+}
+scchart K15bI {
+  output int o = 0
+  int N = 100
+  initial state A do o += N; N += 1 go to A
+}

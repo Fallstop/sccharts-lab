@@ -1,0 +1,9 @@
+// A bool literal for a bool parameter.
+scchart B00bool {
+  output bool p
+  initial state S is B00Gbool<true>(p)
+}
+scchart B00Gbool<V is bool> {
+  output bool o
+  initial state A do o = V go to A
+}

@@ -10,7 +10,7 @@
 
 import type {
     Annotation, AssignOperator, CombineOperator, Declaration, DelayType, Diagnostic, Effect, Equation, Expression,
-    LocalAction, LocalActionKind, OperatorType, ParamAccess, Pragma, Program, Reference, Region, ScheduleRef, ScopeCall,
+    GenericArgument, GenericParameterDeclaration, LocalAction, LocalActionKind, OperatorType, ParamAccess, Pragma, Program, Reference, Region, ScheduleRef, ScopeCall,
     ScopeParameter, SclStatement, Span, State, Transition, ValuedObject, ValueType,
 } from '../types'
 import { describeToken, KEYWORDS, lex, type Token } from './lexer'
@@ -605,7 +605,11 @@ class Parser {
         const name = this.parseExtendedID(`Expected the chart's name after 'scchart', as in scchart Blinker { ... }`)
         const state = this.newState(start, name, this.span(nameIdx), pending, true)
         if (this.at('STRING')) state.label = stringValue(this.next().text)
-        if (this.at('<')) state.genericParameters = this.parseGenericParameterDeclarations()
+        if (this.at('<')) {
+            const generics = this.parseGenericParameterDeclarations()
+            state.genericParameters = generics.text
+            state.genericParameterDeclarations = generics.declarations
+        }
         if (this.accept('extends')) {
             state.baseStates = [this.parseBaseStateReference()]
             while (this.accept(',')) state.baseStates.push(this.parseBaseStateReference())
@@ -628,61 +632,102 @@ class Parser {
         return state
     }
 
-    private parseGenericParameterDeclarations(): string[] {
+    /** GenericParameterDeclaration: QSA* PrimeID ('is' (ValueType | 'primitive' | 'ref'? PrimeID))? */
+    private parseGenericParameterDeclarations(): { text: string[]; declarations: GenericParameterDeclaration[] } {
         this.expect('<')
-        const out: string[] = []
+        const text: string[] = []
+        const declarations: GenericParameterDeclaration[] = []
         const one = () => {
             const s = this.pos
-            this.parseAnnotations('quoted')
-            this.parsePrimeID()
+            const pending = this.parseAnnotations('quoted')
+            const nameStart = this.pos
+            const name = this.parsePrimeID()
+            const nameSpan = this.span(nameStart)
+            const d: GenericParameterDeclaration = {
+                kind: 'genericParameter', annotations: pending.annotations, span: nameSpan,
+                valuedObject: { kind: 'valuedObject', id: '', name, cardinalities: [], span: nameSpan, nameSpan },
+            }
             if (this.accept('is')) {
-                if (this.atAny(VALUE_TYPES) || this.at('primitive')) this.next()
+                if (this.atAny(VALUE_TYPES) || this.at('primitive')) d.valueType = this.next().kind as ValueType | 'primitive'
                 else {
-                    this.accept('ref')
-                    this.parsePrimeID()
+                    if (this.accept('ref')) d.reference = true
+                    const typeStart = this.pos
+                    d.typeName = this.parsePrimeID()
+                    d.typeSpan = this.span(typeStart)
                 }
             }
-            out.push(this.src.slice(this.toks[s].start, this.toks[this.pos - 1].end))
+            d.span = this.span(s)
+            text.push(this.src.slice(this.toks[s].start, this.toks[this.pos - 1].end))
+            declarations.push(d)
         }
         one()
         while (this.accept(',')) one()
         this.expect('>', `Expected '>' to close the generic parameters but found ${describeToken(this.la())}`)
-        return out
+        return { text, declarations }
     }
 
-    private parseGenericParameters(): string[] {
+    /** Sets `genericParameters` (as written) and `genericArguments` (parsed) from `<...>`. */
+    private parseGenericParameters(target: { genericParameters?: string[]; genericArguments?: GenericArgument[] }) {
+        const args = this.parseGenericArguments()
+        target.genericParameters = args.map(a => a.text)
+        target.genericArguments = args
+    }
+
+    private parseGenericArguments(): GenericArgument[] {
         this.expect('<')
-        const out: string[] = []
-        const one = () => {
-            const s = this.pos
-            this.parseGenericParameter()
-            out.push(this.src.slice(this.toks[s].start, this.toks[this.pos - 1].end))
-        }
-        one()
-        while (this.accept(',')) one()
+        const out: GenericArgument[] = [this.parseGenericParameter()]
+        while (this.accept(',')) out.push(this.parseGenericParameter())
         this.expect('>', `Expected '>' to close the generic arguments but found ${describeToken(this.la())}`)
         return out
     }
 
     /** GenericParameter: value type | literal | Type<...> | a[i].b | a.b | Type | a */
-    private parseGenericParameter() {
-        if (this.atAny(['pure', 'bool', 'int', 'float', 'string', 'clock', 'clock-time'])) { this.next(); return }
-        if (this.atAny(['INT', 'FLOAT', 'BOOLEAN', 'STRING'])) { this.next(); return }
-        this.parsePrimeID()
-        if (this.at('<')) { this.parseGenericParameters(); return }
+    private parseGenericParameter(): GenericArgument {
+        const s = this.pos
+        const arg: GenericArgument = { kind: 'genericArgument', text: '', span: this.span(s) }
+        const done = () => {
+            arg.span = this.span(s)
+            arg.text = this.src.slice(this.toks[s].start, this.toks[this.pos - 1].end)
+            return arg
+        }
+        if (this.atAny(['pure', 'bool', 'int', 'float', 'string', 'clock', 'clock-time'])) {
+            arg.valueType = this.next().kind as ValueType
+            return done()
+        }
+        if (this.atAny(['INT', 'FLOAT', 'BOOLEAN', 'STRING'])) {
+            const t = this.next()
+            const span = this.tokSpan(t)
+            arg.expression = t.kind === 'BOOLEAN' ? { kind: 'bool', value: t.text === 'true', span }
+                : t.kind === 'STRING' ? { kind: 'string', value: stringValue(t.text), span }
+                : t.kind === 'INT' ? { kind: 'int', value: this.intValue(t), span }
+                : { kind: 'float', value: this.floatValue(t), span }
+            return done()
+        }
+        const name = this.parsePrimeID()
+        if (this.at('<')) {
+            arg.typeName = name
+            arg.typeArguments = this.parseGenericArguments()
+            return done()
+        }
+        const ref: Reference = { kind: 'ref', name, indices: [], span: this.span(s) }
+        // A bare name is a type or a variable: name resolution decides (KIELER's KExtGenericParamterConverter).
+        if (!this.at('[') && !this.at('.')) arg.typeName = name
         while (this.at('[')) {
             this.next()
-            this.parseExpression()
+            ref.indices.push(this.parseExpression())
             this.expect(']')
         }
-        if (this.accept('.')) this.parseValuedObjectReference()
+        if (this.accept('.')) ref.sub = this.parseValuedObjectReference()
+        ref.span = this.span(s)
+        arg.expression = ref
+        return done()
     }
 
     private parseBaseStateReference(): ScopeCall {
         const start = this.pos
         const targetTok = this.expect('ID', `Expected the name of the base chart after 'extends'`)
         const call: ScopeCall = { kind: 'scopeCall', target: idValue(targetTok.text), parameters: [], span: this.span(start), targetSpan: this.tokSpan(targetTok) }
-        if (this.at('<')) call.genericParameters = this.parseGenericParameters()
+        if (this.at('<')) this.parseGenericParameters(call)
         this.parseScopeParameters(call)
         call.span = this.span(start)
         return call
@@ -1036,7 +1081,7 @@ class Parser {
         const nameTok = this.expect('ID', `Expected the name of the referenced chart after 'is', as in state S is Other(x to y)`)
         const call: ScopeCall = { kind: 'scopeCall', target: idValue(nameTok.text), parameters: [], span: this.span(start), targetSpan: this.tokSpan(nameTok) }
         if (isSuper) call.super = true
-        if (this.at('<')) call.genericParameters = this.parseGenericParameters()
+        if (this.at('<')) this.parseGenericParameters(call)
         this.parseScopeParameters(call)
         call.span = this.span(start)
         return call
@@ -1812,7 +1857,7 @@ class Parser {
             }
             d.referenceTarget = target
             d.referenceSpan = this.span(at)
-            if (this.at('<')) d.genericParameters = this.parseGenericParameters()
+            if (this.at('<')) this.parseGenericParameters(d)
             d.valuedObjects.push(this.parseReferenceValuedObject())
             while (this.accept(',')) d.valuedObjects.push(this.parseReferenceValuedObject())
         }
@@ -1847,7 +1892,7 @@ class Parser {
             vo.cardinalities.push(this.parseExpression())
             this.expect(']')
         }
-        if (this.at('<')) vo.genericParameters = this.parseGenericParameters()
+        if (this.at('<')) this.parseGenericParameters(vo)
         if (this.at('(') || this.at('()')) {
             const holder: { parameters: ScopeParameter[] } = { parameters: [] }
             this.parseScopeParameters(holder)

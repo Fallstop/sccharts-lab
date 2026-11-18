@@ -1,0 +1,10 @@
+// A generic chart referenced without generic arguments: "There is no parameter given for generic parameter
+// declaration of N."
+scchart A11 {
+  output int p
+  initial state S is A11G(p)
+}
+scchart A11G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

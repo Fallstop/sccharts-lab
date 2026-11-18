@@ -1,0 +1,9 @@
+// The extending chart cannot name the base chart's generic parameter.
+scchart C07 extends C07B<3> {
+  output int p = 0
+  region R2 { initial state B do p += N * 2 go to B }
+}
+scchart C07B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

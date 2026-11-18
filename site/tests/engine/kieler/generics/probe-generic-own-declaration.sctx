@@ -1,0 +1,11 @@
+// The generic chart declares a variable with the name of its parameter: accepted, and the variable starts with the
+// argument (3) instead of its own initial value.
+scchart A23 {
+  output int p
+  initial state S is A23G<3>(p)
+}
+scchart A23G<N is int> {
+  output int o = 0
+  int N = 50
+  initial state A do o += N go to A
+}

@@ -1,0 +1,14 @@
+// Holder<Box<4> >: the chart given for W carries its own argument, but state S is W(q) is checked against Box
+// without one.
+scchart X25 {
+  output int p
+  initial state S is X25H<X25Box<4> >(p)
+}
+scchart X25H<W is X25Box> {
+  output int q
+  initial state S is W(q)
+}
+scchart X25Box<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

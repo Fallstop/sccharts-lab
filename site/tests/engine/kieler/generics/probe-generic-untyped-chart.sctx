@@ -1,0 +1,13 @@
+// A parameter without "is" (<X>) is a chart type: state S is X(q) with any chart given for X.
+scchart A03 {
+  output int p
+  initial state S is A03G<A03W>(p)
+}
+scchart A03G<X> {
+  output int q
+  initial state S is X(q)
+}
+scchart A03W {
+  output int o = 0
+  initial state A do o += 1 go to A
+}

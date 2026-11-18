@@ -1,0 +1,10 @@
+// pre(N) in a trigger with the literal 4 for N: gcc refuses KIELER's code.
+scchart N03 {
+  output int p
+  initial state S is N03G<4>(p)
+}
+scchart N03G<N is int> {
+  output int o
+  initial state A if pre(N) > 1 do o += 1 go to A
+  do o += 10 go to A
+}

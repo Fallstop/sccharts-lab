@@ -1,0 +1,11 @@
+// A local variable as the generic argument, written by a concurrent region: the instance reads it after the write.
+scchart A08 {
+  int k = 1
+  output int p
+  region R1 { initial state S is A08G<k>(p) }
+  region R2 { initial state B do k += 1 go to B }
+}
+scchart A08G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,129 @@
+{
+  "hash": "c12515f8275f13df8b32eded37cf6c6985264db0",
+  "chart": "tests/engine/kieler/structure/probe-reference-instance-array-member-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_g_add_k is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "M10C1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "g": [
+          {
+            "a": [
+              1,
+              2
+            ]
+          },
+          {
+            "a": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 52,
+        "g": [
+          {
+            "a": [
+              1,
+              2
+            ]
+          },
+          {
+            "a": [
+              1,
+              5
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 82,
+        "g": [
+          {
+            "a": [
+              1,
+              2
+            ]
+          },
+          {
+            "a": [
+              1,
+              8
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "p": 112,
+        "g": [
+          {
+            "a": [
+              1,
+              2
+            ]
+          },
+          {
+            "a": [
+              1,
+              11
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

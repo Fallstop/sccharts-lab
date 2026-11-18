@@ -1,0 +1,11 @@
+// The counter of a for-region as a generic argument: it has no declared type, so the check refuses it.
+scchart K04 {
+  output int p = 0
+  region R for i : 0 to 1 {
+    initial state S is K04G<i>(p)
+  }
+}
+scchart K04G<N is int> {
+  output int o
+  initial state A do o += N + 1 go to A
+}

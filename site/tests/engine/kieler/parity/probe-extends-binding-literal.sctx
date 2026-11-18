@@ -1,0 +1,9 @@
+// extends Base(5, p): a literal for the input.
+scchart E03 extends E03B(5, p) {
+  output int p
+}
+scchart E03B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

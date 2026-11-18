@@ -1,0 +1,11 @@
+// A chart that extends Base<6>, used as a reference.
+scchart C09 {
+  output int p
+  initial state S is C09X(p)
+}
+scchart C09X extends C09B<6> {
+}
+scchart C09B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

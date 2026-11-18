@@ -1,0 +1,14 @@
+// A plain variable given for <V is ref Worker>.
+scchart B05b {
+  output int p
+  int w
+  initial state S is B05bH<w>(p)
+}
+scchart B05bH<V is ref B05bW> {
+  output int q
+  initial state A do q += 1 go to A
+}
+scchart B05bW {
+  int n = 0
+  method void inc() { n += 1 }
+}

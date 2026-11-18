@@ -1,0 +1,10 @@
+// A wrong generic argument on an inner state's extends: rejected by the validation.
+scchart H18 {
+  output int p
+  initial state T extends H18G<true>(p) {
+  }
+}
+scchart H18G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}
