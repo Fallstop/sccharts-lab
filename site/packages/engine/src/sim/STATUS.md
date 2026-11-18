@@ -1003,6 +1003,7 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 32 (seed 5, objects, nested, structure, schedules x 80, regression) | 320 | 91 | 223 | 1 | 0 | 5 | 0 |
 | 33 (seed 4, preBodies x 100, on the final code) | 100 | 67 | 33 | 0 | 0 | 0 | 0 |
 | 34 (seeds 1 to 3, pointers x 200 each, the new profile) | 600 | 480 | 120 | 0 | 0 | 0 | 0 on the final code; 2 on the way, fixed (below) |
+| 35 (seed 71, preBodies, pointers, random, objects, dataflowObjects, generics, schedules, mix x 80, everything merged) | 640 | 324 | 312 | 1 | 0 | 2 | 1, fixed (below) |
 
 Campaigns 28 to 31 and 33 use the profile `preBodies` (`pre` in the bodies of methods and code blocks); campaign 32
 runs the neighbouring profiles on the changed method, signal, copy and reference code. Campaign 28's seven
@@ -1062,6 +1063,12 @@ fourth was waiting behind one of them and matches when it is run alone. Campaign
 `random` (tools/fuzz/README.md): `random()` and `randomize()` in 120 charts, 101 of them seeding from the clock, the
 seeds recovered from the clock seconds around each tick: no disagreement; `pnpm cgen:check --fuzz 200 --profiles
 random`: 182 charts compiled and compared with the simulation, no mismatch.
+
+Campaign 35 runs eight profiles on the tree with everything merged. Its one disagreement: a code block that calls a
+short method with a local variable, on a transition of a state nothing leads to, which the engine refused
+(`method-inlined-local`) and KIELER compiles, because it makes no C function of a body nothing calls; fixed
+(`pre/probe-pre-codeblock-unreached-calls-local`). A chart of `mix` that got "The compiler failed during compilation
+setup" behind a timeout matches when it is run alone.
 
 Campaign 34 is the profile `pointers` (tools/fuzz/README.md): arrays used as values and differences in differences
 among ordinary behaviour, a third of the values random expressions built by C's types. Earlier versions of the
