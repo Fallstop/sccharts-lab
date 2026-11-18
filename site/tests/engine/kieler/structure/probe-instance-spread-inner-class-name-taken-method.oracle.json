@@ -1,0 +1,11 @@
+{
+  "hash": "f88182a7990fe70d43a3658d965519ae149397d2",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-inner-class-name-taken-method.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "java.lang.Exception: Valued Object not found! [C1_k]\njava.lang.Exception: Valued Object not found! [C1_k]\n\tde.cau.cs.kieler.scg.extensions.SCGDeclarationExtensions.getValuedObjectCopyWNULL(SCGDeclarationExtensions.java:261)\n\tde.cau.cs.kieler.scg.extensions.SCGDeclarationExtensions.lambda$copySCGAssignment$6(SCGDeclarationExtensions.java:325)\n\torg.eclipse.xtext.xbase.lib.ObjectExtensions.operator_doubleArrow(ObjectExtensions.java:141)\n\tde.cau.cs.kieler.scg.extensions.SCGDeclarationExtensions.copySCGAssignment(SCGDeclarationExtensions.java:338)\n\tde.cau.cs.kieler.scg.processors.SimpleGuardTransformation.createGuards(SimpleGuardTransformation.java:425)\n\tde.cau.cs.kieler.scg.processors.SimpleGuardTransformation.process(SimpleGuardTransformation.java:193)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:304)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:777)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext._compileEntry(CompilationContext.java:368)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compileEntry(CompilationContext.java:775)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:256)\n\tde.cau.cs.kieler.kicool.compilation.CompilationContext.compile(CompilationContext.java:210)\n\tde.cau.cs.kieler.language.server.kicool.CompilationThread.run(CompilationThread.java:46)"
+  ],
+  "warnings": [],
+  "ticks": []
+}

@@ -1,0 +1,105 @@
+{
+  "hash": "e2925123222460c40674b7c3fc6fdd912055c981",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-inner-class-name-in-chart.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "C1.C1_k": {
+      "type": "int",
+      "properties": []
+    },
+    "C1.Inner.C1_k": {
+      "type": "int",
+      "properties": []
+    },
+    "C1.Inner.x": {
+      "type": "int",
+      "properties": []
+    },
+    "C1.q": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "g": [
+          {
+            "C1_k": 5,
+            "q": {
+              "C1_k": 3,
+              "x": 0
+            }
+          },
+          {
+            "C1_k": 5,
+            "q": {
+              "C1_k": 8,
+              "x": 0
+            }
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "g": [
+          {
+            "C1_k": 5,
+            "q": {
+              "C1_k": 3,
+              "x": 0
+            }
+          },
+          {
+            "C1_k": 5,
+            "q": {
+              "C1_k": 8,
+              "x": 0
+            }
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "g": [
+          {
+            "C1_k": 5,
+            "q": {
+              "C1_k": 3,
+              "x": 0
+            }
+          },
+          {
+            "C1_k": 5,
+            "q": {
+              "C1_k": 8,
+              "x": 0
+            }
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

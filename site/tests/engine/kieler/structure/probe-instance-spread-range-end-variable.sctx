@@ -1,0 +1,3 @@
+// A range that ends at a variable.
+scchart Main { int n = 2 ref C g[2]({0 to n}) initial state A }
+scchart C { input const int k int v = k }

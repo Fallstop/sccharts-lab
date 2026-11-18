@@ -615,7 +615,10 @@ schedules above).
   (`spread-binding`) and gcc's for a vector that is not spread (`binding-vector`). Under it, an `input const`
   without a value now runs at all: it is what a reference binds to it, and an ordinary input of the simulated chart
   (`probe-instance-spread-*`, `probe-input-const-*`); a class inside the chart that names the constant gets KIELER's
-  copy of it (`Cell1_k`, `probe-instance-spread-inner-class*`).
+  copy of it (`Cell1_k`, `probe-instance-spread-inner-class*`). After the final review: a range ends at a number or
+  at an int constant declared with a number, nothing else (`-range-end-*`), and a member the inner class declares
+  with the copy's name is rejected (`-inner-class-name-taken*`: gcc's duplicate member, or KIELER's crash for a
+  method).
 - **The class objects of the pool** (S-60): one rule in one place, structure/poolShape.ts, read by the simulator
   (exec.ts), the C generator (codegen/layout.ts, `GeneratedC.poolObjects`) and the traces. A chart that declares
   nothing has no class; at the top an object needs a field, a called C function or an object inside; inside another
@@ -863,6 +866,8 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 23 (seed 43, dataflowObjects, generics, structure, dataflowControl, basics, mix x 100, after the review fixes) | 600 | 250 | 339 | 3 | 0 | 4 | 4, explained (below) |
 | 24 (seed 43, dataflowObjects x 100, with the corrected generator) | 100 | 49 | 51 | 0 | 0 | 0 | 0 |
 | 25 (seed 43, the six profiles of 23 x 100, on the final code with the corrected generator) | 600 | 252 | 342 | 3 | 0 | 3 | 0 |
+| 26 (seed 51, dataflowObjects, generics, schedules, structure, nested, dataflowControl x 100, both fix rounds merged) | 600 | 210 | 386 | 1 | 0 | 3 | 0 |
+| 27 (seed 61, random x 120, the new profile) | 120 | 109 | 11 | 0 | 0 | 0 | 0 |
 
 Campaigns 12 to 14 use the profile `dataflowObjects` (tools/fuzz/README.md): dataflow regions with chart instances,
 calls and schedules next to control flow. Campaign 12's three: a binding on an instance of a classic region, which
@@ -905,6 +910,16 @@ member's index): no disagreement (dataflowObjects 49 match and 51 rejected by bo
 36 and 62, dataflowControl 45 and 55, basics 58 and 40, mix 36 and 62). `pnpm cgen:check --fuzz 300` on the same
 six profiles: 810 charts compiled and compared with the simulation, no mismatch (it found the rewriter's flaw:
 five charts without C code).
+
+Campaign 26 runs the tree with both fix rounds merged, `dataflowObjects` drawing the forms of both rounds in one
+chart: no disagreement in 600 charts (dataflowObjects 45 match and 55 rejected by both, generics 46 and 54,
+schedules 7 and 93, structure 40 and 58, nested 33 and 66, dataflowControl 39 and 60 with one chart that depends on
+KIELER's cure order). Four charts got no answer within 40 s: three KIELER does not finish compiling in 200 s either
+(a causality cycle, an abort trigger cycle, a count delay it cannot compile; the engine rejects all three), the
+fourth was waiting behind one of them and matches when it is run alone. Campaign 27 is the first of the profile
+`random` (tools/fuzz/README.md): `random()` and `randomize()` in 120 charts, 101 of them seeding from the clock, the
+seeds recovered from the clock seconds around each tick: no disagreement; `pnpm cgen:check --fuzz 200 --profiles
+random`: 182 charts compiled and compared with the simulation, no mismatch.
 
 Campaigns 16 to 19 (generic parameters, profile `generics`; run beside 12 to 15, on the generics branch): 17's disagreement is a constant passed as a generic
 argument to a chart that contains a chart whose local has the parameter's name and writes it: KIELER binds the

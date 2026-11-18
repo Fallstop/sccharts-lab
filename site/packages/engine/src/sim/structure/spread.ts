@@ -16,6 +16,7 @@
 import type { Diagnostic } from '../../types'
 import { copyExpr, CVar, type CExpr, type CState } from '../model'
 import { foldConstants } from '../fold'
+import { GCC_FAILED } from '../codegen'
 import { rewriteScope, rewriteVar } from './rewrite'
 
 /** A spread binding of one copy of the chart: the copy's formal and the vector. */
@@ -44,10 +45,11 @@ function spreadValues(s: SpreadBinding, size: number, instance: CVar, report: (d
                 'Cannot spread vector range to non integer variable', 'Write the values one by one, `{a, b, ...}`.')
         }
         const [from, to] = values.map(e => foldConstants(copyExpr(e)))
-        if (from?.k !== 'lit' || typeof from.v !== 'number' || to?.k !== 'lit' || typeof to.v !== 'number') {
-            return fail(`The range bound to \`${name}\` must be written with numbers or constants`,
-                to?.k === 'ref' ? 'End value of spread vector range must be a constant integer variable' : 'Unsupported expression type in vector range',
-                'Write the range with numbers, such as `{0 to 3}`.')
+        // The end is a number or an int constant declared with a number (the grammar allows a name there, no more).
+        if (s.vector.badEnd || from?.k !== 'lit' || typeof from.v !== 'number' || to?.k !== 'lit' || typeof to.v !== 'number') {
+            return fail(`The range bound to \`${name}\` must end at a number or at an int constant declared with a number`,
+                'End value of spread vector range must be a constant integer variable',
+                'Write the range with numbers, such as `{0 to 3}`, or declare the end as `const int N = 3`.')
         }
         values = []
         for (let i = from.v; i < to.v; i++) values.push({ k: 'lit', t: 'int', v: i })
@@ -104,6 +106,19 @@ export function applySpreads(
                 break
             }
             const name = `${cls}_${f.name}`
+            // The copy has a fixed name: a member the class declares with it is a second member of that name in
+            // KIELER's C struct, and a method makes its compiler look the copy up and find the method.
+            const clash = inst.decls.find(l => l.member?.of === owner && l.member.name === name)
+            if (clash) {
+                const method = !!clash.method || clash.declKind === 'method'
+                report({
+                    severity: 'error', code: method ? 'kieler-crash' : 'spread-binding', span: clash.span ?? s.vector.span ?? instance.span, related: owner.decl ? [owner.decl] : undefined,
+                    message: `KIELER copies \`${f.name}\`, which is spread over the instances of \`${instance.name}\`, into the class of \`${owner.display ?? owner.name}\` under the name \`${name}\`, which the class declares itself`,
+                    kieler: method ? `java.lang.Exception: Valued Object not found! [${name}]` : `duplicate member \u2018${name}\u2019\n${GCC_FAILED}`,
+                    hint: `Rename \`${name}\` in the class.`,
+                })
+                break
+            }
             const mirror = new CVar(`${owner.name}.${name}`, f.type)
             mirror.member = { of: owner, name }
             mirror.display = `${owner.display ?? owner.name}.${name}`

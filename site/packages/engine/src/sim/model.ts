@@ -174,7 +174,8 @@ export type CExpr = { sched?: SchedEntry[] } & (
     | { k: 'null'; span?: Span }
     | CRef
     | { k: 'op'; op: OperatorType; args: CExpr[]; span?: Span }
-    | { k: 'vector'; values: CExpr[]; range?: boolean; span?: Span }
+    /** `badEnd`: a range whose end KIELER's spreading does not take (lower.ts rangeEnd). */
+    | { k: 'vector'; values: CExpr[]; range?: boolean; badEnd?: boolean; span?: Span }
     /**
      * `bare`: a method called by its name alone (inside a class: a method of the same instance; passes/contracts.ts).
      * `contract`: the whole initial value of a local variable of a body, with a contract's copy on it: KIELER puts the

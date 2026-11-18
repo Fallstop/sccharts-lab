@@ -1,0 +1,102 @@
+{
+  "hash": "ae78d4a04ce98e4faf38302f82da0192f31a8c96",
+  "chart": "tests/engine/kieler/structure/probe-instance-spread-inner-class-name-outside.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "C1.Inner.C1_k": {
+      "type": "int",
+      "properties": []
+    },
+    "C1.Inner.x": {
+      "type": "int",
+      "properties": []
+    },
+    "C1.q": {
+      "type": "class",
+      "properties": []
+    },
+    "C1_k": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "C1_k": 4,
+        "g": [
+          {
+            "q": {
+              "C1_k": 3,
+              "x": 0
+            }
+          },
+          {
+            "q": {
+              "C1_k": 8,
+              "x": 0
+            }
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "C1_k": 4,
+        "g": [
+          {
+            "q": {
+              "C1_k": 3,
+              "x": 0
+            }
+          },
+          {
+            "q": {
+              "C1_k": 8,
+              "x": 0
+            }
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "C1_k": 4,
+        "g": [
+          {
+            "q": {
+              "C1_k": 3,
+              "x": 0
+            }
+          },
+          {
+            "q": {
+              "C1_k": 8,
+              "x": 0
+            }
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

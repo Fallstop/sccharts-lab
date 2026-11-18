@@ -1,0 +1,3 @@
+// The class inside the chart declares a field with the name of the copy KIELER makes of the spread constant (C1_k): two members of one name in the C struct.
+scchart Main { ref C g[2]({3,8}) initial state A }
+scchart C { input const int k class Inner { int C1_k = 3 int x = k } q }

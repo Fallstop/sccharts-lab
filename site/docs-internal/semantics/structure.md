@@ -486,13 +486,23 @@ becomes an ordinary public variable of the class KIELER makes of the chart (S-65
   `-two-classes`, `-and-region` run).
 
 The values may be numbers, constants and expressions (`{Y, 8}`, `{1 + 2, 8}`); a range counts up to, not
-including, its end (`{0 to 3}` is 0, 1, 2: `-range`).
+including, its end (`{0 to 3}` is 0, 1, 2: `-range`). The grammar takes a number as the start of a range and a
+number or a name as its end; the name must be an int constant declared with a number (`const int N = 2`:
+`-range-end-constant`), not one declared with an expression or another constant, a float or bool constant, or a
+variable (`-range-end-constant-expression`, `-constant-of-constant`, `-float-constant`, `-bool-constant`,
+`-variable`).
+
+The copy in a class inside the chart has a fixed name, so a member the class declares with it clashes: a field is
+gcc's ``duplicate member `Cell1_k` ``, a method makes KIELER's compiler fail with `Valued Object not found!
+[Cell1_k]` (`-inner-class-name-taken`, `-name-taken-method`). The same name outside that class is fine
+(`-inner-class-name-outside`, `-name-in-chart`).
 
 | Chart | Message |
 | --- | --- |
 | another number of values than instances | `Cannot spread vector with different size than target array` (`-size`) |
 | a variable among the values | `Cannot bind non-constant variable to constant input (via spread vector)` (`-variable`) |
-| a range for a constant that is no int, or with other bounds than numbers | `Cannot spread vector range to non integer variable`, `End value of spread vector range must be a constant integer variable` (source) |
+| a range for a constant that is no int | `Cannot spread vector range to non integer variable` (source) |
+| a range whose end is no number and no int constant declared with a number | `End value of spread vector range must be a constant integer variable` (`-range-end-*`) |
 | a vector for the constant of a single instance or of a two-dimensional array | not spread: gcc's `expected expression before '{' token` where the constant is read (`probe-instance-vector-to-constant*`) |
 | a vector for an ordinary scalar input of an array of instances | not spread: the same gcc error (`probe-instance-vector-to-input`) |
 

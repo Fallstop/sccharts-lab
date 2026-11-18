@@ -701,7 +701,7 @@ class Lowering {
             case 'null': return { k: 'null', span: e.span }
             case 'ref': return this.refExpr(e)
             case 'op': return { k: 'op', op: e.op, args: e.args.map(a => this.expr(a)), span: e.span }
-            case 'vector': return { k: 'vector', values: e.values.map(a => this.expr(a)), range: e.range, span: e.span }
+            case 'vector': return { k: 'vector', values: e.values.map(a => this.expr(a)), range: e.range, ...(e.range && !this.rangeEnd(e.values[1]) ? { badEnd: true } : {}), span: e.span }
             case 'random': return { k: 'random', span: e.span }
             case 'hostcode': return { k: 'host', text: e.text, span: e.span }
             case 'ignore': return { k: 'ignore', span: e.span }
@@ -716,6 +716,19 @@ class Lowering {
             }
             default: return { k: 'unsupported', what: e.kind, span: e.span }
         }
+    }
+
+    /**
+     * The end of a range `{0 to N}` as KIELER's Reference processor takes it when it spreads the range: a number, or
+     * an int constant declared with a number (`const int N = 2`; not `= 1 + 1`, not another constant, not a float).
+     */
+    private rangeEnd(e: Expression | undefined): boolean {
+        if (!e || e.kind === 'int') return true
+        let r = e.kind === 'ref' && !e.sub ? e : e.kind === 'special' ? e.sub : undefined
+        while (r?.sub) r = r.sub
+        const entry = r?.decl && this.index ? entryOf(this.index, r.decl) : undefined
+        const d = entry?.decl
+        return !!d && d.declKind === 'variable' && !!d.const && d.type === 'int' && entry!.vo.initialValue?.kind === 'int'
     }
 
     private refExpr(r: Reference): CExpr {

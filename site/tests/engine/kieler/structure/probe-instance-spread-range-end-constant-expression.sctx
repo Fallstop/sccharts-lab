@@ -1,0 +1,3 @@
+// A range that ends at an int constant declared with an expression (1 + 1): KIELER refuses it.
+scchart Main { const int N = 1 + 1 ref C g[2]({0 to N}) initial state A }
+scchart C { input const int k int v = k }
