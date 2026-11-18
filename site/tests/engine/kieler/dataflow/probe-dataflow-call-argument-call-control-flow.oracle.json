@@ -1,0 +1,69 @@
+{
+  "hash": "d733ec5836acc92e6545bb648b5178dd8b4fa4d3",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-argument-call-control-flow.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn1_twice_j is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn2_acc_add_j is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Acc.v": {
+      "type": "int",
+      "properties": []
+    },
+    "acc": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "acc": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 6,
+        "acc": {
+          "v": 6
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

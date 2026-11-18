@@ -1,0 +1,15 @@
+// acc.add(1) and then acc.add(twice(n)): KIELER copies short methods into place method by method in the order it
+// first meets them, add before twice here, and the twice call in add's argument is lost with it. Its compiler
+// crashes.
+scchart DfCallArgumentCallCrash {
+  input bool a
+  input int n
+  output int o
+  method int twice(int j) { return j * 2 }
+  class Acc { int v = 0  void add(int j) { v += j }  int get() { return v } } acc
+  dataflow D1 {
+    acc.add(1);
+    acc.add(twice(n))
+    o = acc.get()
+  }
+}

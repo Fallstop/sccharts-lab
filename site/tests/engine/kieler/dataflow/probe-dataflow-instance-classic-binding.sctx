@@ -1,0 +1,16 @@
+// ref G g(n) wired in a classic dataflow region: the translation binds every input and output to a variable of its
+// own after the written bindings, one argument too many. Rejected (binding errors in a referenced state).
+scchart DfInstanceClassicBinding {
+  input int n
+  output int o1
+  ref G g(n)
+  dataflow {
+    g.p = n
+    o1 = g.r + 1
+  }
+}
+scchart G {
+  input int p, q
+  output int r
+  dataflow { r = p + q }
+}

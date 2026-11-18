@@ -1,0 +1,14 @@
+// The same two calls the other way round (acc.add(twice(n)), then acc.add(1)): twice is met first and copied first,
+// accepted.
+scchart DfCallArgumentCall {
+  input bool a
+  input int n
+  output int o
+  method int twice(int j) { return j * 2 }
+  class Acc { int v = 0  void add(int j) { v += j }  int get() { return v } } acc
+  dataflow {
+    acc.add(twice(n))
+    acc.add(1)
+    o = acc.get()
+  }
+}

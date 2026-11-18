@@ -132,6 +132,14 @@ function canTerminate(chart: State, expansion: Expansion): boolean {
     return terminating
 }
 
+/**
+ * KIELER's isSequential: `;` (or `seq`) after an assignment. After a call written as an equation it does nothing
+ * (the call is no DataflowAssignment): such a call is part of a sequence only as the equation after a `;`.
+ */
+function isSequential(eq: CEquation): boolean {
+    return eq.sequential && !eq.call
+}
+
 /** One equation after tuples are taken apart: an assignment or a call. */
 interface Part {
     key: number
@@ -220,7 +228,8 @@ function processRegionOO(df: CRegion, expansion: Expansion, eqs: CEquation[]) {
     let priority = 0
     let lastSequential = false
     eqs.forEach((eq, k) => {
-        if (eq.sequential && !lastSequential) {
+        const sequential = isSequential(eq)
+        if (sequential && !lastSequential) {
             group = {}
             priority = 0
         }
@@ -228,7 +237,7 @@ function processRegionOO(df: CRegion, expansion: Expansion, eqs: CEquation[]) {
             const action = createAction(main, df.ext.once ? 'entry' : 'during')
             action.delay = 'immediate'
             action.about = about
-            const schedule = [...(part.schedule ?? []), ...((eq.sequential || lastSequential) && group ? [{ group, priority: priority++ }] : [])]
+            const schedule = [...(part.schedule ?? []), ...((sequential || lastSequential) && group ? [{ group, priority: priority++ }] : [])]
             const o = { by: about, span: eq.span, ...(schedule.length ? { schedule } : {}) }
             if (part.call && part.expr.k === 'call') {
                 action.effects.push({ k: 'call', call: part.expr, o })
@@ -237,7 +246,7 @@ function processRegionOO(df: CRegion, expansion: Expansion, eqs: CEquation[]) {
                 action.effects.push({ k: 'assign', ref: part.target, op: part.op, expr: part.expr, o })
             }
         }
-        lastSequential = eq.sequential
+        lastSequential = sequential
     })
     parent.regions.splice(parent.regions.indexOf(df), 1)
 }
@@ -315,6 +324,28 @@ function processRegion(df: CRegion, expansion: Expansion) {
         locals.set(g, own)
         const call: ReferenceCall = { target: g.instance!.target, args, span: g.span }
         refState.ext.call = call
+        // The declaration's own bindings come first and the locals after them, one for every input and output: with
+        // any binding there is one argument too many (KIELER's createBindings runs out of ports).
+        if (g.instance!.args.length) {
+            const ports = chart ? interfaceOf(chart, expansion) : []
+            const lost: string[] = []
+            let ptr = 0
+            for (const [k, a] of args.entries()) {
+                if (a.binding !== undefined) {
+                    const at = ports.findIndex(p => p.name === a.binding)
+                    if (at >= 0) ptr = at
+                }
+                if (ptr >= ports.length) {
+                    if (k >= g.instance!.args.length) lost.push(`${PREFIX}${g.name}_${ports[k - g.instance!.args.length].name}`)
+                } else ptr++
+            }
+            expansion.ctx.report({
+                severity: 'error', code: 'binding-error', span: g.span, related: g.decl ? [g.decl] : undefined,
+                message: `\`${g.name}\` is wired by a dataflow region, so it cannot have bindings of its own`,
+                kieler: lost.map(name => `There are binding errors in a referenced state!\nA Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced scope: ${name}`).join('\n') || 'There are binding errors in a referenced state!',
+                hint: `KIELER binds every input and output of \`${g.name}\` to a variable of the dataflow region, after the bindings written here, and runs out of inputs and outputs. Remove the bindings and wire the instance with equations (\`${g.name}.input = ...\`).`,
+            })
+        }
     })
 
     // Equations: tuples into one equation per input (or array element), in written order.
@@ -322,14 +353,15 @@ function processRegion(df: CRegion, expansion: Expansion) {
     let priority = 0
     let lastSequential = false
     eqs.forEach((eq, k) => {
-        if (eq.sequential && !lastSequential) {
+        const sequential = isSequential(eq)
+        if (sequential && !lastSequential) {
             group = {}
             priority = 0
         }
         for (const part of parts(eq, k, expansion)) {
             const r = createControlflowRegion(main, `${PREFIX}subRegion_${part.key}`)
             r.about = about
-            if ((eq.sequential || lastSequential) && group) r.ext.schedule = { group, priority: priority++, name: `seq` } satisfies Schedule
+            if ((sequential || lastSequential) && group) r.ext.schedule = { group, priority: priority++, name: `seq` } satisfies Schedule
             const s = createState(r, `${PREFIX}${part.key}`)
             s.initial = true
             s.about = about
@@ -344,7 +376,7 @@ function processRegion(df: CRegion, expansion: Expansion) {
             if (df.ext.once) d.final = true
             else createTransitionTo(d, s)
         }
-        lastSequential = eq.sequential
+        lastSequential = sequential
     })
 
     // Remove the dataflow region and the instances' declarations.

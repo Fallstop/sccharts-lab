@@ -241,6 +241,22 @@ function callsIn(n: SNode): Extract<CExpr, { k: 'call' }>[] {
     return out
 }
 
+/** The calls of methods inside a call's arguments, at any depth. */
+function argumentCalls(call: Extract<CExpr, { k: 'call' }>): Extract<CExpr, { k: 'call' }>[] {
+    const out: Extract<CExpr, { k: 'call' }>[] = []
+    const visit = (e: CExpr | undefined) => {
+        if (!e) return
+        if (e.k === 'call') {
+            if (!e.extern && e.target?.v.method) out.push(e)
+            e.args.forEach(visit)
+        } else if (e.k === 'op') e.args.forEach(visit)
+        else if (e.k === 'ref') e.idx.forEach(visit)
+        else if (e.k === 'vector') e.values.forEach(visit)
+    }
+    call.args.forEach(visit)
+    return out
+}
+
 /** One method to KIELER: the same variable, or the same method of two chart instances declared together (one class). */
 function sameMethod(a: CVar, b: CVar): boolean {
     if (a === b) return true
@@ -253,8 +269,29 @@ export function inlineMethods(scg: SCG): Diagnostic[] {
     const diagnostics: Diagnostic[] = []
     let counter = 0
     const work = scg.nodes.filter(n => n.kind === 'assign' || n.kind === 'cond')
+    // KIELER collects the calls in a table with a row per method, in the order it first meets the methods (the nodes
+    // in order, a node's calls innermost first), and copies the methods into place row by row.
+    const rows = new Map<unknown, number>()
+    const rowOf = (v: CVar): unknown => (v.method?.cls ? `${v.method.cls}|${v.decl?.split('/').pop()}` : v)
+    for (const node of work) {
+        for (const c of callsIn(node).reverse()) if (!rows.has(rowOf(c.target!.v))) rows.set(rowOf(c.target!.v), rows.size)
+    }
     for (const node of work) {
         const calls = callsIn(node).reverse()
+        // A call with a call in its argument, when the outer method's row comes first (an earlier node called it
+        // already): KIELER copies the outer method into place with a copy of the argument, and the inner call it
+        // turns to next is no longer part of the graph.
+        const detached = calls.find(c => isInlined(c.target!.v.method!) && argumentCalls(c).some(d => isInlined(d.target!.v.method!) && rows.get(rowOf(c.target!.v))! < rows.get(rowOf(d.target!.v))!))
+        if (detached) {
+            const inner = argumentCalls(detached).find(d => isInlined(d.target!.v.method!) && rows.get(rowOf(detached.target!.v))! < rows.get(rowOf(d.target!.v))!)!
+            diagnostics.push({
+                severity: 'error', code: 'kieler-crash', span: detached.span,
+                message: `KIELER's compiler crashes on \`${inner.name}(...)\` inside the call of \`${detached.name}\`: \`${detached.name}\` is called earlier in the chart too`,
+                kieler: 'The compiler failed during compilation setup.',
+                hint: `KIELER copies short methods into place method by method, in the order it first meets them. \`${detached.name}\` comes first here, and the \`${inner.name}\` call in its argument is lost with it. Compute the argument into a variable first (\`t = ${inner.name}(...)\`, then \`${detached.name}(t)\`).`,
+            })
+            continue
+        }
         // KIELER keeps one call per method and node (a HashBasedTable cell): it inlines that one, drops the method
         // as inlined, and the other calls of it in the node call a C function that no longer exists.
         const twice = calls.find((c, i) => isInlined(c.target!.v.method!) && calls.some((d, j) => j !== i && sameMethod(d.target!.v, c.target!.v)))
@@ -267,7 +304,13 @@ export function inlineMethods(scg: SCG): Diagnostic[] {
             })
             continue
         }
-        for (const call of calls) {
+        // Innermost calls first. Copying a call into place rebuilds the expressions around it (a call whose argument
+        // it was is a new object then), so the node's calls are collected again after each one.
+        const skipped = new Set<CExpr>()
+        for (;;) {
+            const call = callsIn(node).reverse().find(c => !skipped.has(c))
+            if (!call) break
+            skipped.add(call)
             const m = call.target!.v.method!
             // `@inline` on a method with a loop: KIELER copies the loop into the tick's graph, a cycle it cannot
             // schedule (conformance structure/155).
@@ -283,6 +326,8 @@ export function inlineMethods(scg: SCG): Diagnostic[] {
             if (!isInlined(m)) continue
             const problem = inline(scg, node, call, m, counter++)
             if (problem) diagnostics.push(problem)
+            // The node was the call itself (an effect `m()`): it is gone, with nothing left to inline.
+            if (!scg.nodes.includes(node)) break
         }
     }
     scg.nodes.forEach((n, i) => { n.id = i })
@@ -467,11 +512,16 @@ function replaceCall(node: SNode, call: CExpr, replacement: CExpr) {
 
 function rewriteExprIdentity(e: CExpr, target: CExpr, replacement: CExpr): CExpr {
     if (e === target) return replacement
+    // An expression without the call in it stays the object it is (the other calls are found by identity later).
+    const all = (list: CExpr[]): CExpr[] | undefined => {
+        const mapped = list.map(a => rewriteExprIdentity(a, target, replacement))
+        return mapped.some((a, i) => a !== list[i]) ? mapped : undefined
+    }
     switch (e.k) {
-        case 'op': return { ...e, args: e.args.map(a => rewriteExprIdentity(a, target, replacement)) }
-        case 'ref': return { ...e, idx: e.idx.map(a => rewriteExprIdentity(a, target, replacement)) }
-        case 'vector': return { ...e, values: e.values.map(a => rewriteExprIdentity(a, target, replacement)) }
-        case 'call': return { ...e, args: e.args.map(a => rewriteExprIdentity(a, target, replacement)) }
+        case 'op': { const args = all(e.args); return args ? { ...e, args } : e }
+        case 'ref': { const idx = all(e.idx); return idx ? { ...e, idx } : e }
+        case 'vector': { const values = all(e.values); return values ? { ...e, values } : e }
+        case 'call': { const args = all(e.args); return args ? { ...e, args } : e }
         default: return e
     }
 }

@@ -1,0 +1,9 @@
+// The crash outside dataflow: a transition's effects acc.add(1); acc.add(twice(n)).
+scchart DfCallArgumentCallCrashControlFlow {
+  input bool a
+  input int n
+  output int o
+  method int twice(int j) { return j * 2 }
+  class Acc { int v = 0  void add(int j) { v += j }  int get() { return v } } acc
+  region R { initial state A do acc.add(1); acc.add(twice(n)); o = acc.get() go to A }
+}

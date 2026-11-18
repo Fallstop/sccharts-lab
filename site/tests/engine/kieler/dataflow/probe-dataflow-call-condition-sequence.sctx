@@ -1,0 +1,17 @@
+// A call with a condition inside a sequence (k.add(1) = a; k.add(n)): the condition guards its own call only.
+scchart DfCallConditionSequence {
+  input bool a
+  input int n
+  output int o
+  ref K k
+  dataflow {
+    k.add(1) = a;
+    k.add(n)
+    o = k.get()
+  }
+}
+scchart K {
+  int v = 0
+  method void add(int j) { v += j }
+  method int get() { return v }
+}
