@@ -91,8 +91,6 @@ class Lowering {
     readonly constScopes = new Set<Scope>()
     /** `state(S)` in method bodies: the flag of each state S (KIELER's MethodSignaling, attachStateFlags). */
     readonly stateFlags = new Map<string, CVar>()
-    /** User schedules where the simulator does not apply them yet: those of dataflow equations and regions. */
-    readonly unsupportedSchedules: { what: string; span?: Span }[] = []
 
     constructor(readonly index: ModelIndex | undefined, private readonly inherited: ReadonlySet<string> = new Set()) {}
 
@@ -1009,12 +1007,8 @@ class Lowering {
      * pass knows once it expanded `x`. What KIELER refuses (a class's schedule named without its instance) is found
      * after the references are expanded: passes/contracts.ts.
      */
-    schedule(list: ScheduleRef[] | undefined, what?: string): SchedEntry[] | undefined {
+    schedule(list: ScheduleRef[] | undefined): SchedEntry[] | undefined {
         if (!list?.length) return undefined
-        if (what) {
-            this.unsupportedSchedules.push({ what, span: list[0].span })
-            return undefined
-        }
         const out: SchedEntry[] = []
         for (const s of list) {
             const first = s.ref.decl ? this.vars.get(s.ref.decl) : undefined
@@ -1296,16 +1290,6 @@ export function lowerChart(chart: State, index: ModelIndex | undefined, inherite
         const reset = new CAction('entry')
         reset.effects.push({ k: 'mark', m: { kind: 'ttsReset' }, o: { hidden: true } })
         root.actions.push(reset)
-    }
-
-    const first = l.unsupportedSchedules[0]
-    if (first) {
-        l.reports.push({
-            // Not a rejection: KIELER runs this chart, only the guide's simulator cannot (yet).
-            severity: 'info', code: 'unsupported', span: first.span,
-            message: `The guide's simulator cannot run ${first.what} yet`,
-            hint: 'The simulator applies schedules everywhere else: on effects, triggers, states, regions, calls, methods and inside code blocks. The official KIELER tools can run this chart.',
-        })
     }
 
     return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports, instances: l.instanceMembers(), stateFlags: [...l.stateFlags.values()] }

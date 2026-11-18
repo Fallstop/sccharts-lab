@@ -80,17 +80,14 @@ So an example in the guide behaves as KIELER does. A chart you write yourself in
 
 ### What the engine does not run
 
-A few constructs are beyond the engine, and an example that uses them shows a notice instead of the
-simulation controls. Its diagram and code are still there, and SCCharts Lab and KIELER run it as usual:
+Two things are beyond the engine, and a chart that uses one shows a notice instead of the simulation
+controls. Its diagram and code are still there, and SCCharts Lab and KIELER run it as usual:
 
 - **Host code**: C code in backticks, `extern` functions, and host classes and enums. Running them takes
   a C compiler, which a browser does not have. The playground's C code tab still gives their C, ready to
   build ([below](#the-c-code)).
-- **Schedules written on dataflow equations or dataflow regions** (a `schedule` anywhere else runs: on a
-  transition, an action, a state, a region or a call, in a method, in a code block, and as a class
-  method's contract).
-- **An array of instances of a chart** (`ref Counter c[2]`; single instances run, `ref Counter c1, c2`).
-- **A few rare combinations**, such as a chart that `extends` another with generic parameters.
+- **An array of no instances of a chart whose regions use its fields** (`ref Counter c[0]`). KIELER still
+  runs the regions, on memory behind the empty array.
 
 The engine follows KIELER's default system only. KIELER's other systems, such as
 **Priority-based Simulation (C)**, differ from it in a few details, and the guide does not reproduce
