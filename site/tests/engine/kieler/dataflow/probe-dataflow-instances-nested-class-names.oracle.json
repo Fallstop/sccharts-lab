@@ -1,0 +1,87 @@
+{
+  "hash": "23401e1480fbf2d1a44a473753854c57cea59321",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instances-nested-class-names.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_h_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn2_g_t_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cnt2.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.Cnt1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.t": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    },
+    "h": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 1,
+        "g": {
+          "t": {
+            "v": 2
+          }
+        },
+        "h": {
+          "v": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 4,
+        "g": {
+          "t": {
+            "v": 4
+          }
+        },
+        "h": {
+          "v": 4
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

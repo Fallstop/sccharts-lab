@@ -1,0 +1,17 @@
+// More arguments than the chart has inputs and outputs on an OO instance: KIELER's compiler throws a
+// NullPointerException.
+scchart DfInstanceTooManyBindings {
+  input int x
+  output int o, m
+  ref Two g(x, x, o, m)
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    m = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

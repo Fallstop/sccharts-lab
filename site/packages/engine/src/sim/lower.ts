@@ -1013,10 +1013,10 @@ class Lowering {
                 const eqs: CEquation[] = r.equations.map(eq => {
                     const call = eq.callArgs !== undefined
                     const out: CEquation = {
-                        target: this.ref(eq.target), op: eq.operator, expr: this.expr(call ? eq.call ?? eq.expression : eq.expression),
+                        target: this.ref(eq.target), op: eq.operator, expr: this.expr(eq.call ?? eq.expression),
                         sequential: !!eq.sequential, call, span: eq.span,
                     }
-                    if (call && eq.call && eq.expression !== eq.call) out.trigger = this.expr(eq.expression)
+                    if (eq.call) out.trigger = this.expr(eq.expression)
                     const schedule = this.schedule(eq.schedule)
                     if (schedule) out.schedule = schedule
                     return out

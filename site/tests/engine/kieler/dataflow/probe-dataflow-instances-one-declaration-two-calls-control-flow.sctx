@@ -1,0 +1,12 @@
+// The same in a transition's effect, outside dataflow: rejected as well.
+scchart DfInstancesOneDeclarationTwoCallsControlFlow {
+  input int x
+  output int o
+  ref Cnt c, d
+  region R { initial state A do c.add(x); d.add(1); o = c.get() + d.get() go to A }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

@@ -1,0 +1,103 @@
+{
+  "hash": "d507e55ed085980307f378873f6f951d5ad4748c",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-nested-name-leak-unused.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_g_inc_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid21.Two1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid21.Two1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid21.s": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid21.t": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 8,
+        "g": {
+          "s": 4,
+          "t": {
+            "b": 2,
+            "s": 4
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 16,
+        "g": {
+          "s": 8,
+          "t": {
+            "b": 4,
+            "s": 8
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 24,
+        "g": {
+          "s": 12,
+          "t": {
+            "b": 6,
+            "s": 12
+          }
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

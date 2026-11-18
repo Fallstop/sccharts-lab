@@ -1,0 +1,16 @@
+// A method call only in the condition of a ?: makes the region an OO one.
+scchart DfCallInCondition {
+  input int x
+  output int o, m
+  ref Two g
+  method bool big(int v) { return v > 2 }
+  dataflow {
+    g.a = x
+    o = big(x) ? g.s : 0
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

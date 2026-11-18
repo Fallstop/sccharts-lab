@@ -1,0 +1,17 @@
+// An instance wired in a classic dataflow region and read by a transition: the classic translation removes the
+// instance, the transition's g.s points at nothing. Rejected.
+scchart DfInstanceClassicAndTransition {
+  input int x
+  output int o, k
+  ref Two g
+  dataflow {
+    g.a = x
+    o = g.s
+  }
+  region R { initial state A do k = g.s go to A }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

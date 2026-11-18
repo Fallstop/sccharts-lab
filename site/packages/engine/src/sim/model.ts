@@ -63,6 +63,8 @@ export class CVar {
     member?: { of: CVar; name: string }
     /** `ref Chart x(args)` (declKind 'reference'): the chart it instantiates (structure.md S-18, S-33). */
     instance?: { target: string; args: CArg[] }
+    /** The class KIELER makes of a `ref` declaration's chart (`Counter1`, the next declaration's `Counter2`). */
+    className?: string
     /** A declaration of a state inside a for-region copy (passes/forRegion.ts): the source region and the counter's
      *  value in that copy. */
     forCopy?: { region: string; counter: string; value: number }
@@ -205,6 +207,11 @@ export interface CMethod {
     by?: string
     /** `@inline`: KIELER inlines every call of it, whatever its size (SCGAnnotations.ANNOTATION_METHOD_INLINING). */
     inline?: boolean
+    /**
+     * A method of a chart instance: KIELER's class for the instance's `ref` declaration. Instances declared together
+     * (`ref C a, b`) are one class with one method, where the simulator has a method per instance.
+     */
+    cls?: string
     span?: Span
 }
 

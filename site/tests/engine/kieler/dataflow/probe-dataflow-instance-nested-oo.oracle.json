@@ -1,0 +1,117 @@
+{
+  "hash": "2359025228fc1aa515fc5ed96429acb085d6573e",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-nested-oo.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_g_inc_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid1.Two1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.Two1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.Two1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid1.t": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 7,
+        "g": {
+          "a": 2,
+          "s": 7,
+          "t": {
+            "a": 3,
+            "b": 3,
+            "s": 7
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 11,
+        "g": {
+          "a": 6,
+          "s": 11,
+          "t": {
+            "a": 7,
+            "b": 3,
+            "s": 11
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 15,
+        "g": {
+          "a": 10,
+          "s": 15,
+          "t": {
+            "a": 11,
+            "b": 3,
+            "s": 15
+          }
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

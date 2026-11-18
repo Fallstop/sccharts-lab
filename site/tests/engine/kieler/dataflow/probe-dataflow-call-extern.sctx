@@ -1,0 +1,11 @@
+// An extern function called as an equation of its own (absf(x)): the call is its own target, a reference declaration,
+// which KIELER's validator takes for a scalar assigned to a reference. Rejected.
+scchart DfCallExtern {
+  input int x
+  output int o
+  extern "abs" absf
+  dataflow {
+    absf(x)
+    o = absf(x)
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "hash": "b5108c9a02298bf8baf8894c280dd7f473b591ad",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-only-called.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_c_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mix1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Mix1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "Mix1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 0,
+        "c": {
+          "a": 0,
+          "s": 1,
+          "v": 1
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 4,
+        "c": {
+          "a": 0,
+          "s": 4,
+          "v": 4
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 9,
+        "c": {
+          "a": 0,
+          "s": 9,
+          "v": 9
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

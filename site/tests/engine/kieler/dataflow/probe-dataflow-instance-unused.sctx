@@ -1,0 +1,15 @@
+// An instance with inputs that no equation names is an ordinary ref declaration: its bindings are missing. Rejected.
+scchart DfInstanceUnused {
+  input int x
+  output int o
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = twice(x)
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

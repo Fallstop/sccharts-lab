@@ -1,0 +1,9 @@
+// A vector assigned to an array in an OO region sets the elements it has values for.
+scchart DfVectorArrayOo {
+  input int x
+  output int A[3]
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    A = {x, twice(x)}
+  }
+}

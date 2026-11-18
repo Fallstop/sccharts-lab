@@ -1,0 +1,10 @@
+// dataflow for with a method call: the OO translation ignores the loop as the classic one does, the counter is
+// unknown. Rejected.
+scchart DfOoFor {
+  input int x
+  output int o[2]
+  method int twice(int v) { return v * 2 }
+  dataflow for i : 0 to 1 {
+    o[i] = twice(x) + i
+  }
+}

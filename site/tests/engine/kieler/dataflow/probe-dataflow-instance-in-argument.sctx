@@ -1,0 +1,16 @@
+// An instance named only inside a method call's argument (o = twice(g.s)).
+scchart DfInstanceInArgument {
+  input int x
+  output int o
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = twice(g.s)
+  }
+  region R { initial state A do g.a = x go to A }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

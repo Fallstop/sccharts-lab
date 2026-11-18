@@ -1,0 +1,26 @@
+// The name leak without an equation on the lost port: the inner instance's a is the outer x (s = x + b + 1), and no
+// member.
+scchart DfInstanceNestedNameLeakUnused {
+  input int x
+  output int o
+  ref Mid2 g(x to a)
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = twice(g.s)
+  }
+}
+scchart Mid2 {
+  input int a
+  output int s
+  ref Two t
+  method int inc(int v) { return v + 1 }
+  dataflow {
+    t.b = inc(a)
+    s = t.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

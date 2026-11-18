@@ -241,6 +241,13 @@ function callsIn(n: SNode): Extract<CExpr, { k: 'call' }>[] {
     return out
 }
 
+/** One method to KIELER: the same variable, or the same method of two chart instances declared together (one class). */
+function sameMethod(a: CVar, b: CVar): boolean {
+    if (a === b) return true
+    const source = (v: CVar) => v.decl?.split('/').pop()
+    return !!a.method?.cls && a.method.cls === b.method?.cls && source(a) === source(b)
+}
+
 /** Inlines the calls of simple methods into the SCG (after the superfluous fork removal, as KIELER does). */
 export function inlineMethods(scg: SCG): Diagnostic[] {
     const diagnostics: Diagnostic[] = []
@@ -250,7 +257,7 @@ export function inlineMethods(scg: SCG): Diagnostic[] {
         const calls = callsIn(node).reverse()
         // KIELER keeps one call per method and node (a HashBasedTable cell): it inlines that one, drops the method
         // as inlined, and the other calls of it in the node call a C function that no longer exists.
-        const twice = calls.find((c, i) => isInlined(c.target!.v.method!) && calls.some((d, j) => j !== i && d.target!.v === c.target!.v))
+        const twice = calls.find((c, i) => isInlined(c.target!.v.method!) && calls.some((d, j) => j !== i && sameMethod(d.target!.v, c.target!.v)))
         if (twice) {
             diagnostics.push({
                 severity: 'error', code: 'method-twice', span: twice.span,

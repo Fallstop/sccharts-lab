@@ -1,0 +1,102 @@
+{
+  "hash": "7a1050588ca0406218f21342686d91aaebe26dbf",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-nested-in-plain-instance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_g_inc_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Mid41.Two1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid41.Two1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid41.Two1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "Mid41.t": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 6,
+        "g": {
+          "t": {
+            "a": 2,
+            "b": 3,
+            "s": 6
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 8,
+        "g": {
+          "t": {
+            "a": 4,
+            "b": 3,
+            "s": 8
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 10,
+        "g": {
+          "t": {
+            "a": 6,
+            "b": 3,
+            "s": 10
+          }
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+// An array of instances of a chart with methods that call each other, an array field with initial values and a region
+// that calls a method: every element has its own state.
+scchart DfInstanceArrayMethods {
+  input int x
+  output int o, p
+  ref Self cs[2]
+  dataflow {
+    cs[0].add(x)
+    cs[x % 2].add(10)
+    o = cs[0].get()
+    p = cs[1].get()
+  }
+}
+scchart Self {
+  int v = 0
+  int n = 0
+  int h[2] = {3, 4}
+  method void add(int k) { v += k; bump() }
+  method void bump() { h[1] += 1 }
+  method int get() { return v + h[1] }
+  region T { initial state A do n += get() go to A }
+}

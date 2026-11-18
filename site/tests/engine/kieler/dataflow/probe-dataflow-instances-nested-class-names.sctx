@@ -1,0 +1,18 @@
+// KIELER names the classes in the order it finishes them: the instance inside g first (Mid1.Cnt1.v), g's own class
+// Mid1, then h (Cnt2).
+scchart DfInstancesNestedClassNames {
+  input int x
+  output int o
+  ref Mid g
+  ref Cnt h
+  dataflow { h.add(x)  o = h.get() }
+}
+scchart Mid {
+  ref Cnt t
+  dataflow { t.add(2) }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

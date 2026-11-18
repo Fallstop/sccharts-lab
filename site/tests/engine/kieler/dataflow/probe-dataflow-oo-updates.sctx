@@ -1,0 +1,13 @@
+// Compound and old-style updates in an OO region (o += twice(x); p = twice(x), p = p + 1, p = p * 3): the absolute
+// write first, then the updates in written order.
+scchart DfOoUpdates {
+  input int x
+  output int o, p
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o += twice(x)
+    p = twice(x)
+    p = p + 1
+    p = p * 3
+  }
+}

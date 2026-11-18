@@ -1,0 +1,9 @@
+// A vector assigned to a scalar (o = {x, x + 10}): the equation is dropped, o stays 0.
+scchart DfVectorToScalar {
+  input int x
+  output int o, p
+  dataflow {
+    o = {x, x + 10}
+    p = x
+  }
+}

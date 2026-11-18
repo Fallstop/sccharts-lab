@@ -1,0 +1,23 @@
+// The same charts with state S is Mid3(x, o) instead of a ref declaration: no leak, the inner instance keeps its a.
+scchart DfInstanceInReferencedChartSameNames {
+  input int x
+  output int o
+  int a
+  initial state S is Mid3(x, o)
+}
+scchart Mid3 {
+  input int a
+  output int s
+  ref Two t
+  method int inc(int v) { return v + 1 }
+  dataflow {
+    t.a = inc(a)
+    t.b = 3
+    s = t.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

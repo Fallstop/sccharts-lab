@@ -1,0 +1,111 @@
+{
+  "hash": "3f012834e72028c0bc79209840b1662e4528c070",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-array-ports.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "unused variable ‘array’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Arr1.in": {
+      "type": "int",
+      "properties": []
+    },
+    "Arr1.out": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "m": 3,
+        "o": 1,
+        "g": {
+          "in": [
+            2,
+            1
+          ],
+          "out": [
+            3,
+            1
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "m": 9,
+        "o": 3,
+        "g": {
+          "in": [
+            6,
+            3
+          ],
+          "out": [
+            9,
+            3
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "m": 15,
+        "o": 5,
+        "g": {
+          "in": [
+            10,
+            5
+          ],
+          "out": [
+            15,
+            5
+          ]
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+// Two ref declarations of one chart are two classes to KIELER (Cnt1, Cnt2 in the simulation interface); calling the
+// same method on both in one expression works.
+scchart DfInstancesTwoDeclarations {
+  input int x
+  output int o
+  ref Cnt c
+  ref Cnt d
+  dataflow { c.add(x)  d.add(1)  o = c.get() + d.get() }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

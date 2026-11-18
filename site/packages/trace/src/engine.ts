@@ -96,20 +96,42 @@ function memberDeclarations(prefix: string | undefined, members: Declaration[], 
  */
 function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): void {
     const compiled = result.sim!
+    /** The class of a chart instance: `<Chart>1`, or the number KIELER gave its declaration (`<Chart>2`). */
+    const classOf = (c: CVar) => c.className ?? `${c.instance!.target}1`
+    // A class declared in an inner state moves to the root under a name made unique again: a further number, counted
+    // per name (`Two11`, and `Two12` for the next state's, such as the next copy of a for-region's state).
+    const risen = new Map<string, Map<string, number>>()
+    const rootType = (root: CVar, scope: { uid: number }, nested: boolean): string => {
+        const name = classOf(root)
+        if (!nested) return name
+        const copies = risen.get(name) ?? new Map<string, number>()
+        risen.set(name, copies)
+        const key = `${root.uid}|${scope.uid}`
+        if (!copies.has(key)) copies.set(key, copies.size + 1)
+        return `${name}${copies.get(key)}`
+    }
     for (const scope of allScopes(compiled.core)) {
         for (const v of scope.decls as CVar[]) {
             if (!v.member || v.const || v.tags.has('#const-member')) continue
             const nested = scope !== compiled.core
             // A member of a class or struct instance declared inside a chart used by `ref C c`: the chart's type, the
-            // classes on the way, the member (`Counter1.O.P.v`; the instances themselves too, `Counter1.os`).
+            // classes on the way, the member (`Counter1.O.P.v`; the instances themselves too, `Counter1.os`). A chart
+            // instance inside the chart is such a class (`Mid1.Two1.a`, and the instance `Mid1.t`).
             const chain: CVar[] = []
             for (let c: CVar | undefined = v; c; c = c.member?.of) chain.unshift(c)
             const root = chain[0]
             if (chain.length > 2 || (v.declKind && chain.length === 2)) {
                 if (root.declKind !== 'reference' || !root.instance || (v.declKind && v.declKind !== 'class' && v.declKind !== 'struct')) continue
-                const classes = chain.slice(1, -1).map((c) => result.index?.vos.get((c.decl ?? '').split('/').pop()!)?.decl?.className ?? c.member!.name)
+                const top = rootType(root, scope, nested)
+                const classes = chain.slice(1, -1).map((c) => (c.declKind === 'reference' && c.instance
+                    ? classOf(c)
+                    : result.index?.vos.get((c.decl ?? '').split('/').pop()!)?.decl?.className ?? c.member!.name))
+                chain.slice(1, -1).forEach((c, i) => {
+                    if (c.declKind !== 'reference') return
+                    out.push({ name: [top, ...classes.slice(0, i), c.member!.name].join('.'), input: false, output: false, type: 'class', dims: [], late: true })
+                })
                 out.push({
-                    name: [`${root.instance.target}1${nested ? '1' : ''}`, ...classes, v.member.name].join('.'), input: false, output: false,
+                    name: [top, ...classes, v.member.name].join('.'), input: false, output: false,
                     type: v.declKind ?? typeName(v.type, v.hostType), dims: [], late: true,
                 })
                 continue
@@ -117,11 +139,12 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
             if (v.declKind) continue
             const { of } = v.member
             let type: string | undefined
-            if (of.declKind === 'reference' && of.instance) type = `${of.instance.target}1`
+            if (of.declKind === 'reference' && of.instance) type = rootType(of, scope, nested)
             // An inherited instance's id has the base chart's copy in front (`…/Base$a`).
-            else if (nested && (of.declKind === 'class' || of.declKind === 'struct')) type = (result.index?.vos.get(of.decl ?? '') ?? result.index?.vos.get((of.decl ?? '').split('/').pop()!))?.decl?.className
-            if (!type) continue
-            out.push({ name: `${type}${nested ? '1' : ''}.${v.member.name}`, input: false, output: false, type: typeName(v.type, v.hostType), dims: [], late: true })
+            else if (nested && (of.declKind === 'class' || of.declKind === 'struct')) type = `${(result.index?.vos.get(of.decl ?? '') ?? result.index?.vos.get((of.decl ?? '').split('/').pop()!))?.decl?.className}1`
+            if (!type || type === 'undefined1') continue
+            // An OO dataflow instance's inherited inputs and outputs are still listed as such.
+            out.push({ name: `${type}.${v.member.name}`, input: v.tags.has('#port-input'), output: v.tags.has('#port-output'), type: typeName(v.type, v.hostType), dims: [], late: true })
         }
     }
 }
@@ -202,12 +225,32 @@ export function traceColumns(result: Compiled): TraceVariable[] {
     return extensionOrder(poolVariables(result)).map((v) => ({ name: v.name, role: roleOf(v), type: v.type }))
 }
 
-/** A value as KIELER's pool holds it: the members of an instance in KIELER's order, by name. */
-function kielerValue(value: unknown): unknown {
-    if (Array.isArray(value)) return value.map(kielerValue)
+/**
+ * A value as KIELER's pool holds it: the members of an instance in KIELER's order, by name. `ports`: the members
+ * KIELER still takes for inputs (0) and outputs (1), which come first (VARIABLE_ORDER).
+ */
+function kielerValue(value: unknown, ports?: Map<string, number>): unknown {
+    if (Array.isArray(value)) return value.map((element) => kielerValue(element, ports))
     if (!value || typeof value !== 'object') return value
-    const entries = Object.entries(value).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    const rank = (key: string) => ports?.get(key) ?? 2
+    const entries = Object.entries(value).sort(([a], [b]) => rank(a) - rank(b) || (a < b ? -1 : a > b ? 1 : 0))
     return Object.fromEntries(entries.map(([key, member]) => [key, kielerValue(member)]))
+}
+
+/**
+ * The inherited inputs and outputs of the chart's OO dataflow instances (`ref C g` of a chart that extends another):
+ * KIELER's pool lists them before the instance's other members.
+ */
+function instancePorts(result: Compiled): Map<string, Map<string, number>> {
+    const out = new Map<string, Map<string, number>>()
+    for (const v of (result.sim?.core.decls ?? []) as CVar[]) {
+        const port = v.tags.has('#port-input') ? 0 : v.tags.has('#port-output') ? 1 : undefined
+        if (port === undefined || !v.member || v.member.of.member) continue
+        const name = v.member.of.name
+        if (!out.has(name)) out.set(name, new Map())
+        out.get(name)!.set(v.member.name, port)
+    }
+    return out
 }
 
 function ticksOf(run: EngineRun): readonly SimTickResult[] {
@@ -239,6 +282,7 @@ export interface TraceOptions {
  */
 export function traceFromRun(result: Compiled, run: EngineRun, options: TraceOptions = {}): TraceRecord {
     const variables = traceColumns(result)
+    const ports = instancePorts(result)
     const ticks = completedTicks(run)
     const read = options.inputs === 'read'
     // Keyed by the chart's names, which may be any identifier (`constructor`): no inherited keys.
@@ -248,7 +292,7 @@ export function traceFromRun(result: Compiled, run: EngineRun, options: TraceOpt
         const row: Record<string, unknown> = {}
         for (const { name, role } of variables) {
             const value = read && role === 'input' ? own(tick.ranWith, name) : own(tick.pool, name)
-            if (value !== undefined && value !== null) last[name] = kielerValue(value)
+            if (value !== undefined && value !== null) last[name] = kielerValue(value, ports.get(name))
             row[name] = last[name]
         }
         return row

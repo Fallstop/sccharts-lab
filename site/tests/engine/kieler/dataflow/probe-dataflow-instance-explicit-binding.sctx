@@ -1,0 +1,16 @@
+// ref Two g(x to a) in an OO region: an explicit binding is applied, a is x and no member of the object.
+scchart DfInstanceExplicitBinding {
+  input int x
+  output int o, m
+  ref Two g(x to a)
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.b = twice(x)
+    o = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

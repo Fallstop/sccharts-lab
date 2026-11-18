@@ -1,0 +1,116 @@
+{
+  "hash": "caf93147e03308bb931f4010f01a77f58546c8fe",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-class-and-chart-instances.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_acc_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Acc.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "acc": {
+      "type": "class",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "m": 0,
+        "o": 3,
+        "acc": {
+          "v": 1
+        },
+        "g": {
+          "a": 1,
+          "b": 1,
+          "s": 3
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "m": 0,
+        "o": 9,
+        "acc": {
+          "v": 4
+        },
+        "g": {
+          "a": 4,
+          "b": 4,
+          "s": 9
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "m": 0,
+        "o": 19,
+        "acc": {
+          "v": 9
+        },
+        "g": {
+          "a": 9,
+          "b": 9,
+          "s": 19
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

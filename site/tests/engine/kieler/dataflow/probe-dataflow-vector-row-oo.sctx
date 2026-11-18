@@ -1,0 +1,11 @@
+// A vector assigned to a row of a two-dimensional array in an OO region: KIELER drops the index and assigns B[0] and
+// B[1], which are arrays. Rejected by gcc.
+scchart DfVectorRowOo {
+  input int x
+  output int A[2], B[2][2]
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    A = {x, twice(x)}
+    B[1] = {x + 1, x + 2}
+  }
+}

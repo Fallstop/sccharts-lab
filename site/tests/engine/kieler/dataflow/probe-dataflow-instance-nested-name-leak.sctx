@@ -1,0 +1,28 @@
+// An OO instance with an explicit binding (x to a) of a chart whose own OO instance has an input called a too: KIELER
+// keeps bindings by name, the inner instance's a becomes x and t.a = ... is left without a target. Rejected.
+scchart DfInstanceNestedNameLeak {
+  input int x
+  output int o
+  int a
+  ref Mid2 g(x to a)
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = twice(g.s)
+  }
+}
+scchart Mid2 {
+  input int a
+  output int s
+  ref Two t
+  method int inc(int v) { return v + 1 }
+  dataflow {
+    t.a = inc(a)
+    t.b = 3
+    s = t.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

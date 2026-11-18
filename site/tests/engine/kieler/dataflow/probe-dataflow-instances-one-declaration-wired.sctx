@@ -1,0 +1,13 @@
+// Two instances declared together, both wired in an OO region (c.a = twice(x), d.a = c.s, o = d.s).
+scchart DfInstancesOneDeclarationWired {
+  input int x
+  output int o, p
+  ref Two c, d
+  method int twice(int v) { return v * 2 }
+  dataflow { c.a = twice(x)  d.a = c.s  o = d.s }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

@@ -63,6 +63,12 @@ interface Instance {
     formals: CVar[]
     /** Formals bound to a variable or array cell. */
     map: Map<CVar, CRef>
+    /** Every bound formal with what it is bound to (KIELER pushes these on its replacement stack, by name). */
+    bound: Map<CVar, CExpr>
+    /** The chart's own top-level declarations, as lowered. */
+    own: CVar[]
+    /** The inputs and outputs an OO dataflow instance keeps as members. */
+    ports: Set<CVar>
 }
 
 class Recursion extends Error {}
@@ -87,6 +93,12 @@ export class Expansion {
     readonly ctx: PassContext
     /** While set, nothing is reported (the further elements of an array of instances repeat the first's reports). */
     private muted = 0
+    /** What the `ref` instances being expanded have bound, by the bound name (KIELER's replacement stack). */
+    private replacements = new Map<string, CExpr>()
+    /** KIELER's classes for `ref` declarations: one per declaration, named after the chart with a running number. */
+    private readonly classes = new Map<Scope, Map<object, { name: string; key: string }>>()
+    private readonly classNumbers = new Map<string, number>()
+    private classKeys = 0
 
     constructor(ctx: PassContext) {
         this.ctx = { root: ctx.root, config: ctx.config, vars: ctx.vars, shared: ctx.shared, report: d => { if (!this.muted) ctx.report(d) } }
@@ -195,19 +207,34 @@ export class Expansion {
         const lowered = lowerInstance(chart, this.index, prefix, this.local(chart) ? undefined : call.span)
         for (const d of lowered.reports) this.ctx.report(d)
         const inst = lowered.root
+        const own = [...inst.decls]
         // The chart's own inputs and outputs, then the inherited ones (KIELER's binding targets).
         const ownIO = inst.decls.filter(v => (v.input || v.output) && !v.declKind)
         if (inst.ext.baseStates) inherit(this.ctx, inst, chart, name => this.findChart(name))
         const formals = [...ownIO, ...inst.decls.filter(v => (v.input || v.output) && !v.declKind && !ownIO.includes(v))]
         const bound = new Map<CVar, CExpr>()
         let ptr = 0
+        let crashed = false
         for (const a of call.args) {
             if (a.binding !== undefined) {
                 const i = formals.findIndex(f => f.name === a.binding)
                 if (i < 0) continue
                 ptr = i
             }
-            if (ptr >= formals.length) continue
+            if (ptr >= formals.length) {
+                // More arguments than inputs and outputs: for an instance of an OO dataflow region KIELER asks the
+                // binding without a target whether its target is an input (handleSCChartsDatatype) and throws.
+                if (dataflow && !crashed) {
+                    crashed = true
+                    this.ctx.report({
+                        severity: 'error', code: 'kieler-crash', span: a.span ?? call.span, related: [owner],
+                        message: `\`${chart.name}\` has ${formals.length} input${formals.length === 1 ? '' : 's'} and output${formals.length === 1 ? '' : 's'}, but ${call.args.length} are bound here: KIELER's compiler crashes on the extra one`,
+                        kieler: 'java.lang.NullPointerException: Cannot invoke "de.cau.cs.kieler.kexpressions.ValuedObject.eContainer()" because "valuedObject" is null',
+                        hint: `Remove the extra argument. In a dataflow region that calls a method, an instance's inputs and outputs are wired by equations (\`g.input = ...\`); only explicit bindings (\`x to input\`) are applied.`,
+                    })
+                }
+                continue
+            }
             // An instance of an OO dataflow region takes explicit bindings only (handleSCChartsDatatype: "For
             // dataflow only explicit bindings otherwise all"); what is bound by position or by name stays a member.
             if (!dataflow || a.binding !== undefined) bound.set(formals[ptr], a.expr)
@@ -218,12 +245,16 @@ export class Expansion {
             const v = this.lookup(scope, f.name)
             if (v) bound.set(f, { k: 'ref', v, idx: [] })
         }
+        const ports = new Set<CVar>()
         if (dataflow) {
             // The unbound inputs and outputs become public variables of the instance, initial values included.
             for (const f of formals) {
                 if (bound.has(f)) continue
+                // (KIELER's simulation interface still lists an inherited one as an input or output.)
+                if (!ownIO.includes(f)) f.tags.add(f.input ? '#port-input' : '#port-output')
                 f.input = false
                 f.output = false
+                ports.add(f)
             }
         }
         const map = new Map<CVar, CRef>()
@@ -257,14 +288,27 @@ export class Expansion {
             // The declarations go, with their initial values (input initial values are dropped).
             if (f.input || f.output) f.init = undefined
         }
-        return { inst, formals, map }
+        return { inst, formals, map, bound, own, ports }
     }
 
-    /** Substitutes the bound formals everywhere in the copy and removes the interface declarations (S-9). */
-    private bind({ inst, formals, map }: Instance) {
+    /**
+     * Substitutes the bound formals everywhere in the copy and removes the interface declarations (S-9).
+     *
+     * `outer`, for a `ref` declaration inside another instance: what the instances around it have bound, by name.
+     * KIELER keeps its replacements by name and does not shadow them with the copied chart's own top-level
+     * declarations (handleSCChartsDatatype calls replaceValuedObjectReferencesInState on the copy directly), so a
+     * local, or an input or output an OO dataflow instance keeps, that has the name of something bound further out
+     * becomes that outer variable (S-18a); such a port is no member of the instance any more.
+     */
+    private bind({ inst, formals, map, bound, own, ports }: Instance, outer?: Map<string, CExpr>) {
+        const leaked = new Map<CVar, CExpr>()
+        for (const l of outer?.size ? own : []) {
+            const actual = bound.has(l) || l.method ? undefined : outer!.get(l.name)
+            if (actual) leaked.set(l, actual)
+        }
         const replace = (r: CRef): CRef | undefined => {
-            const actual = map.get(r.v)
-            if (actual) {
+            const actual = map.get(r.v) ?? (leaked.get(r.v)?.k === 'ref' ? leaked.get(r.v) as CRef : undefined)
+            if (actual && !actual.sub) {
                 // KIELER's replaceReferences: the actual's variable, and its indices if the use has none.
                 return { ...r, v: actual.v, idx: r.idx.length ? r.idx : actual.idx.map(i => copyExpr(i)) }
             }
@@ -282,7 +326,7 @@ export class Expansion {
             return undefined
         }
         rewriteScope(inst, { read: replace, target: replace })
-        inst.decls = inst.decls.filter(v => !formals.includes(v) || !(v.input || v.output))
+        inst.decls = inst.decls.filter(v => (!formals.includes(v) || !(v.input || v.output)) && !(ports.has(v) && leaked.has(v)))
     }
 
     /** Expands `state S is C(args)` (KIELER's expandReferencedScope for states). */
@@ -375,23 +419,32 @@ export class Expansion {
                     // What lowering and expanding the chart reports is the same for every element: once.
                     if (x > 0) this.muted++
                     let instance: Instance
+                    const outer = this.replacements
                     try {
                         instance = this.instantiate(chart, prefix, { target: v.instance!.target, args: v.instance!.args, span: v.span }, scope, id, false, v.tags.has(DF_BINDING))
+                        this.replacements = new Map(outer)
+                        for (const [f, actual] of instance.bound) this.replacements.set(f.name, actual)
                         this.stack.push(chart.name)
                         try {
                             this.expandRoot(instance.inst, chart)
                         } finally {
                             this.stack.pop()
+                            this.replacements = outer
                         }
-                        this.bind(instance)
+                        this.bind(instance, outer)
                     } finally {
                         if (x > 0) this.muted--
                     }
                     const { inst } = instance
                     if (x === 0) {
                         members = [...inst.decls]
+                        if (!this.muted) {
+                            const cls = this.classOf(v, scope, chart)
+                            v.className = cls.name
+                            for (const l of members) if (l.method) l.method = { ...l.method, cls: cls.key }
+                        }
                         this.checkSignals(v, inst, chart)
-                        this.redirectMembers(v, prefix, inst, sizes.length)
+                        this.redirectMembers(v, prefix, inst, root, sizes.length)
                         // A chart class instance without fields is still an (empty) object in KIELER's data pool
                         // (structure.md S-60, conformance structure/131).
                         if (target === this.ctx.root && !v.instance!.args.length && !inst.decls.some(l => !l.declKind)) {
@@ -406,6 +459,13 @@ export class Expansion {
                         for (const local of [...inst.decls]) {
                             // A member of an instance inside the chart keeps its instance; the instance is the member.
                             if (!local.member && (!local.declKind || local.declKind === 'class' || local.declKind === 'struct')) local.member = { of: v, name: local.name }
+                            // A chart instance inside the chart is no declaration any more: it is the member (an
+                            // object inside this instance's object in the pool).
+                            let top = local.member?.of
+                            while (top?.member) top = top.member.of
+                            if (top && top !== v && top.declKind === 'reference') top.member = { of: v, name: top.name }
+                            // In messages: the member as the declaring chart writes it (`g.a`).
+                            if (!local.generated && !local.display) local.display = `${v.name}.${local.name}`
                             local.name = `_${v.name}_${local.name}`
                             local.generated = true
                             addVar(target, local)
@@ -422,6 +482,27 @@ export class Expansion {
                 scope.decls.splice(scope.decls.indexOf(v), 1)
             }
         }
+    }
+
+    /**
+     * The class KIELER makes of the instance's declaration (createPolicyClassDeclaration, uniqueName): `<Chart>1`,
+     * the next declaration of that chart `<Chart>2`. Instances declared together share it, unless one of them has
+     * bindings (separateReferenceDeclarationsWithIndividualBindingsInVOs gives every further one its own).
+     */
+    private classOf(v: CVar, scope: Scope, chart: State): { name: string; key: string } {
+        const d = v.decl ? this.index?.vos.get(v.decl.split(REFERENCE_SEPARATOR).pop()!)?.decl : undefined
+        const first = d?.valuedObjects[0]?.name === v.name
+        const shared = d && (first || !d.valuedObjects.some(vo => vo.parameters?.length)) ? d : undefined
+        const known = shared ? this.classes.get(scope)?.get(shared) : undefined
+        if (known) return known
+        const n = (this.classNumbers.get(chart.name) ?? 0) + 1
+        this.classNumbers.set(chart.name, n)
+        const made = { name: `${chart.name}${n}`, key: `${chart.name}${n}#${++this.classKeys}` }
+        if (shared) {
+            if (!this.classes.has(scope)) this.classes.set(scope, new Map())
+            this.classes.get(scope)!.set(shared, made)
+        }
+        return made
     }
 
     /**
@@ -446,20 +527,27 @@ export class Expansion {
      * A chart used as a class (structure.md S-65): `c.step` and `c.increment()` in the chart that declares `ref C c`
      * mean the instance's own field and method (KIELER's handleSCChartsDatatype).
      */
-    private redirectMembers(v: CVar, prefix: string, inst: CState, dimensions = 0) {
+    private redirectMembers(v: CVar, prefix: string, inst: CState, root: CState, dimensions = 0) {
         // By the declaration's own id (an inherited one is `<instance>/<chart>/<id>`: the last part).
         const byDecl = new Map<string, CVar>()
         for (const local of inst.decls) if (local.decl?.startsWith(prefix)) byDecl.set(local.decl.split(REFERENCE_SEPARATOR).pop()!, local)
-        if (!byDecl.size) return
         const member = (r: CRef): CRef | undefined => {
             if (r.v !== v || !r.sub) return undefined
             // (Inside a referenced chart's copy the member's id carries that copy's prefix.)
             const m = r.sub.v.decl ? byDecl.get(r.sub.v.decl.split(REFERENCE_SEPARATOR).pop()!) : undefined
             return m ? { ...r.sub, v: m, idx: [...r.idx, ...r.sub.idx] } : undefined
         }
-        rewriteScope(this.ctx.root, {
-            read: r => member(r),
-            target: r => member(r),
+        // What is left without its member afterwards: a port that became a variable further out (bind's `outer`).
+        const lost: CRef[] = []
+        const resolve = (r: CRef): CRef | undefined => {
+            const m = member(r)
+            if (!m && r.v === v && r.sub && !r.sub.sub && r.sub.v.declKind === 'unresolved') lost.push(r)
+            return m
+        }
+        // (Inside the chart being expanded: `root` is the copy that declares the instance, not yet part of the chart.)
+        rewriteScope(root, {
+            read: resolve,
+            target: resolve,
             node: e => {
                 if (e.k !== 'call' || !e.target) return undefined
                 const t = member(e.target)
@@ -469,6 +557,15 @@ export class Expansion {
                 return { ...e, target: t, name: t.v.name }
             },
         })
+        if (lost.length && v.tags.has(DF_BINDING)) {
+            const names = [...new Set(lost.map(r => r.sub!.v.name))]
+            this.ctx.report({
+                severity: 'error', code: 'dataflow-instance-port', span: lost[0].span ?? v.span, related: v.decl ? [v.decl] : undefined,
+                message: `\`${v.name}.${names[0]}\` does not exist in KIELER's compiled chart: the chart around \`${v.name}\` is itself an instance, and a variable called \`${names[0]}\` is bound for it`,
+                kieler: [...names.map(n => `The valued object reference points to a valued object (${n}) that is not contained in the model!`), 'References objects are not contained in the resource!'].join('\n'),
+                hint: `KIELER keeps what is bound for an instance by name, so inside it every chart's \`${names[0]}\` means the variable bound further out, and \`${v.name}\` loses its own. Rename \`${names[0]}\` in one of the two charts.`,
+            })
+        }
     }
 
     private recursive(chart: string, owner: string, span: Span | undefined) {
@@ -541,11 +638,15 @@ function elementOf(inst: CState, first: CVar[], at: number[], isFirst: boolean) 
 function arrayMembers(first: CVar[], dims: CExpr[], count: number[]) {
     const repeat = (value: CExpr, depth = 0): CExpr =>
         depth === count.length ? copyExpr(value) : { k: 'vector', values: Array.from({ length: count[depth] }, () => repeat(value, depth + 1)), span: value.span }
+    const nested = new Set<CVar>()
     for (const l of first) {
+        // A chart instance inside the chart (no declaration any more): its members name it.
+        for (let of = l.member?.of; of; of = of.member?.of) if (!first.includes(of)) nested.add(of)
         if (l.method) continue
         l.dims = [...dims.map(d => copyExpr(d)), ...l.dims]
         if (l.init) l.init = repeat(l.init)
     }
+    for (const of of nested) of.dims = [...dims.map(d => copyExpr(d)), ...of.dims]
 }
 
 export function isReferencing(s: CState): boolean {

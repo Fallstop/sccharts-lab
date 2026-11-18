@@ -1,0 +1,13 @@
+// ref Cnt c, d with only c used in a dataflow region: KIELER's validator warns about the declaration; both are
+// objects.
+scchart DfInstancesOneDeclarationOneUsed {
+  input int x
+  output int o
+  ref Cnt c, d
+  dataflow { c.add(x)  o = c.get() }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

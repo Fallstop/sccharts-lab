@@ -18,6 +18,7 @@ import {
     type CRef, type CRegion, type CState, type SchedEntry,
 } from '../model'
 import type { Expansion, ReferenceCall } from './reference'
+import { REFERENCE_SEPARATOR } from '../structure/instance'
 
 const PREFIX = '__df_'
 
@@ -64,7 +65,7 @@ function callsMethod(df: CRegion, eqs: CEquation[], expansion: Expansion): boole
         const v = lowermost(r).v
         if (v.method || v.declKind === 'method') return true
         // A method of a chart instance (`c.add`): its declaration is the instantiated chart's.
-        return v.declKind === 'unresolved' && !!v.decl && expansion.index?.vos.get(v.decl)?.decl?.declKind === 'method'
+        return v.declKind === 'unresolved' && !!v.decl && declarationOf(v, expansion)?.declKind === 'method'
     }
     const visit = (e: CExpr | undefined) => walkExpr(e, x => {
         if (x.k === 'call' && !x.extern && x.target && method(x.target)) found = true
@@ -81,16 +82,21 @@ function callsMethod(df: CRegion, eqs: CEquation[], expansion: Expansion): boole
     return found
 }
 
+/** The source declaration of a variable (inside a referenced chart's copy its id carries the copy's prefix). */
+function declarationOf(v: CVar, expansion: Expansion) {
+    return v.decl ? expansion.index?.vos.get(v.decl.split(REFERENCE_SEPARATOR).pop()!)?.decl : undefined
+}
+
 /** A chart instance the Dataflow processor handles: `ref C g` of a chart, not removed, not `@DFignore`. */
 function isInstance(v: CVar, expansion: Expansion): boolean {
     if (v.declKind !== 'reference' || !v.instance || v.extern || v.tags.has(DF_REMOVED)) return false
-    const d = v.decl ? expansion.index?.vos.get(v.decl)?.decl : undefined
-    return !d?.annotations.some(a => a.name === 'DFignore')
+    return !declarationOf(v, expansion)?.annotations.some(a => a.name === 'DFignore')
 }
 
 /**
  * The chart instances an equation names (KIELER's allAssignmentReferences: the target's and the expression's
- * references; a call written as an equation has neither, only the expression after its `=`).
+ * references; a call written as an equation is its own target, with its arguments, and the expression is what
+ * follows its `=`).
  */
 function instancesOf(eq: CEquation, expansion: Expansion): CVar[] {
     const out: CVar[] = []
@@ -99,12 +105,10 @@ function instancesOf(eq: CEquation, expansion: Expansion): CVar[] {
         if (x.k === 'ref') add(x)
         else if (x.k === 'call' && x.target) add(x.target)
     })
-    if (eq.call) visit(eq.trigger)
-    else {
-        add(eq.target)
-        eq.target.idx.forEach(visit)
-        visit(eq.expr)
-    }
+    add(eq.target)
+    eq.target.idx.forEach(visit)
+    visit(eq.expr)
+    visit(eq.trigger)
     return out
 }
 
@@ -162,9 +166,11 @@ function parts(eq: CEquation, k: number, expansion: Expansion): Part[] {
             }
             idx++
         }
-    } else {
+    } else if (target.v.dims.length) {
+        // createAssignment(array, value) with the element's index: an index or member written on the target is gone
+        // (`B[1] = {a, b}` writes B[0] and B[1]), and so is the operator.
         values.forEach((value, idx) => {
-            if (value.k !== 'ignore') out.push({ key: idx + k * 100, target: { ...target, idx: [...target.idx, { k: 'lit', t: 'int', v: idx }] }, op: eq.op, expr: value })
+            if (value.k !== 'ignore') out.push({ key: idx + k * 100, target: { k: 'ref', v: target.v, idx: [{ k: 'lit', t: 'int', v: idx }], span: target.span }, op: '=', expr: value })
         })
     }
     return out

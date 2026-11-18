@@ -1,0 +1,22 @@
+// ref Mid3 g(x, o) binds a and s by position; the inner OO instance's a and s have the same names and become x and o,
+// s = t.s is left without t.s. Rejected.
+scchart DfInstanceNestedNameLeakOutput {
+  input int x
+  output int o
+  ref Mid3 g(x, o)
+}
+scchart Mid3 {
+  input int a
+  output int s
+  ref Two t
+  method int inc(int v) { return v + 1 }
+  dataflow {
+    t.b = inc(a)
+    s = t.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

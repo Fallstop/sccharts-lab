@@ -1,0 +1,18 @@
+// An instance named only by a call written as an equation (c.add(x)): the call is its own reference, so the instance
+// is an OO instance and its input and output are members.
+scchart DfInstanceOnlyCalled {
+  input int x
+  output int o
+  ref Mix c
+  dataflow {
+    c.add(x)
+  }
+  region R { initial state A do o = c.v go to A }
+}
+scchart Mix {
+  input int a
+  output int s
+  int v = 0
+  method void add(int k) { v += k }
+  dataflow { s = a + v }
+}

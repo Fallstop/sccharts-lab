@@ -1,0 +1,21 @@
+// An instance of an inner state wired by a dataflow once region and read by a second region: its input is set at
+// every entry of the state.
+scchart DfInstanceOnceWiring {
+  input int x
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  method int five() { return 5 }
+  initial state I go to S
+  state S {
+    ref Two g
+    dataflow once {
+      g.a = twice(x)
+    }
+    dataflow { o = g.s + five() }
+  } go to I
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

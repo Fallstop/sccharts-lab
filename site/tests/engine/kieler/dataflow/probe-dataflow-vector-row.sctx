@@ -1,0 +1,9 @@
+// A vector assigned to a row of a two-dimensional array in a classic region: the index is dropped, B[0] = ... assigns
+// an array. Rejected by gcc.
+scchart DfVectorRow {
+  input int x
+  output int B[2][2]
+  dataflow {
+    B[1] = {x + 1, x + 2}
+  }
+}

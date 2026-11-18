@@ -1,0 +1,19 @@
+// An OO instance of a chart with entry and during actions and a dataflow once region of its own.
+scchart DfInstanceActions {
+  input int x
+  output int o, m
+  ref Act g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+    m = g.n
+  }
+}
+scchart Act {
+  input int a
+  output int s, n
+  entry do n = 100
+  during do n += 1
+  dataflow once { s = a + 1 }
+}

@@ -1,0 +1,16 @@
+// ref Two g(o to s): the instance's output is the chart's o, written by the instance directly.
+scchart DfInstanceExplicitOutput {
+  input int x
+  output int o, m
+  ref Two g(o to s)
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    m = o + 1
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

@@ -1,0 +1,13 @@
+// An instance in the chart (class Cnt1, in the pool) and one in an inner state (Cnt21).
+scchart DfInstancesRootAndInnerState {
+  input int x
+  output int o, p
+  ref Cnt c
+  dataflow { c.add(x)  o = c.get() }
+  region R2 { initial state B { ref Cnt c  dataflow { c.add(1)  p = c.get() } } }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

@@ -1,0 +1,172 @@
+{
+  "hash": "18896c1f89482dab220406be9bb244efcd140b65",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-array-methods.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name add is contained in the model but not in VariableStore.",
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Self1.h": {
+      "type": "int",
+      "properties": []
+    },
+    "Self1.n": {
+      "type": "int",
+      "properties": []
+    },
+    "Self1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "cs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 6,
+        "p": 15,
+        "cs": [
+          {
+            "h": [
+              3,
+              5
+            ],
+            "n": 0,
+            "v": 1
+          },
+          {
+            "h": [
+              3,
+              5
+            ],
+            "n": 0,
+            "v": 10
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 10,
+        "p": 26,
+        "cs": [
+          {
+            "h": [
+              3,
+              6
+            ],
+            "n": 10,
+            "v": 4
+          },
+          {
+            "h": [
+              3,
+              6
+            ],
+            "n": 26,
+            "v": 20
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 16,
+        "p": 37,
+        "cs": [
+          {
+            "h": [
+              3,
+              7
+            ],
+            "n": 26,
+            "v": 9
+          },
+          {
+            "h": [
+              3,
+              7
+            ],
+            "n": 63,
+            "v": 30
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "x": 7,
+        "o": 24,
+        "p": 48,
+        "cs": [
+          {
+            "h": [
+              3,
+              8
+            ],
+            "n": 50,
+            "v": 16
+          },
+          {
+            "h": [
+              3,
+              8
+            ],
+            "n": 111,
+            "v": 40
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}
