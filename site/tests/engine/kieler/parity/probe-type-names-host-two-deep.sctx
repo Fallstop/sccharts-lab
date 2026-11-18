@@ -1,0 +1,3 @@
+// A variable of a host type in a class inside a chart instance is not in KIELER's interface (Box1.In.v is, Box1.In.h is not).
+scchart Main { ref Box b initial state A }
+scchart Box { class In { host "int" h int v } q }

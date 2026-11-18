@@ -1,0 +1,4 @@
+// An instance without fields inside an instance declared in a state: KIELER lists it as a member of the outer class (Box11.c).
+scchart Main { initial state S { ref Box b initial state A } }
+scchart Box { int x ref C c }
+scchart C { method int f() { return 2 } }

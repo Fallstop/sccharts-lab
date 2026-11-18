@@ -131,6 +131,8 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
                     if (c.declKind !== 'reference') return
                     out.push({ name: [top, ...classes.slice(0, i), c.member!.name].join('.'), input: false, output: false, type: 'class', dims: [], late: true })
                 })
+                // (A variable of a host type is not in KIELER's interface, however deep.)
+                if (!v.declKind && v.type === 'host') continue
                 out.push({
                     name: [top, ...classes, v.member.name].join('.'), input: false, output: false,
                     type: v.declKind ?? typeName(v.type, v.hostType), dims: [], late: true,
@@ -159,6 +161,23 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
             ? classOf(c)
             : result.index?.vos.get((c.decl ?? '').split('/').pop()!)?.decl?.className ?? c.member!.name))
         out.push({ name: [top, ...classes, o.v.member!.name].join('.'), input: false, output: false, type: o.v.declKind === 'struct' ? 'struct' : 'class', dims: [], late: true })
+    }
+    // The same inside an instance declared in an inner state, which the pool does not hold: the instances the
+    // engine's Reference pass keeps with the state (`Box11.c` for `ref C c` in `Box`, `ref Box b` in a state).
+    type Instance = { v: CVar; declared: boolean; inside: Instance[] }
+    const inner = (c: Instance, names: string[]) => {
+        for (const n of c.inside) {
+            if (!n.declared || !n.v.member) continue
+            out.push({ name: [...names, n.v.member.name].join('.'), input: false, output: false, type: 'class', dims: [], late: true })
+            inner(n, [...names, classOf(n.v)])
+        }
+    }
+    for (const scope of scopes) {
+        if (scope === compiled.core) continue
+        for (const c of ((scope as { ext?: { chartInstances?: Instance[] } }).ext?.chartInstances ?? [])) {
+            const top = c.declared ? rootType(c.v, scope) : undefined
+            if (top) inner(c, [top])
+        }
     }
 }
 

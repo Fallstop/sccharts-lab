@@ -1,0 +1,4 @@
+// An array of instances without fields inside an instance declared in a state.
+scchart Main { initial state S { ref Box b initial state A } }
+scchart Box { int x ref C c[2] }
+scchart C { method int f() { return 2 } }

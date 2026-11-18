@@ -1,0 +1,4 @@
+// An instance with a field inside an instance declared in a state: listed once (Box11.c, Box11.C1.y).
+scchart Main { initial state S { ref Box b initial state A } }
+scchart Box { int x ref C c }
+scchart C { int y }

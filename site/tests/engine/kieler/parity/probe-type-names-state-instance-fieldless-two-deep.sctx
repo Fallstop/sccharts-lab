@@ -1,0 +1,5 @@
+// Two instances deep in a state, the innermost without fields: KIELER cannot serialise the interface (the class of the middle instance has only its _init), and rejects the chart.
+scchart Main { initial state S { ref Box b initial state A } }
+scchart Box { int x ref Mid m }
+scchart Mid { ref C c }
+scchart C { method int f() { return 2 } }

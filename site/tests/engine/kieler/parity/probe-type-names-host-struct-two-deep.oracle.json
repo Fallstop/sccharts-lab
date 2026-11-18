@@ -1,0 +1,54 @@
+{
+  "hash": "c28f5c61e66745aa031850b9cf1dbdfc9473b8b8",
+  "chart": "tests/engine/kieler/parity/probe-type-names-host-struct-two-deep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "Box1.In.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.q": {
+      "type": "struct",
+      "properties": []
+    },
+    "Box1.x": {
+      "type": "int",
+      "properties": []
+    },
+    "b": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "b": {
+          "q": {
+            "v": 0
+          },
+          "x": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "b": {
+          "q": {
+            "v": 0
+          },
+          "x": 0
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

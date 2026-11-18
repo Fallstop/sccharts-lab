@@ -1,0 +1,51 @@
+{
+  "hash": "cb1d2f9c995658b2c3c24a1f8d8afab2950f1fa8",
+  "chart": "tests/engine/kieler/parity/probe-type-names-host-two-deep.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "Box1.In.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Box1.q": {
+      "type": "class",
+      "properties": []
+    },
+    "b": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "b": {
+          "q": {
+            "v": 0
+          }
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "b": {
+          "q": {
+            "v": 0
+          }
+        }
+      },
+      "terminated": false
+    }
+  ]
+}
