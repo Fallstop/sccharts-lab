@@ -705,6 +705,12 @@ lab server reports as a located error). `tests/engine/pre-bodies.test.ts` pins t
   method on the original's variable); a method or code block KIELER keeps as a C function that calls a short method
   with a local variable does not compile (`method-inlined-local`, structure.md S-44f: found by the fuzz profile, 7 of
   200 charts).
+- **After a review** (concurrency.md PRE-6, 31 probes): a parameter or own class field under `pre` that has the name
+  of a chart variable is that variable to the memory, read without a dependency (`CRef.unseen`; the engine rejected
+  these with `pre-parameter` and `pre-class-field`); a class declared without an object is lowered for the Pre pass
+  alone (lower.ts `standIns`: its pres were not seen at all); `method-inlined-local` needs a local the short method
+  names and a body the compiled chart calls (it also fired for `int unused;` and for a code block in a state nothing
+  leads to, which a fuzz campaign found); the placement messages keep the index and the clock (`pre(a[1], c)`).
 - **API**: no change to existing types. New diagnostic codes `pre-parameter`, `pre-class-field`,
   `method-inlined-local` (in `SIMULATOR_CODES`). Internal: `CRef.own`, structure/bodies.ts, passes/preBodies.ts.
 - **Fuzz**: the profile `preBodies` (tools/fuzz/README.md), campaigns 28 to 33 below; `pnpm cgen:check --fuzz 300

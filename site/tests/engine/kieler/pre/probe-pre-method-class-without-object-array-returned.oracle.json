@@ -1,0 +1,116 @@
+{
+  "hash": "8232edfa264a7e5f06f2b026e2efb21f04596c43",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-class-without-object-array-returned.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "A class/struct should have at least one variable defined (Type definitions are not supported).",
+      "line": 2,
+      "column": 50
+    }
+  ],
+  "interface": {
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 2,
+        "c": true
+      },
+      "values": {
+        "v": 2,
+        "o": 0,
+        "a": [
+          0,
+          0
+        ],
+        "c": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 5,
+        "c": false
+      },
+      "values": {
+        "v": 5,
+        "o": 5,
+        "a": [
+          0,
+          0
+        ],
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 7,
+        "c": false
+      },
+      "values": {
+        "v": 7,
+        "o": 7,
+        "a": [
+          0,
+          0
+        ],
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 8,
+        "c": true
+      },
+      "values": {
+        "v": 8,
+        "o": 8,
+        "a": [
+          0,
+          0
+        ],
+        "c": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

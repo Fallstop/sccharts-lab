@@ -1,0 +1,19 @@
+{
+  "hash": "f9971c402a9d74cad2cf86e8f2d201538bc7b453",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-function-calls-local-initialised.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "‘TickData’ has no member named ‘_fn0_f_u’",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name t is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_f_u is contained in the model but not in VariableStore.",
+    "ValuedObject with name g is contained in the model but not in VariableStore.",
+    "unused variable ‘_fn0_f_u’ [-Wunused-variable]"
+  ],
+  "ticks": []
+}

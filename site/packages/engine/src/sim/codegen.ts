@@ -314,6 +314,23 @@ function cNames(root: CState): Diagnostic[] {
 }
 
 /** The expressions of an SCL body, in order. */
+/**
+ * The body (a method KIELER keeps as a C function, or a code block) that a diagnostic is about, where the defect is
+ * in the C function KIELER makes of it: no function is made of a body that the compiled chart never calls (a code
+ * block on a transition of a state nothing leads to), so compile.ts drops the diagnostic then.
+ */
+export const BODY_OF = new WeakMap<Diagnostic, CVar>()
+function ofBody(m: CVar, d: Diagnostic): Diagnostic {
+    BODY_OF.set(d, m)
+    return d
+}
+
+function namesVar(e: CExpr, v: CVar): boolean {
+    let found = false
+    walkExpr(e, x => { if (x.k === 'ref') for (let r: CRef | undefined = x; r; r = r.sub) if (r.v === v) found = true })
+    return found
+}
+
 function bodyExprs(list: CStmt[], out: CExpr[] = []): CExpr[] {
     const add = (e: CExpr | undefined) => { if (e) out.push(e) }
     for (const st of list) {
@@ -558,7 +575,9 @@ function cText(root: CState): Diagnostic[] {
         const calls = (e: CExpr | undefined) => walkExpr(e, x => {
             const callee = x.k === 'call' && !x.extern ? x.target?.v.method : undefined
             if (callee && isInlined(callee)) extra += callee.params.filter(p => !p.tags.has('#self')).length
-            if (x.k === 'call' && callee && isInlined(callee) && callee.locals.length) local ??= { call: x, v: callee.locals[0] }
+            // (A local the short method never names leaves nothing in the copy: `int unused; return 5` compiles.)
+            const named = callee && isInlined(callee) ? callee.locals.find(l => bodyExprs(callee.body).some(b => namesVar(b, l))) : undefined
+            if (x.k === 'call' && named) local ??= { call: x, v: named }
         })
         const walk = (list: CStmt[]) => {
             for (const st of list) {
@@ -581,22 +600,22 @@ function cText(root: CState): Diagnostic[] {
         if (found) {
             const what = m.generated ? 'This code block' : `The method \`${m.member?.name ?? m.name}\``
             const it = m.generated ? 'the code block' : `\`${m.member?.name ?? m.name}\``
-            out.push({
+            out.push(ofBody(m, {
                 severity: 'error', code: 'method-inlined-local', span: found.call.span ?? method.span ?? m.span, related: m.decl ? [m.decl] : undefined,
                 message: `${what} calls \`${found.call.name}\`, a short method with a local variable (\`${found.v.name}\`), which KIELER's C code cannot handle: it does not compile`,
                 kieler: `‘TickData’ has no member named ‘_fn<n>_${found.call.name.replace(/^.*\./, '')}_${found.v.name}’\n${GCC_FAILED}`,
                 hint: `KIELER keeps ${it} as a C function (it calls another method) and copies the short method \`${found.call.name}\` into it. The copy's variable \`${found.v.name}\` is then read in the chart's data, where KIELER never declares it. Call \`${found.call.name}\` in an effect of its own and use the result (\`t = ${found.call.name}(...)\`), or write \`${found.call.name}\` without a local variable.`,
-            })
+            }))
         }
         if (!extra) continue
         // The tick data and, for a class's method, the instance come first.
         const fixed = m.member ? 2 : 1
-        out.push({
+        out.push(ofBody(m, {
             severity: 'error', code: 'method-inlined-parameter', span: method.span ?? m.span, related: m.decl ? [m.decl] : undefined,
             message: `The method \`${m.member?.name ?? m.name}\` calls a short method with parameters, which KIELER's C code cannot handle: it does not compile`,
             kieler: `too few arguments to function ‘${m.member ? `${root.name}_${m.name.replace(/^.*\./, '')}` : m.name}’; expected ${fixed + own + extra}, have ${fixed + own}\n${GCC_FAILED}`,
             hint: `KIELER keeps \`${m.member?.name ?? m.name}\` as a C function (it calls another method) and copies the short method it calls into it. The copy brings the short method's parameters along, as parameters of \`${m.member?.name ?? m.name}\`, and the calls of \`${m.member?.name ?? m.name}\` do not pass them. Write the short method's code in place, or give it no parameters, or mark \`${m.member?.name ?? m.name}\` \`@inline\`.`,
-        })
+        }))
     }
     for (const m of called) {
         const related = m.decl ? [m.decl] : m.method!.by ? [m.method!.by] : undefined

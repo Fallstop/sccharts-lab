@@ -1,0 +1,108 @@
+{
+  "hash": "fe149a96fc60529f25f5fd17e46f2f7e141e10c7",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-name-of-chart-field-instance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 2,
+        "c": true
+      },
+      "values": {
+        "v": 2,
+        "o": 0,
+        "g": {
+          "v": 3
+        },
+        "c": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 5,
+        "c": false
+      },
+      "values": {
+        "v": 5,
+        "o": 3,
+        "g": {
+          "v": 3
+        },
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 7,
+        "c": false
+      },
+      "values": {
+        "v": 7,
+        "o": 6,
+        "g": {
+          "v": 3
+        },
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 8,
+        "c": true
+      },
+      "values": {
+        "v": 8,
+        "o": 8,
+        "g": {
+          "v": 3
+        },
+        "c": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

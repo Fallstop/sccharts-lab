@@ -1,0 +1,23 @@
+{
+  "hash": "18ae93ba487c0fb49c1d99197d09a1dcdb7a6bf7",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-class-without-object-field.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "‘TickData’ has no member named ‘v’",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "declaration does not declare anything",
+    "declaration does not declare anything"
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "A class/struct should have at least one variable defined (Type definitions are not supported).",
+      "line": 2,
+      "column": 29
+    }
+  ],
+  "ticks": []
+}

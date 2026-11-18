@@ -1,0 +1,2 @@
+// The caller is one line, but a method with a call is a C function in KIELER.
+scchart Main { output int o method int f() { int u = 3; return u } method int g() { return f() } initial state A do o = g() go to A }

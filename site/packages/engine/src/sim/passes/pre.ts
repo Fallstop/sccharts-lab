@@ -17,7 +17,7 @@ import {
     sameExpr, walkExpr, type CEffect, type CExpr, type CRef, type CState, type CStmt,
 } from '../model'
 import { declarationsOf, mapBodies, walkBody } from '../structure/bodies'
-import { checkOperands, ownField, writtenPre, type PreExpr } from './preBodies'
+import { chartVariablesByName, checkOperands, ownField, writtenPre, type PreExpr } from './preBodies'
 
 const KIELER_PLACEMENT = 'Pre expressions are only supported in assignments, triggers and other pre expressions'
 const UNSUPPORTED = 'The official KIELER compiler cannot compile this either: it only accepts `pre(...)` in an assignment, a transition trigger, an array index or inside a larger expression.'
@@ -35,7 +35,7 @@ function checkPlacements(ctx: PassContext): boolean {
     let rejected = false
     /** The method whose body is being checked: its names are written as inside it. */
     let method: CVar | undefined
-    const preText = (e: PreExpr) => writtenPre(e, method, false)
+    const preText = (e: PreExpr) => writtenPre(e, method)
     // A body lowered several times (a method of two instances of a class) is one in KIELER's model.
     const reported = new Set<string>()
     const misplaced = (e: PreExpr, message: (text: string) => string, hint: (text: string) => string) => {
@@ -208,6 +208,7 @@ export const pre: Pass = {
         const madeFor = new Map<PreExpr, CVar>()
         const home = new Map<PreExpr, CVar>()
         const order = presInKielerOrder(ctx.root, home)
+        const byName = chartVariablesByName(ctx.root, order, home)
         // KIELER's key of a pre's operand (Pre.expressionKey) cannot have an index on an instance: `pre(os[i].v)`.
         // (Named from inside the class, `pre(v)`, the member has no instance in front of it: preBodies.ts.)
         for (const p of order) {
@@ -229,7 +230,7 @@ export const pre: Pass = {
             let preVar = transformed.get(v)
             if (!preVar) {
                 // (A clock KIELER's during action cannot name is reported below; the memory is made without it.)
-                preVar = createPre(v, usableClock(p.args[1]) ? p.args[1] : undefined)
+                preVar = createPre(v, usableClock(p.args[1]) ? p.args[1] : undefined, byName.has(p))
                 transformed.set(v, preVar)
                 deciding.set(v, p)
             } else {
@@ -342,7 +343,8 @@ function neutral(v: CVar): CExpr | undefined {
     return value
 }
 
-function createPre(v: CVar, clock: CExpr | undefined): CVar {
+/** `unseen`: the memory reads the variable by name only (preBodies.ts chartVariablesByName). */
+function createPre(v: CVar, clock: CExpr | undefined, unseen = false): CVar {
     const state = owningState(v.scope!)
     const make = (prefix: string, role: string) => {
         const x = new CVar(prefix + v.name, v.type)
@@ -368,7 +370,7 @@ function createPre(v: CVar, clock: CExpr | undefined): CVar {
     if (clock) during.trigger = clock
     const o = { hidden: true, by: v.decl }
     if (!v.dims.length) {
-        during.effects.unshift({ k: 'assign', ref: ref(reg), op: '=', expr: ref(v), o })
+        during.effects.unshift({ k: 'assign', ref: ref(reg), op: '=', expr: unseen ? { ...ref(v), unseen: true } : ref(v), o })
         during.effects.unshift({ k: 'assign', ref: ref(preVar), op: '=', expr: ref(reg), o })
     } else {
         for (const index of indices(v)) {

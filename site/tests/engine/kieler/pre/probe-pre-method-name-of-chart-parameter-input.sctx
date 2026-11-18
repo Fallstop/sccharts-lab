@@ -1,0 +1,2 @@
+// pre of a parameter that has the name of an input of the chart: the memory reads the input by name, whatever the call passes.
+scchart Main { output int o input int v method int last(int v) { return pre(v) + 1 } initial state A do o = last(9) go to A }

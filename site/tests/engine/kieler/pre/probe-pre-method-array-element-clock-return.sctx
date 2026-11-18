@@ -1,0 +1,2 @@
+// pre of an array element with a clock as a whole return value: refused (the message names the element and the clock).
+scchart Main { input int v input bool c output int o int a[2] method int last() { return pre(a[1], c) } initial state A do a[1] = v; o = last() go to A }

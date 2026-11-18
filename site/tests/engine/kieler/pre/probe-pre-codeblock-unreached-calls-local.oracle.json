@@ -1,0 +1,643 @@
+{
+  "hash": "fca4f36f61529d272705e7832c0c0a7c8b4a6ae8",
+  "chart": "tests/engine/kieler/pre/probe-pre-codeblock-unreached-calls-local.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_tern_t is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_tern_t is contained in the model but not in VariableStore."
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The transition is not reachable.",
+      "line": 13,
+      "column": 5
+    },
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 24,
+      "column": 5
+    }
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "d": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "k2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "u2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "w": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "S_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "S_val": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "f": {
+      "type": "bool",
+      "properties": []
+    },
+    "v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "d": false,
+        "n": 2
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "d": false,
+        "n": 2,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "S": false,
+        "S_curval": 0,
+        "S_val": 0,
+        "f": false,
+        "v": 3
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 2
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 2,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0,
+        "S": true,
+        "S_curval": 2,
+        "S_val": 2,
+        "f": false,
+        "v": 2
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 1
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 1,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0,
+        "S": true,
+        "S_curval": 1,
+        "S_val": 1,
+        "f": false,
+        "v": 1
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 2
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 2,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0,
+        "S": true,
+        "S_curval": 2,
+        "S_val": 2,
+        "f": false,
+        "v": 2
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": true,
+        "n": 2
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": true,
+        "n": 2,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0,
+        "S": true,
+        "S_curval": 2,
+        "S_val": 2,
+        "f": false,
+        "v": 2
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 1
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 1,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "S": true,
+        "S_curval": 1,
+        "S_val": 1,
+        "f": false,
+        "v": 1
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 7,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": true,
+        "d": false,
+        "n": 0,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "S": true,
+        "S_curval": 0,
+        "S_val": 0,
+        "f": false,
+        "v": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 8,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 2
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 2,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0,
+        "S": true,
+        "S_curval": 2,
+        "S_val": 2,
+        "f": false,
+        "v": 2
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 9,
+      "inputs": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 2
+      },
+      "values": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 2,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 1,
+        "S": true,
+        "S_curval": 2,
+        "S_val": 2,
+        "f": false,
+        "v": 2
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 10,
+      "inputs": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "a": true,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 0,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "S": true,
+        "S_curval": 0,
+        "S_val": 0,
+        "f": false,
+        "v": 0
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 11,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 3
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": false,
+        "n": 3,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 1,
+        "y": 2,
+        "z": 0,
+        "S": true,
+        "S_curval": 3,
+        "S_val": 3,
+        "f": false,
+        "v": 3
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 12,
+      "inputs": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 3
+      },
+      "values": {
+        "a": false,
+        "b": true,
+        "c": false,
+        "d": false,
+        "n": 3,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 2,
+        "y": 3,
+        "z": 0,
+        "S": true,
+        "S_curval": 3,
+        "S_val": 3,
+        "f": false,
+        "v": 3
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 13,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": false,
+        "n": 2
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": true,
+        "d": false,
+        "n": 2,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 3,
+        "y": 3,
+        "z": 0,
+        "S": true,
+        "S_curval": 2,
+        "S_val": 2,
+        "f": false,
+        "v": 2
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 14,
+      "inputs": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 0
+      },
+      "values": {
+        "a": false,
+        "b": false,
+        "c": false,
+        "d": false,
+        "n": 0,
+        "k2": 0,
+        "u2": 0,
+        "w": 0,
+        "x": 3,
+        "y": 3,
+        "z": 0,
+        "S": true,
+        "S_curval": 0,
+        "S_val": 0,
+        "f": false,
+        "v": 0
+      },
+      "taken": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

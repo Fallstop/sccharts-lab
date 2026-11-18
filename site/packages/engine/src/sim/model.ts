@@ -169,6 +169,12 @@ export interface CRef {
      * (the memory of `pre(v)`, passes/pre.ts) looks the name up in the chart's data.
      */
     own?: string
+    /**
+     * A read KIELER's dependency analysis does not see: its code reads the chart's variable by name where the model
+     * has another object (the memory of `pre` of a parameter that has the name of a chart variable, passes/
+     * preBodies.ts), so nothing orders the read after a write of the variable in the same tick.
+     */
+    unseen?: boolean
 }
 
 /** A trigger written `if a > 0 schedule s 1` keeps its schedule on the expression (KIELER's BoolScheduleExpression);
@@ -784,6 +790,7 @@ export function copyRef(r: CRef): CRef {
     if (r.sched) c.sched = r.sched
     if (r.inlined) c.inlined = true
     if (r.own) c.own = r.own
+    if (r.unseen) c.unseen = true
     return c
 }
 

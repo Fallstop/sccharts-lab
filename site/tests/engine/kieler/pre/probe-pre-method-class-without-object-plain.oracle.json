@@ -1,0 +1,103 @@
+{
+  "hash": "abe312b20b8cef99785d60918a58e3e4c838c4b0",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-class-without-object-plain.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "declaration does not declare anything",
+    "declaration does not declare anything"
+  ],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "A class/struct should have at least one variable defined (Type definitions are not supported).",
+      "line": 2,
+      "column": 41
+    }
+  ],
+  "interface": {
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.w": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 2,
+        "c": true
+      },
+      "values": {
+        "v": 2,
+        "o": 0,
+        "c": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 5,
+        "c": false
+      },
+      "values": {
+        "v": 5,
+        "o": 5,
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 7,
+        "c": false
+      },
+      "values": {
+        "v": 7,
+        "o": 7,
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 8,
+        "c": true
+      },
+      "values": {
+        "v": 8,
+        "o": 8,
+        "c": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

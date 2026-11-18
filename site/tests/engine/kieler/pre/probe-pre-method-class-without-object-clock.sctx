@@ -1,0 +1,2 @@
+// A class declared without an object: the pre in its method is the last of the variable and decides the clock of the memory.
+scchart Main { input int v input bool c output int o method int read() { return pre(v) + 1 } class K { int f() { return pre(v, c) + 1 } } initial state A do o = read() go to A }

@@ -1,0 +1,2 @@
+// A class declared without an object whose method takes pre of a chart variable: compiles, one memory.
+scchart Main { input int v output int o class K { int f() { return pre(v) + 1 } } initial state A do o = pre(v) + 0 go to A }

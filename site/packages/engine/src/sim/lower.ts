@@ -23,6 +23,7 @@ import { genericKind } from '../parser/resolve'
 import { entryOf, sourceId } from '../parser/generics'
 import { originalOf } from './structure/instance'
 import { foldConstants } from './fold'
+import { placeDeclarations } from './structure/bodies'
 
 /** A dataflow equation (`x = e`, `x += e`, `g.A = e`, `g = {e1, e2}`), lowered; `sequential`: ends with `;`/`seq`. */
 export interface CEquation {
@@ -96,6 +97,25 @@ class Lowering {
 
     instanceMembers(): Map<CVar, Map<string, CVar>> {
         return new Map([...this.instances].map(([inst, entry]) => [inst, entry.members]))
+    }
+
+    /**
+     * A class declared without an object (`class K { int f() { ... } }`): nothing can call its methods, but they are
+     * in KIELER's model, and its Pre processor walks them like any other (a `pre` in one decides a memory's clock and
+     * is refused where a pre is refused). The class is lowered for a stand-in object, which `dropStandIns` takes out
+     * again once everything is lowered: only the bodies stay, as declarations of the scope that nothing else names.
+     */
+    private readonly standIns = new Map<Declaration, { v: CVar; scope: Scope }>()
+
+    dropStandIns() {
+        for (const { v, scope } of this.standIns.values()) {
+            const inside = (x: CVar): boolean => x === v || (!!x.member && inside(x.member.of))
+            const at = scope.decls.indexOf(v)
+            const mine = scope.decls.filter(inside)
+            scope.decls = scope.decls.filter(x => !inside(x))
+            for (const x of mine) this.instances.delete(x)
+            placeDeclarations(scope, mine.filter(x => !!x.method), scope.decls.slice(Math.max(at, 0)))
+        }
     }
 
     /** Index references already reported by inheritedIndex (by where they are written). */
@@ -180,6 +200,17 @@ class Lowering {
                     this.constSource.set(v, vo.initialValue)
                     this.constScopes.add(scope)
                 }
+            }
+            const methods = (c: Declaration): boolean => !!c.members?.some(m => m.declKind === 'method' || ((m.declKind === 'class' || m.declKind === 'struct') && !m.host && methods(m)))
+            if (d.declKind === 'class' && !d.host && !d.valuedObjects.length && methods(d)) {
+                const v = new CVar(`_${d.className ?? 'class'}`, 'host')
+                v.declKind = 'class'
+                v.generated = true
+                v.scope = scope
+                v.span = d.span
+                scope.decls.push(v)
+                this.declareMembers(scope, d, v)
+                this.standIns.set(d, { v, scope })
             }
         }
     }
@@ -392,6 +423,8 @@ class Lowering {
                     inst.dims = vo.cardinalities.map(c => this.expr(c))
                     this.initialiseInstance(inst)
                 }
+                const standIn = this.standIns.get(d)
+                if (standIn) this.initialiseInstance(standIn.v)
             }
             for (const vo of d.valuedObjects) {
                 const v = this.vars.get(vo.id)!
@@ -1310,6 +1343,7 @@ export function lowerChart(chart: State, index: ModelIndex | undefined, inherite
         root.actions.push(reset)
     }
 
+    l.dropStandIns()
     return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports, instances: l.instanceMembers(), stateFlags: [...l.stateFlags.values()] }
 }
 

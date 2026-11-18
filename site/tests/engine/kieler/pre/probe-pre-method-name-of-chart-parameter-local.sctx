@@ -1,0 +1,2 @@
+// pre of a parameter with the name of a variable the chart writes in the same tick: no dependency orders the memory after the write, so it takes the value from before it.
+scchart Main { output int o input int v int w = 1 method int last(int w) { return pre(w) + 1 } initial state A do w = v; o = last(9) go to A }

@@ -1,0 +1,2 @@
+// A parameter as the clock of a pre, with the name of an input of the chart: the input clocks the memory.
+scchart Main { output int o input int v input bool c method int last(bool c) { return pre(v,c) + 1 } initial state A do o = last(false) go to A }

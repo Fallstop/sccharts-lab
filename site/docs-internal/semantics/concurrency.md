@@ -815,6 +815,18 @@ gcc fails (`implicit declaration of function 'val'`) when the method is called, 
 run and agree tick by tick, 79 rejected; official KIELER gives the same values for every chart that runs, rejects
 71 of the others and never answers on the 8 with `pre` of a local variable, which the lab server reports as an
 error); the fuzz profile `preBodies` (700 charts, seeds 1 to 4, no disagreement after the fixes).
+**Found by a review.** The memory's during action reads the operand and the clock *by name* in the chart's data, so a
+parameter, or a class field named from inside the class, that has the name of a variable of the chart is that
+variable to the memory: with `input int v`, `method int last(int v) { return pre(v) + 1 }` gives the input's previous
+value plus one whatever the call passes, and so does `pre(v)` in a class with a field `v`
+(`probe-pre-method-name-of-chart-*`: an input, an output, a local, a signal, a variable of another type, as operand
+and as clock; an array of that name is gcc's error). KIELER's dependency analysis knows the parameter, not the chart
+variable, so nothing orders that read after a write of the variable in the same tick: the memory takes the value from
+before the write (`-parameter-local`, `-parameter-output`). A local variable of the body stays KIELER's crash
+(`-name-of-chart-local`). A class declared **without an object** has methods nothing can call, but they are in the
+model: a pre in one decides a memory's clock like any other and is refused where a pre is refused
+(`probe-pre-method-class-without-object-*`).
+
 **Source.** `proc/Pre.xtend:108-125` (`eAllContents`, the stack), `:252-312` (the containers it replaces in),
 `:370-377` (`getParentState`), `proc/SclCodeEffect.xtend:67-110`, `proc/Signal.xtend:227-248`,
 `proc/Reference.xtend:1201` (`ref.replace(classDecl)`), `proc/RegionActionsAndDeclarations.xtend:65-86`, `scl/SCLPackage` and `kexpressions/KExpressionsPackage`

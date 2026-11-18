@@ -1,0 +1,2 @@
+// A method that calls a short method with a local variable the short method never names: nothing of the local is left in the copy, KIELER compiles.
+scchart Main { output int o method int f() { int unused; return 5 } method int g() { return f() } initial state A do o = g() go to A }

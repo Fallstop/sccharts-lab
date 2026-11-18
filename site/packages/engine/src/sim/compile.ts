@@ -12,7 +12,7 @@ import { buildSCG, cloneSCG, successors, type SCG, type SNode } from './scg'
 import { abortRegionsSCG } from './abortRegions'
 import { concurrentThreads, dependencies, dependencyReach, entryReach, type Access, type Dependency } from './deps'
 import { analyse, liveNodes, separateSurfaceDepth, type Analysis } from './analysis'
-import { conditionalWithoutElse, checkCodegen, preOfValue } from './codegen'
+import { BODY_OF, conditionalWithoutElse, checkCodegen, preOfValue } from './codegen'
 import { removeSuperfluousForks } from './sfr'
 import { constantIndexWarnings } from './memory'
 import { droppedIndexDiagnostics, guardCondition } from './guardIndices'
@@ -159,12 +159,18 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     const refused = new Set(diagnostics.filter(d => d.code === 'schedule-without-instance').map(d => d.span?.start))
     const functions = new Set<CVar>()
     diagnostics.push(...inlineMethods(scg, functions).filter(d => d.code !== 'schedule-value' || !refused.has(d.span?.start)))
+    // What is wrong with a C function KIELER never makes (nothing in the compiled chart calls the body) is no error.
+    for (let i = diagnostics.length - 1; i >= 0; i--) {
+        const body = BODY_OF.get(diagnostics[i])
+        if (body && !functions.has(body)) diagnostics.splice(i, 1)
+    }
     lowered.root.ext.poolObjects = poolObjects(lowered.root, functions)
     // KIELER's SequentialForkSurfaceDepthSeparatorProcessor.
     separateSurfaceDepth(scg)
     diagnostics.push(...crashingClashes(clashes, scg, lowered.root))
     diagnostics.push(...conditionalWithoutElse(scg.nodes))
-    diagnostics.push(...preOfValue(scg.nodes, functions))
+    // (A parameter under `pre` is reported as such: the value a call puts in its place is not the reader's mistake.)
+    if (!diagnostics.some(d => d.code === 'pre-parameter')) diagnostics.push(...preOfValue(scg.nodes, functions))
     diagnostics.push(...conditionKeepsResult(scg))
     diagnostics.push(...stringConditions(scg))
     // Sums and differences KIELER's C code reads differently from the chart (written.ts).

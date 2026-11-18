@@ -1,0 +1,2 @@
+// The chart variable of the parameter name is an array: gcc refuses the array as a value.
+scchart Main { output int o input int v int w[2] method int last(int w) { return pre(w) + 1 } initial state A do w[0] = v; o = last(9) go to A }

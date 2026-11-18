@@ -1,0 +1,27 @@
+// A code block that calls a short method with a local variable, on a transition of a state nothing leads to (M2): KIELER makes no C function of it, so the chart compiles (found by the fuzzer).
+scchart P60 {
+  input bool a, b, c, d
+  input int n
+  output int x = 0, y = 0, z = 0, w = 0, u2 = 0, k2 = 0
+  int v = 3
+  bool f = false
+  signal int S
+  method int tern() { int t; t = n > 1 ? pre(v, f) : 0; return t }
+  region R0 {
+    initial state V
+    do S(n); v = n go to V
+    do f = a go to V
+  }
+  region R1 {
+    initial state A
+    immediate if b do y = tern() + x go to B
+    state B
+    do { if (pre(v) > 1) { x += 1 } else { x = 0 } } go to A
+  }
+  region R2 {
+    initial state M
+    if a do z = tern() go to M
+    state M2
+    if c do { z = pre(pre(v, a)) + tern() } go to M
+  }
+}

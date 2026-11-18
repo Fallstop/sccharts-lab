@@ -1,0 +1,2 @@
+// The method is never called: the chart still compiles.
+scchart Main { output int o input int v method int last(int v) { return pre(v) + 1 } initial state A do o = v go to A }

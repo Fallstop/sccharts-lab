@@ -15,7 +15,7 @@
 // other pre of the variable is dropped with it. KIELER fails whether or not the method is called.
 
 import type { PassContext } from './context'
-import { allScopes, walkExpr, type CExpr, type CRef, type CVar } from '../model'
+import { allScopes, printExpr, walkExpr, type CExpr, type CRef, type CState, type CVar } from '../model'
 import { GCC_FAILED } from '../codegen'
 import { methodsOf } from '../structure/bodies'
 
@@ -42,10 +42,54 @@ export function ownField(r: CRef, method: CVar | undefined): { path: string; nam
 export function writtenPre(p: PreExpr, method: CVar | undefined, clock = true): string {
     const name = (e: CExpr | undefined): string => {
         // (The Signal pass ran: `S_val` is `val(S)` to the reader.)
-        if (e?.k === 'ref') return ownField(e, method)?.path ?? (e.v.role === 'value' ? `val(${e.v.display ?? e.v.name})` : e.v.display ?? e.v.name)
+        if (e?.k === 'ref') {
+            const base = ownField(e, method)?.path ?? (e.v.role === 'value' ? `val(${e.v.display ?? e.v.name})` : e.v.display ?? e.v.name)
+            // (The indices as written: `pre(a[1])` is another thing to fix than `pre(a)`.)
+            let last = e
+            while (last.sub) last = last.sub
+            return base + last.idx.map(i => `[${printExpr(i)}]`).join('')
+        }
         return e?.k === 'op' && e.op === 'pre' ? writtenPre(e, method) : '...'
     }
     return clock && p.args[1] ? `pre(${name(p.args[0])}, ${name(p.args[1])})` : `pre(${name(p.args[0])})`
+}
+
+/**
+ * KIELER's during action for the memory reads the operand, and the clock, by name in the chart's data (`d->v`). So a
+ * parameter, or a class's field named from inside the class, that has the name of a variable of the chart is that
+ * variable to the memory: `method int last(int v) { return pre(v) + 1 }` with `input int v` gives the previous value
+ * of the input, whatever the call passes (probes pre/probe-pre-method-name-of-chart-*). Arrays are left alone: the
+ * chart's array there is gcc's error.
+ */
+export function chartVariablesByName(root: CState, order: PreExpr[], home: ReadonlyMap<PreExpr, CVar>): Set<PreExpr> {
+    const redirected = new Set<PreExpr>()
+    const params = new Set<CVar>()
+    const byName = new Map<string, CVar>()
+    for (const scope of allScopes(root)) {
+        for (const m of methodsOf(scope)) for (const p of m.method!.params) params.add(p)
+        for (const v of scope.decls) if (!v.member && !v.method && !v.declKind && !v.dims.length && !byName.has(v.name)) byName.set(v.name, v)
+    }
+    for (const p of order) {
+        const method = home.get(p)
+        if (!method) continue
+        const redirect = (e: CExpr | undefined): boolean | undefined => {
+            if (e?.k !== 'ref') return
+            const name = params.has(e.v) && !e.sub ? e.v.name : ownField(e, method)?.path
+            const chart = name === undefined ? undefined : byName.get(name)
+            if (!chart || chart === e.v) return
+            const r = e as { v: CVar; sub?: CRef; own?: string; idx: CExpr[]; unseen?: boolean }
+            r.v = chart
+            r.sub = undefined
+            r.own = undefined
+            r.idx = []
+            // The model's object is the parameter or the field: no dependency orders this read (model.ts `unseen`).
+            r.unseen = true
+            return true
+        }
+        if (redirect(p.args[0])) redirected.add(p)
+        walkExpr(p.args[1], e => { redirect(e) })
+    }
+    return redirected
 }
 
 /**

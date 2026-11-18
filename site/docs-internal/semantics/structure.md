@@ -1966,8 +1966,11 @@ does not compile either: the copy's variable is named for the chart's data (`_fn
 (`d->_fn1_tern_t`), but only the copies in the tick function get a declaration (`'TickData' has no member named
 '_fn1_tern_t'`; engine: `method-inlined-local`). A short method without a local variable, or one with two returns
 (KIELER's return variable), is copied into a C function without harm, and so is a call in an effect or of a method
-that is a C function itself (`kieler/pre/probe-pre-method-function-calls-local-*`, 9 charts, found by the fuzz profile
-`preBodies`). The priority compiler, which
+that is a C function itself (`kieler/pre/probe-pre-method-function-calls-local-*`, found by the fuzz profile
+`preBodies`). It takes a local the short method names (initialises, assigns or reads): one it only declares leaves
+nothing in the copy (`-local-unused*`). And it takes a C function: KIELER makes none of a body that the compiled
+chart never calls, such as a code block on a transition of a state nothing leads to
+(`kieler/pre/probe-pre-codeblock-unreached-calls-local`). The priority compiler, which
 inlines every method and runs loops at run time, differs in both: there `b` becomes 9 too, and `155` is
 accepted (probe, `--system priority`).
 

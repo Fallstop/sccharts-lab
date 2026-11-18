@@ -1,0 +1,98 @@
+{
+  "hash": "7870b764ec2c5790bd490bab4e008154d3d3e770",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-name-of-chart-parameter-local.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_last_w is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "w": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 2,
+        "c": true
+      },
+      "values": {
+        "v": 2,
+        "o": 0,
+        "w": 1,
+        "c": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 5,
+        "c": false
+      },
+      "values": {
+        "v": 5,
+        "o": 2,
+        "w": 5,
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 7,
+        "c": false
+      },
+      "values": {
+        "v": 7,
+        "o": 2,
+        "w": 7,
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 8,
+        "c": true
+      },
+      "values": {
+        "v": 8,
+        "o": 6,
+        "w": 8,
+        "c": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

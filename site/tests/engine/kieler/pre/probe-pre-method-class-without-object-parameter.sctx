@@ -1,0 +1,2 @@
+// A class declared without an object: pre of a parameter fails in gcc.
+scchart Main { output int o class K { int f(int p) { return pre(p) + 1 } } initial state A do o = 1 go to A }

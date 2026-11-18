@@ -1,0 +1,2 @@
+// The only pre of the variable is in a class declared without an object.
+scchart Main { input int v input bool c output int o class K { int f() { return pre(v, c) + 1 } } initial state A do o = v go to A }

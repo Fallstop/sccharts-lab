@@ -1,0 +1,114 @@
+{
+  "hash": "11549d807b677caf63f01f92ae1f0717f94f6259",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-name-of-chart-field-clock.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.c": {
+      "type": "bool",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 2,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 2,
+        "o": 0,
+        "k": {
+          "c": true
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 5,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 5,
+        "o": 1,
+        "k": {
+          "c": true
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 7,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "v": 7,
+        "o": 1,
+        "k": {
+          "c": true
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 8,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "v": 8,
+        "o": 3,
+        "k": {
+          "c": true
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

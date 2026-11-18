@@ -1,0 +1,2 @@
+// A code block kept as a C function calls a short method with a local variable it never names: compiles.
+scchart Main { output int o method int f() { int unused; return 5 } initial state A do { int t = 0; for (int j = 0; j < 2; j++) { t += 1 } o = f() + t } go to A }

@@ -1,0 +1,88 @@
+{
+  "hash": "7f54d758329c10cfb4045fa94b2a474a38977296",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-function-calls-local-unused-codeblock.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name t is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_f_unused is contained in the model but not in VariableStore.",
+    "ValuedObject with name _effect0 is contained in the model but not in VariableStore.",
+    "unused variable ‘_fn0_f_unused’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "v": 2,
+        "c": true
+      },
+      "values": {
+        "o": 0,
+        "v": 2,
+        "c": true
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "v": 5,
+        "c": false
+      },
+      "values": {
+        "o": 7,
+        "v": 5,
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "v": 7,
+        "c": false
+      },
+      "values": {
+        "o": 7,
+        "v": 7,
+        "c": false
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "v": 8,
+        "c": true
+      },
+      "values": {
+        "o": 7,
+        "v": 8,
+        "c": true
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -217,7 +217,7 @@ function reads(node: SNode, e: CExpr | undefined, out: Access[], where?: Where) 
             if (!x.extern && x.target?.v.method) methodAccesses(node, x, out, where)
             return
         }
-        if (x.k !== 'ref') return
+        if (x.k !== 'ref' || x.unseen) return
         const a: Access = { node, v: x.v, ...identifier(x), cls: 'read', span: x.span, ...(x.sched ? { sched: x.sched } : {}) }
         out.push(a)
         const here = where?.trigger && x.inlined ? undefined : where
