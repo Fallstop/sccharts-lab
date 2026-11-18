@@ -1,0 +1,9 @@
+// pre of a float in a method.
+scchart Main {
+  input int n
+  output float o
+  float x = 2.5
+  method float last() { return pre(x) + 0.5 }
+  initial state A
+  do x = n * 1.5; o = last() go to A
+}

@@ -1,0 +1,9 @@
+// pre(s) of a static variable in an effect: the memory `_pre_s`/`_reg_s` is static too, moved to the chart
+// under its hierarchical name and so part of the data pool.
+scchart Main {
+  input int n
+  output int o
+  static int s = 5
+  initial state A
+  do s = n; o = pre(s) + 1 go to A
+}

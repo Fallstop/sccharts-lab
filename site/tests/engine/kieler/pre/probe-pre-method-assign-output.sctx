@@ -1,0 +1,9 @@
+// o = pre(x) in a void method called as an effect.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method void set() { o = pre(x) }
+  initial state A
+  do x = n; set() go to A
+}

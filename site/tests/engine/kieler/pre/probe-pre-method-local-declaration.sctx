@@ -1,0 +1,9 @@
+// int y = pre(x) in a method: the pre is a declaration's whole initial value.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int y = pre(x); return y }
+  initial state A
+  do x = n; o = last() go to A
+}

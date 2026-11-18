@@ -1,0 +1,10 @@
+// if/else in a method: the else branch's pre(x, c) comes last and decides: both are clocked.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { if (n > 2) { return pre(x) + 1 } else { return pre(x, c) + 2 } }
+  initial state A
+  do x = n; o = last() go to A
+}

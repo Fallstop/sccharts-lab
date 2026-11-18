@@ -1,0 +1,14 @@
+// A state inside a for-region with a variable and a method reading pre(x, c): a clocked memory per copy.
+scchart Main {
+  input int n
+  input bool c
+  output int o[2]
+  region for i : 0 to 1 {
+    initial state A {
+      int x = 2
+      method int last() { return pre(x, c) + 1 }
+      initial state A1
+      do x = n + i; o[i] = last() go to A1
+    }
+  }
+}

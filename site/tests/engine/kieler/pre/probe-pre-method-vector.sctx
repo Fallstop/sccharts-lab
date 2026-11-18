@@ -1,0 +1,10 @@
+// a = {pre(x), 1} in a method: the pre is an element of a vector.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[2]
+  method void fill() { a = {pre(x), 1} }
+  initial state A
+  do x = n; fill(); o = a[0] go to A
+}

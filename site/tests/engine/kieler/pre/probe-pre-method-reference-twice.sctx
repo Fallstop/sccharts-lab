@@ -1,0 +1,21 @@
+// The same chart referenced in two regions: each copy has its own variable, method and memory.
+scchart Main {
+  input int n
+  output int o
+  output int p
+  region {
+    initial state A is C(n, o)
+  }
+  region {
+    initial state B is C(n, p)
+  }
+}
+
+scchart C {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + o }
+  initial state A
+  do x = n; o = last() go to A
+}

@@ -1,0 +1,10 @@
+// if (pre(f)) inside the loop of a C function: rejected.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  bool f
+  method int last() { int t = 0; for (int j = 0; j < 2; j++) { if (pre(f)) { t += 1 } } return t }
+  initial state A
+  do x = n; f = n > 2; o = last() go to A
+}

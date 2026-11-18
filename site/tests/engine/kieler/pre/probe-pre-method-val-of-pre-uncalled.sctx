@@ -1,0 +1,15 @@
+// val(pre(S)) in a method nobody calls: no C code, the chart runs.
+scchart Main {
+  input int n
+  output int o
+  signal int S
+  method int last() { return val(pre(S)) + 1 }
+  region {
+    initial state A
+    do o = n go to A
+  }
+  region {
+    initial state B
+    if n > 1 do S(n) go to B
+  }
+}

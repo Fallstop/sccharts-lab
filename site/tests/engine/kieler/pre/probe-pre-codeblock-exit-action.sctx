@@ -1,0 +1,12 @@
+// A code block with pre(x) in an exit action.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  initial state A {
+    exit do { o = pre(x) + 100 }
+    initial state B
+    do x = n go to B
+  }
+  if n == 3 go to A
+}

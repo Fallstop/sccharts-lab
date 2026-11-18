@@ -1,0 +1,14 @@
+// An input bound to 5, return pre(i) in a method nobody calls: the Pre processor's error all the same.
+scchart Main {
+  input int n
+  output int o
+  initial state A is C(5, o)
+}
+
+scchart C {
+  input int i
+  output int o
+  method int last() { return pre(i) }
+  initial state A
+  do o = 7 go to A
+}

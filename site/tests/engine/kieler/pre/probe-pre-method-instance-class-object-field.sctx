@@ -1,0 +1,13 @@
+// ref C g, C's method reads pre(k.v) of a class object of C: gcc looks for `k` in the chart's data.
+scchart Main {
+  input int n
+  output int o
+  ref C g
+  initial state A
+  do g.k.v = n; o = g.f() go to A
+}
+
+scchart C {
+  class K { int v = 3 } k
+  method int f() { return pre(k.v) + 1 }
+}

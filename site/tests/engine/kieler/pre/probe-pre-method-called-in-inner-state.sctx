@@ -1,0 +1,12 @@
+// A chart method with pre(x) called inside a superstate that is entered again.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state A {
+    initial state B
+    do x = n; o = last() go to B
+  }
+  if n == 3 go to A
+}

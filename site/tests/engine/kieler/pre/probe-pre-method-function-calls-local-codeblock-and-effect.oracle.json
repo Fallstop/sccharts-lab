@@ -1,0 +1,18 @@
+{
+  "hash": "a7bbdf38599877bb6aef7a85effa9eb8a9fc2611",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-function-calls-local-codeblock-and-effect.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "‘TickData’ has no member named ‘_fn1_tern_t’; did you mean ‘_fn0_tern_t’?",
+    "‘TickData’ has no member named ‘_fn1_tern_t’; did you mean ‘_fn0_tern_t’?",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name _fn1_tern_t is contained in the model but not in VariableStore.",
+    "ValuedObject with name _effect0 is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_tern_t is contained in the model but not in VariableStore.",
+    "unused variable ‘_fn1_tern_t’ [-Wunused-variable]"
+  ],
+  "ticks": []
+}

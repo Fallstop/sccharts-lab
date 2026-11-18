@@ -1,0 +1,14 @@
+// A state inside a for-region with a variable and a method that reads it (no pre): every copy calls its own
+// method, which reads its own variable.
+scchart Main {
+  input int n
+  output int o[2]
+  region for i : 0 to 1 {
+    initial state A {
+      int x = 2
+      method int last() { return x + 1 }
+      initial state A1
+      do x = n + i; o[i] = last() go to A1
+    }
+  }
+}

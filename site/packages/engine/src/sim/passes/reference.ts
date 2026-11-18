@@ -31,6 +31,7 @@ import {
 import { inheritedDeclarations, type CEquation } from '../lower'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { declaredVars, rewriteScope } from '../structure/rewrite'
+import { declarationsOf, placeDeclarations } from '../structure/bodies'
 import { Replacements, Replacer } from '../structure/replacements'
 import { arrayMembers, elementIndices, elementOf, usesFields } from '../structure/instanceArray'
 import { chartInstancesOf, DECLARED_MEMBER, type ChartInstance } from '../structure/poolShape'
@@ -670,6 +671,8 @@ export class Expansion {
                 const target = isRegion(scope) ? scope.parent : scope
                 /** The first element's declarations: the members of every element. */
                 let members: CVar[] = []
+                /** The class's methods, where KIELER declares them (structure/bodies.ts). */
+                let classMethods: CVar[] = []
                 let outside = false
                 copies.forEach(({ at, tag }, x) => {
                     const prefix = sizes.length ? `${id}[${tag}]${REFERENCE_SEPARATOR}` : id + REFERENCE_SEPARATOR
@@ -724,6 +727,8 @@ export class Expansion {
                             }
                         }
                         for (const c of inside) c.v.member = { of: v, name: c.v.name }
+                        // (In the chart's own order, the classes of the instances inside it at their places.)
+                        classMethods = declarationsOf(inst).filter(l => l.method && !l.generated)
                         chartInstancesOf(target).push({
                             v, inside, methods: inst.decls.filter(l => l.method && !l.generated),
                             declared: inst.decls.some(l => !l.generated) || inside.some(c => c.declared),
@@ -755,6 +760,15 @@ export class Expansion {
                     target.actions.push(...inst.actions)
                     this.records.push({ state: target.origin ?? '', prefix, chart, declaration: true })
                 })
+                // KIELER's class takes the declaration's place (`ref.replace(classDecl)`), its methods with it. A
+                // region's declarations go on before the Pre processor runs (Region Actions): to the end of its
+                // state's, or, when the region has actions, into the state that wraps it (structure/bodies.ts).
+                const following = scope.decls.slice(scope.decls.indexOf(v) + 1)
+                if (isRegion(scope) && !scope.actions.length) {
+                    // (Before the rest of its region's declarations, and those of the regions after it.)
+                    const regions = target.regions.slice(target.regions.indexOf(scope) + 1).filter(r => !r.actions.length)
+                    placeDeclarations(target, classMethods, [...following, ...regions.flatMap(r => r.decls)], v, true)
+                } else placeDeclarations(scope, classMethods, following, v)
                 scope.decls.splice(scope.decls.indexOf(v), 1)
             }
         }

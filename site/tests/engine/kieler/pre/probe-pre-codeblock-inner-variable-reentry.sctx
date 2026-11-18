@@ -1,0 +1,11 @@
+// A code block reads pre(x) of a superstate's variable; the superstate is left and entered again.
+scchart Main {
+  input int n
+  output int o
+  initial state A {
+    int x = 2
+    initial state B
+    do x = n; { o = pre(x) + 1 } go to B
+  }
+  if n == 3 go to A
+}

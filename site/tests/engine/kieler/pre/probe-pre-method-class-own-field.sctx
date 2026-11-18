@@ -1,0 +1,10 @@
+// A class method reads pre(v) of the class's own field: the chart's during action reads `v` in the chart's
+// data, gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int f() { return pre(v) + 1 } } k
+  initial state A
+  do x = n; k.v = n; o = k.f() go to A
+}

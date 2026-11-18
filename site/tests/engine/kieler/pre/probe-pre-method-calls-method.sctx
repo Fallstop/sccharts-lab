@@ -1,0 +1,10 @@
+// A method calls a method with pre(x): the caller stays a C function, the short one is copied into it.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  method int twice() { int t; t = last(); return t + t }
+  initial state A
+  do x = n; o = twice() go to A
+}

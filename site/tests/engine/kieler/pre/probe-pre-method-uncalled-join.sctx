@@ -1,0 +1,16 @@
+// A superstate with a method (pre of its variable) nobody calls and a join: the memory's during action does not
+// keep the superstate from finishing.
+scchart Main {
+  input int n
+  output int o
+  initial state A {
+    int x = 2
+    method int last() { return pre(x) + 1 }
+    initial state A1
+    do x = n; o = x go to A2
+    final state A2
+  }
+  join to C
+  state C
+  do o = 100 go to A
+}

@@ -1,0 +1,124 @@
+{
+  "hash": "84bb8bcf907d745f5ab0c61940844208116e4b21",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-inherited-override.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 1,
+        "o": 0,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 2,
+        "o": 12,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 3,
+        "o": 12,
+        "x": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 4,
+        "o": 13,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 5,
+        "o": 14,
+        "x": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "hash": "aff0434f03925829f2ad11c2fc5ff6f6d2e45ef8",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-static-entry-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through s, o."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Main_region0_A____pre_s": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "pre",
+        "static"
+      ]
+    },
+    "Main_region0_A____reg_s": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "pre",
+        "static"
+      ]
+    },
+    "Main_region0_A___s": {
+      "type": "int",
+      "properties": [
+        "static"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "p": 1,
+        "Main_region0_A____pre_s": 0,
+        "Main_region0_A____reg_s": 2,
+        "Main_region0_A___s": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 3,
+        "p": 1,
+        "Main_region0_A____pre_s": 2,
+        "Main_region0_A____reg_s": 7,
+        "Main_region0_A___s": 7
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 8,
+        "p": 8,
+        "Main_region0_A____pre_s": 8,
+        "Main_region0_A____reg_s": 8,
+        "Main_region0_A___s": 8
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": 9,
+        "p": 8,
+        "Main_region0_A____pre_s": 8,
+        "Main_region0_A____reg_s": 9,
+        "Main_region0_A___s": 9
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5
+      },
+      "values": {
+        "n": 5,
+        "o": 10,
+        "p": 8,
+        "Main_region0_A____pre_s": 9,
+        "Main_region0_A____reg_s": 10,
+        "Main_region0_A___s": 10
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

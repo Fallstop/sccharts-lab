@@ -1,0 +1,11 @@
+// A method with pre(x) called by an immediate transition in the first tick: the type's default.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state A
+  immediate do x = n; o = last() go to B
+  state B
+  do x = n; o = last() go to B
+}

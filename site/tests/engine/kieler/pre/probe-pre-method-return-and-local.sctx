@@ -1,0 +1,9 @@
+// A pre that is a whole return value and pre of a local variable: the Pre processor's error comes first.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int y = x; if (n > 9) { return pre(x) } return pre(y) + 1 }
+  initial state A
+  do x = n; o = last() go to A
+}

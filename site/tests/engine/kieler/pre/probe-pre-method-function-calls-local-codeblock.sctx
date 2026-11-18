@@ -1,0 +1,11 @@
+// A code block that calls a short method with a local variable (no pre anywhere): KIELER keeps the block as a C
+// function, copies the method into it, and never declares the copy's `_fn0_tern_t`. gcc fails. Found by the
+// fuzz profile preBodies.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int tern() { int t; t = x + 1; return t }
+  initial state A
+  do x = n; { o = tern() + 1 } go to A
+}

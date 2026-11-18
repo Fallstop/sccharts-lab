@@ -1,0 +1,138 @@
+{
+  "hash": "417ccf9900932053ed94b7b8b986c751b77c7e5b",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-inherited-super-order-first.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name last is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 1,
+        "o": 0,
+        "x": 2,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 2,
+        "o": 13,
+        "x": 2,
+        "y": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 3,
+        "o": 13,
+        "x": 3,
+        "y": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 4,
+        "o": 14,
+        "x": 4,
+        "y": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 5,
+        "o": 15,
+        "x": 5,
+        "y": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

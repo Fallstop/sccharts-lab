@@ -1,0 +1,11 @@
+// A method with pre(x) that nobody calls, in a chart that reaches a final state: KIELER makes the memory, and
+// its during action does not keep the chart from terminating.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state A
+  do x = n; o = x go to B
+  final state B
+}

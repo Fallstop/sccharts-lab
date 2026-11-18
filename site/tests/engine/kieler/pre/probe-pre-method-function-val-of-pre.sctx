@@ -1,0 +1,15 @@
+// val(pre(S)) in a C function: gcc does not know `val`.
+scchart Main {
+  input int n
+  output int o
+  signal int S
+  method int last() { int t = 0; for (int j = 0; j < 2; j++) { t += val(pre(S)) } return t }
+  region {
+    initial state A
+    do o = last() go to A
+  }
+  region {
+    initial state B
+    if n > 1 do S(n) go to B
+  }
+}

@@ -1,0 +1,9 @@
+// A class field's initial value reads pre(v) of a sibling field: named from inside the class, gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int w = pre(v) + 1 } k
+  initial state A
+  do x = n; k.v = n; o = k.w go to A
+}

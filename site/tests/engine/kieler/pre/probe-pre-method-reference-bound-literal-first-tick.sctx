@@ -1,0 +1,17 @@
+// An input bound to 5 stays a variable with that value: pre(i) in a method is its memory, 0 in the first tick
+// and 5 afterwards.
+scchart Main {
+  input int n
+  output int o
+  initial state A is C(5, o)
+}
+
+scchart C {
+  input int i
+  output int o
+  method int last() { return pre(i) + 1 }
+  initial state A
+  immediate do o = last() go to B
+  state B
+  do o = last() + 10 go to B
+}

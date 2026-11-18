@@ -1,0 +1,10 @@
+// pre(k.a[1]) of an array field of a class object, in a chart method.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int a[3] } k
+  method int last() { return pre(k.a[1]) + 1 }
+  initial state A
+  do x = n; k.a[1] = n; o = last() go to A
+}

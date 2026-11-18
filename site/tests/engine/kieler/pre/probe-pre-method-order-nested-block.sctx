@@ -1,0 +1,10 @@
+// A statement, then a nested block with a local's initial value: written order, the block's pre(x) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { int t = 0; t += pre(x, c); { int u = pre(x) + 0; t += u } return t }
+  initial state A
+  do x = n; o = last() go to A
+}

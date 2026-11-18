@@ -1,0 +1,11 @@
+// pre(k.v) in a chart method and pre(v) in the class's own method: two memories, and the one of the bare name
+// does not compile.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int f() { return pre(v) + 1 } } k
+  method int last() { return pre(k.v) + 1 }
+  initial state A
+  do x = n; k.v = n; o = last() + 10 * k.f() go to A
+}

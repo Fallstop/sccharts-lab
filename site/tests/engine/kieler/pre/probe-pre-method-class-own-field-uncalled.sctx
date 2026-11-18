@@ -1,0 +1,9 @@
+// pre(v) of the class's own field in a method nobody calls: gcc fails all the same.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int f() { return pre(v) + 1 } } k
+  initial state A
+  do x = n; k.v = n; o = k.v go to A
+}

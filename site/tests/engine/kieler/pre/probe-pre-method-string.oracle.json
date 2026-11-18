@@ -1,0 +1,89 @@
+{
+  "hash": "ea7e02b7fa99911e3ff730857af22eb5b4ec21f7",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-string.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_last_t is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "string",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "string",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "x": "a"
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": "a",
+        "x": "b"
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": "b",
+        "x": "b"
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": "b",
+        "x": "b"
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

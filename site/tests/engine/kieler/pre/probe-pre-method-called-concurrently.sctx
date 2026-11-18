@@ -1,0 +1,16 @@
+// A method with pre(x) called in two concurrent regions.
+scchart Main {
+  input int n
+  output int o
+  output int p
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  region {
+    initial state A
+    do x = n; o = last() go to A
+  }
+  region {
+    initial state B
+    do p = last() * 2 go to B
+  }
+}

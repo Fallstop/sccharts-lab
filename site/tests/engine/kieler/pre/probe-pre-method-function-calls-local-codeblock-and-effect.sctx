@@ -1,0 +1,11 @@
+// The short method with a local is called in an effect (its copy `_fn0_tern_t` is declared) and in a code block
+// (`_fn1_tern_t` is not): gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int y
+  method int tern() { int t; t = x + 1; return t }
+  initial state A
+  do x = n; y = tern(); { o = tern() + 1 } go to A
+}

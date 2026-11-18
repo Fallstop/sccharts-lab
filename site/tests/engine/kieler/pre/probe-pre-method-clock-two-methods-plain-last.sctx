@@ -1,0 +1,11 @@
+// Two methods, the first with pre(x, c), the second with pre(x): the later declaration decides, no clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int a() { return pre(x, c) + 1 }
+  method int last() { return pre(x) + 1 }
+  initial state A
+  do x = n; o = last() + 10 * a() go to A
+}

@@ -160,7 +160,7 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     separateSurfaceDepth(scg)
     diagnostics.push(...crashingClashes(clashes, scg, lowered.root))
     diagnostics.push(...conditionalWithoutElse(scg.nodes))
-    diagnostics.push(...preOfValue(scg.nodes))
+    diagnostics.push(...preOfValue(scg.nodes, functions))
     diagnostics.push(...conditionKeepsResult(scg))
     diagnostics.push(...stringConditions(scg))
     diagnostics.push(...droppedIndices(scg, lowered.root.name))

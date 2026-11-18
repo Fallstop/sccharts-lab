@@ -1,0 +1,9 @@
+// n > 2 ? pre(x) : 0 in a method: the conditional is an operator.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int t; t = n > 2 ? pre(x) : 0; return t }
+  initial state A
+  do x = n; o = last() go to A
+}

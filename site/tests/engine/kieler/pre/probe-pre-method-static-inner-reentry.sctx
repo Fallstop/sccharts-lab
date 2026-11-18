@@ -1,0 +1,12 @@
+// pre(s) of a superstate's static variable in the superstate's method: the memory survives the re-entry.
+scchart Main {
+  input int n
+  output int o
+  initial state A {
+    static int s = 5
+    method int last() { return pre(s) + 1 }
+    initial state B
+    do s = n; o = last() go to B
+  }
+  if n == 3 go to A
+}

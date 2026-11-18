@@ -1,0 +1,9 @@
+// pre(x) * 2 - pre(x) in one assignment of a method: both read the one memory.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int t = 0; t = pre(x) * 2 - pre(x); return t }
+  initial state A
+  do x = n; o = last() go to A
+}

@@ -1,0 +1,15 @@
+// The same with pre(x, c): the memory starts again and is next updated when c holds.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  output int p
+  initial state A {
+    int x = 2
+    method int last() { return pre(x, c) + 1 }
+    entry do p = last()
+    initial state B
+    do x = n + 5; o = last() go to B
+  }
+  if n == 3 go to A
+}

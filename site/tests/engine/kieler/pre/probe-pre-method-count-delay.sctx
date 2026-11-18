@@ -1,0 +1,9 @@
+// A method with pre(x) on a transition with a count delay (whose counter uses pre itself).
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state A
+  if 2 n > 0 do x = n; o = last() go to A
+}

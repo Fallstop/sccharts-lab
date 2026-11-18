@@ -1,0 +1,10 @@
+// return pre(x): the pre is the return statement's whole expression, which KIELER's Pre processor cannot
+// replace.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) }
+  initial state A
+  do x = n; o = last() go to A
+}

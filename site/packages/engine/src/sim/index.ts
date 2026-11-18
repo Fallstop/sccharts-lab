@@ -18,7 +18,7 @@ export const SIMULATOR_CODES: ReadonlySet<string> = new Set([
     'unsupported', 'causality-cycle', 'instantaneous-loop', 'kieler-crash', 'cardinality', 'unsigned-shift',
     'array-assignment', 'vector-ignore', 'string-arithmetic', 'empty-method', 'for-outer-counter', 'val-not-signal', 'duplicate-declaration', 'c-keyword', 'c-reserved-name', 'method-array-parameter', 'c-naming', 'c-name', 'c-string', 'c-float-modulo', 'extern-not-called', 'static-access', 'count-delay-reset',
     'unsupported-combine', 'randomize-tick1', 'randomize-stdlib', 'region-action-final', 'kieler-quirk', 'kieler-bug', 'kieler-loop-warning',
-    'kieler-nondeterministic', 'kieler-divergence', 'pre-placement',
+    'kieler-nondeterministic', 'kieler-divergence', 'pre-placement', 'pre-parameter', 'pre-class-field',
     // The kinds of scheduling cycle (all "The SCG is NOT asc-schedulable!" in KIELER).
     'write-conflict', 'update-conflict', 'emission-conflict', 'val-cycle', 'abort-trigger-cycle', 'suspend-abort-cycle', 'period-abort-cycle',
     // Structure passes (references, for-regions, dataflow, clocks, methods).
@@ -26,7 +26,7 @@ export const SIMULATOR_CODES: ReadonlySet<string> = new Set([
     'dataflow-instance-shared', 'dataflow-instance-port', 'reference-array-size', 'inherited-schedule',
     'spread-binding', 'binding-vector', 'empty-class-init', 'object-array-index',
     'clock-variable', 'clock-array', 'timing-constraint', 'default-sleep', 'method-without-value', 'method-without-return', 'for-counter-method',
-    'inheritance-conflict', 'module-call', 'ode-member', 'method-twice', 'inline-loop', 'signal-member', 'unpack-instances', 'unpack-array-method', 'unpack-array-initial', 'outer-member', 'method-inlined-parameter', 'array-cardinality', 'const-array-element', 'inherited-index',
+    'inheritance-conflict', 'module-call', 'ode-member', 'method-twice', 'inline-loop', 'signal-member', 'unpack-instances', 'unpack-array-method', 'unpack-array-initial', 'outer-member', 'method-inlined-parameter', 'method-inlined-local', 'array-cardinality', 'const-array-element', 'inherited-index',
     // Generic parameters and the rest of the Inheritance processor (structure.md S-73, S-66).
     'unbound-generic', 'unbound-reference', 'generic-type-unbound', 'generic-argument', 'generic-arguments-conflict', 'generic-method-type', 'generic-pre',
     'generic-pure-type', 'state-access-copy', 'bound-const-written', 'dataflow-instance-array', 'dataflow-array-port', 'method-in-member-index', 'array-as-value',

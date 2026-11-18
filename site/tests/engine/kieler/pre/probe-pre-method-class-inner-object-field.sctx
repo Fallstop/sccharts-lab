@@ -1,0 +1,9 @@
+// A class method reads pre(l.w), a field of an object inside the class: gcc looks for `l` in the chart's data.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { class L { int w = 1 } l int f() { return pre(l.w) + 1 } } k
+  initial state A
+  do x = n; k.l.w = n; o = k.f() go to A
+}

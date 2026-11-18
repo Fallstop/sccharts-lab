@@ -3,8 +3,9 @@
 // is redirected to them; effects keep their marks and origins (copyEffect).
 
 import {
-    CAction, CRegion, CState, CTransition, CVar, copyEffect, copyExpr, setTarget, type CMethod, type CRef, type CStmt,
+    allScopes, CAction, CRegion, CState, CTransition, CVar, copyEffect, copyExpr, setTarget, type CMethod, type CRef, type CStmt,
 } from '../model'
+import { copyPlacement } from './bodies'
 import { rewriteScope, rewriteStatements } from './rewrite'
 
 export function copyVar(v: CVar): CVar {
@@ -150,6 +151,11 @@ export function copyRegion(region: CRegion): CRegion {
         const v = vars.get(r.v)
         return v ? { ...r, v } : undefined
     }
-    rewriteScope(copy, { read: redirect, target: redirect })
+    for (const scope of [copy, ...copy.states.flatMap(st => allScopes(st))]) copyPlacement(scope, vars)
+    // (A call names its method beside the expressions: the copy's own method, as in EMF's copy.)
+    rewriteScope(copy, {
+        read: redirect, target: redirect,
+        node: e => (e.k === 'call' && e.target && vars.has(e.target.v) ? { ...e, target: { ...e.target, v: vars.get(e.target.v)! } } : undefined),
+    })
     return copy
 }

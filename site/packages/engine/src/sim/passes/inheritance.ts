@@ -27,6 +27,7 @@ import {
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { inheritedDeclarations } from '../lower'
 import { rewriteScope } from '../structure/rewrite'
+import { placeDeclarations } from '../structure/bodies'
 import { expressionClass, isValue, valueClass, type Replacements } from '../structure/replacements'
 import { plainVariable } from './reference'
 
@@ -100,6 +101,8 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
     const inherited: CVar[] = []
     /** Inherited methods an own method overrides (base method -> override). */
     const overridden = new Map<CVar, CVar>()
+    /** An overridden method's place among the inherited declarations: the one before it. */
+    const place = new Map<CVar, CVar | undefined>()
     for (const b of bases) {
         for (const v of b.root.decls) {
             const source = v.decl?.startsWith(b.prefix) ? v.decl.slice(b.prefix.length) : v.decl
@@ -109,6 +112,7 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
                 const overrider = v.method ? state.decls.find(x => x.name === v.name && x.method) : undefined
                 if (overrider) {
                     overridden.set(v, overrider)
+                    place.set(v, inherited[inherited.length - 1])
                     continue
                 }
                 ctx.report({
@@ -175,7 +179,12 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
     // calls `super`: then KIELER keeps the base method and the base's references keep calling it (KIELER's defect,
     // conformance structure/138).
     for (const [base, overrider] of overridden) {
-        if (keepsBase(base, overrider)) continue
+        if (keepsBase(base, overrider)) {
+            // Still a declaration of the state in KIELER (renamed `<Base>_<name>`): structure/bodies.ts.
+            const before = place.get(base)
+            placeDeclarations(state, [base], state.decls.slice(before ? state.decls.indexOf(before) + 1 : 0))
+            continue
+        }
         const swap = (r: CRef): CRef | undefined => (r.v === base ? { ...r, v: overrider } : undefined)
         rewriteScope(state, {
             read: swap, target: swap,

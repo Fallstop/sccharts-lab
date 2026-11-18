@@ -950,6 +950,10 @@ class Lowering {
         const idx = r.indices.map(i => this.expr(i))
         // A member of the instance whose method is being lowered, inside an array of instances: the element's indices.
         if (this.self?.members.has(v)) idx.unshift(...this.self.idx.map(p => ({ k: 'ref' as const, v: p, idx: [] })))
+        // Named from inside its class (`v`, `l.w` in a method of the class): not through the instance or one around it.
+        const inside = (x: CVar | undefined, of: CVar): boolean => !!x && (x === of || inside(x.member?.of, of))
+        const home = this.code?.owner
+        const own = !!home && !inside(home, v)
         // A member of a class instance (`c.x`, `l.a.x`, `cs[1].v`, `c.inc()`): the instance's member variable or method,
         // with the indices of the instances on the way in front of the member's own.
         let sub = r.sub
@@ -962,6 +966,7 @@ class Lowering {
         }
         const out: CRef = { k: 'ref', v, idx, span: r.span }
         if (sub) out.sub = this.ref(sub)
+        if (own && inside(v.member?.of, home)) out.own = r.name
         const unindexed = this.equations ? undefined : this.unindexedObject(r)
         if (unindexed) out.unindexed = unindexed
         return out

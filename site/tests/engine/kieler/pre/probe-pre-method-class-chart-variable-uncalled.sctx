@@ -1,0 +1,9 @@
+// A class method with pre(x) of the chart's x that nobody calls.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int f() { return pre(x) + 1 } } k
+  initial state A
+  do x = n; o = x go to A
+}

@@ -1,0 +1,13 @@
+// A method with pre in a state that is never entered.
+scchart Main {
+  input int n
+  output int o
+  initial state A
+  do o = n go to A
+  state Z {
+    int x
+    method int last() { return pre(x) + 1 }
+    initial state Z1
+    do o = last() go to Z1
+  }
+}

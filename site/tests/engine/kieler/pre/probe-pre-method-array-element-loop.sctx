@@ -1,0 +1,10 @@
+// pre(a[j]) over all elements in a loop (a C function).
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[3]
+  method int last() { int t = 0; for (int j = 0; j < 3; j++) { t += pre(a[j]) } return t }
+  initial state A
+  do x = n; a[1] = n; a[2] = 2 * n; o = last() go to A
+}

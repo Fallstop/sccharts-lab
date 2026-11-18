@@ -1,0 +1,9 @@
+// pre(ks[0].v) in the class's own method: KIELER's array check fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int f() { return pre(ks[0].v) + 1 } } ks[2]
+  initial state A
+  do x = n; ks[0].v = n; o = ks[1].f() go to A
+}

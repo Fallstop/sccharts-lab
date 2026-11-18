@@ -1,0 +1,94 @@
+{
+  "hash": "b1c684606050955d8c26b7e8916e5dc03f502936",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-input-signal-value.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "S": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "signal"
+      ]
+    },
+    "S_val": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "S": true,
+        "S_val": 3
+      },
+      "values": {
+        "S": true,
+        "S_val": 3,
+        "o": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "S": false
+      },
+      "values": {
+        "S": false,
+        "S_val": 3,
+        "o": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "S": true,
+        "S_val": 5
+      },
+      "values": {
+        "S": true,
+        "S_val": 5,
+        "o": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "S": true,
+        "S_val": 5,
+        "o": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

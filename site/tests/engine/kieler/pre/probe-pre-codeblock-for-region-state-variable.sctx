@@ -1,0 +1,13 @@
+// A code block in a state inside a for-region reads pre of that state's variable: per copy.
+scchart Main {
+  input int n
+  output int o[2]
+  region for i : 0 to 1 {
+    initial state A {
+      int x = 2
+      int y
+      initial state A1
+      do x = n + i; { y = pre(x) + 1 }; o[i] = y go to A1
+    }
+  }
+}

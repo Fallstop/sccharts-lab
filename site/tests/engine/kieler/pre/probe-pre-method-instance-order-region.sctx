@@ -1,0 +1,21 @@
+// ref C g(x, c) declared in a region: KIELER moves a region's declarations to its state before the Pre
+// processor runs, so the class's method comes before the state's during action, whose pre(x) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  during do y = pre(x)
+  region R {
+    ref C g(x, c)
+    initial state A
+    do x = n; o = g.f() go to A
+  }
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}

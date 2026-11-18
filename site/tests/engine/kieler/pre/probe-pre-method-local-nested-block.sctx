@@ -1,0 +1,9 @@
+// pre(y) of a variable declared in an if's block: KIELER's compiler fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { if (n > 0) { int y = x; return pre(y) + 1 } return 0 }
+  initial state A
+  do x = n; o = last() go to A
+}

@@ -1,0 +1,13 @@
+// A code block in an inner state's action is a method of that state, after the chart's own (the block of the
+// state's outgoing transition): the inner pre(x, c) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  initial state A {
+    during do { y = pre(x, c) }
+  }
+  do x = n; { o = pre(x) + 1 } go to A
+}

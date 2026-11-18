@@ -1,0 +1,10 @@
+// pre(ks[1].v) in a chart method: KIELER cannot take pre of a member of an array of objects.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 } ks[2]
+  method int last() { return pre(ks[1].v) + 1 }
+  initial state A
+  do x = n; ks[1].v = n; o = last() go to A
+}

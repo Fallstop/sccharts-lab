@@ -1,0 +1,25 @@
+// A variable with pre(x) in its initial value in the first region, ref C g(x, c) in the second: the instance
+// method's pre(i, cc) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  output int p
+  int x = 2
+  region R1 {
+    int y = pre(x) + 1
+    initial state B
+    do p = y go to B
+  }
+  region R2 {
+    ref C g(x, c)
+    initial state A
+    do x = n; o = g.f() go to A
+  }
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}

@@ -1,0 +1,9 @@
+// pre(pre(x)) in a method and pre(x) in a trigger: the memories _pre_x and _pre__pre_x.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(pre(x)) + 1 }
+  initial state A
+  if pre(x) < 9 do x = n; o = last() go to A
+}

@@ -1,0 +1,10 @@
+// id(pre(x)) in a method: the pre is a whole argument.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int id(int v) { return v }
+  method int last() { int t; t = id(pre(x)); return t }
+  initial state A
+  do x = n; o = last() go to A
+}

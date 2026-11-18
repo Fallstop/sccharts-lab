@@ -1,0 +1,16 @@
+// The base's second method is kept for a super call: its pre(x) still comes after the first method's pre(x, c).
+scchart Main extends Base {
+  override method int other() { return super.other() + 10 }
+  initial state A
+  do x = n; o = last(); y = other() go to A
+}
+
+scchart Base {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  method int last() { return pre(x, c) + 1 }
+  method int other() { return pre(x) + 2 }
+}

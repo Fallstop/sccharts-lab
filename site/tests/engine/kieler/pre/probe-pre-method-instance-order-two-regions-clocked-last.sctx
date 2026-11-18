@@ -1,0 +1,30 @@
+// ref declarations in two regions: the second region's instance method (pre(i, cc)) decides, both are clocked.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  output int p
+  int x = 2
+  region R1 {
+    ref D h(x, c)
+    initial state A
+    do x = n; o = h.f() go to A
+  }
+  region R2 {
+    ref C g(x, c)
+    initial state B
+    do p = g.f() go to B
+  }
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}
+
+scchart D {
+  input int i
+  input bool cc
+  method int f() { return pre(i) + 1 }
+}

@@ -1,0 +1,10 @@
+// pre(v) in a method of a class with an array of objects: the bare name has no index, so gcc fails (not
+// KIELER's array check).
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int f() { return pre(v) + 1 } } ks[2]
+  initial state A
+  do x = n; ks[1].v = n; o = ks[1].f() go to A
+}

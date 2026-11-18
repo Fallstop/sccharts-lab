@@ -1,0 +1,14 @@
+// A method of an inner state with pre(x) decides over the chart's during action with pre(x, c): no clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  during do y = pre(x, c)
+  initial state A {
+    method int last() { return pre(x) + 1 }
+    initial state B
+    do x = n; o = last() go to B
+  }
+}

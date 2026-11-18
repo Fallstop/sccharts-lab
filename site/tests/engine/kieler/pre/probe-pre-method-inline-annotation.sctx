@@ -1,0 +1,9 @@
+// @inline on a method with two statements reading pre(x).
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  @inline method int last() { int t = 0; t += pre(x); t += pre(x); return t }
+  initial state A
+  do x = n; o = last() go to A
+}

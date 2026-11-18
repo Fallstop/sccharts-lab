@@ -1,0 +1,16 @@
+// ref C g[2], a code block on C's own transition reads pre(x): pre of a member of an array of objects, KIELER's
+// array check fails.
+scchart Main {
+  input int n
+  output int o
+  ref C g[2]
+  initial state A
+  do g[1].x = n; o = g[1].y go to A
+}
+
+scchart C {
+  int x = 2
+  int y
+  initial state B
+  do { y = pre(x) + 1 } go to B
+}

@@ -1,0 +1,8 @@
+// pre(val(S)) of a valued input signal in a method.
+scchart Main {
+  input signal int S
+  output int o
+  method int last() { return pre(val(S)) + 1 }
+  initial state A
+  do o = last() go to A
+}

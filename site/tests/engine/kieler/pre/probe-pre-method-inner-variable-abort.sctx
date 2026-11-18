@@ -1,0 +1,14 @@
+// A superstate's method reads pre of its variable; the superstate is aborted and entered again later.
+scchart Main {
+  input int n
+  output int o
+  initial state A {
+    int x = 2
+    method int last() { return pre(x) + 1 }
+    initial state B
+    do x = n; o = last() go to B
+  }
+  if n == 3 abort to C
+  state C
+  do o = 100 go to A
+}

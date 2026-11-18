@@ -1,0 +1,11 @@
+// if/else in a method: the then branch (pre(x, c)) comes before the else branch (pre(x)), which decides: no
+// clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { if (n > 2) { return pre(x, c) + 1 } else { return pre(x) + 2 } }
+  initial state A
+  do x = n; o = last() go to A
+}

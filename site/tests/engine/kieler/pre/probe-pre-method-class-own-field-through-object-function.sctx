@@ -1,0 +1,9 @@
+// pre(k.v) in a C function of the class of k: runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int f() { int t = 0; for (int j = 0; j < 2; j++) { t += pre(k.v) } return t } } k
+  initial state A
+  do x = n; k.v = n; o = k.f() go to A
+}

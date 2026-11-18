@@ -1,0 +1,8 @@
+// { int y = pre(x); ... }: the pre is a declaration's whole initial value.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  initial state A
+  do x = n; { int y = pre(x); o = y } go to A
+}

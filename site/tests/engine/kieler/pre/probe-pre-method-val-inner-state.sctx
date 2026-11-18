@@ -1,0 +1,17 @@
+// pre(val(S)) + val(S) in a method of an inner state, S declared in the chart.
+scchart Main {
+  input int n
+  output int o
+  signal int S
+  region {
+    initial state A {
+      method int last() { return pre(val(S)) + val(S) }
+      initial state A1
+      do o = last() go to A1
+    }
+  }
+  region {
+    initial state B
+    if n > 1 do S(n) go to B
+  }
+}

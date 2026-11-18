@@ -1,0 +1,9 @@
+// return -pre(x): inside an operator the pre is replaced.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return -pre(x) }
+  initial state A
+  do x = n; o = last() go to A
+}

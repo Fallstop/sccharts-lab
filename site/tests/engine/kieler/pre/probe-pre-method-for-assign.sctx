@@ -1,0 +1,9 @@
+// for (j = pre(x); ...): the initialisation is an assignment, which holds the pre.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int t = 0; int j; for (j = pre(x); j < 5; j++) { t += 1 } return t }
+  initial state A
+  do x = n; o = last() go to A
+}

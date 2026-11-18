@@ -1,0 +1,9 @@
+// t += pre(x) in a method.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int t = 1; t += pre(x); return t }
+  initial state A
+  do x = n; o = last() go to A
+}

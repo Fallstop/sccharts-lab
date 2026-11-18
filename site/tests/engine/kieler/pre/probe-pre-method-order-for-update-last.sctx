@@ -1,0 +1,10 @@
+// A for loop's update comes after its condition: the update's pre(x) decides over the condition's pre(x, c).
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { int t = 0; for (int j = 0; j < pre(x, c) + 3; j += pre(x) + 1) { t += 1 } return t }
+  initial state A
+  do x = n; o = last() go to A
+}

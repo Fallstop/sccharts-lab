@@ -1,0 +1,92 @@
+{
+  "hash": "aeb6972e5d8c73787a0ec91e908449d59c70ced5",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-for-region-state-variable-plain.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": [
+          3,
+          4
+        ]
+      },
+      "taken": [
+        2
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": [
+          4,
+          5
+        ]
+      },
+      "taken": [
+        2
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": [
+          5,
+          6
+        ]
+      },
+      "taken": [
+        2
+      ],
+      "terminated": false
+    }
+  ]
+}

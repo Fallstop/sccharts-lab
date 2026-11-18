@@ -1,0 +1,13 @@
+// ref C g[2], a chart method reads pre(g[1].x): KIELER's array check fails.
+scchart Main {
+  input int n
+  output int o
+  ref C g[2]
+  method int last() { return pre(g[1].x) + 1 }
+  initial state A
+  do g[1].x = n; o = last() go to A
+}
+
+scchart C {
+  int x = 2
+}

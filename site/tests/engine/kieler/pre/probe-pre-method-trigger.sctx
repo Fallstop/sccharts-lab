@@ -1,0 +1,11 @@
+// A bool method with pre(x) called in a trigger.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method bool was() { return pre(x) > 2 }
+  initial state A
+  if was() do x = n; o = x go to A2
+  state A2
+  do x = n; o = 100 + x go to A
+}

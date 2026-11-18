@@ -1,0 +1,9 @@
+// return pre(x) in a class method: rejected by the Pre processor.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int f() { return pre(x) } } k
+  initial state A
+  do x = n; o = k.f() go to A
+}

@@ -1,0 +1,14 @@
+// pre(K) of a generic parameter given 3, in a C function that is called: gcc refuses pre(3).
+scchart Main {
+  input int n
+  output int o
+  initial state A is G<3>(n, o)
+}
+
+scchart G<K is int> {
+  input int n
+  output int o
+  method int last() { int t = 0; for (int j = 0; j < 2; j++) { t += pre(K) } return t }
+  initial state A
+  do o = last() go to A
+}

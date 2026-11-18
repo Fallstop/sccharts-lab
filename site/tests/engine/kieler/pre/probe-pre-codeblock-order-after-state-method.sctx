@@ -1,0 +1,13 @@
+// In a superstate, a code block is declared after the state's written methods: its pre(x, c) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  initial state A {
+    method int last() { return pre(x) + 1 }
+    initial state A1
+    do x = n; { o = pre(x, c) + 1 }; y = last() go to A1
+  }
+}

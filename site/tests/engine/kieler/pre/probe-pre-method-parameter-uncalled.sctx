@@ -1,0 +1,9 @@
+// pre(v) of a parameter in a method nobody calls: gcc fails all the same.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last(int v) { return pre(v) + 1 }
+  initial state A
+  do x = n; o = x go to A
+}

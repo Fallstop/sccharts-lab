@@ -1,0 +1,8 @@
+// pre(s) of a static variable in a code block: the static memory is in the data pool.
+scchart Main {
+  input int n
+  output int o
+  static int s = 5
+  initial state A
+  do s = n; { o = pre(s) + 1 } go to A
+}

@@ -1,0 +1,11 @@
+// b = pre(a) with two arrays in a method that is called: C cannot assign arrays.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[3]
+  int b[3]
+  method void cp() { b = pre(a) }
+  initial state A
+  do x = n; a[1] = n; cp(); o = b[1] go to A
+}

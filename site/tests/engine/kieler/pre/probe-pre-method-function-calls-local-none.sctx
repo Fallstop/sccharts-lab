@@ -1,0 +1,9 @@
+// A code block calls a short method without a local variable: runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int tern() { return x + 1 }
+  initial state A
+  do x = n; { o = tern() + 1 } go to A
+}

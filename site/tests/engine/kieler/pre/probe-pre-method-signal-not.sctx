@@ -1,0 +1,15 @@
+// !pre(S) of a pure signal in a method's condition.
+scchart Main {
+  input int n
+  output int o
+  signal S
+  method int last() { if (!pre(S)) { return 1 } return 2 }
+  region {
+    initial state A
+    do o = last() go to A
+  }
+  region {
+    initial state B
+    if n == 2 do S go to B
+  }
+}

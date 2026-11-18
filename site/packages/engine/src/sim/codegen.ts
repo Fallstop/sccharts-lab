@@ -2,7 +2,7 @@
 // the simulator rejects them too, with gcc's message in `kieler`.
 
 import type { Diagnostic, Span } from '../types'
-import { allActionSites, allScopes, effectExprs, walkExpr, type CEffect, type CExpr, type CRef, type CState, type CStmt, type CVar, type Scope } from './model'
+import { allActionSites, allScopes, effectExprs, walkExpr, type CEffect, type CExpr, type CMethod, type CRef, type CState, type CStmt, type CVar, type Scope } from './model'
 import { isInlined } from './structure/methods'
 import { DF_SCALAR_PORT } from './passes/dataflow'
 import { KEYWORDS } from '../parser/lexer'
@@ -302,14 +302,7 @@ export function checkCodegen(root: CState): Diagnostic[] {
                         hint: 'Use >> instead (an arithmetic shift, which keeps the sign).',
                     })
                 }
-                if (x.op === 'val') {
-                    add({
-                        severity: 'error', code: 'val-not-signal', span: x.span, related,
-                        message: '`val()` only works directly on a valued signal: `val(pre(V))`, `val(S)` of a pure signal and `val(x)` of a variable do not compile',
-                        kieler: `implicit declaration of function ‘val’ [-Wimplicit-function-declaration]\n${GCC_FAILED}`,
-                        hint: 'For last tick\'s value of a valued signal write `pre(val(V))`.',
-                    })
-                }
+                if (x.op === 'val') add(valNotSignal(x.span, related))
                 if ((x.op === '+' || x.op === '-' || x.op === '*' || x.op === '/' || x.op === '%') && x.args.some(isString)) {
                     add({
                         severity: 'error', code: 'string-arithmetic', span: x.span, related,
@@ -404,13 +397,13 @@ function bodyExprs(list: CStmt[], out: CExpr[] = []): CExpr[] {
  * are methods too), and every expression of the triggers, effects, initial values and called methods' bodies, with
  * the element it belongs to (for `related`).
  */
-function reachingC(root: CState): { called: Set<CVar>; exprs: { e: CExpr; related?: string[] }[] } {
+function reachingC(root: CState): { called: Set<CVar>; exprs: { e: CExpr; related?: string[]; body?: boolean }[] } {
     const called = new Set<CVar>()
-    const exprs: { e: CExpr; related?: string[] }[] = []
+    const exprs: { e: CExpr; related?: string[]; body?: boolean }[] = []
     const pending: CVar[] = []
-    const visit = (e: CExpr | undefined, related?: string[]) => {
+    const visit = (e: CExpr | undefined, related?: string[], body?: boolean) => {
         if (!e) return
-        exprs.push({ e, related })
+        exprs.push({ e, related, ...(body ? { body } : {}) })
         walkExpr(e, x => {
             if (x.k !== 'call' || !x.target) return
             let r = x.target
@@ -433,7 +426,7 @@ function reachingC(root: CState): { called: Set<CVar>; exprs: { e: CExpr; relate
     while (pending.length) {
         const m = pending.pop()!
         const related = m.method!.by ? [m.method!.by] : m.decl ? [m.decl] : undefined
-        for (const e of bodyExprs(m.method!.body)) visit(e, related)
+        for (const e of bodyExprs(m.method!.body)) visit(e, related, true)
     }
     return { called, exprs }
 }
@@ -493,11 +486,23 @@ const isFloatOperand = (e: CExpr): boolean => {
  * rare/probe-d-*): a string literal with a line break or a quote in it, `%` on a float, and a variable `d` in a
  * method KIELER keeps as a C function, whose tick data parameter is called `d`.
  */
+function valNotSignal(span: Span | undefined, related: string[] | undefined): Diagnostic {
+    return {
+        severity: 'error', code: 'val-not-signal', span, related,
+        message: '`val()` only works directly on a valued signal: `val(pre(V))`, `val(S)` of a pure signal and `val(x)` of a variable do not compile',
+        kieler: `implicit declaration of function ‘val’ [-Wimplicit-function-declaration]\n${GCC_FAILED}`,
+        hint: 'For last tick\'s value of a valued signal write `pre(val(V))`.',
+    }
+}
+
 function cText(root: CState): Diagnostic[] {
     const out: Diagnostic[] = []
     const { called, exprs } = reachingC(root)
-    for (const { e, related } of exprs) {
+    for (const { e, related, body } of exprs) {
         walkExpr(e, x => {
+            // A `val` the Signal processor left in the body of a called method or a code block (`val(pre(V))`,
+            // `val(x)`): the same C as in a trigger or effect (checkCodegen; probes pre/probe-pre-method-val-*).
+            if (body && x.k === 'op' && x.op === 'val') out.push(valNotSignal(x.span, related))
             const problem = x.k === 'lit' && x.t === 'string' ? cStringProblem(String(x.v)) : undefined
             if (problem) {
                 out.push({
@@ -613,9 +618,12 @@ function cText(root: CState): Diagnostic[] {
         if (isInlined(method)) continue
         const own = method.params.filter(p => !p.tags.has('#self')).length
         let extra = 0
+        /** A short method with a local variable that the body calls. */
+        let local: { call: Extract<CExpr, { k: 'call' }>; v: CVar } | undefined
         const calls = (e: CExpr | undefined) => walkExpr(e, x => {
             const callee = x.k === 'call' && !x.extern ? x.target?.v.method : undefined
             if (callee && isInlined(callee)) extra += callee.params.filter(p => !p.tags.has('#self')).length
+            if (x.k === 'call' && callee && isInlined(callee) && callee.locals.length) local ??= { call: x, v: callee.locals[0] }
         })
         const walk = (list: CStmt[]) => {
             for (const st of list) {
@@ -631,6 +639,20 @@ function cText(root: CState): Diagnostic[] {
             }
         }
         walk(method.body)
+        // The copy's local variables are named for the chart's data (`_fn<n>_<method>_<name>`) and read there, but only
+        // the copies in the tick function get a declaration: the one inside a C function does not (probes
+        // pre/probe-pre-method-function-calls-local-*; found by the fuzz profile preBodies).
+        const found = local as { call: Extract<CExpr, { k: 'call' }>; v: CVar } | undefined
+        if (found) {
+            const what = m.generated ? 'This code block' : `The method \`${m.member?.name ?? m.name}\``
+            const it = m.generated ? 'the code block' : `\`${m.member?.name ?? m.name}\``
+            out.push({
+                severity: 'error', code: 'method-inlined-local', span: found.call.span ?? method.span ?? m.span, related: m.decl ? [m.decl] : undefined,
+                message: `${what} calls \`${found.call.name}\`, a short method with a local variable (\`${found.v.name}\`), which KIELER's C code cannot handle: it does not compile`,
+                kieler: `‘TickData’ has no member named ‘_fn<n>_${found.call.name.replace(/^.*\./, '')}_${found.v.name}’\n${GCC_FAILED}`,
+                hint: `KIELER keeps ${it} as a C function (it calls another method) and copies the short method \`${found.call.name}\` into it. The copy's variable \`${found.v.name}\` is then read in the chart's data, where KIELER never declares it. Call \`${found.call.name}\` in an effect of its own and use the result (\`t = ${found.call.name}(...)\`), or write \`${found.call.name}\` without a local variable.`,
+            })
+        }
         if (!extra) continue
         // The tick data and, for a class's method, the instance come first.
         const fixed = m.member ? 2 : 1
@@ -644,6 +666,21 @@ function cText(root: CState): Diagnostic[] {
     for (const m of called) {
         const related = m.decl ? [m.decl] : m.method!.by ? [m.method!.by] : undefined
         assigns(effectsOf(m.method!.body), related)
+        // A whole array assigned in the body of a called method or a code block (`b = a`, `b = pre(a)`): the same C
+        // as on a transition (checkCodegen; probes pre/probe-pre-method-array-whole-*).
+        for (const f of effectsOf(m.method!.body)) {
+            if (f.k !== 'assign' || !f.expr || f.expr.k === 'vector' || f.o.hidden) continue
+            let target = f.ref
+            while (target.sub) target = target.sub
+            const v = target.v
+            if (v.dims.length <= target.idx.length || m.method!.params.includes(v)) continue
+            out.push({
+                severity: 'error', code: 'array-assignment', span: f.o.span, related,
+                message: `\`${v.display ?? v.name}\` is an array: it cannot be assigned as a whole`,
+                kieler: `assignment to expression with array type\n${GCC_FAILED}`,
+                hint: `Assign the elements one by one (\`${v.name}[0] = ...\`, \`${v.name}[1] = ...\`).`,
+            })
+        }
         // A C function's first parameter is the tick data, `TickData* d` (an inlined method's variables get a prefix).
         const method = m.method!
         if (isInlined(method) || m.member) continue
@@ -705,22 +742,36 @@ export type { Span }
  * variables and leaves `pre(4)` in the model. In code that is compiled (a state that can be reached), gcc refuses
  * the register KIELER's code generator makes of the number; for a bool in a trigger KIELER's compiler fails before.
  */
-export function preOfValue(nodes: { kind: string; effect?: CEffect; expr?: CExpr }[]): Diagnostic[] {
+export function preOfValue(nodes: { kind: string; effect?: CEffect; expr?: CExpr }[], functions: Iterable<CVar> = []): Diagnostic[] {
+    let found: { e: CExpr; value: CExpr } | undefined
+    const look = (e: CExpr | undefined) => walkExpr(e, x => {
+        if (!found && x.k === 'op' && x.op === 'pre' && x.args[0] && x.args[0].k !== 'ref' && !(x.args[0].k === 'op' && x.args[0].op === 'pre')) found = { e: x, value: x.args[0] }
+    })
+    const report = (setup: boolean): Diagnostic[] => [{
+        severity: 'error', code: 'generic-pre', span: found!.e.span,
+        message: '`pre(...)` of a generic parameter that was given a value does not work in KIELER',
+        kieler: setup ? 'The compiler failed during compilation setup.' : `expected identifier or \u2018(\u2019 before numeric constant\n${GCC_FAILED}`,
+        hint: 'The parameter is the value itself where the chart names it, and `pre` needs a variable. Pass a variable (`<x>`), or copy the parameter into a variable of the chart.',
+    }]
     for (const n of nodes) {
-        let found: { e: CExpr; value: CExpr } | undefined
-        const look = (e: CExpr | undefined) => walkExpr(e, x => {
-            if (!found && x.k === 'op' && x.op === 'pre' && x.args[0] && x.args[0].k !== 'ref' && !(x.args[0].k === 'op' && x.args[0].op === 'pre')) found = { e: x, value: x.args[0] }
-        })
         look(n.expr)
         if (n.effect) for (const e of effectExprs(n.effect)) look(e)
-        if (!found) continue
-        const setup = n.kind === 'cond' && found.value.k === 'lit' && found.value.t === 'bool'
-        return [{
-            severity: 'error', code: 'generic-pre', span: found.e.span,
-            message: '`pre(...)` of a generic parameter that was given a value does not work in KIELER',
-            kieler: setup ? 'The compiler failed during compilation setup.' : `expected identifier or \u2018(\u2019 before numeric constant\n${GCC_FAILED}`,
-            hint: 'The parameter is the value itself where the chart names it, and `pre` needs a variable. Pass a variable (`<x>`), or copy the parameter into a variable of the chart.',
-        }]
+        if (found) return report(n.kind === 'cond' && found.value.k === 'lit' && found.value.t === 'bool')
+    }
+    // The methods KIELER keeps as C functions, with the short methods copied into them: the same C in a function
+    // (probes pre/probe-pre-method-function-value-*). A method nobody calls gets no C code.
+    const seen = new Set<CMethod>()
+    const body = (m: CMethod | undefined) => {
+        if (!m || seen.has(m)) return
+        seen.add(m)
+        for (const e of bodyExprs(m.body)) {
+            look(e)
+            walkExpr(e, x => { if (x.k === 'call' && !x.extern && x.target?.v.method && isInlined(x.target.v.method)) body(x.target.v.method) })
+        }
+    }
+    for (const f of functions) {
+        body(f.method)
+        if (found) return report(false)
     }
     return []
 }

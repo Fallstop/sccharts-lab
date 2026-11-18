@@ -1,0 +1,9 @@
+// pre(a[1]) of the class's own array field in its method: gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int a[3] int f() { return pre(a[1]) + 1 } } k
+  initial state A
+  do x = n; k.a[1] = n; o = k.f() go to A
+}

@@ -1,0 +1,10 @@
+// A for loop's condition comes after its body in KIELER's order: the condition's pre(x, c) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { int t = 0; for (int j = 0; j < pre(x, c); j++) { t += pre(x) } return t }
+  initial state A
+  do x = n; o = last() go to A
+}

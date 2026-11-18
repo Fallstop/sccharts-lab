@@ -1,0 +1,9 @@
+// pre(x) in a condition before a goto and in the return after the label.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int t = 0; if (pre(x) > 2) { goto done } t = 5; done: return t + pre(x) }
+  initial state A
+  do x = n; o = last() go to A
+}

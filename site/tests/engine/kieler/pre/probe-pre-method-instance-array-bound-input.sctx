@@ -1,0 +1,13 @@
+// ref C g[2](n), C's method reads pre(i) of the bound input: runs.
+scchart Main {
+  input int n
+  output int o
+  ref C g[2](n)
+  initial state A
+  do o = g[1].last() go to A
+}
+
+scchart C {
+  input int i
+  method int last() { return pre(i) + 1 }
+}

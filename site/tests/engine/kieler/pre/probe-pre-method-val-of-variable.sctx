@@ -1,0 +1,16 @@
+// val(x) of a variable in a method that is called: gcc does not know `val`.
+scchart Main {
+  input int n
+  output int o
+  signal int S
+  int x
+  method int last() { return val(x) + 1 }
+  region {
+    initial state A
+    do o = last() go to A
+  }
+  region {
+    initial state B
+    if n > 1 do S(n) go to B
+  }
+}

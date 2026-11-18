@@ -1,0 +1,11 @@
+// pre(x) in a method, pre(x, c) in an effect: the effect comes later and makes the memory, so the method's pre
+// is clocked too.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state A
+  do x = n; o = last() + pre(x, c) go to A
+}

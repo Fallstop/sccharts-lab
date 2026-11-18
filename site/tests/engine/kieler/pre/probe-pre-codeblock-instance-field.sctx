@@ -1,0 +1,12 @@
+// A code block reads pre(g.x) of an instance's field: runs.
+scchart Main {
+  input int n
+  output int o
+  ref C g
+  initial state A
+  do g.x = n; { o = pre(g.x) + 1 } go to A
+}
+
+scchart C {
+  int x = 2
+}

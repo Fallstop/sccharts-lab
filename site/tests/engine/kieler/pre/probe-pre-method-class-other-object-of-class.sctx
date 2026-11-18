@@ -1,0 +1,9 @@
+// A method of class K reads pre(k2.v), another object of the same class, through its name: runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int f() { return pre(k2.v) + 1 } } k, k2
+  initial state A
+  do x = n; k2.v = n; o = k.f() go to A
+}

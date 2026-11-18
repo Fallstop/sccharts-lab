@@ -1,0 +1,10 @@
+// The clock of the pre that makes the memory is a local variable of the method: KIELER's compiler fails.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { bool q = n > 2; return pre(x, q) + 1 }
+  initial state A
+  do x = n; o = last() go to A
+}

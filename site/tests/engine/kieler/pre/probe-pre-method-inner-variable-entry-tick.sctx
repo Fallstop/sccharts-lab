@@ -1,0 +1,16 @@
+// A superstate with a variable, a method reading its pre, and an entry action that calls it; the superstate is
+// left and entered again in tick 3. In that tick the entry action still reads the memory the old during action
+// wrote (p = 8); the variable and its memory start again (o = 3 in tick 4).
+scchart Main {
+  input int n
+  output int o
+  output int p
+  initial state A {
+    int x = 2
+    method int last() { return pre(x) + 1 }
+    entry do p = last()
+    initial state B
+    do x = n + 5; o = last() go to B
+  }
+  if n == 3 go to A
+}

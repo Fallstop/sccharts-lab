@@ -1,0 +1,10 @@
+// A chart with a code block reading pre(x) that reaches a final state: the memory's during action does not keep
+// the chart from terminating.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  initial state A
+  do x = n; { o = pre(x) + 1 } go to B
+  final state B
+}

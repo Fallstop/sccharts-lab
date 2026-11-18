@@ -1,0 +1,15 @@
+// A chart method with pre(x, c) and a region's variable with pre(x) in its initial value: the region's
+// declarations come after the state's own, so the variable decides, no clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  output int p
+  int x = 2
+  method int m() { return pre(x, c) + 1 }
+  region R {
+    int y = pre(x) + 1
+    initial state A
+    do x = n; p = y; o = m() go to A
+  }
+}

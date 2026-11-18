@@ -1,0 +1,10 @@
+// pre(a[1][0]) in a method.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[2][2]
+  method int last() { return pre(a[1][0]) + 1 }
+  initial state A
+  do x = n; a[1][0] = n; o = last() go to A
+}

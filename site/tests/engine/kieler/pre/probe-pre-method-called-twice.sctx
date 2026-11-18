@@ -1,0 +1,10 @@
+// A method with pre(x) called in two effects: copied into place twice, one memory.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int y
+  method int last() { return pre(x) + 1 }
+  initial state A
+  do x = n; o = last(); y = last() + 1 go to A
+}

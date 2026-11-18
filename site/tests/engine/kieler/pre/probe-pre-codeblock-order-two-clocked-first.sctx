@@ -1,0 +1,13 @@
+// Two code blocks on the transitions of two states: _effect0 (pre(x, c)) before _effect1 (pre(x)), the second
+// decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  initial state A
+  do x = n; { o = pre(x, c) + 1 } go to B
+  state B
+  do x = n; { y = pre(x) + 1 } go to A
+}

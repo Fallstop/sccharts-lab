@@ -1,0 +1,15 @@
+// A generic chart's method reads pre(x) and its value parameter K.
+scchart Main {
+  input int n
+  output int o
+  initial state A is G<3>(n, o)
+}
+
+scchart G<K is int> {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + K }
+  initial state A
+  do x = n; o = last() go to A
+}

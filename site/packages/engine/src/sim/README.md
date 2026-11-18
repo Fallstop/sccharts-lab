@@ -270,7 +270,11 @@ KIELER recording in `tests/engine/kieler/` (part of the conformance run, area `k
   container is an assignment, an operator, a transition trigger or an index; as a whole argument of print or a
   call, an element of a vector or a declaration's initial value it fails (`pre-placement`, the lab server's
   messages). As the whole trigger of a state action official KIELER fails too, but SCCharts Lab compiles it with
-  a divergence warning; the guide does the same (`kieler-divergence`).
+  a divergence warning; the guide does the same (`kieler-divergence`). The processor walks the bodies of methods
+  and code blocks too (concurrency.md PRE-6; structure/bodies.ts has KIELER's order of a body and of a scope's
+  declarations): a whole return value, condition or local's initial value fails there, and the memory, which lives
+  in the chart, cannot name a body's local variable (KIELER's compiler fails, `kieler-crash`), a parameter
+  (`pre-parameter`) or a class's field by its bare name (`pre-class-field`; gcc). Probes `tests/engine/kieler/pre/`.
 - **Preemption** (passes/): everything in preemption.md that is a rule-like quirk of KIELER's expansions is
   reproduced (P-20, P-23, P-30, P-38, P-42..P-44, P-46, P-51, P-54), with `kieler-quirk` infos where a chart can
   show it. Found while porting, with probes in `tests/engine/kieler/preemption/`: a deferred entry is not recorded
@@ -346,7 +350,7 @@ KIELER recording in `tests/engine/kieler/` (part of the conformance run, area `k
 | `tracker.ts`, `describe.ts` | source-level configuration, plain-English tick descriptions |
 | `describeStructure.ts` | descriptions of instances, for-region copies, clocks, periods and dataflow |
 | `preemptionLog.ts`, `describePreemption.ts` | the preemption passes' log events and notes (history, deferred entries, weak suspend, suspended states) and describeTick's sentences for aborts, count delays and suspension |
-| `structure/` | the structure passes' helpers: instances (`instance.ts`), deep copies (`copy.ts`), rewriting every expression (`rewrite.ts`), the tracker's view (`track.ts`), `->`/`fby`/`sfby` helpers (`delays.ts`), methods (`methods.ts`: inlining and running), KIELER's replacement stack and the walk that binds by name (`replacements.ts`), arrays of chart instances (`instanceArray.ts`), vectors spread over them (`spread.ts`), the class objects of the data pool (`poolShape.ts`), KIELER's unique class names (`classNames.ts`), the initialisation of class objects (`classInit.ts`) |
+| `structure/` | the structure passes' helpers: instances (`instance.ts`), deep copies (`copy.ts`), rewriting every expression (`rewrite.ts`), the tracker's view (`track.ts`), `->`/`fby`/`sfby` helpers (`delays.ts`), methods (`methods.ts`: inlining and running), the bodies of methods and code blocks as KIELER's processors walk them (`bodies.ts`), KIELER's replacement stack and the walk that binds by name (`replacements.ts`), arrays of chart instances (`instanceArray.ts`), vectors spread over them (`spread.ts`), the class objects of the data pool (`poolShape.ts`), KIELER's unique class names (`classNames.ts`), the initialisation of class objects (`classInit.ts`) |
 | `STATUS.md` | what works now |
 | `tests/engine/kieler/` | probe charts for the KIELER defects above, with recordings |
 | `../../../tools/fuzz/` | the differential fuzzer (generator, runner, reducer) |

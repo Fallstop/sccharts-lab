@@ -1,0 +1,10 @@
+// pre(a[j]) with a parameter as the index: runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[3]
+  method int last(int j) { return pre(a[j]) + 1 }
+  initial state A
+  do x = n; a[1] = n; o = last(1) go to A
+}

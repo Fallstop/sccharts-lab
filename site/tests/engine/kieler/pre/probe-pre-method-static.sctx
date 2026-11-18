@@ -1,0 +1,11 @@
+// pre(s) of a static variable in a method: the memory is static too, in the data pool under its hierarchical
+// name.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  static int s = 5
+  method int last() { return pre(s) + 1 }
+  initial state A
+  do s = n; o = last() go to A
+}

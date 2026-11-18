@@ -1,0 +1,17 @@
+// ref C g(c), a code block on C's own transition reads pre(x, c) with the bound input as the clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  ref C g(c)
+  initial state A
+  do g.x = n; o = g.y go to A
+}
+
+scchart C {
+  input bool c
+  int x = 2
+  int y
+  initial state B
+  do { y = pre(x, c) + 1 } go to B
+}

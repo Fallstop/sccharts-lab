@@ -1,0 +1,9 @@
+// The same with an initialised local (int t = x + 1): gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int tern() { int t = x + 1; return t }
+  initial state A
+  do x = n; { o = tern() + 1 } go to A
+}

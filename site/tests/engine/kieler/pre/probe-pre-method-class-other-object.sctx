@@ -1,0 +1,10 @@
+// A method of class L reads pre(k.v) of another class's object.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 } k
+  class L { int f() { return pre(k.v) + 1 } } l
+  initial state A
+  do x = n; k.v = n; o = l.f() go to A
+}

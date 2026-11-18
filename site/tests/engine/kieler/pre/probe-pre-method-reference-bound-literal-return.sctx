@@ -1,0 +1,14 @@
+// An input bound to 5 is still a variable to the Pre processor: return pre(i) is its error.
+scchart Main {
+  input int n
+  output int o
+  initial state A is C(5, o)
+}
+
+scchart C {
+  input int i
+  output int o
+  method int last() { return pre(i) }
+  initial state A
+  do o = last() go to A
+}

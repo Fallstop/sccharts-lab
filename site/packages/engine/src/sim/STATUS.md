@@ -276,7 +276,9 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   error in `kieler`), `c-string` (a line break or a quote in a string literal, S-72), `c-float-modulo` (`%` on a float,
   S-72), `c-string-condition` (a string as a whole condition: KIELER's `char` guard), `extern-not-called` (an `extern` function named without parentheses, S-72), `static-access` (a
   `scchart(C).X` that KIELER cannot copy, S-70), `unsupported-combine`,
-  `randomize-tick1`, `randomize-stdlib`, `region-action-final`, `pre-placement`, `empty-method` (a method with
+  `randomize-tick1`, `randomize-stdlib`, `region-action-final`, `pre-placement`, `pre-parameter`, `pre-class-field`
+  (a pre KIELER's memory cannot name: of a method's parameter, of a class's field named from inside the class),
+  `method-inlined-local` (a C function that calls a short method with a local variable), `empty-method` (a method with
   parameters and an empty body), `for-outer-counter` (a `for` counter that is a chart variable), `method-twice`,
   `method-without-value`, `method-without-return`, `signal-member`, `unpack-instances`, `suspend-without-trigger`,
   `abort-region-order`, `abort-region-alone`, `binding-expression`, `recursive-reference`, `for-counter-assignment`,
@@ -588,6 +590,55 @@ found, none of it special to generics, all fixed:
 - **A lost port** says why (`dataflow-instance-port`: bound in the declaration, bound around the instance, or
   declared again inside).
 
+## `pre` in the bodies of methods and code blocks
+
+A review found `method int last() { return pre(x) }` accepted where KIELER rejects it; behind it the whole area was
+missing. The Pre pass never looked into the bodies of methods and code blocks: a `pre` there reached the simulator,
+which stopped in the first tick that ran it ("pre() was not translated"), and none of KIELER's errors there were
+reported. KIELER's Pre processor walks the whole model, bodies included; the pass now does the same (concurrency.md
+PRE-6 has the rule with its sources). 325 probes recorded with the lab server in `tests/engine/kieler/pre/` (246
+accepted and agreeing tick by tick, 79 rejected by both), all through `pnpm cgen:check`; with the official jar the
+246 give the same values, 71 are rejected and 8 never answered (`pre` of a local variable, the compiler crash the
+lab server reports as a located error). `tests/engine/pre-bodies.test.ts` pins the diagnostics.
+
+- **What runs**: `pre(x)` in a body reads the memory of the state that declares `x`, in short methods KIELER copies
+  into place, in C functions, in code blocks of transitions and actions, in class methods (a variable of the chart),
+  in methods of inner states, referenced charts, base charts, generic charts and for-region copies, called from
+  effects, triggers, actions and dataflow equations, and in methods nobody calls (the memory is still made).
+  `pre(pre(x))`, `pre(a[i])` with a local or parameter as the index, `pre(k.v)`, `pre(g.x)`, `pre(S) == true` and
+  `pre(val(S))` work there.
+- **The order of the pres** (which one makes the memory and gives it its clock, PRE-5) is KIELER's with bodies in it:
+  structure/bodies.ts walks a body in EMF's containment order (an `if`'s condition after its then branch, a loop's
+  condition after its body) and gives every scope its declarations in KIELER's order (`declarationsOf`): a code block
+  is the method `_effect<n>` of its state and so comes before the state's actions and transitions; the methods of a
+  chart used as a class stand where its `ref` declaration stood (the working model appends them), in a region with
+  actions inside the state that wraps it; a region's declarations come after the state's own and before the code
+  blocks (the lowering makes the blocks' methods first); a base method kept for a `super` call stays among the
+  inherited declarations (the working model has it in no scope).
+- **What KIELER rejects, and the engine now too**: a pre that is a whole return value, condition, local's initial
+  value, argument or vector element (`pre-placement`, the existing code, with the statement in the message); pre of
+  a local variable or with a local as the deciding clock (`kieler-crash`: KIELER's SCG transformation fails); of a
+  parameter (`pre-parameter`) and of a class's field named from inside the class, also in a chart used as a class
+  (`pre-class-field`): gcc finds no such variable in the chart's data, because the memory's during action lives in
+  the chart. The lowering marks a field named from inside its class (`CRef.own`), since `pre(k.v)` in the same
+  method works. Only the pre that makes the memory needs a clock the chart can name. A pre of a value (a constant, a
+  generic parameter given a number) is none of the Pre processor's business: no placement error (the engine reported
+  one), and `generic-pre` where it reaches the C code, a called C function included (it was a runtime error there).
+- **Found on the way, each with probes**: the Signal pass replaces `val(S)` in bodies as KIELER's does (it was left
+  there: a runtime error, and `pre(val(S))` in a body was rejected as `generic-pre`); `val(pre(S))`, `val(x)` and a
+  whole array assigned (`b = a`, `b = pre(a)`) in a called body are the C errors they are on a transition
+  (`val-not-signal`, `array-assignment`; they were runtime errors); the memory of a `static` variable is static
+  (KIELER copies the declaration's attributes): in the data pool as `Main____pre_s` and `Main____reg_s`, and not
+  started again with its state (the engine had it hidden and restarting); a call in a for-region copy names the
+  copy's own method (structure/copy.ts redirected variables but not call targets, so every copy ran the original's
+  method on the original's variable); a method or code block KIELER keeps as a C function that calls a short method
+  with a local variable does not compile (`method-inlined-local`, structure.md S-44f: found by the fuzz profile, 7 of
+  200 charts).
+- **API**: no change to existing types. New diagnostic codes `pre-parameter`, `pre-class-field`,
+  `method-inlined-local` (in `SIMULATOR_CODES`). Internal: `CRef.own`, structure/bodies.ts, passes/preBodies.ts.
+- **Fuzz**: the profile `preBodies` (tools/fuzz/README.md), campaigns 26 to 31 below; `pnpm cgen:check --fuzz 300
+  --profiles preBodies`: 210 charts compiled and compared, no mismatch.
+
 ## Chart instances, their arrays, the data pool and the trace columns (after two reviews)
 
 Two independent reviews (of the dataflow and of the generics work, before the two were merged) ran their own charts
@@ -863,6 +914,19 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 23 (seed 43, dataflowObjects, generics, structure, dataflowControl, basics, mix x 100, after the review fixes) | 600 | 250 | 339 | 3 | 0 | 4 | 4, explained (below) |
 | 24 (seed 43, dataflowObjects x 100, with the corrected generator) | 100 | 49 | 51 | 0 | 0 | 0 | 0 |
 | 25 (seed 43, the six profiles of 23 x 100, on the final code with the corrected generator) | 600 | 252 | 342 | 3 | 0 | 3 | 0 |
+| 26 (seed 1, preBodies x 200, the new profile) | 200 | 138 | 55 | 0 | 0 | 0 | 7, one cause, fixed (below) |
+| 27 (seed 1, preBodies x 200, after the fix) | 200 | 138 | 62 | 0 | 0 | 0 | 0 |
+| 28 (seed 2, preBodies x 200) | 200 | 130 | 70 | 0 | 0 | 0 | 0 |
+| 29 (seed 3, preBodies x 200, with the last order and value fixes) | 200 | 140 | 60 | 0 | 0 | 0 | 0 |
+| 30 (seed 5, objects, nested, structure, schedules x 80, regression) | 320 | 91 | 223 | 1 | 0 | 5 | 0 |
+| 31 (seed 4, preBodies x 100, on the final code) | 100 | 67 | 33 | 0 | 0 | 0 | 0 |
+
+Campaigns 26 to 29 and 31 use the profile `preBodies` (`pre` in the bodies of methods and code blocks); campaign 30
+runs the neighbouring profiles on the changed method, signal, copy and reference code. Campaign 26's seven
+disagreements are one defect of KIELER's method inlining that has nothing to do with `pre`: a code block or method
+it keeps as a C function calls a short method with a local variable, and the copy's variable is never declared
+(`'TickData' has no member named '_fn1_tern_t'`; the engine accepted the charts). Fixed (`method-inlined-local`),
+with 9 probes `pre/probe-pre-method-function-calls-local-*`.
 
 Campaigns 12 to 14 use the profile `dataflowObjects` (tools/fuzz/README.md): dataflow regions with chart instances,
 calls and schedules next to control flow. Campaign 12's three: a binding on an instance of a classic region, which

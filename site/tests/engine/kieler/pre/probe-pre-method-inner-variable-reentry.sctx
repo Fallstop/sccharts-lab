@@ -1,0 +1,13 @@
+// A superstate's method reads pre of the superstate's variable: the memory is declared in the superstate, with
+// the variable; the superstate is left and entered again.
+scchart Main {
+  input int n
+  output int o
+  initial state A {
+    int x = 2
+    method int last() { return pre(x) + 1 }
+    initial state B
+    do x = n; o = last() go to B
+  }
+  if n == 3 go to A
+}

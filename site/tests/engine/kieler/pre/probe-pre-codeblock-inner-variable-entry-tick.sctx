@@ -1,0 +1,14 @@
+// The same with code blocks: the entry action's block reads the old memory in the tick the superstate is
+// entered again.
+scchart Main {
+  input int n
+  output int o
+  output int p
+  initial state A {
+    int x = 2
+    entry do { p = pre(x) + 1 }
+    initial state B
+    do x = n + 5; { o = pre(x) + 1 } go to B
+  }
+  if n == 3 go to A
+}

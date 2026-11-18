@@ -1,0 +1,8 @@
+// pre(E.B0) of an enum value in a C function that is called: gcc refuses it.
+scchart Main {
+  input int n
+  output int o enum E { A0, B0 }
+  method int last() { int t = 0; for (int j = 0; j < 2; j++) { t += pre(E.B0) } return t }
+  initial state A
+  do o = last() go to A
+}

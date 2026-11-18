@@ -1,0 +1,10 @@
+// A code block reads pre(x) of a variable declared in a region.
+scchart Main {
+  input int n
+  output int o
+  region R {
+    int x = 2
+    initial state A
+    do x = n; { o = pre(x) + 1 } go to A
+  }
+}

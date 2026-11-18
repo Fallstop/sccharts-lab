@@ -1,0 +1,10 @@
+// a[pre(x)]++ in a method.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[5]
+  method void put() { a[pre(x)]++ }
+  initial state A
+  do x = n; put(); o = a[2] + 10 * a[3] go to A
+}

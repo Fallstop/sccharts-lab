@@ -1,0 +1,21 @@
+// An input bound to a[1]: the method's pre(i) is pre(a[1]).
+scchart Main {
+  input int n
+  output int o
+  int a[3]
+  region {
+    initial state W
+    do a[1] = n go to W
+  }
+  region {
+    initial state A is C(a[1], o)
+  }
+}
+
+scchart C {
+  input int i
+  output int o
+  method int last() { return pre(i) + 1 }
+  initial state A
+  do o = last() go to A
+}

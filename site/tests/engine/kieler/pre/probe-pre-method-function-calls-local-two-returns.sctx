@@ -1,0 +1,9 @@
+// A code block calls a short method with two returns (KIELER's return variable, no local of its own): runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int two() { if (x > 2) { return 5 } return 6 }
+  initial state A
+  do x = n; { o = two() + 1 } go to A
+}

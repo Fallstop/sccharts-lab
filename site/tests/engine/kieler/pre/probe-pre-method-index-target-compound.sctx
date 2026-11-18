@@ -1,0 +1,10 @@
+// a[pre(x)] += 7 in a method.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[5]
+  method void put() { a[pre(x)] += 7 }
+  initial state A
+  do x = n; put(); o = a[2] + 10 * a[3] go to A
+}

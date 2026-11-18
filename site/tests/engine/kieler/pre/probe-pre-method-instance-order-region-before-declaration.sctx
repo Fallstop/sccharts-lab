@@ -1,0 +1,21 @@
+// In a region, ref C g(x, c) declared before a variable whose initial value holds pre(x): the variable comes
+// later and decides, no clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  output int p
+  int x = 2
+  region R {
+    ref C g(x, c)
+    int y = pre(x) + 1
+    initial state A
+    do x = n; p = y; o = g.f() go to A
+  }
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}

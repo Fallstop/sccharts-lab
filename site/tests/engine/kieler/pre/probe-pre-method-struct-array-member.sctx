@@ -1,0 +1,10 @@
+// pre(ts[1].w) of an array of structs in a chart method: KIELER's array check fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  struct T { int w = 1 } ts[2]
+  method int last() { return pre(ts[1].w) + 1 }
+  initial state A
+  do x = n; ts[1].w = n; o = last() go to A
+}

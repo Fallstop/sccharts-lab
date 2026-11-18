@@ -1,0 +1,10 @@
+// pre(v) of the class's own field with two objects of the class: gcc fails (and KIELER loses the short method
+// called twice in one effect).
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 int f() { return pre(v) + 1 } } k, k2
+  initial state A
+  do x = n; k.v = n; k2.v = n * 2; o = k.f() + 10 * k2.f() go to A
+}

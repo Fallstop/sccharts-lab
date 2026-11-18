@@ -1,0 +1,114 @@
+{
+  "hash": "6d2ea063a5dbdf7d111688f1a0646719f0b160f5",
+  "chart": "tests/engine/kieler/pre/probe-pre-static-transition.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Main____pre_s": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "pre",
+        "static"
+      ]
+    },
+    "Main____reg_s": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "pre",
+        "static"
+      ]
+    },
+    "Main___s": {
+      "type": "int",
+      "properties": [
+        "static"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "Main____pre_s": 0,
+        "Main____reg_s": 5,
+        "Main___s": 5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 6,
+        "Main____pre_s": 5,
+        "Main____reg_s": 2,
+        "Main___s": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 3,
+        "Main____pre_s": 2,
+        "Main____reg_s": 3,
+        "Main___s": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": 4,
+        "Main____pre_s": 3,
+        "Main____reg_s": 4,
+        "Main___s": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}
