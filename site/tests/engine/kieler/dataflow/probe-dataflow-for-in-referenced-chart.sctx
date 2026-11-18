@@ -1,0 +1,9 @@
+// A dataflow for-region inside a referenced chart.
+scchart Main {
+  output int o
+  initial state S is Sub(o)
+}
+scchart Sub {
+  output int o
+  dataflow for i : 0 to 2 { o += 2 }
+}

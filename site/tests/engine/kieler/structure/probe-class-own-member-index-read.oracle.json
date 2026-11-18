@@ -1,0 +1,99 @@
+{
+  "hash": "0d19f876f1beb25035001a6dac07088671344f63",
+  "chart": "tests/engine/kieler/structure/probe-class-own-member-index-read.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.a": {
+      "type": "int",
+      "properties": []
+    },
+    "K.w": {
+      "type": "int",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "k": {
+          "a": [
+            5,
+            6
+          ],
+          "w": 1
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 6,
+        "k": {
+          "a": [
+            5,
+            6
+          ],
+          "w": 1
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 6,
+        "k": {
+          "a": [
+            5,
+            6
+          ],
+          "w": 1
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

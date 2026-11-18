@@ -64,19 +64,23 @@ export function recordedCases(): Case[] {
     return out.sort((a, b) => a.id.localeCompare(b.id))
 }
 
-/** Recordings the engine is known not to reproduce yet (tests/conformance/engine-expected-failures.json), by case id. */
+/** Features of KIELER's environment the engine emulates (scenario `needs`), as in the conformance test. */
+const EMULATED_NEEDS = new Set(['c-strings', 'c-random'])
+
+/**
+ * The recordings the engine is known not to reproduce yet (tests/conformance/engine-expected-failures.json, by the
+ * conformance test's ids): their traces differ from KIELER's as the engine's run does.
+ */
 const knownDifferences: string[] = (() => {
     const file = path.join(site, 'tests/conformance/engine-expected-failures.json')
     if (!fs.existsSync(file)) return []
-    // The conformance test names tests/engine/kieler `kieler-probes`, src/examples `examples` and its own cases alone.
     return Object.keys(JSON.parse(fs.readFileSync(file, 'utf8')) as Record<string, string>).filter((k) => !k.startsWith('//'))
-        .map((k) => (k.startsWith('kieler-probes/') ? `tests/engine/kieler/${k.slice('kieler-probes/'.length)}` : k.startsWith('examples/') ? `src/${k}` : `tests/conformance/${k}`))
 })()
 
-const knownDifference = (id: string): boolean => knownDifferences.some((k) => (k.endsWith('*') ? id.startsWith(k.slice(0, -1)) : id === k))
-
-/** Features of KIELER's environment the engine emulates (scenario `needs`), as in the conformance test. */
-const EMULATED_NEEDS = new Set(['c-strings', 'c-random'])
+function knownDifference(id: string): boolean {
+    const key = id.replace(/^tests\/engine\/kieler\//, 'kieler-probes/').replace(/^src\/examples\//, 'examples/').replace(/^tests\/conformance\//, '')
+    return knownDifferences.some((pattern) => (pattern.endsWith('*') ? key.startsWith(pattern.slice(0, -1)) : key === pattern))
+}
 
 /** Compiles a case the engine runs as KIELER did, or says why it is left out (the conformance test's reasons). */
 export function compileCase(c: Case): { result?: CompileResult; skip?: string } {

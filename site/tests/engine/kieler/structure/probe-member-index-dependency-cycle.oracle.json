@@ -1,0 +1,19 @@
+{
+  "hash": "1de63249b437d01927cb86c519c11a7010e7a444",
+  "chart": "tests/engine/kieler/structure/probe-member-index-dependency-cycle.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g3b to _g7b",
+    "Can't schedule from _g7b to _g3b",
+    "Can't schedule from _g3b to _g2",
+    "Can't schedule from _g7b to _g6",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving x prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through x.",
+    "Potential instantaneous loop through x."
+  ],
+  "ticks": []
+}

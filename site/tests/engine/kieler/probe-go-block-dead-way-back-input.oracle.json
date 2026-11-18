@@ -1,0 +1,80 @@
+{
+  "hash": "63354cf832e8ff8c80dceea87c62b27b57022a93",
+  "chart": "tests/engine/kieler/probe-go-block-dead-way-back-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 3,
+        "o": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 4
+      },
+      "values": {
+        "i": 4,
+        "o": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "i": 4,
+        "o": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "i": 4,
+        "o": 3
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

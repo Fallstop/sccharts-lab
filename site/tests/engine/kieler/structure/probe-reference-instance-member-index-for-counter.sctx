@@ -1,0 +1,14 @@
+// A for-region's counter inside another index in the index of an instance's assigned field (k.a[arr[i]] += n + i):
+// each copy gets its own value there.
+scchart Main {
+  input int n
+  output int o
+  ref K2 k
+  int arr[2] = {1, 0}
+  region R for i : 0 to 1 {
+    initial state A do k.a[arr[i]] += n + i go to B
+    state B
+  }
+  region Q { initial state X do o = k.a[0] * 10 + k.a[1] go to X }
+}
+scchart K2 { int a[2] int w = 1 }

@@ -1,0 +1,4 @@
+// A chart that extends a chart that references it.
+scchart Main { initial state S is B }
+scchart B extends C { }
+scchart C { initial state U is B }

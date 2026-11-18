@@ -1,0 +1,7 @@
+// The range of a dataflow for-region is never looked at: a constant as its end (which a control-flow for-region may
+// not have) is accepted, and the equation still runs once per tick.
+scchart Main {
+  const int N = 2
+  output int o
+  dataflow for i : 0 to N { o += 1 }
+}

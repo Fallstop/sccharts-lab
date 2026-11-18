@@ -1,0 +1,3 @@
+// extends Base(true), and the base assigns the bound input: BoolValueImpl.
+scchart Main extends Base(true) { }
+scchart Base { input bool x initial state A do x = false go to A }

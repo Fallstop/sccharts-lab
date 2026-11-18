@@ -1,0 +1,65 @@
+{
+  "hash": "2d886a686bd5454e67b757914a3b1dd11544901a",
+  "chart": "tests/engine/kieler/structure/probe-method-member-index-direct-kept-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name big is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.a": {
+      "type": "int",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "k": {
+          "a": [
+            0,
+            0
+          ]
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 7,
+        "k": {
+          "a": [
+            0,
+            7
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+// The element is bound on the upper level (Mid(a[1], p)) and Mid passes the plain name on: kept (p is 7).
+scchart Main extends Mid(a[1],p) { int a[2] = {4,7} output int p }
+scchart Mid extends Base(b,q) { input int b output int q }
+scchart Base { input int x output int y initial state A do y = x go to A }

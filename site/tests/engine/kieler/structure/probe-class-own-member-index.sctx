@@ -1,0 +1,7 @@
+// A class instance's own member as the index of its assigned array member.
+scchart Main {
+  input int n
+  output int o
+  class K { int a[2] int w = 1 } k
+  initial state A do k.a[k.w] = 7; o = k.a[1] go to A
+}

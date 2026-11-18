@@ -1,0 +1,3 @@
+// One level: extends Base(a[1], p) keeps the index (p is 7).
+scchart Main extends Base(a[1], p) { int a[2] = {4,7} output int p }
+scchart Base { input int x output int y initial state A do y = x go to A }

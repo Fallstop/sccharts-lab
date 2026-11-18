@@ -1,0 +1,5 @@
+// Two charts of the file extend each other and the simulated chart uses neither: rejected all the same (the
+// validator checks every chart).
+scchart Main { output int o initial state S do o = 1 go to S }
+scchart B extends C(1) { input int b }
+scchart C extends B(1) { input int c }

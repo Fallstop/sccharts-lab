@@ -1,0 +1,5 @@
+// An output bound to an element on the lower level and to an array above: the base assigns the whole array, which
+// gcc rejects.
+scchart Main extends Mid(4,r) { output int r[2] }
+scchart Mid extends Base(v, o[1]) { input int v output int o[2] }
+scchart Base { input int x output int y initial state A do y = x go to A }

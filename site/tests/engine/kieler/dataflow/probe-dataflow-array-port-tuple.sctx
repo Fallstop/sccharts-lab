@@ -1,0 +1,7 @@
+// A tuple sets the array input as a single value (c = {7}), and c.a[1] reads it.
+scchart Main {
+  output int o
+  ref Cell c
+  dataflow { c = {7} o = c.a[1] }
+}
+scchart Cell { input int a[2] }

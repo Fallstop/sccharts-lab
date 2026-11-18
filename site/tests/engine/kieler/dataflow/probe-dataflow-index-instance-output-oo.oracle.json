@@ -1,0 +1,82 @@
+{
+  "hash": "e4a35a8ec38f58a1e277a8c3047ebcf77055127f",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-index-instance-output-oo.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘array’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Index1.n": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "ix": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 7,
+        "c": {
+          "a": [
+            0,
+            7
+          ],
+          "b": [
+            0,
+            0
+          ]
+        },
+        "ix": {
+          "n": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 7,
+        "c": {
+          "a": [
+            0,
+            7
+          ],
+          "b": [
+            10,
+            27
+          ]
+        },
+        "ix": {
+          "n": 1
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

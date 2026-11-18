@@ -1,0 +1,50 @@
+{
+  "hash": "69d7b6e0651c7198462e3a0131b0d0cf45345fdd",
+  "chart": "tests/engine/kieler/parity/probe-extends-cycle-inner.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "2:40 Inconsistent inheritance hierarchy! Cycle including base state: B",
+    "1:1 Error executing EValidator",
+    "1:1 Error executing EValidator",
+    "3:19 Inconsistent inheritance hierarchy! Cycle including base state: B",
+    "4:19 Inconsistent inheritance hierarchy! Cycle including base state: C",
+    "The compiler ran out of stack space during Reference Expansion."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: B",
+      "line": 2,
+      "column": 40
+    },
+    {
+      "severity": 1,
+      "message": "Error executing EValidator",
+      "line": 1,
+      "column": 1,
+      "code": "org.eclipse.emf.ecore.impl.EClassImpl@cbffaa7 (name: State) (instanceClassName: null) (abstract: false, interface: false).0"
+    },
+    {
+      "severity": 1,
+      "message": "Error executing EValidator",
+      "line": 1,
+      "column": 1,
+      "code": "org.eclipse.emf.ecore.impl.EClassImpl@5312a623 (name: BaseStateReference) (instanceClassName: null) (abstract: false, interface: false).0"
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: B",
+      "line": 3,
+      "column": 19
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: C",
+      "line": 4,
+      "column": 19
+    }
+  ],
+  "ticks": []
+}

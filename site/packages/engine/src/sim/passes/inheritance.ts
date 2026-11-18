@@ -27,7 +27,7 @@ import {
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { inheritedDeclarations } from '../lower'
 import { rewriteScope } from '../structure/rewrite'
-import { expressionClass, isValue, type Replacements } from '../structure/replacements'
+import { expressionClass, isValue, valueClass, type Replacements } from '../structure/replacements'
 import { plainVariable } from './reference'
 
 interface Base {
@@ -320,7 +320,24 @@ function bindInherited(b: Binding) {
                     if (i < 0) continue
                     ptr = i
                 }
-                if (ptr >= formals.length) continue
+                if (ptr >= formals.length) {
+                    // One argument too many: KIELER's binding has no target, and the processor asks it for one.
+                    if (!crashed) {
+                        crashed = true
+                        const literal = isValue(a.expr)
+                        ctx.report({
+                            severity: 'error', code: 'kieler-crash', span: a.span ?? call.span, related,
+                            message: `\`extends ${target.chart.name}(...)\` has more arguments than \`${target.chart.name}\` has inputs and outputs: KIELER's compiler crashes on that`,
+                            kieler: literal
+                                ? 'java.lang.NullPointerException: Cannot invoke "de.cau.cs.kieler.kexpressions.ValuedObject.eContainer()" because the return value of "de.cau.cs.kieler.kexpressions.kext.extensions.Binding.getTargetValuedObject()" is null'
+                                : 'java.lang.NullPointerException: Cannot invoke "de.cau.cs.kieler.kexpressions.ValuedObject.eContainer()" because "valuedObject" is null',
+                            hint: formals.length
+                                ? `\`${target.chart.name}\` has ${formals.length === 1 ? 'one input or output' : `${formals.length} inputs and outputs`} (\`${formals.map(f => f.name).join('\`, \`')}\`): give exactly one argument for each.`
+                                : `\`${target.chart.name}\` has no inputs or outputs: write \`extends ${target.chart.name}\` without a parameter list.`,
+                        })
+                    }
+                    continue
+                }
                 const v = vars[ptr]
                 bound.add(ptr)
                 ptr++
@@ -330,7 +347,7 @@ function bindInherited(b: Binding) {
                 if (replacement.k === 'ref' && bindings.has(replacement.v)) replacement = bindings.get(replacement.v)!
                 bindings.set(v, replacement)
             }
-            const open = formals.find((_, i) => !bound.has(i))
+            const open = crashed ? undefined : formals.find((_, i) => !bound.has(i))
             if (open) {
                 // An input or output the parameter list leaves open has no source, and KIELER copies it regardless.
                 crashed = true
@@ -427,7 +444,7 @@ function bindInherited(b: Binding) {
                 ctx.report({
                     severity: 'error', code: 'kieler-crash', span: r.span, related,
                     message: `\`${r.v.name}\` stands for a value here and cannot be assigned: KIELER's compiler crashes on this assignment`,
-                    kieler: 'java.lang.ClassCastException: class de.cau.cs.kieler.kexpressions.impl.IntValueImpl cannot be cast to class de.cau.cs.kieler.kexpressions.ValuedObjectReference',
+                    kieler: `java.lang.ClassCastException: class ${valueClass(value)} cannot be cast to class de.cau.cs.kieler.kexpressions.ValuedObjectReference`,
                     hint: 'A name bound to a value through `extends` is that value wherever the chart names it. Bind a variable instead if the chart writes it.',
                 })
             }

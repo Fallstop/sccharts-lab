@@ -1,0 +1,6 @@
+// The same scoping in a code effect (do { ... }), which KIELER walks like a method body.
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  initial state A do { for (int N = 0; N < 1; N++) { } o = N } go to A
+}

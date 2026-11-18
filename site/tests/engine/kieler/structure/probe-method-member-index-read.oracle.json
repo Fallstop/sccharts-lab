@@ -1,0 +1,60 @@
+{
+  "hash": "dcedad8f3d6a7880c8822cf6209f86c2137a634d",
+  "chart": "tests/engine/kieler/structure/probe-method-member-index-read.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.a": {
+      "type": "int",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "k": {
+          "a": [
+            5,
+            6
+          ]
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 6,
+        "k": {
+          "a": [
+            5,
+            6
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

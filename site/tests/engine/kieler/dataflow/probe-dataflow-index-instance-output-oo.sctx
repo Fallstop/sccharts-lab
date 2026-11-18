@@ -1,0 +1,11 @@
+// In the OO translation the instances stay objects and c.a[ix.n] indexes the real array with the other instance's
+// output.
+scchart Main {
+  output int o
+  ref Cell c
+  ref Index ix
+  method int seven() { return 7 }
+  dataflow { c.a[ix.n] = seven() o = c.a[1] }
+}
+scchart Cell { input int a[2] output int b[2] initial state A do b[0] = a[0] + 10; b[1] = a[1] + 20 go to A }
+scchart Index { output int n = 1 }

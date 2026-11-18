@@ -1,0 +1,11 @@
+// An instance's output as an index inside the values of a tuple: replaced by its local there (the tuple's parts are
+// new assignments).
+scchart Main {
+  output int o
+  int arr[2] = {1, 0}
+  ref Two t
+  ref Index ix
+  dataflow { t = {arr[ix.n], arr[ix.n - 1] + 5} o = t.s }
+}
+scchart Two { input int p, q output int s initial state A do s = p * 10 + q go to A }
+scchart Index { output int n = 1 }

@@ -1,0 +1,26 @@
+{
+  "hash": "5ac56661ecb8755c09f55cf69d9da9ea64b1466b",
+  "chart": "tests/engine/kieler/parity/probe-extends-cycle-generic.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:29 Inconsistent inheritance hierarchy! Cycle including base state: B",
+    "4:29 Inconsistent inheritance hierarchy! Cycle including base state: C"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: B",
+      "line": 3,
+      "column": 29
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: C",
+      "line": 4,
+      "column": 29
+    }
+  ],
+  "ticks": []
+}

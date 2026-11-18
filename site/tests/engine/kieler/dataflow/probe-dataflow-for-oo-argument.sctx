@@ -1,0 +1,6 @@
+// The counter as a call's argument: rejected.
+scchart Main {
+  output int o
+  method void add(int k) { o += k }
+  dataflow for i : 0 to 1 { add(i) }
+}

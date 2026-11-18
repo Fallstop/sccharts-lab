@@ -1,0 +1,10 @@
+// The referenced chart indexes its own array ports: KIELER's classic translation bound them to single variables,
+// and gcc rejects the subscript.
+scchart Main {
+  output int o
+  ref Cell c
+  ref Index ix
+  dataflow { c.a = {3, 4} o = c.b[ix.n] }
+}
+scchart Cell { input int a[2] output int b[2] initial state A do b[0] = a[0] + 10; b[1] = a[1] + 20 go to A }
+scchart Index { output int n = 1 }

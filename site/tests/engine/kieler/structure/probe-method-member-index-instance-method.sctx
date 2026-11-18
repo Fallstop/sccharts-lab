@@ -1,0 +1,11 @@
+// An instance's method as the index of an assigned member (c.a[g.one()] = 7): only the first name of an index is
+// redirected, the method behind it is not found, gcc finds no function one.
+scchart Main {
+  output int o
+  ref Cell c
+  ref Giver g
+  dataflow { c.a[g.one()] = 7 o = c.a[1] }
+}
+scchart Giver { method int one() { return 1 } }
+scchart Cell { input int a[2] output int b[2] initial state A do b[0] = a[0] + 10; b[1] = a[1] + 20 go to A }
+scchart Index { output int n = 1 }

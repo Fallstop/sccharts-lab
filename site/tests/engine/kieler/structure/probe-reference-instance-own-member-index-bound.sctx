@@ -1,0 +1,14 @@
+// Inside a referenced chart: an instance's own field and the chart's bound input in the index of the instance's
+// assigned field.
+scchart Main {
+  input int n
+  output int o
+  initial state S is Sub(n, o)
+}
+scchart Sub {
+  input int i
+  output int r
+  ref K2 k
+  initial state A do k.a[k.w - i + i] = i; r = k.a[1] go to A
+}
+scchart K2 { int a[2] int w = 1 }

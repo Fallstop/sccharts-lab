@@ -1,0 +1,7 @@
+// A call in an operator in a member's index on the right (o = k.a[ix() + 0]): accepted.
+scchart Main {
+  output int o
+  class K { int a[2] = {5, 6} } k
+  method int ix() { return 1 }
+  initial state A do o = k.a[ix() + 0] go to A
+}

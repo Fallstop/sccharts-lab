@@ -1,0 +1,7 @@
+// The same method called as the whole index (k.a[big()] = 7): found, and it stays a C function.
+scchart Main {
+  output int o
+  class K { int a[2] } k
+  method int big() { int s = 0 for (int j = 0; j < 1; j++) { s += 1 } return s }
+  initial state A do k.a[big()] = 7; o = k.a[1] go to A
+}

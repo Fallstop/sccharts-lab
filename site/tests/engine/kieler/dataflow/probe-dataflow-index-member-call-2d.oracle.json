@@ -1,0 +1,68 @@
+{
+  "hash": "6d02547ac4a01077aff1744ebfafcc2ab8651b2c",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-index-member-call-2d.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘array’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Grid1.m": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "g": {
+          "m": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 3,
+        "g": {
+          "m": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

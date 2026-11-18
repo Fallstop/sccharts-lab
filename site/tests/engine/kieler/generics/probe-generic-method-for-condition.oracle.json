@@ -1,0 +1,39 @@
+{
+  "hash": "2e987e40604b3ded883fe593b94a351964961ac3",
+  "chart": "tests/engine/kieler/generics/probe-generic-method-for-condition.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name _Main_local_get is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 5
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+// A vector after the call of an extern function: KIELER takes the function for a referenced chart and asks it for
+// its declarations (a NullPointerException).
+scchart Main {
+  output int o
+  extern "abs" myabs
+  dataflow { myabs(1) = {true} o = 2 }
+}

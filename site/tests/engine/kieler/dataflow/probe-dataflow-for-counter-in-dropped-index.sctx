@@ -1,0 +1,7 @@
+// The counter is named only in the index of an instance's port, which the classic translation drops: accepted.
+scchart Main {
+  output int o
+  ref Cell c
+  dataflow for i : 0 to 1 { c.a[i] = 7 o = c.a[0] }
+}
+scchart Cell { input int a[2] }

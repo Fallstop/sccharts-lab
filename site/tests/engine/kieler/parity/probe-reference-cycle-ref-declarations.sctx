@@ -1,0 +1,4 @@
+// A cycle of ref declarations.
+scchart Main { ref B b initial state S }
+scchart B { ref C c initial state T }
+scchart C { ref B b initial state U }

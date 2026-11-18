@@ -1,0 +1,8 @@
+// The same in a dataflow region with an instance's port.
+scchart Main {
+  output int o
+  ref Cell c
+  method int ix() { return 1 }
+  dataflow { c.a[ix() + 0] = 7 o = c.a[1] }
+}
+scchart Cell { input int a[2] }

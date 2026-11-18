@@ -1,0 +1,7 @@
+// The counter as an index in the OO translation: it is gone with the region, rejected.
+scchart Main {
+  output int o
+  int arr[2]
+  method int one() { return 1 }
+  dataflow for i : 0 to 1 { arr[i] = one() o = arr[1] }
+}

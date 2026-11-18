@@ -1,0 +1,10 @@
+// The index of a port is never evaluated in the classic translation: an index outside the array and a division by
+// zero in it are simply gone.
+scchart Main {
+  input int i
+  output int o
+  ref Cell c
+  int arr[2] = {5, 6}
+  dataflow { c.a[arr[5]] = 7 o = c.a[i / 0] }
+}
+scchart Cell { input int a[2] }

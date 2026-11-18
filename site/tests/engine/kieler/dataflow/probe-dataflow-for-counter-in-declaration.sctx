@@ -1,0 +1,5 @@
+// The counter as the initial value of a variable declared in the region: rejected.
+scchart Main {
+  output int o
+  dataflow for i : 0 to 1 { int x = i o = x }
+}

@@ -1,0 +1,8 @@
+// The initial value of a for loop's own variable is the one KIELER does visit: accepted (N is 5 in it and in the
+// condition).
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  method int get() { int r = 0 for (int i = N; i < N + 2; i++) { r += 1 } return r * 10 + N }
+  initial state A do o = get() go to A
+}

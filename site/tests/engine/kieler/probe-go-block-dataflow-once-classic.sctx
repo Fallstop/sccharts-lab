@@ -1,0 +1,8 @@
+// dataflow once without a method (classic translation): the state terminates in tick 1 and is entered again, so
+// nothing is moved.
+scchart Main {
+  input int x
+  output int o, m
+  initial state S { dataflow once { o = x * 2 m = o + 1 } } join to T
+  state T go to S
+}

@@ -1,0 +1,111 @@
+{
+  "hash": "60b3eff1230187656a3c5da977651bfdff8ca5ae",
+  "chart": "tests/engine/kieler/probe-go-block-regions-live-ways-back.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "c": false,
+        "i": 5,
+        "o": 5,
+        "y": 0
+      },
+      "taken": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 4,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "i": 4,
+        "o": 5,
+        "y": 1
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "i": 5,
+        "o": 5,
+        "y": 2
+      },
+      "taken": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "c": true,
+        "i": 5,
+        "o": 5,
+        "y": 3
+      },
+      "taken": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

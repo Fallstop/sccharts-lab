@@ -1,0 +1,80 @@
+{
+  "hash": "1a48d0c1a20408ea17a136b63afce6a29185e8c9",
+  "chart": "tests/engine/kieler/probe-go-block-live-way-back-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 5,
+        "o": 5
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 4
+      },
+      "values": {
+        "i": 5,
+        "o": 5
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "i": 5,
+        "o": 5
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "i": 5,
+        "o": 5
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

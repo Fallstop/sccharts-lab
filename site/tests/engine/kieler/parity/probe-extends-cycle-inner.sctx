@@ -1,0 +1,4 @@
+// An inner state extends a chart of a cycle.
+scchart Main { initial state S extends B(1) { } }
+scchart B extends C(1) { input int b }
+scchart C extends B(1) { input int c }

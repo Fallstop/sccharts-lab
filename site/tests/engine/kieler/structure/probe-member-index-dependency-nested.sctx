@@ -1,0 +1,9 @@
+// A variable inside the index of the array that is the index (k.a[arr[x]] += 1): arr is seen, x is not.
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do k.a[arr[x]] += 1 go to A }
+  region { initial state B do x = 1 go to B }
+}

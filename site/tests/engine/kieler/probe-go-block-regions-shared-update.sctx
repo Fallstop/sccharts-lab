@@ -1,0 +1,9 @@
+// The second region's first-tick code updates a variable the first region's later code updates too: not merged (the
+// wide-span merge needs fresh variables).
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  region { initial state A if c do y += 1 go to A2 state A2 }
+  region { initial state P { entry do y += 10; i = 5; o = i } go to Q state Q }
+}

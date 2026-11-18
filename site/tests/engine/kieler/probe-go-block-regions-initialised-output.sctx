@@ -1,0 +1,8 @@
+// The second region writes an output the root initialised: not merged either, i = 5 wins over the environment.
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  region { initial state A if c do y += 1 go to A2 state A2 }
+  region { initial state P { entry do i = 5; o = i } go to Q state Q }
+}

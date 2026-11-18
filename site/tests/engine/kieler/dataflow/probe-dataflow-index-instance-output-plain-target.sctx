@@ -1,0 +1,10 @@
+// An instance's output as the index of a plain array on the left (arr[ix.n] = 7) is replaced by the instance's
+// local.
+scchart Main {
+  output int o
+  int arr[2]
+  ref Index ix
+  dataflow { arr[ix.n] = 7 o = arr[1] }
+}
+scchart Cell { input int a[2] output int b[2] initial state A do b[0] = a[0] + 10; b[1] = a[1] + 20 go to A }
+scchart Index { output int n = 1 }

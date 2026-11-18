@@ -1,0 +1,10 @@
+// A region's first-tick assignments next to a region whose trigger reads the output they write: the schedule puts
+// the writing region's code first, right after the root's, so it is part of the GO block and i = 5 runs in reset()
+// (the environment's i wins).
+scchart Main {
+  input int i
+  input bool c
+  output int o
+  region { initial state A if o > 3 go to B state B }
+  region { initial state P { entry do i = 5; o = i } go to Q state Q }
+}

@@ -56,8 +56,9 @@ export function rewriteSchedule(list: SchedEntry[] | undefined, w: Rewriter): Sc
 }
 
 function rewriteTarget(r: CRef, w: Rewriter): CRef {
-    const idx = r.idx.map(i => rewriteExpr(i, w))
-    const mapped: CRef = { ...r, idx }
+    // The indices at every level: those of the members after the name too (`c.a[c.n] = 7`).
+    const indices = (x: CRef): CRef => ({ ...x, idx: x.idx.map(i => rewriteExpr(i, w)), ...(x.sub ? { sub: indices(x.sub) } : {}) })
+    const mapped = indices(r)
     return w.target?.(mapped) ?? mapped
 }
 

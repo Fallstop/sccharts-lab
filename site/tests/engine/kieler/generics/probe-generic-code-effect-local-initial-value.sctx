@@ -1,0 +1,6 @@
+// The same in a code effect.
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  initial state A do { int x = N o = x } go to A
+}

@@ -1,0 +1,10 @@
+// An OO instance's own output in the index of its assigned port (cell.v[cell.w % 2] = twice(n)): every index at
+// every level of the target names the object's member.
+scchart Main {
+  input int n
+  output int o
+  ref Cell cell
+  method int twice(int j) { return j * 2 }
+  dataflow { cell.v[cell.w % 2] = twice(n) o = cell.v[1] }
+}
+scchart Cell { input int v[2] output int w = 0 initial state CA do w += 1 go to CA }

@@ -1,0 +1,5 @@
+// Mid binds Base's x to b[1] and Main binds Mid's b to its array a: KIELER replaces the b of b[1] by the whole
+// binding of b, the index is lost, x is the array a, and gcc rejects y = a.
+scchart Main extends Mid(a,p) { int a[2] = {4,7} output int p }
+scchart Mid extends Base(b[1],q) { input int b[2] output int q }
+scchart Base { input int x output int y initial state A do y = x go to A }

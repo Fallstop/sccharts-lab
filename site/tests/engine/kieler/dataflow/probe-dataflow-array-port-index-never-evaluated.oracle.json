@@ -1,0 +1,54 @@
+{
+  "hash": "730255c90c057519367ab2d0b58c12d240c4c603",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-array-port-index-never-evaluated.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "arr": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "i": 0,
+        "o": 7,
+        "arr": [
+          5,
+          6
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "i": 0,
+        "o": 7,
+        "arr": [
+          5,
+          6
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

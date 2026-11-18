@@ -1,0 +1,3 @@
+// An inner state with one argument too many.
+scchart Main { initial state S extends Base(2, 4) { } }
+scchart Base { input int x int y = 0 initial state A do y = x go to A }

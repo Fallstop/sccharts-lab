@@ -1,0 +1,9 @@
+// The way back needs an input but is dead all the same (T is never entered): the input assignment is in the GO
+// block.
+scchart Main {
+  input int i
+  input bool c
+  output int o
+  initial state S { entry do i = 5; o = i initial state A } join to T
+  state T if c go to S
+}

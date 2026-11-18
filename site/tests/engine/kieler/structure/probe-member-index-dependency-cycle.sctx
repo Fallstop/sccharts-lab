@@ -1,0 +1,9 @@
+// The same with the plain variable as the whole index: the read is seen and the chart is rejected for the cycle.
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do k.a[x] = 1 go to A }
+  region { initial state B do x = k.a[0] go to B }
+}

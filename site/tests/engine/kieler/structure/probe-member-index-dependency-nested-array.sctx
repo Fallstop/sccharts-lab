@@ -1,0 +1,9 @@
+// The array that is the whole index is seen: k.a[arr[1]] += 1 waits for arr[1] = 0.
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do k.a[arr[1]] += 1 go to A }
+  region { initial state B do arr[1] = 0 go to B }
+}

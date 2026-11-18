@@ -1,0 +1,7 @@
+// A dropped call followed by a call that runs.
+scchart Main {
+  output int o
+  method void add() { o += 1 }
+  method void sub() { o -= 3 }
+  dataflow { add() = {true} sub() }
+}

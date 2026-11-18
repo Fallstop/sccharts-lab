@@ -255,7 +255,19 @@ export function nodeAccesses(node: SNode): Access[] {
             // Index expressions are read. Those of a member (`c.arr[i] = 1 schedule s 0`) are found through the
             // target's reference and get the assignment's schedule; those of a plain array are read on their own,
             // without it (probes schedules/probe-schedule-index-*).
-            for (const i of low.idx) reads(node, i, out, target.sub || low.v.member ? where : undefined)
+            // KIELER's SCG copies the indices of the target's MEMBERS as they are written and only redirects an index
+            // that is itself a plain variable to the graph's own objects (SCGTransformation: `ref.indices +=
+            // sccSub.indices.map[copy]`, structure.md S-44f): its dependency analysis sees that variable and nothing
+            // else in a member's index (not `x` in `c.a[x + 0]` or `c.a[arr[x]]`, not `c.w` in `c.a[c.w]`), so such
+            // a read is not ordered after a concurrent write and is no cycle with one. The indices of the instance
+            // itself (`cs[x + 1].a`) and of a plain array are read as usual.
+            const memberFrom = low.v.member ? low.v.member.of.dims.length : target.sub ? 0 : undefined
+            low.idx.forEach((i, k) => {
+                if (memberFrom === undefined || k < memberFrom) return reads(node, i, out, target.sub || low.v.member ? where : undefined)
+                if (i.k !== 'ref' || i.sub || i.v.member) return
+                const literal = i.idx.every(x => x.k === 'lit')
+                reads(node, { ...i, idx: literal ? i.idx : [] }, out, where)
+            })
             let cls: AccessClass = 'write'
             if (ownReads > 0 && ownReads === 1 && f.op === '=') cls = 'relative'
             if (f.op !== '=' && ownReads === 0) cls = 'relative'

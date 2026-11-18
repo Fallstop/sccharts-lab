@@ -1,0 +1,3 @@
+// An argument for a base without inputs or outputs.
+scchart Main extends Base(2) { }
+scchart Base { int y = 0 initial state A do y += 1 go to A }

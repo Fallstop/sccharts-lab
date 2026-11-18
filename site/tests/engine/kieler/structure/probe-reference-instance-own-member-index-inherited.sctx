@@ -1,0 +1,12 @@
+// An inherited instance's own field as the index of its assigned field, written in the base chart: rejected (the
+// inherited name is not put in place in an index written alone).
+scchart Main extends Base {
+  input int n
+  output int o
+}
+scchart Base {
+  ref K2 k
+  initial state A do k.a[k.w] = 7 go to B
+  state B
+}
+scchart K2 { int a[2] int w = 1 }

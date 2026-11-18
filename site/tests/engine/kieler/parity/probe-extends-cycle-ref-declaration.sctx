@@ -1,0 +1,4 @@
+// The cycle is reached through a ref declaration wired by a dataflow region.
+scchart Main { ref B g(1) dataflow { g.b = 2 } }
+scchart B extends C(1) { input int b }
+scchart C extends B(1) { input int c }

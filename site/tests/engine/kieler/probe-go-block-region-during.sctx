@@ -1,0 +1,10 @@
+// A region with a during action next to a region that assigns an input in its first tick: the during action's guard
+// comes between the root's code and the second region's, which is not merged (it writes an output the root
+// initialised) and stays in the tick.
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  region { initial state A { during do y += 1 } }
+  region { initial state P { entry do i = 5; o = i } }
+}

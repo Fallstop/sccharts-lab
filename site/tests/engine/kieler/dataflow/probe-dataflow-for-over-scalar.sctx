@@ -1,0 +1,7 @@
+// A dataflow for-region over a variable that is no array: not checked either (the validator checks control-flow
+// regions only).
+scchart Main {
+  const int N = 3
+  output int o
+  dataflow for i : N { o = 4 }
+}

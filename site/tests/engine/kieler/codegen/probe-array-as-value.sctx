@@ -1,0 +1,3 @@
+// A whole array assigned to an int (p = a): the array's address in C, which gcc does not convert (-Wint-conversion
+// is an error).
+scchart Main { int a[2] = {4, 7} output int p initial state A do p = a go to A }

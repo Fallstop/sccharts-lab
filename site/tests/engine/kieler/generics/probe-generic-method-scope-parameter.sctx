@@ -1,0 +1,8 @@
+// A method parameter called like the generic parameter (the chart is rejected for calling a short method with
+// parameters from a method).
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  method int get() { return twice(2) + N } method int twice(int N) { return N * 2 }
+  initial state A do o = get() go to A
+}

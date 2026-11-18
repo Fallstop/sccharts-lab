@@ -1,0 +1,7 @@
+// A dataflow for-region that wires an instance and does not use the counter.
+scchart Main {
+  output int o
+  ref Index ix
+  dataflow for i : 0 to 1 { o = ix.n + 1 }
+}
+scchart Index { output int n = 1 }

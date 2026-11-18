@@ -1,0 +1,102 @@
+{
+  "hash": "013e1758165fcd05caf944417074ae7b524c2e8f",
+  "chart": "tests/engine/kieler/probe-go-block-way-back-needs-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "c": false,
+        "x": 1,
+        "m": 3,
+        "o": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "x": 1,
+        "m": 3,
+        "o": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "x": 1,
+        "m": 3,
+        "o": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "c": true,
+        "x": 1,
+        "m": 3,
+        "o": 2
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

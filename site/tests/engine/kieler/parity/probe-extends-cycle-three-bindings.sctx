@@ -1,0 +1,5 @@
+// A cycle of three charts with bindings.
+scchart Main { initial state S is B(1) }
+scchart B extends C(1) { input int b }
+scchart C extends D(1) { input int c }
+scchart D extends B(1) { input int d }

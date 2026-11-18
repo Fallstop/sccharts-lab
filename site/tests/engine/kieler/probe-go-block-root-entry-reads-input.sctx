@@ -1,0 +1,10 @@
+// A root entry action that reads an input, then a state with a dead way back that assigns it: the assignment is
+// moved to reset(), the reading one stays.
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  entry do y = i + 1
+  initial state S { entry do i = 5; o = i  initial state A } join to T
+  state T go to S
+}

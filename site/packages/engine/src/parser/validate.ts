@@ -433,7 +433,8 @@ class Validator {
                 }
             }
         }
-        if (region.forLoop) this.checkForRegion(region)
+        // KIELER checks the range of a control-flow region only: a dataflow region's loop is never looked at.
+        if (region.forLoop && region.regionType !== 'dataflow') this.checkForRegion(region)
         if (region.override) {
             if (!region.name) {
                 this.add('error', 'override-anonymous', region.span, 'Only a named region can be overridden', 'Cannot override anonymous region.', undefined, [region.id])
@@ -1073,8 +1074,18 @@ class Validator {
             const target = this.index.scopeTargets.get(b)
             return new Set(target ? this.allInherited(target).flatMap(plain) : [])
         })
+        // With a clash KIELER asks every base for its visible inherited declarations, which never comes back from a
+        // cycle of base charts ("Error executing EValidator" in place of the clash; the cycle is reported anyway).
+        const cyclic = (s: State, path: State[]): boolean => path.includes(s) || (s.baseStates ?? []).some(b => {
+            const target = this.index.scopeTargets.get(b)
+            return !!target && cyclic(target, [...path, s])
+        })
+        const overflow = direct.some(b => {
+            const target = this.index.scopeTargets.get(b)
+            return !!target && cyclic(target, [])
+        })
         for (const [name, list] of byName) {
-            if (list.length < 2) continue
+            if (list.length < 2 || overflow) continue
             const marked = new Set<number>()
             const kieler = `There is a name clash between declared valued object in inheritance hierarchy. Valued object with name ${name} is declared multiple times (${list.map(r => r.target.name).join(', ')}).`
             const mark = (i: number) => {

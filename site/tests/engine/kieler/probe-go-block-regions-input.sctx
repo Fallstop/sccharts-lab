@@ -1,0 +1,14 @@
+// Two regions whose initial states are never entered again: both threads' entry code has the guard _GO and is
+// merged into the one GO block (the halt states' guards between them are removed).
+scchart Main {
+  input int i
+  output int o, r
+  region {
+    initial state S { entry do i = 5; o = i initial state A } join to T
+    state T go to S
+  }
+  region {
+    initial state P { entry do r = i + 1 }
+    state Q go to P
+  }
+}

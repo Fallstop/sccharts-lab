@@ -1,0 +1,56 @@
+{
+  "hash": "b3fa96401e394368adb50305fe98f4f830da9e50",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-index-member-call.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘array’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 7,
+        "c": {
+          "a": [
+            0,
+            7
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 7,
+        "c": {
+          "a": [
+            0,
+            7
+          ]
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+ "ticks": [
+  {
+   "inputs": {
+    "x": 1
+   }
+  },
+  {
+   "inputs": {}
+  }
+ ],
+ "kielerBug": "Netlist GOInitOptimizer reorders tick-1 assignments: m = o + 1 names no input and runs in reset(), before o = twice(x). Intended result: o = 2, m = 3."
+}

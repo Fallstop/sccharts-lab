@@ -1,0 +1,8 @@
+// A call inside another index in the index of a plain array on the left (b[arr[ix()]] = 7): accepted.
+scchart Main {
+  output int o
+  int arr[2] = {0, 1}
+  int b[2]
+  method int ix() { return 1 }
+  dataflow { b[arr[ix()]] = 7 o = b[1] }
+}

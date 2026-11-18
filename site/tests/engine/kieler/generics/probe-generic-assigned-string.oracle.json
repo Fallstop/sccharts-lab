@@ -1,0 +1,23 @@
+{
+  "hash": "5d2d32386dbe3dfc61e9c80c2bb4ad3a801e789b",
+  "chart": "tests/engine/kieler/generics/probe-generic-assigned-string.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "2:35 The referencing binding is erroneous!\nType mismatch! Generic parameter N of type string cannot take literal of type UNKNOWN.",
+    "There are binding errors in a referenced state!\nType mismatch! Generic parameter N of type string cannot take literal of type UNKNOWN.",
+    "The valued object reference points to a valued object (N) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nType mismatch! Generic parameter N of type string cannot take literal of type UNKNOWN.",
+      "line": 2,
+      "column": 35,
+      "code": "The referencing binding is erroneous!\nType mismatch! Generic parameter N of type string cannot take literal of type UNKNOWN."
+    }
+  ],
+  "ticks": []
+}

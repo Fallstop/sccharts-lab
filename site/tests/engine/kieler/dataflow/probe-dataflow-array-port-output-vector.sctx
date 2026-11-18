@@ -1,0 +1,8 @@
+// An array output with a vector as its initial value: the vector is assigned to the single variable, which gcc
+// rejects.
+scchart Main {
+  output int o
+  ref Cell c
+  dataflow { o = c.b[1] }
+}
+scchart Cell { output int b[2] = {3, 4} }

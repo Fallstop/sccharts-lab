@@ -1,0 +1,66 @@
+{
+  "hash": "c6f5d8d9f8cd969cb4202bbc3bcf3e9b92a7023f",
+  "chart": "tests/engine/kieler/structure/probe-method-member-index-read-nested.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "arr": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "arr": [
+          0,
+          1
+        ],
+        "c": {
+          "a": [
+            0,
+            4
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "arr": [
+          0,
+          1
+        ],
+        "c": {
+          "a": [
+            0,
+            4
+          ]
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

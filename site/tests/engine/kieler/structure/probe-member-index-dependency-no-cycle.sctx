@@ -1,0 +1,9 @@
+// A cycle through a read KIELER does not see is no cycle to it: k.a[x + 0] = 1 next to x = k.a[0] is accepted.
+scchart Main {
+  output int o
+  int x = 0
+  int arr[2] = {0, 1}
+  class K { int a[2] int w = 0 } k, ks[2]
+  region { initial state A do k.a[x + 0] = 1 go to A }
+  region { initial state B do x = k.a[0] go to B }
+}

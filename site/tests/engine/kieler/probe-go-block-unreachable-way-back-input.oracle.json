@@ -1,0 +1,84 @@
+{
+  "hash": "fb3a010d8877b4754ac809cbe943c5e651955da8",
+  "chart": "tests/engine/kieler/probe-go-block-unreachable-way-back-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 6,
+      "column": 3
+    }
+  ],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 3,
+        "o": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 4
+      },
+      "values": {
+        "i": 4,
+        "o": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "i": 4,
+        "o": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "i": 4,
+        "o": 3
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

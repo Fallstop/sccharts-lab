@@ -888,8 +888,37 @@ z = 11; priority `64-...` y = 13, z = 14). `65-kieler-bug-tick1-input-index` (`a
 sets arr[0]). Also explains B-7 and probes `y = I` as initialiser followed by `entry do y += 1` (3
 instead of 4).
 
+**Which code is "the block".** The optimiser looks at one thing: the first statement of `logic()`, when it is
+`if (_GO) { ... }`. What ends up in there is decided by the optimisers that run before it:
+
+- every scheduling block is `g = <guard>; if (g) { its assignments }`, in the schedule's order, and the root
+  entry's block has the guard `_GO`;
+- a block with exactly one predecessor that is not dead, reached by plain control flow, has that predecessor's
+  guard (`SimpleGuardExpressions.createStandardBlockGuardExpression` leaves dead predecessors out), and copy
+  propagation puts `_GO` in its place. That is a thread's entry after a fork, and a state that a transition leads
+  **back** to when the block the transition comes from is dead: a way back that can never be taken (`initial
+  state S { ... } join to T`, `state T go to S` with an `S` that never terminates; a way back from a state nothing
+  leads to). A way back that can be taken, with or without a trigger, makes the state's guard `_GO || ...`, and
+  its code is not part of the block;
+- the two guards of a halt state are removed (`HaltStateRemover`);
+- `ConditionalMerger` moves the body of a later `if (_GO)` into the one before it when nothing is left between the
+  two, or (its "wide span") when none of the variables it reads or writes was read or written by anything before
+  it; one that stays where it is takes the later ones;
+- when another block's guard is the first statement, nothing is moved at all.
+
+So the block is the root's straight sequence, the entry code of states behind dead ways back, and the first-tick
+code of concurrent regions as far as the merger joins it: the first region's when it follows the root's directly,
+a later region's only when nothing of the regions before it is left in between (their states are halt states) or
+when its variables are fresh. Evidence: `tests/engine/kieler/probe-go-block-*` (28 recordings; the input written in
+such code shows where it runs: `i = 5` in `reset()` loses to the environment's `i`, in the tick it wins), and the
+generated C of those charts and of 104 accepted random charts, whose `reset()` and first `if (_GO)` hold exactly
+the statements the engine's block has (`tests/engine/go-block.test.ts` pins the counts).
+
 **Source.** `opt/GOInitOptimizer.xtend` 82-151 (line 99: only `node.expression` is inspected);
-enabled by `"de.cau.cs.kieler.scg.opt.goInit": true` in `scg/system/de.cau.cs.kieler.scg.netlist.kico`.
+enabled by `"de.cau.cs.kieler.scg.opt.goInit": true` in `scg/system/de.cau.cs.kieler.scg.netlist.kico`, which
+also gives the order of the optimisers (`copyPropagation`, `haltStateRemover`, ..., `conditionalMerger`,
+`goInitOptimizer`); `SimpleGuardExpressions.xtend` 461-483, `opt/CopyPropagationV2.xtend`,
+`opt/HaltStateRemover.xtend`, `opt/ConditionalMerger.xtend` (`ineffectiveVariables`).
 
 **Teaching note.** Only matters in tick 1 and only when a tick-1 effect sequence mixes input reads with
 other writes of the same variables. Rule of thumb for the guide's examples: in tick 1, don't combine

@@ -1,0 +1,7 @@
+// The same with a way back from an unreachable state.
+scchart Main {
+  input int i
+  output int o
+  initial state S { entry do i = 5; o = i }
+  state T go to S
+}

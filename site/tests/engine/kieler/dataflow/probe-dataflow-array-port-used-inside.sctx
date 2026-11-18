@@ -1,0 +1,7 @@
+// The same with a chart that reads a[1] itself: gcc rejects the subscript on the single variable.
+scchart Main {
+  output int o
+  ref Cell c
+  dataflow { c.a[1] = 7 o = c.s }
+}
+scchart Cell { input int a[2] output int s initial state A do s = a[1] go to A }

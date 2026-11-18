@@ -1,0 +1,7 @@
+// The same with _ for the first input: only q is set.
+scchart Main {
+  output int o
+  ref Two t
+  dataflow { t.poke() = {_, 4} o = t.s }
+}
+scchart Two { input int p, q output int s method void poke() { s += 100 } initial state A do s = p * 10 + q go to A }

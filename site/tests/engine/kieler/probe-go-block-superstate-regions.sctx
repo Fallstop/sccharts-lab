@@ -1,0 +1,11 @@
+// The regions of an initial superstate: the first region's entry action joins the GO block, the second region's
+// first-tick code stays in the tick (i is 5).
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  initial state S {
+    region { initial state A { entry do y = 1 } if c go to B state B }
+    region { initial state P { entry do i = 5; o = i } if c go to Q state Q }
+  }
+}

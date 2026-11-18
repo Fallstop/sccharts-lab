@@ -1,0 +1,103 @@
+{
+  "hash": "36099a722c10f1077012dade15399607074c0599",
+  "chart": "tests/engine/kieler/probe-go-block-regions-first-entry.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "c": false,
+        "i": 5,
+        "o": 5,
+        "y": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 4,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "i": 4,
+        "o": 5,
+        "y": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "i": 4,
+        "o": 5,
+        "y": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "c": true,
+        "i": 4,
+        "o": 5,
+        "y": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

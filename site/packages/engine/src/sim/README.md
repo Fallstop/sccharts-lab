@@ -20,7 +20,8 @@ compile() (../index.ts)
                     SCGTransformation in one step), with KIELER's node order and control-flow creation order
     abortRegions.ts KIELER's SCGAbortRegionProcessor (sequential preemptive forks, par-or joins) and its checks
     sfr.ts          KIELER's superfluous thread and fork removal (and the crashes it causes)
-    goblock.ts      tick 1's GO block: KIELER's GO-init behaviour for inputs, B-34 warnings, randomize()
+    goblock.ts      tick 1's GO block (read off the schedule, after the analysis): KIELER's GO-init behaviour for
+                    inputs, B-34 warnings, randomize()
     deps.ts         KIELER's dependency analysis (absolute/relative writes, reads, confluence, commutation,
                     where its search stops)
     analysis.ts     thread path types, loop analysis, schizophrenia curing (structural depth join),
@@ -229,10 +230,12 @@ The structure passes (structure.md) are KIELER's processors too, so their quirks
   variables (memory.ts, basics.md B-28): the top-level declarations in written order, byte by byte; beyond the part
   the guide can lay out, a runtime error.
 - **Inputs.** Persist (B-9); KIELER's GO-init moves tick-1 assignments of inputs that read no input before the
-  first inputs (B-7; goblock.ts). The GO block is the root entry's basic block: it ends where control flow also
-  arrives from elsewhere (an initial state a transition returns to), so such a state's entry assignments run in
-  tick 1 after the inputs are read; unknown keys stay in the pool as in KIELER's server; strings from the
-  environment are fresh pointers every tick (B-26).
+  first inputs (B-7; goblock.ts). The GO block is what KIELER's code has under its first `if (_GO)` (basics.md
+  B-34): the root entry's block, the blocks whose only live predecessor has the guard `_GO` too (a thread's entry,
+  a state whose way back is dead), merged as KIELER's conditional merger merges them. It ends where control flow
+  arrives from a live block elsewhere (an initial state a transition returns to), so such a state's entry
+  assignments run in tick 1 after the inputs are read; unknown keys stay in the pool as in KIELER's server; strings
+  from the environment are fresh pointers every tick (B-26).
 - **Runtime errors.** Division by zero, `INT_MIN / -1`, index out of range, unsupported calls: the tick is not
   applied (KIELER's process would crash) and every later step repeats the error.
 

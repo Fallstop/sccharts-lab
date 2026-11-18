@@ -1,0 +1,6 @@
+// The same with {false}, and an ordinary equation after it that still runs.
+scchart Main {
+  output int o
+  method void add() { o += 1 }
+  dataflow { add() = {false} o += 2 }
+}

@@ -1,0 +1,7 @@
+// The same with a compound assignment (k.a[ix() + 0] += 7).
+scchart Main {
+  output int o
+  class K { int a[2] } k
+  method int ix() { return 1 }
+  initial state A do k.a[ix() + 0] += 7; o = k.a[1] go to A
+}

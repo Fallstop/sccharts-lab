@@ -1,0 +1,93 @@
+{
+  "hash": "0f8641c10afb7ce4fa069fb6d8a264ce65205ee6",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-index-own-member-oo.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_j is contained in the model but not in VariableStore.",
+    "unused variable ‘array’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Cell1.w": {
+      "type": "int",
+      "properties": []
+    },
+    "cell": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "cell": {
+          "v": [
+            2,
+            0
+          ],
+          "w": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 0,
+        "cell": {
+          "v": [
+            4,
+            0
+          ],
+          "w": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 6,
+        "cell": {
+          "v": [
+            4,
+            6
+          ],
+          "w": 2
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

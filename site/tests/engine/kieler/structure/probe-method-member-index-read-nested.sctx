@@ -1,0 +1,9 @@
+// A call inside another index in a member's index on the right: accepted.
+scchart Main {
+  output int o
+  int arr[2] = {0, 1}
+  ref Cell c
+  method int ix() { return 1 }
+  dataflow { c.a[1] = 4 o = c.a[arr[ix()]] }
+}
+scchart Cell { input int a[2] }

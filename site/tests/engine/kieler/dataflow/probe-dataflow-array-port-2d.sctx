@@ -1,0 +1,9 @@
+// A two-dimensional array port is one variable too (g.m[ix.n][0] = 3 is read as g.m[0][1]).
+scchart Main {
+  output int o
+  ref Grid g
+  ref Index ix
+  dataflow { g.m[ix.n][0] = 3 o = g.m[0][1] }
+}
+scchart Grid { input int m[2][2] }
+scchart Index { output int n = 1 }

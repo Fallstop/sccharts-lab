@@ -1,0 +1,9 @@
+// OPEN (engine-expected-failures.json): the condition of an if in a method body names a variable the branch
+// declares. To KIELER the condition is inside the branch's scope and reads the local (0 there), so the else branch
+// runs and o is 100; the engine's name resolution takes the chart's N (6) and o is 1.
+scchart Main {
+  output int o
+  int N = 6
+  method int get() { int r = 0 if (N > 4) { int N = 1 r = N } else { r = 100 } return r }
+  initial state A do o = get() go to A
+}

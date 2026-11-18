@@ -1,0 +1,4 @@
+// An array output bound to an array through two levels: fine.
+scchart Main extends Mid(4,r) { output int r[2] }
+scchart Mid extends Base(v, o) { input int v output int o }
+scchart Base { input int x output int y[2] initial state A do y[1] = x go to A }

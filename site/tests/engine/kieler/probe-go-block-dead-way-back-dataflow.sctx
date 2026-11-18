@@ -1,0 +1,11 @@
+// The GO block goes on into a state that a transition leads back to when that transition can never fire (S never
+// terminates, so T is never entered): KIELER leaves the dead block out of the state's guard, which is then _GO, and
+// its conditional merger joins the code with the root's. m = o + 1 names no input and runs in reset() before o =
+// twice(x): KIELER gives m = 1.
+scchart Main {
+  input int x
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  initial state S { dataflow once { o = twice(x) m = o + 1 } } join to T
+  state T go to S
+}

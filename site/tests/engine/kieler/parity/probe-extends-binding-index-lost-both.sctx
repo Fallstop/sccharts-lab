@@ -1,0 +1,4 @@
+// Both levels bind an element (b[0], then a[1]): the lower index is lost, x is the row a[1], rejected by gcc.
+scchart Main extends Mid(a[1],p) { int a[2][2] = {{1,2},{4,7}} output int p }
+scchart Mid extends Base(b[0],q) { input int b[2] output int q }
+scchart Base { input int x output int y initial state A do y = x go to A }

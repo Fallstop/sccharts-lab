@@ -1,0 +1,4 @@
+// A cycle of referenced charts with bindings.
+scchart Main { int v initial state S is B(v) }
+scchart B { input int x initial state T is C(x) }
+scchart C { input int y initial state U is B(y) }
