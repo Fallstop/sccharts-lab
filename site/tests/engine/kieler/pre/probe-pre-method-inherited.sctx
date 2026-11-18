@@ -1,0 +1,12 @@
+// A base chart's method with pre(x), called in the chart that extends it.
+scchart Main extends Base {
+  initial state A
+  do x = n; o = last() go to A
+}
+
+scchart Base {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+}

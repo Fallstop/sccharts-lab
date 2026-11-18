@@ -1,0 +1,88 @@
+{
+  "hash": "58c9f07115d5c4c4bb58fc5b3d9e88310b07381d",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-float.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "float",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "x": 2.5
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 3,
+        "x": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 3.5,
+        "x": 4.5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": 5,
+        "x": 6
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

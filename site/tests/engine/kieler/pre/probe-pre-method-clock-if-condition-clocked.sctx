@@ -1,0 +1,11 @@
+// An if's condition comes after its then branch in KIELER's order: the condition's pre(x, c) decides over the
+// body's pre(x).
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { if (pre(x, c) > 2) { return pre(x) + 1 } return 0 }
+  initial state A
+  do x = n; o = last() go to A
+}

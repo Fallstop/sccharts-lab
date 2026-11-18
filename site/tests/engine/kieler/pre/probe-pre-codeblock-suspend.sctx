@@ -1,0 +1,11 @@
+// A code block with pre(x) of a superstate's variable, the superstate suspended in one tick.
+scchart Main {
+  input int n
+  output int o
+  initial state A {
+    int x = 2
+    suspend if n == 3
+    initial state B
+    do x = n; { o = pre(x) + 1 } go to B
+  }
+}

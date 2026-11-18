@@ -1,0 +1,9 @@
+// A code block reads pre(k.v) of a class object's field.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int v = 3 } k
+  initial state A
+  do x = n; k.v = n; { o = pre(k.v) + 1 } go to A
+}

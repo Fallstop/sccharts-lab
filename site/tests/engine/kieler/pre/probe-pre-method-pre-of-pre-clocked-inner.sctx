@@ -1,0 +1,10 @@
+// pre(pre(x, c)) in a method: the inner memory is clocked, the outer is not.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { return pre(pre(x, c)) + 1 }
+  initial state A
+  do x = n; o = last() go to A
+}

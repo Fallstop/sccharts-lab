@@ -1,0 +1,10 @@
+// pre of a parameter and pre of a local variable in one method: KIELER fails on the local first (its SCG
+// transformation, before gcc).
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last(int v) { int y = v; return pre(v) + pre(y) }
+  initial state A
+  do x = n; o = last(x) go to A
+}

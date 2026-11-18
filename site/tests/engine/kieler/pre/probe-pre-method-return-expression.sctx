@@ -1,0 +1,9 @@
+// return pre(x) + 1 in a short method KIELER copies into place: the previous value of x.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state A
+  do x = n; o = last() go to A
+}

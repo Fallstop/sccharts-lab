@@ -1,0 +1,18 @@
+// ref C g, a method of a state inside C reads pre(x) of C's own variable: outside the class by then, runs.
+scchart Main {
+  input int n
+  output int o
+  ref C g
+  initial state A
+  do g.x = n; o = g.y go to A
+}
+
+scchart C {
+  int x = 2
+  int y
+  initial state B {
+    method int last() { return pre(x) + 1 }
+    initial state D
+    do y = last() go to D
+  }
+}

@@ -1,0 +1,10 @@
+// A method with a loop (a C function) calls a short method with a local variable: gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int tern() { int t; t = x + 1; return t }
+  method int loop() { int s = 0; for (int j = 0; j < 2; j++) { s += tern() } return s }
+  initial state A
+  do x = n; o = loop() go to A
+}

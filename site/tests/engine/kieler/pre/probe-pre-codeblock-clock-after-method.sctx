@@ -1,0 +1,11 @@
+// A code block is the method _effect0, declared after the chart's own methods: its pre(x, c) decides over the
+// method's pre(x).
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state A
+  do x = n; { o = pre(x, c) + 1 } go to A
+}

@@ -1,0 +1,12 @@
+// A code block in the entry action of a superstate that is entered again, reading pre of a chart variable.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  initial state A {
+    entry do { o = pre(x) + 100 }
+    initial state B
+    do x = n go to B
+  }
+  if n == 3 go to A
+}

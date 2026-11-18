@@ -1,0 +1,8 @@
+// pre(K) of a constant in a code block: gcc refuses pre(4).
+scchart Main {
+  input int n
+  output int o
+  const int K = 4
+  initial state A
+  do { o = pre(K) + 1 } go to A
+}

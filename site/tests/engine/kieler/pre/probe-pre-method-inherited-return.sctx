@@ -1,0 +1,12 @@
+// A base chart's method with return pre(x), never called: the Pre processor's error.
+scchart Main extends Base {
+  initial state A
+  do x = n; o = x go to A
+}
+
+scchart Base {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) }
+}

@@ -1,0 +1,12 @@
+// pre(s) of a superstate's static variable: the static memory is initialised once and does not start again when
+// the superstate is entered again.
+scchart Main {
+  input int n
+  output int o
+  initial state A {
+    static int s = 5
+    initial state B
+    do s = n; o = pre(s) + 1 go to B
+  }
+  if n == 3 go to A
+}

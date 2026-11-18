@@ -1,0 +1,14 @@
+// ref C g(z), C's method reads pre(q) of the bound output: pre of the chart's z.
+scchart Main {
+  input int n
+  output int o
+  int z
+  ref C g(z)
+  initial state A
+  do z = n; o = g.last() go to A
+}
+
+scchart C {
+  output int q
+  method int last() { return pre(q) + 1 }
+}

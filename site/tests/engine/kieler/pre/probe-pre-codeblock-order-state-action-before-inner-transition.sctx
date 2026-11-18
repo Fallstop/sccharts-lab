@@ -1,0 +1,14 @@
+// In a superstate, the code block of its own action comes before the one of an inner state's transition: the
+// transition's pre(x) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  initial state A {
+    during do { y = pre(x, c) }
+    initial state A1
+    do x = n; { o = pre(x) + 1 } go to A1
+  }
+}

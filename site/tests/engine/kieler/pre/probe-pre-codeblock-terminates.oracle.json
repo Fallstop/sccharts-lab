@@ -1,0 +1,88 @@
+{
+  "hash": "70e1bf631c1368f5aa4179e74b616bf18db95f72",
+  "chart": "tests/engine/kieler/pre/probe-pre-codeblock-terminates.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 3,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": true
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 3,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": 3,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

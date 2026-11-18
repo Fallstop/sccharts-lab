@@ -1,0 +1,9 @@
+// pre(K) of a constant in a method with a loop that nobody calls: no C code, the chart runs.
+scchart Main {
+  input int n
+  output int o
+  const int K = 4
+  method int last() { int t = 0; for (int j = 0; j < 2; j++) { t += pre(K) } return t }
+  initial state A
+  do o = n go to A
+}

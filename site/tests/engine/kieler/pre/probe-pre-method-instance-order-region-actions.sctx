@@ -1,0 +1,22 @@
+// ref C g(x, c) declared in a region that has an action: KIELER wraps the region in a state that takes its
+// declarations, after the chart's during action. The instance method's pre(i, cc) decides, both are clocked.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  during do y = pre(x)
+  region R {
+    ref C g(x, c)
+    entry do o = 0
+    initial state A
+    do x = n; o = g.f() go to A
+  }
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}

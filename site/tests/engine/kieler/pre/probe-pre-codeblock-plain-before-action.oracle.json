@@ -1,0 +1,128 @@
+{
+  "hash": "cad007cba721b4a497dc58b5036d04c4476f168c",
+  "chart": "tests/engine/kieler/pre/probe-pre-codeblock-plain-before-action.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": []
+    },
+    "y": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 1,
+        "o": 0,
+        "x": 2,
+        "y": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 2,
+        "o": 1,
+        "x": 2,
+        "y": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 3,
+        "o": 1,
+        "x": 3,
+        "y": 0
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 4,
+        "o": 3,
+        "x": 4,
+        "y": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 5,
+        "o": 3,
+        "x": 5,
+        "y": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+// A referenced chart's method reads pre(i) of a bound input: pre of the chart's n.
+scchart Main {
+  input int n
+  output int o
+  initial state A is C(n, o)
+}
+
+scchart C {
+  input int i
+  output int o
+  method int last() { return pre(i) + 1 }
+  initial state A
+  do o = last() go to A
+}

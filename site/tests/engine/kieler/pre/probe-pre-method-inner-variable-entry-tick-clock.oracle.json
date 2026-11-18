@@ -1,0 +1,128 @@
+{
+  "hash": "25b95c2568e1f14ddf15308f1b746bd3a3d24d4b",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-inner-variable-entry-tick-clock.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through x, o."
+  ],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 1,
+        "o": 0,
+        "p": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 2,
+        "o": 3,
+        "p": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 3,
+        "o": 3,
+        "p": 3
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 4,
+        "o": 3,
+        "p": 3
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 5,
+        "o": 1,
+        "p": 3
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

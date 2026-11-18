@@ -1,0 +1,11 @@
+// b = pre(a) in a method nobody calls: the method gets no C code, the chart runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[3]
+  int b[3]
+  method void cp() { b = pre(a) }
+  initial state A
+  do x = n; a[1] = n; o = b[1] go to A
+}

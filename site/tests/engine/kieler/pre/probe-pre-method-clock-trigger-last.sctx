@@ -1,0 +1,11 @@
+// pre(x, c) in a method, pre(x) in a trigger: a method is a declaration, the trigger comes later in KIELER's
+// order and makes the memory, without a clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { return pre(x, c) + 1 }
+  initial state A
+  if pre(x) > 0 do x = n; o = last() go to A
+}

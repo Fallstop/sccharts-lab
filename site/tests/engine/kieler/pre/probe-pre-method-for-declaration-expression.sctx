@@ -1,0 +1,9 @@
+// for (int j = pre(x) + 0; ...): inside an operator the pre is replaced.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int t = 0; for (int j = pre(x) + 0; j < 5; j++) { t += 1 } return t }
+  initial state A
+  do x = n; o = last() go to A
+}

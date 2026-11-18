@@ -1,0 +1,15 @@
+// A method writes x = n + pre(x) in one region, another region reads pre(x).
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method void set() { x = n + pre(x) }
+  region {
+    initial state A
+    do set() go to A
+  }
+  region {
+    initial state B
+    do o = pre(x) go to B
+  }
+}

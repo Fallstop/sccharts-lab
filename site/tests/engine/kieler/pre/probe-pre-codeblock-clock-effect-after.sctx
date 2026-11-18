@@ -1,0 +1,10 @@
+// A code block with pre(x, c), then the effect y = pre(x) on the same transition: the effect decides, no clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  initial state A
+  do x = n; { o = pre(x, c) + 1 }; y = pre(x) go to A
+}

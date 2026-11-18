@@ -1,0 +1,19 @@
+// pre(val(S)) of a superstate's signal in its method: the memory starts again when the superstate is entered
+// again.
+scchart Main {
+  input int n
+  output int o
+  initial state A {
+    signal int S
+    method int last() { return pre(val(S)) + 1 }
+    region {
+      initial state A1
+      do o = last() go to A1
+    }
+    region {
+      initial state B
+      if n > 1 do S(n) go to B
+    }
+  }
+  if n == 4 go to A
+}

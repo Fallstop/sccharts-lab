@@ -752,6 +752,79 @@ every `pre` whose clock changes.
 **Source.** `proc/Pre.xtend:70-110` (the stack and the `transformedVariables` map keyed by the reference).
 **Teaching.** *Don't mix `pre(x)` and `pre(x, c)`: copy `x` into a second variable for the clocked one.*
 
+### PRE-6 `pre` in the bodies of methods and code blocks
+**Rule.** KIELER's Pre processor walks the whole model, so a `pre(x)` in the body of a method or of a code block
+`do { ... }` is replaced like one in a trigger or effect: it reads `_pre_x`, declared with `_reg_x` in the state that
+declares `x` (not where the method is), updated by that state's immediate during action. It holds for short methods
+KIELER copies into place, for the ones it keeps as C functions, for class methods reading a variable of the chart,
+for methods of inner states, referenced charts, base charts and for-region copies, and whether or not the method is
+called: a method nobody calls still makes the memory (its during action does not keep a chart from terminating). The
+memory of a `static` variable is static too: KIELER copies the declaration's attributes, the Static processor moves
+`_pre_s` and `_reg_s` to the chart under their hierarchical names (`Main____pre_s`), where they are in the data pool,
+and they are not started again with their state.
+
+**Where the body's pres are in KIELER's order (PRE-5).** A method is a declaration, and a code block is one too by
+then: SCL Code Effects, earlier in the chain, makes it the method `_effect<n>`, appended to the declarations of the
+state (an action's state; for a transition, the state around its source), in the order of the states, a state's
+actions before its transitions. So every pre in a body comes *before* the actions, regions and transitions of its
+scope, also a code block written after a clocked effect on the same transition. Among declarations: inherited ones
+first (a base method kept for a `super` call stays at its place among them), a class's methods where the class is
+declared, the methods of a chart used as a class where its `ref` declaration stood (`ref.replace(classDecl)`), then
+the declarations of the state's regions in the regions' order (Region Actions moves them to the end of the state's;
+a region with actions is wrapped in a state `_region_<name>` that takes them instead), code blocks last. Inside a body, EMF's containment
+order: a statement list as written (a block's declarations first); `if`: the then branch, the condition, the else
+branch; a loop: its body, the initialisation, the condition, the afterthought; an assignment: the target's index, then
+the value.
+
+**What the processor cannot replace** (its error, in the lab's words; official KIELER reports "Pre expressions are
+only supported in assignments, triggers and other pre expressions"; called or not): a pre that is the whole
+expression of a `return` (parentheses do not help), of an `if`, `while` or `for` condition, of a local variable's
+initial value (the `for` loop's own declaration too), a whole argument of a call or of `print`, an element of a
+vector. Inside an operator (`pre(x) + 1`, `-pre(x)`, `!pre(f)`, `pre(f) == true`, `c ? pre(x) : 0`), as the value of
+an assignment (`t = pre(x)`, `t += pre(x)`, a `for` loop's `j = pre(x)`), and as an index (`a[pre(x)]`, of an
+assignment's target too, and `return a[pre(x)]`) it is replaced.
+
+**Operands the memory cannot name.** The during action lives in the chart and copies the pre's operand as written,
+`_reg_x = x`:
+- a **local variable** of the body: KIELER's SCG transformation fails (`Can't copy valued object. Valued object is
+  null!`);
+- a **parameter**: gcc fails on `d->v` (`'TickData' has no member named 'v'`);
+- a **field of a class named from inside the class** (`pre(v)` in a method of the class, in a field's initial value,
+  `pre(l.w)` of an object inside the class; and the variables of a chart used as a class in its methods, a `ref C
+  g(5)` input included): gcc fails the same way. Through the object it works, in the class's own method too
+  (`pre(k.v)`), and so does `pre(g.x)` in the chart that declares the instance; a code block on a transition of the
+  chart used as a class is no method of the class (KIELER moves it out with the regions) and works; with
+  `@UnpackClass` the field is the chart's variable and works. An array of objects fails in KIELER's own check as
+  before (`Cannot handle pre operator on arrays of classes`), except by the bare name, which has no index (gcc).
+The same holds for the **clock** of the pre that makes the memory (the during action's trigger); the clock of any
+other pre of the variable is dropped with it, so a parameter or local as a clock is accepted when a later pre of the
+variable has none. The Pre processor's errors come first, then the SCG transformation's, then gcc's. A bound input
+is the bound variable (`pre(i)` with `is C(n, o)` is `pre(n)`, with `a[1]` `pre(a[1])`); bound to a literal (`is C(5,
+o)`) it stays a variable of the copy with that value, and `pre(i)` is its memory: 0 in the first tick, 5 afterwards.
+
+**A pre of a value.** The processor only handles a pre whose operand is a variable (`valuedObjectRef !== null`). A
+pre of a constant, of a generic parameter given a number or of an enum value (`pre(K)`, `pre(4)` by then) is left
+where it is, in any container: no placement error, and gcc refuses it where it reaches the C code (the tick, a
+called C function, a code block; `generic-pre`). In a method nobody calls it reaches none, so `return pre(K)` of a
+constant in an uncalled method compiles, where `return pre(x)` of a variable does not.
+
+**Signals.** The Signal processor replaces `val(S)` in the bodies of the methods of the signal's state too
+(`allActionsAndMethods`), so `pre(val(S))` and `pre(S) == true` work in bodies; `val(pre(S))` and `val(x)` stay and
+gcc fails (`implicit declaration of function 'val'`) when the method is called, not when nobody calls it.
+**Evidence.** Probes `kieler/pre/probe-pre-method-*`, `probe-pre-codeblock-*`, `probe-pre-static-*` (325 charts: 246
+run and agree tick by tick, 79 rejected; official KIELER gives the same values for every chart that runs, rejects
+71 of the others and never answers on the 8 with `pre` of a local variable, which the lab server reports as an
+error); the fuzz profile `preBodies` (700 charts, seeds 1 to 4, no disagreement after the fixes).
+**Source.** `proc/Pre.xtend:108-125` (`eAllContents`, the stack), `:252-312` (the containers it replaces in),
+`:370-377` (`getParentState`), `proc/SclCodeEffect.xtend:67-110`, `proc/Signal.xtend:227-248`,
+`proc/Reference.xtend:1201` (`ref.replace(classDecl)`), `proc/RegionActionsAndDeclarations.xtend:65-86`, `scl/SCLPackage` and `kexpressions/KExpressionsPackage`
+(the feature order of Conditional, Loop, Assignment, MethodImplementationDeclaration, ClassDeclaration).
+**Teaching.** *In a method, `pre` only knows the chart's variables: not the method's parameters and locals, and a
+class's fields only through the object.*
+**Implementation.** passes/pre.ts walks bodies in this order (structure/bodies.ts) and replaces in them;
+passes/preBodies.ts reports the operands (`kieler-crash`, `pre-parameter`, `pre-class-field`); the lowering marks a
+field named from inside its class (`CRef.own`).
+
 ---
 
 ## A. ABRO

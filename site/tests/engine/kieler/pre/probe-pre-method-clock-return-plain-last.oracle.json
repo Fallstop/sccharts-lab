@@ -1,0 +1,119 @@
+{
+  "hash": "37e3aafe3088f19272caec53d87a1b2e8363d144",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-clock-return-plain-last.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 1,
+        "o": 0,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 2,
+        "o": 22,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 3,
+        "o": 22,
+        "x": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 4,
+        "o": 33,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 5,
+        "o": 44,
+        "x": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

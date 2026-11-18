@@ -1,0 +1,112 @@
+{
+  "hash": "e0d055787389ee195506553081bca7f277df5df7",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-inner-variable-entry-tick.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through x, o."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "p": 1
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 3,
+        "p": 1
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 8,
+        "p": 8
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": 3,
+        "p": 8
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5
+      },
+      "values": {
+        "n": 5,
+        "o": 10,
+        "p": 8
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

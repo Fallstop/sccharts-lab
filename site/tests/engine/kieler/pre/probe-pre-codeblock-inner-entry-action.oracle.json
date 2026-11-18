@@ -1,0 +1,110 @@
+{
+  "hash": "084dfa8cd1bf83ce1cd2e31131a34776ea5ecaef",
+  "chart": "tests/engine/kieler/pre/probe-pre-codeblock-inner-entry-action.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through o, x."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 100,
+        "x": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 100,
+        "x": 2
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 102,
+        "x": 3
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": 102,
+        "x": 4
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5
+      },
+      "values": {
+        "n": 5,
+        "o": 102,
+        "x": 5
+      },
+      "taken": [
+        0,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

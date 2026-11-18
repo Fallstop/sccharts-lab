@@ -1,0 +1,8 @@
+// A method with pre(x) called in a dataflow equation.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  dataflow { x = n o = last() }
+}

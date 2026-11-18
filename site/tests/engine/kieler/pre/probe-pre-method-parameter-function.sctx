@@ -1,0 +1,9 @@
+// pre(v) of a parameter in a method with a loop (a C function): gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last(int v) { int t = 0; for (int j = 0; j < 2; j++) { t += pre(v) } return t }
+  initial state A
+  do x = n; o = last(x) go to A
+}

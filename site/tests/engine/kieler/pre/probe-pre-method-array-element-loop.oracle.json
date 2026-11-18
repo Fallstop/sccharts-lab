@@ -1,0 +1,117 @@
+{
+  "hash": "471ac3a4cfd53fba1616e3748f73b4f8feb9afc2",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-array-element-loop.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name t is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name last is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "x": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "a": [
+          0,
+          0,
+          0
+        ],
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 0,
+        "a": [
+          0,
+          2,
+          4
+        ],
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 6,
+        "a": [
+          0,
+          3,
+          6
+        ],
+        "x": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": 9,
+        "a": [
+          0,
+          4,
+          8
+        ],
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

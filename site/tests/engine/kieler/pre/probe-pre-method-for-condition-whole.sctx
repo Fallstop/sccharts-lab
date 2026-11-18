@@ -1,0 +1,10 @@
+// for (...; pre(f); ...): the pre is the whole condition.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  bool f
+  method int last() { int t = 0; for (int j = 0; pre(f); j++) { t += 1; return t } return t }
+  initial state A
+  do x = n; f = n > 2; o = last() go to A
+}

@@ -1,0 +1,13 @@
+// ref C g(5), C's method reads pre(i): the input stays a field of the class, gcc fails.
+scchart Main {
+  input int n
+  output int o
+  ref C g(5)
+  initial state A
+  do o = g.last() go to A
+}
+
+scchart C {
+  input int i
+  method int last() { return pre(i) + 1 }
+}

@@ -1,0 +1,13 @@
+// ref C g, h with pre(x) of C's own variable in its method: gcc fails.
+scchart Main {
+  input int n
+  output int o
+  ref C g, h
+  initial state A
+  do g.x = n; o = g.last() + h.last() go to A
+}
+
+scchart C {
+  int x = 2
+  method int last() { return pre(x) + 1 }
+}

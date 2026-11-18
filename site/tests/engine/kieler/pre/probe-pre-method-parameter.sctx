@@ -1,0 +1,9 @@
+// pre(v) of a parameter: the chart's during action reads `v` in the chart's data, gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last(int v) { return pre(v) + 1 }
+  initial state A
+  do x = n; o = last(x) go to A
+}

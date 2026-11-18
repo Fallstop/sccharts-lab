@@ -1,0 +1,14 @@
+// A region's variable with pre(x) in its initial value and a code block with pre(x, c): the block comes later
+// and decides, both are clocked.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  output int p
+  int x = 2
+  region R {
+    int y = pre(x) + 1
+    initial state A
+    do x = n; p = y; { o = pre(x, c) + 1 } go to A
+  }
+}

@@ -1,0 +1,13 @@
+// The same with a method KIELER keeps as a C function.
+scchart Main {
+  input int n
+  output int o[2]
+  region for i : 0 to 1 {
+    initial state A {
+      int x = 2
+      method int last() { int t = 0; for (int j = 0; j < 2; j++) { t += x } return t }
+      initial state A1
+      do x = n + i; o[i] = last() go to A1
+    }
+  }
+}

@@ -1,0 +1,17 @@
+// ref C g(x, c) declared after a chart method: the instance method's pre(i, cc) comes later and decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  ref C g(x, c)
+  initial state A
+  do x = n; o = last() + 10 * g.f() go to A
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}

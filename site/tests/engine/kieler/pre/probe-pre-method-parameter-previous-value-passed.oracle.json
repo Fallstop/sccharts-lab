@@ -1,0 +1,98 @@
+{
+  "hash": "425952209b74086e1770fb83c40048a19576769b",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-parameter-previous-value-passed.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_plus_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "prev": {
+      "type": "int",
+      "properties": []
+    },
+    "x": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1
+      },
+      "values": {
+        "n": 1,
+        "o": 0,
+        "prev": 0,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "o": 3,
+        "prev": 2,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "o": 3,
+        "prev": 2,
+        "x": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4
+      },
+      "values": {
+        "n": 4,
+        "o": 4,
+        "prev": 3,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

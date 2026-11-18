@@ -1,0 +1,10 @@
+// A chart method reads pre(k.l.w) through both objects: runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { class L { int w = 1 } l } k
+  method int last() { return pre(k.l.w) + 1 }
+  initial state A
+  do x = n; k.l.w = n; o = last() go to A
+}

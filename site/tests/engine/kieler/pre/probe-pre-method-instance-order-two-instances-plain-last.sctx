@@ -1,0 +1,23 @@
+// Two ref declarations: their classes keep the declarations' places, the second one's method (pre(i)) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  ref C g(x, c)
+  ref D h(x, c)
+  initial state A
+  do x = n; o = g.f() + 10 * h.f() go to A
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}
+
+scchart D {
+  input int i
+  input bool cc
+  method int f() { return pre(i) + 1 }
+}

@@ -1,0 +1,16 @@
+// ref C g, a code block on C's own transition reads pre(x): no method of the class, KIELER moves it out with
+// the regions and the chart runs.
+scchart Main {
+  input int n
+  output int o
+  ref C g
+  initial state A
+  do g.x = n; o = g.y go to A
+}
+
+scchart C {
+  int x = 2
+  int y
+  initial state B
+  do { y = pre(x) + 1 } go to B
+}

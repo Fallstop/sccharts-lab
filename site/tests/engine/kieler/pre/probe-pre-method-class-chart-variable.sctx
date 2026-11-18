@@ -1,0 +1,9 @@
+// A class method reads pre(x) of the chart's x: the memory is the chart's, the chart runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { int last() { return pre(x) + 1 } } k
+  initial state A
+  do x = n; o = k.last() go to A
+}

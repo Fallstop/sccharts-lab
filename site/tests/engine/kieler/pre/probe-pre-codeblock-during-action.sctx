@@ -1,0 +1,9 @@
+// A code block with pre(x) in the chart's during action.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  during do { o = pre(x) + 1 }
+  initial state A
+  do x = n go to A
+}

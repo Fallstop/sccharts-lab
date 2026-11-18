@@ -7,6 +7,7 @@ import {
     addVar, allRegions, createControlflowRegion, createFinalState, createState, createTransitionTo, addState,
 } from '../model'
 import { isComplexFinalState } from './complexFinalState'
+import { REGION_DECLARATION } from '../structure/bodies'
 
 export const regionActions: Pass = {
     id: 'de.cau.cs.kieler.sccharts.processors.regionactions',
@@ -23,6 +24,7 @@ export const regionActions: Pass = {
                     v.display ??= v.name
                     v.name = `${regionId}_${v.name}`
                     v.generated = true
+                    v.tags.add(REGION_DECLARATION)
                     addVar(parent, v)
                 }
             } else {

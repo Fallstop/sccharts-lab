@@ -1,0 +1,14 @@
+// val(S) without pre in a code block.
+scchart Main {
+  input int n
+  output int o
+  signal int S
+  region {
+    initial state A
+    do { o = val(S) + 1 } go to A
+  }
+  region {
+    initial state B
+    if n > 1 do S(n) go to B
+  }
+}

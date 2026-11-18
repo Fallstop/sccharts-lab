@@ -1,0 +1,17 @@
+// Code blocks on transitions in two regions: both are methods of the chart, in the order of the regions; the
+// second one's pre(x) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  region R1 {
+    initial state A
+    do x = n; { o = pre(x, c) + 1 } go to A
+  }
+  region R2 {
+    initial state B
+    do { y = pre(x) + 1 } go to B
+  }
+}

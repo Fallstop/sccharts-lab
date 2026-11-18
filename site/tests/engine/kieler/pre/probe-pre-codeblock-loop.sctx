@@ -1,0 +1,8 @@
+// t += pre(x) in the loop of a code block.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  initial state A
+  do x = n; { int t = 0; for (int j = 0; j < 2; j++) { t += pre(x) } o = t } go to A
+}

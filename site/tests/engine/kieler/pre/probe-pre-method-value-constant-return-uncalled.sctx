@@ -1,0 +1,10 @@
+// return pre(K) of a constant in a method nobody calls: the Pre processor only looks at pres of variables, so
+// there is no error and the chart runs.
+scchart Main {
+  input int n
+  output int o
+  const int K = 4
+  method int last() { return pre(K) }
+  initial state A
+  do o = n go to A
+}

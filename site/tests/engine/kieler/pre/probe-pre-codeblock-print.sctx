@@ -1,0 +1,8 @@
+// print(pre(x)) in a code block: the pre is a whole argument.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  initial state A
+  do x = n; { print(pre(x)) } go to A
+}

@@ -1960,7 +1960,14 @@ stays 4). `@inline` on a method with a loop inlines the loop and is rejected as 
 (`155-err-scl-inline-loop`: `Can't schedule …`, `The SCG is NOT asc-schedulable!`). An `@inline` method that calls a
 C function loses it: KIELER notes the functions the tick and the kept functions call, not the ones a body it copies
 into place calls, drops the function as unused and gcc fails on the call (`implicit declaration of function
-'inner'`), unless something else calls it too (`kieler/structure/probe-inline-calls-cfn*`). The priority compiler, which
+'inner'`), unless something else calls it too (`kieler/structure/probe-inline-calls-cfn*`). A method or code block
+KIELER keeps as a C function (it has a loop, or calls a method) that calls a short method **with a local variable**
+does not compile either: the copy's variable is named for the chart's data (`_fn<n>_<method>_<name>`) and read there
+(`d->_fn1_tern_t`), but only the copies in the tick function get a declaration (`'TickData' has no member named
+'_fn1_tern_t'`; engine: `method-inlined-local`). A short method without a local variable, or one with two returns
+(KIELER's return variable), is copied into a C function without harm, and so is a call in an effect or of a method
+that is a C function itself (`kieler/pre/probe-pre-method-function-calls-local-*`, 9 charts, found by the fuzz profile
+`preBodies`). The priority compiler, which
 inlines every method and runs loops at run time, differs in both: there `b` becomes 9 too, and `155` is
 accepted (probe, `--system priority`).
 

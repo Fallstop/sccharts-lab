@@ -1,0 +1,11 @@
+// A C function with pre(x) called in a trigger.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method bool was() { int t = 0; for (int j = 0; j < 2; j++) { t += pre(x) } return t > 4 }
+  initial state A
+  if was() do o += 1 go to A2
+  state A2
+  do x = n go to A2
+}

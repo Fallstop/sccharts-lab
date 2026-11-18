@@ -1,0 +1,10 @@
+// if (pre(f)): the pre is the whole condition, which KIELER's Pre processor cannot replace.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  bool f
+  method int last() { if (pre(f)) { return 1 } return 2 }
+  initial state A
+  do x = n; f = n > 2; o = last() go to A
+}

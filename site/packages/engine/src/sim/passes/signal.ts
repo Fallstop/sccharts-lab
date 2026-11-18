@@ -12,6 +12,7 @@ import {
     type CAction, type CEffect, type CExpr, type CRef, type CState,
 } from '../model'
 import { INT_MAX, INT_MIN } from '../values'
+import { mapBodies } from '../structure/bodies'
 import type { AssignOperator, CombineOperator } from '../../types'
 
 export const signal: Pass = {
@@ -138,6 +139,14 @@ function transformSignal(state: CState, ctx: PassContext) {
                 }
             }
 
+            // val(V) becomes V_val
+            const replaceVal = (e: CExpr): CExpr | undefined => {
+                if (e.k === 'op' && e.op === 'val' && e.args[0]?.k === 'ref' && e.args[0].v === s) {
+                    const r = e.args[0]
+                    return { ...ref(valueVar), idx: r.idx, span: e.span }
+                }
+                return undefined
+            }
             for (const site of allActionSites(state)) {
                 const holder = site.transition ?? site.action!
                 if (curval) {
@@ -151,18 +160,13 @@ function transformSignal(state: CState, ctx: PassContext) {
                     }
                     holder.effects = effects
                 }
-                // val(V) becomes V_val
-                const replaceVal = (e: CExpr): CExpr | undefined => {
-                    if (e.k === 'op' && e.op === 'val' && e.args[0]?.k === 'ref' && e.args[0].v === s) {
-                        const r = e.args[0]
-                        return { ...ref(valueVar), idx: r.idx, span: e.span }
-                    }
-                    return undefined
-                }
                 // A trigger that is val(S) alone becomes the reference inside it, which has no schedule.
                 if (holder.trigger) holder.trigger = replaceVal(holder.trigger) ?? mapExpr(holder.trigger, replaceVal)
                 holder.effects = holder.effects.map(f => mapEffectExprs(f, replaceVal))
             }
+            // In the bodies of the methods and code blocks declared in the state or below it too (Signal.xtend:
+            // every Action and MethodImplementationDeclaration of the state's contents).
+            mapBodies(state, replaceVal)
         }
 
         // The signal becomes a bool variable, declared again at the end of its scope.

@@ -1,0 +1,12 @@
+// A code block is a declaration, so the chart's during action comes after it: the action's pre(x) decides, no
+// clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  during do y = pre(x)
+  initial state A
+  do x = n; { o = pre(x, c) + 1 } go to A
+}

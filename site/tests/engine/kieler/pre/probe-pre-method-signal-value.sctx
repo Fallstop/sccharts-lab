@@ -1,0 +1,15 @@
+// pre(val(S)) in a method: KIELER's Signal processor replaces val(S) in method bodies too.
+scchart Main {
+  input int n
+  output int o
+  signal int S
+  method int last() { return pre(val(S)) + 1 }
+  region {
+    initial state A
+    do o = last() go to A
+  }
+  region {
+    initial state B
+    if n > 1 do S(n) go to B
+  }
+}

@@ -1,0 +1,9 @@
+// pre(x) in a trigger and in a method called by its effect.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state A
+  if pre(x) < 4 do x = n; o = last() go to A
+}

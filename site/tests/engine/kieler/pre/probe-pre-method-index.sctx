@@ -1,0 +1,10 @@
+// a[pre(x)] + 0 in a method: an index holds the pre.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[5] = {10, 11, 12, 13, 14}
+  method int last() { return a[pre(x)] + 0 }
+  initial state A
+  do x = n; o = last() go to A
+}

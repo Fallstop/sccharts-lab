@@ -1,0 +1,9 @@
+// pre(a[1]) in a code block.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[3]
+  initial state A
+  do x = n; a[1] = n; { o = pre(a[1]) + 1 } go to A
+}

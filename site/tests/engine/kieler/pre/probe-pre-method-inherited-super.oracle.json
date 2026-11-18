@@ -1,0 +1,127 @@
+{
+  "hash": "82f66065a76384057ab1a0a929f9dce444bade5b",
+  "chart": "tests/engine/kieler/pre/probe-pre-method-inherited-super.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name last is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "c": {
+      "type": "bool",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input",
+        "inherited"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output",
+        "inherited"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "inherited"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 1,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 1,
+        "o": 0,
+        "x": 2
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 2,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 2,
+        "o": 5,
+        "x": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 3,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 3,
+        "o": 5,
+        "x": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 4,
+        "c": true
+      },
+      "values": {
+        "c": true,
+        "n": 4,
+        "o": 7,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "n": 5,
+        "c": false
+      },
+      "values": {
+        "c": false,
+        "n": 5,
+        "o": 9,
+        "x": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

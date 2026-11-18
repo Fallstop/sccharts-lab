@@ -1,0 +1,9 @@
+// return pre(x) in a method with a loop (a C function): rejected like in a short method.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { for (int j = 0; j < 2; j++) { } return pre(x) }
+  initial state A
+  do x = n; o = last() go to A
+}

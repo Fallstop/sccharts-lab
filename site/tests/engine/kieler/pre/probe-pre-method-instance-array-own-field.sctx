@@ -1,0 +1,13 @@
+// ref C g[2], pre(x) of C's own variable in its method: gcc fails (the bare name has no index).
+scchart Main {
+  input int n
+  output int o
+  ref C g[2]
+  initial state A
+  do g[1].x = n; o = g[1].last() go to A
+}
+
+scchart C {
+  int x = 2
+  method int last() { return pre(x) + 1 }
+}

@@ -1,0 +1,10 @@
+// return a[pre(x)]: the pre's container is the array reference, not the return statement.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[5] = {10, 11, 12, 13, 14}
+  method int last() { return a[pre(x)] }
+  initial state A
+  do x = n; o = last() go to A
+}

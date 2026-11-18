@@ -1,0 +1,10 @@
+// The same chart without pre in the method: it terminates in the same tick.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return x + 1 }
+  initial state A
+  do x = n; o = x go to B
+  final state B
+}

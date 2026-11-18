@@ -1,0 +1,11 @@
+// a[pre(x)] = pre(x, c): the assigned value comes last and decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int a[5]
+  method void put() { a[pre(x)] = pre(x, c) }
+  initial state A
+  do x = n; put(); o = a[2] + 10 * a[3] + 100 * a[4] go to A
+}

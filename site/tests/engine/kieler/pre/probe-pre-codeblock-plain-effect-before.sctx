@@ -1,0 +1,11 @@
+// The effect y = pre(x, c) is written before the code block's pre(x), but the code block is a declaration and
+// comes first to KIELER: the effect decides, both are clocked.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  initial state A
+  do x = n; y = pre(x, c); { o = pre(x) + 1 } go to A
+}

@@ -1,0 +1,22 @@
+// ref C g(x, c) declared in a region that has an action: the instance method's pre(i) comes after the chart's
+// during action (pre(x, c)) and decides, no clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  during do y = pre(x, c)
+  region R {
+    ref C g(x, c)
+    entry do o = 0
+    initial state A
+    do x = n; o = g.f() go to A
+  }
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i) + 1 }
+}

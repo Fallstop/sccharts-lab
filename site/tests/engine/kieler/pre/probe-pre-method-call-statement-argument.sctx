@@ -1,0 +1,10 @@
+// put(pre(x)) as a statement of a method: the pre is a whole argument.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method void put(int v) { o = v }
+  method void go2() { put(pre(x)) }
+  initial state A
+  do x = n; go2() go to A
+}

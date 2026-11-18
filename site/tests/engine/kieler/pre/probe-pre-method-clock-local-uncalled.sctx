@@ -1,0 +1,9 @@
+// A local variable as the clock in a method nobody calls: KIELER's compiler fails all the same.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { bool q = n > 2; return pre(x, q) + 1 }
+  initial state A
+  do x = n; o = x go to A
+}

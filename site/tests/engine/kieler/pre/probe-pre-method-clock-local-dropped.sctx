@@ -1,0 +1,11 @@
+// pre(x, q) with a local variable as the clock, but a later pre(x) makes the memory: the clock is dropped and
+// the chart runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int y
+  method int last() { bool q = n > 2; return pre(x, q) + 1 }
+  initial state A
+  do x = n; o = last(); y = pre(x) go to A
+}

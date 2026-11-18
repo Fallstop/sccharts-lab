@@ -1,0 +1,10 @@
+// pre(a[pre(x)]): a pre as the index of a pre's operand.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[5] = {10, 11, 12, 13, 14}
+  method int last() { return pre(a[pre(x)]) + 0 }
+  initial state A
+  do x = n; a[2] = 20 + n; o = last() go to A
+}

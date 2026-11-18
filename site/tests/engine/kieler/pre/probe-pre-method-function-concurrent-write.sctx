@@ -1,0 +1,15 @@
+// A C function reads pre(x) while another region writes x.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int sum() { int t = 0; for (int j = 0; j < 2; j++) { t += pre(x) } return t }
+  region {
+    initial state A
+    do x = n go to A
+  }
+  region {
+    initial state B
+    do o = sum() go to B
+  }
+}

@@ -1,0 +1,12 @@
+// A class method with pre(x, c) declared after a chart method with pre(x): the class method decides, both are
+// clocked.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  class K { int f() { return pre(x, c) + 1 } } k
+  initial state A
+  do x = n; o = last() + 10 * k.f() go to A
+}

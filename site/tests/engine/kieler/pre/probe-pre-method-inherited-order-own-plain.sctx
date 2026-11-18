@@ -1,0 +1,14 @@
+// Inherited declarations come first: the chart's own method with pre(x) decides over the base's pre(x, c).
+scchart Main extends Base {
+  method int mine() { return pre(x) + 10 }
+  initial state A
+  do x = n; o = last() + mine() go to A
+}
+
+scchart Base {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { return pre(x, c) + 1 }
+}

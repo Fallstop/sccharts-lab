@@ -1,0 +1,23 @@
+// Two ref declarations: the second one's method (pre(i, cc)) decides, both are clocked.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  ref D h(x, c)
+  ref C g(x, c)
+  initial state A
+  do x = n; o = g.f() + 10 * h.f() go to A
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}
+
+scchart D {
+  input int i
+  input bool cc
+  method int f() { return pre(i) + 1 }
+}

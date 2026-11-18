@@ -1,0 +1,31 @@
+// ref declarations in two regions: both go to the end of the chart's declarations, in the order of the regions;
+// the second one's method (pre(i)) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  output int p
+  int x = 2
+  region R1 {
+    ref C g(x, c)
+    initial state A
+    do x = n; o = g.f() go to A
+  }
+  region R2 {
+    ref D h(x, c)
+    initial state B
+    do p = h.f() go to B
+  }
+}
+
+scchart C {
+  input int i
+  input bool cc
+  method int f() { return pre(i, cc) + 1 }
+}
+
+scchart D {
+  input int i
+  input bool cc
+  method int f() { return pre(i) + 1 }
+}

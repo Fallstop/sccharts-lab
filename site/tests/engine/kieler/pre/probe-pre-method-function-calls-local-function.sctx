@@ -1,0 +1,10 @@
+// A code block calls a method with a loop and a local variable: a C function of its own with its own locals,
+// runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int loop() { int s = 0; for (int j = 0; j < 2; j++) { s += x } return s }
+  initial state A
+  do x = n; { o = loop() + 1 } go to A
+}

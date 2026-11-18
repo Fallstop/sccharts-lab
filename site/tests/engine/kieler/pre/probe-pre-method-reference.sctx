@@ -1,0 +1,15 @@
+// A referenced chart (initial state A is C(n, o)) with a method reading pre of its own variable.
+scchart Main {
+  input int n
+  output int o
+  initial state A is C(n, o)
+}
+
+scchart C {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(x) + 1 }
+  initial state I
+  do x = n; o = last() go to I
+}

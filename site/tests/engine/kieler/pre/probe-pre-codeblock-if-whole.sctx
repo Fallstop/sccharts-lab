@@ -1,0 +1,9 @@
+// if (pre(f)) in a code block: the pre is the whole condition.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  bool f
+  initial state A
+  do x = n; f = n > 2; { if (pre(f)) { o = 1 } else { o = 2 } } go to A
+}

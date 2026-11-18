@@ -163,6 +163,12 @@ export interface CRef {
      * name. KIELER's C code takes the array's address there, which is no object (codegen.ts).
      */
     unindexed?: string
+    /**
+     * A member of a class named from inside the class (`v` in a method of the class, not `k.v`): the name as written.
+     * KIELER's C code only knows the instance inside the class's own functions; what a processor moves out of them
+     * (the memory of `pre(v)`, passes/pre.ts) looks the name up in the chart's data.
+     */
+    own?: string
 }
 
 /** A trigger written `if a > 0 schedule s 1` keeps its schedule on the expression (KIELER's BoolScheduleExpression);
@@ -777,6 +783,7 @@ export function copyRef(r: CRef): CRef {
     const c: CRef = { k: 'ref', v: r.v, idx: r.idx.map(i => copyExpr(i)), sub: r.sub ? copyRef(r.sub) : undefined, span: r.span }
     if (r.sched) c.sched = r.sched
     if (r.inlined) c.inlined = true
+    if (r.own) c.own = r.own
     return c
 }
 

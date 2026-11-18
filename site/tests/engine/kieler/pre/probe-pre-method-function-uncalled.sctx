@@ -1,0 +1,9 @@
+// A method with a loop and pre(x) that nobody calls.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int t = 0; for (int j = 0; j < 2; j++) { t += pre(x) } return t }
+  initial state A
+  do x = n; o = x go to A
+}

@@ -1,0 +1,16 @@
+// pre(K) of a value parameter given a variable: pre of that variable.
+scchart Main {
+  input int n
+  output int o
+  int z
+  initial state A is G<z>(n, o)
+  do z = n go to A
+}
+
+scchart G<K is int> {
+  input int n
+  output int o
+  method int last() { return pre(K) + 1 }
+  initial state A
+  do o = last() go to A
+}

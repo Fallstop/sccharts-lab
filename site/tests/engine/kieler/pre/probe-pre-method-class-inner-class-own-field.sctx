@@ -1,0 +1,9 @@
+// A method of a class inside a class reads pre(w) of its own field: gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { class L { int w = 1 int g() { return pre(w) + 1 } } l } k
+  initial state A
+  do x = n; k.l.w = n; o = k.l.g() go to A
+}

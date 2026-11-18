@@ -1,0 +1,9 @@
+// return pre(x) + t in a method with a loop, which KIELER keeps as a C function.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int t = 0; for (int j = 0; j < 2; j++) { t += 1 } return pre(x) + t }
+  initial state A
+  do x = n; o = last() go to A
+}

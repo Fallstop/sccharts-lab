@@ -1,0 +1,15 @@
+// The same with a strong abort: the inside does not run in tick 3, the entry action reads the memory the during
+// action wrote before (p = 3).
+scchart Main {
+  input int n
+  output int o
+  output int p
+  initial state A {
+    int x = 2
+    method int last() { return pre(x) + 1 }
+    entry do p = last()
+    initial state B
+    do x = n + 5; o = last() go to B
+  }
+  if n == 3 abort to A
+}

@@ -1,0 +1,9 @@
+// pre(o) of an output in a method.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { return pre(o) + 1 }
+  initial state A
+  do o = last() go to A
+}

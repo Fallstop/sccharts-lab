@@ -1,0 +1,15 @@
+// Code blocks in two regions: one writes x and reads pre(x), the other reads pre(x) and x.
+scchart Main {
+  input int n
+  output int o
+  output int p
+  int x = 2
+  region {
+    initial state A
+    do { x = n; o = pre(x) } go to A
+  }
+  region {
+    initial state B
+    do { p = pre(x) + x } go to B
+  }
+}

@@ -1,0 +1,14 @@
+// An input bound to 5, pre(i) > 2 in a method called in a trigger.
+scchart Main {
+  input int n
+  output int o
+  initial state A is C(5, o)
+}
+
+scchart C {
+  input int i
+  output int o
+  method bool was() { return pre(i) > 2 }
+  initial state A
+  if was() do o += 1 go to A
+}

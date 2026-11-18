@@ -1,0 +1,10 @@
+// pre(a[j]) with a local variable as the index: the index stays in the method, the chart runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int a[3]
+  method int last() { int j = 1; return pre(a[j]) + 1 }
+  initial state A
+  do x = n; a[1] = n; o = last() go to A
+}

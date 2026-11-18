@@ -1,0 +1,13 @@
+// A superstate's method reads pre of a chart variable: the memory is the chart's and survives the superstate's
+// re-entry.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  initial state A {
+    method int last() { return pre(x) + 1 }
+    initial state B
+    do x = n; o = last() go to B
+  }
+  if n == 3 go to A
+}

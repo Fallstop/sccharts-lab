@@ -1,0 +1,14 @@
+// A method reads pre(g.out) of an instance a dataflow region wires.
+scchart Main {
+  input int n
+  output int o
+  ref C g
+  method int last() { return pre(g.out) + 1 }
+  dataflow { g = {n} o = last() }
+}
+
+scchart C {
+  input int in
+  output int out
+  dataflow { out = in * 2 }
+}

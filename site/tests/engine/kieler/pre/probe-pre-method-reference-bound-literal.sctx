@@ -1,0 +1,15 @@
+// An input bound to 5 stays a variable of the copy with that value: the method's pre(i) is its memory (5 after
+// the first tick).
+scchart Main {
+  input int n
+  output int o
+  initial state A is C(5, o)
+}
+
+scchart C {
+  input int i
+  output int o
+  method int last() { return pre(i) + 1 }
+  initial state A
+  do o = last() go to A
+}

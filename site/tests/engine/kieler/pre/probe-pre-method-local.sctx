@@ -1,0 +1,9 @@
+// pre(y) of a method's local variable: KIELER's compiler fails (Can't copy valued object).
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  method int last() { int y = x; return pre(y) + 1 }
+  initial state A
+  do x = n; o = last() go to A
+}

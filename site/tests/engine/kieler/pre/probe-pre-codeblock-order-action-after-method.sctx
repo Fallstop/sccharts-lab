@@ -1,0 +1,12 @@
+// A code block of the chart's during action is declared after the chart's methods: its pre(x, c) decides.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  int y
+  method int last() { return pre(x) + 1 }
+  during do { y = pre(x, c) }
+  initial state A
+  do x = n; o = last() go to A
+}

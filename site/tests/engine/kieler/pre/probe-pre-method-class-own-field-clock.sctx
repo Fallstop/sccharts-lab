@@ -1,0 +1,10 @@
+// pre(x, q) in a class method with the class's own field q as the clock: the during action's trigger reads `q`
+// in the chart's data, gcc fails.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { bool q int f() { return pre(x, q) + 1 } } k
+  initial state A
+  do x = n; k.q = n > 2; o = k.f() go to A
+}

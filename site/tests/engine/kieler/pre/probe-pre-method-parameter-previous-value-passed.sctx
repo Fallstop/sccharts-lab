@@ -1,0 +1,11 @@
+// What works instead of pre of a parameter: the previous value is taken in an effect (prev = pre(x)) and passed
+// to the method.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  int prev
+  method int plus(int v) { return v + 1 }
+  initial state A
+  do prev = pre(x); x = n; o = plus(prev) go to A
+}

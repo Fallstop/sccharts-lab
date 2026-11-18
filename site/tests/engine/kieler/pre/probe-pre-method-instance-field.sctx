@@ -1,0 +1,13 @@
+// A chart method reads pre(g.x) of an instance's field: runs.
+scchart Main {
+  input int n
+  output int o
+  ref C g
+  method int last() { return pre(g.x) + 1 }
+  initial state A
+  do g.x = n; o = last() go to A
+}
+
+scchart C {
+  int x = 2
+}

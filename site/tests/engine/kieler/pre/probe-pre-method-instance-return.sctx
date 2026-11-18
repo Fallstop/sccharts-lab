@@ -1,0 +1,13 @@
+// ref C g, return pre(x) in C's method: the Pre processor's error.
+scchart Main {
+  input int n
+  output int o
+  ref C g
+  initial state A
+  do o = g.last() go to A
+}
+
+scchart C {
+  int x = 2
+  method int last() { return pre(x) }
+}

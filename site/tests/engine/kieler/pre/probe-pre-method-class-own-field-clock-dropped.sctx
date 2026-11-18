@@ -1,0 +1,11 @@
+// pre(x, q) with the class's own field as the clock, but a later pre(x) makes the memory: the clock is dropped
+// and the chart runs.
+scchart Main {
+  input int n
+  output int o
+  int x = 2
+  class K { bool q int f() { return pre(x, q) + 1 } } k
+  int y
+  initial state A
+  do x = n; k.q = n > 2; o = k.f(); y = pre(x) go to A
+}

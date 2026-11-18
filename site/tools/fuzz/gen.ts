@@ -106,6 +106,8 @@ export const PROFILES: Record<string, Profile> = {
     generics: { features: ['hierarchy', 'concurrency', 'data', 'joins', 'generics', 'references'], optional: ['aborts', 'immediate', 'signals', 'actions', 'count', 'pre', 'forRegions', 'locals', 'connectors'], optionalRate: 0.2, weights: { reference: 2, immediate: 0.5 }, maxDepth: 1 },
     // Timed annotations and ode actions among clocks, suspension and references.
     timed: { features: ['hierarchy', 'data', 'immediate', 'joins', 'clocks', 'timed', 'actions'], optional: ['concurrency', 'aborts', 'count', 'suspend', 'references', 'signals', 'history'], optionalRate: 0.25, maxDepth: 1 },
+    // A template of its own (preBodiesChart): pre(...) in the bodies of methods and code blocks.
+    preBodies: { features: [...BASE, 'pre', 'classes', 'code'] },
 }
 
 /** Clock declarations of the timed profile: @Logical / @Passive count on the declaration (any case), not on the variable. */
@@ -1132,6 +1134,158 @@ function randomChart(r: Rng, index: number): string {
     return (r.chance(0.1) ? '#hostcode "#include <stdlib.h>"\n' : '') + charts.join('\n\n') + '\n'
 }
 
+/**
+ * The `preBodies` profile's chart: `pre(...)` in the bodies of methods and code blocks, which KIELER's Pre processor
+ * walks as it walks triggers and effects. A region writes `v` (and an array, a signal, a class's field); methods read
+ * `pre(v)` in every statement KIELER can replace it in (returns and conditions inside an operator, assignments,
+ * loop conditions, indices), short ones it copies into place and ones with a loop that stay C functions, called from
+ * effects, triggers, entry and during actions or never; code blocks on transitions and actions do the same. A clock
+ * now and then (`pre(v, a)`), next to unclocked pres in other bodies, triggers and effects: the last pre in KIELER's
+ * order decides for all of them. A superstate with a variable of its own and a method that reads its `pre` is left
+ * and entered again; a referenced chart and a chart used as a class have methods of their own. Now and then a form
+ * KIELER rejects: a pre that is a whole return value, condition, argument or initial value, and the pre of a
+ * parameter, of a local variable or of a class's own field.
+ */
+function preBodiesChart(r: Rng, index: number): string {
+    const lines = [`scchart P${index} {`, '  input bool a, b, c, d', '  input int n', '  output int x = 0, y = 0, z = 0, w = 0, u2 = 0, k2 = 0', `  int v = ${r.int(0, 3)}`, '  bool f = false']
+    const shuffle = <T>(list: T[]): T[] => {
+        const out = [...list]
+        for (let i = out.length - 1; i > 0; i--) {
+            const j = r.int(0, i)
+            ;[out[i], out[j]] = [out[j], out[i]]
+        }
+        return out
+    }
+    const arr = r.chance(0.35)
+    const sig = r.chance(0.3)
+    const cls = r.chance(0.35)
+    const sub = r.chance(0.25)
+    const inst = !sub && r.chance(0.2)
+    const sup = r.chance(0.35)
+    if (arr) lines.push('  int q[3] = {4, 5, 6}')
+    if (sig) lines.push('  signal int S')
+    const clock = () => (r.chance(0.3) ? `, ${r.pick(['a', 'b', 'f'])}` : '')
+    const P = () => `pre(v${clock()})`
+    // Methods: [declaration, an expression that calls it]. Their order matters (the last pre decides the clock).
+    const pool: [string, string][] = [
+        [`method int last() { return ${P()} + 1 }`, 'last()'],
+        [`method int neg() { return -${P()} }`, 'neg()'],
+        [`method int viaLocal() { int t; t = ${P()}; return t + 1 }`, 'viaLocal()'],
+        [`method int viaInit() { int t = ${P()} + 0; return t }`, 'viaInit()'],
+        [`method int cond() { if (${P()} > 1) { return 5 } return ${r.pick(['6', `${P()} + 6`])} }`, 'cond()'],
+        [`method int both() { if (n > 1) { return ${P()} + 1 } else { return ${P()} + 2 } }`, 'both()'],
+        [`method int sum() { int t = 0; for (int j = 0; j < 2; j++) { t += ${P()} } return t }`, 'sum()'],
+        [`method int upTo() { int t = 0; for (int j = 0; j < ${P()} % 4; j++) { t += 2 } return t }`, 'upTo()'],
+        [`method int count() { int t = 0; while (t < ${P()} % 5) { t += 1 } return t }`, 'count()'],
+        [`method int two() { return pre(${P()}) + 1 }`, 'two()'],
+        ['method int flag() { if (!pre(f)) { return 1 } return 2 }', 'flag()'],
+        [`method int tern() { int t; t = n > 1 ? ${P()} : 0; return t }`, 'tern()'],
+        ['@inline method int twice() { int t = 0; t += pre(v); t += pre(v); return t }', 'twice()'],
+    ]
+    if (arr) pool.push(
+        ['method int elem() { return pre(q[1]) + 1 }', 'elem()'],
+        ['method int elemAt() { int j = 2; return pre(q[j]) + pre(q[n % 3]) }', 'elemAt()'],
+        ['method int at() { return q[pre(v) % 3] + 0 }', 'at()'],
+    )
+    if (sig) pool.push(
+        ['method int sval() { return pre(val(S)) + 1 }', 'sval()'],
+        ['method int spres() { if (pre(S) == true) { return 1 } return 2 }', 'spres()'],
+    )
+    // What KIELER rejects (now and then one of them).
+    const bad: [string, string][] = [
+        ['method int badRet() { return pre(v) }', 'badRet()'],
+        ['method int badInit() { int t = pre(v); return t }', 'badInit()'],
+        ['method int badIf() { if (pre(f)) { return 1 } return 2 }', 'badIf()'],
+        ['method int badWhile() { int t = 0; while (pre(f)) { t += 1; return t } return t }', 'badWhile()'],
+        ['method int badParam(int m) { return pre(m) + 1 }', 'badParam(n)'],
+        ['method int badLocal() { int t = v; return pre(t) + 1 }', 'badLocal()'],
+        ['method int badClock() { bool k = n > 1; return pre(v, k) + 1 }', 'badClock()'],
+        ['method int badPrint() { print(pre(v)); return 0 }', 'badPrint()'],
+    ]
+    const methods: [string, string][] = shuffle(pool).slice(0, r.int(1, 4))
+    if (r.chance(0.12)) methods.push(r.pick(bad))
+    // Never called: KIELER still makes the memory (and its clock may decide for the others).
+    const uncalled = methods.length > 1 && r.chance(0.3) ? r.pick(methods) : undefined
+    const used = methods.filter(m => m !== uncalled).map(m => m[1])
+    for (const m of shuffle(methods)) lines.push(`  ${m[0]}`)
+    const was = r.chance(0.35)
+    if (was) lines.push(`  method bool was() { return ${P()} > ${r.pick(['1', 'n', '2'])} }`)
+    if (cls) {
+        const own = r.chance(0.1)
+        lines.push(`  class K { int g = 1  int prev() { return ${P()} + g }  int slow() { int t = 0; for (int j = 0; j < 2; j++) { t += pre(v) } return t }${own ? '  int own() { return pre(g) + 1 }' : ''} } k`)
+        used.push('k.prev()', 'k.slow()')
+        if (own && r.chance(0.5)) used.push('k.own()')
+        if (r.chance(0.4)) {
+            lines.push('  method int field() { return pre(k.g) + 1 }')
+            used.push('field()')
+        }
+    }
+    if (inst) {
+        // A chart used as a class: its methods read the bound variable's past, the chart reads a field's.
+        lines.splice(r.chance(0.5) ? 6 : lines.length, 0, `  ref PG${index} g(v)`)
+        used.push('g.prev()')
+        if (r.chance(0.5)) {
+            lines.push('  method int gq() { return pre(g.m) + 1 }')
+            used.push('gq()')
+        }
+    }
+    const call = () => r.pick(used)
+    const block = (p: string, q: string) => r.pick([
+        `{ ${p} = ${P()} + 1 }`, `{ ${p} = ${P()} }`, `{ int t = ${P()} + 0; ${p} = t }`, `{ if (${P()} > 1) { ${p} += 1 } else { ${p} = 0 } }`,
+        `{ int t = 0; for (int j = 0; j < 2; j++) { t += ${P()} } ${q} = t }`, `{ ${p} = pre(${P()}) + ${call()} }`,
+        ...(arr ? [`{ ${p} = pre(q[${r.int(0, 2)}]) + 1 }`, `{ ${p} = q[pre(v) % 3] }`] : []),
+        ...(sig ? [`{ ${p} = pre(val(S)) + 1 }`] : []),
+        ...(r.chance(0.06) ? [`{ int t = pre(v); ${p} = t }`, `{ if (pre(f)) { ${p} = 1 } }`, `{ int t = v; ${p} = pre(t) }`] : []),
+    ])
+    // The effects of the first region write x and y, those of the second z and w.
+    const effect = (first: boolean): string => {
+        const [p, q] = first ? ['x', 'y'] : ['z', 'w']
+        return r.pick([
+            `${p} = ${call()}`, `${p} = ${call()}`, `${q} = ${call()} + ${p}`, `${p} = ${P()} + 1`, `${p} += 1`, `${q} = n`,
+            block(p, q), block(p, q), `${block(p, q)}; ${q} = ${call()}`, `${p} = ${call()}; ${block(q, p)}`,
+        ])
+    }
+    const trigger = () => r.pick(['a', 'b', 'c', 'd', 'n > 1', 'a', ...(was ? ['was()', 'was()', 'a && was()'] : []), ...(r.chance(0.3) ? [`${P()} > 1`, `${call()} > 2`] : [])])
+    const go = (first: boolean, to: string, always = false) => `    ${r.chance(0.15) ? 'immediate ' : ''}${always && r.chance(0.3) ? '' : `if ${trigger()} `}do ${effect(first)} go to ${to}`
+    if (r.chance(0.2)) lines.push(`  during do ${r.pick([`k2 = ${call()}`, block('k2', 'k2')])}`)
+    const second = r.chance(0.55)
+    // The region that makes the past: v, f, the array, the signal, the class's field.
+    lines.push('  region R0 {', '    initial state V')
+    const writes = ['v = n', 'v += 1', 'v = n + 1', 'f = a', 'f = !f', 'v = n; f = b']
+    if (arr) writes.push('q[1] = n', 'q[n % 3] += 1', 'q[0] = v')
+    if (sig) writes.push('S(n)', 'S(v + 1)')
+    if (cls) writes.push('k.g = n', 'k.g += 1')
+    if (inst) writes.push('g.m = n')
+    lines.push(`    ${r.chance(0.5) ? `if ${r.pick(['a', 'b', 'c', 'n > 0'])} ` : ''}do ${r.pick(writes)}; ${r.pick(writes)} go to V`, `    do ${r.pick(writes)} go to V`, '  }')
+    lines.push('  region R1 {')
+    lines.push(...(r.chance(0.25) ? ['    initial state A {', `      ${r.pick(['entry', 'during'])} do ${effect(true)}`, '    }'] : ['    initial state A']))
+    lines.push(go(true, 'B'), '    state B', go(true, 'A', true))
+    if (r.chance(0.3)) lines.push(go(true, 'C'), '    state C', go(true, r.pick(['A', 'C']), true))
+    lines.push('  }')
+    if (second) lines.push('  region R2 {', '    initial state M', go(false, r.pick(['M', 'M2'])), '    state M2', go(false, 'M', true), '  }')
+    if (sup) {
+        // A variable of a superstate: its memory starts again when the superstate is entered again.
+        const read = r.pick(['u2 = past()', '{ u2 = pre(u) + 1 }', 'u2 = past() + pre(u)'])
+        lines.push('  region R3 {', '    initial state T {', '      int u = 1',
+            `      method int past() { return pre(u${r.chance(0.2) ? ', a' : ''}) + ${r.pick(['1', 'pre(v)'])} }`,
+            '      initial state T1', `      ${r.chance(0.5) ? 'if a ' : ''}do u += ${r.pick(['1', 'n'])}; ${read} go to T1`,
+            '    }', `    if ${r.pick(['c', 'd', 'n > 2'])} ${r.pick(['go to', 'abort to'])} T`, '  }')
+    }
+    if (sub) lines.push('  region R4 {', `    initial state Z is PS${index}(v, k2)`, '  }')
+    lines.push('}')
+    const charts = [lines.join('\n')]
+    if (sub) {
+        charts.push([`scchart PS${index} {`, '  input int i', '  output int r', '  int m = 1',
+            `  method int mine() { return pre(${r.pick(['m', 'i', 'r'])}) + 1 }`,
+            `  initial state I do m = i; ${r.pick(['r = mine()', 'r = mine() + pre(i)', '{ r = pre(m) + pre(i) }'])} go to I`, '}'].join('\n'))
+    }
+    if (inst) {
+        charts.push([`scchart PG${index} {`, '  input int i', '  int m = 2',
+            `  method int prev() { return pre(${r.chance(0.12) ? 'm' : 'i'}) + 1 }`, '}'].join('\n'))
+    }
+    return charts.join('\n\n') + '\n'
+}
+
 export function generate(seed: number, profileName: string, index: number, ticks = 14): Job {
     const profile = PROFILES[profileName] ?? PROFILES.mix
     const rng = new Rng(seed * 7919 + index * 104729 + 17)
@@ -1140,6 +1294,6 @@ export function generate(seed: number, profileName: string, index: number, ticks
     if (features.has('valued')) features.add('signals')
     if (features.has('timed')) features.add('clocks')
     const g = new Generator(rng, features, profile)
-    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : profileName === 'dataflowObjects' ? dataflowObjectsChart(rng, index) : profileName === 'random' ? randomChart(rng, index) : g.chart(index)
+    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : profileName === 'dataflowObjects' ? dataflowObjectsChart(rng, index) : profileName === 'random' ? randomChart(rng, index) : profileName === 'preBodies' ? preBodiesChart(rng, index) : g.chart(index)
     return { name: `${profileName}-${seed}-${index}`, model, inputs: inputsFor(rng, ticks, features.has('clocks')), profile: profileName, features: [...features].sort() }
 }

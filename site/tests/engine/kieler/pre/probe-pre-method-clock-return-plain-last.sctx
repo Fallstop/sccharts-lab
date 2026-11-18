@@ -1,0 +1,10 @@
+// pre(x, c) + 10 * pre(x) in one return: the later pre decides, no clock.
+scchart Main {
+  input int n
+  input bool c
+  output int o
+  int x = 2
+  method int last() { return pre(x, c) + 10 * pre(x) }
+  initial state A
+  do x = n; o = last() go to A
+}
