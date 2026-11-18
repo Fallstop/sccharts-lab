@@ -1,0 +1,9 @@
+// A way back that needs an input: the state's guard is _GO or the returning transition, its code is not in the GO
+// block and runs as written.
+scchart Main {
+  input int x
+  input bool c
+  output int o, m
+  initial state S { entry do o = x * 2; m = o + 1 } if c go to T
+  state T if c go to S
+}

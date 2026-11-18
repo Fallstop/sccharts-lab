@@ -1,0 +1,8 @@
+// The same without dataflow: entry actions of a state whose way back (join to T, T go to S) is dead are part of the
+// GO block.
+scchart Main {
+  input int x
+  output int o, m
+  initial state S { entry do o = x * 2; m = o + 1 initial state A } join to T
+  state T go to S
+}

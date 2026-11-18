@@ -1,0 +1,11 @@
+// Immediate transitions out of both regions' initial states: the first region's is merged into the GO block (it
+// comes right after the root's code), the second region's comes after the first region's other guards and counts a
+// taken transition as the first did, so it stays in an if (_GO) of its own and i = 5 runs after the inputs are
+// read.
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  region { initial state A immediate do y = 2 go to A1 state A1 if c go to A2 state A2 }
+  region { initial state P immediate do i = 5; o = i go to Q state Q if c go to R state R }
+}

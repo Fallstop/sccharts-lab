@@ -1,0 +1,9 @@
+// An immediate transition into the state with the dead way back: its effects and the state's entry actions are one
+// GO block (two conditionals with the guard _GO, one right after the other).
+scchart Main {
+  input int x
+  output int o, m, k
+  initial state Z immediate do k = x + 1; k += 1 go to S
+  state S { entry do o = x * 2; m = o + 1 initial state A } join to T
+  state T go to S
+}

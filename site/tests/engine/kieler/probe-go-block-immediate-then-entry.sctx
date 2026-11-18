@@ -1,0 +1,9 @@
+// An immediate transition whose effect reads the input, into a state that assigns it.
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  initial state Z immediate do y = i go to S
+  state S { entry do i = 5; o = i } if c go to T
+  state T
+}

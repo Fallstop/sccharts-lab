@@ -1,0 +1,8 @@
+// An input assigned in a state with a dead way back: the assignment is in the GO block, runs in reset() and the
+// environment's value wins (i is 3, not 5).
+scchart Main {
+  input int i
+  output int o
+  initial state S { entry do i = 5; o = i initial state A } join to T
+  state T go to S
+}

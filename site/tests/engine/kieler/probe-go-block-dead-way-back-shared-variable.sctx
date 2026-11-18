@@ -1,0 +1,8 @@
+// The same when both parts write k: adjacent conditionals are merged whatever they write.
+scchart Main {
+  input int x
+  output int o, m, k
+  initial state Z immediate do k = x + 1; k += 1 go to S
+  state S { entry do o = x * 2; m = o + 1; k += 5 initial state A } join to T
+  state T go to S
+}

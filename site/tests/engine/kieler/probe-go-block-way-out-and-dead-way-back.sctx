@@ -1,0 +1,9 @@
+// A state with a way out that needs an input and a way back from an unreachable state.
+scchart Main {
+  input int i
+  input bool c
+  output int o
+  initial state S { entry do i = 5; o = i } if c go to T
+  state T
+  state U go to S
+}

@@ -1,0 +1,8 @@
+// A way back from a state nothing leads to (T go to S, T unreachable): dead too, the initial state's entry actions
+// are in the GO block.
+scchart Main {
+  input int x
+  output int o, m
+  initial state S { entry do o = x * 2; m = o + 1 }
+  state T go to S
+}

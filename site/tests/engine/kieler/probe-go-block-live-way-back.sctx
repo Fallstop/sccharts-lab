@@ -1,0 +1,8 @@
+// A way back that is taken (the state terminates at once and T returns in the next tick): the entry actions run in
+// every tick, there is no GO block.
+scchart Main {
+  input int x
+  output int o, m
+  initial state S { entry do o = x * 2; m = o + 1 initial final state A } join to T
+  state T go to S
+}

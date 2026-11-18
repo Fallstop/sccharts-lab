@@ -1,0 +1,7 @@
+// With a live way back the input assignment runs in the tick, after the inputs are read: i is 5.
+scchart Main {
+  input int i
+  output int o
+  initial state S { entry do i = 5; o = i initial final state A } join to T
+  state T go to S
+}

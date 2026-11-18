@@ -1,0 +1,9 @@
+// Both regions return to their initial states: the second region's entry code is guarded by _GO or its return, so
+// it is not part of the GO block.
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  region { initial state A if c do y += 1 go to A2 state A2 if c do y += 1 go to A }
+  region { initial state P { entry do i = 5; o = i } go to Q state Q go to P }
+}

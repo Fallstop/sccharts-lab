@@ -1,0 +1,9 @@
+// The first region's entry action is merged into the GO block (right after the root's), the second region's code
+// comes after the first region's other guards and writes a variable written before: it stays in the tick.
+scchart Main {
+  input int i
+  input bool c
+  output int o, y
+  region { initial state A { entry do y = 1 } if c do y += 1 go to B state B }
+  region { initial state P { entry do i = 5; o = i } go to Q state Q }
+}

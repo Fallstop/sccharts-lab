@@ -152,8 +152,8 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     diagnostics.push(...stringConditions(scg))
     diagnostics.push(...droppedIndices(scg, lowered.root.name))
     diagnostics.push(...orderDependentUpdates(scg))
-    const go = goBlock(scg)
-    diagnostics.push(...goBlockDiagnostics(go))
+    // (The GO block is read off the schedule: its diagnostics keep this place.)
+    const goAt = diagnostics.length
     // KIELER's search for accesses ends at a flow into a state without nodes (deps.ts dependencyReach).
     const reach = dependencyReach(scg)
     const { deps, accesses } = dependencies(scg.nodes, reach?.stop ? reach.reached : undefined, isInlined)
@@ -164,6 +164,8 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     const t3 = now()
     const analysis = analyse({ scg, deps })
     const t4 = now()
+    const go = goBlock(scg, analysis)
+    diagnostics.splice(goAt, 0, ...goBlockDiagnostics(go))
 
     // SimpleGuardTransformation orders the threads of a sequential fork (a state with abort regions) through their
     // guard nodes; a fork that can never be reached (dead: its state is entered only by a join that never fires) has
