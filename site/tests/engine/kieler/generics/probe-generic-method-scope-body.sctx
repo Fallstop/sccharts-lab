@@ -1,0 +1,7 @@
+// A variable declared at the top of the method hides the parameter in the whole body.
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  method int get() { int N = 9 return N }
+  initial state A do o = get() go to A
+}

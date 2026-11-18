@@ -1,0 +1,3 @@
+// Assigning to a generic parameter that stands for 1.5: FloatValueImpl.
+scchart Main { initial state S is G<1.5> }
+scchart G<N is float> { initial state A do N = 2.5 go to A }

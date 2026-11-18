@@ -1,0 +1,16 @@
+{
+  "hash": "5e6f5d027a4ca7c1cc61a923da691945399b42f1",
+  "chart": "tests/engine/kieler/generics/probe-generic-method-scope-parameter.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "too few arguments to function ‘Main__Main_local_get’; expected 2, have 1",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0__Main_local_twice_N is contained in the model but not in VariableStore.",
+    "ValuedObject with name _Main_local_get is contained in the model but not in VariableStore."
+  ],
+  "ticks": []
+}

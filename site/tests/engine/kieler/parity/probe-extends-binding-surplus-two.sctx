@@ -1,0 +1,3 @@
+// Two arguments too many.
+scchart Main extends Base(2, 4, 6) { }
+scchart Base { input int x int y = 0 initial state A do y = x go to A }

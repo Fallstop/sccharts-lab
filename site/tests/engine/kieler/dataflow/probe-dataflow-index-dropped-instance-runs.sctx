@@ -1,0 +1,10 @@
+// The instance named only in a dropped index (c.a[ix.n]) still runs as an instance of the region; its output is
+// read nowhere.
+scchart Main {
+  output int o, p
+  ref Cell c
+  ref Index ix
+  dataflow { c.a[ix.n] = 7 o = c.a[0] p = 1 }
+}
+scchart Cell { input int a[2] }
+scchart Index { output int n = 1 initial state A do n += 1 go to A }

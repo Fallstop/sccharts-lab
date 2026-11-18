@@ -1,0 +1,7 @@
+// The counter is named only in a call that KIELER removes (a vector after its =): nothing points at the counter
+// afterwards, accepted.
+scchart Main {
+  output int o
+  method void add(int k) { o += k }
+  dataflow for i : 0 to 1 { add(i) = {true} o = 3 }
+}

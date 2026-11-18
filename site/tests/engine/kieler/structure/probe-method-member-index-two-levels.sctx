@@ -1,0 +1,7 @@
+// A member of a member with a call as its whole index (k.l.a[ix()] = 7): found.
+scchart Main {
+  output int o
+  class K { class L { int a[2] } l } k
+  method int ix() { return 1 }
+  initial state A do k.l.a[ix()] = 7; o = k.l.a[1] go to A
+}

@@ -1,0 +1,7 @@
+// A vector after the = of a call equation: KIELER's tuple handling runs on the call's name, makes nothing of it and
+// removes the call with the vector, so add() never runs.
+scchart Main {
+  output int o
+  method void add() { o += 1 }
+  dataflow { add() = {true} }
+}

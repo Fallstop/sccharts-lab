@@ -1,0 +1,37 @@
+{
+  "hash": "f510d77617aa2e7a3e1a9003913046953730d2de",
+  "chart": "tests/engine/kieler/generics/probe-generic-method-scope-else.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__Main_local_get_r is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0__Main_local_get_N is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 102005
+      },
+      "terminated": false
+    }
+  ]
+}

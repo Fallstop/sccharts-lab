@@ -1,0 +1,6 @@
+// A dataflow for-region over an array: one run per tick, not one per element.
+scchart Main {
+  int arr[2]
+  output int o
+  dataflow for i : arr { o += 1 }
+}

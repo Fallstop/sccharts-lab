@@ -1,0 +1,8 @@
+// The same defect without a dataflow region: k.a[arr[ix()]] = 7 in a transition's effect.
+scchart Main {
+  output int o
+  int arr[2] = {0, 1}
+  class K { int a[2] } k
+  method int ix() { return 1 }
+  initial state A do k.a[arr[ix()]] = 7; o = k.a[1] go to A
+}

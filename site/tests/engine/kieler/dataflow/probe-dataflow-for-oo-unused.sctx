@@ -1,0 +1,7 @@
+// A dataflow for-region that calls a method and never names its counter: KIELER ignores the loop, the call runs
+// once per tick (o is 1, then 2).
+scchart Main {
+  output int o
+  method void add() { o += 1 }
+  dataflow for i : 0 to 1 { add() }
+}

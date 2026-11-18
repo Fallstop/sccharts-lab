@@ -1,0 +1,8 @@
+// For comparison: a chart's own variable (not bound) as the initial value of a method's local is fine.
+scchart Main { output int p initial state S is G(p) }
+scchart G {
+  output int o
+  int N = 6
+  method int get() { int x = N return x }
+  initial state A do o = get() go to A
+}

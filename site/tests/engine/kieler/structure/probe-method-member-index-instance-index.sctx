@@ -1,0 +1,8 @@
+// A call in an operator in the index of the INSTANCE (ks[ix() + 0].a = 7): the assignment's own indices are
+// converted properly, accepted.
+scchart Main {
+  output int o
+  class K { int a } ks[2]
+  method int ix() { return 1 }
+  initial state A do ks[ix() + 0].a = 7; o = ks[1].a go to A
+}

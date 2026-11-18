@@ -1,0 +1,44 @@
+{
+  "hash": "ff66ddb210325b964c3c010dcc969af4b0d7b307",
+  "chart": "tests/engine/kieler/generics/probe-binding-method-scope-for.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name N is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name _Main_local_get is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "v": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 5,
+        "v": 5
+      },
+      "terminated": false
+    }
+  ]
+}

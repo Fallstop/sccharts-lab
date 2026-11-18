@@ -1,0 +1,9 @@
+// The same with an ordinary binding: an input N bound to a variable is that variable again after a loop whose own
+// variable is called N.
+scchart Main { output int p int v = 5 initial state S is G(v, p) }
+scchart G {
+  input int N
+  output int o
+  method int get() { for (int N = 0; N < 1; N++) { } return N }
+  initial state A do o = get() go to A
+}

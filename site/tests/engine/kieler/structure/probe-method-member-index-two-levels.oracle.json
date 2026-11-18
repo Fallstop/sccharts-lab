@@ -1,0 +1,71 @@
+{
+  "hash": "d7e6d1c929a987ded8b33b8fcb732cb53a62c9cf",
+  "chart": "tests/engine/kieler/structure/probe-method-member-index-two-levels.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name _init is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.L.a": {
+      "type": "int",
+      "properties": []
+    },
+    "K.l": {
+      "type": "class",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "k": {
+          "l": {
+            "a": [
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 7,
+        "k": {
+          "l": {
+            "a": [
+              0,
+              7
+            ]
+          }
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

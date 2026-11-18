@@ -1,0 +1,8 @@
+// An array port of an instance is ONE variable in the classic translation (the local has no size): c.a[1] = 7 is
+// read back as c.a[0].
+scchart Main {
+  output int o
+  ref Cell c
+  dataflow { c.a[1] = 7 o = c.a[0] }
+}
+scchart Cell { input int a[2] }

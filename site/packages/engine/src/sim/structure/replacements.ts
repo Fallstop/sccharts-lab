@@ -182,29 +182,74 @@ export class Replacer {
         return g.k === 'expr' ? { ...g, expr: this.expr(g.expr) } : g
     }
 
-    /** replaceValuedObjectReferencesInSclScope: the parameters and locals hide bindings of their names. */
+    /**
+     * replaceValuedObjectReferencesInSclScope: every SCL scope (the body, an `if` branch, a loop, a plain block)
+     * pushes its own declarations as themselves, all at once and for as long as it is walked, the body its
+     * parameters too. So a local hides a bound name inside its block only (after a `for (int N = 0; ...)` the name
+     * `N` is the binding again). A declaration's initial value is not visited (a bound name stays in it and points
+     * out of the model), except that of a `for` loop's own declaration; an `if`'s condition is replaced before the
+     * branch's declarations are pushed.
+     */
     private method(v: CVar) {
         const m = v.method!
-        const frame = [...m.params, ...m.locals]
-        for (const p of frame) this.replacements.push(p.name, { k: 'ref', v: p, idx: [] })
-        m.body = this.statements(m.body)
-        for (const p of frame) this.replacements.pop(p.name)
-    }
-
-    private statements(list: CStmt[]): CStmt[] {
-        return list.map((s): CStmt => {
+        // A body without block numbers (made by a pass): every local hides its name everywhere, as before.
+        const own = (block: number | undefined) => (block === undefined ? [] : m.locals.filter(l => l.block === block))
+        const frame = [...m.params, ...(m.scope === undefined ? m.locals : own(m.scope))]
+        const within = <T>(locals: CVar[], walk: () => T): T => {
+            for (const p of locals) this.replacements.push(p.name, { k: 'ref', v: p, idx: [] })
+            const out = walk()
+            for (const p of locals) this.replacements.pop(p.name)
+            return out
+        }
+        const statements = (list: CStmt[]): CStmt[] => list.map(s => (s.blocks?.length ? within(s.blocks.flatMap(own), () => statement(s)) : statement(s)))
+        const statement = (s: CStmt): CStmt => {
             switch (s.k) {
-                case 'do': return { ...s, f: this.effect(s.f) }
-                case 'if': return { ...s, cond: this.expr(s.cond), then: this.statements(s.then), else: s.else ? this.statements(s.else) : undefined }
-                case 'while': return { ...s, cond: this.expr(s.cond), body: this.statements(s.body) }
-                case 'for': return {
-                    ...s, init: this.statements(s.init), cond: s.cond ? this.expr(s.cond) : undefined,
-                    update: this.statements(s.update), body: this.statements(s.body),
+                case 'do': return s.init && m.scope !== undefined ? s : { ...s, f: this.effect(s.f) }
+                case 'if': {
+                    this.conditionNamesLocal(s.cond, own(s.scope))
+                    const cond = this.expr(s.cond)
+                    const then = within(own(s.scope), () => statements(s.then))
+                    return { ...s, cond, then, else: s.else ? within(own(s.elseScope), () => statements(s.else!)) : undefined }
                 }
+                case 'while': return within(own(s.scope), () => ({ ...s, cond: this.expr(s.cond), body: statements(s.body) }))
+                case 'for': return within(own(s.scope), () => {
+                    // The loop's own declaration (one variable) is the only one whose initial value is visited.
+                    const init = s.init.map((i): CStmt => (i.k === 'do' ? { ...i, f: this.effect(i.f) } : statement(i)))
+                    return { ...s, init, cond: s.cond ? this.expr(s.cond) : undefined, update: statements(s.update), body: statements(s.body) }
+                })
                 case 'return': return { ...s, expr: s.expr ? this.expr(s.expr) : undefined }
                 case 'expr': return { ...s, e: this.expr(s.e) }
                 default: return s
             }
+        }
+        m.body = within(frame, () => statements(m.body))
+    }
+
+    /**
+     * To KIELER the condition of an `if` is inside the scope of the branch's declarations, so a name declared there
+     * is that local in the condition too, but the condition is replaced before the local is pushed: with a value
+     * bound to the name, KIELER tries to give the local the value as its initial value and fails on its container.
+     */
+    private conditionNamesLocal(cond: CExpr, locals: CVar[]) {
+        if (!locals.length) return
+        const hit = (e: CExpr): CRef | undefined => {
+            if (e.k === 'ref') {
+                const bound = e.sub ? undefined : this.replacements.peek(e.v.name)
+                if (bound && isValue(bound) && !(bound.k === 'lit' && bound.konst !== undefined) && locals.some(l => l.name === e.v.name)) return e
+                return e.idx.map(hit).find(Boolean)
+            }
+            if (e.k === 'op') return e.args.map(hit).find(Boolean)
+            if (e.k === 'vector') return e.values.map(hit).find(Boolean)
+            if (e.k === 'call' && e.target && !e.extern) return e.args.map(hit).find(Boolean)
+            return undefined
+        }
+        const r = hit(cond)
+        if (!r) return
+        this.options.report({
+            severity: 'error', code: 'kieler-crash', span: r.span, related: this.options.owner ? [this.options.owner] : undefined,
+            message: `KIELER's compiler crashes on \`${r.v.name}\` in this condition: the branch declares a variable \`${r.v.name}\` of its own, and the name stands for a value here`,
+            kieler: 'java.lang.ClassCastException: class de.cau.cs.kieler.scl.impl.ConditionalImpl cannot be cast to class de.cau.cs.kieler.sccharts.Scope',
+            hint: `To KIELER the condition of an \`if\` already belongs to the block that declares \`${r.v.name}\`. Give the variable declared in the block another name.`,
         })
     }
 
@@ -232,7 +277,7 @@ export class Replacer {
                     this.options.report({
                         severity: 'error', code: 'kieler-crash', span: f.o.span ?? f.ref.span, related: this.options.owner ? [this.options.owner] : undefined,
                         message: `\`${f.ref.v.name}\` stands for the value ${describe(ref)} here and cannot be assigned: KIELER's compiler crashes on this assignment`,
-                        kieler: 'java.lang.ClassCastException: class de.cau.cs.kieler.kexpressions.impl.IntValueImpl cannot be cast to class de.cau.cs.kieler.kexpressions.ValuedObjectReference',
+                        kieler: `java.lang.ClassCastException: class ${valueClass(ref)} cannot be cast to class de.cau.cs.kieler.kexpressions.ValuedObjectReference`,
                         hint: `A generic parameter that is given a value (\`<4>\`) is that value wherever the chart names it. Pass a variable instead (\`<x>\`) if the chart writes it, or copy the parameter into a variable of the chart.`,
                     })
                     return { ...f, expr }
@@ -340,7 +385,8 @@ function describe(e: CExpr): string {
     return e.k === 'lit' ? String(e.v) : e.k === 'vector' ? 'of a vector' : 'null'
 }
 
-function valueClass(e: CExpr): string {
+/** KIELER's class of a value (in its exception texts). */
+export function valueClass(e: CExpr): string {
     const name = e.k === 'lit' ? { bool: 'BoolValueImpl', int: 'IntValueImpl', float: 'FloatValueImpl', string: 'StringValueImpl' }[e.t] : e.k === 'vector' ? 'VectorValueImpl' : 'NullValueImpl'
     return `de.cau.cs.kieler.kexpressions.impl.${name}`
 }

@@ -1,0 +1,6 @@
+// Two uses of the counter are two of KIELER's messages.
+scchart Main {
+  output int o
+  method int one() { return 1 }
+  dataflow for i : 0 to 1 { o = one() + i + i }
+}

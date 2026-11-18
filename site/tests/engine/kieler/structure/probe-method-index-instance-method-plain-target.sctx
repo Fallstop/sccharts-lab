@@ -1,0 +1,8 @@
+// An instance's method as the index of a plain array on the left: accepted.
+scchart Main {
+  output int o
+  int b[2]
+  ref Giver g
+  dataflow { b[g.one()] = 7 o = b[1] }
+}
+scchart Giver { method int one() { return 1 } }

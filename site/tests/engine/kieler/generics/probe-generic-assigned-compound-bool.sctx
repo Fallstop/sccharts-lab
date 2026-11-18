@@ -1,0 +1,3 @@
+// A compound assignment to a parameter that stands for true: the same exception.
+scchart Main { initial state S is G<true> }
+scchart G<N is bool> { signal s initial state A do N += true go to A }

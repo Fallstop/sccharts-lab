@@ -1,0 +1,4 @@
+// An inner state extends Mid(a, p): the index of Mid's own binding b[1] is lost in the same way.
+scchart Main { int a[2] = {4,7} output int p initial state S extends Mid(a, p) { } }
+scchart Mid extends Base(b[1],q) { input int b[2] output int q }
+scchart Base { input int x output int y initial state A do y = x go to A }

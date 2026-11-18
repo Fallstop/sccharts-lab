@@ -1,0 +1,9 @@
+// An instance's method as a member's index on the right: accepted.
+scchart Main {
+  output int o
+  ref Cell c
+  ref Giver g
+  dataflow { c.a[1] = 4 o = c.a[g.one()] }
+}
+scchart Giver { method int one() { return 1 } }
+scchart Cell { input int a[2] }

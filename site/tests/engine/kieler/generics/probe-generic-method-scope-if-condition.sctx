@@ -1,0 +1,9 @@
+// A variable declared in an if's own branch: to KIELER the condition is inside that scope and names the local,
+// which it replaces before the local is pushed, giving the local the value and failing on its container (a
+// ClassCastException).
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  method int get() { int r = 0 if (N > 4) { int N = 1 r = N } else { r = N + 100 } return r * 1000 + N }
+  initial state A do o = get() go to A
+}

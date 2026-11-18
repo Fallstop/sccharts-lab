@@ -1,0 +1,8 @@
+// The same with an input bound to a variable.
+scchart Main { output int p int v = 5 initial state S is G(v, p) }
+scchart G {
+  input int N
+  output int o
+  method int get() { int r = 0 for (int i = N; i < N + 2; i++) { r += 1 } return r * 10 + N }
+  initial state A do o = get() go to A
+}

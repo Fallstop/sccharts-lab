@@ -1,0 +1,4 @@
+// The same as the first with Mid reading b[0] itself: still rejected for x.
+scchart Main extends Mid(a,p) { int a[2] = {4,7} output int p }
+scchart Mid extends Base(b[1],q) { input int b[2] output int q initial state M do q += b[0] go to M }
+scchart Base { input int x output int y initial state A do y = x go to A }

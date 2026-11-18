@@ -1,0 +1,6 @@
+// The counter in an expression in the OO translation: rejected.
+scchart Main {
+  output int o
+  method int one() { return 1 }
+  dataflow for i : 0 to 1 { o = one() + i }
+}

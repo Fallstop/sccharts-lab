@@ -1,0 +1,8 @@
+// A method of an instance called with a vector after it: the vector sets the instance's inputs in order (t.p = 3,
+// t.q = 4) and the call is dropped.
+scchart Main {
+  output int o
+  ref Two t
+  dataflow { t.poke() = {3, 4} o = t.s }
+}
+scchart Two { input int p, q output int s method void poke() { s += 100 } initial state A do s = p * 10 + q go to A }

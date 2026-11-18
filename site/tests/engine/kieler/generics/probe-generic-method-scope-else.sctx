@@ -1,0 +1,8 @@
+// A variable declared in an else branch hides the parameter there only; the condition and the code after the if see
+// the argument.
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  method int get() { int r = 0 if (N > 9) { r = N } else { int N = 2 r = N + 100 } return r * 1000 + N }
+  initial state A do o = get() go to A
+}

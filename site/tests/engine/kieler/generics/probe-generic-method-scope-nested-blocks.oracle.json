@@ -1,0 +1,38 @@
+{
+  "hash": "a686d58926f603b9268fbe916ede704857cb4a96",
+  "chart": "tests/engine/kieler/generics/probe-generic-method-scope-nested-blocks.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__Main_local_get_r is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0__Main_local_get_N is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0__Main_local_get_N_ is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 8705
+      },
+      "terminated": false
+    }
+  ]
+}

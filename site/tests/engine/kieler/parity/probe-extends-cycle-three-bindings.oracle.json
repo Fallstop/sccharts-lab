@@ -1,0 +1,43 @@
+{
+  "hash": "eee0f2dfb0b596729f9cfdf88bf5ca72ff876a81",
+  "chart": "tests/engine/kieler/parity/probe-extends-cycle-three-bindings.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "1:1 Error executing EValidator",
+    "3:19 Inconsistent inheritance hierarchy! Cycle including base state: B",
+    "4:19 Inconsistent inheritance hierarchy! Cycle including base state: C",
+    "5:19 Inconsistent inheritance hierarchy! Cycle including base state: D",
+    "Variable b is declared again along the inheritance hierarchy.",
+    "The compiler ran out of stack space during Reference Expansion."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Error executing EValidator",
+      "line": 1,
+      "column": 1,
+      "code": "org.eclipse.emf.ecore.impl.EClassImpl@52799fa7 (name: ScopeCall) (instanceClassName: null) (abstract: false, interface: false).0"
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: B",
+      "line": 3,
+      "column": 19
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: C",
+      "line": 4,
+      "column": 19
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: D",
+      "line": 5,
+      "column": 19
+    }
+  ],
+  "ticks": []
+}

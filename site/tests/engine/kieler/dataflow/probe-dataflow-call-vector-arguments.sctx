@@ -1,0 +1,6 @@
+// Calls with arguments: the one with a vector is dropped, the one with true runs, the one with false does not.
+scchart Main {
+  output int o
+  method void add(int k) { o += k }
+  dataflow { add(2) = {true, false} add(3) = true add(100) = false }
+}

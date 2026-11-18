@@ -1,0 +1,6 @@
+// A dropped call in the middle of a ; sequence: the assignments around it keep their order.
+scchart Main {
+  output int o
+  method void add() { o += 1 }
+  dataflow { o = 5; add() = {true}; o += 10 }
+}

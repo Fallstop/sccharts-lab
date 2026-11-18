@@ -1,0 +1,4 @@
+// The base of the base has one argument too many: the crash reaches the chart that inherits it.
+scchart Main extends Mid { }
+scchart Mid extends Base(2, 4) { }
+scchart Base { input int x int y = 0 initial state A do y = x go to A }

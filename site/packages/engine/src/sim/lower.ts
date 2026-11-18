@@ -489,11 +489,12 @@ class Lowering {
     // ----- methods and SCL code (structure.md S-43, S-44) -----
 
     /** Variables of a method frame or code block: registered for name resolution, but in no scope. */
-    private frameVars(declarations: Declaration[], into: CVar[]): { v: CVar; init: CExpr; span?: Span }[] {
+    private frameVars(declarations: Declaration[], into: CVar[], block?: number): { v: CVar; init: CExpr; span?: Span }[] {
         const inits: { v: CVar; init: CExpr; span?: Span }[] = []
         for (const d of declarations) {
             for (const vo of d.valuedObjects) {
                 const v = new CVar(vo.name, d.type ?? 'host')
+                if (block !== undefined) v.block = block
                 v.hostType = d.hostType
                 v.decl = vo.id
                 v.span = vo.nameSpan ?? vo.span
@@ -521,21 +522,28 @@ class Lowering {
         const locals: CVar[] = []
         for (const p of d.parameters ?? []) this.frameVars([p], params)
         const by = d.valuedObjects[0]?.id
-        const body = d.body ? this.block(d.body.declarations, d.body.statements, locals, by) : []
+        const scope = this.blockCount++
+        const body = d.body ? this.block(d.body.declarations, d.body.statements, locals, by, scope) : []
         const rt = d.returnType
         const returnType: CMethod['returnType'] = !rt || rt === 'void' ? 'void'
             : (['bool', 'int', 'float', 'string', 'pure', 'host'] as const).find(t => t === rt) ?? 'host'
         const inline = d.annotations.some(a => a.name.toLowerCase() === 'inline')
         return {
-            params, locals, body, returnType, by, span: d.span, ...(inline ? { inline } : {}), ...(contract ? { schedule: contract } : {}),
+            params, locals, body, scope, returnType, by, span: d.span, ...(inline ? { inline } : {}), ...(contract ? { schedule: contract } : {}),
             ...(d.returnParameter ? { returnParam: d.returnParameter } : {}),
         }
     }
 
-    /** An SCL block: its declarations (initialisations become statements where they are written), then statements. */
-    private block(declarations: Declaration[], statements: SclStatement[], locals: CVar[], by: string | undefined): CStmt[] {
+    /** The SCL blocks of method bodies and code blocks, numbered (KIELER's SCL scopes; model.ts CStmt). */
+    private blockCount = 0
+
+    /**
+     * An SCL block: its declarations (initialisations become statements where they are written), then statements.
+     * `scope`: the block's number (its declarations' `block`).
+     */
+    private block(declarations: Declaration[], statements: SclStatement[], locals: CVar[], by: string | undefined, scope: number): CStmt[] {
         const out: CStmt[] = []
-        for (const i of this.frameVars(declarations, locals)) {
+        for (const i of this.frameVars(declarations, locals, scope)) {
             out.push({ k: 'do', init: true, f: { k: 'assign', ref: { k: 'ref', v: i.v, idx: [], span: i.span }, op: '=', expr: i.init, o: { by, span: i.span, hidden: true } } })
         }
         for (const s of statements) out.push(...this.statement(s, locals, by))
@@ -547,22 +555,35 @@ class Lowering {
             case 'assign': case 'postfix': case 'call': case 'print': case 'randomize': case 'hostcode':
                 return [{ k: 'do', f: this.effect(s, by ?? '') }]
             case 'return': return [{ k: 'return', expr: s.expression ? this.expr(s.expression) : undefined, span: s.span }]
-            case 'block': return this.block(s.declarations, s.statements, locals, by)
-            case 'if': return [{
-                // `if x > 0 schedule s 1 { ... }`: the schedule stays on the condition, as on a trigger.
-                k: 'if', cond: this.trigger(s.condition, s.conditionSchedule), span: s.span,
-                then: this.block(s.declarations, s.statements, locals, by),
-                else: s.else ? this.block(s.else.declarations, s.else.statements, locals, by) : undefined,
-            }]
-            case 'while': return [{ k: 'while', cond: this.expr(s.condition), body: this.block(s.declarations, s.statements, locals, by), span: s.span }]
+            case 'block': {
+                // A plain block is flattened; its statements remember it (outermost block first).
+                const scope = this.blockCount++
+                return this.block(s.declarations, s.statements, locals, by, scope).map(x => ({ ...x, blocks: [scope, ...(x.blocks ?? [])] }))
+            }
+            case 'if': {
+                const scope = this.blockCount++
+                const elseScope = s.else ? this.blockCount++ : undefined
+                return [{
+                    // `if x > 0 schedule s 1 { ... }`: the schedule stays on the condition, as on a trigger.
+                    k: 'if', cond: this.trigger(s.condition, s.conditionSchedule), span: s.span, scope,
+                    then: this.block(s.declarations, s.statements, locals, by, scope),
+                    ...(s.else ? { else: this.block(s.else.declarations, s.else.statements, locals, by, elseScope!), elseScope } : { else: undefined }),
+                }]
+            }
+            case 'while': {
+                const scope = this.blockCount++
+                return [{ k: 'while', cond: this.expr(s.condition), body: this.block(s.declarations, s.statements, locals, by, scope), scope, span: s.span }]
+            }
             case 'for': {
+                // One scope for the loop: its own declaration and the body's.
+                const scope = this.blockCount++
                 let init: CStmt[] = []
-                if (s.init?.kind === 'declaration') init = this.block([s.init], [], locals, by)
+                if (s.init?.kind === 'declaration') init = this.block([s.init], [], locals, by, scope)
                 else if (s.init) init = this.statement(s.init, locals, by)
                 return [{
-                    k: 'for', init, cond: s.condition ? this.expr(s.condition) : undefined, span: s.span,
+                    k: 'for', init, cond: s.condition ? this.expr(s.condition) : undefined, span: s.span, scope,
                     update: s.update ? this.statement(s.update, locals, by) : [],
-                    body: this.block(s.declarations, s.statements, locals, by),
+                    body: this.block(s.declarations, s.statements, locals, by, scope),
                 }]
             }
             case 'expression': return [{ k: 'expr', e: this.expr(s.expression), span: s.span }]
@@ -582,7 +603,8 @@ class Lowering {
         v.generated = true
         v.span = f.span
         const locals: CVar[] = []
-        v.method = { params: [], locals, body: this.block(f.declarations ?? [], f.statements ?? [], locals, by), returnType: 'void', by, span: f.span }
+        const scope = this.blockCount++
+        v.method = { params: [], locals, body: this.block(f.declarations ?? [], f.statements ?? [], locals, by, scope), scope, returnType: 'void', by, span: f.span }
         if (owner) {
             v.scope = owner
             owner.decls.push(v)

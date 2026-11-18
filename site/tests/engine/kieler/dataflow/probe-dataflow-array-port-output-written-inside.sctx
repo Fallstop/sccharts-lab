@@ -1,0 +1,7 @@
+// The chart writes an element of its own array output: gcc rejects the subscript on the region's single variable.
+scchart Main {
+  output int o
+  ref Cell c
+  dataflow { o = c.b[1] + c.b[0] }
+}
+scchart Cell { output int b[2] initial state A do b[1] = 4 go to A }

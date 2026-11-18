@@ -1,0 +1,4 @@
+// A cycle of generic charts with generic arguments.
+scchart Main { initial state S is B<1> }
+scchart B<N is int> extends C<N> { }
+scchart C<N is int> extends B<N> { }

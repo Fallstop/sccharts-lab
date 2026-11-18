@@ -2,11 +2,14 @@
 // the simulator rejects them too, with gcc's message in `kieler`.
 
 import type { Diagnostic, Span } from '../types'
-import { allActionSites, allScopes, effectExprs, walkExpr, type CEffect, type CExpr, type CState, type CStmt, type CVar } from './model'
+import { allActionSites, allScopes, effectExprs, walkExpr, type CEffect, type CExpr, type CRef, type CState, type CStmt, type CVar, type Scope } from './model'
 import { isInlined } from './structure/methods'
+import { DF_SCALAR_PORT } from './passes/dataflow'
 import { KEYWORDS } from '../parser/lexer'
 
 export const GCC_FAILED = 'Compiler did not return success (exit value != 0)'
+
+const SCALAR_PORT_HINT = 'A dataflow region that calls no method gives every input and output of a wired instance one plain variable, also where the chart declares an array. Wire the instance in a dataflow region that calls a method (it then stays an object with its arrays), or use single inputs and outputs instead of the array.'
 
 /** C keywords: a top-level variable of that name breaks the generated C code (KIELER does not rename them). */
 export const C_KEYWORDS = new Set([
@@ -23,6 +26,30 @@ function cKeywordError(name: string): string {
     if (name === 'union') return 'expected ‘{’ before ‘;’ token'
     if (name === 'volatile' || name === 'long' || name === 'short' || name === 'signed' || name === 'unsigned') return `expected identifier before ‘${name}’`
     return `expected identifier or ‘(’ before ‘${name}’`
+}
+
+/**
+ * The array whose address an expression is in C: the array's name with fewer indices than it has dimensions, also
+ * with a number added or subtracted (pointer arithmetic).
+ */
+function arrayAddress(e: CExpr): CRef | undefined {
+    if (e.k === 'ref') {
+        let r = e
+        while (r.sub) r = r.sub
+        // (A member's dimensions include those of an array of instances it belongs to.)
+        return r.v.dims.length > r.idx.length && !r.v.method && r.v.declKind !== 'method' ? r : undefined
+    }
+    if (e.k === 'op' && (e.op === '+' || e.op === '-') && e.args.length === 2) {
+        const [a, b] = e.args.map(arrayAddress)
+        // (The difference of two addresses is a number.)
+        if (a && b) return undefined
+        return a ?? (e.op === '+' ? b : undefined)
+    }
+    return undefined
+}
+
+function cType(v: CVar): string {
+    return v.type === 'bool' ? 'char' : v.type === 'float' ? 'float' : v.type === 'string' ? 'char *' : 'int'
 }
 
 export function checkCodegen(root: CState): Diagnostic[] {
@@ -184,6 +211,24 @@ export function checkCodegen(root: CState): Diagnostic[] {
                 let target = f.ref
                 while (target.sub) target = target.sub
                 const v = target.v
+                if (v.tags.has(DF_SCALAR_PORT) && f.expr?.k === 'vector') {
+                    add({
+                        severity: 'error', code: 'dataflow-array-port', span: f.o.span, related,
+                        message: `\`${v.display ?? v.name}\` is an array of a chart instance that a dataflow region wires: KIELER makes a single variable of it, which cannot take a vector`,
+                        kieler: `expected expression before \u2018{\u2019 token\n${GCC_FAILED}`,
+                        hint: SCALAR_PORT_HINT,
+                    })
+                }
+                // A whole array where a number is assigned: its address in C, which gcc does not convert.
+                const whole = f.expr && v.dims.length <= target.idx.length && (v.type === 'int' || v.type === 'bool') ? arrayAddress(f.expr) : undefined
+                if (whole) {
+                    add({
+                        severity: 'error', code: 'array-as-value', span: whole.span ?? f.o.span, related,
+                        message: `\`${whole.v.display ?? whole.v.name}\` is an array: it cannot be used as a single value`,
+                        kieler: `assignment to \u2018${v.type === 'bool' ? 'char' : 'int'}\u2019 from \u2018${cType(whole.v)} *\u2019 makes integer from pointer without a cast [-Wint-conversion]\n${GCC_FAILED}`,
+                        hint: `Name the element you mean (\`${whole.v.name}[0]\`). In KIELER's C code the array's name alone is its address.`,
+                    })
+                }
                 if (v.dims.length > target.idx.length && f.expr && f.expr.k !== 'vector') {
                     add({
                         severity: 'error', code: 'array-assignment', span: f.o.span, related,
@@ -202,8 +247,49 @@ export function checkCodegen(root: CState): Diagnostic[] {
                 }
             }
         }
+        for (const f of holder.effects) {
+            // KIELER's SCG copies the indices of a target's members as they are and only redirects an index that is a
+            // plain reference to the SCG's own variables (SCGTransformation, the assignment's subReference): a method
+            // called deeper inside such an index, or through an instance, still names the chart's method, which the
+            // method inliner does not know. The call stays in the C code and its function is removed as unused.
+            if (f.k !== 'assign') continue
+            // A member of an instance is one variable here (`k.a`, after the instance's own indices), or a `sub`.
+            const members: { name: string; idx: CExpr[] }[] = []
+            if (f.ref.v.member) members.push({ name: f.ref.v.member.name, idx: f.ref.idx.slice(f.ref.v.member.of.dims.length) })
+            for (let m = f.ref.sub; m; m = m.sub) members.push({ name: m.v.name, idx: m.idx })
+            for (const member of members) {
+                for (const index of member.idx) {
+                    walkExpr(index, x => {
+                        if (x.k !== 'call' || x.extern || !x.target) return
+                        let m = x.target
+                        while (m.sub) m = m.sub
+                        if (!m.v.method && m.v.declKind !== 'method') return
+                        // Called by its name alone: a method of the chart around the effect (not of an instance).
+                        let around: Scope | undefined = site.owner
+                        while (around && around !== x.target.v.scope) around = around.parent
+                        const own = x.target.v.member ? !!x.bare : !!around && !x.target.v.method?.instance
+                        const direct = x === index && !x.target.sub && own
+                        if (direct) return
+                        add({
+                            severity: 'error', code: 'method-in-member-index', span: x.span ?? f.o.span, related,
+                            message: `KIELER cannot compile the call of \`${x.name}\` inside the index of \`${member.name}\`, a member that is assigned`,
+                            kieler: `implicit declaration of function \u2018${x.name}\u2019 [-Wimplicit-function-declaration]\n${GCC_FAILED}`,
+                            hint: `In the index of an assigned member (\`c.a[...] = ...\`) KIELER only finds a method called as the whole index and by its name alone (\`c.a[m()]\`). Compute the index into a variable first (\`i = ${x.name}(...)\`) and write \`${member.name}[i]\`.`,
+                        })
+                    })
+                }
+            }
+        }
         for (const e of exprs) {
             walkExpr(e, x => {
+                if (x.k === 'ref' && x.idx.length && x.v.tags.has(DF_SCALAR_PORT)) {
+                    add({
+                        severity: 'error', code: 'dataflow-array-port', span: x.span ?? x.v.span, related,
+                        message: `\`${x.v.display ?? x.v.name}\` is an array of a chart instance that a dataflow region wires: KIELER makes a single variable of it, which cannot be indexed`,
+                        kieler: `subscripted value is neither array nor pointer nor vector\n${GCC_FAILED}`,
+                        hint: SCALAR_PORT_HINT,
+                    })
+                }
                 if (x.k !== 'op') return
                 if (x.op === '>>>') {
                     add({

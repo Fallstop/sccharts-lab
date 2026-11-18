@@ -1,0 +1,7 @@
+// An array port whose size is a constant of the chart: one variable as well.
+scchart Main {
+  output int o
+  ref Cell c
+  dataflow { c.a[1] = 7 o = c.a[0] }
+}
+scchart Cell { const int N = 2 input int a[N] }

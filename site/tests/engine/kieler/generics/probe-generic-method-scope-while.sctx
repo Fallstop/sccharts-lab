@@ -1,0 +1,7 @@
+// A variable declared in a while loop hides the parameter inside the loop; after it N is the argument.
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  method int get() { int k = 0 while (k < 1) { int N = 3 k += N } return N + k }
+  initial state A do o = get() go to A
+}

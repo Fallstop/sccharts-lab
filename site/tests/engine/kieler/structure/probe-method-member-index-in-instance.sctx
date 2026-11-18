@@ -1,0 +1,13 @@
+// Inside a chart used as an instance: a call in an operator in the index of an assigned member.
+scchart Main {
+  output int o
+  ref Inner g
+  dataflow { g.poke() o = g.r }
+}
+scchart Inner {
+  output int r
+  class K { int a[2] } k
+  method int one() { return 1 }
+  method void poke() { r = k.a[1] }
+  initial state A do k.a[one() + 0] = 7 go to A
+}

@@ -1,0 +1,60 @@
+{
+  "hash": "033c559906c772f2de0d552f40bd33ec6df5fe17",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-vector-instance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Two1.p": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.q": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "t": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "t": {
+          "p": 3,
+          "q": 4,
+          "s": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 34,
+        "t": {
+          "p": 3,
+          "q": 4,
+          "s": 34
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+// Assigning to a generic parameter that stands for true: KIELER's exception names BoolValueImpl.
+scchart Main { initial state S is G<true> }
+scchart G<N is bool> { initial state A do N = true go to A }

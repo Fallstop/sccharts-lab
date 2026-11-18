@@ -1,0 +1,39 @@
+{
+  "hash": "aa62830fabac62d9ede7c44be05ea6595c9203f5",
+  "chart": "tests/engine/kieler/generics/probe-generic-method-scope-while.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "ValuedObject with name N is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name _Main_local_get is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 8
+      },
+      "terminated": false
+    }
+  ]
+}

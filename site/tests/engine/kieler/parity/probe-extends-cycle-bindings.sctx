@@ -1,0 +1,5 @@
+// Two charts that extend each other with bindings, one of them referenced: an inconsistent hierarchy, reported as
+// that (official KIELER does not come back from it).
+scchart Main { initial state S is B(1) }
+scchart B extends C(1) { input int b }
+scchart C extends B(1) { input int c }

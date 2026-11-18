@@ -1,0 +1,9 @@
+// A method called in the index of a target's member (c.a[ix()]) selects the OO translation like a call anywhere
+// else in the region: c stays an object in the pool.
+scchart Main {
+  output int o
+  ref Cell c
+  method int ix() { return 1 }
+  dataflow { c.a[ix()] = 7 o = c.a[1] }
+}
+scchart Cell { input int a[2] }

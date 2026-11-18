@@ -1,0 +1,4 @@
+// Two charts that extend each other, one of them referenced.
+scchart Main { initial state S is B }
+scchart B extends C { }
+scchart C extends B { }

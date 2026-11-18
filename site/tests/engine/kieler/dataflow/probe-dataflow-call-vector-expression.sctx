@@ -1,0 +1,7 @@
+// A vector holding an expression after a call, next to a vector assigned to an array.
+scchart Main {
+  output int o
+  int arr[2]
+  method void add() { o += 1 }
+  dataflow { add() = {arr[0] == 0} arr = {1, 2} }
+}

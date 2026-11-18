@@ -1,0 +1,3 @@
+// A string as a generic argument is rejected before that (a literal of type UNKNOWN).
+scchart Main { initial state S is G<"a"> }
+scchart G<N is string> { initial state A do N = "b" go to A }

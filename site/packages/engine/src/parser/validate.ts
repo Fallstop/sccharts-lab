@@ -433,7 +433,8 @@ class Validator {
                 }
             }
         }
-        if (region.forLoop) this.checkForRegion(region)
+        // KIELER checks the range of a control-flow region only: a dataflow region's loop is never looked at.
+        if (region.forLoop && region.regionType !== 'dataflow') this.checkForRegion(region)
         if (region.override) {
             if (!region.name) {
                 this.add('error', 'override-anonymous', region.span, 'Only a named region can be overridden', 'Cannot override anonymous region.', undefined, [region.id])

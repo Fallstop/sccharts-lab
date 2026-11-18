@@ -1,0 +1,6 @@
+// A named dataflow for-region inside a state.
+scchart Main {
+  output int o
+  method void add() { o += 1 }
+  initial state S { dataflow D for i : 0 to 1 { add() } } 
+}

@@ -1,0 +1,5 @@
+// A dataflow for-region without method calls that never names its counter: the equation runs once per tick.
+scchart Main {
+  output int o
+  dataflow for i : 0 to 1 { o = 4 }
+}

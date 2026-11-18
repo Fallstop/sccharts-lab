@@ -1,0 +1,28 @@
+{
+  "hash": "a42235b0312265da9c23d0b70b893ede4729f67a",
+  "chart": "tests/engine/kieler/parity/probe-extends-cycle-ref-declaration.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:19 Inconsistent inheritance hierarchy! Cycle including base state: B",
+    "4:19 Inconsistent inheritance hierarchy! Cycle including base state: C",
+    "Variable b is declared again along the inheritance hierarchy.",
+    "The compiler ran out of stack space during Reference Expansion."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: B",
+      "line": 3,
+      "column": 19
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: C",
+      "line": 4,
+      "column": 19
+    }
+  ],
+  "ticks": []
+}

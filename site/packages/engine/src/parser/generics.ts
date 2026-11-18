@@ -80,13 +80,15 @@ export function inheritedReferences(state: State, index: ModelIndex): { ref: Non
  * The interface a reference binds (KIELER's createBindings targetVOs): the chart's own inputs and outputs in
  * declaration order, then the visible inherited ones that the base references on the way do not bind themselves.
  */
-export function interfaceOf(target: State, index: ModelIndex): ValuedObject[] {
+export function interfaceOf(target: State, index: ModelIndex, path: State[] = []): ValuedObject[] {
     const out: ValuedObject[] = []
     for (const d of target.declarations) if (d.input || d.output) out.push(...d.valuedObjects)
     const bound = new Set<ValuedObject>()
+    const around = [...path, target]
     for (const { ref, target: base } of inheritedReferences(target, index)) {
-        if (!ref.parameters.length) continue
-        for (const b of positionalBindings(interfaceOf(base, index), ref.parameters)) if (b.target && !b.error) bound.add(b.target)
+        // A cycle of base charts (rejected as an inconsistent hierarchy): the chart's interface is not asked again.
+        if (!ref.parameters.length || around.includes(base)) continue
+        for (const b of positionalBindings(interfaceOf(base, index, around), ref.parameters)) if (b.target && !b.error) bound.add(b.target)
     }
     for (const base of allInheritedStates(target, index)) {
         for (const d of base.declarations) if ((d.input || d.output) && !isPrivate(d)) for (const vo of d.valuedObjects) if (!bound.has(vo)) out.push(vo)

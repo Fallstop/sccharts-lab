@@ -1,0 +1,12 @@
+// A method called inside another index in the index of an assigned member (c.a[arr[ix()]] = 7): KIELER's SCG copies
+// a member's indices as they are, the inliner does not know the call and removes the method as unused, and gcc
+// finds no function ix.
+scchart Main {
+  output int o
+  int arr[2] = {0, 1}
+  ref Cell c
+  method int ix() { return 1 }
+  dataflow { c.a[arr[ix()]] = 7 o = c.a[1] }
+}
+scchart Cell { input int a[2] output int b[2] initial state A do b[0] = a[0] + 10; b[1] = a[1] + 20 go to A }
+scchart Index { output int n = 1 }

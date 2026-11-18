@@ -1,0 +1,26 @@
+{
+  "hash": "b0a546c5934d82010d384d82d1475332e36db947",
+  "chart": "tests/engine/kieler/parity/probe-extends-cycle-unused.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "4:19 Inconsistent inheritance hierarchy! Cycle including base state: B",
+    "5:19 Inconsistent inheritance hierarchy! Cycle including base state: C"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: B",
+      "line": 4,
+      "column": 19
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: C",
+      "line": 5,
+      "column": 19
+    }
+  ],
+  "ticks": []
+}

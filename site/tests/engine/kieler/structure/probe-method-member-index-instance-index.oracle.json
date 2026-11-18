@@ -1,0 +1,66 @@
+{
+  "hash": "f204da938089b7bfe175d37f68c0a1bfe9604100",
+  "chart": "tests/engine/kieler/structure/probe-method-member-index-instance-index.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.a": {
+      "type": "int",
+      "properties": []
+    },
+    "ks": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "ks": [
+          {
+            "a": 0
+          },
+          {
+            "a": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 7,
+        "ks": [
+          {
+            "a": 0
+          },
+          {
+            "a": 7
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+// A cycle of referenced generic charts.
+scchart Main { initial state S is B<1> }
+scchart B<N is int> { initial state T is C<N> }
+scchart C<N is int> { initial state U is B<N> }

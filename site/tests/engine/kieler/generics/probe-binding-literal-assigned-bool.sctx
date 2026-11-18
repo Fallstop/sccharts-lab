@@ -1,0 +1,4 @@
+// For comparison: a referenced chart (is Base(true)) keeps the input as a variable that starts with the value, so
+// assigning it is fine.
+scchart Main { initial state S is Base(true) }
+scchart Base { input bool x initial state A do x = false go to A }

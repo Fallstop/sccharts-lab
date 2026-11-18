@@ -1,0 +1,8 @@
+// A method call in the second index of a member (g.m[0][ix()]) selects the OO translation too.
+scchart Main {
+  output int o
+  ref Grid g
+  method int ix() { return 1 }
+  dataflow { g.m[0][ix()] = 3 o = g.m[0][1] }
+}
+scchart Grid { input int m[2][2] }

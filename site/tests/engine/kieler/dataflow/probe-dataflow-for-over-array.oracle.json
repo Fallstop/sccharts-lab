@@ -1,0 +1,46 @@
+{
+  "hash": "6276a093ac4243c6021f9816099a268fb9d8a2b8",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-for-over-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "arr": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "arr": [
+          0,
+          0
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 2,
+        "arr": [
+          0,
+          0
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

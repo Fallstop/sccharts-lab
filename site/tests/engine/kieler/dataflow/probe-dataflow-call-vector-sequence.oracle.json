@@ -1,0 +1,36 @@
+{
+  "hash": "385405b5bdcc9541184b205ccca6ecf0bbb49075",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-vector-sequence.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _Main_local_seq0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 15
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 15
+      },
+      "terminated": false
+    }
+  ]
+}

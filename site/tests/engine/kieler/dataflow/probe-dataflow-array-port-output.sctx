@@ -1,0 +1,7 @@
+// An array output read through the classic translation: a single variable, 0.
+scchart Main {
+  output int o
+  ref Cell c
+  dataflow { o = c.b[1] }
+}
+scchart Cell { output int b[2] }

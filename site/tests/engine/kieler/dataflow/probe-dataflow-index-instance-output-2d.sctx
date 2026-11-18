@@ -1,0 +1,9 @@
+// Both indices of a port are dropped (g.m[ix.n][0] and g.m[1][0] are the one variable __df_g_m).
+scchart Main {
+  output int o
+  ref Grid g
+  ref Index ix
+  dataflow { g.m[ix.n][0] = 3 o = g.m[1][0] }
+}
+scchart Grid { input int m[2][2] }
+scchart Index { output int n = 1 }

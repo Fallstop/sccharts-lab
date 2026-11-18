@@ -1,0 +1,27 @@
+{
+  "hash": "35c32519c50dde27700c829a5abdd20379ca608e",
+  "chart": "tests/engine/kieler/parity/probe-extends-cycle-root-bindings.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "2:22 Inconsistent inheritance hierarchy! Cycle including base state: Main",
+    "3:19 Inconsistent inheritance hierarchy! Cycle including base state: B",
+    "The compiler ran out of stack space during Reference Expansion."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: Main",
+      "line": 2,
+      "column": 22
+    },
+    {
+      "severity": 1,
+      "message": "Inconsistent inheritance hierarchy! Cycle including base state: B",
+      "line": 3,
+      "column": 19
+    }
+  ],
+  "ticks": []
+}

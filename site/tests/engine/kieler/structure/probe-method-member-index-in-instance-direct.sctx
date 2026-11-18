@@ -1,0 +1,14 @@
+// Inside a chart used as an instance even the call as the whole index fails: the method is the instance's class's
+// there, reached through the instance.
+scchart Main {
+  output int o
+  ref Inner g
+  dataflow { g.poke() o = g.r }
+}
+scchart Inner {
+  output int r
+  class K { int a[2] } k
+  method int one() { return 1 }
+  method void poke() { r = k.a[1] }
+  initial state A do k.a[one()] = 7 go to A
+}

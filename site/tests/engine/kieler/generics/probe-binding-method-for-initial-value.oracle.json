@@ -1,0 +1,47 @@
+{
+  "hash": "f34938a762a5a077e253f6d4bdcf2d226f6db734",
+  "chart": "tests/engine/kieler/generics/probe-binding-method-for-initial-value.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Could not redirect VOR to new VO when copying method. VO name: v",
+    "Could not redirect VOR to new VO when copying method. VO name: v",
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name _Main_local_get is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "v": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 25,
+        "v": 5
+      },
+      "terminated": false
+    }
+  ]
+}

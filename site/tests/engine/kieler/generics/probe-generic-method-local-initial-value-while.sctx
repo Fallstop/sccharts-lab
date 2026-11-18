@@ -1,0 +1,7 @@
+// The same in a while loop.
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  method int get() { int k = 0 while (k < 1) { int x = N k += x } return k }
+  initial state A do o = get() go to A
+}

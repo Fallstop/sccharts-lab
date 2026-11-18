@@ -1,0 +1,56 @@
+{
+  "hash": "64509a6585332a087fb469e228d503df51b95c26",
+  "chart": "tests/engine/kieler/structure/probe-method-member-index-read-instance-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘array’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cell1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "c": {
+          "a": [
+            0,
+            4
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "c": {
+          "a": [
+            0,
+            4
+          ]
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

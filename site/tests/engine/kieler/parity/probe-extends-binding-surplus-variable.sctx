@@ -1,0 +1,3 @@
+// One variable too many: a NullPointerException as well (with another text).
+scchart Main extends Base(a, b) { int a = 2 int b = 4 }
+scchart Base { input int x int y = 0 initial state A do y = x go to A }

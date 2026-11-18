@@ -45,6 +45,8 @@ export class CVar {
     display?: string
     /** What a generated variable is for: 'value' | 'curval' | 'pre' | 'reg' | 'term' | 'trig' | 'exit' | ... */
     role?: string
+    /** A variable of a method body or code block: the SCL block that declares it (CMethod.scope, CStmt scopes). */
+    block?: number
     /** The source variable a generated one belongs to (the signal of `V_val`, the operand of `_pre_x`). */
     of?: CVar
     /** Created by a pass (KIELER prefixes such names with `_`; they are not in KIELER's data pool). */
@@ -215,13 +217,21 @@ export type CEffect =
     | { k: 'mark'; m: Mark; o: EffectOrigin }
     | { k: 'unsupported'; what: string; o: EffectOrigin }
 
-/** A statement of an SCL body (methods, and code effects `do { ... }`, which KIELER turns into methods). */
-export type CStmt =
+/**
+ * A statement of an SCL body (methods, and code effects `do { ... }`, which KIELER turns into methods). The blocks of
+ * a body are KIELER's SCL scopes, numbered by the lowering (a variable's `block`): `scope` is the block of an `if`'s
+ * then branch, of a loop (a `for`'s own declaration included) and `elseScope` the else branch's; a plain `{ ... }`
+ * block is flattened into the statements around it, each of which keeps the blocks it was written in (`blocks`,
+ * outermost first). structure/replacements.ts hides bound names block by block with them.
+ */
+export type CStmt = CStatement & { blocks?: number[] }
+
+type CStatement =
     /** An effect statement: assignment, `x++`, call, print, ... `init`: the initial value of a local declaration. */
     | { k: 'do'; f: CEffect; init?: boolean }
-    | { k: 'if'; cond: CExpr; then: CStmt[]; else?: CStmt[]; span?: Span }
-    | { k: 'while'; cond: CExpr; body: CStmt[]; span?: Span }
-    | { k: 'for'; init: CStmt[]; cond?: CExpr; update: CStmt[]; body: CStmt[]; span?: Span }
+    | { k: 'if'; cond: CExpr; then: CStmt[]; else?: CStmt[]; scope?: number; elseScope?: number; span?: Span }
+    | { k: 'while'; cond: CExpr; body: CStmt[]; scope?: number; span?: Span }
+    | { k: 'for'; init: CStmt[]; cond?: CExpr; update: CStmt[]; body: CStmt[]; scope?: number; span?: Span }
     | { k: 'return'; expr?: CExpr; span?: Span }
     /** SCL `name:` and `goto name` (a jump to a label of this block or an enclosing one). */
     | { k: 'label'; name: string; span?: Span }
@@ -253,6 +263,8 @@ export interface CMethod {
     params: CVar[]
     /** Every local declared in the body (initialisations are `do` statements where they are declared). */
     locals: CVar[]
+    /** The body's own block (see CStmt): the locals declared at its top level have this `block`. */
+    scope?: number
     body: CStmt[]
     /** Return type as written ('void' when there is none). */
     returnType: ValueType | 'void'

@@ -1,0 +1,11 @@
+// An instance's output used only as the index of another instance's port (c.a[ix.n]): KIELER's classic translation
+// makes both instances, puts the port's local in place of c.a and drops the index with everything in it, so the
+// equation writes the one variable __df_c_a and o is 7.
+scchart Main {
+  output int o
+  ref Cell c
+  ref Index ix
+  dataflow { c.a[ix.n] = 7 o = c.a[1] }
+}
+scchart Cell { input int a[2] }
+scchart Index { output int n = 1 }

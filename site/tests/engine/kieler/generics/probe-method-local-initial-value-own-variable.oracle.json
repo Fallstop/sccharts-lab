@@ -1,0 +1,36 @@
+{
+  "hash": "4fe7b2f5f68777e25fef4059fa67b3fe92ba82f7",
+  "chart": "tests/engine/kieler/generics/probe-method-local-initial-value-own-variable.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__Main_local_get_x is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 6
+      },
+      "terminated": false
+    }
+  ]
+}

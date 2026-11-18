@@ -1,0 +1,4 @@
+// One literal too many after extends: KIELER's binding has no target and its Inheritance processor asks it for one
+// (a NullPointerException).
+scchart Main extends Base(2, 4) { }
+scchart Base { input int x int y = 0 initial state A do y = x go to A }

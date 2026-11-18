@@ -1,0 +1,8 @@
+// The instantiated chart passes its array port on to a referenced chart without indexing it: accepted.
+scchart Main {
+  output int o
+  ref Outer c
+  dataflow { c.a[0] = 7 o = c.s }
+}
+scchart Outer { input int a[2] output int s initial state X is Cell(a, s) }
+scchart Cell { input int a[2] output int s initial state A do s = 1 go to A }

@@ -1,0 +1,8 @@
+// A for loop's own variable hides the generic parameter of the same name inside the loop only: after it, N is the
+// argument again (get() returns 5, not the counter's last value).
+scchart Main { output int p initial state S is G<5>(p) }
+scchart G<N is int> {
+  output int o
+  method int get() { for (int N = 0; N < 1; N++) { } return N }
+  initial state A do o = get() go to A
+}
