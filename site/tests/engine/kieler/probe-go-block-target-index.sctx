@@ -1,0 +1,8 @@
+// A first-tick assignment whose target's index is a variable that an earlier assignment sets from an input:
+// KIELER moves a[j] = 7 into reset(), where j is still 0, and leaves j = i in the tick (basics.md B-34).
+scchart ProbeGoBlockTargetIndex {
+  input int i
+  int j
+  output int a[2]
+  initial state A { entry do j = i; a[j] = 7 }
+}

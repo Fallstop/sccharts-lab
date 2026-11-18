@@ -238,6 +238,8 @@ function vars(f: CEffect): { writes: Set<unknown>; reads: Set<unknown> } {
     if (f.k === 'assign') {
         writes.add(lowermost(f.ref).v)
         walkExpr(f.expr, x => { if (x.k === 'ref') reads.add(x.v) })
+        // The indices of the target are read too (`a[j] = 7` moved before `j = i`).
+        for (let r: CRef | undefined = f.ref; r; r = r.sub) for (const i of r.idx) walkExpr(i, x => { if (x.k === 'ref') reads.add(x.v) })
         if (f.op !== '=') reads.add(lowermost(f.ref).v)
     }
     return { writes, reads }
