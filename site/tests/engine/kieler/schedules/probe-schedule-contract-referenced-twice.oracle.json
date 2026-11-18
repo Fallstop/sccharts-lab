@@ -1,0 +1,64 @@
+{
+  "hash": "381670b2d0acae82dea16804dbb07610caf15abf",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-referenced-twice.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore.",
+    "ValuedObject with name C_c_s1 is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1__E16b_local_c_set_x is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn4__E16b_local_c1_set_x is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "C3.v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "p": 0
+      },
+      "terminated": false
+    }
+  ]
+}
