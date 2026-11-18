@@ -97,6 +97,8 @@ export const PROFILES: Record<string, Profile> = {
     nested: { features: [...BASE, 'nested', 'actions'], optional: ['structs', 'classes', 'code', 'signals', 'count', 'references'], optionalRate: 0.3 },
     // Written schedules ordering concurrent writes of w, in two or three regions.
     schedules: { features: ['hierarchy', 'concurrency', 'data', 'immediate', 'joins', 'schedules'], optional: ['actions', 'signals', 'aborts', 'references'], optionalRate: 0.3, roots: [2, 2, 3], maxDepth: 1 },
+    // A template of its own (randomChart): random() and randomize() wherever KIELER's C code can call them.
+    random: { features: [...BASE, 'classes'] },
     // A template of its own (dataflowObjectsChart): dataflow regions with chart instances, calls and schedules.
     dataflowObjects: { features: [...BASE, 'dataflow', 'classes', 'schedules'] },
     // Generic charts among ordinary behaviour: references, declared instances, extends, inner extends, region references.
@@ -1071,6 +1073,65 @@ function instanceForms(r: Rng, index: number, second: boolean): { decls: string[
     return { decls, region, children }
 }
 
+/**
+ * The `random` profile's chart: `random()` (C's rand() as a float in [0, 1]) and `randomize()` (srand(time(NULL)))
+ * in the places KIELER's C code can call them: effects and triggers of two concurrent regions, the first tick (an
+ * initial value, the initial state's entry action, an immediate transition: KIELER moves such code into reset()),
+ * short methods it copies into place and one with a loop that stays a C function, a class instance's methods, a
+ * referenced chart, and code nothing reaches (a method never called, a state never entered), which decides whether
+ * KIELER's C file includes <stdlib.h>. The comparison finds the clock seconds KIELER seeded with (compare.ts).
+ */
+function randomChart(r: Rng, index: number): string {
+    const lines = [`scchart Q${index} {`, '  input bool a, b, c, d', '  input int n', '  output int x = 0, y = 0, z = 0, w = 0', '  output float f = 0, g = 0']
+    const draw = () => r.pick(['random() * 6', 'random() * 100', 'random() * 1000 + 1', '(random() + random()) * 10', 'random() * (n + 2)'])
+    const roll = r.chance(0.5)
+    const seed = r.chance(0.35)
+    const big = r.chance(0.3)
+    const die = r.chance(0.35)
+    const sub = r.chance(0.25)
+    if (r.chance(0.2)) lines.push(`  int k = ${draw()}`)
+    if (roll) lines.push('  method int roll(int m) { return random() * m }')
+    if (seed) lines.push('  method void seed() { randomize() }')
+    if (big) lines.push('  method int big() { int t = 0; for (int j = 0; j < 2; j++) { t += random() * 4 } return t }')
+    if (r.chance(0.15)) lines.push(r.pick(['  method void never() { randomize() }', '  method int neverRoll() { return random() * 3 }']))
+    if (die) lines.push(`  class Die { int v = 0  void roll() { v = random() * 6 }${r.chance(0.6) ? '  void seed() { randomize() }' : ''} } die`)
+    // The effects of the first region write x, y and f, those of the second z, w and g: no conflict between them.
+    const effect = (first: boolean): string => {
+        const [p, q, fl] = first ? ['x', 'y', 'f'] : ['z', 'w', 'g']
+        const all = [`${p} = ${draw()}`, `${p} = ${draw()}`, `${p} += random() * 3`, `${fl} = random()`, 'randomize()', `randomize(); ${p} = ${draw()}`,
+            `${p} = ${draw()}; ${q} = ${draw()}`, `${p} += 1`, `${q} = n`]
+        if (roll) all.push(`${q} = roll(6)`, `${q} = roll(n + 1)`)
+        if (seed) all.push('seed()', `seed(); ${p} = ${draw()}`)
+        if (big) all.push(`${q} = big()`)
+        if (die && first) all.push('die.roll(); y = die.v', 'die.roll()')
+        if (die && first && lines.some(l => l.includes('void seed() { randomize() } } die'))) all.push('die.seed()')
+        return r.pick(all)
+    }
+    const trigger = () => r.pick(['a', 'b', 'c', 'd', 'n > 1', 'a', 'b', ...(r.chance(0.3) ? ['random() < 0.5', 'a && random() < 0.7'] : [])])
+    const go = (first: boolean, to: string, always = false) => `    ${r.chance(0.15) ? 'immediate ' : ''}${always && r.chance(0.3) ? '' : `if ${trigger()} `}do ${effect(first)} go to ${to}`
+    if (r.chance(0.15)) lines.push(`  during do ${r.pick(['g = random()', 'w += random() * 2'])}`)
+    const second = r.chance(0.5)
+    lines.push('  region R1 {')
+    lines.push(...(r.chance(0.2) ? ['    initial state A {', `      entry do ${effect(true)}`, '    }'] : ['    initial state A']))
+    lines.push(go(true, 'B'))
+    lines.push('    state B', go(true, 'A', true))
+    if (r.chance(0.3)) lines.push(go(true, 'C'), '    state C', go(true, r.pick(['A', 'C']), true))
+    if (r.chance(0.15)) lines.push('    state U', `    if a do ${r.pick(['randomize()', 'x = random() * 9'])} go to A`)
+    lines.push('  }')
+    if (second) {
+        lines.push('  region R2 {', '    initial state P', go(false, r.pick(['P', 'P2'])))
+        lines.push('    state P2', go(false, 'P', true), '  }')
+    }
+    if (sub) lines.push('  region R3 {', `    initial state S is QS${index}(${second ? 'k2' : 'w'})`, '  }')
+    if (sub && second) lines.splice(5, 0, '  output int k2 = 0')
+    lines.push('}')
+    const charts = [lines.join('\n')]
+    if (sub) charts.push([`scchart QS${index} {`, '  output int r', `  initial state I do ${r.pick(['r = random() * 50', 'randomize(); r = random() * 50', 'r += 1', 'randomize()'])} go to I`, '}'].join('\n'))
+    // A chart of the file that nothing uses: its random() does not reach the C code.
+    if (r.chance(0.1)) charts.push(`scchart QN${index} { output int q initial state I do q = random() * 3 go to I }`)
+    return (r.chance(0.1) ? '#hostcode "#include <stdlib.h>"\n' : '') + charts.join('\n\n') + '\n'
+}
+
 export function generate(seed: number, profileName: string, index: number, ticks = 14): Job {
     const profile = PROFILES[profileName] ?? PROFILES.mix
     const rng = new Rng(seed * 7919 + index * 104729 + 17)
@@ -1079,6 +1140,6 @@ export function generate(seed: number, profileName: string, index: number, ticks
     if (features.has('valued')) features.add('signals')
     if (features.has('timed')) features.add('clocks')
     const g = new Generator(rng, features, profile)
-    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : profileName === 'dataflowObjects' ? dataflowObjectsChart(rng, index) : g.chart(index)
+    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : profileName === 'dataflowObjects' ? dataflowObjectsChart(rng, index) : profileName === 'random' ? randomChart(rng, index) : g.chart(index)
     return { name: `${profileName}-${seed}-${index}`, model, inputs: inputsFor(rng, ticks, features.has('clocks')), profile: profileName, features: [...features].sort() }
 }
