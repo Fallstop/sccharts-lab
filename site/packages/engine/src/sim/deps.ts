@@ -268,7 +268,11 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean, b
         visiting.add(m)
         // A method KIELER inlines into this one reads through this one's `self`; one it keeps has its own.
         const saved = self
-        if (!isInlined(m)) self = mv.member ? { id: mv.decl ?? mv.name, inst: mv.member.of } : undefined
+        // (A chart instance's method, `ref C g`: the class KIELER makes of the declaration, and the instance.)
+        if (!isInlined(m)) {
+            self = mv.member ? { id: mv.decl ?? mv.name, inst: mv.member.of }
+                : m.instance ? { id: `${m.cls}|${mv.decl?.split('/').pop()}`, inst: m.instance } : undefined
+        }
         statements(m.body, new Set([...outer, ...m.params, ...m.locals]))
         self = saved
         visiting.delete(m)
@@ -284,7 +288,7 @@ export function innerAccesses(node: SNode, isInlined: (m: CMethod) => boolean, b
         else if (f.k === 'print') f.args.forEach(collect)
     }
     for (const c of roots) {
-        via = c.target!.v.name
+        via = c.target!.v.display ?? c.target!.v.name
         self = undefined
         method(c.target!.v, new Set())
     }

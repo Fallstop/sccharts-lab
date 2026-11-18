@@ -324,9 +324,10 @@ export interface TraceableVariable {
  * KIELER's deltaT and sleepT), the members of the chart's class and struct instances, and the locals of the states
  * and regions inside the chart, each with its scope and declared type. Values: `values` (or `present`) for the
  * ones `inPool`, `trace[key]` for the others. Constants, methods and the inside of referenced charts are left out.
- * The members of the chart's `ref C g` instances are listed when the result has the simulator's compilation (`sim`).
+ * The members of the chart's `ref C g` instances are listed when the result is a whole CompileResult (they come from
+ * the simulator's compilation, its `sim`).
  */
-export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index' | 'interface'> & Partial<Pick<CompileResult, 'sim'>>): TraceableVariable[] {
+export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index' | 'interface'>): TraceableVariable[] {
     const chart = result.chart
     if (!chart) return []
     const index = result.index

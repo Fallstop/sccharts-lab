@@ -441,7 +441,7 @@ export class Expansion {
                         if (!this.muted) {
                             const cls = this.classOf(v, scope, chart)
                             v.className = cls.name
-                            for (const l of members) if (l.method) l.method = { ...l.method, cls: cls.key }
+                            for (const l of members) if (l.method) l.method = { ...l.method, cls: cls.key, instance: v }
                         }
                         this.checkSignals(v, inst, chart)
                         this.redirectMembers(v, prefix, inst, root, sizes.length)

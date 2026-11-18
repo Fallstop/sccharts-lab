@@ -4,7 +4,7 @@
 // generated elements), diagnostics (codes, KIELER's texts) and the plain-English descriptions.
 
 import { describe, expect, it } from 'vitest'
-import { compile, createSimulation, describeTick } from '@sccharts-lab/engine'
+import { compile, createSimulation, describeTick, traceableVariables } from '@sccharts-lab/engine'
 
 const run = (source: string, inputs: Record<string, unknown>[], files?: Record<string, string>) => {
     const r = compile(source, { files })
@@ -250,6 +250,176 @@ scchart Pulse {
   final state F
 }`, [{}, {}, {}, {}, {}, {}])
         expect(ticks.map(t => t.values.O)).toEqual([0, 1, 2, 2, 1, 2])
+    })
+})
+
+describe('dataflow regions that call methods (S-33a)', () => {
+    const gate = `
+scchart Gate {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}`
+
+    it('keeps a chart instance as an object with its ports as members, traceable by name', () => {
+        const { r, ticks } = run(`scchart M {
+  input int x
+  output int o
+  ref Gate g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}${gate}`, [{ x: 1 }, { x: 3 }])
+        expect(r.ok).toBe(true)
+        expect(r.diagnostics.some(d => d.code === 'unsupported')).toBe(false)
+        expect(ticks.map(t => t.pool.g)).toEqual([{ a: 2, b: 0, s: 3 }, { a: 6, b: 0, s: 7 }])
+        expect(ticks[1].trace['g.s']).toBe(7)
+        const members = traceableVariables(r).filter(v => v.group === 'member')
+        expect(members.map(v => v.key)).toEqual(['g.a', 'g.b', 'g.s'])
+        expect(members[0].member).toEqual({ instance: 'g', member: 'a' })
+    })
+
+    it('runs calls written as equations, the expression after one as its condition', () => {
+        const { r, ticks } = run(`scchart M {
+  input int x
+  output int o
+  ref Counter c
+  dataflow {
+    c.add(x) = x > 2
+    o = c.get()
+  }
+}
+scchart Counter {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}`, [{ x: 1 }, { x: 3 }, { x: 5 }, { x: 1 }])
+        expect(r.ok).toBe(true)
+        expect(ticks.map(t => t.values.o)).toEqual([0, 3, 8, 8])
+        expect(ticks[2].pool.c).toEqual({ v: 8 })
+    })
+
+    it('does not restart a terminated instance, and says so', () => {
+        const { r, ticks } = run(`scchart M {
+  input int x
+  output int o, m
+  ref Fin g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = x
+    o = g.s
+    m = twice(x)
+  }
+}
+scchart Fin {
+  input int a
+  output int s
+  initial state A do s = a go to B
+  state B do s = a + 100 go to C
+  final state C
+}`, [{ x: 1 }, { x: 3 }, { x: 5 }, { x: 7 }, { x: 9 }])
+        expect(ticks.map(t => t.values.o)).toEqual([0, 3, 105, 105, 105])
+        const quirk = r.diagnostics.find(d => d.code === 'kieler-quirk')
+        expect(quirk?.severity).toBe('info')
+        expect(quirk?.kieler).toMatch(/^An SCChart that can terminate \(Fin\) is used \(g\) in a dataflow region/)
+    })
+
+    it('keeps an equation\'s schedule in such a region and loses it in a classic one, as KIELER', () => {
+        const chart = (extra: string) => `scchart S {
+  input int x
+  output int o, m
+  schedule s
+  method int twice(int v) { return v * 2 }
+  dataflow { o = 1 schedule s 1 ${extra} }
+  region R { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}`
+        const classic = compile(chart(''))
+        expect(classic.ok).toBe(false)
+        expect(classic.diagnostics.some(d => d.code === 'write-conflict')).toBe(true)
+        const { r, ticks } = run(chart('m = twice(x)'), [{ x: 1 }])
+        expect(r.ok).toBe(true)
+        expect(ticks[0].values.o).toBe(1)
+    })
+
+    it('rejects what KIELER rejects, with its texts', () => {
+        const shared = compile(`scchart M {
+  input int x
+  output int o
+  ref Gate g
+  method int twice(int v) { return v * 2 }
+  dataflow D1 { g.a = twice(x) }
+  dataflow D2 { o = g.s }
+}${gate}`)
+        const d = shared.diagnostics.find(x => x.code === 'dataflow-instance-shared')
+        expect(shared.ok).toBe(false)
+        expect(d?.kieler).toBe('The valued object reference points to a valued object (g) that is not contained in the model!\nThe valued object reference points to a valued object (a) that is not contained in the model!\nReferences objects are not contained in the resource!')
+        expect(d?.hint).toBeTruthy()
+        expect(d?.span).toBeTruthy()
+
+        const tooMany = compile(`scchart M {
+  input int x
+  output int o
+  ref Gate g(x, x, o, o)
+  method int twice(int v) { return v * 2 }
+  dataflow { g.a = twice(x)  o = g.s }
+}${gate}`)
+        expect(tooMany.ok).toBe(false)
+        expect(tooMany.diagnostics.find(x => x.code === 'kieler-crash')?.kieler).toMatch(/^java\.lang\.NullPointerException/)
+
+        const classicBinding = compile(`scchart M {
+  input int x
+  output int o
+  ref Gate g(x)
+  dataflow { g.b = x  o = g.s }
+}${gate}`)
+        expect(classicBinding.ok).toBe(false)
+        expect(classicBinding.diagnostics.find(x => x.code === 'binding-error')?.kieler).toBe('There are binding errors in a referenced state!\nA Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced scope: __df_g_s')
+
+        const signals = compile(`scchart M {
+  input int x
+  output int o
+  ref Sig g
+  method int twice(int v) { return v * 2 }
+  dataflow { g.a = twice(x) > 4  o = g.s ? 1 : 0 }
+}
+scchart Sig {
+  input signal a
+  output signal s
+  initial state A if a do s go to A
+}`)
+        expect(signals.ok).toBe(false)
+        expect(signals.diagnostics.find(x => x.code === 'signal-member')?.kieler).toBe('Signals in class declarations not yet supported')
+
+        const externCall = compile(`scchart M {
+  input int x
+  output int o
+  extern "abs" absf
+  dataflow { absf(x)  o = absf(x) }
+}`)
+        expect(externCall.ok).toBe(false)
+        expect(externCall.diagnostics.some(x => x.code === 'dataflow-scalar-to-reference')).toBe(true)
+    })
+
+    it('does not sequence a call by the ; after it (KIELER\'s isSequential)', () => {
+        const { ticks } = run(`scchart M {
+  input int n
+  output int o1
+  ref Counter k
+  dataflow {
+    o1 = k.get() + n;
+    k.add(1);
+    k.add(2);
+  }
+}
+scchart Counter {
+  int v = 0
+  method void add(int j) { v += j }
+  method int get() { return v }
+}`, [{ n: 2 }, { n: 1 }])
+        // k.add(2) is unordered and runs before the read; k.add(1), the equation after the assignment's ;, after it.
+        expect(ticks.map(t => t.values.o1)).toEqual([4, 6])
     })
 })
 

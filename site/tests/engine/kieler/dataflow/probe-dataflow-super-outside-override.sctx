@@ -1,0 +1,12 @@
+// super.value() in a transition's effect, the override itself does not call super: KIELER keeps the base's method,
+// and the base's own twice() goes on calling it (o = 2, not 10).
+scchart DfSuperOutsideOverride extends B5 {
+  input int x
+  output int o, p
+  override method int value() { return 5 }
+  region R { initial state A do o = twice(); p = super.value() go to A }
+}
+scchart B5 {
+  method int value() { return 1 }
+  method int twice() { return 2 * value() }
+}

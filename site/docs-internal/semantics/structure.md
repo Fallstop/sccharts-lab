@@ -387,6 +387,35 @@ from the tick the state is entered, for as long as it is active.
 - Implementation: treat it as an extra concurrent region of the declaring state containing
   `initial state _ is C(args)`.
 
+### S-18a Inside an instance, bindings are kept by name
+
+KIELER keeps what is bound for a `ref` instance on a stack of replacements **by name** and hands that stack on to
+the `ref` declarations inside the instantiated chart. When it then replaces the references in such an inner copy, it
+does not shadow the stack with the copy's own top-level declarations (`handleSCChartsDatatype` calls
+`replaceValuedObjectReferencesInState` on the copy directly; only the dispatcher `replaceValuedObjectReferences`
+pushes a scope's own declarations). So inside an instance of an instance, a top-level variable of the inner chart
+that has the name of something bound further out **is** that outer variable:
+
+- `ref Outer1 g(x, o)` binds Outer1's input `a` to `x`; Outer1 declares `ref Inner1 i`, and Inner1 has a local
+  `int a = 100` that its region counts up. KIELER's result: the chart's **input `x`** is counted up (the pool shows
+  `x` one above what the environment gave), `i.a` stays 100, `i.get()` returns `x`.
+- With an OO dataflow instance inside (S-33a) the same happens to its inputs and outputs, which are members there:
+  the inner instance's port of the bound name is replaced by the outer variable and is no member any more. An
+  equation that wires it (`t.a = ...`, `s = t.s`) is left without its target: `The valued object reference points
+  to a valued object (a) that is not contained in the model!`. Without such an equation the chart compiles and the
+  inner chart reads the outer variable.
+- `state S is Mid(x, o)` instead of a `ref` declaration has no such leak: the copy's declarations are pushed.
+
+- Evidence: `dataflow/probe-dataflow-nested-ref-name-leak`, `-instance-nested-name-leak` (rejected),
+  `-instance-nested-name-leak-unused`, `-instance-nested-name-leak-output` (rejected),
+  `-instance-in-referenced-chart-same-names` (no leak).
+- Source: `processors/Reference.xtend:951-1004` (`new Replacements(parentReplacements)`, `replacements.push`,
+  `newState.expandRoot(replacements, false)`, `newState.replaceValuedObjectReferencesInState(replacements, false)`),
+  `:448-465` (the dispatcher that does push), `kext/extensions/Replacements.xtend` (keyed by name).
+- Teaching: do not teach nesting `ref` instances; if a guide chart does, give the charts' variables different names.
+- Implementation: passes/reference.ts keeps the names bound by the instances being expanded (`replacements`) and
+  `bind` replaces an inner copy's own top-level declarations of those names (not bound formals, not methods).
+
 ### S-19 `state S calls C(...)` runs as a reference
 
 In KIELER 1.6.1 (official 0.4.3 and the lab server) `state S calls C(...)` behaves as `state S is C(...)`: the
@@ -528,7 +557,8 @@ compiles each equation into its own concurrent region: an initial state with an 
 - several dataflow regions, and dataflow regions next to control-flow regions in the same state, communicate
   within the tick the same way (probe: a control-flow region reacting to `O = A` in the same tick).
 
-Equations may use any expression, method calls (probe: `O = twice(I)`), and compound operators (`X += I`).
+Equations may use any expression and compound operators (`X += I`). An equation that calls a method (`O =
+twice(I)`, `c.add(x)`) changes how KIELER compiles the **whole region**: S-33a.
 
 - Evidence: `40-dataflow-basic`, `41-dataflow-order-independent`, `45-dataflow-self-update`.
 - Source: `processors/dataflow/Dataflow.xtend:309-540` (`processDataflowRegionClassic`; equation regions at
@@ -558,8 +588,17 @@ accepted (last wins, probe), whereas without `;` they conflict (S-31). Without `
 considers commuting may share a variable, and some of those also run in textual order (S-31). The compiler warns (harmlessly)
 `ValuedObject with name _<Root>_local_seq0 is contained in the model but not in VariableStore.`
 
+A `;` after a **call written as an equation** (`k.add(1);`, S-33a) does nothing: KIELER's `isSequential` is true
+for assignments only. Such a call is part of a sequence only as the equation after an assignment's `;`. In `o1 =
+k.get() + n; k.add(1); k.add(2);` the read and the first call are ordered, and `k.add(2)` is not: it runs before the
+read like any other write (KIELER's C code: `k.v += 2; o1 = k.v + n; k.v += 1`).
+
 - Evidence: `44-dataflow-sequential`. Probes: `seq` keyword gives the same result; `O = A && B; P = A || B;`
-  (semicolons after independent equations) changes nothing but adds the warning.
+  (semicolons after independent equations) changes nothing but adds the warning. Calls:
+  `dataflow/probe-dataflow-call-semicolon-no-sequence`, `-call-semicolon-between`, `-call-after-sequenced-read`,
+  `-call-sequence`, `-call-condition-sequence` (found by the `dataflowObjects` fuzz profile, seed 2).
+- Source (calls): `extensions/SCChartsDataflowRegionExtensions.xtend:52-54` (`(a instanceof DataflowAssignment) &&
+  sequential`; a `DataflowReferenceCall` is no `DataflowAssignment`).
 - Source: `Dataflow.xtend:477-489` (schedule per run of sequential equations), grammar `SCTX.xtext`
   (`sequential?=(';'|'seq')?`).
 - Teaching: a `;` after an equation is not a harmless separator; it sequences equations.
@@ -612,10 +651,37 @@ clause naming a variable that is not a schedule crashes the dependency analysis 
   `AbstractDependencyAnalysis.xtend:400-500` (processDependencies, accessType), `processors/Signal.xtend:233-309`.
 - Teaching: rarely needed; data dependencies order most charts. Shows that "who goes first" is a compiler decision
   the programmer can override.
+**Dataflow.** A clause on a dataflow region (`dataflow D schedule s 1 { ... }`) is copied to the control-flow
+region KIELER makes of it, so it is on every equation of the region (and, in a region that calls methods, not on the
+regions of its chart instances, which belong to the declaring state). A clause on an equation (`o = 1 schedule s 1`)
+is **lost** in a region without method calls (the classic translation makes a new assignment of target, operator
+and expression only) and **kept** in a region that calls a method (the OO translation copies it, S-33a); on a call
+written as an equation it orders the call (`c.add(10) schedule s 0` before `c.add(x) schedule s 1`). A vector
+equation's clause is lost in both (its parts are new assignments).
+
+| Chart | KIELER |
+| --- | --- |
+| `dataflow D schedule s 1 { o = 1 }` next to a transition's `o = 2 schedule s 0` | `o = 1` (the region's write last); with the priorities swapped, tick 1 keeps the transition's 2 |
+| `dataflow { o = 1 schedule s 1 }` next to that transition (no method call in the region) | rejected, at either priority: the clause is gone, two unordered absolute writes (`Can't schedule from ...`) |
+| the same region with `m = twice(x)` in it | accepted, ordered by the priorities |
+| `dataflow { o = x schedule s 1  m = o + 1 schedule s 0 }` | classic: `m` follows `o` in the same tick (clauses ignored); with a method call (`o = twice(x) schedule s 1`): `m` reads the previous tick's `o` |
+| a scheduled region with a `;` sequence in it | rejected: the region's one priority is on every equation of the sequence, whose writes then conflict |
+| a scheduled OO region that wires an instance (`g.a = ...`, `o = g.s`) | rejected: at one priority a read comes before a write, against the data flow through the instance |
+| `g = {x, twice(x)} schedule s 1` next to a transition's `g.a = 50 schedule s 0` | rejected: the vector's parts carry no clause |
+
+- Evidence (dataflow): `dataflow/probe-dataflow-region-schedule`, `-region-schedule-first`,
+  `-region-schedule-two-regions`, `-region-schedule-sequence` (rejected), `-region-schedule-instance` (rejected),
+  `-equation-schedule-lost`, `-equation-schedule-lost-first` (rejected), `-equation-schedule-ignored`,
+  `-equation-schedule-oo`, `-equation-schedule-oo-first`, `-equation-schedule-oo-order`, `-call-schedule`,
+  `-vector-schedule-lost` (rejected).
+- Source (dataflow): `processors/dataflow/Dataflow.xtend:124-129, 315-320` (`r.schedule += s.copy`), `:231-250` (OO:
+  `it.schedule += assignment.schedule`), `:511-516` (classic: reference, operator and expression only).
 - Implementation: lowering keeps clauses on effects (`o.schedule`) and triggers (`sched`), states and regions
-  (`ext.userSchedule`); passes/userSchedule.ts spreads those of states and regions; deps.ts orders the accesses.
-  Not yet simulated (`unsupported`): clauses inside code blocks and methods, on calls, on methods, on equations
-  and dataflow regions, and schedules of class instances (`c.s 1`).
+  (`ext.userSchedule`, a dataflow region's too) and equations (`CEquation.schedule`); passes/dataflow.ts hands the
+  region's on and keeps an equation's in the OO translation only; passes/userSchedule.ts spreads those of states
+  and regions; deps.ts orders the accesses.
+  Not yet simulated (`unsupported`): clauses inside code blocks and methods, on calls in effects, on methods, and
+  schedules of class instances (`c.s 1`).
 
 ### S-28 Delays: `->`, `fby`, `pre`, `sfby`
 
@@ -716,6 +782,11 @@ the helper should simply be the target's.
 | `false -> (level > 3)` and similar mixed operands | see S-30a |
 | `dataflow once` in a state with a self-loop; `join to` from a dataflow state into a state with an entry action | see S-32 |
 | `g(X, Y).O` (call syntax on an instance) | parse error `mismatched input '.' expecting '}'` (probe) |
+| `add(x, y)` with `ref DAdd add` (calling an instance) | `Couldn't resolve reference to ValuedObject 'add'.` (a call names a method or an extern function only; `dataflow/probe-dataflow-call-of-instance`) |
+| an extern function called as an equation of its own (`absf(x)`) | `You are assigning a scalar value to a reference. ...` (the call is its own target, S-33a; `-call-extern`) |
+| an instance wired in a classic region and named anywhere else (a second dataflow region, a transition) | `The valued object reference points to a valued object (g) that is not contained in the model!` (S-33) |
+| `ref C g(x)`, `ref C g(x to a)` wired in a classic region | `There are binding errors in a referenced state!\nA Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced scope: __df_g_r` (S-33) |
+| an instance declared in the chart and wired in a dataflow region of an inner state | `The referencing binding is erroneous!` (the validator only excuses instances used by the dataflow regions of the declaring state; `-instance-declared-outside`) |
 
 Evidence: `53`–`56`, `59`. Source: `SCTXValidator.xtend:668-673` (non-variable assignment), `:1179-1190`.
 
@@ -740,7 +811,14 @@ variable (or `;` sequences, S-27).
 
 - Declarations inside a dataflow region (`dataflow { int t  t = I * 2  X = t + 1 }`) are region locals, hidden
   from the pool (probe: `X = 3, 5`).
-- A vector equation assigns array elements: `O = {A + 1, B * 2}` (probe: `O = [2, 4]`).
+- A vector equation assigns array elements: `O = {A + 1, B * 2}` (probe: `O = [2, 4]`); `_` skips one. KIELER makes
+  one new assignment `O[k] = value` per value from the array's name alone, so an index, a member or an operator
+  written on the target is gone: `A[2] = {x, x + 10}` writes `A[0]` and `A[1]`, `A += {x, x + 10}` assigns, a row
+  `B[1] = {..}` of a two-dimensional array assigns the rows `B[0]`, `B[1]` (gcc: `assignment to expression with array
+  type`), `gs[1] = {..}` on an array of instances is a gcc error too. A vector assigned to a scalar is dropped
+  (`o = {x, x + 10}` leaves `o` alone). Probes `dataflow/probe-dataflow-vector-*`, `-instance-array-vector`.
+  Source: `Dataflow.xtend:208-221, 465-476` (`createAssignment(rdInstance, value)`, `indices += createIntValue(idx)`;
+  neither branch for a scalar).
 - An equation may write an input; the written value replaces the environment's for that tick and shows in the
   pool (probe: `I = 3; X = I` → pool `I = 3, X = 3`).
 - A weak abort out of the enclosing state lets the equations run in the abort tick (probe).
@@ -773,9 +851,95 @@ never set keep their default (0/false). Each instance becomes a concurrent regio
 - Source: `Dataflow.xtend:351-417`.
 - `ref C g(X, Y)` with bindings **and** dataflow use → binding errors (probe:
   `There are binding errors in a referenced state!\nA Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced scope: __df_g_B`).
+  Any binding does it, explicit ones too: the translation puts one local per input and output after the written
+  bindings, always one argument too many (`dataflow/probe-dataflow-instance-classic-binding`, `-explicit-binding`;
+  found by the `dataflowObjects` fuzz profile).
+- The translation **removes the instance's declaration** from the chart. Whatever else names the instance then
+  points at nothing and the chart is rejected (`The valued object reference points to a valued object (g) that is
+  not contained in the model!`): a second classic dataflow region, a region that calls a method (S-33a), in either
+  order, a transition or an action (`-instance-two-classic`, `-instance-shared-oo-classic`, `-shared-classic-oo`,
+  `-instance-classic-and-transition`). An instance belongs to one classic dataflow region.
+- An array of instances (`ref C gs[2]`) is one instance to the classic translation: `gs[0].a` and `gs[1].a` both
+  write the one local `__df_gs_a`, a conflict (`-instance-array-classic`, rejected). It works in a region that calls
+  a method (S-33a).
+- What this section describes is KIELER's **classic** translation, used for a region in which no equation calls a
+  method. Otherwise: S-33a.
 - Teaching: instances are like logic gates on a schematic: wire their inputs, read their outputs.
 - Implementation: one concurrent region per instance (in order of first use), running a copy of `C` whose
   formals are fresh hidden locals; `g.X` reads/writes those locals; tuples assign the inputs in order.
+
+### S-33a A dataflow region that calls a method: instances stay objects (KIELER's "OO" translation)
+
+As soon as anything inside a dataflow region calls a method (in an equation, an index, a call's argument, a
+condition, the initial value of a declaration of the region), KIELER compiles **that region** differently
+(`processDataflowRegionOO`; decided per region):
+
+- The region becomes one state whose **immediate during actions** are the equations in written order (entry
+  actions for `dataflow once`, whose state is not final: a `join to` on the enclosing state never fires). Each
+  action is a thread of its own, so the equations are still ordered by the data they read and write, not by their
+  position; `;` sequences get schedules as in S-27.
+- A **call written as an equation** (the grammar's `DataflowReferenceCall`) is a call effect: `add(x)`, `c.add(x)`
+  (a method of a class instance or of a chart instance), `accs[n % 2].add(1)`, `super.add(x)`. An expression after it
+  is not assigned anything: `c.add(x) = x > 2` makes `x > 2` the **trigger** of the action, the method runs only
+  while it holds. A call names a method (or an extern function, which is then a validator error, S-31); a chart
+  instance cannot be called (`add(x, y)` with `ref DAdd add` does not resolve).
+- **Chart instances stay declarations**, which KIELER's Reference processor then turns into objects as for a chart
+  used as a class (S-65), with one difference: the instance's inputs and outputs that are not bound explicitly
+  become **public members** of the object, with their initial values. The data pool has `"inc": {"a": 1, "s": 2}`
+  (the classic translation hides `__df_inc_a`). An input no equation sets keeps its value (0, or its initial value);
+  the instance's own regions and actions run concurrently with the equations, in the scope that declares the
+  instance (the chart, a state, or the state the dataflow region becomes when the region declares it).
+- **Bindings.** Only explicit bindings are applied (`ref Two g(x to a)`: `a` is `x` and no member). A binding by
+  position is ignored (`ref Two g(x)`: `a` stays a member with 0), and there is no implicit binding by name. More
+  arguments than the chart has inputs and outputs crash the compiler (`NullPointerException` in
+  `handleSCChartsDatatype`, which asks the binding without a target whether its target is an input).
+- An instance counts as "used by the region" when an equation names it: in its target, its expression, a call's
+  argument or condition, or as the object a call written as an equation is made on (that call is its own reference:
+  `DataflowReferenceCallImpl.getReference` returns `this`). An instance with inputs that no equation names is an
+  ordinary `ref` declaration and its bindings are missing.
+- **No restart.** A terminated instance is not started again (the classic translation restarts it one tick later,
+  S-34). KIELER means to restart an instance declared in the region itself (`_DF_restart_behavior`), but tests
+  `dataflowRegion.declarations.contains(...)` after it has moved the declarations to the new state, so the test never
+  holds; it warns instead (`An SCChart that can terminate (Fin) is used (g) in a dataflow region that assumes
+  continuous IO behavior. ...`) wherever the instance is declared.
+- **Vectors** assigned to an instance set its inputs in declaration order (own, then inherited; `_` skips one) as in
+  the classic translation; S-32 for arrays.
+- **Arrays of instances** work: `ref Two gs[2]` is an array of objects (`"gs": [{...}, {...}]`), each element with
+  its own copy of the chart's regions; `gs[0].a = twice(x)`, `gs[1].a = gs[0].s`.
+- **Signals** as inputs or outputs of such an instance are refused: `Signals in class declarations not yet
+  supported` (KIELER's Signal processor on the class the instance became; a local signal of a chart used as a class
+  is refused the same way, S-65).
+- **Sharing.** Two regions that both call methods may share an instance (one object). A classic region may not
+  share one with anything (S-33). A control-flow region may read and write the object's members (`g.s`, `g.b = 50`).
+- An instance of a chart that itself wires instances: with a classic region inside, that region's hidden locals are
+  members of the outer object (`g: {__df_t_a, ...}`); with an OO region inside, an object inside the object (`g:
+  {a, s, t: {a, b, s}}`), with the name leak of S-18a.
+- The simulation interface names the classes KIELER makes: `Two1.a`, the next declaration of the same chart
+  `Two2.a`, a class of an inner state `Two11` (and `Two12` for the next copy of a for-region's state), a nested one
+  `Mid1.Two1.a` with the instance `Mid1.t`; KIELER numbers them in the order it finishes them (an inner instance
+  before the one around it). The inherited inputs and outputs of an instance of an extending chart are still listed
+  as inputs and outputs there, and come first among the object's members.
+- A `dataflow for` region that calls a method is rejected like a classic one (S-24).
+- In tick 1, a `dataflow once` region of this kind is a straight sequence of entry actions and so subject to B-34
+  (KIELER runs the equations that read no input first).
+
+- Evidence: `tests/engine/kieler/dataflow/probe-dataflow-instance-*`, `-instances-*`, `-call-*`, `-class-*`,
+  `-oo-*`, `-struct-members`, `-chart-instance-*` (the last two outside dataflow: an array of chart instances and a
+  local signal).
+- Source: `processors/dataflow/Dataflow.xtend:113-119` (the choice), `:121-262` (`processDataflowRegionOO`: `:135`
+  moves the declarations, `:160-167` the restart test, `:231-243` the call effect and its trigger),
+  `processors/Reference.xtend:938-988` (`dataflowBinding`: explicit bindings only, `:959` the crash), `:1179-1193`
+  (ports become public members), `:1213-1220` (the restart region that is never made), `:1222-1296` (arrays of
+  instances), `processors/Signal.xtend:133-139`, `impl/DataflowReferenceCallImpl.java:227-230` ("Beware! Hidden
+  magic."), `text/scoping/SCTXScopeProvider.xtend` (a call without a sub-reference resolves among callable
+  declarations only).
+- Teaching: calling a method in a dataflow region is fine, but it makes the region's instances objects (visible in
+  the pool, never restarted). `c.add(x) = cond` reads like an assignment and is a condition: avoid it in teaching
+  material, or explain it.
+- Implementation: passes/dataflow.ts `processRegionOO`; passes/reference.ts `expandDeclarations` with the dataflow
+  binding mode of `instantiate` (ports kept as members), element-wise expansion for arrays (`elementOf`), KIELER's
+  class names (`classOf`) and the checks (`checkSignals`, `checkRemovedInstances`, the lost port of S-18a).
+
 
 ### S-34 A terminating instance restarts after one tick
 
@@ -785,6 +949,8 @@ re-entered fresh in tick n+1, and its own delayed transitions resume from tick n
 - Evidence: `48-dataflow-ref-restarts` (`O = 0, 1, 2, 2, 1, 2`: period 3 for a chart that terminates after two
   ticks).
 - Source: `Dataflow.xtend:358-375`.
+- Only in a region without method calls. In a region that calls a method the instance is an object and is never
+  restarted (S-33a; `dataflow/probe-dataflow-instance-terminates`, `-terminates-local`).
 - Teaching: a dataflow instance of a chart that finishes starts over, with one idle tick in between.
 - Implementation: wrap the instance as `initial state I is C(...)  join to W;  state W  go to I` (delayed).
 
@@ -1189,6 +1355,30 @@ accepted (probe, `--system priority`).
   a kept one reads through the kept one's `self`; a kept one called by a kept one keeps its own. A variable of the
   chart accessed in such a method is the chart's as before. Probes
   `tests/engine/kieler/structure/probe-method-self-*`; engine: `deps.ts` `innerAccesses` (`Access.bucket`).
+- **The methods of a chart instance** (`ref C g`, S-65) follow the same `self` rule when KIELER keeps them as
+  functions: `c.big()` (a loop) next to `c.v += 1` is accepted without an order; the kept `set7` of two instances
+  declared together (`ref KL c, d`: one class) called in two regions is rejected, of two declarations (two classes)
+  accepted; and a method that calls a method of an instance declared inside its chart (`g.get()` returning
+  `t.get()`) is kept (it calls), so its read of the inner field is not ordered after a concurrent write of it
+  (KIELER: `o = g.get() + x` runs before the inner `t.add(2)`). Probes `dataflow/probe-dataflow-instance-kept-method`,
+  `-instances-one-declaration-kept-method`, `-instances-two-declarations-kept-method`,
+  `-instance-nested-method-read`, `-instance-nested-method-read-dataflow`.
+- **A call in the argument of a call** (`acc.add(twice(n))`, both short methods): KIELER collects the calls of the
+  chart in a table with a row per method, in the order it first meets the methods (the nodes in order, the calls of
+  one node innermost first), and copies the methods into place row by row. Normally `twice` gets its row before
+  `add`, is copied first, and the chart runs. When an **earlier** node has called `add` already (`acc.add(1)` and
+  then `acc.add(twice(n))`), `add`'s row comes first: `add` is copied into place with a copy of its argument, and the
+  `twice` call KIELER turns to next is no longer part of the graph. The compiler crashes (lab `The compiler failed
+  during compilation setup.`). The same two calls the other way round are accepted. Probes
+  `dataflow/probe-dataflow-call-argument-call`, `-call-argument-call-crash`, `-call-argument-call-control-flow`,
+  `-call-argument-call-crash-control-flow` (in equations and in a transition's effects alike; found by the
+  `dataflowObjects` fuzz profile). Source: `MethodProcessor.xtend:152-176` (`HashBasedTable`, "TODO check is
+  iteration order is really deterministic").
+- **Two chart instances declared together are one class** (`ref K c, d`, S-65): `c.get() + d.get()` in one effect
+  or trigger are two calls of one method there, which KIELER's C code does not compile (the rule above:
+  `implicit declaration of function ‘get’`). With two declarations (`ref K c` and `ref K d`: classes `K1` and `K2`)
+  it compiles. Probes `dataflow/probe-dataflow-instances-one-declaration-two-calls`, `-two-calls-control-flow`,
+  `-instances-two-declarations`.
 - Teaching: treat parameters as read-only; compute into a local (`int r = k * 2`) instead.
 - Implementation: inline or not as KIELER does (the choice decides what a parameter assignment means); give every
   call the body's accesses for scheduling.
@@ -1628,7 +1818,26 @@ left and entered again). Instances in nested states are hidden from the pool.
 | assigning an instance (`c = d`) | `Assignments to referenced SCCharts are not supported. Except with dataflow semantics (i.e. in a dataflow region).`, `128-err-assign-chart-instance` |
 
 A chart method can also be called in a dataflow equation (`O = c.twice(I)`, probe; official 0.3.0 never
-answers).
+answers), which makes the region an OO one (S-33a).
+
+More, found with the dataflow probes (`tests/engine/kieler/dataflow/`):
+
+- **Arrays of instances** (`ref Cnt cs[2]`): one object per element in the pool (`"cs": [{...}, {...}]`), the
+  chart's regions and actions once per element, methods called on an element (`cs[0].bump(x)`, `cs[n % 2].add(1)`).
+  The size must be a number or a constant (`Can only handle reference arrays with constant cardinality`).
+  `probe-dataflow-chart-instance-array`, `-instance-array`, `-instance-array-methods`.
+- **A chart with a signal cannot be instantiated** this way: `Signals in class declarations not yet supported`
+  (KIELER's Signal processor refuses a signal in the class the instance has become; a local signal of the chart, or,
+  for an OO dataflow instance, an input or output signal). `-chart-instance-signal`, `-instance-signal-ports`.
+- **Class names.** KIELER makes one class per `ref` declaration, named after the chart with a running number
+  (`Cnt1`, the next declaration of `Cnt`: `Cnt2`); the instances of one declaration share it (unless one of them has
+  bindings: then every further instance gets a class of its own). The simulation interface lists the members under
+  these names (`Cnt1.v`), a class of an inner state with a further number (`Cnt11`, `Cnt21`).
+  `-instances-two-declarations`, `-instances-inner-states`, `-instances-root-and-inner-state`,
+  `-instances-nested-class-names`, `-instances-one-declaration-*`.
+- `ref Cnt c, d` with only one of them used in a dataflow region: the validator warns (`This reference declaration
+  contains some valued objects that are used in dataflow regions and some not. ...`). `-instances-one-declaration-one-used`.
+- Instances inside instances: S-18a.
 
 - Evidence: `126-chart-class` (methods and a public field), `127`, `128`, `129`, `130-chart-class-inheritance`.
 - Source: `processors/Reference.xtend:927-1000` (`handleSCChartsDatatype`), `SCTXValidator.xtend:180-189`
@@ -1649,7 +1858,12 @@ twice through the hierarchy is inherited once). Then:
 - `override method int value() { ... }` replaces an inherited method with the same name and number of
   parameters, everywhere: a base method that calls `value()` gets the override (`131-override-method`:
   `twice()` of the base, called on the subclass, returns `2 * 5`; on a base instance `2 * 1`).
-- `super.value()` inside the override calls the base version. **KIELER defect:** when an override calls `super`,
+- `super.value()` calls the base version: inside the override, and anywhere else in the extending chart (an
+  effect, a trigger, a dataflow equation `super.add(x)`). KIELER keeps the base's method whenever a `super` call of it
+  is written in the chart's methods, actions or regions (`dataflow/probe-dataflow-call-super`: `super.add(x)` and
+  `add(x)` as equations call the base's and the override, although the override does not call `super`;
+  `-super-outside-override`: the base's own `twice()` then calls the base's `value()`). **KIELER
+  defect:** when the chart calls `super.value()` anywhere (in the override or elsewhere),
   KIELER keeps the base implementation under another name and every call of `value()` written in the base
   chart goes on calling that base version, so the base's `twice()` on the subclass returns `2 * 1`
   (`138-override-super-keeps-base`), whereas the same chart without `super` gives `2 * 5` (`131`). Calls written
@@ -2034,7 +2248,10 @@ Exact texts as reported by the oracle (lab server). "official" marks differences
 | missing import | warning `Broken Import: There is no SCCharts model with the given name.` + link errors | S-20 |
 | link error in another chart | e.g. `Couldn't resolve reference to ValuedObject 'q'.` | S-2, `27` |
 | for-region problems | see S-24 | `33`–`37`, `94` |
-| dataflow problems | see S-30a, S-31, S-32 | `38`, `39`, `53`–`56`, `59`, `89` |
+| dataflow problems | see S-27a, S-30a, S-31, S-32, S-33, S-33a | `38`, `39`, `53`–`56`, `59`, `89`, `tests/engine/kieler/dataflow/` |
+| an OO dataflow instance with more arguments than ports | `java.lang.NullPointerException: Cannot invoke "...ValuedObject.eContainer()" because "valuedObject" is null` | S-33a |
+| a chart with a signal instantiated with `ref`; signal ports of an OO dataflow instance | `Signals in class declarations not yet supported` | S-65, S-33a |
+| a call in the argument of a call whose method an earlier node called | `The compiler failed during compilation setup.` | S-44f |
 | clock problems | see S-39 | `67`, `68`, `71` |
 | weak abort out of a state with `period` | `The SCG is NOT asc-schedulable!` (priority: `The SCG is not IASC-schedulable!`) | S-42a, `74` |
 | extern without declaration | `implicit declaration of function ‘abs’ [-Wimplicit-function-declaration]` | S-46, `79` |

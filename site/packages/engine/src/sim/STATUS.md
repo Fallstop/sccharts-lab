@@ -226,7 +226,8 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `method-arguments`,
   `method-signature` (KIELER's method inheritance checks), `method-without-call`, `return-outside-method`,
   `return-without-type`, `this-parameter`, `inheritance-cycle`, `inherited-name`, `override-anonymous`,
-  `override-missing`, `override-nothing`, `dataflow-scalar-to-reference`, `deprecated-import`,
+  `override-missing`, `override-nothing`, `dataflow-scalar-to-reference` (also an extern function called as an
+  equation of its own), `deprecated-import`,
   `violation-without-enforcer`, `non-signal-emission` (error when the emission is reachable, else warning), `for-range`,
   `no-chart`, `unknown-chart` (`compile({ chart })`).
 - **Indices** (warning): `index-out-of-range` for a constant index outside its array (after constant folding and in
@@ -239,7 +240,7 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `implicit-binding`, `reference-never-terminates`, `extern-without-call`, `minmax-combine`, `during-count-delay`,
   `count-delay-unary`, `valued-input-emission`, `static-without-value`, `region-action`, `broken-import`,
   `duplicate-chart`, `duplicate-region`, `duplicate-variable`, `print-calculation`, `layout-annotation`,
-  `class-without-variable`, `float-modulo`, `immediate-loop`; `ternary-grouping` (the guide's own: how KIELER groups
+  `class-without-variable`, `float-modulo`, `immediate-loop`, `reference-mixed-dataflow-use`; `ternary-grouping` (the guide's own: how KIELER groups
   `? :`). **Infos**: `label-hides-trigger`, `label-hides-effects` (transitions and actions).
 - **Scheduling** (error, `The SCG is NOT asc-schedulable!`): `instantaneous-loop` (a cycle of immediate
   transitions), `write-conflict` (two regions assign different values; for-region copies sharing a region
@@ -263,13 +264,73 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `method-without-value`, `method-without-return`, `signal-member`, `unpack-instances`, `suspend-without-trigger`,
   `abort-region-order`, `abort-region-alone`, `binding-expression`, `recursive-reference`, `for-counter-assignment`,
   `for-counter-method`, `dataflow-for`, `unknown-type`, `shared-clock`, `clock-variable`, `clock-array`,
-  `timing-constraint`, `default-sleep`, `inheritance-conflict`, `module-call`.
+  `timing-constraint`, `default-sleep`, `inheritance-conflict`, `module-call`, `dataflow-instance-shared`,
+  `dataflow-instance-port`, `reference-array-size`.
 - **The guide's notes**: `unsupported` (info: the simulator cannot run it), `kieler-quirk` (info or warning),
   `kieler-bug` (warning), `kieler-divergence` (warning), `kieler-loop-warning` (info), `internal` (error: an engine
   bug).
 - **Runtime** (`TickResult.error.code`): `division-by-zero`, `division-overflow` (`-2147483648 / -1`),
   `index-out-of-range`, `runaway-loop`, `missing-return`, `float-modulo`, `array-assignment`, `unsupported`,
   `internal`.
+
+## Dataflow regions: instances as objects, calls, schedules
+
+KIELER translates a dataflow region in one of two ways (structure.md S-33a): the classic one (each equation a region,
+chart instances as hidden reference states) and, as soon as anything in the region calls a method, its "OO" one (the
+equations are immediate during actions of one state, chart instances stay objects). Both are ported now
+(passes/dataflow.ts, passes/reference.ts); 118 probes in `tests/engine/kieler/dataflow/` (85 accepted charts agreeing
+tick by tick, 33 rejected), all through `pnpm cgen:check` too.
+
+- **OO instances** (S-33a): `ref C g` named by an equation of such a region is an object in the pool with its
+  unbound inputs and outputs as members (`"inc": {"a": 1, "s": 2}`), initial values kept; only explicit bindings are
+  applied (`x to a`), a binding by position is ignored, more arguments than ports crash KIELER (`kieler-crash`). A
+  terminated instance is not restarted (`kieler-quirk` info with KIELER's warning; KIELER's restart for an instance
+  declared in the region never triggers, because it looks for the declaration after moving it). Arrays of instances
+  (`ref C gs[2]`), instances inside instances (an object in the object) and in for-region copies, instances declared
+  in the region, in a state or in the chart. A signal port is KIELER's `Signals in class declarations not yet
+  supported` (`signal-member`).
+- **Calls written as equations** (`c.add(x)`, `add(x)`, `super.add(x)`, `accs[n % 2].add(1)`): call effects; the
+  expression after one (`c.add(x) = x > 2`) is the trigger of its action. The call is its own reference to KIELER, so
+  an instance only called is an OO instance, and an extern function called this way is the validator's "scalar
+  assigned to a reference" (`dataflow-scalar-to-reference`). A `;` after such a call does not sequence it
+  (KIELER's `isSequential` knows assignments only).
+- **Schedules** (S-27a): a dataflow region's clause is on everything the region becomes; an equation's clause is
+  lost by the classic translation (which is why KIELER rejects `dataflow { o = 1 schedule s 1 }` beside a scheduled
+  write of `o`: an unordered conflict) and kept by the OO one; a vector equation's is lost in both.
+- **What KIELER rejects**, now rejected: an instance wired in a classic region and named anywhere else
+  (`dataflow-instance-shared`; the classic translation removes the declaration: a second dataflow region, a
+  transition, an OO region, in either order), any binding on an instance of a classic region (`binding-error`), an
+  inner OO instance's port that has the name of a variable bound further out (`dataflow-instance-port`, S-18a).
+- **Vector equations** (S-32): the target's index and operator are dropped (`A[2] = {x, y}` writes `A[0]`, `A[1]`;
+  `A += {..}` assigns), a vector assigned to a scalar is dropped.
+- **Charts used as classes** (S-65, outside dataflow too): arrays of chart instances; a chart with a local signal is
+  rejected (`signal-member`); two instances of one declaration are one class to KIELER, so the same method called on
+  both in one effect is `method-twice`; `super.m()` anywhere in the extending chart keeps the base's method (the
+  engine looked at the override's body only); KIELER's by-name bindings leak into the instances inside an instance
+  (S-18a: an inner chart's top-level variable with the name of an outer bound one is that outer variable).
+- **Method inlining** (S-44f): a method call in the argument of a call (`acc.add(twice(n))`) is copied into place
+  like any other (the engine reported `method-without-value` for the outer call); when the outer method's row comes
+  first in KIELER's table of calls (an earlier node called it), KIELER's compiler crashes (`kieler-crash`).
+- **Pool, traces, interface**: the members of the chart's `ref` instances are traceable (`traceableVariables` lists
+  `g.a`, `g.t.b`; `SimTickResult.trace` has them), `@sccharts-lab/trace` names the columns
+  as KIELER's simulation interface does (`Two1.a`, `Two2.a` for the next declaration, `Two11`/`Two12` for the copies
+  of an inner state's class, `Mid1.Two1.a` and `Mid1.t` for a nested instance; inherited ports of an instance keep
+  their input/output role there), and generated C nests the structs (an array of instances is an array of structs).
+- **API**: `Equation.call` (types.ts: the call of `m(x) = e`, `expression` being `e`); `traceableVariables` (same
+  signature) also lists the members of chart instances when it is given a whole CompileResult; `CVar.className`,
+  `CMethod.cls`, `CMethod.instance` (internal). New codes: `dataflow-instance-shared`,
+  `dataflow-instance-port`, `reference-array-size` (errors), `reference-mixed-dataflow-use` (KIELER's validator
+  warning for `ref C a, b` with only one used in dataflow).
+- **Kept methods of chart instances** (S-44f): a method of a `ref C g` instance that KIELER keeps as a C function
+  (a loop, or a call: `g.get()` returning `t.get()` of an instance inside) reads the instance's fields through its
+  own `self`, as a class's method does: no order with a concurrent write of the field, and the kept method of two
+  instances declared together is one method (a conflict in two regions; two declarations are two classes and fine).
+  deps.ts `innerAccesses` knows the instance of such a method now (`CMethod.instance`).
+- **Open**: a `dataflow once` region that calls a method, in a state entered in tick 1 that a transition which can
+  never fire leads back to (`initial state S { dataflow once { o = twice(x)  m = o + 1 } } join to T` with `state T
+  ... go to S`): KIELER's GO block reaches the equations (the dead way back does not end it) and B-34 reorders them
+  (`m = 1`), the engine's GO block ends at `S`, so it computes `m = 3` and does not warn (`kieler-bug`). Without the
+  dead transition it warns as for any B-34 pattern.
 
 ## Final polish (engine-5)
 
@@ -474,6 +535,18 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 9 (seed 91, polish x 200, the new profile) | 200 | 104 | 83 | 1 | 0 | 0 | 12, all fixed (below) |
 | 10 (seed 101, polish x 250, after those fixes) | 250 | 92 | 154 | 2 | 0 | 0 | 2, fixed (below) |
 | 11 (seed 111, polish, beginner, rare x 200) | 600 | 230 | 354 | 9 | 0 | 5 | 2, explained (below) |
+| 12 (seed 1, dataflowObjects x 200, the new profile) | 200 | 129 | 68 | 0 | 0 | 0 | 3, all fixed (below) |
+| 13 (seeds 2 and 3, dataflowObjects x 200 each) | 400 | 256 | 143 | 0 | 0 | 0 | 1, fixed (below) |
+| 14 (seeds 1, 2, 4, 5, dataflowObjects x 200 each, after the fixes) | 800 | 503 | 297 | 0 | 0 | 0 | 0 |
+
+Campaigns 12 to 14 use the profile `dataflowObjects` (tools/fuzz/README.md): dataflow regions with chart instances,
+calls and schedules next to control flow. Campaign 12's three: a binding on an instance of a classic region, which
+KIELER refuses (2, fixed: `binding-error`, probes `dataflow/probe-dataflow-instance-classic-binding`); `k.add(1)`
+followed by `k.add(twice(n))`, on which KIELER's method inlining crashes (1, reduced with reduce.ts; fixed:
+`kieler-crash`, probes `-call-argument-call*`; the engine had rejected every call with a call in its argument, which
+hid it). Campaign 13's one: a `;` after a call written as an equation does not sequence it (fixed, probes
+`-call-semicolon-*`). `pnpm cgen:check --fuzz 300 --profiles dataflowObjects`: 190 charts compiled and compared, no
+mismatch.
 
 Campaigns 8 to 11 (final polish): 8 runs the profiles `beginner` and `rare` on the engine with this round's changes
 (no disagreement in 440 charts; the five charts the engine flags as depending on KIELER's cure order were run 5 to 15
@@ -541,9 +614,8 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 
 ## Not yet (charts get the `unsupported` info and cannot be simulated)
 
-Written schedules inside code blocks and methods, on calls, methods, equations and dataflow regions, and of class
-instances (structure.md S-27a; those on effects, triggers, states and regions run), `extends` with generic parameters,
-chart instances in dataflow regions that call methods, dataflow reference calls `A(x, y)`. Never (no C compiler in the browser): host code (backticks), `extern` functions, host
+Written schedules inside code blocks and methods, on calls, methods, and of class
+instances (structure.md S-27a; those on effects, triggers, states, regions, equations and dataflow regions run), `extends` with generic parameters. Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".
 
 ## Known differences

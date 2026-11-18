@@ -212,6 +212,8 @@ export interface CMethod {
      * (`ref C a, b`) are one class with one method, where the simulator has a method per instance.
      */
     cls?: string
+    /** A method of a chart instance: the instance (KIELER's `self` when it keeps the method as a function). */
+    instance?: CVar
     span?: Span
 }
 

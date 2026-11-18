@@ -1,0 +1,15 @@
+// The same with two declarations (two classes, two methods): accepted.
+scchart DfInstancesTwoDeclarationsKeptMethod {
+  input int x
+  output int o
+  ref KL c
+  ref KL d
+  region R1 { initial state A do c.set7() go to A }
+  region R2 { initial state B do d.set7() go to B }
+}
+scchart KL {
+  int v = 0
+  method void big() { for (int j = 0; j < 2; j++) { v += 1; } }
+  method void set7() { for (int j = 0; j < 1; j++) { v = 7; } }
+  method int get() { return v }
+}

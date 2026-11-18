@@ -1,0 +1,15 @@
+// A method of a chart instance that KIELER keeps as a C function (it has a loop) next to a concurrent update of the
+// same field: accepted, the method reads the field through its own self.
+scchart DfInstanceKeptMethod {
+  input int x
+  output int o
+  ref KL c
+  region R1 { initial state A do c.big() go to A }
+  region R2 { initial state B do c.v += 1; o = c.v go to B }
+}
+scchart KL {
+  int v = 0
+  method void big() { for (int j = 0; j < 2; j++) { v += 1; } }
+  method void set7() { for (int j = 0; j < 1; j++) { v = 7; } }
+  method int get() { return v }
+}
