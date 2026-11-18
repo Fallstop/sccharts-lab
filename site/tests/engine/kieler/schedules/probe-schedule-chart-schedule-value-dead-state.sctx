@@ -1,0 +1,7 @@
+// A chart's schedule read as a value on a transition of a state that is never entered.
+scchart T {
+  output int o
+  schedule s
+  initial state A do o = 1 go to B state B
+  state X do o = s go to B
+}

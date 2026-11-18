@@ -1,0 +1,11 @@
+// Control: the same chart referenced by a state keeps its schedule to itself.
+scchart Test {
+  output int o
+  initial state A is Sub
+}
+scchart Sub {
+  schedule s
+  int v
+  region R { initial state P do v = 1 schedule s 1 go to Q state Q }
+  region S { initial state P2 do v = 2 schedule s 0 go to Q2 state Q2 }
+}

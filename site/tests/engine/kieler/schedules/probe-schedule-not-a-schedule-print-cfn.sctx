@@ -1,0 +1,7 @@
+// A clause naming a variable that is no schedule on a constant print inside a C function.
+scchart Test {
+  output int o
+  int s
+  method void say() { for (int i = 0; i < 1; i++) { print("test") schedule s 0 } }
+  initial state A do say() go to B state B
+}

@@ -1,0 +1,11 @@
+// A statement of a method of a chart used as a class that names the chart's own schedule: refused (found by a review).
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do x.set() go to B state B
+}
+scchart Sub {
+  schedule s
+  int v
+  method void set() { v = 1 schedule s 0 }
+}

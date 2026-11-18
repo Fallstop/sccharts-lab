@@ -1,0 +1,8 @@
+// A contract of a chart method that names the schedule of a class instance, called from a method nobody calls.
+scchart T {
+  output int o
+  class C { schedule s int v } c
+  method void set() schedule c.s 0 { o = 1 }
+  method void never() { set() }
+  initial state A do o = 2 go to B state B
+}

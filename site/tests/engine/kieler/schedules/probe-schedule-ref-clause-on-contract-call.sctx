@@ -1,0 +1,13 @@
+// A call of a contract method of a chart used as a class, with a clause naming the instance's schedule too.
+scchart Test {
+  output int o
+  ref Sub x
+  region R { initial state A do x.put(1, 0) schedule x.s 2 go to B state B }
+  region S { initial state C do o = x.get() go to D state D }
+}
+scchart Sub {
+  schedule s
+  int v
+  method void put(int a, int b) schedule s 0 { v = a + b }
+  method int get() schedule s 1 { return v }
+}

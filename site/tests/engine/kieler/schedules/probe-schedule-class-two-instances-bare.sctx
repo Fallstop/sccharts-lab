@@ -1,0 +1,6 @@
+// A class with two instances whose method statement names the class's own schedule.
+scchart Test {
+  output int o
+  class C { schedule s int v void set() { v = 1 schedule s 0 } } c, d
+  initial state A do c.set() go to B state B
+}

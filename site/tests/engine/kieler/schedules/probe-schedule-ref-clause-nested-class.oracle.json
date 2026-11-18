@@ -1,0 +1,44 @@
+{
+  "hash": "d8d67b192d167f1bd33acbbfe8c8e2dbc13e34f7",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-ref-clause-nested-class.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "5:39 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@72723523{file:///tmp/sccharts-oracle-iXvjiT/m152/probe-schedule-ref-clause-nested-class.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@schedule.0/@subReference}' must be set",
+    "5:41 The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@6ff6d75a{file:///tmp/sccharts-oracle-iXvjiT/m152/probe-schedule-ref-clause-nested-class.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@schedule.0/@subReference/@subReference}' must be set",
+    "Couldn't resolve reference to ValuedObject 'c'.",
+    "Couldn't resolve reference to ValuedObject 's'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 'c'.",
+      "line": 5,
+      "column": 39,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to ValuedObject 's'.",
+      "line": 5,
+      "column": 41,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@72723523{file:///tmp/sccharts-oracle-iXvjiT/m152/probe-schedule-ref-clause-nested-class.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@schedule.0/@subReference}' must be set",
+      "line": 5,
+      "column": 39,
+      "code": "org.eclipse.emf.ecore.1"
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'valuedObject' of 'de.cau.cs.kieler.kexpressions.impl.ValuedObjectReferenceImpl@6ff6d75a{file:///tmp/sccharts-oracle-iXvjiT/m152/probe-schedule-ref-clause-nested-class.sctx#//@rootStates.0/@regions.0/@states.0/@outgoingTransitions.0/@effects.0/@schedule.0/@subReference/@subReference}' must be set",
+      "line": 5,
+      "column": 41,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

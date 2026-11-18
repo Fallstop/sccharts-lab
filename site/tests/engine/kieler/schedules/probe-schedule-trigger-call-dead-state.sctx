@@ -1,0 +1,8 @@
+// A scheduled trigger that calls a short method, on a transition of a state that is never entered.
+scchart T {
+  output int o
+  schedule s
+  method bool yes() { return true }
+  initial state A do o = 2 go to B state B
+  state X if yes() schedule s 0 go to B
+}

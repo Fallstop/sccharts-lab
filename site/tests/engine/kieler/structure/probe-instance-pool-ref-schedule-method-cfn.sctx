@@ -1,0 +1,7 @@
+// A chart used as a class with a schedule and a C function, which is called.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = x.big() schedule x.s 0 go to B state B
+}
+scchart Sub { schedule s method int big() { int r = 0; for (int i = 0; i < 2; i++) { r += 1 } return r } }

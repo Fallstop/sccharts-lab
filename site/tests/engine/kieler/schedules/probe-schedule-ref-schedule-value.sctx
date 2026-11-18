@@ -1,0 +1,7 @@
+// The schedule of a chart used as a class read as a value in its own method.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do x.set() go to B state B
+}
+scchart Sub { schedule s int v method void set() { v = s } }

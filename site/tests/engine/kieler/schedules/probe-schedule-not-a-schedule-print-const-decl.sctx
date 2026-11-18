@@ -1,0 +1,7 @@
+// A clause naming a variable that is no schedule on a print of a constant of the chart.
+scchart Test {
+  output int o
+  int s
+  const int K = 4
+  initial state A do print(K) schedule s 0 go to B state B
+}

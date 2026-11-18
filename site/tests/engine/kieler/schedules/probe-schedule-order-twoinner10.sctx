@@ -1,0 +1,11 @@
+// Two short methods with a scheduled statement (priorities 1 and 0) whose value calls one C function (a reviewer's chart).
+scchart T {
+  output int p, o
+  int n
+  schedule s
+  method int next() { for (int i = 0; i < 1; i++) { n += 1 } return n }
+  method void rd1() { p = next() schedule s 1 }
+  method void rd2() { o = next() schedule s 0 }
+  region R { initial state A do rd1() go to B state B }
+  region S { initial state X do rd2() go to Y state Y }
+}

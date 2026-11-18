@@ -1,0 +1,7 @@
+// Control: a scheduled trigger of the chart that is a call of a short class method.
+scchart T {
+  output int o
+  schedule s
+  class C { bool yes() { return true } } c
+  initial state A if c.yes() schedule s 0 do o = 1 go to B state B
+}

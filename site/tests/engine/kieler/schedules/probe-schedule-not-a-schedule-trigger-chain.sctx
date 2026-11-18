@@ -1,0 +1,8 @@
+// A clause naming a variable that is no schedule, in a method reached through a call in a trigger.
+scchart Test {
+  output int o
+  int s
+  method int inner() { o = 1 schedule s 0; return 1 }
+  method int outer() { return inner() }
+  initial state A if outer() == 1 go to B state B
+}

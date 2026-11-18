@@ -1,0 +1,8 @@
+// A contract method called in an argument of a short method as an initial value, in a method nobody calls.
+scchart T {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 3 } } c
+  method int wrap(int x) { return x }
+  method void never() { int k = wrap(c.get()); o = k }
+  initial state A do o = c.get() go to B state B
+}

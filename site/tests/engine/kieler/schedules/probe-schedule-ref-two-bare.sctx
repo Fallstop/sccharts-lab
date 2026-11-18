@@ -1,0 +1,7 @@
+// Two instances of a chart whose method statement names the chart's own schedule.
+scchart Test {
+  output int o
+  ref Sub x, y
+  initial state A do x.set() go to B state B
+}
+scchart Sub { schedule s int v method void set() { v = 1 schedule s 0 } }

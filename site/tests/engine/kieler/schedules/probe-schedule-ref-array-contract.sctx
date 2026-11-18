@@ -1,0 +1,7 @@
+// An array of instances of a referenced chart with a contract method that is called.
+scchart Test {
+  output int o
+  ref Sub x[2]
+  initial state A do x[0].set() go to B state B
+}
+scchart Sub { schedule s int v method void set() schedule s 0 { v = 1 } }

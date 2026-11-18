@@ -1,0 +1,11 @@
+// A scheduled condition that calls a short method, inside a method marked @inline.
+scchart T {
+  output int o
+  schedule s
+  method bool yes() { return true }
+  @inline
+  method void inner() {
+    if yes() schedule s 0 { o = 1 }
+  }
+  initial state A do inner() go to B state B
+}

@@ -1,0 +1,6 @@
+// A clause naming a variable that is no schedule on an assignment of random().
+scchart Test {
+  output float o
+  int s
+  initial state A do o = random() schedule s 0 go to B state B
+}

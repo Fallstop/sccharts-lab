@@ -13,7 +13,7 @@
 // on triggers; the regions the simulator schedules have none.)
 
 import type { Pass, PassContext } from './context'
-import { allActionSites, allRegions, allScopes, controlflowRegions, CVar, effectExprs, isRegion, mapEffect, mapExpr, walkExpr, type CAction, type CEffect, type CExpr, type CRegion, type CState, type CStmt, type CTransition, type SchedEntry } from '../model'
+import { allRegions, allScopes, controlflowRegions, isRegion, mapEffect, mapExpr, type CAction, type CEffect, type CExpr, type CRegion, type CState, type CStmt, type CTransition, type SchedEntry } from '../model'
 import type { Schedule } from './dataflow'
 import { transformContracts } from './contracts'
 
@@ -30,7 +30,6 @@ export const userSchedule: Pass = {
             if (isRegion(scope)) transformRegion(scope)
             else transformState(scope)
         }
-        if (notASchedule(ctx)) return
         for (const region of allRegions(ctx.root)) {
             const schedule = region.ext.schedule as Schedule | undefined
             if (!schedule) continue
@@ -47,7 +46,7 @@ export const userSchedule: Pass = {
 }
 
 /** Every place of the chart that holds schedule clauses, with a function that replaces them. */
-function clauses(ctx: PassContext, fn: (list: SchedEntry[]) => SchedEntry[] | undefined, called?: (v: CVar) => boolean) {
+function clauses(ctx: PassContext, fn: (list: SchedEntry[]) => SchedEntry[] | undefined) {
     const expr = <E extends CExpr | undefined>(e: E): E => (e ? (mapExpr(e, x => (x.sched ? { ...x, sched: fn(x.sched) } : undefined)) as E) : e)
     const effect = (f: CEffect): CEffect => {
         const mapped = mapEffect(f, x => (x.sched ? { ...x, sched: fn(x.sched) } : undefined))
@@ -63,19 +62,17 @@ function clauses(ctx: PassContext, fn: (list: SchedEntry[]) => SchedEntry[] | un
         }
     })
     for (const scope of allScopes(ctx.root)) {
-        if (!called) {
-            const own = scope.ext.userSchedule as SchedEntry[] | undefined
-            if (own) scope.ext.userSchedule = fn(own)
-        }
+        const own = scope.ext.userSchedule as SchedEntry[] | undefined
+        if (own) scope.ext.userSchedule = fn(own)
         const sites: (CTransition | CAction)[] = [...scope.actions, ...(isRegion(scope) ? [] : scope.out)]
         for (const a of sites) {
             a.trigger = expr(a.trigger)
             a.effects = a.effects.map(effect)
         }
         for (const v of scope.decls) {
-            if (!v.method || (called && !called(v))) continue
+            if (!v.method) continue
             v.method.body = statements(v.method.body)
-            if (v.method.schedule && !called) v.method.schedule = fn(v.method.schedule)
+            if (v.method.schedule) v.method.schedule = fn(v.method.schedule)
         }
     }
 }
@@ -86,35 +83,6 @@ function dropUnresolved(ctx: PassContext) {
         const kept = list.filter(e => !e.ref)
         return kept.length === list.length ? list : kept.length ? kept : undefined
     })
-}
-
-/**
- * A schedule clause naming a variable that is not a schedule (`int s ... schedule s 0`): KIELER's dependency analysis
- * casts its declaration to a schedule declaration for every access it orders, and throws. In a method body it does
- * when the method is called (KIELER removes the graph of a method nobody calls).
- */
-function notASchedule(ctx: PassContext): boolean {
-    const found: SchedEntry[] = []
-    const check = (list: SchedEntry[]) => {
-        for (const e of list) if (e.group instanceof CVar && e.group.declKind !== 'schedule') found.push(e)
-        return list
-    }
-    const calledVars = new Set<CVar>()
-    for (const site of allActionSites(ctx.root)) {
-        const holder = site.transition ?? site.action!
-        for (const e of [holder.trigger, ...holder.effects.flatMap(effectExprs)]) walkExpr(e, x => { if (x.k === 'call' && x.target?.v.method) calledVars.add(x.target.v) })
-    }
-    clauses(ctx, check, v => calledVars.has(v))
-    const first = found[0]
-    if (!first) return false
-    const v = first.group as CVar
-    ctx.report({
-        severity: 'error', code: 'kieler-crash', span: first.span, related: v.decl ? [v.decl] : undefined,
-        message: `\`${v.name}\` is not a schedule, so KIELER's compiler crashes on \`schedule ${v.name} ${first.priority}\``,
-        kieler: 'java.lang.ClassCastException: class de.cau.cs.kieler.kexpressions.impl.VariableDeclarationImpl cannot be cast to class de.cau.cs.kieler.kexpressions.ScheduleDeclaration',
-        hint: 'After `schedule` comes the name of a schedule object, declared as `schedule t`.',
-    })
-    return true
 }
 
 function scheduleOf(scope: CState | CRegion): SchedEntry[] {

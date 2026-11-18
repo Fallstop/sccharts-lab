@@ -1,0 +1,7 @@
+// A class with only a schedule, named through the instance.
+scchart Test {
+  output int o
+  class C { schedule s } c
+  region R { initial state A do o = 1 schedule c.s 1 go to B state B }
+  region S { initial state C2 do o = 2 schedule c.s 0 go to D state D }
+}

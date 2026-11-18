@@ -1,0 +1,10 @@
+// A C function of the chart returns the value of a contract method (priority 1), which gets no contract, next to a concurrent contract call (priority 0) (a reviewer's chart).
+scchart T {
+  output int o
+  class C { schedule s int v = 3 int get() schedule s 1 { return v } void set() schedule s 0 { v = 5 } } c
+  method void wrap(int a, int b) { for (int i = 0; i < 1; i++) { o = a } }
+  method int plus(int a, int b) { int r = 0; for (int i = 0; i < 1; i++) { r = a } return r }
+  method int run() { int x = 0; for (int i = 0; i < 1; i++) { x = 1 } return c.get() }
+  region R { initial state A do o = run() go to B state B }
+  region S { initial state X do c.set() go to Y state Y }
+}

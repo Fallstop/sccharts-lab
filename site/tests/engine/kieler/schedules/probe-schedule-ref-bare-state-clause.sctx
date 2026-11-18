@@ -1,0 +1,11 @@
+// A state of a chart used as a class scheduled with the chart's own schedule.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = 1 go to B state B
+}
+scchart Sub {
+  schedule s
+  int v
+  initial state P schedule s 0 { initial state P1 do v = 1 go to P2 state P2 }
+}

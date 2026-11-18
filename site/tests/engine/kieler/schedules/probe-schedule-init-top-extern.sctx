@@ -1,0 +1,8 @@
+// A contract method that is a C function as a local variable's initial value inside an operator, in a C function.
+scchart T {
+  output int o
+  class C { schedule s int v = 3 int get() schedule s 1 { return v } void set() schedule s 0 { v = 7 } } c
+  method void run() { for (int i = 0; i < 1; i++) { int k = c.get() + 1; o = k } }
+  region R { initial state A do run() go to B state B }
+  region S { initial state C2 do c.set() go to D state D }
+}

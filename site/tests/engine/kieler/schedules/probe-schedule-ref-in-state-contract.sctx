@@ -1,0 +1,15 @@
+// A chart used as a class declared in an inner state: its contracts order the calls.
+scchart Test {
+  output int o
+  initial state P {
+    ref Sub x
+    region R1 { initial state A do o = x.get() go to B state B }
+    region R2 { initial state C do x.set(5) go to D state D }
+  }
+}
+scchart Sub {
+  schedule s
+  int v = 0
+  method void set(int a) schedule s 0 { v = a }
+  method int get() schedule s 1 { return v }
+}

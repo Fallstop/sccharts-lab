@@ -1,0 +1,12 @@
+// A scheduled condition inside a C function that calls another C function: fine.
+scchart T {
+  output int o
+  schedule s
+  method bool yes() { bool r = false; for (int i = 0; i < 1; i++) { r = true } return r }
+  method void inner() {
+    for (int i = 0; i < 1; i++) {
+      if yes() schedule s 0 { o = 1 }
+    }
+  }
+  initial state A do inner() go to B state B
+}

@@ -1,0 +1,7 @@
+// A contract of a class method that names a variable that is no schedule.
+scchart T {
+  output int o
+  int s
+  class D { void set() schedule s 0 { o = 1 } } d
+  initial state A do d.set() go to B state B
+}

@@ -1,0 +1,10 @@
+// A C function whose value comes from another C function with a scheduled statement.
+scchart B54 {
+  output int o
+  int g = 0
+  schedule s
+  method int inner() { int r = 0; for (int i = 0; i < 1; i++) { r = g schedule s 1 } return r }
+  method int outer() { int r = 0; for (int i = 0; i < 1; i++) { r = inner() } return r }
+  region R1 { initial state A do o = outer() go to B state B }
+  region R2 { initial state C do g = 2 schedule s 0 go to D state D }
+}

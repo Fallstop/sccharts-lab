@@ -1,0 +1,7 @@
+// A clause naming a variable that is no schedule on a call of a C function that touches nothing.
+scchart Test {
+  output int o
+  int s
+  method void idle() { for (int i = 0; i < 1; i++) { } }
+  initial state A do idle() schedule s 0 go to B state B
+}

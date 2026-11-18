@@ -1,0 +1,11 @@
+// Control: a field and a method of a chart used as a class, inside a chart referenced by a state.
+scchart Test {
+  output int o
+  initial state P is Mid(o)
+}
+scchart Mid {
+  output int r
+  ref Sub x
+  initial state A do x.set() go to B state B do r = x.v go to C state C
+}
+scchart Sub { int v method void set() { v = 4 } }

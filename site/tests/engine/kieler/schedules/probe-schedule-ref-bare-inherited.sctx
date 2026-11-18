@@ -1,0 +1,11 @@
+// A chart used as a class inherits a schedule and names it in a statement of a method.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do x.set() go to B state B
+}
+scchart Sub extends Base {
+  int v
+  method void set() { v = 1 schedule s 0 }
+}
+scchart Base { schedule s }

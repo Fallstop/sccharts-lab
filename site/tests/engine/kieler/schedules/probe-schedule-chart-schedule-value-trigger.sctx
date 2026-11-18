@@ -1,0 +1,6 @@
+// A chart's schedule read in a trigger.
+scchart T {
+  output int o
+  schedule s
+  initial state A if s == 0 do o = 1 go to B state B
+}

@@ -1,0 +1,9 @@
+// Statements of a code block and of a method scheduled with the schedule of a chart used as a class.
+scchart Test {
+  output int o
+  ref Sub x
+  method void one() { o = 1 schedule x.s 1 }
+  region R { initial state A do one() go to B state B }
+  region S { initial state C do { o = 2 schedule x.s 0 } go to D state D }
+}
+scchart Sub { schedule s }

@@ -1,0 +1,10 @@
+// A C function of the chart calls a C function of a class with a scheduled statement.
+scchart B55 {
+  output int o
+  schedule s
+  class C { int v = 0 void put() { for (int i = 0; i < 1; i++) { v = 1 schedule s 1 } } } c
+  method void outer() { for (int i = 0; i < 1; i++) { c.put() } }
+  region R1 { initial state A do outer() go to B state B }
+  region R2 { initial state C2 do c.v = 2 schedule s 0 go to D state D }
+  region R3 { initial state E go to F state F do o = c.v go to G state G }
+}

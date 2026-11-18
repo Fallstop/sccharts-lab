@@ -1,0 +1,8 @@
+// A contract method as a local variable's initial value in a method marked @inline.
+scchart T {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 3 } } c
+  @inline
+  method void run() { int k = c.get(); o = k }
+  initial state A do run() go to B state B
+}

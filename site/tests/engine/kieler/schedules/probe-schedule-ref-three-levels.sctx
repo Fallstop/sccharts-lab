@@ -1,0 +1,7 @@
+// A schedule two classes deep inside a chart used as a class: three levels, where KIELER does not look.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = 1 go to B state B
+}
+scchart Sub { class A1 { class B1 { schedule s int v } b } a }

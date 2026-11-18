@@ -1,0 +1,7 @@
+// A method of a chart used as a class with a clause naming a variable that is no schedule, never called.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = 1 go to B state B
+}
+scchart Sub { int t int v method void set() { v = 1 schedule t 0 } }

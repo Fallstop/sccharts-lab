@@ -11,7 +11,7 @@
 import type { Diagnostic, Span } from '../../types'
 import { compileEffect, SimError, type Compiled, type ExprCompiler, type Runtime } from '../eval'
 import {
-    CVar, copyEffect, copyExpr, mapExpr, type CEffect, type CExpr, type CMethod, type CRef, type CStmt,
+    CVar, copyEffect, copyExpr, mapExpr, walkExpr, type CEffect, type CExpr, type CMethod, type CRef, type CStmt,
 } from '../model'
 import type { SCG, SNode } from '../scg'
 import { convert, ctypeOf, defaultValue, type CType, type RValue } from '../values'
@@ -264,11 +264,131 @@ function sameMethod(a: CVar, b: CVar): boolean {
     return !!a.method?.cls && a.method.cls === b.method?.cls && source(a) === source(b)
 }
 
-/** Inlines the calls of simple methods into the SCG (after the superfluous fork removal, as KIELER does). */
-export function inlineMethods(scg: SCG): Diagnostic[] {
+type Call = Extract<CExpr, { k: 'call' }>
+
+/**
+ * The bodies KIELER's Methods processor works on beyond the tick's own nodes, and what it refuses or loses there
+ * (MethodProcessor.process, inlineCalls, inlineMethod).
+ *
+ * - A method the tick calls and KIELER keeps as a C function is *remaining*: its graph is processed like the tick's
+ *   (the short methods it calls are copied into it), and so are the functions it calls in turn. A method that only
+ *   methods nobody calls reach is never looked at.
+ * - A call with a schedule of its own cannot be copied into place: `User schedules are not supported in combination
+ *   with method inlining!`. In a body that is a condition which is the call itself (`if yes() schedule s 0`: the
+ *   clause sits on the condition, so an operator around the call is fine) and the outermost call of a local variable's
+ *   initial value that carries a contract (passes/contracts.ts). Probes schedules/probe-schedule-cfn-cond-call-*,
+ *   -init-arg-*.
+ * - A body copied into place (`@inline`) has its short methods copied too, but the C functions it calls are not
+ *   noted as remaining: unless something else calls them, KIELER drops them as unused and gcc fails on the call.
+ * - A schedule read as a value (`o = s`) is a variable KIELER's C code never declares, in the tick or in a remaining
+ *   function (not in a method nobody calls; probes schedules/probe-schedule-value-*).
+ */
+function bodyProblems(work: SNode[], remaining: Set<CVar>): Diagnostic[] {
+    const out: Diagnostic[] = []
+    const queue: CVar[] = []
+    const copied = new Set<CMethod>()
+    /** Calls of C functions inside bodies that were copied into place. */
+    const orphans: Call[] = []
+    const refused = new Set<Call>()
+    const refuse = (call: Call) => {
+        if (refused.has(call)) return
+        refused.add(call)
+        out.push(call.contract ? {
+            severity: 'error', code: 'schedule-inlined-call', span: call.span, related: call.target?.v.decl ? [call.target.v.decl] : undefined,
+            message: `KIELER cannot compile this initial value: it carries the contract of a method it calls, and KIELER copies the short method \`${call.name}\` into place`,
+            kieler: 'User schedules are not supported in combination with method inlining!',
+            hint: `Declare the variable without a value and assign it in a statement of its own (\`k = ${call.name}(...)\`).`,
+        } : {
+            severity: 'error', code: 'schedule-inlined-call', span: call.span, related: call.target?.v.decl ? [call.target.v.decl] : undefined,
+            message: `KIELER cannot compile a scheduled condition that is a call of \`${call.name}\`, a short method it copies into place`,
+            kieler: 'User schedules are not supported in combination with method inlining!',
+            hint: `Store the result in a variable first (\`t = ${call.name}(...)\`) and test \`t\` in the scheduled condition, or write the schedule on the statements of \`${call.name}\`.`,
+        })
+    }
+    const visit = (call: Call, inCopy: boolean, inBody: boolean) => {
+        const mv = call.target!.v
+        const m = mv.method!
+        if (isInlined(m)) {
+            if (inBody && (call.contract || call.sched?.length)) refuse(call)
+            else if (!copied.has(m)) {
+                copied.add(m)
+                statements(m.body, true)
+            }
+        } else if (inCopy) orphans.push(call)
+        else if (!remaining.has(mv)) {
+            remaining.add(mv)
+            queue.push(mv)
+        }
+    }
+    const values = new Set<CVar>()
+    /** KIELER's name for a schedule: an instance's is `<Class>_<instance>_<name>` in the chart. */
+    const cName = (v: CVar) => {
+        const chart = v.scheduleInstance?.instance?.target
+        return chart ? `${chart}1_${v.scheduleInstance!.name}_${(v.display ?? v.name).split('.').pop()}` : v.name
+    }
+    const read = (x: CExpr) => {
+        if (x.k !== 'ref' || x.v.declKind !== 'schedule' || values.has(x.v)) return
+        values.add(x.v)
+        const name = (x.v.display ?? x.v.name).split('.').pop()!
+        out.push({
+            severity: 'error', code: 'schedule-value', span: x.span ?? x.v.span, related: x.v.decl ? [x.v.decl] : undefined,
+            message: `\`${name}\` is a schedule and has no value: KIELER's C code does not compile where it is read`,
+            kieler: `\u2018TickData\u2019 has no member named \u2018${cName(x.v)}\u2019\nCompiler did not return success (exit value != 0)`,
+            hint: `A schedule only orders what a \`schedule ${name} ...\` clause is written on. Remove \`${name}\` from the expression.`,
+        })
+    }
+    const expr = (e: CExpr | undefined, inCopy: boolean) => walkExpr(e, x => {
+        read(x)
+        if (x.k === 'call' && !x.extern && x.target?.v.method) visit(x, inCopy, true)
+    })
+    function statements(list: CStmt[], inCopy: boolean) {
+        for (const st of list) {
+            switch (st.k) {
+                case 'do': {
+                    const f = st.f
+                    if (f.k === 'assign') { f.ref.idx.forEach(i => expr(i, inCopy)); expr(f.expr, inCopy) }
+                    else if (f.k === 'emit') expr(f.value, inCopy)
+                    else if (f.k === 'print') f.args.forEach(a => expr(a, inCopy))
+                    else if (f.k === 'call') expr(f.call, inCopy)
+                    break
+                }
+                case 'if': expr(st.cond, inCopy); statements(st.then, inCopy); if (st.else) statements(st.else, inCopy); break
+                case 'while': expr(st.cond, inCopy); statements(st.body, inCopy); break
+                case 'for': statements(st.init, inCopy); expr(st.cond, inCopy); statements(st.update, inCopy); statements(st.body, inCopy); break
+                case 'return': expr(st.expr, inCopy); break
+                case 'expr': expr(st.e, inCopy); break
+                default: break
+            }
+        }
+    }
+    for (const node of work) {
+        for (const call of callsIn(node)) visit(call, false, false)
+        const f = node.effect
+        const own = node.kind === 'cond' ? [node.expr] : f?.k === 'assign' ? [...f.ref.idx, f.expr] : f?.k === 'emit' ? [f.value] : f?.k === 'print' ? f.args : f?.k === 'call' ? f.call.args : []
+        for (const e of own) walkExpr(e, read)
+    }
+    while (queue.length) statements(queue.shift()!.method!.body, false)
+    const lost = orphans.find(c => !remaining.has(c.target!.v))
+    if (lost) {
+        out.push({
+            severity: 'error', code: 'method-dropped', span: lost.span, related: lost.target?.v.decl ? [lost.target.v.decl] : undefined,
+            message: `KIELER's C code does not compile: \`${lost.name}\` is only called from a method KIELER copies into place (\`@inline\`), and KIELER drops it as unused`,
+            kieler: `implicit declaration of function \u2018${lost.name}\u2019 [-Wimplicit-function-declaration]\nCompiler did not return success (exit value != 0)`,
+            hint: `Remove \`@inline\` from the calling method, or make \`${lost.name}\` short enough to be copied into place too (no loop, no call).`,
+        })
+    }
+    return out
+}
+
+/**
+ * Inlines the calls of simple methods into the SCG (after the superfluous fork removal, as KIELER does). `remaining`
+ * receives the methods KIELER keeps as C functions: those the tick calls, and those they call.
+ */
+export function inlineMethods(scg: SCG, remaining = new Set<CVar>()): Diagnostic[] {
     const diagnostics: Diagnostic[] = []
     let counter = 0
     const work = scg.nodes.filter(n => n.kind === 'assign' || n.kind === 'cond')
+    diagnostics.push(...bodyProblems(work, remaining))
     // KIELER collects the calls in a table with a row per method, in the order it first meets the methods (the nodes
     // in order, a node's calls innermost first), and copies the methods into place row by row.
     const rows = new Map<unknown, number>()

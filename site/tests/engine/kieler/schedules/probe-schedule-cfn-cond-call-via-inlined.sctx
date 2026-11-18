@@ -1,0 +1,14 @@
+// A scheduled condition that calls a short method, inside a C function called only from a method marked @inline.
+scchart T {
+  output int o
+  schedule s
+  method bool yes() { return true }
+  method void inner() {
+    for (int i = 0; i < 1; i++) {
+      if yes() schedule s 0 { o = 1 }
+    }
+  }
+  @inline
+  method void outer() { inner() }
+  initial state A do outer() go to B state B
+}

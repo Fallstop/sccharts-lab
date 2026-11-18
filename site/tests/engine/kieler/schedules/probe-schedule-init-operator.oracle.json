@@ -1,0 +1,62 @@
+{
+  "hash": "c8bda0470d259b60f71b4e39a7662c243cf0f6a4",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-init-operator.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Cannot serialize model with variable initialization (k) affected by scheduling directives. If you want to save this model, please move the initialization into a separated assignment.",
+    "Could not redirect VOR to new VO when copying method. VO name: C_c_s",
+    "Could not redirect VOR to new VO when copying method. VO name: c",
+    "Could not redirect VOR to new VO when copying method. VO name: get",
+    "Could not redirect VOR to new VO when copying method. VO name: C_c_s",
+    "Could not redirect VOR to new VO when copying method. VO name: c",
+    "Could not redirect VOR to new VO when copying method. VO name: get",
+    "ValuedObject with name k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _effect0 is contained in the model but not in VariableStore.",
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 4
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

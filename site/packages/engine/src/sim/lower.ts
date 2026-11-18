@@ -94,8 +94,7 @@ class Lowering {
     /** User schedules where the simulator does not apply them yet: those of dataflow equations and regions. */
     readonly unsupportedSchedules: { what: string; span?: Span }[] = []
 
-    /** `asClass`: the chart is lowered for a `ref` instance, which is a class to KIELER (its classes are one level deeper). */
-    constructor(readonly index: ModelIndex | undefined, private readonly inherited: ReadonlySet<string> = new Set(), private readonly asClass = false) {}
+    constructor(readonly index: ModelIndex | undefined, private readonly inherited: ReadonlySet<string> = new Set()) {}
 
     instanceMembers(): Map<CVar, Map<string, CVar>> {
         return new Map([...this.instances].map(([inst, entry]) => [inst, entry.members]))
@@ -206,8 +205,7 @@ class Lowering {
             for (const mvo of m.valuedObjects) {
                 const nested = m.declKind === 'class' || m.declKind === 'struct'
                 if (m.declKind === 'schedule') {
-                    const schedule = this.classSchedule(scope, d, inst, m, mvo, depth)
-                    if (schedule) members.set(mvo.id, schedule)
+                    members.set(mvo.id, this.classSchedule(scope, d, inst, m, mvo, depth))
                     continue
                 }
                 if (!nested && m.declKind !== 'variable' && m.declKind !== 'method') continue
@@ -249,7 +247,7 @@ class Lowering {
         this.instances.set(inst, { members, decl: d, owner })
     }
 
-    /** Schedules declared more than two classes deep, by declaration: KIELER leaves them where they are. */
+    /** Schedules declared two or more classes deep, by declaration: KIELER leaves them where they are (or refuses them). */
     private readonly deepSchedules = new Map<string, CVar>()
 
     /**
@@ -258,21 +256,11 @@ class Lowering {
      * the class's methods name that instance's schedule. It refuses one in a class inside a class, and does not look
      * further in (getAllNestedValuedObjects: two levels): a schedule deeper than that stays one object for all
      * instances. `depth` 0: the class is unpacked into the chart (@UnpackClass), where the schedule is the chart's.
-     * In a chart lowered for a `ref` instance every class is one level deeper: the Reference pass refuses the schedule
-     * of a class of the chart (checkSchedules), and one in a class inside a class is out of KIELER's sight already.
+     * What KIELER refuses is reported once the charts used as classes are expanded (a `ref C x` is one more class
+     * around the schedule): passes/contracts.ts classSchedules.
      */
-    private classSchedule(scope: Scope, d: Declaration, inst: CVar, m: Declaration, vo: Declaration['valuedObjects'][number], depth: number): CVar | undefined {
-        const deep = depth > 2 || (depth === 2 && this.asClass)
-        if (depth === 2 && !deep) {
-            this.reports.push({
-                severity: 'error', code: 'schedule-nested-class', span: vo.nameSpan ?? vo.span,
-                message: `KIELER cannot compile the schedule \`${vo.name}\` because it is declared in a class inside a class`,
-                kieler: `Scheduling declarations in nested classes are not yet supported (${vo.name})`,
-                hint: `Declare \`schedule ${vo.name}\` in the outer class or in the chart.`,
-            })
-            return undefined
-        }
-        const shared = deep ? this.deepSchedules.get(vo.id) : undefined
+    private classSchedule(scope: Scope, d: Declaration, inst: CVar, m: Declaration, vo: Declaration['valuedObjects'][number], depth: number): CVar {
+        const shared = depth > 1 ? this.deepSchedules.get(vo.id) : undefined
         if (shared) return shared
         const v = new CVar(depth === 1 ? `${d.className ?? 'class'}_${inst.name}_${vo.name}` : depth === 0 ? `${inst.name}_${vo.name}` : vo.name, 'host')
         v.declKind = 'schedule'
@@ -281,11 +269,12 @@ class Lowering {
         v.span = vo.nameSpan ?? vo.span
         v.scope = scope
         v.display = `${inst.display ?? inst.name}.${vo.name}`
-        if (depth === 1) v.scheduleOf = inst.name
-        if (deep) {
-            this.deepSchedules.set(vo.id, v)
-            v.tags.add(DEEP_SCHEDULE)
+        if (depth > 0) v.scheduleDepth = depth
+        if (depth === 1) {
+            v.scheduleOf = inst.name
+            v.scheduleInstance = inst
         }
+        if (depth > 1) this.deepSchedules.set(vo.id, v)
         scope.decls.push(v)
         return v
     }
@@ -404,15 +393,6 @@ class Lowering {
                     const inst = this.vars.get(vo.id)!
                     inst.dims = vo.cardinalities.map(c => this.expr(c))
                     this.initialiseInstance(inst)
-                    const schedule = vo.cardinalities.length ? [...(this.instances.get(inst)?.members.values() ?? [])].find(x => x.scheduleOf !== undefined) : undefined
-                    if (schedule) {
-                        this.reports.push({
-                            severity: 'error', code: 'schedule-class-array', span: vo.nameSpan ?? vo.span, related: schedule.decl ? [schedule.decl] : undefined,
-                            message: `KIELER cannot compile the schedule \`${schedule.display ?? schedule.name}\` of a class with an array of instances (\`${vo.name}\`)`,
-                            kieler: `Scheduling declarations in nested classes with cardinalities are not yet supported (${vo.name})`,
-                            hint: `Declare single instances (\`${d.className ?? 'C'} a, b\`), or declare the schedule in the chart.`,
-                        })
-                    }
                 }
             }
             for (const vo of d.valuedObjects) {
@@ -516,7 +496,7 @@ class Lowering {
 
     private method(d: Declaration, hidden: CVar[] = []): CMethod {
         const name = d.valuedObjects[0]?.name ?? ''
-        const contract = this.schedule(d.schedule, undefined, true)?.map(e => ({ ...e, method: name, span: e.span ?? d.schedule?.[0]?.span }))
+        const contract = this.schedule(d.schedule)?.map(e => ({ ...e, method: name, span: e.span ?? d.schedule?.[0]?.span }))
         const params: CVar[] = [...hidden]
         const locals: CVar[] = []
         for (const p of d.parameters ?? []) this.frameVars([p], params)
@@ -972,21 +952,20 @@ class Lowering {
             args = [...target.idx, ...args]
             target = { ...target, idx: [] }
         }
-        // A class's method called by its name alone, inside the class.
-        const bare = !!target?.v.member && target.v.declKind === 'method' && !!from.target && !from.target.sub
+        // A method called by its name alone (inside a class or a chart used as one: a method of the same instance).
+        const bare = target?.v.declKind === 'method' && !target.v.generated && !!from.target && !from.target.sub
         return { k: 'call', name, args, extern: from.extern, target, paramAccess: from.paramAccess as never, span: from.span, ...(bare ? { bare } : {}) }
     }
 
     // ----- effects -----
 
-    /** Clauses naming a class's schedule without an instance that were reported already (by where they are written). */
-    private readonly bareSchedules = new Set<number>()
-
     /**
      * `schedule s 1`: the schedule object and the priority. `schedule c.s 1` names the schedule of the instance `c`
-     * (classSchedule). `contract`: the clause of a method declaration, which names its class's schedule directly.
+     * (classSchedule; `qualified`), `schedule x.s 1` that of a chart used as a class (`ref C x`), which the Reference
+     * pass knows once it expanded `x`. What KIELER refuses (a class's schedule named without its instance) is found
+     * after the references are expanded: passes/contracts.ts.
      */
-    schedule(list: ScheduleRef[] | undefined, what?: string, contract = false): SchedEntry[] | undefined {
+    schedule(list: ScheduleRef[] | undefined, what?: string): SchedEntry[] | undefined {
         if (!list?.length) return undefined
         if (what) {
             this.unsupportedSchedules.push({ what, span: list[0].span })
@@ -994,40 +973,21 @@ class Lowering {
         }
         const out: SchedEntry[] = []
         for (const s of list) {
-            let v = s.ref.decl ? this.vars.get(s.ref.decl) : undefined
-            // The schedule of a chart instance (`schedule g.s 1`, `ref C g`): known once the Reference pass has made
-            // the instance (its redirectMembers).
-            if (v?.declKind === 'reference' && v.instance && s.ref.sub) {
-                const ref = this.ref(s.ref)
-                out.push({ group: ref.v, priority: s.priority, ref })
-                continue
-            }
+            const first = s.ref.decl ? this.vars.get(s.ref.decl) : undefined
+            let v = first
             for (let sub = s.ref.sub; sub && v; sub = sub.sub) v = sub.decl ? this.instances.get(v)?.members.get(sub.decl) : undefined
-            // Declared in a base chart: the Inheritance pass knows the base's copy (passes/userSchedule.ts drops what
-            // nothing redirects).
-            if (!v && s.ref.decl && this.inherited.has(s.ref.decl.split('/').pop()!)) {
+            const qualified = s.ref.sub ? { qualified: true } : {}
+            // Declared in a base chart (the Inheritance pass knows the base's copy) or in a chart used as a class (the
+            // Reference pass knows the instance's): passes/userSchedule.ts drops what nothing redirects.
+            if (!v && s.ref.decl && (this.inherited.has(s.ref.decl.split('/').pop()!) || (s.ref.sub && first?.declKind === 'reference'))) {
                 const ref = this.ref(s.ref)
-                out.push({ group: ref.v, priority: s.priority, ref })
+                out.push({ group: ref.v, priority: s.priority, ref, span: s.span, ...qualified })
                 continue
             }
-            // Not resolved: the front end reports it (or classSchedule did). A variable that is not a schedule crashes
-            // KIELER's dependency analysis where it orders an access (passes/userSchedule.ts reports it).
+            // Not resolved: the front end reports it. A variable that is not a schedule crashes KIELER's dependency
+            // analysis where it orders an access (deps.ts), a contract's when the method is called (contracts.ts).
             if (!v) continue
-            if (!contract && !s.ref.sub && v.scheduleOf !== undefined) {
-                // Inside the class, in a statement: KIELER only rebinds a class's schedule where an instance is named.
-                const at = s.span?.start ?? -1
-                if (!this.bareSchedules.has(at)) {
-                    this.bareSchedules.add(at)
-                    this.reports.push({
-                        severity: 'error', code: 'schedule-without-instance', span: s.span, related: v.decl ? [v.decl] : undefined,
-                        message: `\`schedule ${s.ref.name} ${s.priority}\` inside the class names the class's own schedule, which KIELER cannot compile in a statement`,
-                        kieler: `Referring to scheduling directive in classes without reference to instance (${v.scheduleOf})`,
-                        hint: `Write the clause on the method's declaration (\`void m() schedule ${s.ref.name} ${s.priority} { ... }\`): it then applies to every call of the method. In a statement, use a schedule declared in the chart.`,
-                    })
-                }
-                continue
-            }
-            out.push({ group: v, priority: s.priority, ...(v.declKind === 'schedule' ? {} : { span: s.span }) })
+            out.push({ group: v, priority: s.priority, span: s.span, ...qualified })
         }
         return out.length ? out : undefined
     }
@@ -1257,11 +1217,8 @@ export function inheritedDeclarations(chart: State, index: ModelIndex | undefine
  * Lowers the scchart `chart` (with the resolved index from compile()). `inherited`: for the copy of a base chart,
  * the declarations inherited in the chart that extends it (inheritedDeclarations).
  */
-/** A schedule declared deeper in classes than KIELER looks: an ordinary schedule, no class's (classSchedule). */
-export const DEEP_SCHEDULE = '#deep-schedule'
-
-export function lowerChart(chart: State, index: ModelIndex | undefined, inherited?: ReadonlySet<string>, asClass = false): LowerResult {
-    const l = new Lowering(index, new Set([...(inherited ?? []), ...inheritedDeclarations(chart, index)]), asClass)
+export function lowerChart(chart: State, index: ModelIndex | undefined, inherited?: ReadonlySet<string>): LowerResult {
+    const l = new Lowering(index, new Set([...(inherited ?? []), ...inheritedDeclarations(chart, index)]))
     const root = l.state(chart, undefined)
     root.root = true
     l.contents(chart, root)

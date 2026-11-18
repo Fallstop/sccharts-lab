@@ -28,7 +28,7 @@ import {
     addVar, allContainedStates, allRegions, allScopes, copyExpr, createEntryAction, effectExprs, isRegion, ref, sameExpr, setSource,
     setTarget, walkExpr, type CArg, type CExpr, type CGenericArg, type CRef, type CRegion, type CState, type CStmt, type CVar, type Scope,
 } from '../model'
-import { DEEP_SCHEDULE, inheritedDeclarations, type CEquation } from '../lower'
+import { inheritedDeclarations, type CEquation } from '../lower'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { declaredVars, rewriteScope } from '../structure/rewrite'
 import { Replacements, Replacer } from '../structure/replacements'
@@ -54,6 +54,12 @@ export interface InstanceRecord {
     chart: State
     /** A `ref` declaration's instance (its regions join the declaring state's), not a referencing state. */
     declaration?: boolean
+}
+
+/** A chart instance without fields at the top of the simulated chart, and its methods (compile.ts emptyInstances). */
+export interface EmptyCandidate {
+    name: string
+    methods: CVar[]
 }
 
 /** A reference to expand: a state's `is C(args)`, or one the Dataflow processor made. */
@@ -670,14 +676,17 @@ export class Expansion {
                     } finally {
                         if (x > 0) this.muted--
                     }
-                    if (x === 0) this.checkSchedules(v, inst, chart, sizes.length > 0)
-                    // The chart is the instance's class: its own schedules are a class's (passes/contracts.ts).
+                    // The chart is the instance's class: one more class around every schedule declared in it, and its
+                    // own schedules are the instance's (passes/contracts.ts classSchedules reports what KIELER refuses).
                     for (const local of inst.decls) {
-                        if (local.declKind === 'schedule' && local.scheduleOf === undefined && !local.tags.has(DEEP_SCHEDULE)) {
-                            local.scheduleOf = v.name
-                            local.display = `${v.name}.${local.name}`
+                        if (local.declKind === 'schedule') {
+                            local.scheduleDepth = (local.scheduleDepth ?? 0) + 1
+                            local.scheduleOf = local.scheduleDepth === 1 ? v.name : undefined
+                            local.scheduleInstance = local.scheduleDepth === 1 ? v : undefined
+                            if (local.scheduleDepth === 1) local.display = `${v.name}.${local.name}`
                         }
-                        if (local.method && !local.member) local.classInstance = v
+                        // (A code block of the chart's own actions is no method of the class: KIELER moves it out with them.)
+                        if (local.method && !local.member && !local.generated) local.classInstance = v
                     }
                     if (x === 0) {
                         members = [...inst.decls]
@@ -688,10 +697,11 @@ export class Expansion {
                         }
                         this.checkSignals(v, inst, chart)
                         this.redirectMembers(v, prefix, inst, root, sizes.length)
-                        // A chart class instance without fields is still an (empty) object in KIELER's data pool
-                        // (structure.md S-60, conformance structure/131).
+                        // A chart class instance without fields is still an (empty) object in KIELER's data pool while
+                        // one of its methods is a C function (structure.md S-60, conformance structure/131; compile.ts
+                        // emptyInstances).
                         if (target === this.ctx.root && !v.instance!.args.length && !inst.decls.some(l => !l.declKind)) {
-                            ((this.ctx.root.ext.emptyInstances ??= []) as string[]).push(v.name)
+                            ((this.ctx.root.ext.emptyCandidates ??= []) as EmptyCandidate[]).push({ name: v.name, methods: inst.decls.filter(l => l.method && !l.generated) })
                         }
                     }
                     if (sizes.length) elementOf(inst, members, at, x === 0)
@@ -735,7 +745,7 @@ export class Expansion {
         const id = v.decl ?? v.name
         const dataflow = v.tags.has(DF_BINDING)
         this.checkRecursion(chart, id, v.span)
-        const lowered = lowerInstance(chart, this.index, prefix, this.local(chart) ? undefined : v.span, undefined, true)
+        const lowered = lowerInstance(chart, this.index, prefix, this.local(chart) ? undefined : v.span)
         for (const d of lowered.reports) this.ctx.report(d)
         const inst = lowered.root
         // (Before the base charts' declarations join them.)
@@ -798,32 +808,6 @@ export class Expansion {
             this.classes.get(scope)!.set(group, made)
         }
         return made
-    }
-
-    /**
-     * The instance is a class to KIELER from here on, so its chart's schedules are a class's (UserSchedule.xtend
-     * "Handle Class SDs", S-27a): one in an array of instances is refused, and so is one of a class or instance
-     * inside the chart, which is a class inside a class now.
-     */
-    private checkSchedules(v: CVar, inst: CState, chart: State, array: boolean) {
-        const nested = inst.decls.find(l => l.declKind === 'schedule' && l.scheduleOf !== undefined)
-        if (nested) {
-            this.ctx.report({
-                severity: 'error', code: 'schedule-nested-class', span: v.span, related: v.decl ? [v.decl] : undefined,
-                message: `KIELER cannot compile the schedule \`${nested.display ?? nested.name}\` of \`${chart.name}\` in the instance \`${v.name}\`: the instance is a class, and the schedule is declared in a class inside it`,
-                kieler: `Scheduling declarations in nested classes are not yet supported (${sourceName(nested)})`,
-                hint: `Declare the schedule in \`${chart.name}\` itself, or reference the chart with \`state S is ${chart.name}\` instead of declaring an instance.`,
-            })
-        }
-        const own = array ? inst.decls.find(l => l.declKind === 'schedule' && l.scheduleOf === undefined && !l.tags.has(DEEP_SCHEDULE)) : undefined
-        if (own) {
-            this.ctx.report({
-                severity: 'error', code: 'schedule-class-array', span: v.span, related: own.decl ? [own.decl] : undefined,
-                message: `KIELER cannot compile the schedule \`${own.name}\` of \`${chart.name}\` with an array of instances (\`${v.name}\`)`,
-                kieler: `Scheduling declarations in nested classes with cardinalities are not yet supported (${v.name})`,
-                hint: `Declare single instances (\`ref ${chart.name} a, b\`), or declare the schedule in the chart that declares \`${v.name}\`.`,
-            })
-        }
     }
 
     /**
@@ -1027,11 +1011,6 @@ function referenceCall(s: CState): ReferenceCall | undefined {
     const call = s.ext.reference as ScopeCall | undefined
     if (!call) return undefined
     return { target: call.target, args: (s.ext.args as CArg[] | undefined) ?? [], span: call.targetSpan ?? call.span, super: call.super }
-}
-
-/** A declaration's name as written (lowering renames the schedule of a class to `C_c_s`). */
-function sourceName(v: CVar): string {
-    return v.decl ? typeName(v.decl).split('.').pop()! : v.name
 }
 
 /** The name of a generic parameter from its declaration id (`<chart>$<name>`, behind an instance's prefix). */

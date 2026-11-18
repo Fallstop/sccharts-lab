@@ -1,0 +1,9 @@
+// A class with a schedule in a chart used as a class that is declared in an inner state.
+scchart Test {
+  output int o
+  initial state P {
+    ref Sub x
+    initial state A do o = 1 go to B state B
+  }
+}
+scchart Sub { class Inner { schedule s int v } c }

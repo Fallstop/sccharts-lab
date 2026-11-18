@@ -1,0 +1,10 @@
+// Control: the same chart referenced by a state, where its class is a class of the chart.
+scchart Test {
+  output int o
+  initial state A is Sub
+}
+scchart Sub {
+  class Inner { schedule s int v } c
+  region R { initial state P do c.v = 1 schedule c.s 1 go to Q state Q }
+  region S { initial state P2 do c.v = 2 schedule c.s 0 go to Q2 state Q2 }
+}

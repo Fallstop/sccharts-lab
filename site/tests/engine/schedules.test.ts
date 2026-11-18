@@ -142,3 +142,120 @@ describe('contracts and the schedules of instances', () => {
         }
     })
 })
+
+// What an independent review found (each chart is a recorded probe too: probe-schedule-ref-*, -init-arg-*,
+// -cfn-cond-call*, -contract-other-*, -not-a-schedule-*, -class-schedule-value*). Most came from checks made while
+// lowering, before a chart used through `ref Sub x` is the class of `x`.
+describe('charts used as classes, and where KIELER makes its checks', () => {
+    const codes = (source: string) => errors(source).map(d => d.code)
+    const through = (sub: string, effect = 'o = 1', decl = 'ref Sub x') => `scchart Test { output int o ${decl} initial state A do ${effect} go to B state B }\nscchart Sub { ${sub} }`
+
+    it('refuses the schedule of an array of chart instances instead of failing in the first tick', () => {
+        const array = errors(through('schedule s int v', 'o = 1', 'ref Sub x[2]'))
+        expect(array.map(d => d.code)).toEqual(['schedule-class-array'])
+        expect(array[0].kieler).toBe('Scheduling declarations in nested classes with cardinalities are not yet supported (x)')
+        // Without a schedule the array runs, as in KIELER (structure/probe-chart-instance-array).
+        const plain = compile(through('int v', 'o = 1', 'ref Sub x[2]'))
+        expect(plain.ok).toBe(true)
+        expect(plain.diagnostics.map(d => d.code)).not.toContain('unsupported')
+        expect(createSimulation(plain).step({}).pool).toEqual({ o: 0, x: [{ v: 0 }, { v: 0 }] })
+    })
+
+    it('names the schedule of a chart instance (schedule x.s N)', () => {
+        const chart = (a: number, b: number, sub = 'schedule s') => `scchart Test {
+  output int o
+  ref Sub x
+  region R { initial state A do o = 1 schedule x.s ${a} go to B state B }
+  region S { initial state C do o = 2 schedule x.s ${b} go to D state D }
+}
+scchart Sub { ${sub} }`
+        expect(run(chart(1, 0)).ticks[1].values.o).toBe(1)
+        expect(run(chart(0, 1)).ticks[1].values.o).toBe(2)
+        expect(run(chart(1, 0, 'private schedule s')).ticks[1].values.o).toBe(1)
+        // A chart with nothing but a schedule leaves no object in KIELER's data pool.
+        expect(run(chart(1, 0)).ticks[1].values).toEqual({ o: 1 })
+        // After `x.` a schedule clause sees schedules only.
+        expect(codes(chart(1, 0, 'int s'))).toEqual(['unknown-variable', 'unknown-variable'])
+    })
+
+    it('counts a chart used as a class as a class around what it declares', () => {
+        const nested = errors(through('class Inner { schedule s int v } c'))
+        expect(nested.map(d => d.code)).toEqual(['schedule-nested-class'])
+        expect(nested[0].kieler).toBe('Scheduling declarations in nested classes are not yet supported (s)')
+        // Three levels: KIELER does not look that far.
+        expect(compile(through('class A1 { class B1 { schedule s int v } b } a')).ok).toBe(true)
+        // Referenced by a state, the chart's class is at the first level.
+        expect(compile('scchart Test { output int o initial state A is Sub }\nscchart Sub { class Inner { schedule s int v } c }').ok).toBe(true)
+    })
+
+    it('refuses the chart\'s own schedule in its methods and accepts it on its transitions', () => {
+        const statement = errors(through('schedule s int v method void set() { v = 1 schedule s 0 }', 'x.set()'))
+        expect(statement.map(d => d.code)).toEqual(['schedule-without-instance'])
+        expect(statement[0].kieler).toBe('Referring to scheduling directive in classes without reference to instance (x)')
+        expect(codes(through('schedule s int v method void set() { v = 1 schedule s 0 }'))).toEqual(['schedule-without-instance'])
+        expect(codes(through('schedule s int v method void set() schedule s 0 { v = 1 } method void run() { set() }', 'x.run()'))).toEqual(['contract-sibling-call'])
+        expect(compile(through('schedule s int v initial state P do v = 1 schedule s 0 go to Q state Q')).ok).toBe(true)
+    })
+
+    it('refuses a class\'s schedule read as a value, and a schedule read as a value anywhere', () => {
+        const inside = errors('scchart T { output int o class C { schedule s int v void set() { v = s } } c initial state A do c.set() go to B state B }')
+        expect(inside.map(d => d.code)).toEqual(['schedule-without-instance'])
+        expect(inside[0].kieler).toBe('Referring to scheduling directive in classes without reference to instance (c)')
+        const value = errors('scchart T { output int o schedule s initial state A do o = s go to B state B }')
+        expect(value.map(d => d.code)).toEqual(['schedule-value'])
+        expect(value[0].kieler).toContain('has no member named ‘s’')
+        // A method nobody calls gets no C code.
+        expect(compile('scchart T { output int o schedule s method void never() { o = s } initial state A do o = 1 go to B state B }').ok).toBe(true)
+    })
+
+    it('puts a contract on the outermost call of an initial value', () => {
+        const chart = (wrap: string) => `scchart Test {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 3 } } c
+  method int wrap(int x) { ${wrap} }
+  initial state A do { int k = wrap(c.get()); o = k } go to B state B
+}`
+        expect(run(chart('for (int i = 0; i < 1; i++) { x += 1 } return x')).ticks[1].values.o).toBe(4)
+        expect(codes(chart('return x'))).toContain('schedule-inlined-call')
+    })
+
+    it('refuses a scheduled condition that is a call of a short method, in the bodies KIELER works on', () => {
+        const chart = (cond: string, call = 'inner()') => `scchart T {
+  output int o
+  schedule s
+  method bool yes() { return true }
+  method void inner() { for (int i = 0; i < 1; i++) { if ${cond} { o = 1 } } }
+  method void outer() { for (int i = 0; i < 1; i++) { inner() } }
+  initial state A do ${call} go to B state B
+}`
+        const refused = errors(chart('yes() schedule s 0'))
+        expect(refused.map(d => d.code)).toEqual(['schedule-inlined-call'])
+        expect(refused[0].kieler).toBe('User schedules are not supported in combination with method inlining!')
+        expect(codes(chart('yes() schedule s 0', 'outer()'))).toEqual(['schedule-inlined-call'])
+        expect(compile(chart('yes()')).ok).toBe(true)
+        expect(compile(chart('yes() && o == 0 schedule s 0')).ok).toBe(true)
+        expect(compile(chart('yes() schedule s 0', 'o = 2')).ok).toBe(true)
+    })
+
+    it('refuses a contract that is not its own class\'s schedule named alone, once the method is called', () => {
+        const chart = (effect: string) => `scchart T { output int o class C { schedule s int v } c method void set() schedule c.s 0 { o = 1 } initial state A do ${effect} go to B state B }`
+        const crash = errors(chart('set()'))
+        expect(crash.map(d => d.code)).toEqual(['kieler-crash'])
+        expect(crash[0].kieler).toContain('PolicyClassDeclarationImpl cannot be cast')
+        expect(compile(chart('o = 2')).ok).toBe(true)
+        expect(codes('scchart T { output int o class C { schedule s int v } c class D { void set() schedule c.s 0 { o = 1 } } d initial state A do d.set() go to B state B }')).toEqual(['kieler-crash'])
+    })
+
+    it('crashes on a clause that names no schedule only where KIELER makes an access with it', () => {
+        const chart = (body: string) => `scchart Test { output int o int s method void inner() { o = 1 schedule s 0 } method void outer() { inner() } ${body} }`
+        const transitive = errors(chart('initial state A do outer() go to B state B'))
+        expect(transitive.map(d => d.code)).toEqual(['kieler-crash'])
+        expect(transitive[0].kieler).toContain('VariableDeclarationImpl cannot be cast')
+        expect(compile(chart('initial state A do o = 2 go to B state B')).ok).toBe(true)
+        expect(compile(chart('initial state A do print("test") schedule s 0 go to B state B')).ok).toBe(true)
+        expect(codes(chart('initial state A do print(o) schedule s 0 go to B state B'))).toEqual(['kieler-crash'])
+        expect(compile(chart('initial state A do o = 2 go to B state B state X do o = 1 schedule s 0 go to B')).ok).toBe(true)
+        // A state's clause reaches the counter of the transition inside it.
+        expect(codes(chart('initial state A schedule s 0 { initial state P do print("test") go to Q state Q }'))).toEqual(['kieler-crash'])
+    })
+})

@@ -1,0 +1,7 @@
+// A chart's schedule read as a value in a method nobody calls.
+scchart T {
+  output int o
+  schedule s
+  method void never() { o = s }
+  initial state A do o = 1 go to B state B
+}

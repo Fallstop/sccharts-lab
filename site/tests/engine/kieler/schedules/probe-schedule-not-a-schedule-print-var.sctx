@@ -1,0 +1,6 @@
+// A clause naming a variable that is no schedule on a print that reads a variable.
+scchart Test {
+  output int o
+  int s
+  initial state A do print(o) schedule s 0 go to B state B
+}

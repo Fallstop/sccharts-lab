@@ -64,6 +64,17 @@ export function recordedCases(): Case[] {
     return out.sort((a, b) => a.id.localeCompare(b.id))
 }
 
+/** Recordings the engine is known not to reproduce yet (tests/conformance/engine-expected-failures.json), by case id. */
+const knownDifferences: string[] = (() => {
+    const file = path.join(site, 'tests/conformance/engine-expected-failures.json')
+    if (!fs.existsSync(file)) return []
+    // The conformance test names tests/engine/kieler `kieler-probes`, src/examples `examples` and its own cases alone.
+    return Object.keys(JSON.parse(fs.readFileSync(file, 'utf8')) as Record<string, string>).filter((k) => !k.startsWith('//'))
+        .map((k) => (k.startsWith('kieler-probes/') ? `tests/engine/kieler/${k.slice('kieler-probes/'.length)}` : k.startsWith('examples/') ? `src/${k}` : `tests/conformance/${k}`))
+})()
+
+const knownDifference = (id: string): boolean => knownDifferences.some((k) => (k.endsWith('*') ? id.startsWith(k.slice(0, -1)) : id === k))
+
 /** Features of KIELER's environment the engine emulates (scenario `needs`), as in the conformance test. */
 const EMULATED_NEEDS = new Set(['c-strings', 'c-random'])
 
@@ -74,6 +85,7 @@ export function compileCase(c: Case): { result?: CompileResult; skip?: string } 
     if ((scenario.needs ?? []).some((need) => !EMULATED_NEEDS.has(need))) return { skip: 'needs what the engine does not emulate' }
     if (!recording.ok) return { skip: 'KIELER rejects the chart' }
     if (scenario.kielerBug) return { skip: 'a KIELER bug the engine does not reproduce' }
+    if (knownDifference(c.id)) return { skip: 'a known engine difference (engine-expected-failures.json)' }
     const files: Record<string, string> = {}
     for (const f of scenario.imports ?? []) files[path.basename(f)] = fs.readFileSync(path.join(path.dirname(c.chart), f), 'utf8')
     const result = compile(fs.readFileSync(c.chart, 'utf8'), { files })

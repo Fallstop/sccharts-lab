@@ -1,0 +1,8 @@
+// Control: a chart used as a class inside a chart used as a class, without schedules.
+scchart Test {
+  output int o
+  ref Sub x
+  initial state A do o = 1 go to B state B
+}
+scchart Sub { ref Leaf y }
+scchart Leaf { int v }

@@ -1,0 +1,7 @@
+// A contract method called in an argument of a short class method without contract, as an initial value.
+scchart T {
+  output int o
+  class C { schedule s int get() schedule s 0 { return 3 } } c
+  class D { int id(int x) { return x } } d
+  initial state A do { int k = d.id(c.get()); o = k } go to B state B
+}
