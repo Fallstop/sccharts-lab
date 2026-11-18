@@ -1,0 +1,17 @@
+// Outside dataflow: a chart instance in a state that is entered again. Its field without an initial value starts
+// again at 0 like the one with an initial value (KIELER's implicit initialisation of the class's members).
+scchart DfChartInstanceReentryField {
+  input int x
+  input bool r
+  output int o, m
+  initial state S {
+    ref Cnt18 g
+    region R { initial state A do o = g.n + g.k go to A }
+  } if r go to T
+  state T do m += 1 go to S
+}
+scchart Cnt18 {
+  int n
+  int k = 1000
+  initial state A do n += 1; k += 1 go to A
+}

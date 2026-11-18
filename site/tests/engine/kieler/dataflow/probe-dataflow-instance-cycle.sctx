@@ -1,0 +1,16 @@
+// An OO instance's output fed back to its own input in the same tick (g.a = g.s) is a causality cycle. Rejected.
+scchart DfInstanceCycle {
+  input int x
+  output int o, m
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = g.s
+    o = twice(g.s)
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

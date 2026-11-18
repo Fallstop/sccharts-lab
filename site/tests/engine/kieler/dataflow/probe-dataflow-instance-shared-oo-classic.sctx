@@ -1,0 +1,19 @@
+// One instance in a region that calls a method and in one that does not: the classic translation removes the instance
+// from the chart and the other region's references point at nothing. Rejected.
+scchart DfInstanceSharedOoClassic {
+  input int x
+  output int o, m
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow D1 {
+    g.a = twice(x)
+  }
+  dataflow D2 {
+    o = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

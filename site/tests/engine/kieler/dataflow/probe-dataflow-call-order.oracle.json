@@ -1,0 +1,86 @@
+{
+  "hash": "d3569a49cd0175899857ada8f084b97a5d2bf5d7",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn2_c_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn3_c_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "DCounter1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 101,
+        "p": 101,
+        "c": {
+          "v": 101
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 204,
+        "p": 204,
+        "c": {
+          "v": 204
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 309,
+        "p": 309,
+        "c": {
+          "v": 309
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

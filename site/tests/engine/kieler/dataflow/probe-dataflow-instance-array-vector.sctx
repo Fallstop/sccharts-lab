@@ -1,0 +1,18 @@
+// A vector assigned to an element of an array of instances (gs[1] = {x, twice(x)}): the index is dropped and KIELER's
+// C code assigns members of the array itself. Rejected by gcc.
+scchart DfInstanceArrayVector {
+  input int x
+  output int o, p
+  ref Two gs[2]
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    gs[1] = {x, twice(x)}
+    o = gs[0].s
+    p = gs[1].s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

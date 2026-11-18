@@ -1,0 +1,71 @@
+{
+  "hash": "f3ef2ccf38a7ffac83aab9c605feecc5f27b3347",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-vector-array-oo.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "A": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "A": [
+          1,
+          2,
+          0
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "A": [
+          3,
+          6,
+          0
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "A": [
+          5,
+          10,
+          0
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

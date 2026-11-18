@@ -1,0 +1,9 @@
+// The same with the equation at priority 0: the transition's value stays in tick 1.
+scchart DfEquationScheduleOoFirst {
+  input int x
+  output int o, m
+  schedule s
+  method int twice(int v) { return v * 2 }
+  dataflow { o = 1 schedule s 0  m = twice(x) }
+  region R2 { initial state C immediate do o = 2 schedule s 1 go to D state D }
+}

@@ -1,0 +1,15 @@
+// The same with an explicit binding (n to q): rejected as well, the classic translation takes no bindings at all.
+scchart DfInstanceClassicExplicitBinding {
+  input int n
+  output int o1
+  ref G g(n to q)
+  dataflow {
+    g.p = n
+    o1 = g.r + 1
+  }
+}
+scchart G {
+  input int p, q
+  output int r
+  dataflow { r = p + q }
+}

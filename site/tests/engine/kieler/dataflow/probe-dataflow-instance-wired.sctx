@@ -1,0 +1,18 @@
+// A chart instance wired with inc.a = x and o = inc.s in a region that also calls a method (m = twice(x)): the OO
+// translation keeps the instance as an object with its input and output as members (inc: {a, s}).
+scchart DfInstanceWired {
+  input int x
+  output int o, m
+  ref DInc2 inc
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    inc.a = x
+    o = inc.s
+    m = twice(x)
+  }
+}
+scchart DInc2 {
+  input int a
+  output int s
+  dataflow { s = a + 1 }
+}

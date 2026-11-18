@@ -1,0 +1,9 @@
+// Two dataflow regions write o, ordered by their schedules (priority 0 first, priority 1 last and visible).
+scchart DfRegionScheduleTwoRegions {
+  input int x
+  output int o, m
+  schedule s
+  dataflow D1 schedule s 1 { o = x + 1 }
+  dataflow D2 schedule s 0 { o = x + 2 }
+  dataflow D3 { m = o }
+}

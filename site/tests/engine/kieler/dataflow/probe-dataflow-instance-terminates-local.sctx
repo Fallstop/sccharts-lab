@@ -1,0 +1,20 @@
+// The same instance declared in the dataflow region itself: KIELER means to restart it then, but looks for the
+// declaration after moving it away, so it is not restarted either. The instance of an inner state is not in the pool.
+scchart DfInstanceTerminatesLocal {
+  input int x
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    ref Fin g
+    g.a = x
+    o = g.s
+    m = twice(x)
+  }
+}
+scchart Fin {
+  input int a
+  output int s
+  initial state A do s = a go to B
+  state B do s = a + 100 go to C
+  final state C
+}

@@ -1,0 +1,18 @@
+// Two classic dataflow regions share an instance: the first one takes it, the second one's references point at
+// nothing. Rejected.
+scchart DfInstanceTwoClassic {
+  input int x
+  output int o, k
+  ref Two g
+  dataflow D1 {
+    g.a = x
+  }
+  dataflow D2 {
+    o = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

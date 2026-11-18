@@ -1,0 +1,12 @@
+// dataflow once with a method call: the equations are entry actions, run once in written order.
+scchart DfOoOnce {
+  input int x
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  initial state S {
+    dataflow once {
+      o = twice(3)
+      m = o + 1
+    }
+  }
+}

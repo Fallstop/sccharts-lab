@@ -1,0 +1,22 @@
+// A plain instance (all ports bound) of a chart with an OO instance inside: the pool has g: {t: {a, b, s}}.
+scchart DfInstanceNestedInPlainInstance {
+  input int x
+  output int o
+  ref Mid4 g(x, o)
+}
+scchart Mid4 {
+  input int i
+  output int r
+  ref Two t
+  method int inc(int v) { return v + 1 }
+  dataflow {
+    t.a = inc(i)
+    t.b = 3
+    r = t.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

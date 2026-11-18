@@ -1,0 +1,17 @@
+// An OO instance's inputs and outputs that no equation names stay members with their values: b is 0, the output t
+// keeps its initial value 7.
+scchart DfInstanceUnwired {
+  input int x
+  output int o, m
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s, t = 7
+  dataflow { s = a + b + 1 }
+}

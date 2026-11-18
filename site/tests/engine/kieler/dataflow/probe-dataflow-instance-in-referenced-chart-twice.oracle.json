@@ -1,0 +1,150 @@
+{
+  "hash": "9a1730772e487b2b3692480128073a214ea68471",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-in-referenced-chart-twice.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__DfInstanceInReferencedChartTwice_local_twice_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn2__DfInstanceInReferencedChartTwice_local_twice1_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Two11.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Two11.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Two11.s": {
+      "type": "int",
+      "properties": []
+    },
+    "Two21.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Two21.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Two21.s": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "r": false,
+        "x": 1,
+        "o": [
+          3,
+          3
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 3,
+        "o": [
+          7,
+          7
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 5,
+        "o": [
+          11,
+          11
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "r": true,
+        "x": 7,
+        "o": [
+          15,
+          15
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "x": 9,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 9,
+        "o": [
+          19,
+          19
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "x": 11
+      },
+      "values": {
+        "r": true,
+        "x": 11,
+        "o": [
+          23,
+          23
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

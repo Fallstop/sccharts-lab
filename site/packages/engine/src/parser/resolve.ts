@@ -468,9 +468,9 @@ class Resolver {
     private resolveEquation(eq: Equation, scope: Scope) {
         this.resolveSchedule(eq.schedule, scope)
         if (eq.callArgs) {
-            this.resolveReference(eq.target, scope, { callable: !eq.target.sub, dataflow: true })
-            for (const a of eq.callArgs) this.resolveExpression(a, scope, true)
-            if (eq.expression.kind !== 'call') this.resolveExpression(eq.expression, scope, true)
+            // The call (with `super.` and the number of arguments), and the expression after it, if any.
+            if (eq.call) this.resolveExpression(eq.call, scope, true)
+            this.resolveExpression(eq.expression, scope, true)
             return
         }
         this.resolveReference(eq.target, scope, { dataflow: true })

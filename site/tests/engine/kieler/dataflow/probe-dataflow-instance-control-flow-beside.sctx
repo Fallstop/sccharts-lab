@@ -1,0 +1,20 @@
+// A control-flow region next to the OO region reads and writes the instance's members (g.s, g.b = 50).
+scchart DfInstanceControlFlowBeside {
+  input int x
+  output int o, m, k
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+  region R {
+    initial state A if o > 5 do k = g.s + 1000; m += 1 go to B
+    state B do g.b = 50 go to A
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

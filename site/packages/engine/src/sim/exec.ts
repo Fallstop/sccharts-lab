@@ -127,6 +127,18 @@ interface PoolEntry {
     path?: { key: string; dims: number }[]
 }
 
+/**
+ * The trace key of a field of a chart instance (`ref C g`): the instances on the way and the field (`g.a`, `g.t.b`),
+ * or undefined for anything else (the compiler's helpers inside an instance too).
+ */
+export function chartInstanceMember(v: CVar): string | undefined {
+    if (!v.member || v.const || v.declKind || v.tags.has('#const-member') || v.member.name.startsWith('_')) return undefined
+    const chain: CVar[] = []
+    for (let c: CVar | undefined = v; c; c = c.member?.of) chain.unshift(c)
+    if (chain[0].declKind !== 'reference' || !chain[0].instance) return undefined
+    return chain.map((c, i) => (i ? c.member!.name : c.name)).join('.')
+}
+
 /** The way from the pool to a member of an instance (`l.a.x`, `cs[i].v`): see PoolEntry.path. */
 function memberPath(v: CVar): { key: string; dims: number }[] {
     const chain: CVar[] = []
@@ -267,6 +279,10 @@ export class ExecutableChart {
             this.traced.push({ key, v, type: ctypeOf(v.type) })
         }
         for (const [v] of this.slots) {
+            // A field of one of the chart's `ref C g` instances (and an input or output an OO dataflow region keeps
+            // with the instance): `g.a`, `g.t.b` for an instance inside it.
+            const chartMember = chartInstanceMember(v)
+            if (chartMember && rootDecls.has(v)) { trace(chartMember, v); continue }
             if (v.const || v.declKind || !v.decl || (v.decl.includes('/') && !v.tags.has('#inherited'))) continue
             if (v.member && rootDecls.has(v)) { if (!v.tags.has('#const-member')) trace(`${v.member.of.name}.${v.member.name}`, v); continue }
             if (rootDecls.has(v) || v.member) continue

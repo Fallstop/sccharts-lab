@@ -1459,7 +1459,10 @@ class Parser {
             if (isSuper) callExpr.super = true
             if (access.some(a => a !== null)) callExpr.paramAccess = access
             const eq: Equation = { kind: 'equation', target, operator: '=', expression: callExpr, callArgs: args, span: this.span(start) }
-            if (this.accept('=')) eq.expression = this.parseExpression()
+            if (this.accept('=')) {
+                eq.call = callExpr
+                eq.expression = this.parseExpression()
+            }
             const schedule = this.parseOptionalSchedule()
             if (schedule) eq.schedule = schedule
             if (this.at(';') || this.at('seq')) { this.next(); eq.sequential = true }

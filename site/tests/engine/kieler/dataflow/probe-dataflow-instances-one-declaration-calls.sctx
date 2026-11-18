@@ -1,0 +1,12 @@
+// Two instances declared together, each called in equations of its own (o = c.get(), p = d.get()).
+scchart DfInstancesOneDeclarationCalls {
+  input int x
+  output int o, p
+  ref Cnt c, d
+  dataflow { c.add(x)  d.add(1)  o = c.get()  p = d.get() }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

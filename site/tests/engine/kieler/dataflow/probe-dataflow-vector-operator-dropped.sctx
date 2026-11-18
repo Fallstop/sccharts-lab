@@ -1,0 +1,8 @@
+// A += {x, x + 10}: the operator is dropped, the elements are assigned.
+scchart DfVectorOperatorDropped {
+  input int x
+  output int A[2]
+  dataflow {
+    A += {x, x + 10}
+  }
+}

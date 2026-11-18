@@ -1,0 +1,18 @@
+// Outside dataflow: ref Outer1 g(x, o) binds Outer1's input a to x; Outer1 has ref Inner1 i, and Inner1 a local
+// called a. KIELER keeps bindings by name and Inner1's a becomes x: its region counts the input x up, i.a stays 100.
+scchart DfNestedRefNameLeak {
+  input int x
+  output int o
+  ref Outer1 g(x, o)
+}
+scchart Outer1 {
+  input int a
+  output int s
+  ref Inner1 i
+  region R { initial state A do s = a + i.get() go to A }
+}
+scchart Inner1 {
+  int a = 100
+  method int get() { return a }
+  region T { initial state A do a += 1 go to A }
+}

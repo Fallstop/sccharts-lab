@@ -1,5 +1,8 @@
-// KIELER's Dataflow processor, classic mode (sccharts/processors/dataflow/Dataflow.xtend, processDataflowRegionClassic),
-// called by the Reference processor. structure.md S-25 .. S-34.
+// KIELER's Dataflow processor (sccharts/processors/dataflow/Dataflow.xtend), called by the Reference processor.
+// structure.md S-25 .. S-34. It translates a region in one of two ways: its "OO" way as soon as anything in the region
+// calls a method (processRegionOO below, S-33a: the equations are immediate during actions of one state, chart
+// instances stay declarations that the Reference pass turns into objects), else its classic way
+// (processDataflowRegionClassic):
 //
 // A dataflow region becomes a control-flow region `__df_<name>` of its state with one state `__df_main`. Every
 // equation becomes a region of `__df_main`: `__df_<k>` -immediate/ x = e-> `__df_d<k>` -delayed-> `__df_<k>`, so it
@@ -9,15 +12,18 @@
 // tick later, S-34), bound to fresh locals `__df_g_X` for C's inputs and outputs, which `g.X` in the equations
 // becomes. A tuple `g = {a, _, c}` sets C's inputs in declaration order (`_` skips one); a vector assigned to an
 // array sets its elements. Equations ending with `;` (or `seq`) and the one after them form a sequence: their regions
-// get one schedule (KIELER's `schedule seq<n>` with increasing priorities), so they run in written order (S-27).
+// get one schedule (KIELER's `schedule seq<n>` with increasing priorities), so they run in written order (S-27). A
+// schedule written on the region goes to the new region; one written on an equation is lost here and kept by the OO
+// translation (S-27a).
 
 import type { State } from '../../types'
 import type { CEquation } from '../lower'
 import {
-    CVar, createAction, createControlflowRegion, createState, createTransitionTo, ref, type CArg, type CExpr, type CRef,
-    type CRegion, type CState,
+    CVar, createAction, createControlflowRegion, createState, createTransitionTo, ref, walkExpr, type CArg, type CExpr,
+    type CRef, type CRegion, type CState, type SchedEntry,
 } from '../model'
 import type { Expansion, ReferenceCall } from './reference'
+import { REFERENCE_SEPARATOR } from '../structure/instance'
 
 const PREFIX = '__df_'
 
@@ -42,29 +48,161 @@ export function processDataflow(state: CState, expansion: Expansion) {
     for (const r of regions) processRegion(r, expansion)
 }
 
-/** Does an equation call a method? Then KIELER uses its "OO" translation (processDataflowRegionOO). */
-function callsMethod(eqs: CEquation[]): boolean {
-    let found = false
-    const visit = (e: CExpr) => {
-        if (e.k === 'call' && e.target?.v.method) found = true
-        if (e.k === 'op') e.args.forEach(visit)
-        else if (e.k === 'call' || e.k === 'vector') (e.k === 'call' ? e.args : e.values).forEach(visit)
-        else if (e.k === 'ref') e.idx.forEach(visit)
-    }
-    for (const eq of eqs) visit(eq.expr)
-    return found
+/** KIELER's tag on an instance used in an OO dataflow region: its inputs and outputs stay with it (Reference pass). */
+export const DF_BINDING = '_DF_keep_io_local'
+/** A `ref` declaration the classic translation has removed (`removeFromContainmentAndCleanup`). */
+export const DF_REMOVED = '#df-removed'
+
+/** The variable a reference finally names (`c.add`: the method; KIELER's lowermostReference). */
+function lowermost(r: CRef): CRef {
+    let x = r
+    while (x.sub) x = x.sub
+    return x
 }
 
 /**
- * KIELER's processDataflowRegionOO, for equations that call methods: one state `__df_<name>` whose immediate during
- * actions (entry actions for `once`) are the equations, in written order; sequences get schedules as in the classic
- * translation. Chart instances in such regions are not supported (KIELER keeps them as objects).
+ * Does the region call a method anywhere (an equation, an index, a call's argument, a declaration's initial value)?
+ * Then KIELER uses its "OO" translation (processDataflowRegion: eAllContents.filter(ReferenceCall)).
+ */
+function callsMethod(df: CRegion, eqs: CEquation[], expansion: Expansion): boolean {
+    let found = false
+    const method = (r: CRef) => {
+        const v = lowermost(r).v
+        if (v.method || v.declKind === 'method') return true
+        // A method of a chart instance (`c.add`): its declaration is the instantiated chart's.
+        return v.declKind === 'unresolved' && !!v.decl && declarationOf(v, expansion)?.declKind === 'method'
+    }
+    const visit = (e: CExpr | undefined) => walkExpr(e, x => {
+        if (x.k === 'call' && !x.extern && x.target && method(x.target)) found = true
+    })
+    for (const eq of eqs) {
+        visit(eq.expr)
+        visit(eq.trigger)
+        eq.target.idx.forEach(visit)
+    }
+    for (const v of df.decls) {
+        visit(v.init)
+        v.dims.forEach(visit)
+    }
+    return found
+}
+
+/** The source declaration of a variable (inside a referenced chart's copy its id carries the copy's prefix). */
+function declarationOf(v: CVar, expansion: Expansion) {
+    return v.decl ? expansion.index?.vos.get(v.decl.split(REFERENCE_SEPARATOR).pop()!)?.decl : undefined
+}
+
+/** A chart instance the Dataflow processor handles: `ref C g` of a chart, not removed, not `@DFignore`. */
+function isInstance(v: CVar, expansion: Expansion): boolean {
+    if (v.declKind !== 'reference' || !v.instance || v.extern || v.tags.has(DF_REMOVED)) return false
+    return !declarationOf(v, expansion)?.annotations.some(a => a.name === 'DFignore')
+}
+
+/**
+ * The chart instances an equation names (KIELER's allAssignmentReferences: the target's and the expression's
+ * references; a call written as an equation is its own target, with its arguments, and the expression is what
+ * follows its `=`).
+ */
+function instancesOf(eq: CEquation, expansion: Expansion): CVar[] {
+    const out: CVar[] = []
+    const add = (r: CRef) => { if (isInstance(r.v, expansion) && !out.includes(r.v)) out.push(r.v) }
+    const visit = (e: CExpr | undefined) => walkExpr(e, x => {
+        if (x.k === 'ref') add(x)
+        else if (x.k === 'call' && x.target) add(x.target)
+    })
+    add(eq.target)
+    eq.target.idx.forEach(visit)
+    visit(eq.expr)
+    visit(eq.trigger)
+    return out
+}
+
+/** KIELER's canTerminate: every region of the chart (and of its base charts) has a final state, no during actions. */
+function canTerminate(chart: State, expansion: Expansion): boolean {
+    const states: State[] = []
+    const inherit = (c: State | undefined) => {
+        if (!c || states.includes(c)) return
+        states.push(c)
+        for (const b of c.baseStates ?? []) inherit(expansion.findChart(b.target))
+    }
+    inherit(chart)
+    let terminating = false
+    for (const s of states) {
+        if (s.actions.some(a => a.kind === 'during') || s.regions.some(r => r.regionType === 'dataflow')) return false
+        for (const r of s.regions) {
+            if (r.final || r.states.every(x => !x.final)) return false
+            terminating = true
+        }
+    }
+    return terminating
+}
+
+/**
+ * KIELER's isSequential: `;` (or `seq`) after an assignment. After a call written as an equation it does nothing
+ * (the call is no DataflowAssignment): such a call is part of a sequence only as the equation after a `;`.
+ */
+function isSequential(eq: CEquation): boolean {
+    return eq.sequential && !eq.call
+}
+
+/** One equation after tuples are taken apart: an assignment or a call. */
+interface Part {
+    key: number
+    target: CRef
+    op: CEquation['op']
+    expr: CExpr
+    /** A dataflow reference call (`expr` is the call), with the `= e` after it. */
+    call?: boolean
+    trigger?: CExpr
+    /** The equation's own `schedule` clause (lost with a tuple's parts: they are new assignments). */
+    schedule?: SchedEntry[]
+}
+
+/**
+ * KIELER's tuple handling, shared by both translations: `g = {a, _, c}` sets the inputs of the chart `g`
+ * instantiates in declaration order (its own, then the inherited ones), a vector assigned to an array its elements.
+ */
+function parts(eq: CEquation, k: number, expansion: Expansion): Part[] {
+    if (eq.expr.k !== 'vector' || eq.call) {
+        return [{ key: k, target: eq.target, op: eq.op, expr: eq.expr, call: eq.call, trigger: eq.trigger, schedule: eq.schedule }]
+    }
+    const out: Part[] = []
+    const values = [...eq.expr.values]
+    const target = eq.target
+    if (target.v.declKind === 'reference' && target.v.instance) {
+        const chart = expansion.findChart(target.v.instance.target)
+        let idx = 0
+        for (const input of chart ? interfaceOf(chart, expansion).filter(d => d.input) : []) {
+            if (values.length) {
+                const value = values.shift()!
+                if (value.k !== 'ignore') out.push({ key: idx + k * 100, target: { k: 'ref', v: target.v, idx: [], sub: { k: 'ref', v: placeholder(input), idx: [] }, span: target.span }, op: '=', expr: value })
+            }
+            idx++
+        }
+    } else if (target.v.dims.length) {
+        // createAssignment(array, value) with the element's index: an index or member written on the target is gone
+        // (`B[1] = {a, b}` writes B[0] and B[1]), and so is the operator.
+        values.forEach((value, idx) => {
+            if (value.k !== 'ignore') out.push({ key: idx + k * 100, target: { k: 'ref', v: target.v, idx: [{ k: 'lit', t: 'int', v: idx }], span: target.span }, op: '=', expr: value })
+        })
+    }
+    return out
+}
+
+/**
+ * KIELER's processDataflowRegionOO, for regions that call methods: one state `__df_<name>` whose immediate during
+ * actions (entry actions for `once`) are the equations, in written order. A call written as an equation is a call
+ * effect, and the `= e` after it the action's trigger. Sequences get schedules as in the classic translation; an
+ * equation's own schedule clause stays on its effect. The chart instances the equations name stay declarations,
+ * tagged so that the Reference pass keeps their inputs and outputs as members of the instance (they are objects in
+ * KIELER's data pool).
  */
 function processRegionOO(df: CRegion, expansion: Expansion, eqs: CEquation[]) {
     const parent = df.parent
     const about = df.origin ?? df.about
     const region = createControlflowRegion(parent, `${PREFIX}${df.name ?? 'null'}`)
     region.about = about
+    if (df.ext.userSchedule) region.ext.userSchedule = df.ext.userSchedule
     const main = createState(region, `${PREFIX}${df.name ?? 'null'}`)
     main.initial = true
     main.about = about
@@ -73,47 +211,54 @@ function processRegionOO(df: CRegion, expansion: Expansion, eqs: CEquation[]) {
         main.decls.push(v)
     }
     df.decls = []
-    if (eqs.some(eq => [eq.target, ...refsOf(eq.expr)].some(r => r.v.declKind === 'reference'))) {
-        expansion.ctx.report({
-            severity: 'info', code: 'unsupported', related: about ? [about] : undefined,
-            message: 'The guide\'s simulator cannot run chart instances in a dataflow region that calls methods yet',
-            hint: 'KIELER translates such a region differently (its "OO" mode), keeping the instances as objects. The official KIELER tools can run this chart.',
-        })
-        return
+
+    const instances: CVar[] = []
+    for (const eq of eqs) for (const g of instancesOf(eq, expansion)) if (!instances.includes(g)) instances.push(g)
+    for (const g of instances) {
+        g.tags.add(DF_BINDING)
+        // KIELER would restart an instance declared in the region itself, but looks for the declaration after it has
+        // moved it to the new state: no instance is ever restarted.
+        const chart = expansion.findChart(g.instance!.target)
+        if (chart && canTerminate(chart, expansion)) {
+            expansion.ctx.report({
+                severity: 'info', code: 'kieler-quirk', span: g.span, related: g.decl ? [g.decl] : undefined,
+                message: `\`${g.name}\` stops for good when \`${chart.name}\` terminates: in a dataflow region that calls methods an instance is not started again`,
+                kieler: `An SCChart that can terminate (${chart.name}) is used (${g.name}) in a dataflow region that assumes continuous IO behavior. If you move the reference declaration into the scope of the dataflow region the behavior will be automatically restarted.`,
+                hint: `Without a method call in the region, KIELER starts a terminated instance again one tick later. Here it keeps the instance as an object and never restarts it, wherever \`${g.name}\` is declared. Give \`${chart.name}\` a state that loops instead of a final state if it should keep running.`,
+            })
+        }
     }
+
     let group: object | undefined
     let priority = 0
     let lastSequential = false
-    for (const eq of eqs) {
-        if (eq.sequential && !lastSequential) {
+    eqs.forEach((eq, k) => {
+        const sequential = isSequential(eq)
+        if (sequential && !lastSequential) {
             group = {}
             priority = 0
         }
-        const action = createAction(main, df.ext.once ? 'entry' : 'during')
-        action.delay = 'immediate'
-        action.about = about
-        const schedule = (eq.sequential || lastSequential) && group ? [{ group, priority: priority++ }] : undefined
-        action.effects.push({ k: 'assign', ref: eq.target, op: eq.op, expr: eq.expr, o: { by: about, span: eq.span, schedule } })
-        lastSequential = eq.sequential
-    }
+        for (const part of parts(eq, k, expansion)) {
+            const action = createAction(main, df.ext.once ? 'entry' : 'during')
+            action.delay = 'immediate'
+            action.about = about
+            const schedule = [...(part.schedule ?? []), ...((sequential || lastSequential) && group ? [{ group, priority: priority++ }] : [])]
+            const o = { by: about, span: eq.span, ...(schedule.length ? { schedule } : {}) }
+            if (part.call && part.expr.k === 'call') {
+                action.effects.push({ k: 'call', call: part.expr, o })
+                if (part.trigger) action.trigger = part.trigger
+            } else {
+                action.effects.push({ k: 'assign', ref: part.target, op: part.op, expr: part.expr, o })
+            }
+        }
+        lastSequential = sequential
+    })
     parent.regions.splice(parent.regions.indexOf(df), 1)
-}
-
-function refsOf(e: CExpr): CRef[] {
-    const out: CRef[] = []
-    const visit = (x: CExpr) => {
-        if (x.k === 'ref') { out.push(x); x.idx.forEach(visit) }
-        else if (x.k === 'op') x.args.forEach(visit)
-        else if (x.k === 'vector') x.values.forEach(visit)
-        else if (x.k === 'call') x.args.forEach(visit)
-    }
-    visit(e)
-    return out
 }
 
 function processRegion(df: CRegion, expansion: Expansion) {
     const eqsAll = (df.ext.eqs as CEquation[] | undefined) ?? []
-    if (!df.ext.forCounter && !eqsAll.some(eq => eq.call) && callsMethod(eqsAll)) {
+    if (!df.ext.forCounter && callsMethod(df, eqsAll, expansion)) {
         processRegionOO(df, expansion, eqsAll)
         return
     }
@@ -121,6 +266,7 @@ function processRegion(df: CRegion, expansion: Expansion) {
     const about = df.origin ?? df.about
     const region = createControlflowRegion(parent, `${PREFIX}${df.name ?? 'null'}`)
     region.about = about
+    if (df.ext.userSchedule) region.ext.userSchedule = df.ext.userSchedule
     const main = createState(region, `${PREFIX}main`)
     main.initial = true
     main.about = about
@@ -148,24 +294,9 @@ function processRegion(df: CRegion, expansion: Expansion) {
         })
         return
     }
-    for (const eq of eqs) {
-        if (eq.call) {
-            expansion.ctx.report({
-                severity: 'info', code: 'unsupported', span: eq.span, related: about ? [about] : undefined,
-                message: 'The guide\'s simulator cannot run dataflow reference calls (A(x, y)) yet',
-                hint: 'Write one equation per input instead: g.A = x. The official KIELER tools can run this chart as written.',
-            })
-            return
-        }
-    }
-
     // Chart instances used in the equations, in order of first use.
     const instances: CVar[] = []
-    for (const eq of eqs) {
-        for (const r of assignmentRefs(eq)) {
-            if (r.v.declKind === 'reference' && r.v.instance && !instances.includes(r.v)) instances.push(r.v)
-        }
-    }
+    for (const eq of eqs) for (const g of instancesOf(eq, expansion)) if (!instances.includes(g)) instances.push(g)
     const locals = new Map<CVar, Map<string, CVar>>()
     instances.forEach((g, i) => {
         const chart = expansion.findChart(g.instance!.target)
@@ -181,7 +312,7 @@ function processRegion(df: CRegion, expansion: Expansion) {
         const args: CArg[] = [...g.instance!.args]
         const own = new Map<string, CVar>()
         // Local versions of the instance's interface (inputs and outputs, in declaration order).
-        for (const d of chart ? interfaceOf(chart) : []) {
+        for (const d of chart ? interfaceOf(chart, expansion) : []) {
             const local = new CVar(`${PREFIX}${g.name}_${d.name}`, d.type)
             local.signal = d.signal
             local.generated = true
@@ -198,6 +329,28 @@ function processRegion(df: CRegion, expansion: Expansion) {
         locals.set(g, own)
         const call: ReferenceCall = { target: g.instance!.target, args, span: g.span }
         refState.ext.call = call
+        // The declaration's own bindings come first and the locals after them, one for every input and output: with
+        // any binding there is one argument too many (KIELER's createBindings runs out of ports).
+        if (g.instance!.args.length) {
+            const ports = chart ? interfaceOf(chart, expansion) : []
+            const lost: string[] = []
+            let ptr = 0
+            for (const [k, a] of args.entries()) {
+                if (a.binding !== undefined) {
+                    const at = ports.findIndex(p => p.name === a.binding)
+                    if (at >= 0) ptr = at
+                }
+                if (ptr >= ports.length) {
+                    if (k >= g.instance!.args.length) lost.push(`${PREFIX}${g.name}_${ports[k - g.instance!.args.length].name}`)
+                } else ptr++
+            }
+            expansion.ctx.report({
+                severity: 'error', code: 'binding-error', span: g.span, related: g.decl ? [g.decl] : undefined,
+                message: `\`${g.name}\` is wired by a dataflow region, so it cannot have bindings of its own`,
+                kieler: lost.map(name => `There are binding errors in a referenced state!\nA Valued Object is supposed to be bound, but there is no free Valued Object left in the referenced scope: ${name}`).join('\n') || 'There are binding errors in a referenced state!',
+                hint: `KIELER binds every input and output of \`${g.name}\` to a variable of the dataflow region, after the bindings written here, and runs out of inputs and outputs. Remove the bindings and wire the instance with equations (\`${g.name}.input = ...\`).`,
+            })
+        }
     })
 
     // Equations: tuples into one equation per input (or array element), in written order.
@@ -205,36 +358,15 @@ function processRegion(df: CRegion, expansion: Expansion) {
     let priority = 0
     let lastSequential = false
     eqs.forEach((eq, k) => {
-        const parts: { key: number; target: CRef; op: CEquation['op']; expr: CExpr }[] = []
-        if (eq.expr.k === 'vector') {
-            const values = [...eq.expr.values]
-            const target = eq.target
-            if (target.v.declKind === 'reference' && target.v.instance) {
-                const chart = expansion.findChart(target.v.instance.target)
-                let idx = 0
-                for (const input of chart ? interfaceOf(chart).filter(d => d.input) : []) {
-                    if (values.length) {
-                        const value = values.shift()!
-                        if (value.k !== 'ignore') parts.push({ key: idx + k * 100, target: { k: 'ref', v: target.v, idx: [], sub: { k: 'ref', v: placeholder(input.name), idx: [] }, span: target.span }, op: eq.op, expr: value })
-                    }
-                    idx++
-                }
-            } else {
-                values.forEach((value, idx) => {
-                    if (value.k !== 'ignore') parts.push({ key: idx + k * 100, target: { ...target, idx: [...target.idx, { k: 'lit', t: 'int', v: idx }] }, op: eq.op, expr: value })
-                })
-            }
-        } else {
-            parts.push({ key: k, target: eq.target, op: eq.op, expr: eq.expr })
-        }
-        if (eq.sequential && !lastSequential) {
+        const sequential = isSequential(eq)
+        if (sequential && !lastSequential) {
             group = {}
             priority = 0
         }
-        for (const part of parts) {
+        for (const part of parts(eq, k, expansion)) {
             const r = createControlflowRegion(main, `${PREFIX}subRegion_${part.key}`)
             r.about = about
-            if ((eq.sequential || lastSequential) && group) r.ext.schedule = { group, priority: priority++, name: `seq` } satisfies Schedule
+            if ((sequential || lastSequential) && group) r.ext.schedule = { group, priority: priority++, name: `seq` } satisfies Schedule
             const s = createState(r, `${PREFIX}${part.key}`)
             s.initial = true
             s.about = about
@@ -249,7 +381,7 @@ function processRegion(df: CRegion, expansion: Expansion) {
             if (df.ext.once) d.final = true
             else createTransitionTo(d, s)
         }
-        lastSequential = eq.sequential
+        lastSequential = sequential
     })
 
     // Remove the dataflow region and the instances' declarations.
@@ -257,45 +389,44 @@ function processRegion(df: CRegion, expansion: Expansion) {
     for (const g of instances) {
         const scope = g.scope
         if (scope) scope.decls.splice(scope.decls.indexOf(g), 1)
+        g.tags.add(DF_REMOVED)
     }
 }
 
-/** The interface of a chart as written: its inputs and outputs in declaration order. */
-function interfaceOf(chart: State): { name: string; type: CVar['type']; signal: boolean; input: boolean; dims: CExpr[] }[] {
-    const out: { name: string; type: CVar['type']; signal: boolean; input: boolean; dims: CExpr[] }[] = []
-    for (const d of chart.declarations) {
-        if (d.declKind !== 'variable' || !(d.input || d.output)) continue
-        for (const vo of d.valuedObjects) {
-            out.push({
-                name: vo.name, type: d.type ?? (d.signal ? 'pure' : 'host'), signal: d.signal, input: d.input,
-                dims: vo.cardinalities.flatMap(c => (c.kind === 'int' ? [{ k: 'lit', t: 'int', v: c.value } as CExpr] : [])),
-            })
+interface Port { name: string; id: string; type: CVar['type']; signal: boolean; input: boolean; dims: CExpr[] }
+
+/**
+ * The interface of a chart as written: its inputs and outputs in declaration order, then those of the charts it
+ * extends (KIELER's `decls += ref.allInheritedDeclarations`).
+ */
+function interfaceOf(chart: State, expansion: Expansion): Port[] {
+    const out: Port[] = []
+    const seen = new Set<State>()
+    const visit = (c: State | undefined) => {
+        if (!c || seen.has(c)) return
+        seen.add(c)
+        for (const d of c.declarations) {
+            if (d.declKind !== 'variable' || !(d.input || d.output)) continue
+            for (const vo of d.valuedObjects) {
+                if (out.some(x => x.name === vo.name)) continue
+                out.push({
+                    name: vo.name, id: vo.id, type: d.type ?? (d.signal ? 'pure' : 'host'), signal: d.signal, input: d.input,
+                    dims: vo.cardinalities.flatMap(x => (x.kind === 'int' ? [{ k: 'lit', t: 'int', v: x.value } as CExpr] : [])),
+                })
+            }
         }
+        for (const b of c.baseStates ?? []) visit(expansion.findChart(b.target))
     }
+    visit(chart)
     return out
 }
 
-const placeholders = new Map<string, CVar>()
-/** A stand-in for a member of an instance (`g.A`) before it is replaced by the local `__df_g_A`. */
-function placeholder(name: string): CVar {
-    let v = placeholders.get(name)
-    if (!v) placeholders.set(name, (v = new CVar(name, 'host')))
+/** A stand-in for a member of an instance (`g.A`), as the lowering makes one: named, with the member's declaration. */
+function placeholder(port: Port): CVar {
+    const v = new CVar(port.name, 'host')
+    v.declKind = 'unresolved'
+    v.decl = port.id
     return v
-}
-
-/** The references of an equation: target first, then the expression's (KIELER's allAssignmentReferences). */
-function assignmentRefs(eq: CEquation): CRef[] {
-    const out: CRef[] = [eq.target]
-    const walk = (e: CExpr) => {
-        if (e.k === 'ref') {
-            out.push(e)
-            e.idx.forEach(walk)
-        } else if (e.k === 'op') e.args.forEach(walk)
-        else if (e.k === 'vector') e.values.forEach(walk)
-        else if (e.k === 'call') e.args.forEach(walk)
-    }
-    walk(eq.expr)
-    return out
 }
 
 /** `g.X` becomes the local `__df_g_X`. */

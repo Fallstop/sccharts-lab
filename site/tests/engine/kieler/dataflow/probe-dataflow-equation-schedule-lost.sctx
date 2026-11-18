@@ -1,0 +1,8 @@
+// A schedule on an equation of a region without method calls is lost (the classic translation makes a new assignment
+// without it), so o = 1 and the transition's o = 2 are an unordered conflict: rejected.
+scchart DfEquationScheduleLost {
+  output int o
+  schedule s
+  dataflow { o = 1 schedule s 1 }
+  region R2 { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}

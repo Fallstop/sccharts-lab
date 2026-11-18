@@ -241,6 +241,8 @@ export interface Equation extends NodeBase {
     sequential?: boolean
     /** Dataflow reference call `A(x, y)` / `A(x) = e`: the call's arguments (expression is then the call or `e`). */
     callArgs?: Expression[]
+    /** Dataflow reference call with an expression after it (`A(x) = e`): the call (`expression` is `e`). */
+    call?: Expression
     schedule?: ScheduleRef[]
     annotations?: Annotation[]
 }

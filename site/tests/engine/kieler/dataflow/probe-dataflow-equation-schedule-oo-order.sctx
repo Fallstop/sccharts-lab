@@ -1,0 +1,9 @@
+// The same pair in an OO region is ordered by the schedule: m = o + 1 at priority 0 runs before o = twice(x) at
+// priority 1 and reads the previous tick's o.
+scchart DfEquationScheduleOoOrder {
+  input int x
+  output int o, m
+  schedule s
+  method int twice(int v) { return v * 2 }
+  dataflow { o = twice(x) schedule s 1  m = o + 1 schedule s 0 }
+}

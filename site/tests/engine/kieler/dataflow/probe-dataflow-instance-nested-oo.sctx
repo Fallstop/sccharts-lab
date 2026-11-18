@@ -1,0 +1,28 @@
+// An OO instance of a chart that has an OO dataflow region and an instance itself: an object inside the object (g:
+// {a, s, t: {a, b, s}}).
+scchart DfInstanceNestedOo {
+  input int x
+  output int o
+  ref Mid g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart Mid {
+  input int a
+  output int s
+  ref Two t
+  method int inc(int v) { return v + 1 }
+  dataflow {
+    t.a = inc(a)
+    t.b = 3
+    s = t.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

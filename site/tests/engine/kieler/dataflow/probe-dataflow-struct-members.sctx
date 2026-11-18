@@ -1,0 +1,12 @@
+// Struct members written and read by equations next to a method call.
+scchart DfStructMembers {
+  input int x
+  output int o, m
+  struct P { int u, w } p
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    p.u = twice(x)
+    p.w = p.u + 1
+    o = p.u + p.w
+  }
+}

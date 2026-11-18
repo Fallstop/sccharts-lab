@@ -1,0 +1,8 @@
+// Schedules on the equations of a classic region change nothing: m = o + 1 schedule s 0 still reads the o written by
+// o = x schedule s 1 in the same tick.
+scchart DfEquationScheduleIgnored {
+  input int x
+  output int o, m
+  schedule s
+  dataflow { o = x schedule s 1  m = o + 1 schedule s 0 }
+}

@@ -1,0 +1,19 @@
+// A ; after a call written as an equation does not sequence it: in o1 = k.get() + n; k.add(1); k.add(2); only the
+// first two equations are ordered (the call after the assignment's ; is), and k.add(2) runs before the read.
+scchart DfCallSemicolonNoSequence {
+  input bool a
+  input int n
+  output int o1, o2
+  ref K k
+  dataflow {
+    o1 = k.get() + n;
+    k.add(1);
+    k.add(2);
+    o2 = n
+  }
+}
+scchart K {
+  int v = 0
+  method void add(int j) { v += j }
+  method int get() { return v }
+}

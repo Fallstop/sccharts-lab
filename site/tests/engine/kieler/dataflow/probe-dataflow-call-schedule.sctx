@@ -1,0 +1,18 @@
+// Schedules on dataflow reference calls order the calls: c.add(10) schedule s 0 runs before c.add(x) schedule s 1, o
+// = c.get() schedule s 2 last.
+scchart DfCallSchedule {
+  input int x
+  output int o
+  schedule s
+  ref DCounter c
+  dataflow {
+    c.add(x) schedule s 1
+    c.add(10) schedule s 0
+    o = c.get() schedule s 2
+  }
+}
+scchart DCounter {
+  int v = 0
+  method void add(int k) { v = v * 2 + k }
+  method int get() { return v }
+}

@@ -1,0 +1,24 @@
+// A chart with an OO instance referenced twice, its output bound to array cells: each copy has an instance of its
+// own.
+scchart DfInstanceInReferencedChartTwice {
+  input int x
+  input bool r
+  output int o[2]
+  region R1 { initial state A is Wrap10(x, o[0]) }
+  region R2 { initial state B is Wrap10(x, o[1]) }
+}
+scchart Wrap10 {
+  input int i
+  output int q
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(i)
+    q = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

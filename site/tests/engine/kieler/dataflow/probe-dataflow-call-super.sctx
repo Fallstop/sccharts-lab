@@ -1,0 +1,17 @@
+// super.add(x) as an equation calls the base chart's method although the chart overrides it and the override does not
+// call super; add(x) calls the override.
+scchart DfCallSuper extends Base14 {
+  input int x
+  output int o
+  override method void add(int k) { v += 2 * k }
+  dataflow {
+    super.add(x)
+    add(x)
+    o = get()
+  }
+}
+scchart Base14 {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

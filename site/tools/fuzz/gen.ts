@@ -90,6 +90,8 @@ export const PROFILES: Record<string, Profile> = {
     nested: { features: [...BASE, 'nested', 'actions'], optional: ['structs', 'classes', 'code', 'signals', 'count', 'references'], optionalRate: 0.3 },
     // Written schedules ordering concurrent writes of w, in two or three regions.
     schedules: { features: ['hierarchy', 'concurrency', 'data', 'immediate', 'joins', 'schedules'], optional: ['actions', 'signals', 'aborts', 'references'], optionalRate: 0.3, roots: [2, 2, 3], maxDepth: 1 },
+    // A template of its own (dataflowObjectsChart): dataflow regions with chart instances, calls and schedules.
+    dataflowObjects: { features: [...BASE, 'dataflow', 'classes', 'schedules'] },
     // Timed annotations and ode actions among clocks, suspension and references.
     timed: { features: ['hierarchy', 'data', 'immediate', 'joins', 'clocks', 'timed', 'actions'], optional: ['concurrency', 'aborts', 'count', 'suspend', 'references', 'signals', 'history'], optionalRate: 0.25, maxDepth: 1 },
 }
@@ -690,6 +692,110 @@ function reincarnationChart(r: Rng, index: number): string {
     return lines.join('\n') + '\n'
 }
 
+/**
+ * The `dataflowObjects` profile's chart: dataflow regions that KIELER translates in its OO way (an equation calls a
+ * method) and in its classic way, next to a control-flow region that reads their outputs. Drawn from: chart
+ * instances wired by equations (`g.p = ...`, `g = {e, _}`, `o1 = g.r`) of a gate chart with a dataflow region or
+ * states of its own (initial values, a local, now and then a final state), declared in the chart, in the region or
+ * in a state, singly, as two of one declaration or as an array; a chart used as a class and a class instance, called
+ * in equations (`k.add(n)`, `k.add(1) = a`, `o2 = k.get()`, `cells[n % 2].add(1)`); the chart's own methods; vectors
+ * assigned to arrays; sequences with `;`; `dataflow once` in a state entered late; schedules on equations and on
+ * regions against a transition's scheduled write; an explicit binding; a transition that writes an instance's input.
+ * Now and then what KIELER rejects: an instance shared by a classic and an OO region, a schedule clause the classic
+ * translation loses, a positional binding too many.
+ */
+function dataflowObjectsChart(r: Rng, index: number): string {
+    const lines = [`scchart F${index} {`, '  input bool a, b, c, d', '  input int n', '  output int x = 0, y = 0, z = 0', '  output int o1 = 0, o2 = 0, o3 = 0, o4 = 0', '  output int arr[3] = {0, 0, 0}']
+    const children: string[] = []
+    const sched = r.chance(0.3)
+    if (sched) lines.push(`  schedule ${r.chance(0.3) ? '{conflicting, commuting} ' : ''}s`, '  output int w = 0')
+    // The gate chart: p, q in, r out.
+    const gateKind = r.pick(['dataflow', 'dataflow', 'states', 'counter', 'final'])
+    const gate = [`scchart G${index} {`, `  input int p${r.chance(0.2) ? ' = 2' : ''}, q`, `  output int r${r.chance(0.2) ? ' = 5' : ''}`]
+    if (gateKind === 'dataflow') gate.push(`  dataflow { r = ${r.pick(['p + q + 1', 'p * 2 + q', 'p - q', 'pre(p) + q'])} }`)
+    else if (gateKind === 'states') gate.push('  initial state GA', '  if p > 1 do r = p + q go to GB', '  state GB', '  do r += 1 go to GA')
+    else if (gateKind === 'counter') gate.push('  int k = 3', '  initial state GA', '  do k += 1; r = p + k go to GA')
+    else gate.push('  initial state GA', '  do r = p go to GB', '  state GB', '  if q > 0 do r = p + 100 go to GC', '  final state GC')
+    gate.push('}')
+    children.push(gate.join('\n'))
+    // A chart used as a class.
+    const withRegion = r.chance(0.3)
+    children.push([`scchart K${index} {`, '  int v = 0', '  method void add(int j) { v += j }', '  method int get() { return v }',
+        ...(withRegion ? ['  int t = 0', '  region KT { initial state KA do t += 1 go to KA }'] : []), '}'].join('\n'))
+    lines.push('  method int twice(int j) { return j * 2 }')
+    const cells = r.chance(0.3)
+    lines.push(`  class Acc { int v = 0  void add(int j) { v += j }  int get() { return v } } acc${cells ? ', cells[2]' : ''}`)
+
+    // Instances: where they are declared and how.
+    const gateDecl = r.pick(['one', 'one', 'one', 'two', 'array', 'bound', 'explicit'])
+    const gateRef = gateDecl === 'two' ? `ref G${index} g, g2` : gateDecl === 'array' ? `ref G${index} gs[2]`
+        : gateDecl === 'bound' ? `ref G${index} g(${r.chance(0.15) ? 'n, n, o4, n' : 'n'})` : gateDecl === 'explicit' ? `ref G${index} g(n to q)` : `ref G${index} g`
+    const g = gateDecl === 'array' ? 'gs[0]' : 'g'
+    const g2 = gateDecl === 'array' ? 'gs[1]' : gateDecl === 'two' ? 'g2' : undefined
+    const inRegion = r.chance(0.25)
+    const counterRef = r.chance(0.25) ? `ref K${index} k, k2` : `ref K${index} k`
+    if (!inRegion) lines.push(`  ${gateRef}`)
+    lines.push(`  ${counterRef}`)
+
+    const src = () => r.pick(['n', 'n + 1', 'n * 2', 'pre(n)', 'x', 'pre(x)', '(a ? 1 : 2)'])
+    const call = () => r.pick(['twice(n)', 'twice(n) + 1', 'acc.get()', 'k.get()', 'k.get() + n', 'twice(x)'])
+    // The equations of the instance's region.
+    const oo = r.chance(0.7)
+    const eqs: string[] = []
+    const seq = oo && r.chance(0.2)
+    if (gateDecl !== 'explicit' || r.chance(0.2)) {
+        eqs.push(r.chance(0.2) ? `${g} = {${src()}, ${r.pick(['_', 'n', oo ? 'twice(n)' : 'n + 2'])}}` : `${g}.p = ${oo && r.chance(0.5) ? call() : src()}`)
+    } else eqs.push(`${g}.p = ${src()}`)
+    if (gateDecl !== 'explicit' && gateDecl !== 'bound' && r.chance(0.4)) eqs.push(`${g}.q = ${r.pick(['n', '1', 'pre(n)'])}`)
+    if (g2) eqs.push(`${g2}.p = ${r.pick([`${g}.r`, 'n', `${g}.r + 1`])}`)
+    eqs.push(`o1 = ${g2 && r.chance(0.6) ? `${g2}.r` : `${g}.r`}${r.chance(0.3) ? ' + 1' : ''}`)
+    if (oo) {
+        const calls = [`k.add(${r.pick(['n', '1', 'twice(n)'])})`, `k.add(1) = ${r.pick(['a', 'n > 1', 'b && !c'])}`, 'acc.add(n)', 'acc.add(1) = a']
+        if (cells) calls.push('cells[n % 2].add(1)', 'cells[0].add(n)')
+        if (counterRef.includes('k2')) calls.push('k2.add(n)')
+        eqs.push(r.pick(calls))
+        if (r.chance(0.5)) eqs.push(r.pick(calls))
+        eqs.push(`o2 = ${r.pick(['k.get()', 'acc.get()', 'twice(n)', 'k.get() + 1', ...(cells ? ['cells[1].get()'] : []), ...(counterRef.includes('k2') ? ['k2.get()'] : [])])}`)
+    } else if (r.chance(0.5)) eqs.push(`o2 = ${src()}`)
+    if (r.chance(0.3)) eqs.push(`arr = {${src()}, ${r.pick(['_', '1', 'n'])}${r.chance(0.5) ? ', n' : ''}}`)
+    // Schedule clauses: on an equation (kept by the OO translation only) against the transition's write of w.
+    const eqSched = sched && r.chance(0.5)
+    const regionSched = sched && !eqSched && r.chance(0.6)
+    if (eqSched) eqs.push(`w = ${r.pick(['n', 'twice(n)', '5'])} schedule s ${r.pick([0, 1, 1])}`)
+    if (regionSched) eqs.push(`w = ${oo ? 'twice(n)' : 'n + 1'}`)
+    const shuffled = seq ? eqs : eqs.map(e => [r.next(), e] as const).sort((p, q) => p[0] - q[0]).map(e => e[1])
+    const body = shuffled.map((e, i) => `    ${e}${seq && i < shuffled.length - 1 && r.chance(0.6) ? ';' : ''}`)
+    const header = `  dataflow D1${regionSched ? ` schedule s ${r.pick([0, 1])}` : ''} {`
+    const first = [header, ...(inRegion ? [`    ${gateRef}`] : []), ...body, '  }']
+
+    // A second dataflow region: more calls, or (rarely) a second user of the instance.
+    const second: string[] = []
+    if (r.chance(0.5)) {
+        const eq2: string[] = []
+        const share = !inRegion && r.chance(0.15)
+        if (share) eq2.push(`o3 = ${g}.r${r.chance(0.5) ? ' + twice(1)' : ''}`)
+        else eq2.push(`o3 = ${r.pick(['twice(n) + o1', 'o1 + 1', 'acc.get() + 1', 'pre(o1)', 'k.get()'])}`)
+        if (r.chance(0.4)) eq2.push(`o4 = ${r.pick(['o3 + 1', 'twice(o3)', 'n'])}`)
+        second.push('  dataflow D2 {', ...eq2.map(e => `    ${e}`), '  }')
+    }
+
+    // Control flow beside it: reads the outputs, counts, sometimes writes an instance's input or the scheduled w.
+    const trigger = () => r.pick(['a', 'b', 'c', 'n > 1', 'o1 > 2', 'o2 > 1', 'a && !b', 'pre(a)', ...(oo && !inRegion && gateDecl !== 'explicit' ? [`${g}.r > 1`] : [])])
+    const effect = () => r.pick(['x += 1', 'y += 1', 'z += 1', 'x += 1; y += 1', 'z += o1', ...(sched ? [`w = 9 schedule s ${r.pick([0, 1, 2])}`] : []),
+        ...(oo && !inRegion && gateDecl === 'one' && r.chance(0.3) ? [`${g}.q = n`] : [])])
+    const control = ['  region R0 {', '    initial state A', `    if ${trigger()} do ${effect()} go to B`, ...(r.chance(0.4) ? [`    if ${trigger()} do ${effect()} go to A`] : []), '    state B']
+    if (r.chance(0.35)) {
+        // A state with a dataflow region of its own, entered late: `once` runs its equations at every entry.
+        const once = r.chance(0.5)
+        control.push(`    if ${trigger()} go to C`, `    ${r.pick(['', 'immediate '])}go to A`, '    state C {', `      dataflow${once ? ' once' : ''} {`,
+            `        o4 = ${r.pick(['twice(n)', 'n + 1', 'acc.get() + n'])}`, '      }', '    }', `    if ${trigger()} ${r.pick(['go to', 'abort to'])} A`)
+    } else control.push(`    if ${trigger()} do ${effect()} go to A`)
+    control.push('  }')
+    const regions = r.chance(0.5) ? [...first, ...second, ...control] : [...control, ...first, ...second]
+    lines.push(...regions, '}')
+    return [lines.join('\n'), ...children].join('\n\n') + '\n'
+}
+
 export function generate(seed: number, profileName: string, index: number, ticks = 14): Job {
     const profile = PROFILES[profileName] ?? PROFILES.mix
     const rng = new Rng(seed * 7919 + index * 104729 + 17)
@@ -698,6 +804,6 @@ export function generate(seed: number, profileName: string, index: number, ticks
     if (features.has('valued')) features.add('signals')
     if (features.has('timed')) features.add('clocks')
     const g = new Generator(rng, features, profile)
-    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : g.chart(index)
+    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : profileName === 'dataflowObjects' ? dataflowObjectsChart(rng, index) : g.chart(index)
     return { name: `${profileName}-${seed}-${index}`, model, inputs: inputsFor(rng, ticks, features.has('clocks')), profile: profileName, features: [...features].sort() }
 }

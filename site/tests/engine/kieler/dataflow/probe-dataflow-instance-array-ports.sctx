@@ -1,0 +1,18 @@
+// An OO instance with array inputs and outputs, wired element by element (g.in[0] = ..., o = g.out[1]).
+scchart DfInstanceArrayPorts {
+  input int x
+  output int o, m
+  ref Arr g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.in[0] = twice(x)
+    g.in[1] = x
+    o = g.out[1]
+    m = g.out[0]
+  }
+}
+scchart Arr {
+  input int in[2]
+  output int out[2]
+  dataflow { out[0] = in[0] + in[1]  out[1] = in[0] - in[1] }
+}

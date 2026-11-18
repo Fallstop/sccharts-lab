@@ -23,6 +23,7 @@ import { validateProgram } from './parser/validate'
 import { importTargets } from './parser/imports'
 import { kielerSyntaxWording } from './parser/kielerWording'
 import { compileChart, type CompiledChart } from './sim/compile'
+import { chartInstanceMember } from './sim/exec'
 import { rememberImports } from './sim/describe'
 import { codeNamingProblems } from './sim/codegen'
 
@@ -323,6 +324,8 @@ export interface TraceableVariable {
  * KIELER's deltaT and sleepT), the members of the chart's class and struct instances, and the locals of the states
  * and regions inside the chart, each with its scope and declared type. Values: `values` (or `present`) for the
  * ones `inPool`, `trace[key]` for the others. Constants, methods and the inside of referenced charts are left out.
+ * The members of the chart's `ref C g` instances are listed when the result is a whole CompileResult (they come from
+ * the simulator's compilation, its `sim`).
  */
 export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index' | 'interface'>): TraceableVariable[] {
     const chart = result.chart
@@ -404,6 +407,19 @@ export function traceableVariables(result: Pick<CompileResult, 'chart' | 'index'
             if (unpacked(d)) members(d, undefined, dims(inst), (vo, m) => `${inst.name}${suffix(vo, m)}`, 0)
             else members(d, inst.name, dims(inst))
         }
+    }
+    // The chart's `ref C g` instances (charts used as classes, the instances of dataflow regions that call methods):
+    // their fields, and the inputs and outputs such a dataflow region keeps with the instance (`g.a`), as the
+    // compiled chart has them. An instance inside an instance has its members under its path (`g.t.b`).
+    for (const v of (result as { sim?: CompiledChart }).sim?.core.decls ?? []) {
+        const key = chartInstanceMember(v)
+        if (key === undefined) continue
+        const at = key.lastIndexOf('.')
+        out.push({
+            key, name: key, group: 'member', type: v.type, signal: false, valued: false, input: false, output: false,
+            dims: v.dims.map(d => (d.k === 'lit' && typeof d.v === 'number' ? d.v : -1)),
+            scope: chartScope, inPool: false, member: { instance: key.slice(0, at), member: key.slice(at + 1) },
+        })
     }
     // Locals of inner states and regions (not of referenced charts: their states are another chart's).
     type Copy = NonNullable<TraceableVariable['copy']>

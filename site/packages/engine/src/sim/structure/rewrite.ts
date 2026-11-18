@@ -123,7 +123,12 @@ export function rewriteScope(root: CState | Scope, w: Rewriter) {
         }
         if (isRegion(scope)) {
             const eqs = scope.ext.eqs as CEquation[] | undefined
-            if (eqs) scope.ext.eqs = eqs.map(eq => ({ ...eq, target: rewriteTarget(eq.target, w), expr: rewriteExpr(eq.expr, w) }))
+            if (eqs) {
+                scope.ext.eqs = eqs.map(eq => ({
+                    ...eq, target: rewriteTarget(eq.target, w), expr: rewriteExpr(eq.expr, w),
+                    trigger: eq.trigger ? rewriteExpr(eq.trigger, w) : undefined, schedule: rewriteSchedule(eq.schedule, w),
+                }))
+            }
             if (scope.ext.forFrom) scope.ext.forFrom = rewriteExpr(scope.ext.forFrom as CExpr, w)
             if (scope.ext.forTo) scope.ext.forTo = rewriteExpr(scope.ext.forTo as CExpr, w)
         } else {

@@ -1,0 +1,14 @@
+// dataflow once with a method call in a state entered again and again: the entry actions run at every entry, in
+// written order.
+scchart DfOoOnceReentered {
+  input int x
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  initial state I go to S
+  state S {
+    dataflow once {
+      o = twice(x)
+      m = o + 1
+    }
+  } go to I
+}

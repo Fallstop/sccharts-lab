@@ -1,0 +1,9 @@
+// A method call in the argument of a void method call in a transition's effect (acc.add(twice(n))): accepted, both
+// are copied into place.
+scchart DfCallArgumentCallControlFlow {
+  input int n
+  output int o
+  method int twice(int j) { return j * 2 }
+  class Acc { int v = 0  void add(int j) { v += j }  int get() { return v } } acc
+  region R { initial state A do acc.add(twice(n)); o = acc.get() go to A }
+}

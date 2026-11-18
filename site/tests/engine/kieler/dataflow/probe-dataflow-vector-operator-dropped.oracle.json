@@ -1,0 +1,66 @@
+{
+  "hash": "9471c0719ee56be53d850df2c6f8106bc684476d",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-vector-operator-dropped.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "A": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "A": [
+          1,
+          11
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "A": [
+          3,
+          13
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "A": [
+          5,
+          15
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

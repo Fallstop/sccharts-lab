@@ -151,12 +151,23 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
         return { ...out, idx: out.idx.map(deep) }
     }
     const deep = (e: CExpr): CExpr => mapExpr(e, x => (x.k === 'ref' ? redirect(x) : retarget(x, redirect)))
+    // `super.m()` anywhere in the inheriting chart (its methods, actions and regions, dataflow equations included)
+    // keeps the base's method (Inheritance.xtend superMethodCalls): only a super call names a base's method there.
+    const superCalled = new Set<CVar>()
+    rewriteScope(state, {
+        node: e => {
+            const base = e.k === 'call' && e.target ? inheritedVar(e.target.v) : undefined
+            if (base) superCalled.add(base)
+            return undefined
+        },
+    })
     rewriteScope(state, { read: redirect, target: redirect, node: e => retarget(e, redirect) })
+    const keepsBase = (base: CVar, overrider: CVar) => superCalled.has(base) || callsVar(overrider.method?.body ?? [], base)
     // An override replaces the base method everywhere, also in the base's own bodies (structure.md S-66), unless it
     // calls `super`: then KIELER keeps the base method and the base's references keep calling it (KIELER's defect,
     // conformance structure/138).
     for (const [base, overrider] of overridden) {
-        if (callsVar(overrider.method?.body ?? [], base)) continue
+        if (keepsBase(base, overrider)) continue
         const swap = (r: CRef): CRef | undefined => (r.v === base ? { ...r, v: overrider } : undefined)
         rewriteScope(state, {
             read: swap, target: swap,
@@ -170,7 +181,7 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
     for (const b of bases) {
         const dropped: (Span | undefined)[] = b.chart.regions.filter(r => !visibleIds.has(r.id)).map(r => r.span)
         for (const [base, overrider] of overridden) {
-            if (callsVar(overrider.method?.body ?? [], base)) continue
+            if (keepsBase(base, overrider)) continue
             dropped.push(b.chart.declarations.find(d => d.valuedObjects.some(vo => b.prefix + vo.id === base.decl))?.span)
         }
         for (const d of b.reports ?? []) {

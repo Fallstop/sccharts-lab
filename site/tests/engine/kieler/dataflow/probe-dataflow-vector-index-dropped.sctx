@@ -1,0 +1,8 @@
+// A vector assigned to an element (A[2] = {x, x + 10}): the index is dropped, A[0] and A[1] are written.
+scchart DfVectorIndexDropped {
+  input int x
+  output int A[3]
+  dataflow {
+    A[2] = {x, x + 10}
+  }
+}

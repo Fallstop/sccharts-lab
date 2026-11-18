@@ -1,0 +1,78 @@
+{
+  "hash": "39b3177b72419e964bb94ff9b0b63aa238f4366e",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-in-referenced-chart-same-names.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__DfInstanceInReferencedChartSameNames_local_inc_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Two11.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Two11.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Two11.s": {
+      "type": "int",
+      "properties": []
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 6,
+        "a": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 8,
+        "a": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 10,
+        "a": 0
+      },
+      "terminated": false
+    }
+  ]
+}

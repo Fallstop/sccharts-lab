@@ -1,0 +1,20 @@
+// An OO dataflow region with an instance inside a state of a for-region: one instance per copy.
+scchart DfInstanceInForRegion {
+  input int x
+  output int o[2]
+  method int twice(int v) { return v * 2 }
+  region R for i : 0 to 1 {
+    initial state S {
+      ref Two g
+      dataflow {
+        g.a = twice(x) + i
+        o[i] = g.s
+      }
+    }
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

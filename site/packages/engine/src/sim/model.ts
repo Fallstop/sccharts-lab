@@ -70,6 +70,8 @@ export class CVar {
     member?: { of: CVar; name: string }
     /** `ref Chart x(args)` (declKind 'reference'): the chart it instantiates (structure.md S-18, S-33). */
     instance?: { target: string; args: CArg[] }
+    /** The class KIELER makes of a `ref` declaration's chart (`Counter1`, the next declaration's `Counter2`). */
+    className?: string
     /** A declaration of a state inside a for-region copy (passes/forRegion.ts): the source region and the counter's
      *  value in that copy. */
     forCopy?: { region: string; counter: string; value: number }
@@ -228,6 +230,13 @@ export interface CMethod {
     /** The contract written on the declaration (`schedule s 0` before the body), until passes/contracts.ts copies it
      *  onto the calls (`span`: where it is written). */
     schedule?: SchedEntry[]
+    /**
+     * A method of a chart instance: KIELER's class for the instance's `ref` declaration. Instances declared together
+     * (`ref C a, b`) are one class with one method, where the simulator has a method per instance.
+     */
+    cls?: string
+    /** A method of a chart instance: the instance (KIELER's `self` when it keeps the method as a function). */
+    instance?: CVar
     span?: Span
 }
 

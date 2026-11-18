@@ -1,0 +1,92 @@
+{
+  "hash": "8fb6c5d9ddec95243d48bbb38cf6b5e249b6a970",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-oo-delays.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_twice_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn2_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "q": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 2,
+        "p": 102,
+        "q": 202
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 108,
+        "p": 9,
+        "q": 3
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 19,
+        "p": 15,
+        "q": 5
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "x": 7,
+        "o": 29,
+        "p": 21,
+        "q": 7
+      },
+      "terminated": false
+    }
+  ]
+}

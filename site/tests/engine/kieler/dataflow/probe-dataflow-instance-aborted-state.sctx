@@ -1,0 +1,21 @@
+// An OO instance declared in a state that is aborted and entered again: it starts again with the state, initial
+// values included.
+scchart DfInstanceAbortedState {
+  input int x
+  input bool r
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  initial state S {
+    ref Cnt2 g
+    dataflow {
+      g.a = twice(x)
+      o = g.s
+    }
+  } if r abort to S
+}
+scchart Cnt2 {
+  input int a
+  output int s
+  int n = 0
+  initial state A do n += 1; s = a + 100 * n go to A
+}

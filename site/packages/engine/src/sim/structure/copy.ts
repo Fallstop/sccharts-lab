@@ -74,6 +74,9 @@ export function copyRegion(region: CRegion): CRegion {
             const c = copyVar(v)
             c.scope = to
             if (v.method) c.method = copyMethod(v.method, vars)
+            // A member of a chart instance (`ref C g`, which is no declaration any more) stays that instance's
+            // member in the copy: KIELER's copy of the state has a class of its own for it (the trace's columns).
+            if (v.member && v.member.of.declKind === 'reference' && !v.member.of.scope?.decls.includes(v.member.of)) c.member = v.member
             vars.set(v, c)
             to.decls.push(c)
         }

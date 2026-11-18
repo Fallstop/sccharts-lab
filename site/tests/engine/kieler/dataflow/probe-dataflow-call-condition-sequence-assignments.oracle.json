@@ -1,0 +1,98 @@
+{
+  "hash": "a953c1ffea43f2b54454c0069f4edf6bc6cf3a0c",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-condition-sequence-assignments.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _DfCallConditionSequenceAssignments_local_seq0 is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_k_add_j is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "n": 1
+      },
+      "values": {
+        "a": true,
+        "n": 1,
+        "o": 1,
+        "p": 1,
+        "k": {
+          "v": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": false,
+        "n": 2
+      },
+      "values": {
+        "a": false,
+        "n": 2,
+        "o": 1,
+        "p": 2,
+        "k": {
+          "v": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": true,
+        "n": 3
+      },
+      "values": {
+        "a": true,
+        "n": 3,
+        "o": 4,
+        "p": 3,
+        "k": {
+          "v": 4
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

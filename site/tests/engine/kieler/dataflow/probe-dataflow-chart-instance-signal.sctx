@@ -1,0 +1,13 @@
+// A chart with a local signal cannot be instantiated with ref: KIELER refuses a signal in the object.
+scchart DfChartInstanceSignal {
+  input int x
+  output int o
+  ref Sg c
+  region R { initial state A do c.bump(x); o = c.v go to A }
+}
+scchart Sg {
+  int v = 0
+  signal s
+  method void bump(int k) { v += k }
+  region T { initial state A do s go to B  state B if s do v += 100 go to A }
+}

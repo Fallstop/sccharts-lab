@@ -1,0 +1,82 @@
+{
+  "hash": "e013dcfa2cae32d1524140e291bb75004219e7fd",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-in-index.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "arr": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "m": 2,
+        "o": 20,
+        "arr": [
+          10,
+          20
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 0
+      },
+      "values": {
+        "x": 0,
+        "m": 1,
+        "o": 10,
+        "arr": [
+          10,
+          20
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "m": 2,
+        "o": 20,
+        "arr": [
+          10,
+          20
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

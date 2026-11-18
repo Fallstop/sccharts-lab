@@ -1,0 +1,177 @@
+{
+  "hash": "17a75c4c91a373c0f51707eeaab5cb1e67b3ed4c",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-oo-reads-signals.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "V": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "V_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "V_val": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "r": false,
+        "x": 1,
+        "o": 0,
+        "S": false,
+        "V": false,
+        "V_curval": 0,
+        "V_val": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 3,
+        "o": 7,
+        "S": true,
+        "V": true,
+        "V_curval": 3,
+        "V_val": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 5,
+        "o": 11,
+        "S": true,
+        "V": true,
+        "V_curval": 5,
+        "V_val": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "r": true,
+        "x": 7,
+        "o": 15,
+        "S": true,
+        "V": true,
+        "V_curval": 7,
+        "V_val": 7
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "x": 9,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 9,
+        "o": 19,
+        "S": true,
+        "V": true,
+        "V_curval": 9,
+        "V_val": 9
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "x": 11
+      },
+      "values": {
+        "r": true,
+        "x": 11,
+        "o": 23,
+        "S": true,
+        "V": true,
+        "V_curval": 11,
+        "V_val": 11
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

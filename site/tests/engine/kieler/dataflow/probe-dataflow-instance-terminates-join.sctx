@@ -1,0 +1,22 @@
+// A state with a dataflow once region that calls a method, an instance that terminates and join to: the OO region's
+// state is not final, the state never terminates.
+scchart DfInstanceTerminatesJoin {
+  input int x
+  output int o, m, d
+  method int twice(int v) { return v * 2 }
+  initial state S {
+    ref Fin g
+    dataflow once {
+      g.a = twice(x)
+      o = g.s
+    }
+  } join to T
+  state T do d += 1 go to S
+}
+scchart Fin {
+  input int a
+  output int s
+  initial state A do s = a go to B
+  state B do s = a + 100 go to C
+  final state C
+}

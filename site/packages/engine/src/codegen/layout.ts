@@ -54,6 +54,16 @@ function poolPathOf(v: CVar): { key: string; dims: number[] }[] {
     return chain.map((c, i) => ({ key: i ? c.member!.name : c.name, dims: ownDimsOf(c) }))
 }
 
+/**
+ * The chart instance (`ref C g`, no declaration any more) a variable finally belongs to: the outermost one of its
+ * member chain that is not among the chart's declarations.
+ */
+function topChartInstance(v: CVar, root: Set<CVar>): CVar | undefined {
+    let top: CVar | undefined
+    for (let c = v.member?.of; c; c = c.member?.of) if (!root.has(c)) top = c
+    return top
+}
+
 /** A C identifier made of the name (generated names are KIELER's already; this only guards against odd ones). */
 function identifier(name: string): string {
     const s = name.replace(/[^A-Za-z0-9_]/g, '_')
@@ -93,7 +103,9 @@ export class Layout {
         const rootSet = new Set(rootDecls)
         const empty = new Set((core.ext.emptyInstances as string[] | undefined) ?? [])
         const chartInstanceOf = (v: CVar): string | undefined => {
-            if (v.member && !rootSet.has(v.member.of)) return v.member.of.name
+            // (A chart instance inside a chart instance is a member of the outer one: the outermost names the object.)
+            const top = topChartInstance(v, rootSet)
+            if (top) return top.name
             const at = v.decl?.indexOf('$') ?? -1
             const slash = v.decl?.indexOf('/', at) ?? -1
             const inst = at >= 0 && slash > at ? v.decl!.slice(at + 1, slash) : undefined
@@ -152,19 +164,50 @@ export class Layout {
         for (const v of extra) if (!this.slots.has(v) && !v.declKind) this.plain(v, this.unique(identifier(v.name)), false)
     }
 
-    /** An instance of a chart used as a class: `<Chart>_<Referenced>1 c;` (KIELER's naming) with the chart's fields. */
+    /**
+     * An instance of a chart used as a class: `<Chart>_<Referenced>1 c;` (KIELER's naming) with the chart's fields. An
+     * array of instances (`ref C cs[2]`) is an array of the struct; a chart instance declared in the chart is a struct
+     * inside it.
+     */
     private chartInstance(inst: string, decls: CVar[], classes: Map<string, string>) {
-        // Its fields, and the class and struct instances declared in the chart (with their members inside).
-        const inside = decls.filter(m => m.member?.of.name === inst && !m.const && (!m.declKind || ((m.declKind === 'class' || m.declKind === 'struct') && !m.tags.has('#host'))))
-        const members = inside.filter(m => !m.declKind)
-        const nested = inside.filter(m => m.declKind)
-        // Ids inside the instance are `<Chart>$<instance>/<Referenced chart>[/<Base>]$<name>`.
-        const id = decls.map(m => m.decl ?? '').find(d => d.includes(`$${inst}/`)) ?? ''
-        const rest = id.slice(id.indexOf(`$${inst}/`) + inst.length + 2)
+        const rootSet = new Set(decls)
+        const of = decls.map(m => topChartInstance(m, rootSet)).find(t => t?.name === inst)
+        const type = this.chartType(of, inst, decls, classes)
+        const outer = of ? dimsOf(of) : []
+        const name = this.unique(identifier(inst))
+        this.lines.push(`${type} ${name}${outer.map(n => `[${n}]`).join('')};`)
+        this.instances.push({ name: inst, member: name, ctype: type, pool: inst })
+        if (of) this.chartMembers(of, `${name}${'[]'.repeat(outer.length)}`, decls, inst)
+    }
+
+    /** What a chart instance holds: its fields, the class and struct instances and the chart instances declared in it. */
+    private insideChart(of: CVar | undefined, decls: CVar[]): { inside: CVar[]; charts: CVar[] } {
+        if (!of) return { inside: [], charts: [] }
+        const inside = decls.filter(m => m.member?.of === of && !m.const && (!m.declKind || ((m.declKind === 'class' || m.declKind === 'struct') && !m.tags.has('#host'))))
+        const charts: CVar[] = []
+        for (const m of decls) {
+            for (let c = m.member?.of; c; c = c.member?.of) {
+                if (c.member?.of === of && c.declKind === 'reference' && !charts.includes(c)) charts.push(c)
+            }
+        }
+        return { inside, charts }
+    }
+
+    private chartType(of: CVar | undefined, inst: string, decls: CVar[], classes: Map<string, string>): string {
+        const { inside, charts } = this.insideChart(of, decls)
+        // Ids inside the instance are `<Chart>$<instance>/<Referenced chart>[/<Base>]$<name>` (an element of an array
+        // of instances: `$<instance>[0]/`).
+        const marker = new RegExp(`\\$${inst.replace(/[^A-Za-z0-9_]/g, '\\$&')}(\\[\\d+\\])*/`)
+        const id = decls.map(m => m.decl ?? '').find(d => marker.test(d)) ?? ''
+        const at = marker.exec(id)
+        const rest = at ? id.slice(at.index + at[0].length) : ''
         const chart = rest ? rest.split(/[/$]/)[0] : inst
-        const fields = inside.map(m => (m.declKind
-            ? `${this.classType(m, decls, classes)} ${identifier(m.member!.name)}${ownDimsOf(m).map(n => `[${n}]`).join('')};`
-            : `${ctypeOf(m)} ${identifier(m.member!.name)}${dimsOf(m).map(n => `[${n}]`).join('')};`))
+        const fields = [
+            ...inside.map(m => (m.declKind
+                ? `${this.classType(m, decls, classes)} ${identifier(m.member!.name)}${ownDimsOf(m).map(n => `[${n}]`).join('')};`
+                : `${ctypeOf(m)} ${identifier(m.member!.name)}${ownDimsOf(m).map(n => `[${n}]`).join('')};`)),
+            ...charts.map(c => `${this.chartType(c, c.name, decls, classes)} ${identifier(c.member!.name)}${ownDimsOf(c).map(n => `[${n}]`).join('')};`),
+        ]
         const key = `chart ${chart}|${fields.join(' ')}`
         let type = classes.get(key)
         if (!type) {
@@ -172,19 +215,28 @@ export class Layout {
             classes.set(key, type)
             this.typedefs.push(`typedef struct {\n${fields.map(f => `  ${f}\n`).join('')}} ${type};\n`)
         }
-        const name = this.unique(identifier(inst))
-        this.lines.push(`${type} ${name};`)
-        this.instances.push({ name: inst, member: name, ctype: type, pool: inst })
-        for (const m of nested) this.instance(m, `${name}.${identifier(m.member!.name)}`, decls, true)
-        for (const m of members) {
-            const member = `${name}.${identifier(m.member!.name)}`
+        return type
+    }
+
+    /** The members of a chart instance at `element` (`g`, `gs[]`, `g.t`), and of the instances inside it. */
+    private chartMembers(of: CVar, element: string, decls: CVar[], inst: string) {
+        const { inside, charts } = this.insideChart(of, decls)
+        const plain = !of.member && !of.dims.length
+        for (const m of inside) {
+            const member = `${element}.${identifier(m.member!.name)}`
+            if (m.declKind) {
+                this.instance(m, member, decls, true)
+                continue
+            }
             this.slots.set(m, { v: m, member })
             if (m.tags.has('#const-member')) continue
             this.variables.push({
                 name: `${inst}.${m.member!.name}`, member, ctype: ctypeOf(m), type: simpleType(m), dims: dimsOf(m),
                 input: false, output: false, pool: m.member!.name, poolObject: inst,
+                ...(plain ? {} : { poolPath: poolPathOf(m) }),
             })
         }
+        for (const c of charts) this.chartMembers(c, `${element}.${identifier(c.member!.name)}${'[]'.repeat(ownDimsOf(c).length)}`, decls, inst)
     }
 
     /** Reserves a member name (KIELER's UniqueNameCache: `x`, then `x1`, `x2`, ...). */

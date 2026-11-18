@@ -1,0 +1,76 @@
+{
+  "hash": "2240fc8af9da59c3fe04706120766b805e7aa534",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-class-methods.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_acc_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Acc.v": {
+      "type": "int",
+      "properties": []
+    },
+    "acc": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 1,
+        "acc": {
+          "v": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 4,
+        "acc": {
+          "v": 4
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 9,
+        "acc": {
+          "v": 9
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

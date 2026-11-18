@@ -1,0 +1,17 @@
+// An OO instance of a chart with a clock: the chart is timed (deltaT, sleepT), the clock is a field of the object.
+scchart DfInstanceWithClock {
+  input int x
+  output int o
+  ref Tick11 g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+}
+scchart Tick11 {
+  input int a
+  output int s
+  clock t
+  initial state A if t >= 200 do s = a; t = 0 go to A
+}

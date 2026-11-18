@@ -1,0 +1,12 @@
+// A chart instance cannot be called (add(x, y) with ref DAdd add): a call names a method or an extern function only.
+scchart DfCallOfInstance {
+  input int x, y
+  output int o
+  ref DAdd add
+  dataflow { add(x, y)  o = add.s }
+}
+scchart DAdd {
+  input int a, b
+  output int s
+  dataflow { s = a + b }
+}

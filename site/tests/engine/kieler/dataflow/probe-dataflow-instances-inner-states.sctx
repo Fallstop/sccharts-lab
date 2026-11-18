@@ -1,0 +1,13 @@
+// An instance in each of two inner states, each with an OO dataflow region: the classes are Cnt11 and Cnt21 in the
+// simulation interface, the instances are not in the pool.
+scchart DfInstancesInnerStates {
+  input int x
+  output int o, p
+  region R1 { initial state A { ref Cnt c  dataflow { c.add(x)  o = c.get() } } }
+  region R2 { initial state B { ref Cnt c  dataflow { c.add(1)  p = c.get() } } }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

@@ -1,0 +1,77 @@
+{
+  "hash": "3f7179e6e31d2391884b4ddf13ed0a16cfe5bd30",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instances-two-declarations.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_c_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_d_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cnt1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt2.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "d": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 2,
+        "c": {
+          "v": 1
+        },
+        "d": {
+          "v": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 6,
+        "c": {
+          "v": 4
+        },
+        "d": {
+          "v": 2
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

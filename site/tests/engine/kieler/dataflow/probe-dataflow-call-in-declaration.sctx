@@ -1,0 +1,18 @@
+// A method call only in the initial value of a declaration of the dataflow region (int loc = five()) makes it an OO
+// region: the instance is an object.
+scchart DfCallInDeclaration {
+  input int x
+  output int o, m
+  ref Two g
+  method int five() { return 5 }
+  dataflow {
+    int loc = five()
+    g.a = x + loc
+    o = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

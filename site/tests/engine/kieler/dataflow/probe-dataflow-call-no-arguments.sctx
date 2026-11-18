@@ -1,0 +1,13 @@
+// A call without arguments as an equation (bump()), a second one with a condition and a sequence mark (bump() = x >
+// 2;).
+scchart DfCallNoArguments {
+  input int x
+  output int o
+  int v = 0
+  method void bump() { v += 1 }
+  dataflow {
+    bump()
+    bump() = x > 2;
+    o = v
+  }
+}

@@ -1,0 +1,17 @@
+// p = n; k.add(p) = a; o = k.get(): a sequence of an assignment, a conditional call and a read.
+scchart DfCallConditionSequenceAssignments {
+  input bool a
+  input int n
+  output int o, p
+  ref K k
+  dataflow {
+    p = n;
+    k.add(p) = a;
+    o = k.get()
+  }
+}
+scchart K {
+  int v = 0
+  method void add(int j) { v += j }
+  method int get() { return v }
+}

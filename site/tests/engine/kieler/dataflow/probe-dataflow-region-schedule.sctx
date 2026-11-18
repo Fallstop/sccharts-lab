@@ -1,0 +1,8 @@
+// A schedule on a dataflow region (dataflow D schedule s 1): the region's equation runs after the transition's o = 2
+// schedule s 0.
+scchart DfRegionSchedule {
+  output int o
+  schedule s
+  dataflow D schedule s 1 { o = 1 }
+  region R2 { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}

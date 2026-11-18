@@ -1,0 +1,8 @@
+// _ in a vector assigned to an array skips that element.
+scchart DfVectorSkip {
+  input int x
+  output int A[3]
+  dataflow {
+    A = {x, _, x + 10}
+  }
+}

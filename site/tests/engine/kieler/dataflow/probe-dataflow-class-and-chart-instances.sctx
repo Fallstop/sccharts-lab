@@ -1,0 +1,19 @@
+// A class instance and a chart instance in one OO region, the class's method and field feeding the chart instance's
+// inputs.
+scchart DfClassAndChartInstances {
+  input int x
+  output int o, m
+  ref Two g
+  class Acc { int v = 0  void add(int k) { v += k }  int get() { return v } } acc
+  dataflow {
+    acc.add(x)
+    g.a = acc.get()
+    g.b = acc.v
+    o = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

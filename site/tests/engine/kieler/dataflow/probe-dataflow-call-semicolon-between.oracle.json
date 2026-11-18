@@ -1,0 +1,116 @@
+{
+  "hash": "22a60b9aba83da8c991c7f528430e37c13c88740",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-semicolon-between.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _DfCallSemicolonBetween_local_seq0 is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn0_k_add_j is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_k_add_j is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "n": 2
+      },
+      "values": {
+        "a": true,
+        "n": 2,
+        "o1": 3,
+        "o2": 2,
+        "k": {
+          "v": 2
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "n": 1
+      },
+      "values": {
+        "a": true,
+        "n": 1,
+        "o1": 4,
+        "o2": 4,
+        "k": {
+          "v": 4
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "n": 1
+      },
+      "values": {
+        "a": false,
+        "n": 1,
+        "o1": 6,
+        "o2": 6,
+        "k": {
+          "v": 6
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": true,
+        "n": 0
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "o1": 7,
+        "o2": 8,
+        "k": {
+          "v": 8
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+// pre, -> and fby next to method calls in an OO region.
+scchart DfOoDelays {
+  input int x
+  output int o, p, q
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = pre(p) + twice(x)
+    p = (100 -> x) + twice(x)
+    q = (200 fby x) + twice(1)
+  }
+}

@@ -1,0 +1,11 @@
+// A method body with two statements and no semicolon between them is rejected here as anywhere.
+scchart DfCallMethodMissingSemicolon {
+  input int x
+  output int o
+  int v = 0
+  method int addget(int k) { v += k  return v }
+  dataflow {
+    addget(x)
+    o = v
+  }
+}

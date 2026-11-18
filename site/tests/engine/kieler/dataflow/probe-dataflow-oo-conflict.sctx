@@ -1,0 +1,10 @@
+// Two absolute writes of one variable in an OO region are a conflict as in a classic one. Rejected.
+scchart DfOoConflict {
+  input int x
+  output int o, p
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    p = twice(x)
+    p = x + 1
+  }
+}

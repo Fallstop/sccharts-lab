@@ -1,0 +1,19 @@
+// A scheduled OO dataflow region with an instance: the region's priority is on g.a = ... and o = g.s alike, at one
+// priority the read comes before the write, against the data flow. Rejected.
+scchart DfRegionScheduleInstance {
+  input int x
+  output int o, m
+  schedule s
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow D schedule s 1 {
+    g.a = twice(x)
+    o = g.s
+  }
+  region R { initial state A do o = 77 schedule s 0 go to A }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

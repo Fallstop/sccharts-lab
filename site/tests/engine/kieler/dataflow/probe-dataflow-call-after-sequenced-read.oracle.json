@@ -1,0 +1,115 @@
+{
+  "hash": "438259a027a61e9e56eb4c91e032123e4884bf76",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-after-sequenced-read.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _DfCallAfterSequencedRead_local_seq0 is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_k_add_j is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "a": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o1": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o2": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K1.v": {
+      "type": "int",
+      "properties": []
+    },
+    "k": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "a": true,
+        "n": 2
+      },
+      "values": {
+        "a": true,
+        "n": 2,
+        "o1": 2,
+        "o2": 2,
+        "k": {
+          "v": 1
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "a": true,
+        "n": 1
+      },
+      "values": {
+        "a": true,
+        "n": 1,
+        "o1": 2,
+        "o2": 1,
+        "k": {
+          "v": 2
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "a": false,
+        "n": 1
+      },
+      "values": {
+        "a": false,
+        "n": 1,
+        "o1": 3,
+        "o2": 1,
+        "k": {
+          "v": 3
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "a": true,
+        "n": 0
+      },
+      "values": {
+        "a": true,
+        "n": 0,
+        "o1": 3,
+        "o2": 0,
+        "k": {
+          "v": 4
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

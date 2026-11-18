@@ -1,0 +1,15 @@
+{
+  "hash": "b1fc725ddec1f9a545ab5e7245e7ab2260e25f86",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instances-one-declaration-two-calls-control-flow.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "implicit declaration of function ‘get’ [-Wimplicit-function-declaration]",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name _fn2_c_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn3_d_add_k is contained in the model but not in VariableStore."
+  ],
+  "ticks": []
+}

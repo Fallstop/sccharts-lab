@@ -1,0 +1,10 @@
+// A schedule on an equation of a region that calls a method is kept (the OO translation copies it): o = 1 schedule s
+// 1 runs after the transition's o = 2 schedule s 0.
+scchart DfEquationScheduleOo {
+  input int x
+  output int o, m
+  schedule s
+  method int twice(int v) { return v * 2 }
+  dataflow { o = 1 schedule s 1  m = twice(x) }
+  region R2 { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}

@@ -1,0 +1,19 @@
+// The condition after a call names an instance's output (add(x) = g.s > 3): that makes g an OO instance; a transition
+// sets its input.
+scchart DfCallConditionInstance {
+  input int x
+  output int o
+  int v
+  ref Two g
+  method void add(int k) { v += k }
+  dataflow {
+    add(x) = g.s > 3
+    o = v
+  }
+  region R { initial state A do g.a = x go to A }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

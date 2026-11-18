@@ -1,0 +1,65 @@
+{
+  "hash": "f44680bd3b89ed199c2a99cbf772bc0864be2f6a",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instances-inner-states.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0__DfInstancesInnerStates_local_c_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn3__DfInstancesInnerStates_local_c1_add_k is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cnt11.v": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt21.v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 1,
+        "p": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 4,
+        "p": 2
+      },
+      "terminated": false
+    }
+  ]
+}

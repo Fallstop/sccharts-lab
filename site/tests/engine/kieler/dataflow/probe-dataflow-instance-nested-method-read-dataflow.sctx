@@ -1,0 +1,17 @@
+// The same read in a dataflow equation (o = g.get() + x) next to the inner chart's own dataflow call t.add(2).
+scchart DfInstanceNestedMethodReadDataflow {
+  input int x
+  output int o
+  ref Mid g
+  dataflow { o = g.get() + x }
+}
+scchart Mid {
+  ref Cnt t
+  method int get() { return t.get() }
+  dataflow { t.add(2) }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}

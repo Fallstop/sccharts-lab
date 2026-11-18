@@ -1,0 +1,18 @@
+// An array of chart instances in an OO region (gs[0].a = twice(x), gs[1].a = gs[0].s): an array of objects in the
+// pool.
+scchart DfInstanceArray {
+  input int x
+  output int o, m
+  ref Two gs[2]
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    gs[0].a = twice(x)
+    gs[1].a = gs[0].s
+    o = gs[1].s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

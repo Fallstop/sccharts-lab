@@ -1,0 +1,19 @@
+// A schedule on a vector equation is lost (its parts are new assignments): g.a = x and the transition's g.a = 50
+// schedule s 0 conflict. Rejected.
+scchart DfVectorScheduleLost {
+  input int x
+  output int o, m
+  schedule s
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g = {x, twice(x)} schedule s 1
+    o = g.s
+  }
+  region R { initial state A do g.a = 50 schedule s 0 go to A }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

@@ -1,0 +1,17 @@
+// An OO instance of a chart with signal inputs and outputs: KIELER refuses a signal in the object the instance
+// becomes.
+scchart DfInstanceSignalPorts {
+  input int x
+  output int o, m
+  ref Sig g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x) > 4
+    o = g.s ? 1 : 0
+  }
+}
+scchart Sig {
+  input signal a
+  output signal s
+  initial state A if a do s go to A
+}

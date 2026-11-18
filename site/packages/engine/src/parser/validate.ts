@@ -557,8 +557,18 @@ class Validator {
 
     private checkDataflowVectorAssignment(region: Region) {
         for (const eq of region.equations) {
-            if (eq.callArgs) continue
             const entry = this.vo(eq.target.decl)
+            if (eq.callArgs) {
+                // A call written as an equation is its own target (KIELER's DataflowReferenceCall.getReference): an
+                // extern function is a reference declaration, so its call is "a scalar assigned to a reference".
+                const value = eq.call ? eq.expression : undefined
+                if (entry?.decl?.declKind === 'reference' && !eq.target.sub && value?.kind !== 'vector') {
+                    this.add('error', 'dataflow-scalar-to-reference', eq.span, `The extern function \`${eq.target.name}\` cannot be called as an equation of its own`,
+                        'You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar.',
+                        `Use the call in an equation's expression instead: \`x = ${eq.target.name}(...)\`. Only methods can be called as an equation of their own.`)
+                }
+                continue
+            }
             if (entry?.decl?.declKind === 'reference' && !eq.target.sub && eq.expression.kind !== 'vector') {
                 this.add('error', 'dataflow-scalar-to-reference', eq.span, `\`${eq.target.name}\` is a referenced chart: assign one of its inputs (\`${eq.target.name}.input = ...\`) or a vector`,
                     'You are assigning a scalar value to a reference. You should specify the input variable of the reference or use a vector value instead of a scalar.')
@@ -703,6 +713,13 @@ class Validator {
         else if (owner?.kind === 'region' && owner.regionType === 'dataflow') scanDataflow([owner])
         const check = d.valuedObjects.filter(vo => !usedInDataflow.has(vo.id))
         if (!check.length) return
+        if (check.length < d.valuedObjects.length) {
+            const used = d.valuedObjects.filter(vo => usedInDataflow.has(vo.id)).map(vo => `\`${vo.name}\``)
+            this.add('warning', 'reference-mixed-dataflow-use', d.span,
+                `${used.join(', ')} ${used.length === 1 ? 'is' : 'are'} used in a dataflow region and ${check.map(vo => `\`${vo.name}\``).join(', ')} ${check.length === 1 ? 'is' : 'are'} not, in one declaration`,
+                'This reference declaration contains some valued objects that are used in dataflow regions and some not. This might cause problems since reference valued objects not used in dataflow will be instaciated as class instances.',
+                'KIELER treats the instances a dataflow region uses differently from the others. Declare them separately (one `ref` line for the dataflow instances, one for the rest).')
+        }
         const first = check[0]
         const each = usedInDataflow.size > 0 || (d.valuedObjects.length > 1 && d.valuedObjects.some(v => v.parameters?.length))
         for (const vo of each ? check : [first]) {
@@ -1052,6 +1069,7 @@ class Validator {
 
     private equation(eq: Equation) {
         this.checkExpression(eq.expression, false)
+        if (eq.call) this.checkExpression(eq.call, false)
         if (!eq.callArgs) this.checkAssignmentTarget(eq.target, eq.span, true)
     }
 

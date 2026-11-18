@@ -1,0 +1,17 @@
+// o1 = k.get() + n; k.add(1): the read comes first, the call is the equation after a ;.
+scchart DfCallAfterSequencedRead {
+  input bool a
+  input int n
+  output int o1, o2
+  ref K k
+  dataflow {
+    o1 = k.get() + n;
+    k.add(1);
+    o2 = n
+  }
+}
+scchart K {
+  int v = 0
+  method void add(int j) { v += j }
+  method int get() { return v }
+}

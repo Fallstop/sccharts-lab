@@ -1,0 +1,18 @@
+// An OO instance of a chart with a for-region writing its array output.
+scchart DfInstanceWithForRegion {
+  input int x
+  input bool r
+  output int o, p
+  ref For5 g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.i = twice(x)
+    o = g.q[0]
+    p = g.q[1]
+  }
+}
+scchart For5 {
+  input int i
+  output int q[2]
+  region F for k : 0 to 1 { initial state A do q[k] = i + k go to A }
+}

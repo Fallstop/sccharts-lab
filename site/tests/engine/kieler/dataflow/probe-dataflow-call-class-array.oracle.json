@@ -1,0 +1,102 @@
+{
+  "hash": "739833c0b869151351e936b800bea5f67a69d7bc",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-call-class-array.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_accs_add_k is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_accs_add_k is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Acc.v": {
+      "type": "int",
+      "properties": []
+    },
+    "accs": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "x": 1,
+        "o": 1,
+        "p": 100,
+        "accs": [
+          {
+            "v": 1
+          },
+          {
+            "v": 100
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3
+      },
+      "values": {
+        "x": 3,
+        "o": 4,
+        "p": 200,
+        "accs": [
+          {
+            "v": 4
+          },
+          {
+            "v": 200
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5
+      },
+      "values": {
+        "x": 5,
+        "o": 9,
+        "p": 300,
+        "accs": [
+          {
+            "v": 9
+          },
+          {
+            "v": 300
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

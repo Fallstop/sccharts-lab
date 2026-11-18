@@ -1,0 +1,19 @@
+// Compound and old-style updates of an instance's inputs (g.a += twice(x), g.b = g.b + 1): the ports are ordinary
+// variables that keep their values.
+scchart DfInstanceCompoundWiring {
+  input int x
+  input bool r
+  output int o
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a += twice(x)
+    g.b = g.b + 1
+    o = g.s
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

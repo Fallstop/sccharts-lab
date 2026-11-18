@@ -1,0 +1,13 @@
+// Two instances declared together (ref Cnt c, d) are one class: c.get() + d.get() in one expression are two calls of
+// one method, which KIELER's C code does not compile (implicit declaration of get). Rejected.
+scchart DfInstancesOneDeclarationTwoCalls {
+  input int x
+  output int o
+  ref Cnt c, d
+  dataflow { c.add(x)  d.add(1)  o = c.get() + d.get() }
+}
+scchart Cnt {
+  int v = 0
+  method void add(int k) { v += k }
+  method int get() { return v }
+}
