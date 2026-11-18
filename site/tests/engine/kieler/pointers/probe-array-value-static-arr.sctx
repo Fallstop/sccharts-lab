@@ -1,0 +1,2 @@
+// An array as a value, for-regions, references, inheritance: static arr. KIELER runs it: x is 0, 4, 4.
+scchart Main { int a[2] output int x initial state A { static int l[2] initial state I do x = l - a go to I } }

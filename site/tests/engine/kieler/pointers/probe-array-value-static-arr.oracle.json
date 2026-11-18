@@ -1,0 +1,93 @@
+{
+  "hash": "3c72cb0e3af0520a907ddf6aa1736978f135e747",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-static-arr.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "Static variables should be initialized.",
+      "line": 2,
+      "column": 67
+    }
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Main_region0_A___l": {
+      "type": "int",
+      "properties": [
+        "static"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "Main_region0_A___l": [
+          0,
+          0
+        ],
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 4,
+        "Main_region0_A___l": [
+          0,
+          0
+        ],
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 4,
+        "Main_region0_A___l": [
+          0,
+          0
+        ],
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+// An array as a value, methods, short (inlined): `method int first(int p[2]) { return p[0] } initial state A do x =
+// first(fa) go to A`. KIELER runs it: x is 0, 0, 0.
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y method int first(int p[2]) { return p[0] } initial state A do x = first(fa) go to A }

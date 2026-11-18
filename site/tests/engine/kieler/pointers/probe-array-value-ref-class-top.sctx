@@ -1,0 +1,2 @@
+// An array as a value, chart instances and references: ref class top. KIELER runs it: x is 0, 2, 2.
+scchart Main { int a[2] ref C c output int x initial state A do x = c.v - a go to A } scchart C { int v[2] int u int w[2] }

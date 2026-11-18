@@ -4,6 +4,7 @@
 import type { CExpr } from './model'
 import { ExprCompiler, SimError } from './eval'
 import { newRandState } from './random'
+import { isAdditive, readsDifferently } from './written'
 
 const BOOLEAN_OPS = new Set(['==', '!=', '<', '<=', '>', '>=', '&&', '||', '!'])
 
@@ -16,6 +17,12 @@ export function foldConstants(e: CExpr): CExpr {
     if (e.k === 'vector') return { ...e, values: e.values.map(foldConstants) }
     if (e.k === 'ref') return { ...e, idx: e.idx.map(foldConstants) }
     if (e.k !== 'op') return e
+    // A difference KIELER writes without its parentheses (`10 - (4 - 2)` is `10 - 4 - 2` in its C code, written.ts):
+    // its value is not that of its parts, and KIELER does not fold it either. Only what stands apart is folded.
+    if (readsDifferently(e)) {
+        const keep = (x: CExpr): CExpr => (x.k === 'op' && isAdditive(x) ? { ...x, args: x.args.map(keep) } : foldConstants(x))
+        return keep(e)
+    }
     const args = e.args.map(foldConstants)
     const folded: CExpr = { ...e, args }
     if (e.op === 'pre' || e.op === 'val') return folded

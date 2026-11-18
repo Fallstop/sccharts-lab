@@ -1,0 +1,3 @@
+// An array as a value, initial values: init float. KIELER rejects it: incompatible types when assigning to type
+// ‘double’ from type ‘int *’.
+scchart Main { int a[2] = {4,7} float z = a output int x initial state A do x = 1 go to A }

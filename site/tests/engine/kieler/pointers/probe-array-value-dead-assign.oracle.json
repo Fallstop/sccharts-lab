@@ -1,0 +1,149 @@
+{
+  "hash": "a59dbcd2c39e7ac9dabc12a9b7af9bb138853909",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-dead-assign.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "The state is not reachable.",
+      "line": 3,
+      "column": 133
+    }
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": []
+    },
+    "p": {
+      "type": "int",
+      "properties": []
+    },
+    "q": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "z": 0,
+        "m": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "p": [
+          4,
+          7
+        ],
+        "q": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "z": 3,
+        "m": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "p": [
+          4,
+          7
+        ],
+        "q": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 2
+      },
+      "values": {
+        "n": 2,
+        "z": 6,
+        "m": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "p": [
+          4,
+          7
+        ],
+        "q": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

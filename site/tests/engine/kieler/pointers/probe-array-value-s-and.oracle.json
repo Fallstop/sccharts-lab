@@ -1,0 +1,89 @@
+{
+  "hash": "9c9e0004ced4bf928cdd3dc469af70857fee8fdd",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-s-and.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "s": {
+      "type": "string",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "x": 0,
+        "a": [
+          0,
+          0
+        ],
+        "s": "hi"
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "x": 0,
+        "a": [
+          0,
+          0
+        ],
+        "s": "hi"
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "x": 1,
+        "a": [
+          0,
+          0
+        ],
+        "s": "hi"
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

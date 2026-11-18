@@ -628,13 +628,54 @@ allows at most one comparison operator); serialiser precedence `kexpressions/...
 196-222; conditional placeholder `ccode/CCodeSerializeHRExtensions.xtend` 75, 227.
 
 **Quirk.** `x = - -x` is written to C as `--d->x`, a pre-decrement (gcc warns
-`operation on ‘d->x’ may be undefined`). Probe result: x = -I, then `- -x` gives x - 1. Don't teach it;
-the engine should evaluate it as double negation and may warn.
+`operation on ‘d->x’ may be undefined`). Probe result: x = -I, then `- -x` gives x - 1. Don't teach it. It is one
+case of the next rule, which the engine reproduces with a `kieler-quirk` warning.
 
 **Teaching note.** Parenthesise every ternary condition: `(A > 2) ? A : 0`.
 
 **Implementation note.** The parser must reproduce these precedences exactly (owned by the parser
 workstream). Evaluate `&&`/`||` lazily.
+
+### B-24a A difference inside a difference loses its parentheses
+
+**Rule.** KIELER writes an expression into its C code with the parentheses its serializer finds necessary, and for a
+difference it finds too few. An operand of the same binding strength as its parent gets none in the first place
+(`(a - b) + c`, harmless), and none in any place when it is the same operator as its parent and that operator is
+one of `+ - * && || & | ^ ! ~` (the source: "this will ignore user forces right associativity"). For `+`, `*` and
+the logical and bitwise operators that only regroups; for `-` it changes the value, because C subtracts from the
+left. A minus sign is a subtraction with one operand to the serializer, so the same holds under a negation, and two
+minus signs meet as C's `--`:
+
+| chart | KIELER's C code | value |
+| --- | --- | --- |
+| `10 - (i - 2)` | `10 - d->i - 2` | 8 - i, not 12 - i |
+| `-(i - 2)`, `-(i - 2) * 3` | `-d->i - 2`, `(-d->i - 2) * 3` | -i - 2 |
+| `20 - (i + 2 - 1)` | `20 - d->i + 2 - 1` | the sum inside lost its place too: 21 - i |
+| `20 - (i - 2) - (i - 3)`, `20 - (i - (2 - 1))` | `20 - d->i - 2 - d->i - 3`, `20 - d->i - 2 - 1` | |
+| `10 - (i + 2)`, `10 + (i - 2)`, `-(i + 2)`, `5 - -i` | parentheses kept (another operator), or none needed | as written |
+| `- -i`, `-(-i)`, `-(-(i - 2))` | `--d->i`, `--d->i - 2` | C counts `i` down by one and gives the new value, every time the expression is computed (an input too, a trigger every tick) |
+| `- -5`, `- -(i + 1)`, `- - -i`, `- -N` for a constant N, `- -a` for an array | `--5`, `--(d->i + 1)`, `---d->i` | rejected: `lvalue required as decrement operand` |
+| `a + (b + c)`, `a * (b * c)` | `a + b + c`, `a * b * c` | regrouped only (the last bit of a float may differ) |
+
+It holds wherever an expression reaches C: effects, compound assignments, triggers, indices, method bodies (copied
+into place or kept as functions), referenced charts, dataflow equations, initial values. KIELER does not fold
+constants before it writes the code: `10 - (K - 2)` with `const int K = 4` is `10 - 4 - 2`, and `output int x = 10 -
+(4 - 2)` starts at 4.
+
+**Evidence.** Probes `tests/engine/kieler/written/probe-written-*` (47: 41 accepted, 6 rejected), all with the
+generated C read (`d->x = 10 - d->i - 2;`); the same verdicts and values on official KIELER.
+
+**Source.** `kexpressions/.../extensions/KExpressionsSerializeHRExtensions.xtend` 162-193 (`requiresParenthesis`:
+the first operand of equal precedence, `ALWAYS_OMIT_PARENTHESIS` for the same operator), 196-222 (precedences: `+`
+and `-` are both 4, a negation is `SUB` with one sub-expression), 330-336 (`"-" + serializeHR(...)`).
+
+**Teaching note.** Never nest a difference in a difference: write `a - b + c` for `a - (b - c)`, or compute the inner
+difference into a variable first. Avoid a double minus.
+
+**Implementation note.** `sim/written.ts` reads a sum, a difference or a negation as the list of terms C reads from
+KIELER's text (`additiveChain`); the simulator (eval.ts `additive`, `countDown`), the typing of arrays (B-28a) and
+the C generator (codegen/expr.ts) work from that list, and the constant folding of the lowering leaves such a
+difference unfolded (fold.ts). A `kieler-quirk` warning names what KIELER computes; `c-decrement` is the error.
 
 ### B-25 Bitwise operators and shifts
 
@@ -727,6 +768,98 @@ where the types differ, with a warning for constant indices and a log note for e
 the taken counters or past them, or a partial pointer, is a runtime error (the guide cannot predict what
 KIELER's generated variables hold). Probes `kieler/rare/probe-overflow-*` (15 layouts, all agreeing).
 Reject `_` in vectors with the gcc-style message to match KIELER's rejection.
+
+### B-28a An array as a value: C's pointer rules
+
+**Rule.** Where a chart names an array without all of its indices (`a`, or `m[1]` of `int m[2][2]`) in an
+expression, KIELER's C code has the array there, and C makes a pointer of it: `int *` for `a` and `m[1]`,
+`int (*)[2]` for `m`, `double *`, `char *` (a bool array), `char **` (a string array). gcc then decides, and since
+gcc 14 it refuses to convert between pointers and numbers without a cast. Most uses do not compile; a few do, with
+pointer semantics. With `int a[2]`, `int c[2]` declared next, `int m[2][2]`, `float fa[2]`:
+
+| chart | KIELER (gcc) |
+| --- | --- |
+| `x = a`, `y = a`, `x = a + 1`, `x += a`, `S(a)`, `x = b ? a : a`, `c[0] = a` | rejected: `assignment to ‘int’ from ‘int *’ makes integer from pointer without a cast [-Wint-conversion]` (`‘char’` for a bool target) |
+| `f = a`, `f = fa` | rejected: `incompatible types when assigning to type ‘double’ from type ‘int *’` |
+| `a + a`, `a * 2`, `a % 2`, `a << 1`, `a & 1`, `1 - a`, `a + 1.5`, `a == 1.5`, `a < random()`, `x -= a`, `f += a`, `m - m[0]`, `ba - a` | rejected: `invalid operands to binary * (have ‘int *’ and ‘int’)` and so on (a char operand is named `int`, a random() `float`) |
+| `-a`, `~a` | rejected: `wrong type argument to unary minus`, `... to bit-complement` |
+| `c[a]` | rejected: `array subscript is not an integer` |
+| `b ? a : i`, `x min= a`; `b ? a : fa`, `b ? a : m` | rejected: `pointer/integer type mismatch in conditional expression`; `pointer type mismatch in conditional expression` (`b ? a : 0` and `b ? a : c` compile) |
+| `if a`, `immediate if a`, `during if a`, `entry if a`, `if 2 a`, an abort's trigger, `if (a)` in a short method or a code block | rejected: KIELER keeps every condition in a `char` guard (`assignment to ‘char’ from ‘int *’ ...`) |
+| `if ia` for an input array the chart never writes | runs (true): copy propagation tests the input where it stands (B-22) |
+| `a = c`, `a = 0`, `a += 1`, `m[0] = a`; `a++` | rejected: `assignment to expression with array type`; `lvalue required as increment operand` |
+| a whole constant array (`x = k`, `k == k`, `!k`) | rejected: the Const processor writes its values there, `expected expression before ‘{’ token` |
+| `a ? 1 : 2`, `a && b`, `a \|\| b`, `!a`, `suspend if a`, a termination's trigger | runs: the address is never 0, so the array is true |
+| `a == a`, `a == c`, `a != c`, `a < c`, `m[0] == m[1]`, `m[i] == m[1]`, `m == m[0]`, `a == fa`, `(a + 2) == c` | runs: the addresses are compared (1, 0, 1, 1, 0, `i == 1`, 1, 0, 1: an array ends where the next begins) |
+| `a == 0`, `a != 0`, `a == i`, `a < 5`, `a > 5`, `a < -1` | runs: 0, 1, 0, 0, 1, 1 (the integer becomes an address: a negative one is a very high one) |
+| `a - a`, `(a + 1) - a`, `c - a`, `a - c`, `m[1] - m[0]`, `m[i] - m[0]`, `(m + 1) - m` | runs: 0, 1, 2, -2, 2, `2 * i`, 1: the distance in elements of the pointer's type |
+| `(c - a) * 2000000000 * 2 / 1000`, `((c - a) << 31) / 4`, `y = (c - a) * 128` | runs: a difference is a `long` (64 bits); an int or char keeps its low bits (8000000, 1073741824, false) |
+| `x = fa`, `x = fa + 1`, `x += fa`, `x = b ? fa : fa`, `c[0] = fa`; `print(a)` | **runs**: KIELER casts a float expression assigned to an int (`(int)(d->fa)`, B-27), and a cast compiles. x is the low 32 bits of the array's address, another number every time the simulation starts (three starts: -677150424, 737202472, 688783656) |
+| `x = null`; with a `print` or `random()` in the chart | runs (0): KIELER's header defines NULL as 0; with `<stdio.h>` or `<stdlib.h>` included NULL is a pointer and it is rejected |
+| `x = s`, `y = s`, `f = s`, `s = 5`, `s = a`, `s = sa` for a string `s` | rejected (the same messages with `‘char *’`); `s = 0` compiles (NULL) |
+
+**Where things lie.** Every variable is a member of KIELER's one struct (B-28), so two arrays have a distance: the
+chart's own declarations in the order written (inputs and outputs among them, a class or struct instance and a
+chart instance `ref C c` where it is declared, each a struct of its own), then `int _taken_transitions[n]` (no such
+member for a chart without a transition of its own), then what KIELER generates in its order (`_reg_x`, `_pre_x`,
+signals), the statics and the locals of inner states (`_Main_local_l`), then the frames of the short methods it
+copied into place (`_fn0_g_t`, call by call, the locals as declared). A member of an array of objects steps by the
+object's size (`q[2].a - q[0].a` is 6 for a 12-byte class). The struct itself is a global of KIELER's program;
+string literals lie below it, strings from the environment and the stack above it, so `"abc" < a` and `a < t` for a
+local array `t` of a method kept as a C function hold.
+
+**Differences that are not whole elements.** Two matrices of one row type with something odd between them
+(`int m[2][3] int k int n[2][3]`: 28 bytes apart, a row is 12): C leaves it undefined, gcc computes what its code
+gives. Folded when it compiles the code (both operands members with constant indices, also through a conditional
+and a `+ 0`): the division truncates (`n - m` is 2, `m - n` -2). Computed when the code runs (`(n + i) - m`): a
+shift by the size's power of two and a multiplication by the inverse of the odd rest (-1431655763 for i = 0; for a
+row of 8 bytes that is a division rounding down, `m - (n + i)` -3 where the folded one is -2).
+
+**Methods.** A short method is copied into place before any of this: the argument stands where the body names the
+parameter, so `first(a)` with `method int first(int p[2]) { return p[0] }` is `a[0]` (4), `first(m[1])` is
+`m[1][0]`, `first(m)` and `id(a)` are the assignment error, `first(i)` is `subscripted value is neither array nor
+pointer nor vector`. A method KIELER keeps as a C function (a loop, a call) has C parameters, and an array
+parameter is declared as one value (`int p`): passing an array is `passing argument 2 of ‘Main_g’ makes integer from
+pointer without a cast`, returning one `returning ‘int *’ from a function with return type ‘int’ ...` (`incompatible
+types when returning type ‘int *’ but ‘double’ was expected` for a float), a subscript of the parameter the error
+above. There is no cast on an argument or a return (`g(fa)`, `return fa` are rejected), there is one on an
+assignment in the body. Its conditions are plain C conditions: `if (a)`, `while (a && r < 3)` run. Its local arrays
+are C locals on the stack. A short method called inside it is copied into it (`r += h()` with `h` returning `a` is
+the assignment error).
+
+**Code KIELER has none for** is not judged: a state nothing leads to, a method nobody calls (`x = a` there
+compiles, because it is not there).
+
+**Evidence.** Probes `tests/engine/kieler/pointers/probe-array-value-*` (425: 276 accepted, 149 rejected), from
+the generated C of the surprising ones (`d->x = (int)(d->fa);`, `d->x = d->_pre_a - d->a;`, `int Main_g(TickData* d,
+int p)`); official KIELER gives the same verdicts and values for the 165 run through it too (the addresses aside).
+gcc's texts were checked with the gcc KIELER uses (16.2).
+
+**Source.** `ccode/CCodeSerializeHRExtensions.xtend` (a reference is written as it is; the `(int)` cast),
+`scg/processors/codegen/c/CCodeGeneratorStructModule` (the struct), `scg/processors/MethodProcessor.xtend` (copies
+of short methods), `kicool/deploy/processor/CCompiler.xtend` 121-144 (`gcc -std=c99 -Wall`, no optimisation).
+
+**Teaching note.** Name the element. An array's name alone is never its contents.
+
+**Implementation note.** `sim/pointers.ts` is C's typing in one place: the types, gcc's rule for every operator and
+for a value assigned, passed or returned (the result type or gcc's own text), and the values (an address is a plain
+number: the struct's address plus the member's offset, `sim/structLayout.ts`). The static check
+(`sim/pointerCheck.ts`) runs on the graph after the Methods processor and on the bodies of the kept functions; the
+simulator (eval.ts) asks the same rules. Errors: `array-as-value`, `array-operands`, `array-index`,
+`conditional-mismatch`, `array-assignment`, `const-array-value`, `string-as-value`, `string-assignment`,
+`method-array-parameter`; `array-address` warns wherever an accepted expression works with an address;
+`c-address-value` warns where the address itself shows, and `createSimulation`'s `address` option (default: where
+the struct lies without the system's randomisation) reproduces a run: the tools find a recording's address
+(tools/fuzz/compare.ts `resolveAddress`, the scenario's `"address"`). What depends on gcc's stack layout (the
+distance or order of two local arrays of a kept function, a local's address as a number, `print` of a float or
+string array) is `unsupported`.
+
+**Open.** A whole signal array as a trigger (`signal int S[2]`, `if S`): KIELER's partial evaluation (B-22's
+defect, B-35) keeps one value per variable, whatever element was assigned, so the reset `S[0] = 0` at the start of
+the tick makes the test the constant 0 (accepted, never true), unless an emission of an element comes before the
+test in the sequential code (then the address is left and gcc rejects the guard). The engine rejects the chart
+(`pointers/probe-array-value-sig-arr-whole`, in engine-expected-failures.json). Pointer arithmetic on a string
+(`s + 1`, `s - s`) compiles in KIELER and is still rejected by the engine's `string-arithmetic` (B-26).
 
 ### B-29 random() and randomize()
 
@@ -976,6 +1109,8 @@ warning only; `ok` stays true.
 | Vector longer than the array / `_` for a row | `Cardinalities do not match.` | ArrayAssignment |
 | `_` element in a vector assignment | `‘_’ undeclared (first use in this function)` + `Compiler did not return success` | gcc |
 | `b = a` (arrays), `arr = 5` | `assignment to expression with array type` | gcc |
+| An array without its indices where a number is needed, or as an operand C has no pointer form of (B-28a) | `makes integer from pointer without a cast`, `invalid operands to binary`, `wrong type argument to unary minus`, `array subscript is not an integer`, `type mismatch in conditional expression` | gcc |
+| `- -5`, `- -(i + 1)` (B-24a) | `lvalue required as decrement operand` | gcc |
 | `>>>`, `>>>=` | `expected expression before ‘>’ token` / `‘>=’ token` + `Compiler did not return success` | gcc |
 | String `+` | `invalid operands to binary +` | gcc |
 | `randomize()` in the tick-1 block | `‘null’ undeclared` | gcc |

@@ -1,0 +1,133 @@
+{
+  "hash": "c52963f106a305f730a9fcc6926cc0f48214828d",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-order.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads oa[0], so the compiler treats it as an update of oa[0] (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. oa[0] += 1.\nIt only matters when another region also writes oa[0] in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 3,
+      "column": 111
+    },
+    {
+      "severity": 2,
+      "message": "This assignment reads oa[1], so the compiler treats it as an update of oa[1] (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. oa[1] += 1.\nIt only matters when another region also writes oa[1] in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 3,
+      "column": 128
+    }
+  ],
+  "interface": {
+    "ia": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "oa": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "ia": [
+          0,
+          0
+        ],
+        "oa": [
+          0,
+          0
+        ],
+        "x": 0,
+        "a": [
+          0,
+          0
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "ia": [
+          0,
+          0
+        ],
+        "oa": [
+          2,
+          -4
+        ],
+        "x": 6,
+        "a": [
+          0,
+          0
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "ia": [
+          0,
+          0
+        ],
+        "oa": [
+          2,
+          -4
+        ],
+        "x": 6,
+        "a": [
+          0,
+          0
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

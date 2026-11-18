@@ -1,0 +1,2 @@
+// An array as a value, dataflow: df diff. KIELER runs it: x is 2, 2, 2.
+scchart Main { int a[2] = {4,7} int c[2] output int x dataflow D { x = c - a } }

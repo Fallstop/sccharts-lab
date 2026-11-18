@@ -1,0 +1,2 @@
+// An array as a value, locals of inner states: loc diff. KIELER runs it: x is 0, 4, 4.
+scchart Main { int a[2] output int x initial state A { int l[2] initial state I do x = l - a go to I } }

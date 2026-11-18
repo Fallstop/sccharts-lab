@@ -1,0 +1,4 @@
+// An array as a value, methods, kept (a loop): `method float g() { for (int j = 0; j < 2; j++) { x += 1 } return a }
+// initial state A do f = g() go to A`. KIELER rejects it: incompatible types when returning type ‘int *’ but ‘double’
+// was expected.
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y method float g() { for (int j = 0; j < 2; j++) { x += 1 } return a } initial state A do f = g() go to A }

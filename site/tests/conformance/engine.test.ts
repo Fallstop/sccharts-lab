@@ -27,6 +27,8 @@ const site = path.resolve(here, '../..')
 interface Scenario {
     /** `seeds`: what KIELER's clock gave each randomize() of the tick in the recorded run (tools/oracle/seeds.ts). */
     ticks: { inputs?: Record<string, Value>; seeds?: number[] }[]
+    /** Where KIELER's struct lay in the recorded run, for a chart that shows an address (tools/oracle/seeds.ts). */
+    address?: number
     expect?: 'ok' | 'error'
     system?: string
     imports?: string[]
@@ -145,7 +147,7 @@ function run(c: Case): { skip?: string; problems: string[] } {
     if (unsupported) return { skip: `unsupported: ${unsupported.message}`, problems: [] }
     if (!result.ok) return { problems: [`KIELER accepts this chart but the engine rejects it: ${errors.map(e => `${e.code}: ${e.message}`).join(' | ').slice(0, 300)}`] }
 
-    const sim = createSimulation(result, { seed: replaySeeds(scenario.ticks) })
+    const sim = createSimulation(result, { seed: replaySeeds(scenario.ticks), address: scenario.address })
     const problems: string[] = []
     let kielerTerminated = -1
     let engineTerminated = -1

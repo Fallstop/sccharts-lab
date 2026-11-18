@@ -249,7 +249,10 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   for-region copies), with what KIELER's C code reads or writes instead (memory.ts). **gcc** (error):
   `conditional-without-else`, a `(c) ? a` where KIELER's C code has nothing to put for the missing branch;
   `c-array-address`, a condition whose dropped index (guardIndices.ts) leaves gcc an array to multiply or to compare
-  with a float.
+  with a float; an array used as a value (pointers.ts, basics.md B-28a): `array-as-value`, `array-operands`,
+  `array-index`, `conditional-mismatch`, `const-array-value`, `string-as-value`, `string-assignment`, and the
+  warnings `array-address` and `c-address-value`; `c-decrement`, two minus signs KIELER writes as `--` in front of
+  something that is no variable (written.ts, B-24a).
 - **Validation warnings**: `unreachable-state`, `unreachable-transition`, `relative-write`, `missing-final-state`,
   `regions-cannot-terminate`, `abort-without-trigger`, `connector-not-immediate`, `connector-no-default`,
   `implicit-binding`, `reference-never-terminates`, `extern-without-call`, `minmax-combine`, `during-count-delay`,
@@ -304,6 +307,73 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
 - **Runtime** (`TickResult.error.code`): `division-by-zero`, `division-overflow` (`-2147483648 / -1`),
   `index-out-of-range`, `runaway-loop`, `missing-return`, `float-modulo`, `array-assignment`, `unsupported`,
   `internal`.
+
+## Arrays as values (C's pointer rules), and differences as KIELER writes them
+
+An array named without all of its indices (`a`, a row `m[1]`) is the array's address in KIELER's C code, and gcc
+decides what compiles (basics.md B-28a). The engine accepted most of what gcc rejects and computed the rest on the
+arrays' contents (39 of 61 probed expressions disagreed); it now has C's typing of such expressions in one place.
+
+- **sim/pointers.ts**: the C types (`int *`, `int (*)[2]`, `char **`, `long int`), gcc's rule for every operator
+  and for a value assigned, passed or returned (the result's type or gcc's own error text), the values (an address is
+  a plain number), and the walk over an expression (`CTyper`). **sim/pointerCheck.ts** is the static side: it runs on
+  the graph after the Methods processor (a short method's array parameter is its argument by then: `first(a)` with
+  `p[0]` in the body runs, which the old `method-array-parameter` rule rejected) and on the bodies of the methods
+  KIELER keeps as C functions (parameters are single values there, conditions plain C conditions, no cast on an
+  argument or a return); every condition is an assignment to a `char` guard, except an input the chart never writes.
+  Code KIELER has none for (a state nothing leads to, a method nobody calls) is not judged; the whole-array
+  assignment check moved onto that code too (it rejected `p = q` in a dead state, which KIELER compiles).
+  **eval.ts** asks the same rules: a reference with too few indices is an address, an operator with a pointer or a
+  long among its operands goes through `binaryRule`, so what the check accepts the simulator runs.
+- **Where things lie** (sim/structLayout.ts): the byte offset of every variable in KIELER's whole struct, from the
+  struct the C generator writes (codegen/layout.ts), laid out as gcc does. Three things in that struct were not
+  KIELER's and are now: a chart instance (`ref C c`) lies where it is declared (it was after the chart's own
+  variables), a static after the taken counters, the frames of copied methods in the order they are made, and a chart
+  without a transition of its own has no `_taken_transitions` member at all. The generated C and the simulator read
+  the same layout, so `pnpm cgen:check` (gcc, natively) is a second proof of every distance and comparison.
+- **Longs**: a difference of two pointers is a `long`. Its arithmetic keeps 64 bits (`Compiled.big`, exact), an int
+  or char target its low bits, a float its rounding. A difference that is not whole elements is what gcc's code
+  gives: truncated when gcc folds it, shift and multiply by the inverse when the code runs.
+- **Addresses that show**: KIELER casts a float expression assigned to an int, and a cast of a pointer compiles:
+  `x = fa` runs in KIELER and gives the low 32 bits of the array's address, another number at every start (its
+  program is position independent and the system moves it). The engine accepts, warns (`c-address-value`), and
+  computes with the address `createSimulation`'s new `address` option gives (default: the one without the system's
+  randomisation). A recording is one run: tools/fuzz/compare.ts `resolveAddress` finds its address from the first
+  values that show it (or from the path, when only a trigger does), `pnpm oracle:record` writes it into the
+  scenario (`"address"`), and the conformance, trace and C code checks replay with it (the C harness says where its
+  own struct lies).
+- **Diagnostics**: errors `array-as-value` (also for an array as a whole condition, which used to speak of a
+  string), `array-operands`, `array-index`, `conditional-mismatch`, `const-array-value`, `string-as-value`,
+  `string-assignment`, `array-assignment` (now also `a++`), `method-array-parameter` (a kept function's subscripted
+  parameter, a single value in an array parameter's place), each with gcc's exact text for the operator and types;
+  warnings `array-address` (an accepted expression works with an address, not with the elements) and
+  `c-address-value`; `c-array-address` (a dropped index, guardIndices.ts) takes its gcc text from the same typing,
+  and the stand-in addresses of exec.ts are gone.
+- **Not simulated** (`unsupported`): what depends on gcc's stack layout or on what printf finds: the distance or
+  order of two different local arrays of a method kept as a C function, such a local's address as a number, `print`
+  of a float or string array.
+- **A difference inside a difference** (sim/written.ts, basics.md B-24a), found on the way (`-(c - a)` is rejected
+  by KIELER although `c - a` is a number): KIELER's serializer leaves out the parentheses of an operand that is the
+  same operator as its parent, so `10 - (i - 2)` is `10 - i - 2` in its C code, `-(i - 2)` is `-i - 2`, `20 - (i + 2
+  - 1)` is `20 - i + 2 - 1`, and `- -i` is `--i`, which counts `i` down. Plain integer arithmetic differed from
+  KIELER there. A sum, a difference or a negation is now read as the terms C reads from KIELER's text, by the
+  simulator, the typing and the C generator; the lowering no longer folds such a difference (KIELER folds no
+  constants before it writes its code). `kieler-quirk` warns with what KIELER computes; `--` of something that is no
+  variable is the error `c-decrement`.
+- **Tests**: `tests/engine/pointers.test.ts`; probes `tests/engine/kieler/pointers/` (425: 276 accepted, 149
+  rejected) and `tests/engine/kieler/written/` (47: 41 accepted, 6 rejected), all recorded with KIELER and all
+  through gcc with the generated C (no mismatch); the fuzz profile `pointers` (campaign 28).
+- **API**: additions only. `SimulationOptions.address`; codes `array-operands`, `array-index`,
+  `conditional-mismatch`, `const-array-value`, `string-as-value`, `string-assignment`, `c-address-value`,
+  `array-address`, `c-decrement` (in `SIMULATOR_CODES`); internal: `Compiled.c`, `.big`, `.konst`,
+  `EvalContext.place`, `.address`, `ExecutableChart`'s third argument. `generateC` with `takenTransitions` writes no
+  counter array for a chart without transitions.
+- **Open**: a whole signal array as a trigger (`signal int S[2]`, `if S`) is KIELER's constant 0 or gcc's error
+  depending on where an emission stands (its partial evaluation keeps one value per variable, B-28a); the engine
+  rejects it (`pointers/probe-array-value-sig-arr-whole`, engine-expected-failures.json). Pointer arithmetic on a
+  string (`s + 1`, `s - s`) compiles in KIELER and is rejected by `string-arithmetic`, as before. The checks of
+  codegen.ts that still run on the chart as written (`string-arithmetic`, `unsigned-shift`, `val-not-signal`,
+  `vector-ignore`) reject such code in a state nothing leads to as well, where KIELER has no C code.
 
 ## Written schedules in bodies, on calls and of classes
 
@@ -533,9 +603,8 @@ official KIELER.
   `goBlock(scg, analysis?)`; codes `dataflow-array-port`, `method-in-member-index`, `array-as-value` (in
   `SIMULATOR_CODES`).
 - **Fuzz** (campaigns 23 to 25 below): the profiles `dataflowObjects` and `generics` draw the reviewed forms now.
-- **Open** (both recorded as probes in `tests/conformance/engine-expected-failures.json`): comparing two whole
-  arrays (`p = a == b`) compares their addresses in KIELER's C (never equal), the engine compares them as values
-  (`codegen/probe-array-compare-addresses`); a name declared in an `if` branch of a method body and used in that
+- **Open** (recorded as a probe in `tests/conformance/engine-expected-failures.json`; the comparison of two whole
+  arrays, which was open here, is closed: "Arrays as values" above): a name declared in an `if` branch of a method body and used in that
   `if`'s condition is the branch's local to KIELER (0 there: `if (N > 4) { int N = 1 ... } else { ... }` takes the
   else branch) and the chart's variable to the engine's name resolution, when nothing is bound to the name
   (`structure/probe-method-if-condition-names-branch-local`; with a value bound, both reject).
@@ -868,6 +937,7 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 25 (seed 43, the six profiles of 23 x 100, on the final code with the corrected generator) | 600 | 252 | 342 | 3 | 0 | 3 | 0 |
 | 26 (seed 51, dataflowObjects, generics, schedules, structure, nested, dataflowControl x 100, both fix rounds merged) | 600 | 210 | 386 | 1 | 0 | 3 | 0 |
 | 27 (seed 61, random x 120, the new profile) | 120 | 109 | 11 | 0 | 0 | 0 | 0 |
+| 28 (seeds 1 to 3, pointers x 200 each, the new profile) | 600 | 480 | 120 | 0 | 0 | 0 | 0 on the final code; 2 on the way, fixed (below) |
 
 Campaigns 12 to 14 use the profile `dataflowObjects` (tools/fuzz/README.md): dataflow regions with chart instances,
 calls and schedules next to control flow. Campaign 12's three: a binding on an instance of a classic region, which
@@ -920,6 +990,15 @@ fourth was waiting behind one of them and matches when it is run alone. Campaign
 `random` (tools/fuzz/README.md): `random()` and `randomize()` in 120 charts, 101 of them seeding from the clock, the
 seeds recovered from the clock seconds around each tick: no disagreement; `pnpm cgen:check --fuzz 200 --profiles
 random`: 182 charts compiled and compared with the simulation, no mismatch.
+
+Campaign 28 is the profile `pointers` (tools/fuzz/README.md): arrays used as values and differences in differences
+among ordinary behaviour, a third of the values random expressions built by C's types. Earlier versions of the
+profile found two things: `p = q` (a whole array assigned) on a transition of a state nothing leads to, which KIELER
+compiles because it has no code for it (the check ran on the chart as written; fixed, probe
+`pointers/probe-array-value-dead-assign`), and a chart whose path depends on the address a float array shows
+(`x += fa`, then a trigger on `x`): KIELER's run is one of two, and the comparison now finds an address that gives it
+(`-address-path`). `pnpm cgen:check --fuzz 300 --profiles pointers --seed 5`: 244 charts compiled and compared with the
+simulation over 3416 ticks, no mismatch.
 
 Campaigns 16 to 19 (generic parameters, profile `generics`; run beside 12 to 15, on the generics branch): 17's disagreement is a constant passed as a generic
 argument to a chart that contains a chart whose local has the parameter's name and writes it: KIELER binds the
@@ -1001,7 +1080,8 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 One form: an array of **no** chart instances (`ref C g[0]`) whose chart's regions or actions name a field. KIELER makes
 two copies of them, and they read and write behind the empty array in its C data (the counters of the taken
 transitions in `structure/probe-instance-array-zero-entry` and `-zero-region`), which the engine does not lay out; an
-empty array of a chart whose regions name no field runs (S-60). Never (no C compiler in the browser): host code (backticks), `extern` functions, host
+empty array of a chart whose regions name no field runs (S-60). And what depends on where gcc puts a C function's local
+array, or on what printf reads where an array's address was passed ("Arrays as values" above). Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".
 
 ## Known differences

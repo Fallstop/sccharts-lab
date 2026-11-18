@@ -93,11 +93,12 @@ export class Layout {
         const core = compiled.core
         const rootDecls = core.decls
         // The leading source declarations (not signals): `_taken_transitions` comes right after them (memory.ts).
-        let taken = takenCount !== undefined
+        // (A chart without a transition of its own has no counters: KIELER's struct has no such member then.)
+        let taken = takenCount !== undefined && takenCount > 0
         const placeTaken = () => {
             if (!taken) return
             taken = false
-            this.lines.push(`int _taken_transitions[${Math.max(1, takenCount!)}];`)
+            this.lines.push(`int _taken_transitions[${takenCount!}];`)
             this.used.add('_taken_transitions')
         }
         const classes = new Map<string, string>()
@@ -119,6 +120,24 @@ export class Layout {
             return inst !== undefined && empty.has(inst) ? inst : undefined
         }
         const placed = new Set<string>()
+        // A chart instance (`ref C c`) is a member where it is declared: its fields are the last of the chart's
+        // variables here (the Reference pass adds them), so the instances written before a variable come first.
+        const written = new Map<string, number>()
+        const instancesAt = new Map<string, number>()
+        compiled.chart.declarations.forEach(d => d.valuedObjects.forEach(vo => {
+            written.set(vo.id, written.size)
+            if (d.referenceTarget) instancesAt.set(vo.name, written.size)
+        }))
+        const instancesBefore = (v: CVar) => {
+            const at = v.decl !== undefined && !v.generated && !v.role ? written.get(v.decl) : undefined
+            if (at === undefined) return
+            for (const [name, position] of instancesAt) {
+                if (position > at || placed.has(name)) continue
+                if (!rootDecls.some(m => chartInstanceOf(m) === name)) continue
+                placed.add(name)
+                this.chartInstance(name, rootDecls, classes)
+            }
+        }
         for (let i = 0; i < rootDecls.length; i++) {
             const v = rootDecls[i]
             const inst = chartInstanceOf(v)
@@ -129,8 +148,9 @@ export class Layout {
                 }
                 continue
             }
+            instancesBefore(v)
             if (v.const || v.extern || v.declKind === 'method' || v.declKind === 'enum' || v.member) continue
-            if (v.generated || v.role === 'presence' || v.role === 'value' || v.role === 'curval') placeTaken()
+            if (v.generated || v.role === 'presence' || v.role === 'value' || v.role === 'curval' || v.tags.has('#static')) placeTaken()
             if (v.declKind === 'class' || v.declKind === 'struct') {
                 if (this.slots.has(v)) continue
                 // Instances of one declaration share a line, as KIELER declares them (`Counter home, away;`).
@@ -168,7 +188,8 @@ export class Layout {
             }
         }
         for (const o of fieldless) if (!placed.has(o.v.name)) this.chartInstance(o.v.name, rootDecls, classes, o.v)
-        for (const v of extra) if (!this.slots.has(v) && !v.declKind) this.plain(v, this.unique(identifier(v.name)), false)
+        // (The frames of copied methods in the order KIELER makes them: call by call, the locals as declared.)
+        for (const v of [...extra].sort((a, b) => a.uid - b.uid)) if (!this.slots.has(v) && !v.declKind) this.plain(v, this.unique(identifier(v.name)), false)
     }
 
     /**

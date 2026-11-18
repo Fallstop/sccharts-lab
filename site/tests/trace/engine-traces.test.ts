@@ -84,7 +84,8 @@ function check(c: Case): string[] {
     stats.ticks += ticks
     const model = path.basename(c.chart)
     // A recorded run that calls randomize() has the seeds of KIELER's clock in its scenario.
-    const seeded = () => createSimulation(result, { seed: replaySeeds(c.scenario.ticks) })
+    // (And one that shows an address has the address KIELER's struct had: sim/pointers.ts.)
+    const seeded = () => createSimulation(result, { seed: replaySeeds(c.scenario.ticks), address: c.scenario.address })
     const simulation = seeded()
     for (let i = 0; i < ticks; i++) simulation.step(c.scenario.ticks[i].inputs ?? {})
     const engine = traceFromRun(result, simulation, { model })
@@ -127,7 +128,8 @@ function check(c: Case): string[] {
         stats.replayMismatches += replayed.mismatches.length
         if (replayed.error) stats.replayErrors++
         const read = traceFromRun(result, simulation, { model, inputs: 'read' })
-        if ((replayed.mismatches.length > 0 || replayed.error) && writesInputs(engine, read)) {
+        // (A written input may show in nothing but itself: `if - -i > 0` counts `i` down, sim/written.ts.)
+        if ((replayed.mismatches.length > 0 || replayed.error || differences(replayed.run, engine, same).length > 0) && writesInputs(engine, read)) {
             if (format === 'ktrace') stats.writesInputs++
             replayed = replayTrace(result, readTrace(writeTrace(read, format), format), { model, simulation: seeded() })
         }

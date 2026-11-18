@@ -1,0 +1,28 @@
+{
+  "hash": "43403b76ed39333f6f1f0263f6a267a12227af60",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-ob-diff.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:94 Referencing class/struct types is not supported. Please specify a member.",
+    "3:103 Referencing class/struct types is not supported. Please specify a member."
+  ],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 94
+    },
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 103
+    }
+  ],
+  "ticks": []
+}

@@ -1,0 +1,21 @@
+{
+  "hash": "5f4df4c462d69e971c4ba9839bcc4498aa9f255a",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-cl-whole.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:99 Referencing class/struct types is not supported. Please specify a member.",
+    "incompatible types when assigning to type ‘int’ from type ‘Main_K’",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 99
+    }
+  ],
+  "ticks": []
+}

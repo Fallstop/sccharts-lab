@@ -20,12 +20,13 @@
 // binary *`), an array as an index, and the member of an array of instances (`d->cells.v`). Official KIELER does the
 // same.
 //
-// exec.ts evaluates such a condition as KIELER's C code has it, with the address in place of the element (a large
-// positive number, different for each array), and compile.ts reports it (`kieler-quirk` warning) or, where gcc fails,
-// rejects the chart.
+// exec.ts evaluates such a condition as KIELER's C code has it: the array without its index is its address
+// (pointers.ts, the typing of every array used as a value), and compile.ts reports it (`kieler-quirk` warning) or,
+// where gcc fails, rejects the chart.
 
 import type { Diagnostic } from '../types'
 import { sourceText } from './eval'
+import { guardError } from './pointerCheck'
 import type { CExpr, CRef, CVar } from './model'
 
 /** A condition as KIELER's C code has it. */
@@ -200,41 +201,6 @@ export function guardCondition(e: CExpr): GuardCondition | undefined {
     return changed ? out : undefined
 }
 
-/** A stand-in for the address of an array in KIELER's C code: large and positive, one per array. */
-export function addressOf(v: CVar, slot: number): number {
-    void v
-    return 0x40000000 + slot * 64
-}
-
-const COMPARISONS = new Set(['==', '!=', '<', '<=', '>', '>='])
-
-/**
- * The condition KIELER's C code has, with the arrays that lost their index replaced by their address (for exec.ts).
- * C compares an address with an integer as two addresses: a negative integer is a very high one (`ov > -1` is false).
- */
-export function withAddresses(g: GuardCondition, address: (v: CVar) => number): CExpr {
-    const pointer = (x: CExpr): boolean => (x.k === 'ref' ? g.dropped.has(x) : x.k === 'op' && (x.op === '+' || x.op === '-') && x.args.filter(pointer).length === 1)
-    const asAddress = (x: CExpr): CExpr => ({ k: 'op', op: '?:', args: [{ k: 'op', op: '<', args: [x, { k: 'lit', t: 'int', v: 0 }] }, { k: 'op', op: '+', args: [x, { k: 'lit', t: 'float', v: 2 ** 64 }] }, x] })
-    const map = (x: CExpr): CExpr => {
-        switch (x.k) {
-            case 'ref': return g.dropped.has(x) ? { k: 'lit', t: 'int', v: address(x.v), span: x.span } : x.idx.length ? { ...x, idx: x.idx.map(map) } : x
-            case 'op': {
-                const args = x.args.map(map)
-                if (COMPARISONS.has(x.op) && x.args.length === 2 && pointer(x.args[0]) !== pointer(x.args[1])) {
-                    const at = pointer(x.args[0]) ? 1 : 0
-                    args[at] = asAddress(args[at])
-                }
-                return { ...x, args }
-            }
-            case 'call': return { ...x, args: x.args.map(map) }
-            default: return x
-        }
-    }
-    return map(g.expr)
-}
-
-const cType = (v: CVar): string => (v.type === 'float' ? 'double' : v.type === 'bool' || v.type === 'pure' ? 'char' : v.type === 'string' ? 'char*' : 'int')
-
 /**
  * The diagnostics for a condition KIELER's partial evaluation changes: what gcc rejects (the member of an array of
  * instances, arithmetic other than + and - with an array, a comparison with a float, an array as an index), else a
@@ -255,37 +221,8 @@ export function droppedIndexDiagnostics(written: CExpr, g: GuardCondition, label
             hint: `${why}. ${fix}`,
         }]
     }
-    const pointer = (t: string | undefined) => !!t?.endsWith('*')
-    let gcc: string | undefined
-    const type = (x: CExpr): string | undefined => {
-        if (x.k === 'ref') {
-            // An array as an index.
-            if (!gcc && x.idx.some(i => pointer(type(i)))) gcc = 'array subscript is not an integer'
-            return g.dropped.has(x) ? `${cType(x.v)} *` : x.idx.length || !x.v.dims.length ? cType(x.v) : `${cType(x.v)} *`
-        }
-        if (x.k === 'lit') return x.t === 'float' ? 'double' : x.t === 'string' ? 'char *' : 'int'
-        if (x.k !== 'op') return 'int'
-        const types = x.args.map(type)
-        const at = types.findIndex(pointer)
-        if (at >= 0 && !gcc) {
-            const other = types.find((t, i) => i !== at) ?? 'int'
-            const symbol = x.op === 'neg' ? '-' : x.op
-            const unary = x.op === 'neg' || x.op === '~'
-            const bad = unary || ['*', '/', '%', '&', '|', '^', '<<', '>>', '>>>'].includes(x.op)
-                || (['+', '-', '<', '<=', '>', '>=', '==', '!='].includes(x.op) && other === 'double')
-                || (x.op === '+' && types.filter(pointer).length > 1)
-                || (x.op === '-' && !pointer(types[0]))
-            if (bad) gcc = unary ? `wrong type argument to ${x.op === 'neg' ? 'unary minus' : 'bit-complement'}` : `invalid operands to binary ${symbol} (have ‘${types[0] ?? 'int'}’ and ‘${types[1] ?? other}’)`
-            // A literal 0 as the other branch is a null pointer, which C accepts.
-            else if (x.op === '?:' && x.args.slice(1).some((a, i) => !pointer(types[i + 1]) && !(a.k === 'lit' && a.v === 0))) gcc = 'pointer/integer type mismatch in conditional expression [-Wint-conversion]'
-        }
-        if ((x.op === '+' || x.op === '-') && at >= 0) return x.op === '-' && types.filter(pointer).length > 1 ? 'int' : types[at]
-        if (x.op === '?:' && at >= 1) return types[at]
-        if (types.includes('double') && !['&&', '||', '!', '==', '!=', '<', '<=', '>', '>='].includes(x.op)) return 'double'
-        return 'int'
-    }
-    const whole = type(e)
-    if (!gcc && pointer(whole)) gcc = `assignment to ‘char’ from ‘${whole}’ makes integer from pointer without a cast [-Wint-conversion]`
+    // gcc's verdict on the condition as KIELER's code has it: the array without its index is a pointer (pointers.ts).
+    const gcc = guardError(e)
     const first = [...g.dropped.values()][0] ?? [...g.mixed.values()][0]
     const element = text(first)
     const array = label(first.v)

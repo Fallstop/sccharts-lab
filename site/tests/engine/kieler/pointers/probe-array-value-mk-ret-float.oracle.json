@@ -1,0 +1,16 @@
+{
+  "hash": "642eb71891112fb056601e173ea0aed63805cd87",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-mk-ret-float.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "incompatible types when returning type ‘int *’ but ‘double’ was expected",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name g is contained in the model but not in VariableStore."
+  ],
+  "ticks": []
+}

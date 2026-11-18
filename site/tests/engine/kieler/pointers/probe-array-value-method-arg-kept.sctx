@@ -1,0 +1,4 @@
+// An array as a value, `method int get(int n) { for (int j = 0; j < 2; j++) { n += 1 } return n } initial state A do
+// x = get(a) go to A`. KIELER rejects it: passing argument 2 of ‘Main_get’ makes integer from pointer without a cast
+// [-Wint-conversion].
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y method int get(int n) { for (int j = 0; j < 2; j++) { n += 1 } return n } initial state A do x = get(a) go to A }

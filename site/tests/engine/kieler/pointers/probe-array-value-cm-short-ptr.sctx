@@ -1,0 +1,3 @@
+// An array as a value, class methods: cm short ptr. KIELER rejects it: assignment to ‘int’ from ‘int *’ makes integer
+// from pointer without a cast [-Wint-conversion].
+scchart Main { int a[2] class K { int p int q[2] int r[2] int g() { return q } } k output int x initial state A do x = k.g() go to A }

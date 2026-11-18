@@ -1,0 +1,194 @@
+{
+  "hash": "2e62acd2fdcf9fa8e7f077a30e6c228c42428da2",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-ca-diff.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "ba": {
+      "type": "bool",
+      "properties": []
+    },
+    "c": {
+      "type": "int",
+      "properties": []
+    },
+    "fa": {
+      "type": "float",
+      "properties": []
+    },
+    "m": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "b": true,
+        "i": 1
+      },
+      "values": {
+        "b": true,
+        "i": 1,
+        "f": 0,
+        "x": 0,
+        "y": false,
+        "a": [
+          4,
+          7
+        ],
+        "ba": [
+          false,
+          false
+        ],
+        "c": [
+          4,
+          7
+        ],
+        "fa": [
+          0,
+          0
+        ],
+        "m": [
+          [
+            4,
+            7
+          ],
+          [
+            8,
+            1
+          ]
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": false,
+        "i": 0
+      },
+      "values": {
+        "b": false,
+        "i": 0,
+        "f": 0,
+        "x": -2,
+        "y": false,
+        "a": [
+          4,
+          7
+        ],
+        "ba": [
+          false,
+          false
+        ],
+        "c": [
+          4,
+          7
+        ],
+        "fa": [
+          0,
+          0
+        ],
+        "m": [
+          [
+            4,
+            7
+          ],
+          [
+            8,
+            1
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": true,
+        "i": 1
+      },
+      "values": {
+        "b": true,
+        "i": 1,
+        "f": 0,
+        "x": -4,
+        "y": false,
+        "a": [
+          4,
+          7
+        ],
+        "ba": [
+          false,
+          false
+        ],
+        "c": [
+          4,
+          7
+        ],
+        "fa": [
+          0,
+          0
+        ],
+        "m": [
+          [
+            4,
+            7
+          ],
+          [
+            8,
+            1
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

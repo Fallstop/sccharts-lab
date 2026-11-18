@@ -1,0 +1,3 @@
+// An array as a value, input arrays as triggers: in trig float. KIELER rejects it: 2:66 Float tests must have a
+// comparison operator!.
+scchart Main { input float ia[2] output int x initial state A if ia do x = 1 go to A }

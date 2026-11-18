@@ -1,0 +1,4 @@
+// An array as a value, kept methods: casts: `method string g() { for (int j = 0; j < 2; j++) { x += 1 } return a }
+// initial state A do g() go to A`. KIELER rejects it: returning ‘int *’ from a function with incompatible return type
+// ‘char *’ [-Wincompatible-pointer-types].
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y method string g() { for (int j = 0; j < 2; j++) { x += 1 } return a } initial state A do g() go to A }

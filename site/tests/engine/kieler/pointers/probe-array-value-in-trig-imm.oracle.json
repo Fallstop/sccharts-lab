@@ -1,0 +1,72 @@
+{
+  "hash": "bfb3d93412539ee049191cd76318966c89c5806c",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-in-trig-imm.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "the comparison will always evaluate as ‘true’ for the address of ‘ia’ will never be NULL [-Waddress]",
+    "the comparison will always evaluate as ‘true’ for the address of ‘ia’ will never be NULL [-Waddress]"
+  ],
+  "interface": {
+    "ia": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "ia": [
+          0,
+          0
+        ],
+        "x": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "ia": [
+          0,
+          0
+        ],
+        "x": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "ia": [
+          0,
+          0
+        ],
+        "x": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

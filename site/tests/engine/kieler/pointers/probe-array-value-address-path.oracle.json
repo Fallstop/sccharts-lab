@@ -1,0 +1,116 @@
+{
+  "hash": "73a9c268949e6a36bcfa12f7ac4bc65c658f4f52",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-address-path.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "cast from pointer to integer of different size [-Wpointer-to-int-cast]"
+  ],
+  "interface": {
+    "n": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "fa": {
+      "type": "float",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "x": 1,
+        "y": 1,
+        "fa": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "x": 1,
+        "y": 2,
+        "fa": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "n": 0
+      },
+      "values": {
+        "n": 0,
+        "x": 1,
+        "y": 3,
+        "fa": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "n": 3
+      },
+      "values": {
+        "n": 3,
+        "x": 1,
+        "y": 4,
+        "fa": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

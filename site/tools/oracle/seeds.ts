@@ -8,11 +8,15 @@
 // `pnpm oracle:record` runs it for every recording under its paths that keeps the clock (it changes a scenario only
 // when its seeds change). Exit code 1 when no seeds give a recording (the engine and KIELER then differ in something
 // else too).
+//
+// The same for the address of a recorded run: a chart that makes a number of an array's address (the engine's
+// `c-address-value` warning) shows where KIELER's struct lay in that run, which changes with every start of its
+// simulation. The scenario gets it as `"address"` (`createSimulation`'s option of that name).
 
 import fs from 'node:fs'
 import path from 'node:path'
 import { compile } from '@sccharts-lab/engine'
-import { resolveSeeds, type OracleResult } from '../fuzz/compare'
+import { resolveAddress, resolveSeeds, type OracleResult } from '../fuzz/compare'
 
 let failures = 0
 for (const chart of process.argv.slice(2)) {
@@ -21,12 +25,26 @@ for (const chart of process.argv.slice(2)) {
     const text = fs.readFileSync(scenarioFile, 'utf8')
     const scenario = JSON.parse(text) as { ticks: { inputs?: Record<string, never>; seeds?: number[] }[]; imports?: string[] }
     const rec = JSON.parse(fs.readFileSync(`${base}.oracle.json`, 'utf8')) as OracleResult
-    if (!rec.ok || !rec.ticks.some(t => t.clock)) continue
+    if (!rec.ok) continue
     const files = Object.fromEntries((scenario.imports ?? []).map(f => [f, fs.readFileSync(path.join(path.dirname(chart), f), 'utf8')]))
     const model = fs.readFileSync(chart, 'utf8')
     // A chart the engine does not run (host code, say) has no run to give seeds to.
     const compiled = compile(model, { files })
     if (!compiled.ok || compiled.diagnostics.some(d => d.code === 'unsupported')) continue
+    if (compiled.diagnostics.some(d => d.code === 'c-address-value')) {
+        const address = resolveAddress(model, scenario.ticks.map(t => t.inputs ?? {}), rec, files)
+        if (address === undefined) {
+            failures++
+            console.error(`✗ address  ${chart}: no address of KIELER's struct gives its recorded run`)
+        } else if (((scenario as { address?: number }).address ?? null) !== address) {
+            if (address === null) delete (scenario as { address?: number }).address
+            else (scenario as { address?: number }).address = address
+            const indent = /^( +)"/m.exec(text)?.[1].length ?? 2
+            fs.writeFileSync(scenarioFile, JSON.stringify(scenario, null, indent) + '\n')
+            console.error(`✓ address  ${chart}: ${address === null ? 'none shows' : `0x${address.toString(16)}`}`)
+        }
+    }
+    if (!rec.ticks.some(t => t.clock)) continue
     const seeds = resolveSeeds(model, scenario.ticks.map(t => t.inputs ?? {}), rec, files)
     if (!seeds) {
         failures++

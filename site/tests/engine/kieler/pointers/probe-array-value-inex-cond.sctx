@@ -1,0 +1,2 @@
+// An array as a value, inexact differences: inex cond. KIELER runs it: x is 0, 0, 2; z is 0, 0, -2.
+scchart Main { input bool b int m[2][3] int k int n[2][3] output int x output int z initial state A do x = (b ? n : m) - m; z = m - (b ? n : m) go to A }

@@ -1,0 +1,2 @@
+// An array as a value, unreachable code: dead region. KIELER runs it: x is 0, 1, 1.
+scchart Main { int a[2] output int x initial state A { initial state I do x = 1 go to I state J do x = a go to I } }

@@ -10,14 +10,15 @@ import type { SCG } from './scg'
 
 const lowermost = (r: CRef): CRef => (r.sub ? lowermost(r.sub) : r)
 
-/** The C value of the expression is a pointer (a string, NULL, an array without all its indices). */
+/** The C value of the expression is a string (a `char *`) or NULL. An array without all its indices is a pointer
+ *  too: pointerCheck.ts words that one. */
 function isPointer(e: CExpr): boolean {
     switch (e.k) {
         case 'lit': return e.t === 'string'
         case 'null': return true
         case 'ref': {
             const r = lowermost(e)
-            return r.v.type === 'string' || r.idx.length < r.v.dims.length
+            return r.v.type === 'string' && r.idx.length >= r.v.dims.length
         }
         case 'call': return !e.extern && e.target?.v.method?.returnType === 'string'
         case 'op': return e.op === '?:' && e.args.slice(1).some(isPointer)

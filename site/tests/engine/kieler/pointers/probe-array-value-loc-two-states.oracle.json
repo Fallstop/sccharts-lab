@@ -1,0 +1,78 @@
+{
+  "hash": "826c59bb1179b4d9640d21a7a9eeea4a44a1893f",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-loc-two-states.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads a[0], so the compiler treats it as an update of a[0] (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. a[0] += 1.\nIt only matters when another region also writes a[0] in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 3,
+      "column": 176
+    }
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 5,
+        "a": [
+          7,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 5,
+        "a": [
+          7,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

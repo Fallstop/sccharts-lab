@@ -1,0 +1,86 @@
+{
+  "hash": "f89ad0901b5bc5b75d7ade013058981f5b1a28ca",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-in-trig-and.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "the comparison will always evaluate as ‘true’ for the address of ‘ia’ will never be NULL [-Waddress]"
+  ],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "ia": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "ia": [
+          0,
+          0
+        ],
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "ia": [
+          0,
+          0
+        ],
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "ia": [
+          0,
+          0
+        ],
+        "x": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

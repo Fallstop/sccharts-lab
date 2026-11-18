@@ -1,0 +1,23 @@
+{
+  "hash": "1bc880a031de2448667f45e61243156a33af4afc",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-ob-int.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:93 Referencing class/struct types is not supported. Please specify a member.",
+    "assignment to ‘int’ from ‘Main_K *’ makes integer from pointer without a cast [-Wint-conversion]",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 93
+    }
+  ],
+  "ticks": []
+}

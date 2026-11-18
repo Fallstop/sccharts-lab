@@ -1,0 +1,2 @@
+// An array as a value, initial values: init local. KIELER runs it: x is 0, 1, 1.
+scchart Main { int a[2] = {4,7} output int x initial state A { int z = a - a } do x = 1 go to A }

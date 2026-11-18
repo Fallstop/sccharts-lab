@@ -13,6 +13,8 @@ import { harness, parseOutput, type HarnessTick } from './harness'
 export interface Scenario {
     /** `seeds`: what KIELER's clock gave each randomize() of the tick in the recorded run (tools/oracle/seeds.ts). */
     ticks: { inputs?: Record<string, Value>; seeds?: number[] }[]
+    /** Where KIELER's struct lay in the recorded run, for a chart that shows an address (tools/oracle/seeds.ts). */
+    address?: number
     expect?: 'ok' | 'error'
     system?: string
     imports?: string[]
@@ -148,8 +150,16 @@ async function compareCase(c: Case, options: { keep?: string } = {}): Promise<Ca
     const out = parseOutput(run.stdout)
     const warnings = generatedWarnings(run, gen)
     const r: CaseResult = { ...base, verdict: 'match', warnings, hostCode: gen.hostCode }
+    // A chart that makes a number of an array's address (`c-address-value`): the engine runs again with the address
+    // the C program's struct has. KIELER's recorded run had another one (the conformance test compares that).
+    const shown = result.diagnostics.some(d => d.code === 'c-address-value')
+    if (sim && shown && out.address !== undefined) {
+        const again = createSimulation(result, { seed: replaySeeds(engine.map(e => ({ seeds: e.tick.seeds }))), address: out.address })
+        engine.length = 0
+        for (const given of c.inputs) { const t = again.step(given); engine.push({ tick: t, taken: again.takenCounts(t) }) }
+    }
     if (sim) compareWithEngine(r, c, gen, engine, out, run)
-    if (rec) compareWithKieler(r, c, gen, rec, out, run)
+    if (rec && !shown) compareWithKieler(r, c, gen, rec, out, run)
     if (r.problems.length) r.verdict = 'mismatch'
     return r
 }

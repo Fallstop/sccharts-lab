@@ -35,7 +35,7 @@ export const SIMULATOR_CODES: ReadonlySet<string> = new Set([
     // Final polish (engine-5).
     'conditional-without-else', 'index-out-of-range', 'c-array-address',
     // Found by the C code generator's checks (tools/cgen).
-    'c-string-condition',
+    'c-string-condition', 'array-operands', 'array-index', 'conditional-mismatch', 'const-array-value', 'string-as-value', 'string-assignment', 'c-address-value', 'c-decrement', 'array-address',
 ])
 
 /** The engine's Simulation (docs-internal/ARCHITECTURE.md). */
@@ -77,6 +77,12 @@ export interface SimulationOptions {
      * seeds are in its result (`TickResult.seeds`): give them to another simulation to repeat a run.
      */
     seed?: number | ((call: SeedCall) => number | undefined)
+    /**
+     * Where KIELER's struct of the chart's variables lies in memory, for the few charts that make a number of an
+     * address (`c-address-value`: a float array assigned to an int, an array printed). KIELER's simulation has
+     * another address every time it starts; the default is the one without the system's randomisation.
+     */
+    address?: number
 }
 
 /** One `randomize()` call of a run: the tick it runs in and its place among the tick's calls (from 0). */
@@ -98,7 +104,7 @@ export function createSimulation(result: SimulationInput, options: SimulationOpt
     if (!result.ok || !result.chart) return rejectedSimulation(result, result.sim)
     const compiled = result.sim ?? compileChart(result.chart, result.index)
     if (!result.ok || !compiled || !compiled.runnable || !result.chart) return rejectedSimulation(result, compiled)
-    const exe = new ExecutableChart(compiled, result.interface)
+    const exe = new ExecutableChart(compiled, result.interface, options.address)
     const runner = new SimRunner(exe, result.chart)
     // The seeds of the ticks run so far, kept across rewind(): a tick run again is the tick it was.
     const seeds: number[][] = []
