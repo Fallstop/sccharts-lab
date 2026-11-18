@@ -28,7 +28,7 @@ import {
 import { inheritedDeclarations, type CEquation } from '../lower'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { declaredVars, rewriteScope } from '../structure/rewrite'
-import { Replacements, Replacer, isValue } from '../structure/replacements'
+import { Replacements, Replacer } from '../structure/replacements'
 import { spreadInstanceArray } from '../structure/instanceArray'
 import { foldConstants } from '../fold'
 import { processDataflow } from './dataflow'
@@ -207,7 +207,7 @@ export class Expansion {
             // The names visible here that are bound further out (KIELER walks all of them, needed or not).
             const visible = new Map<string, CVar>()
             for (let s: Scope | undefined = scope; s; s = isRegion(s) ? s.parent : s.parent) for (const v of s.decls) if (!visible.has(v.name)) visible.set(v.name, v)
-            for (const [name, v] of visible) {
+            for (const name of [...visible.keys()]) {
                 if (!replacements.has(name)) continue
                 const outer = replacements.peek(name)
                 if (outer?.k === 'ref') visible.set(name, outer.v)
@@ -218,7 +218,6 @@ export class Expansion {
                         kieler: `java.lang.IllegalStateException: There is a matching valued object on the replacement stack for an implicitly bound variable ( ${name}).However, the binding is not a valued object reference, so the type does not match.`,
                         hint: `Rename the variable \`${name}\` or the generic parameter, or bind every input and output of \`${chart.name}\` in the parameter list.`,
                     })
-                    void v
                     throw new Recursion()
                 }
             }
@@ -636,7 +635,6 @@ export class Expansion {
      */
     private validate(root: CState) {
         const lost = new Map<CVar, Span | undefined>()
-        let preOfValue: Span | undefined | null = null
         // (The Inheritance pass removes the declarations `extends Base(...)` binds.)
         for (const v of (this.ctx.shared.removedVars as Set<CVar> | undefined) ?? []) this.removed.add(v)
         let visit = (e: CExpr | undefined, span?: Span) => walkExpr(e, x => {
@@ -677,8 +675,6 @@ export class Expansion {
             visitPlain(e, span)
             walkExpr(e, x => {
                 if (x.k === 'ref' && x.v.declKind === 'unresolved' && x.v.decl && inheritedIds.has(sourceId(x.v.decl)) && !lost.has(x.v)) lost.set(x.v, x.span ?? span)
-                // `pre(N)` with a value for N: KIELER's Pre processor makes a register of the number, and gcc refuses it.
-                if (x.k === 'op' && x.op === 'pre' && x.args[0] && isValue(x.args[0]) && !preOfValue) preOfValue = x.span ?? span ?? root.out[0]?.span
             })
         }
         for (const scope of allScopes(root)) {
@@ -709,14 +705,6 @@ export class Expansion {
                     generic(b.generics)
                 }
             }
-        }
-        if (preOfValue !== null) {
-            this.ctx.report({
-                severity: 'error', code: 'generic-pre', span: preOfValue,
-                message: '`pre(...)` of a generic parameter that was given a value does not work in KIELER',
-                kieler: 'expected identifier or \u2018(\u2019 before numeric constant\nCompiler did not return success (exit value != 0)',
-                hint: 'The parameter is the value itself where the chart names it, and `pre` needs a variable. Pass a variable (`<x>`), or copy the parameter into a variable of the chart.',
-            })
         }
         for (const [v, span] of lost) {
             if (v.declKind === 'unresolved') {
@@ -833,4 +821,3 @@ function copyGenericArg(g: CGenericArg): CGenericArg {
     return { ...g }
 }
 
-void isValue

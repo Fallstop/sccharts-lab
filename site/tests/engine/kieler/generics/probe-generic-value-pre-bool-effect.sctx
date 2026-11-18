@@ -1,0 +1,9 @@
+// pre(B) in an effect with the literal true for B: gcc refuses KIELER's code.
+scchart N04 {
+  output bool p
+  initial state S is N04G<true>(p)
+}
+scchart N04G<B is bool> {
+  output bool o
+  initial state A do o = pre(B) go to A
+}

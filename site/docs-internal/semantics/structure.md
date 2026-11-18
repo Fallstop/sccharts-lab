@@ -473,7 +473,7 @@ processors, on the same replacement stack that binds inputs and outputs.
   those on `extends` only when the chart is compiled (S-76), so a wrong one in an unused chart goes unnoticed
   (`probe-generic-extends-mismatch-unused-chart` against `-argument-missing-unused-chart`).
 
-- Evidence: `tests/engine/kieler/generics/probe-generic-*` (192 probes: `-value`, `-value-input`, `-literal-*`,
+- Evidence: `tests/engine/kieler/generics/probe-generic-*` (204 probes: `-value`, `-value-input`, `-literal-*`,
   `-type-mismatch-*`, `-argument-*`, `-chart-type*`, `-instance*`, `-untyped-*`, `-decl*`, `-root*`, ...).
 - Source: grammar `kexpressions/.../kext/KExt.xtext:281-330`, `sccharts/.../text/SCTX.xtext:27-36, 67-89, 406-427`;
   scoping `text/scoping/SCTXScopeProvider.xtend:117-134, 177-252, 374-402`,
@@ -496,8 +496,12 @@ and pops them when it leaves; a nested reference starts from a **copy of the who
   tick; an array element with a variable index is read anew; the chart may write it, `-value-written-variable`).
 - A **literal** argument is the literal wherever the parameter is named. Writing it crashes KIELER's compiler
   (`N += 1`: `ClassCastException: IntValueImpl cannot be cast to ... ValuedObjectReference`, engine `kieler-crash`,
-  `-value-written-literal`); `pre(N)` becomes `pre(4)`, which gcc refuses (`expected identifier ... before numeric
-  constant`, `generic-pre`, `-value-pre-literal`).
+  `-value-written-literal`; also in a state that cannot be reached, `-value-written-literal-unreachable`). `pre(N)`
+  becomes `pre(4)`: KIELER's Pre processor only handles variables and leaves it, and where code is made for it gcc
+  refuses the register (`expected identifier ... before numeric constant`; a bool in a trigger: `The compiler
+  failed during compilation setup.`; engine `generic-pre`; `-value-pre-literal`, `-value-pre-int-trigger`,
+  `-value-pre-bool-trigger`, `-value-pre-bool-effect`). In a state that cannot be reached no code is made and the
+  chart is accepted (`-value-pre-unreachable`, found by the `generics` fuzz profile).
 - A **constant** as the argument is still a name when KIELER binds it (its Const processor runs after the
   Reference processor): reads get the value, but a write is an assignment to the constant, `Cannot replace left
   hand side of assignment by a value. (Trying to replace ... K by ... (value: 4) in ... K += 1)` (engine
@@ -606,6 +610,8 @@ class method, in `print`, and in the generic arguments of `state T is Inner<N>` 
   `ref W w` in the base is replaced, `state S is W` is **not** (`Invalid reference W!`, `-extends-chart-type`).
 - A chart that extends a generic base can be referenced, declared with `ref` and extended further like any other
   (`-extends-referenced`, `-decl-of-extending`).
+- Generic charts of an imported file work like those of the same file (S-20; `-import`: a value parameter, a chart
+  type parameter and a generic base from one imported library; `-import-wrong`: the binding error across files).
 
 - Source: `processors/Inheritance.xtend:278-447` (bindings and replacement), `:449-508` (types);
   `extensions/SCChartsInheritanceExtensions.xtend:296-365` (overrides), `extensions/SCChartsGenericTypeExtensions.xtend`.
@@ -1843,6 +1849,16 @@ left and entered again). Instances in nested states are hidden from the pool.
 
 A chart method can also be called in a dataflow equation (`O = c.twice(I)`, probe; official 0.3.0 never
 answers).
+
+**Arrays of instances.** `ref C g[2]` (also `[2][2]`, a `const int` size, with bindings or generic arguments) is
+an array of class objects: the pool has `"g": [{"n": 1}, {"n": 2}]`, `g[i].inc()` and `g[1].n` work with literal
+and variable indices, and every element runs its own copy of the chart's regions and actions (named
+`g0_R`, `g1_R`; an array of one keeps `g_R`). Bound to one output, all elements write it. An element read in a
+dataflow region does not compile (`subscripted value is neither array nor pointer nor vector`: the dataflow
+translation makes one instance of the whole array). A size that is no constant: `Can only handle reference arrays
+with constant cardinality` (source). Probes `tests/engine/kieler/structure/probe-reference-instance-array*`
+(`-regions`, `-bound`, `-2d`, `-method-calls-method`, `-variable-index`, `-inner-state`, `-const-size`, `-of-one`,
+`-member-array`, `-dataflow`), `generics/probe-generic-decl-array*`; source `processors/Reference.xtend:1221-1296`.
 
 - Evidence: `126-chart-class` (methods and a public field), `127`, `128`, `129`, `130-chart-class-inheritance`.
 - Source: `processors/Reference.xtend:927-1000` (`handleSCChartsDatatype`), `SCTXValidator.xtend:180-189`

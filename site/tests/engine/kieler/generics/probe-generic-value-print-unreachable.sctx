@@ -1,0 +1,11 @@
+// A parameter in print inside a state that cannot be reached: still rejected, the reference is expanded all the
+// same.
+scchart N12 {
+  output int p
+  initial state A do p += 1 go to A
+  state U is N12G<4>(p)
+}
+scchart N12G<N is int> {
+  output int o
+  initial state X do o += N; print("v", N) go to X
+}

@@ -1,0 +1,20 @@
+// The library of probe-generic-import (not a probe of its own).
+scchart ProbeGenericImportCounter<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}
+scchart ProbeGenericImportBase<M is int> {
+  output int b = 0
+  region Base { initial state A do b += M go to A }
+}
+scchart ProbeGenericImportHolder<W is ProbeGenericImportWorker> {
+  output int h
+  initial state S is W(h)
+}
+scchart ProbeGenericImportWorker {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart ProbeGenericImportFast extends ProbeGenericImportWorker {
+  region R2 { initial state B do o += 10 go to B }
+}

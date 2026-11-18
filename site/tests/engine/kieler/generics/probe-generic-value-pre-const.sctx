@@ -1,0 +1,10 @@
+// pre(N) with a constant for N: the constant is inlined, and gcc refuses the pre of a number.
+scchart K12 {
+  const int K = 4
+  output int p
+  initial state S is K12G<K>(p)
+}
+scchart K12G<N is int> {
+  output int o = 0
+  initial state A do o += pre(N) go to A
+}

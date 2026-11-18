@@ -1,0 +1,11 @@
+// An array of one chart instance.
+scchart M09 {
+  output int p
+  ref M09C g[1]
+  initial state A do g[0].inc(); p = g[0].n go to A
+}
+scchart M09C {
+  int n = 0
+  method void inc() { n += 1 }
+  region R { initial state S do n += 10 go to S }
+}

@@ -1,0 +1,81 @@
+{
+  "hash": "a9b431960230e9d025aeb83320b1e43dde7a47d4",
+  "chart": "tests/engine/kieler/generics/probe-generic-decl-class-one-declaration.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K01bC1.n": {
+      "type": "int",
+      "properties": []
+    },
+    "a": {
+      "type": "class",
+      "properties": []
+    },
+    "b": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "a": {
+          "n": 0
+        },
+        "b": {
+          "n": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 21,
+        "a": {
+          "n": 1
+        },
+        "b": {
+          "n": 2
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 42,
+        "a": {
+          "n": 2
+        },
+        "b": {
+          "n": 4
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

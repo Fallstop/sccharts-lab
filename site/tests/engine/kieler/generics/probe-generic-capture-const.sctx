@@ -1,0 +1,15 @@
+// The parameter stands for a constant: the nested chart's local N is the constant.
+scchart K15 {
+  const int K = 4
+  output int p
+  initial state S is K15O<K>(p)
+}
+scchart K15O<N is int> {
+  output int o
+  initial state T is K15I(o)
+}
+scchart K15I {
+  output int o = 0
+  int N = 100
+  initial state A do o += N go to A
+}

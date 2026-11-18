@@ -1,0 +1,11 @@
+// A reference to a generic chart inside a for-region: one instance per copy.
+scchart K20 {
+  output int p = 0
+  region R for i : 0 to 1 {
+    initial state S is K20G<2>(p)
+  }
+}
+scchart K20G<N is int> {
+  output int o
+  initial state A do o += N + 1 go to A
+}

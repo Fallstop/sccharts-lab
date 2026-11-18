@@ -1,0 +1,9 @@
+// An override of a generic method with a return type that is not the type given for T.
+scchart K02 extends K02B<int> {
+  output int p = 0
+  override method bool inc(int v) { return v > 1 }
+  initial state A do p += 1 go to A
+}
+scchart K02B<T is primitive> {
+  method primitive T inc(primitive T v) { return v + 1 }
+}

@@ -10,7 +10,7 @@ import { buildSCG, cloneSCG, successors, type SCG, type SNode } from './scg'
 import { abortRegionsSCG } from './abortRegions'
 import { concurrentThreads, dependencies, dependencyReach, type Access, type Dependency } from './deps'
 import { analyse, liveNodes, separateSurfaceDepth, type Analysis } from './analysis'
-import { conditionalWithoutElse, checkCodegen } from './codegen'
+import { conditionalWithoutElse, checkCodegen, preOfValue } from './codegen'
 import { removeSuperfluousForks } from './sfr'
 import { constantIndexWarnings } from './memory'
 import { droppedIndexDiagnostics, guardCondition } from './guardIndices'
@@ -145,6 +145,7 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     separateSurfaceDepth(scg)
     diagnostics.push(...crashingClashes(clashes, scg, lowered.root))
     diagnostics.push(...conditionalWithoutElse(scg.nodes))
+    diagnostics.push(...preOfValue(scg.nodes))
     diagnostics.push(...conditionKeepsResult(scg))
     diagnostics.push(...stringConditions(scg))
     diagnostics.push(...droppedIndices(scg, lowered.root.name))

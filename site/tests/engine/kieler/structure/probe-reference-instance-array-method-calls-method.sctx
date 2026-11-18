@@ -1,0 +1,11 @@
+// A method of an element that calls another method of the same element.
+scchart M04 {
+  output int p
+  ref M04C g[2]
+  initial state A do g[0].twice(); g[1].inc(); p = g[0].n + 10 * g[1].n go to A
+}
+scchart M04C {
+  int n = 0
+  method void inc() { n += 1 }
+  method void twice() { inc(); inc() }
+}

@@ -243,6 +243,26 @@ scchart Inner {
         expect(ticks.map(t => t.values.p)).toEqual([0, 3, 6])
     })
 
+    it('runs an array of chart instances as KIELER\'s array of class objects', () => {
+        const { r, ticks } = run(`scchart Main {
+  input int i
+  output int p
+  ref Cell<3> g[2]
+  initial state A do g[i].inc(); p = g[0].n + 10 * g[1].n go to A
+}
+scchart Cell<N is int> {
+  int n = 0
+  method void inc() { n += N }
+  region R { initial state S do n += 1 go to S }
+}`, [{ i: 0 }, { i: 1 }, { i: 1 }])
+        expect(r.ok).toBe(true)
+        expect(ticks.map(t => t.pool.g)).toEqual([[{ n: 0 }, { n: 0 }], [{ n: 1 }, { n: 4 }], [{ n: 2 }, { n: 8 }]])
+        expect(ticks.map(t => t.values.p)).toEqual([0, 41, 82])
+        // An element wired in a dataflow region is gcc's error in KIELER.
+        const dataflow = errors('scchart Main {\n  output int p\n  ref W g[2]\n  dataflow { p = g[0].o + g[1].o }\n}\nscchart W {\n  output int o = 0\n  initial state A do o += 2 go to A\n}')
+        expect(dataflow.map(d => [d.code, d.kieler?.split('\n')[0]])).toEqual([['dataflow-instance-array', 'subscripted value is neither array nor pointer nor vector']])
+    })
+
     it('resolves a generic chart of an imported file', () => {
         const { r, ticks } = run('import "counter"\nscchart Main {\n  output int p\n  initial state S is Counter<4>(p)\n}', [{}, {}, {}], { 'counter.sctx': counter })
         expect(r.ok).toBe(true)
@@ -279,6 +299,22 @@ describe('what KIELER rejects when it compiles a generic chart', () => {
         expect(written.code).toBe('kieler-crash')
         expect(written.kieler).toContain('java.lang.ClassCastException')
         expect(codes(`scchart Main {\n  output int p\n  initial state S is G<4>(p)\n}\nscchart G<N is int> {\n  output int o = 0\n  initial state A do o += pre(N) go to A\n}`)).toEqual(['generic-pre'])
+    })
+
+    it('a written parameter or input that stands for a constant', () => {
+        const generic = first('scchart Main {\n  const int K = 4\n  output int p\n  initial state S is G<K>(p)\n}\nscchart G<N is int> {\n  output int o = 0\n  initial state A do o += N; N += 1 go to A\n}')
+        expect(generic.code).toBe('bound-const-written')
+        expect(generic.kieler).toContain('Cannot replace left hand side of assignment by a value.')
+        const input = 'scchart Sub {\n  input int x\n  output int o = 0\n  initial state A do o += x; x += 1 go to A\n}'
+        expect(codes(`scchart Main {\n  const int K = 4\n  output int p\n  initial state S is Sub(K, p)\n}\n${input}`)).toEqual(['bound-const-written'])
+        // A literal makes the input a local that starts with it.
+        expect(run(`scchart Main {\n  output int p\n  initial state S is Sub(4, p)\n}\n${input}`).ticks.map(t => t.values.p)).toEqual([0, 4, 9])
+    })
+
+    it('pre of a parameter that stands for a value, only where code is made for it', () => {
+        const generic = '\nscchart G<B is bool> {\n  output int o\n  initial state X if pre(B) do o += 100 go to X\n}'
+        expect(first(`scchart Main {\n  output int p\n  initial state U is G<false>(p)\n}${generic}`).kieler).toBe('The compiler failed during compilation setup.')
+        expect(compile(`scchart Main {\n  output int p\n  initial state A do p += 1 go to A\n  state U is G<false>(p)\n}${generic}`).ok).toBe(true)
     })
 
     it('a chart type parameter handed on, and pure for a primitive type', () => {
@@ -339,7 +375,7 @@ scchart G {
     })
 
     it('lists its compile-stage codes in SIMULATOR_CODES', () => {
-        for (const code of ['unbound-generic', 'unbound-reference', 'generic-type-unbound', 'generic-argument', 'generic-arguments-conflict', 'generic-method-type', 'generic-pre', 'generic-pure-type', 'state-access-copy']) {
+        for (const code of ['unbound-generic', 'unbound-reference', 'generic-type-unbound', 'generic-argument', 'generic-arguments-conflict', 'generic-method-type', 'generic-pre', 'generic-pure-type', 'state-access-copy', 'bound-const-written', 'dataflow-instance-array']) {
             expect(SIMULATOR_CODES.has(code), code).toBe(true)
         }
     })

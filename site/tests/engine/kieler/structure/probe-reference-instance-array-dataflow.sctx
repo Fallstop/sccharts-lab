@@ -1,0 +1,10 @@
+// An element of an array of chart instances read in a dataflow region: gcc refuses KIELER's code.
+scchart M11 {
+  output int p
+  ref M11C g[2]
+  dataflow { p = g[0].o + g[1].o }
+}
+scchart M11C {
+  output int o = 0
+  initial state A do o += 2 go to A
+}

@@ -1,0 +1,104 @@
+{
+  "hash": "3fa6ba2dab86b867befc1d333e444c917792dd05",
+  "chart": "tests/engine/kieler/structure/probe-reference-instance-array-bound.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "M02C1.k": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "g": [
+          {
+            "k": 1
+          },
+          {
+            "k": 1
+          },
+          {
+            "k": 1
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 3,
+        "g": [
+          {
+            "k": 2
+          },
+          {
+            "k": 2
+          },
+          {
+            "k": 2
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 9,
+        "g": [
+          {
+            "k": 3
+          },
+          {
+            "k": 3
+          },
+          {
+            "k": 3
+          }
+        ]
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "p": 18,
+        "g": [
+          {
+            "k": 4
+          },
+          {
+            "k": 4
+          },
+          {
+            "k": 4
+          }
+        ]
+      },
+      "terminated": false
+    }
+  ]
+}

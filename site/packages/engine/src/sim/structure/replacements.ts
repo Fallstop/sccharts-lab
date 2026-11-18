@@ -151,7 +151,7 @@ export class Replacer {
             const eqs = region.ext.eqs as CEquation[] | undefined
             if (eqs) {
                 region.ext.eqs = eqs.map(eq => {
-                    const target = this.ref(eq.target, true)
+                    const target = this.ref(eq.target)
                     return { ...eq, expr: this.expr(eq.expr), target: target.k === 'ref' ? target : eq.target }
                 })
             }
@@ -214,7 +214,7 @@ export class Replacer {
         switch (f.k) {
             case 'assign': {
                 const expr = f.expr ? this.expr(f.expr) : undefined
-                const ref = this.ref(f.ref, true)
+                const ref = this.ref(f.ref)
                 if (ref.k !== 'ref') {
                     this.options.failed.add(f.ref.v)
                     const bound = this.replacements.peek(f.ref.v.name)
@@ -266,14 +266,14 @@ export class Replacer {
 
     expr(e: CExpr): CExpr {
         switch (e.k) {
-            case 'ref': return this.ref(e, false)
+            case 'ref': return this.ref(e)
             case 'op': return { ...e, args: e.args.map(a => this.expr(a)) }
             case 'vector': return { ...e, values: e.values.map(a => this.expr(a)) }
             case 'call': {
                 // A call of a method (ReferenceCall): the method's reference, then the arguments. An extern function
                 // call is an expression type the processor ignores, with its arguments.
                 if (!e.target || e.extern) return e
-                const target = this.ref(e.target, true)
+                const target = this.ref(e.target)
                 return { ...e, target: target.k === 'ref' ? target : e.target, args: e.args.map(a => this.expr(a)) }
             }
             default: return e
@@ -281,7 +281,7 @@ export class Replacer {
     }
 
     /** A reference to a variable: KIELER's replaceReferences(ValuedObjectReference). */
-    ref(r: CRef, target: boolean): CExpr {
+    ref(r: CRef): CExpr {
         const idx = r.idx.map(i => this.expr(i))
         const sub = r.sub ? this.subIndices(r.sub) : undefined
         const plain: CRef = { ...r, idx, ...(sub ? { sub } : {}) }
@@ -310,7 +310,6 @@ export class Replacer {
                 }
                 return plain
             }
-            void target
             return bound.k === 'lit' ? { k: 'lit', t: bound.t, v: bound.v, span: r.span } : { ...copyExpr(bound), span: r.span }
         }
         const key = `${r.v.uid}`

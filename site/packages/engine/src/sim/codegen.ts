@@ -594,6 +594,31 @@ export type { Span }
  * method KIELER keeps as a C function) gcc rejects it (probes kieler/rare/probe-cond-noelse-*). Runs on the graph
  * after the Methods processor, whose inlining moves arguments into the bodies.
  */
+/**
+ * `pre(N)` where the generic parameter N was given a value (structure.md S-74): KIELER's Pre processor only knows
+ * variables and leaves `pre(4)` in the model. In code that is compiled (a state that can be reached), gcc refuses
+ * the register KIELER's code generator makes of the number; for a bool in a trigger KIELER's compiler fails before.
+ */
+export function preOfValue(nodes: { kind: string; effect?: CEffect; expr?: CExpr }[]): Diagnostic[] {
+    for (const n of nodes) {
+        let found: { e: CExpr; value: CExpr } | undefined
+        const look = (e: CExpr | undefined) => walkExpr(e, x => {
+            if (!found && x.k === 'op' && x.op === 'pre' && x.args[0] && x.args[0].k !== 'ref' && !(x.args[0].k === 'op' && x.args[0].op === 'pre')) found = { e: x, value: x.args[0] }
+        })
+        look(n.expr)
+        if (n.effect) for (const e of effectExprs(n.effect)) look(e)
+        if (!found) continue
+        const setup = n.kind === 'cond' && found.value.k === 'lit' && found.value.t === 'bool'
+        return [{
+            severity: 'error', code: 'generic-pre', span: found.e.span,
+            message: '`pre(...)` of a generic parameter that was given a value does not work in KIELER',
+            kieler: setup ? 'The compiler failed during compilation setup.' : `expected identifier or \u2018(\u2019 before numeric constant\n${GCC_FAILED}`,
+            hint: 'The parameter is the value itself where the chart names it, and `pre` needs a variable. Pass a variable (`<x>`), or copy the parameter into a variable of the chart.',
+        }]
+    }
+    return []
+}
+
 export function conditionalWithoutElse(nodes: { kind: string; effect?: CEffect; expr?: CExpr }[]): Diagnostic[] {
     const out: Diagnostic[] = []
     const seen = new Set<CExpr>()
