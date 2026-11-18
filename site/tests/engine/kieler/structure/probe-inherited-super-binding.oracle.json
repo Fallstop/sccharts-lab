@@ -1,0 +1,71 @@
+{
+  "hash": "951c4e4f7f10abd9ab50763b1305466bea4203f6",
+  "chart": "tests/engine/kieler/structure/probe-inherited-super-binding.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name _Main_local_last is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "m": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "m": 1
+      },
+      "values": {
+        "m": 1,
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "m": 2
+      },
+      "values": {
+        "m": 2,
+        "o": 13
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "m": 3
+      },
+      "values": {
+        "m": 3,
+        "o": 14
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "m": 4
+      },
+      "values": {
+        "m": 4,
+        "o": 15
+      },
+      "terminated": false
+    }
+  ]
+}

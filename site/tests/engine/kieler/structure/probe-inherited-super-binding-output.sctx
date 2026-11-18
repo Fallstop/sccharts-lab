@@ -1,0 +1,4 @@
+// The base method kept for super writes the output the reference binds.
+scchart Main { input int m output int o initial state A is C(m, o) }
+scchart C extends Base { override method void set() { super.set(); o += 10 } initial state A do set() go to A }
+scchart Base { input int n output int o method void set() { o = n + 1 } }

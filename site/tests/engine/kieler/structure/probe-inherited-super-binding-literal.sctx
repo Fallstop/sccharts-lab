@@ -1,0 +1,4 @@
+// The base method kept for super reads an input bound to a number.
+scchart Main { input int m output int o initial state A is C(5, o) }
+scchart C extends Base { override method int last() { return super.last() + 10 } initial state A do o = last() go to A }
+scchart Base { input int n output int o method int last() { return n + 1 } }

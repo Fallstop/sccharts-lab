@@ -2659,6 +2659,9 @@ twice through the hierarchy is inherited once). Then:
   chart goes on calling that base version, so the base's `twice()` on the subclass returns `2 * 1`
   (`138-override-super-keeps-base`), whereas the same chart without `super` gives `2 * 5` (`131`). Calls written
   in the extending chart and from outside (`a.value()`) get the override in both cases.
+  The kept base method is a declaration of the extending chart (`<Base>_<name>`), so it takes the bindings of a
+  reference to that chart like every other: its inputs, outputs and generic parameters are what the reference
+  binds (`probe-inherited-super-binding`, `-instance`, `-literal`, `-generic`, `-kept`, `-output`).
 - A `protected` field is visible in the extending charts but not outside (`135-err-protected-outside`); a
   `private` one only in its own chart. Inherited private and protected fields are renamed `<Base>_<field>`
   (`134-protected-field`: `"s": {"St134Base_secret": 21}` in the pool); every inherited field has the interface

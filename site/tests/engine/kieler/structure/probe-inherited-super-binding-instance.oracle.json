@@ -1,0 +1,80 @@
+{
+  "hash": "f74d9922465e54bff20730ce9c004303b888a67b",
+  "chart": "tests/engine/kieler/structure/probe-inherited-super-binding-instance.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name last is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "m": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "m": 1
+      },
+      "values": {
+        "m": 1,
+        "o": 0,
+        "g": {}
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "m": 2
+      },
+      "values": {
+        "m": 2,
+        "o": 13,
+        "g": {}
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "m": 3
+      },
+      "values": {
+        "m": 3,
+        "o": 14,
+        "g": {}
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "m": 4
+      },
+      "values": {
+        "m": 4,
+        "o": 15,
+        "g": {}
+      },
+      "terminated": false
+    }
+  ]
+}

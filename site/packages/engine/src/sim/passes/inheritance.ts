@@ -180,9 +180,17 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
     // conformance structure/138).
     for (const [base, overrider] of overridden) {
         if (keepsBase(base, overrider)) {
-            // Still a declaration of the state in KIELER (renamed `<Base>_<name>`): structure/bodies.ts.
+            // Still a declaration of the state in KIELER, renamed `<Base>_<name>` (structure/bodies.ts has its place):
+            // whatever rewrites the state's declarations afterwards reaches its body too (the bindings of a
+            // reference to the chart, the copies of an instance).
             const before = place.get(base)
             placeDeclarations(state, [base], state.decls.slice(before ? state.decls.indexOf(before) + 1 : 0))
+            if (!state.decls.includes(base)) {
+                const from = bases.find(b => b.root.decls.includes(base))
+                if (from) base.name = `${from.chart.name}_${base.name}`
+                base.scope = state
+                state.decls.splice(before ? state.decls.indexOf(before) + 1 : 0, 0, base)
+            }
             continue
         }
         const swap = (r: CRef): CRef | undefined => (r.v === base ? { ...r, v: overrider } : undefined)

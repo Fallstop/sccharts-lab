@@ -1,0 +1,4 @@
+// The same in a declared instance (ref C g(m, o)).
+scchart Main { input int m output int o ref C g(m, o) initial state A }
+scchart C extends Base { override method int last() { return super.last() + 10 } initial state A do o = last() go to A }
+scchart Base { input int n output int o method int last() { return n + 1 } }

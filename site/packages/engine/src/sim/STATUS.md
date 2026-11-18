@@ -614,7 +614,9 @@ lab server reports as a located error). `tests/engine/pre-bodies.test.ts` pins t
   chart used as a class stand where its `ref` declaration stood (the working model appends them), in a region with
   actions inside the state that wraps it; a region's declarations come after the state's own and before the code
   blocks (the lowering makes the blocks' methods first); a base method kept for a `super` call stays among the
-  inherited declarations (the working model has it in no scope).
+  inherited declarations (it is a declaration of the extending chart now, `<Base>_<name>` as KIELER renames it: in
+  no scope, the bindings of a reference to the chart never reached its body, and a referenced chart whose override
+  calls `super` read 0 for a bound input; `structure/probe-inherited-super-binding*`, 6 probes).
 - **What KIELER rejects, and the engine now too**: a pre that is a whole return value, condition, local's initial
   value, argument or vector element (`pre-placement`, the existing code, with the statement in the message); pre of
   a local variable or with a local as the deciding clock (`kieler-crash`: KIELER's SCG transformation fails); of a

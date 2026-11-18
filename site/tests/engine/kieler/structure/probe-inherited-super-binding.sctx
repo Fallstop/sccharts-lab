@@ -1,0 +1,4 @@
+// A referenced chart whose override calls super: the base method KIELER keeps (Base_last) reads the input the reference binds.
+scchart Main { input int m output int o initial state A is C(m, o) }
+scchart C extends Base { override method int last() { return super.last() + 10 } initial state A do o = last() go to A }
+scchart Base { input int n output int o method int last() { return n + 1 } }

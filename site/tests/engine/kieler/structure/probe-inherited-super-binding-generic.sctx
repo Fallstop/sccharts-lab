@@ -1,0 +1,4 @@
+// The base method kept for super reads a generic parameter handed on by extends Base<K> and an input the reference binds.
+scchart Main { input int m output int o initial state A is C<3>(m, o) }
+scchart C<K is int> extends Base<K> { override method int last() { return super.last() + 10 } initial state A do o = last() go to A }
+scchart Base<N is int> { input int n output int o method int last() { return n + N } }
