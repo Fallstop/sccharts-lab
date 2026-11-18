@@ -70,11 +70,11 @@ workflow can publish them; there is no token. Publishing access is set to requir
 Each release:
 
 1. Set the same `version` in the four `packages/*/package.json` (`pack.mjs` refuses different ones), and, when the
-   minor version changes, in the jsDelivr addresses (`@sccharts-lab/embed@0.2`) of `packages/embed/README.md` and of
+   minor version changes, in the jsDelivr addresses (`@sccharts-lab/embed@0.3`) of `packages/embed/README.md` and of
    the documentation's `samples/embed/tag.html` (`tests/packages-docs` fails until they agree).
 2. `pnpm exec vitest run && pnpm build && pnpm packages:smoke --site dist`, then commit. Run it in a fresh clone of
    that commit: the CI on `main` does not run the site's tests, and a file only in your worktree passes locally.
-3. Tag that commit and push the tag: `git tag packages-v0.2.0 <commit> && git push origin packages-v0.1.0`.
+3. Tag that commit and push the tag: `git tag packages-v0.3.0 <commit> && git push origin packages-v0.3.0`.
 
 The tag starts `.github/workflows/packages.yml`: it installs in `site/`, runs the whole test suite, builds the site,
 runs `pnpm packages:smoke --version <tag's version> --site dist` and publishes the smoke test's tarballs with npm
