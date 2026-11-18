@@ -164,6 +164,15 @@ function processRegion(df: CRegion, expansion: Expansion) {
     const instances: CVar[] = []
     for (const eq of eqs) {
         for (const r of assignmentRefs(eq)) {
+            if (r.v.declKind === 'reference' && r.v.instance && r.idx.length && !instances.includes(r.v)) {
+                // An element of an array of instances: KIELER makes one instance of the whole array and indexes it in C.
+                expansion.ctx.report({
+                    severity: 'error', code: 'dataflow-instance-array', span: r.span ?? eq.span, related: r.v.decl ? [r.v.decl] : undefined,
+                    message: `An element of the array of instances \`${r.v.name}\` cannot be wired in a dataflow region`,
+                    kieler: 'subscripted value is neither array nor pointer nor vector\nCompiler did not return success (exit value != 0)',
+                    hint: `KIELER's dataflow translation makes one instance of \`${r.v.name}\` and its C code then indexes a plain variable. Declare the instances one by one (\`ref ${r.v.instance.target} g0, g1\`).`,
+                })
+            }
             if (r.v.declKind === 'reference' && r.v.instance && !instances.includes(r.v)) instances.push(r.v)
         }
     }

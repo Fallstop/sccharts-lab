@@ -66,7 +66,18 @@ export class CVar {
      * generic arguments (`ref Chart<4> x`: `declGenerics`, the declaration's; `ref Chart x<4>`: the variable's own).
      * `typeParam`: the chart is a generic type parameter of the chart around it (`ref W w`), by its declaration id.
      */
-    instance?: { target: string; args: CArg[]; generics?: CGenericArg[]; declGenerics?: boolean; typeParam?: string }
+    instance?: {
+        target: string
+        args: CArg[]
+        generics?: CGenericArg[]
+        declGenerics?: boolean
+        typeParam?: string
+        /** The declaration's first variable (its id), and whether KIELER gives each variable a declaration of its own. */
+        group?: string
+        separate?: boolean
+        /** The class KIELER makes of the instance (`Counter1`; a second declaration of the chart: `Counter2`). */
+        className?: string
+    }
     /**
      * A generic parameter of a chart (declKind 'generic', structure.md S-73): kept apart from the chart's
      * declarations until the Reference pass binds it. `type`: the chart a type or instance parameter names.
@@ -119,7 +130,9 @@ export interface CRef {
 /** A trigger written `if a > 0 schedule s 1` keeps its schedule on the expression (KIELER's BoolScheduleExpression);
  *  an expression built around it later does not have it. */
 export type CExpr = { sched?: SchedEntry[] } & (
-    | { k: 'lit'; t: 'bool' | 'int' | 'float' | 'string'; v: boolean | number | string; span?: Span }
+    /** `konst`: an argument of a reference that names a constant (its value is here already, but KIELER still has the
+     *  name when it binds the argument, structure.md S-74). */
+    | { k: 'lit'; t: 'bool' | 'int' | 'float' | 'string'; v: boolean | number | string; span?: Span; konst?: string }
     | { k: 'null'; span?: Span }
     | CRef
     | { k: 'op'; op: OperatorType; args: CExpr[]; span?: Span }

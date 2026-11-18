@@ -388,19 +388,22 @@ class Resolver {
                     delete a.expression
                     continue
                 }
-                delete a.typeName
                 const param = this.typeParameter(this.rootOf(scope), a.expression.name, ['type', 'primitive'])
                 if (param) {
+                    delete a.typeName
                     a.expression.decl = param.valuedObject.id
                     continue
                 }
                 if (!scope.lookup(a.expression.name)) {
+                    // Unknown: it stays the type reference KIELER's parser made of it.
                     const name = a.expression.name
+                    delete a.expression
                     const s = closest(name, [...this.chartsByName.keys(), ...scope.visible()])
                     this.unresolved('NamedObject', name, a.span, `Unknown name \`${name}\` in the generic arguments`,
                         s ? `Did you mean \`${s}\`? A generic argument is a value, a type, a chart or a variable.` : 'A generic argument is a value (`4`), a type (`int`), a chart or a variable of this chart.', 'unknown-variable')
                     continue
                 }
+                delete a.typeName
             }
             this.resolveExpression(a.expression, scope)
         }
@@ -608,7 +611,7 @@ class Resolver {
                 if (generic) d.referenceParameter = generic.valuedObject.id
                 else {
                     this.unresolved('EObject', d.referenceTarget, d.referenceSpan ?? d.span, `There is no primitive type parameter \`${d.referenceTarget}\``,
-                        `\`primitive ${d.referenceTarget} x\` needs a generic parameter of the chart declared as \`<${d.referenceTarget} is primitive>\`.`, 'unknown-type')
+                        `\`primitive ${d.referenceTarget} x\` needs a generic parameter of the chart declared as \`<${d.referenceTarget} is primitive>\`.`, 'unknown-generic-type')
                 }
                 for (const vo of d.valuedObjects) for (const p of vo.parameters ?? []) this.resolveExpression(p.expression, scope)
             }
@@ -688,7 +691,7 @@ class Resolver {
             if (generic) d.returnParameter = generic.valuedObject.id
             else {
                 this.unresolved('NamedObject', d.returnHostType, d.span, `There is no primitive type parameter \`${d.returnHostType}\``,
-                    `\`method primitive ${d.returnHostType} ...\` needs a generic parameter of the chart declared as \`<${d.returnHostType} is primitive>\`.`, 'unknown-type')
+                    `\`method primitive ${d.returnHostType} ...\` needs a generic parameter of the chart declared as \`<${d.returnHostType} is primitive>\`.`, 'unknown-generic-type')
             }
         }
         for (const p of d.parameters ?? []) {
@@ -697,7 +700,7 @@ class Resolver {
             if (generic) p.referenceParameter = generic.valuedObject.id
             else {
                 this.unresolved('EObject', p.referenceTarget, p.referenceSpan ?? p.span, `There is no primitive type parameter \`${p.referenceTarget}\``,
-                    `\`primitive ${p.referenceTarget} x\` needs a generic parameter of the chart declared as \`<${p.referenceTarget} is primitive>\`.`, 'unknown-type')
+                    `\`primitive ${p.referenceTarget} x\` needs a generic parameter of the chart declared as \`<${p.referenceTarget} is primitive>\`.`, 'unknown-generic-type')
             }
         }
         if (d.body) this.resolveBlock(d.body.declarations, d.body.statements, methodScope)

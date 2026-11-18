@@ -123,12 +123,21 @@ The structure passes (structure.md) are KIELER's processors too, so their quirks
 - **References** (passes/reference.ts, with dataflow.ts and inheritance.ts, which KIELER's Reference processor
   calls): every instance is a fresh lowering of the referenced chart's AST with its ids prefixed
   `<reference state>/` (structure/instance.ts), so its variables are its own and its elements report ids the
-  diagram can draw (an expanded reference uses the same ids). Binding is substitution (structure/rewrite.ts walks
-  every expression, target, method body, reference argument and equation). An instance's transitions carry `take`
+  diagram can draw (an expanded reference uses the same ids). Binding is substitution by name
+  (structure/replacements.ts, below). An instance's transitions carry `take`
   marks with index -1: no KIELER effect (scg.ts gives them weight 0), not counted (S-15), but the tracker follows
   them. Expansion order and placement are KIELER's (the copy is appended to the region; output initialisations
   are entry actions after the chart's own; dataflow regions, then `ref` declarations, then the references the
   dataflow created).
+- **Generic parameters and bindings by name** (structure/replacements.ts, structure.md S-73 .. S-76): KIELER's
+  replacement stack is keyed by name, and the Reference pass walks a copy as KIELER's processor does: bindings and
+  generic arguments are pushed, every scope pushes its own declarations as themselves while it is walked, nested
+  references are expanded on the way with a copy of the stack. A chart's generic parameters are variables of no
+  scope (`root.ext.generics`) until then; type parameters are replaced first (`replaceGenericTypes`). What the walk
+  does not visit (a for-region range, class members, `print`, the generic arguments of `is C<N>`) is left pointing
+  at a parameter or a removed input, and the pass's `validate` rejects it as KIELER's does. `extends Base<3>(i, p)`
+  is bound in passes/inheritance.ts (`bindInherited`), which replaces every use, and an inner state that extends a
+  chart goes through the same code; `region Q is R` is a copy bound like a referenced chart (`expandRegion`).
 - **For-regions** (passes/forRegion.ts): copies are deep copies (structure/copy.ts) with the counter replaced and
   constants folded (KIELER's Const). Their take marks keep the original's id and index and get a `key` per copy;
   structure/track.ts gives the tracker a view of the chart with every instance and every copy, and reports copies
@@ -322,7 +331,7 @@ KIELER recording in `tests/engine/kieler/` (part of the conformance run, area `k
 | `tracker.ts`, `describe.ts` | source-level configuration, plain-English tick descriptions |
 | `describeStructure.ts` | descriptions of instances, for-region copies, clocks, periods and dataflow |
 | `preemptionLog.ts`, `describePreemption.ts` | the preemption passes' log events and notes (history, deferred entries, weak suspend, suspended states) and describeTick's sentences for aborts, count delays and suspension |
-| `structure/` | the structure passes' helpers: instances (`instance.ts`), deep copies (`copy.ts`), rewriting every expression (`rewrite.ts`), the tracker's view (`track.ts`), `->`/`fby`/`sfby` helpers (`delays.ts`), methods (`methods.ts`: inlining and running) |
+| `structure/` | the structure passes' helpers: instances (`instance.ts`), deep copies (`copy.ts`), rewriting every expression (`rewrite.ts`), the tracker's view (`track.ts`), `->`/`fby`/`sfby` helpers (`delays.ts`), methods (`methods.ts`: inlining and running), KIELER's replacement stack and the walk that binds by name (`replacements.ts`) |
 | `STATUS.md` | what works now |
 | `tests/engine/kieler/` | probe charts for the KIELER defects above, with recordings |
 | `../../../tools/fuzz/` | the differential fuzzer (generator, runner, reducer) |

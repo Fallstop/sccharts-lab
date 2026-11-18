@@ -19,6 +19,7 @@ pool after a tick. Generated helper variables start with `_` and are hidden from
 are quoted exactly, including their oddities.
 
 Contents: 1 [Several charts in a file](#1-several-charts-in-a-file) · 2 [References](#2-references) ·
+2a [Generic parameters](#2a-generic-parameters) ·
 3 [Imports](#3-imports) · 4 [For-regions](#4-for-regions) · 5 [Dataflow](#5-dataflow) · 6 [Time](#6-time) ·
 7 [Methods and code effects](#7-methods-and-code-effects) ·
 8 [Object-oriented data: enums, structs, classes](#8-object-oriented-data-enums-structs-classes) ·
@@ -155,6 +156,10 @@ implicitly. If no such name is visible:
 - Implementation: after the argument loop, look each unbound formal's name up from the referencing state
   outwards (state, enclosing states, root; declarations of all kinds); emit the warning once per reference,
   only for `state ... is` references (not for `ref` declarations, which bind implicitly without warning).
+- Inside a referenced chart the lookup ends at that chart's copy, and a name that is an input or output of the
+  copy means what it is bound to: `Outer(a to x, p to o)` with `state T is Inner` inside binds `Inner`'s `x` to `a`,
+  not to a variable `x` of the chart around `Outer` (`tests/engine/kieler/structure/probe-reference-nested-implicit`;
+  `SCChartsReferenceExtensions.xtend:161-181`, the names on the replacement stack, S-74).
 
 ### S-8 What can be bound
 
@@ -192,6 +197,15 @@ Inside the copy, every occurrence of a bound formal is replaced by its actual. C
   `Sub(o to b, o to c)` with `b = 1; c = 2` → `o = 2`).
 - A literal input is a constant inside the copy.
 
+- **Where KIELER does not look.** The substitution walks declarations (sizes, initial values, method bodies,
+  the arguments of `ref` declarations), actions, transitions, reference arguments and dataflow equations. It skips
+  the range of a for-region, the members of a class (initial values and methods), and the arguments of `print`
+  (and of host calls: expression types the processor "ignores"). An input or output named there keeps pointing at
+  the declaration that is removed afterwards: `The valued object reference points to a valued object (x) that is
+  not contained in the model!` (rejected; engine code `unbound-reference`). Probes
+  `structure/probe-reference-interface-print`, `-interface-class-method`, `-interface-for-range`. The same holds for
+  generic parameters (S-74). Source: `processors/Reference.xtend:447-560` (the walk), `:814-818` (ignored
+  expression types), `:900-925` (`validate`).
 - Teaching: an instance works directly on the variables you pass it; nothing is copied in at the start or out
   at the end of a tick. Plain English: "inside the instance, its `beep` simply *is* your `speaker`."
 - Implementation: substitute (or alias) at expansion time; do not copy values in and out. Scheduling
@@ -363,15 +377,33 @@ A state without code (case 2) trips later steps:
 ### S-17 `region R is ...` refers to inherited regions only
 
 `region R is X` does **not** instantiate a chart: `X` must be a region inherited from a base chart (`scchart A
-extends B`), normally written `region is super.R` inside an `override region R`. A chart name does not resolve:
-`Couldn't resolve reference to NamedObject 'St22Beep'.` (`types.ts` describes `Region.reference` as
-"`region R is Other(...)`"; that is misleading.)
+extends B`). A chart name does not resolve: `Couldn't resolve reference to NamedObject 'St22Beep'.` (`types.ts`
+describes `Region.reference` as "`region R is Other(...)`"; that is misleading.)
 
-- Evidence: `22-err-region-is-chart`, `24-region-is-super`.
-- Source: `SCTXScopeProvider.xtend:127-128` (region context: `getAllVisibleInheritedRegions`).
+- **`region is super.R`** takes the base chart's version of a region, normally inside the `override region R` that
+  replaces it; it also works outside an override region and inside a state of an ordinary region
+  (`probe-extends-region-super`, `-super-inner-state`, `-override-is-super`: `override region R is super.R`). It
+  takes no arguments (`A reference to a super scope must not have parameters!` / `... generic parameters!`).
+- **`region Q is R`** (without `super`) is a **copy** of the inherited region `R`, appended to the state's regions
+  in `Q`'s place; `R` itself is inherited as well, so the behaviour runs twice (`probe-extends-region`: `o` grows
+  by 2 per tick; two copies: by 3, `-two`). It also works inside a state of the extending chart, where the copy
+  restarts with the state (`-inner-state`). A region the state overrides itself is not visible without `super`
+  (`-overridden`: `Couldn't resolve reference to NamedObject 'R'.`).
+- The copy is bound like a referenced chart, with the **names the region uses** as its interface, in the order
+  they are first named: arguments bind them by the pointer of S-6, the rest by name to the variables around `Q`
+  (the inherited declarations count). `region Q is R(p)` therefore makes the copy write `p` where `R` writes its
+  first variable `o` (`-binding`: both grow). A name with nothing to bind to is an error: a declaration of `R`
+  itself (`-own-declaration`) and a generic parameter of the base chart (`-generic`), both
+  `The referencing binding is erroneous!\nValued object in the referenced scope was not bound properly: k`.
+
+- Evidence: `22-err-region-is-chart`, `24-region-is-super`, probes `tests/engine/kieler/parity/probe-extends-region*`.
+- Source: `SCTXScopeProvider.xtend:109-134` (region context: `getAllVisibleInheritedRegions(!super)`),
+  `processors/Reference.xtend:264-379` (`expandReferencedScope`, the `Region` branches),
+  `SCChartsReferenceExtensions.xtend:116-118` (a region's binding targets: every valued object it names),
+  `Inheritance.xtend:398-404, 532-544` (the bindings kept for `super`).
 - Teaching: to run a chart concurrently with other regions, write `region { initial state R is C(...) }`.
-- Implementation: resolve `region ... is X` only against regions inherited through `extends`; `super.X` takes
-  the base chart's version of an overridden region.
+- Implementation: `super.X` where the base charts are inherited (passes/inheritance.ts); `region Q is R` in the
+  Reference pass (`expandRegion`), validation in `validate.ts` `checkRegionReference`.
 
 ### S-18 `ref C g(args)` outside dataflow: a concurrent instance
 
@@ -396,6 +428,188 @@ to a C function call that its netlist back end never defined (`implicit declarat
 
 - Teaching: do not teach it; `is` says the same.
 - Implementation: expand it as a reference.
+
+---
+
+## 2a. Generic parameters
+
+A chart can declare generic parameters after its name, `scchart C<N is int, T is primitive, W is Worker, V is ref
+Worker, X>`, and everything that uses the chart gives arguments: `state S is C<4, int, Fast, w, Fast>(p)`, `ref
+C<...> g` or `ref C g<...>`, `scchart D extends C<...>`. KIELER binds them in its Reference and Inheritance
+processors, on the same replacement stack that binds inputs and outputs.
+
+### S-73 Parameters and arguments
+
+| Parameter | What it is | Argument |
+| --- | --- | --- |
+| `N is int` (`bool`, `float`, `string`, `pure`) | a **value**: a name the chart uses like a variable | a literal of exactly that type (`4`, `true`, `1.5`), or a variable, signal, constant, array or array element declared with that type |
+| `T is primitive` | a **primitive type**: `primitive T x`, `const primitive T K`, `primitive T a[2]`, `method primitive T f(primitive T v)` | `int`, `bool`, `float` or `pure`, written out |
+| `W is Chart`, or `X` without `is` | a **chart type**: `state S is W(...)`, `ref W w` | a chart that is `Chart` or extends it (any number of levels) without adding inputs or outputs; for `X` anything (also a type: `ref X v` with `int` is an int variable) |
+| `V is ref Chart` | an **instance**: `V.method()`, `V.field` | a variable declared `ref Chart v` (or of a chart that extends it; the instance's own override runs) |
+
+- Arguments are bound **by position**, never by name; every parameter needs one, also one the chart never names
+  (`There is no parameter given for generic parameter declaration of N.`), and a surplus one is an error (`There
+  is no declaration for the given generic parameter (position: 1).`), also on a chart without generic parameters.
+- A bare name in the arguments is a chart first, then a type parameter of the chart around it, then a variable
+  (`KExtGenericParamterConverter`). A type parameter `W` hides a chart called `W` in `state S is W`
+  (`probe-generic-type-hides-chart`). After `is` only a chart can be named (an enum: `Couldn't resolve reference to
+  NamedObject 'Color'.`); `primitive N x` needs `N is primitive` (`Couldn't resolve reference to EObject 'N'.`).
+- **Literals.** The type must be equal (`Type mismatch! Generic parameter F of type float cannot take literal of
+  type int.`). A **string literal is always refused** (`... cannot take literal of type UNKNOWN.`: a string value
+  has no type in KIELER); a string variable works. A negative number and any expression are syntax errors, and so
+  is `Holder<Box<4>>` (the `>>` is a shift operator; `Holder<Box<4> >` parses).
+- **Variables.** KIELER compares the declared type of the *first* name: `C<a[1]>` and the whole array `C<a>` pass
+  for an int array (the chart may then index the parameter, `N[1]`), a member `C<c.x>` does not (`... cannot take
+  valued object declared with type class.`).
+- Two parameters may have the same name (the last argument wins), and the chart may declare a variable with a
+  parameter's name (S-74).
+- The first chart of a file cannot be generic: `A root SCChart cannot have unbound generic parameters.` (also
+  when it never names the parameter, and when it only hands it to its base chart).
+- `ref C<2> g<7>`: `Cannot mix generic parameters in variables and declaration`. With arguments or bindings on the
+  variables (`ref C g<2>, h<5>`) KIELER makes a declaration, and a class, of each: the trace has `C1.n` and `C2.n`,
+  as for two declarations of one chart (`-decl-class-two-declarations`); one declaration with two plain variables
+  is one class `C1` (`-decl-class-one-declaration`).
+- Generic arguments on references and `ref` declarations are checked by the validation in every chart of the file;
+  those on `extends` only when the chart is compiled (S-76), so a wrong one in an unused chart goes unnoticed
+  (`probe-generic-extends-mismatch-unused-chart` against `-argument-missing-unused-chart`).
+
+- Evidence: `tests/engine/kieler/generics/probe-generic-*` (192 probes: `-value`, `-value-input`, `-literal-*`,
+  `-type-mismatch-*`, `-argument-*`, `-chart-type*`, `-instance*`, `-untyped-*`, `-decl*`, `-root*`, ...).
+- Source: grammar `kexpressions/.../kext/KExt.xtext:281-330`, `sccharts/.../text/SCTX.xtext:27-36, 67-89, 406-427`;
+  scoping `text/scoping/SCTXScopeProvider.xtend:117-134, 177-252, 374-402`,
+  `kext/converter/KExtGenericParamterConverter.xtend`; bindings and their messages
+  `extensions/SCChartsReferenceExtensions.xtend:273-336`, `extensions/SCChartsTypeExtensions.xtend:72-176`;
+  `kexpressions/.../extensions/KExpressionsGenericParameterExtensions.xtend` (the four kinds);
+  `kexpressions/.../validation/KExpressionsValidator.xtend:64-76`.
+- Teaching: generic charts are the wiki's "templates". Show a value parameter with a literal first; mention that
+  strings need a variable.
+- Implementation: `parser/parser.ts` (`GenericParameterDeclaration`, `GenericArgument` beside the strings),
+  `parser/resolve.ts` (scoping), `parser/generics.ts` (bindings and messages), `parser/validate.ts`.
+
+### S-74 Binding is by name: where a parameter is replaced, and what it captures
+
+A value parameter is replaced like a bound input (S-9), with KIELER's replacement stack, which is keyed by
+**name**: binding pushes `N -> argument`; every scope the walk enters pushes its own declarations as themselves
+and pops them when it leaves; a nested reference starts from a **copy of the whole stack**.
+
+- A **variable** argument is substitution: the parameter *is* the variable (`C<i>` follows the input tick by
+  tick; an array element with a variable index is read anew; the chart may write it, `-value-written-variable`).
+- A **literal** argument is the literal wherever the parameter is named. Writing it crashes KIELER's compiler
+  (`N += 1`: `ClassCastException: IntValueImpl cannot be cast to ... ValuedObjectReference`, engine `kieler-crash`,
+  `-value-written-literal`); `pre(N)` becomes `pre(4)`, which gcc refuses (`expected identifier ... before numeric
+  constant`, `generic-pre`, `-value-pre-literal`).
+- A **constant** as the argument is still a name when KIELER binds it (its Const processor runs after the
+  Reference processor): reads get the value, but a write is an assignment to the constant, `Cannot replace left
+  hand side of assignment by a value. (Trying to replace ... K by ... (value: 4) in ... K += 1)` (engine
+  `bound-const-written`; `-value-written-const`, `-extends-written-const`), also for a captured local
+  (`-capture-const-written`, found by the `generics` fuzz profile) and for an input of an ordinary reference
+  (`structure/probe-reference-const-written`; a literal there makes the input a local that starts with it and can
+  be written, `structure/probe-reference-literal-written`). `pre(N)` fails with a constant as with a literal
+  (`-value-pre-const`). A computed constant and an element of a constant array are fine as arguments
+  (`-value-const-computed`, `-value-const-array-element`); a for-region counter is not (no declared type,
+  `-value-for-counter`).
+- **Not replaced** (as S-9): the range of a for-region (`-value-for-range`), class members (`-value-class-initial`,
+  `-value-class-method`), `print` (`-value-print`), and additionally the **generic arguments** of a reference and
+  of a `ref` declaration's chart: `state T is Inner<N>(o)` and `ref Inner<N> g` fail (`-forward-is`,
+  `-forward-decl`: `The valued object reference points to a valued object (N) that is not contained in the
+  model!`), while `ref Inner g<N>` (arguments after the variable) and `state T is Inner(N, o)` work
+  (`-forward-decl-variable`, `-value-inner-argument`). Through `extends` all of these are replaced (S-76).
+- **Capture.** The top of a copy does not push its declarations, and a generic parameter is no declaration, so
+  nothing renames a nested chart's local out of the way (S-11 does that for inputs and outputs):
+  - a chart referenced inside an instance of `Outer<N>` that declares `int N = 100` at its top gets the outer
+    parameter: with a literal the local **starts with the argument** (it stays a variable and can be written,
+    `-capture`, `-capture-literal-written`); with a variable argument the local *is* that variable
+    (`-capture-variable`). At any depth of nesting, also for a local the nested chart inherits
+    (`-capture-extending`), and even when the simulated chart has a variable of that name (`-capture-detached`).
+    A local of an inner state keeps its own value (`-capture-inner-scope`);
+  - the generic chart's own variable of the parameter's name behaves the same (`-own-declaration`: starts with
+    3, not 50); inside an inner state that declares the name, the name is the variable (`-shadow-inner-scope`);
+  - an input of the same name loses to the parameter (`-parameter-and-input-same-name`); a nested generic chart
+    with a parameter of that name gets its own argument (`-inner-own-parameter`);
+  - a chart with such a variable that binds an inner reference **by name** crashes the compiler
+    (`IllegalStateException: There is a matching valued object on the replacement stack for an implicitly bound
+    variable ( N). ...`, `-implicit-crash`).
+- `scchart(G).K` reads a constant of a generic chart, and works inside one (`-static-access-of`, `-static-access-in`);
+  a constant whose value is the parameter stays behind (`-static-access-parameter`, S-70).
+- `state(S)` in a method works in the chart KIELER compiles and in instances declared with `ref`, **not** in a
+  chart copied for `state S is C` (MethodSignaling is not run on that copy): gcc's `implicit declaration of
+  function ‘state’` (`-state-access`, `structure/probe-reference-state-access`, `-state-access-declared`; engine
+  `state-access-copy`).
+
+- Evidence: the probes named above (all `tests/engine/kieler/generics/probe-generic-…`).
+- Source: `kexpressions/.../kext/extensions/Replacements.xtend` (name-keyed stacks; the copy constructor copies the
+  stacks but not the type replacements); `processors/Reference.xtend:195-261` (`expandRoot`), `:264-379`
+  (`expandReferencedScope`: bindings pushed at 306-317, nested references expanded during the walk at 486-488),
+  `:447-560` (the walk and its pushes), `:684-789` (`replaceReferences`, `replaceReferenceWithLiteral`: a declared
+  variable gets the literal as its initial value, anything else is replaced by it), `:867-898` (renaming looks at
+  declarations only), `SCChartsReferenceExtensions.xtend:161-181` (the IllegalStateException).
+- Teaching: do not name a variable like a generic parameter; pass a variable when the chart writes the parameter.
+- Implementation: `sim/structure/replacements.ts` (the stack and the walk), `sim/passes/reference.ts`.
+
+### S-75 Type parameters
+
+- `primitive T x` is a variable of the type given for `T`, with its initial value and arithmetic (`-primitive-int`,
+  `-primitive-float-initial`, `-primitive-array`, `-primitive-const`); a method's generic return and parameter types
+  become the type (`-method-types`; anything but a primitive type there: `Only primitive generic types are
+  currently supported as return types.`). `pure` passes the check and then fails in the simulation (`Cannot
+  serialize simulation interface. Unsupported type: pure`, `-primitive-pure`); `string` is refused (`... cannot
+  accept type string.`). A primitive type parameter cannot be handed on to another generic chart (`Generic parameter
+  U with primitive type restriction must be bound to a concrete primitive type, not ValuedObjectReferenceImpl.`).
+- **A declaration of a generic type is no longer an input or output.** KIELER replaces it by a plain variable
+  declaration of the type. Its static check therefore refuses to bind `input primitive T x` or `output primitive T
+  y` to a variable (`Cannot substitute reference of type T by valued object of type int`, `-primitive-interface-
+  variable`); only a literal of the given type binds to such an input (`-primitive-input-literal`; another type:
+  `Type of literal value bool does not match generic type argument int for T`). Through `extends Base<int>` the
+  base chart's `input primitive T x` becomes a local `x` the environment cannot set (`-extends-type`).
+- `state S is W(args)` is an instance of the chart given for `W`, bound as that chart is (the validation checks the
+  bindings against `W`'s declared chart); `ref W w` an instance of it, also in a dataflow region, whose methods
+  are found by signature in the chart actually given (`-chart-type*`, `-chart-type-decl-override`).
+- The chart given for `W` may carry generic arguments of its own (`Holder<Box<4> >`), which are used unless the
+  use gives some too (`Conflicting generic parameters passed to scope call in S via generic type and in call.`,
+  `-nested-argument-conflict`). KIELER's validation checks `state S is W(q)` against `Box` without arguments, so only
+  `ref W w` (`-nested-argument-decl`) and `state S is W<5>(q)` with a bare `Box` (`-chart-type-own-arguments`)
+  work.
+- A chart type parameter cannot be handed on (`state U is V(o)` then stays `Invalid reference V! Only
+  States/Regions can be instantiated.`, `-chart-type-forward`).
+- The lab server's recursion check covers charts with type parameters only when the simulated chart itself is
+  reached again (`-recursion-type-root`); a chart with value parameters only is checked like any other
+  (`-recursion`, S-16).
+
+- Source: `processors/Reference.xtend:562-635` (`replaceGenericTypeParametersInState`), `:390-415` (recursion),
+  `extensions/SCChartsTypeExtensions.xtend:201-280` (the interface checks), `SCTXValidator.xtend:1059-1076`.
+- Implementation: `sim/passes/reference.ts` `replaceGenericTypes`, `plainVariable`.
+
+### S-76 Generic arguments on `extends`
+
+`scchart D extends Base<3>` binds the base chart's parameters in the Inheritance processor (S-66), which replaces
+**every** reference in the chart, so what the Reference processor skips works here: the parameter in a for-region
+range (with a literal: `-extends-for-range`; a variable or even a constant is still a name when the for-region is
+copied: `The for-region range ... ends at K, which is not an integer literal.`, `-extends-for-range-const`), in a
+class method, in `print`, and in the generic arguments of `state T is Inner<N>` and `ref Inner<N> g`
+(`-extends-class-method`, `-extends-print`, `-extends-forward-is`, `-extends-forward-decl`).
+
+- The argument may be a literal, a variable or constant of the extending chart (`-extends-input`, `-extends-const`),
+  or the extending chart's own parameter (`scchart Mid<M is int> extends Base<M>`, `-extends-forward`). The
+  extending chart cannot name the base chart's parameter (`Couldn't resolve reference to ValuedObject 'N'.`).
+- Errors come from the compiler, not the validation: `Errornous generic parameter. Paramter N of Base was not set
+  correcly. <message of S-73>` (wrong type, missing, surplus; engine `generic-argument`); without any argument the
+  parameter simply stays unbound (`... (N) that is not contained in the model!`). An inner state's `extends` is
+  checked by the validation too (`The binding of inherited variables is erroneous!`).
+- A base chart reached along two paths with arguments is `Conflicting generic parameters. Binding Paramter N of
+  Base was already set to ... and cannot be set to ...` even when the arguments are equal (KIELER compares the
+  objects; `-extends-diamond-method`).
+- Types: `extends Base<int>` turns the inherited declarations and methods of type `T` into `int` ones
+  (`-extends-type-used`, `-extends-method`), and an override may declare the concrete types (`override method int
+  inc(int v)` for `method primitive T inc(primitive T v)`, `-extends-override-concrete`; another type: `Overriding
+  methods must not declare a different return type than the given generic type argument (int vs. bool).`, for a
+  parameter `(index 0: int vs. bool)`, `-extends-override-wrong-return`, `-wrong-parameter`).
+  `ref W w` in the base is replaced, `state S is W` is **not** (`Invalid reference W!`, `-extends-chart-type`).
+- A chart that extends a generic base can be referenced, declared with `ref` and extended further like any other
+  (`-extends-referenced`, `-decl-of-extending`).
+
+- Source: `processors/Inheritance.xtend:278-447` (bindings and replacement), `:449-508` (types);
+  `extensions/SCChartsInheritanceExtensions.xtend:296-365` (overrides), `extensions/SCChartsGenericTypeExtensions.xtend`.
+- Implementation: `sim/passes/inheritance.ts` `bindInherited`.
 
 ---
 
@@ -1693,13 +1907,48 @@ twice through the hierarchy is inherited once). Then:
 | an inheritance cycle | `Inconsistent inheritance hierarchy! Cycle including base state: B` (source) |
 | an inner state `state T extends B` that leaves an input or output of `B` unbound | `The binding of inherited variables is erroneous!` + `Valued object in the referenced scope was not bound properly: o` (`parity/probe-inner-extends-unbound`) |
 
-An inner state can extend a chart too (`initial state T extends B(o)`), with a parameter list as for a reference
-(S-6 to S-10). Unlike a reference, its unbound inputs and outputs are **not** bound by name to the variables
-around it: only to the inputs and outputs that an enclosing state (or the chart) inherits through its own
-`extends`. The enclosing chart's own `output int o` does not bind `B`'s `o` (`probe-inner-extends-own-name`,
-rejected); an `o` the chart inherits does (`probe-inner-extends-inherited-name`). Evidence:
-`tests/engine/kieler/parity/probe-inner-extends*`; source `SCTXValidator.checkBaseStateBindings`,
-`SCChartsReferenceExtensions.createBindings(BaseStateReference)`.
+**Bindings on `extends`.** `scchart X extends Base(i, p)` binds the base chart's inputs and outputs to the
+chart's own variables (by the pointer of S-6, `x to y` too, a literal for an input): the base's names are replaced
+everywhere and their declarations go, so the pool has `i` and `p` only (`probe-extends-binding`, `-named`,
+`-literal`). The argument names are looked up in the chart's own declarations and what the bases written *before*
+this one give it, not in what it inherits from this very base (`extends Base(x, o)`: `Couldn't resolve reference
+to ValuedObject 'x'.`). **The list must bind every input and output of the base**: an open one has no source, and
+KIELER's compiler copies it regardless (`java.lang.NullPointerException ... Inheritance.replaceVOR`; engine
+`kieler-crash`; `probe-extends-binding-open*`). `extends Base()` binds nothing and is fine (`-empty`). A literal
+bound to an output the base writes crashes the compiler as a written literal parameter does
+(`-binding-literal-output`). The validation says nothing about a root chart's parameter list, so such a chart is
+only rejected when it is compiled (`-binding-open-unused-chart`). A reference to such a chart binds its own
+inputs and outputs only (`-binding-referenced`).
+
+**Inner states.** A state inside a chart can extend a chart (`initial state T extends B(o) { ... }`): it gets
+`B`'s declarations (as locals, hidden from the pool), actions (before its own) and regions, can override regions
+and use `region is super.R`, add regions and actions of its own, and inherit methods; two states extending the
+same chart have a copy each (`probe-extends-inner*`: `-binding`, `-binding-named`, `-binding-literal`,
+`-transitions`, `-own-region`, `-override`, `-override-super`, `-actions`, `-method`, `-two`, `-two-levels`,
+`-generic`). Its parameter list follows the rule above, and unlike a reference its unbound inputs and outputs are
+**not** bound by name to the variables around it: only to the inputs and outputs that an enclosing state (or the
+chart) inherits through its own `extends` (`probe-inner-extends-own-name`, rejected;
+`probe-inner-extends-inherited-name`). KIELER inherits for the chart it compiles, the states inside it and the
+instances of `ref` declarations (`-inner-in-declared`), but **not for the states inside a chart it copies for
+`state S is C`**: such a state keeps nothing from its base (`-inner-in-referenced`: accepted, the base's region
+never runs), and naming something of the base, or binding with a parameter list, points out of the model
+(`-inner-in-referenced-name`, `-inner-in-referenced-binding`).
+
+**Diamonds.** A base chart reached along two paths is rejected as soon as it declares a non-private variable:
+`There is a name clash between declared valued object in inheritance hierarchy. Valued object with name k is
+declared multiple times (B, B).` (`probe-extends-diamond`; KIELER counts the two base *references*); without one
+it is inherited once (`-diamond-empty`). Two base charts with a region of one name: `There is a name clash
+between regions IDs in inheritance hierarchy. Region with name R is declared multiple times (L, R).`
+(`-region-clash`).
+
+**`state(S)` in a base chart's method** does not work: KIELER makes the flag where `S` is written, in the base
+chart, which is not compiled (`The valued object reference points to a valued object (_R_B_active) that is not
+contained in the model!`, `probe-extends-state-access`, engine `state-access-copy`).
+
+Evidence: `tests/engine/kieler/parity/probe-extends-*`, `probe-inner-extends*`; source `Inheritance.xtend:95-521`
+(bindings 278-447), `SCTXValidator.xtend:208-275` (clashes), `:430-447` (`checkBaseStateBindings`),
+`SCChartsReferenceExtensions.xtend:244-271`, `SCTXScopeProvider.xtend:374-390` (what an argument of `extends`
+sees), `processors/Reference.xtend:195-204, 288-292` (where inheritance is applied).
 
 **Official KIELER 0.3.0 cannot compile method overrides**: every chart with an `override method` that is called
 fails there (no answer at all for `131` and `138`; gcc errors or no answer for the probes; gcc errors for the
@@ -2031,6 +2280,13 @@ Exact texts as reported by the oracle (lab server). "official" marks differences
 | bool variable to signal formal | `O is an output bool variable, not a signal, so it cannot be emitted.` (lab; official crashes) | S-8 |
 | recursive reference | `Recursive reference: chart X uses itself (X -> X).` (lab; official never finishes) | S-16, `21` |
 | `region R is Chart` | `Couldn't resolve reference to NamedObject 'Chart'.` | S-17, `22` |
+| missing, surplus or wrong generic argument | `The referencing binding is erroneous!\n` + `There is no parameter given for generic parameter declaration of N.` / `There is no declaration for the given generic parameter (position: 1).` / `Type mismatch! Generic parameter N of type int cannot take literal of type bool.` | S-73 |
+| generic chart first in the file | `A root SCChart cannot have unbound generic parameters.` | S-73 |
+| a generic parameter or bound input where KIELER does not replace it | `The valued object reference points to a valued object (N) that is not contained in the model!` | S-9, S-74 |
+| a written literal parameter | `java.lang.ClassCastException: ... IntValueImpl cannot be cast to ... ValuedObjectReference` | S-74 |
+| wrong generic argument on `extends` | `Errornous generic parameter. Paramter N of Base was not set correcly. ...` | S-76 |
+| `extends Base(i)` leaving an output open | `java.lang.NullPointerException ... Inheritance.replaceVOR` | S-66 |
+| a base chart with a variable, reached along two paths | `There is a name clash between declared valued object in inheritance hierarchy. ...` | S-66 |
 | missing import | warning `Broken Import: There is no SCCharts model with the given name.` + link errors | S-20 |
 | link error in another chart | e.g. `Couldn't resolve reference to ValuedObject 'q'.` | S-2, `27` |
 | for-region problems | see S-24 | `33`–`37`, `94` |

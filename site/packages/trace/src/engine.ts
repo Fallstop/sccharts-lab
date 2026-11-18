@@ -109,7 +109,7 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
                 if (root.declKind !== 'reference' || !root.instance || (v.declKind && v.declKind !== 'class' && v.declKind !== 'struct')) continue
                 const classes = chain.slice(1, -1).map((c) => result.index?.vos.get((c.decl ?? '').split('/').pop()!)?.decl?.className ?? c.member!.name)
                 out.push({
-                    name: [`${root.instance.target}1${nested ? '1' : ''}`, ...classes, v.member.name].join('.'), input: false, output: false,
+                    name: [`${root.instance.className ?? `${root.instance.target}1`}${nested ? '1' : ''}`, ...classes, v.member.name].join('.'), input: false, output: false,
                     type: v.declKind ?? typeName(v.type, v.hostType), dims: [], late: true,
                 })
                 continue
@@ -117,7 +117,7 @@ function generatedMemberDeclarations(result: Compiled, out: PoolVariable[]): voi
             if (v.declKind) continue
             const { of } = v.member
             let type: string | undefined
-            if (of.declKind === 'reference' && of.instance) type = `${of.instance.target}1`
+            if (of.declKind === 'reference' && of.instance) type = of.instance.className ?? `${of.instance.target}1`
             // An inherited instance's id has the base chart's copy in front (`…/Base$a`).
             else if (nested && (of.declKind === 'class' || of.declKind === 'struct')) type = (result.index?.vos.get(of.decl ?? '') ?? result.index?.vos.get((of.decl ?? '').split('/').pop()!))?.decl?.className
             if (!type) continue

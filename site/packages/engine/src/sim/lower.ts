@@ -367,6 +367,9 @@ class Lowering {
                     const generics = this.genericArgs(own ? vo.genericArguments : d.genericArguments)
                     this.vars.get(vo.id)!.instance = {
                         target: d.referenceTarget, args: this.args(vo.parameters ?? []),
+                        group: d.valuedObjects[0].id,
+                        // (separateReferenceDeclarationsWithIndividualBindingsInVOs)
+                        ...(d.valuedObjects.length > 1 && d.valuedObjects.some(x => x.parameters?.length || x.genericArguments?.length) ? { separate: true } : {}),
                         ...(generics.length ? { generics, declGenerics: !own } : {}),
                         ...(d.referenceParameter ? { typeParam: d.referenceParameter } : {}),
                     }
@@ -381,7 +384,16 @@ class Lowering {
 
     /** Arguments of a reference, lowered in the referencing scope (structure.md S-6). */
     args(parameters: ScopeParameter[]): CArg[] {
-        return parameters.map(p => ({ expr: this.expr(p.expression), binding: p.binding, span: p.span }))
+        return parameters.map(p => ({ expr: this.argument(p.expression), binding: p.binding, span: p.span }))
+    }
+
+    /**
+     * An argument of a reference. A constant's name is its value here (constants are inlined while lowering), but
+     * KIELER's Reference processor runs before its Const processor and binds the name: the literal remembers it.
+     */
+    private argument(e: Expression): CExpr {
+        const value = this.expr(e)
+        return e.kind === 'ref' && value.k === 'lit' ? { ...value, konst: e.name } : value
     }
 
     /** Generic arguments, lowered where they are written (structure.md S-73). */
@@ -389,7 +401,7 @@ class Lowering {
         return (list ?? []).map((a): CGenericArg => {
             const at = { text: a.text, span: a.span }
             if (a.valueType) return { ...at, k: 'type', type: a.valueType }
-            if (a.expression) return { ...at, k: 'expr', expr: this.expr(a.expression), ...(a.expression.kind === 'ref' ? { named: true } : {}) }
+            if (a.expression) return { ...at, k: 'expr', expr: this.argument(a.expression), ...(a.expression.kind === 'ref' ? { named: true } : {}) }
             return { ...at, k: 'chart', name: a.typeName ?? '', args: this.genericArgs(a.typeArguments) }
         })
     }

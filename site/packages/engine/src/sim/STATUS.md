@@ -212,7 +212,8 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   braces, `extraneous input '}' expecting EOF`, `For input string: "3000000000"`, `mismatched character '<EOF>'
   expecting '*'` / `'"'`), `missing-semicolon`; `swallowed-line` (warning, the guide's own).
 - **Names** (error, `Couldn't resolve reference to ...`): `unknown-variable`, `unknown-state`, `unknown-chart`,
-  `unknown-region`, `unknown-binding`, `unknown-label`, `unknown-type`, `not-callable`. Reported after syntax errors
+  `unknown-region`, `unknown-binding`, `unknown-label`, `unknown-type`, `unknown-generic-type` (`primitive T x`
+  without `<T is primitive>`), `not-callable`. Reported after syntax errors
   too (the corpus test compares them with KIELER). An unresolved transition target has `related` = the state it leaves
   and the transition (`['Lamp.On', 'Lamp.On->1']`: the widgets can mark the source; the transition is not drawn), and
   `suggestion` when there is a near name.
@@ -225,7 +226,9 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   ambiguous between anonymous regions; inside a method body it is accepted and simulated, S-69), `private-interface`,
   `method-arguments`,
   `method-signature` (KIELER's method inheritance checks), `method-without-call`, `return-outside-method`,
-  `return-without-type`, `this-parameter`, `inheritance-cycle`, `inherited-name`, `override-anonymous`,
+  `return-without-type`, `this-parameter`, `inheritance-cycle`, `inherited-name`, `inheritance-clash` (a base chart
+  with a variable reached along two paths, two base charts with a region of one name), `generic-arguments-twice`
+  (`ref C<2> g<7>`), `override-anonymous`,
   `override-missing`, `override-nothing`, `dataflow-scalar-to-reference`, `deprecated-import`,
   `violation-without-enforcer`, `non-signal-emission` (error when the emission is reachable, else warning), `for-range`,
   `no-chart`, `unknown-chart` (`compile({ chart })`).
@@ -263,13 +266,58 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `method-without-value`, `method-without-return`, `signal-member`, `unpack-instances`, `suspend-without-trigger`,
   `abort-region-order`, `abort-region-alone`, `binding-expression`, `recursive-reference`, `for-counter-assignment`,
   `for-counter-method`, `dataflow-for`, `unknown-type`, `shared-clock`, `clock-variable`, `clock-array`,
-  `timing-constraint`, `default-sleep`, `inheritance-conflict`, `module-call`.
+  `timing-constraint`, `default-sleep`, `inheritance-conflict`, `module-call`; generic parameters and inheritance
+  (structure.md S-73 .. S-76, S-66): `unbound-generic` (a generic chart first in the file), `unbound-reference` (a
+  parameter or bound input where KIELER does not replace it), `generic-type-unbound`, `generic-argument` (on
+  `extends`), `generic-arguments-conflict`, `generic-method-type`, `generic-pre`, `generic-pure-type`,
+  `bound-const-written`, `state-access-copy`.
 - **The guide's notes**: `unsupported` (info: the simulator cannot run it), `kieler-quirk` (info or warning),
   `kieler-bug` (warning), `kieler-divergence` (warning), `kieler-loop-warning` (info), `internal` (error: an engine
   bug).
 - **Runtime** (`TickResult.error.code`): `division-by-zero`, `division-overflow` (`-2147483648 / -1`),
   `index-out-of-range`, `runaway-loop`, `missing-return`, `float-modulo`, `array-assignment`, `unsupported`,
   `internal`.
+
+## Generic parameters and the rest of Inheritance
+
+KIELER's generic SCCharts run (structure.md S-73 .. S-76), and the three `unsupported` reports of the Reference and
+Inheritance passes are gone: bindings and generic arguments on `extends`, `extends` on inner states, `region Q is R`
+outside an override region (S-17, S-66). Probed with the lab server; 252 recorded probes (`tests/engine/kieler/
+generics/probe-generic-*`, `parity/probe-extends-*`, `structure/probe-reference-*`), `tests/engine/generics.test.ts`
+pins the API around them.
+
+- **Front end**: the parser keeps `GenericParameterDeclaration` and `GenericArgument` structures beside the strings
+  (`genericParameterDeclarations`, `genericArguments`); name resolution follows KIELER's scoping (a bare argument is
+  a chart, then a type parameter, then a variable; a type parameter hides a chart of its name in `is W`; an
+  argument of `extends` sees the chart's own names and those of the bases before it); the validation reports
+  KIELER's binding messages for generic arguments on references and `ref` declarations in every chart of the file
+  (`parser/generics.ts`), the diamond and region clash checks, and the bindings of `region Q is R`.
+- **Binding by name** (`sim/structure/replacements.ts`, `passes/reference.ts`): a port of KIELER's `Replacements`
+  stack and of the walk that applies it, with nested references expanded during the walk. It reproduces what
+  KIELER's walk misses (a for-region range, class members, `print`, the generic arguments of `is C<N>` and `ref
+  C<N> g`: `unbound-reference`) and what the name key captures: a nested chart's local with the name of an
+  enclosing chart's generic parameter is taken for the parameter. A literal argument is the literal (writing it
+  crashes KIELER's compiler: `kieler-crash`), a constant argument is still the constant's name when KIELER binds
+  (writing it: `bound-const-written`), a variable argument is the variable.
+- **Type parameters**: `primitive T x` becomes a variable of the type (and stops being an input or output, as
+  KIELER's replacement declaration is), `is W(...)` and `ref W w` take the chart given, with the generic arguments
+  it carries.
+- **Inheritance** (`passes/inheritance.ts` `bindInherited`): generic arguments and bindings on `extends` replace
+  every use; a parameter list that leaves an input or output open is KIELER's NullPointerException
+  (`kieler-crash`), a full one works; inner states inherit like charts; KIELER inherits for the chart it compiles,
+  the states inside it and declared instances, not for the states inside a chart copied for `state S is C`.
+- **Found on the way, ordinary references too**: a nested reference is bound by name through the outer chart's
+  input (it was bound to a variable of that name further out); an input named in `print`, in a class method or in
+  a for-region range is rejected as in KIELER; a constant bound to an input that the referenced chart writes is
+  rejected; `state(S)` in a method of a chart copied for `is`, or of a base chart, is rejected
+  (`state-access-copy`); an enum declared in a referenced chart and `scchart(C).X` inside one work (name
+  resolution's results are found for the copies now).
+- **Open**: arrays of chart instances (`ref C g[2]`, with or without generic arguments). KIELER runs
+  `tests`-style charts such as `scchart M { output int p  ref C g[2]  initial state A do g[0].inc(); g[1].inc();
+  p = g[0].n + 10 * g[1].n go to A }  scchart C { int n = 0  method void inc() { n += 1 } }` (pool `"g": [{"n":
+  1}, {"n": 1}]`); the engine accepts the chart and `step()` throws (as before this round). With `dataflow { p =
+  g[0].o + g[1].o }` KIELER's C code does not compile (`subscripted value is neither array nor pointer nor
+  vector`) and the engine runs it.
 
 ## Final polish (engine-5)
 
@@ -542,8 +590,11 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 ## Not yet (charts get the `unsupported` info and cannot be simulated)
 
 Written schedules inside code blocks and methods, on calls, methods, equations and dataflow regions, and of class
-instances (structure.md S-27a; those on effects, triggers, states and regions run), `extends` with generic parameters,
-chart instances in dataflow regions that call methods, dataflow reference calls `A(x, y)`. Never (no C compiler in the browser): host code (backticks), `extern` functions, host
+instances (structure.md S-27a; those on effects, triggers, states and regions run),
+chart instances in dataflow regions that call methods, dataflow reference calls `A(x, y)`. Arrays of chart instances
+(`ref C g[2]`) are not expanded per element yet: KIELER runs them when they are used as objects (`g[0].inc()`, the pool
+has `"g": [{...}, {...}]`) and gcc refuses its code when they are read in a dataflow region; the engine accepts both
+and `step()` fails on the first (open, see "Generic parameters" below). Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".
 
 ## Known differences

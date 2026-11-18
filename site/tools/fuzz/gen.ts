@@ -32,6 +32,12 @@ export type Feature =
      *  an array of structs (`rows[n % 2].arr[1]`), and methods with a loop, which KIELER keeps as functions and whose
      *  accesses it reads through their own `self` (`cells[0].bump()`, `cells[1].put(n)`, `box.fill()`). Not in `mix`. */
     | 'nested'
+    /** Generic parameters (structure.md S-73): referenced charts with value, type and chart parameters given literals,
+     *  variables, types and charts; `ref C<..> g(...)` instances; a base chart with a parameter (`extends GB<3>`), also
+     *  with bindings; inner states that extend a generic chart; `region Q is R`; now and then a form KIELER rejects (a
+     *  missing or wrong argument, a parameter handed on in `is C<N>`, a written literal parameter) and a nested chart
+     *  whose local has an enclosing parameter's name. Not in `mix`. */
+    | 'generics'
 
 export const ALL_FEATURES: Feature[] = [
     'hierarchy', 'concurrency', 'connectors', 'immediate', 'pre', 'data', 'signals', 'valued', 'actions', 'aborts',
@@ -89,6 +95,9 @@ export const PROFILES: Record<string, Profile> = {
     nested: { features: [...BASE, 'nested', 'actions'], optional: ['structs', 'classes', 'code', 'signals', 'count', 'references'], optionalRate: 0.3 },
     // Written schedules ordering concurrent writes of w, in two or three regions.
     schedules: { features: ['hierarchy', 'concurrency', 'data', 'immediate', 'joins', 'schedules'], optional: ['actions', 'signals', 'aborts', 'references'], optionalRate: 0.3, roots: [2, 2, 3], maxDepth: 1 },
+    // Generic charts among ordinary behaviour: references, declared instances, extends, inner extends, region references.
+    // (Aborts and immediate transitions only now and then: most charts should reach the tick-by-tick comparison.)
+    generics: { features: ['hierarchy', 'concurrency', 'data', 'joins', 'generics', 'references'], optional: ['aborts', 'immediate', 'signals', 'actions', 'count', 'pre', 'forRegions', 'locals', 'connectors'], optionalRate: 0.2, weights: { reference: 2, immediate: 0.5 }, maxDepth: 1 },
     // Timed annotations and ode actions among clocks, suspension and references.
     timed: { features: ['hierarchy', 'data', 'immediate', 'joins', 'clocks', 'timed', 'actions'], optional: ['concurrency', 'aborts', 'count', 'suspend', 'references', 'signals', 'history'], optionalRate: 0.25, maxDepth: 1 },
 }
@@ -159,6 +168,8 @@ interface Scope {
     ode?: string[]
     /** Rare forms: a method reading `state(R0.R0s1)`, a chart with constants (`scchart(FK).K`), a primed constant. */
     rare?: { at?: string; konst?: string; prime?: string }
+    /** The simulated chart of the `generics` profile (inner states may extend a generic chart there). */
+    genericRoot?: boolean
 }
 
 class Generator {
@@ -347,7 +358,11 @@ class Generator {
             } else if (s.depth > 0 && this.on('actions') && r.chance(0.25)) {
                 body.push(...this.actions(s, pad + '  ', false))
             }
-            if (body.length) out.push(`${head} {`, ...body, `${pad}}`)
+            if (sup && s.genericRoot && r.chance(0.12)) {
+                // The superstate extends a generic chart and binds its output (the chart's own gz).
+                this.helper('GI', 'scchart GI<M is int> {\n  output int gout = 0\n  region GIR {\n    initial state GIs0\n    if gout < 20 do gout += M go to GIs0\n  }\n}')
+                out.push(`${head} extends GI<${r.pick(['1', '2', '3', 'n'])}>(gz) {`, ...body, `${pad}}`)
+            } else if (body.length) out.push(`${head} {`, ...body, `${pad}}`)
             else out.push(head)
             if (isFinal && r.chance(0.7)) continue
             out.push(...this.transitions(s, pad, names, i, sup, allFinal, isConn, supers))
@@ -452,9 +467,95 @@ class Generator {
         return [`${pad}dataflow {`, ...eqs.map(e => `${pad}  ${e}`), `${pad}}`]
     }
 
+    /** The generic charts made so far: name and parameter kinds. */
+    private genericChildren: { name: string; params: ('int' | 'bool' | 'prim' | 'chart')[] }[] = []
+    private helpers = new Set<string>()
+
+    /** Adds a fixed helper chart of the `generics` profile once. */
+    private helper(name: string, text: string) {
+        if (this.helpers.has(name)) return
+        this.helpers.add(name)
+        this.children.push(text)
+    }
+
+    /**
+     * A generic chart to reference (`G0<2, int>(a, b, x)`); returns the call. Its body uses the value parameters in
+     * triggers and effects, declares a variable of the primitive type parameter, and makes a state an instance of
+     * the chart type parameter.
+     */
+    genericReference(s: Scope): string {
+        const r = this.rng
+        if (!this.genericChildren.length || (this.genericChildren.length < 3 && r.chance(0.5))) {
+            const name = `G${this.genericChildren.length}`
+            const params: ('int' | 'bool' | 'prim' | 'chart')[] = [r.pick(['int', 'int', 'int', 'bool', 'prim', 'chart'] as const)]
+            if (r.chance(0.4)) params.push(r.pick((['int', 'bool', 'prim'] as const).filter(k => k !== 'prim' || !params.includes('prim'))))
+            const names = params.map((k, i) => (k === 'int' ? `N${i}` : k === 'bool' ? `B${i}` : k === 'prim' ? 'T' : 'W'))
+            const header = params.map((k, i) => `${names[i]} is ${k === 'int' ? 'int' : k === 'bool' ? 'bool' : k === 'prim' ? 'primitive' : 'GW0'}`).join(', ')
+            const sub = new Generator(r, new Set([...this.features].filter(f => f !== 'references' && f !== 'forRegions' && f !== 'dataflow' && f !== 'generics')), { features: [] })
+            const scope: Scope = {
+                conc: true, depth: 1, bools: ['p', 'q', ...names.filter((_, i) => params[i] === 'bool')], ints: names.filter((_, i) => params[i] === 'int'),
+                outs: ['o', ...(params.includes('prim') ? ['tv'] : [])], signals: this.on('signals') ? ['T0'] : [], valued: [],
+            }
+            const lines = [`scchart ${name}<${header}> {`, '  input bool p, q', '  output int o = 0', ...(scope.signals.length ? ['  output signal T0'] : [])]
+            if (params.includes('prim')) lines.push(`  primitive T tv = ${r.pick(['1', '2', '0'])}`)
+            const chart = params.includes('chart')
+            const body = sub.region(scope, '    ', `${name}x`)
+            lines.push('  region {', ...body.lines, '  }')
+            // The parameters at work, in regions of their own (commuting updates of the output only).
+            if (scope.ints.length && r.chance(0.7)) {
+                const n = r.pick(scope.ints)
+                lines.push('  region {', `    initial state ${name}u`, r.pick([`    if p do o += ${n} go to ${name}u`, `    if ${n} > 1 do o += 1 go to ${name}u`, `    do o += ${n} + 1 go to ${name}u`]), '  }')
+            }
+            const flag = names.find((_, i) => params[i] === 'bool')
+            if (flag && r.chance(0.7)) lines.push('  region {', `    initial state ${name}b`, `    if ${flag} do o += 1 go to ${name}b`, '  }')
+            if (params.includes('prim') && r.chance(0.7)) {
+                lines.push('  region {', `    initial state ${name}t`, `    do tv += 1 go to ${name}tt`, `    state ${name}tt`, `    if tv > 2 do o += 1 go to ${name}t`, `    go to ${name}t`, '  }')
+            }
+            // The chart given for W, as an instance: its output is the chart's.
+            if (chart) lines.push('  region {', `    initial state ${name}w is W(o)`, '  }')
+            if (scope.ints.length && r.chance(0.12)) {
+                // A chart that is not generic, with a local of the parameter's name at its top (KIELER takes it for the parameter).
+                const local = scope.ints[0]
+                this.helper(`GCAP${local}`, `scchart GCAP${local} {\n  output int o = 0\n  int ${local} = 5\n  initial state GCs0\n  if ${local} < 9 do o += ${local}; ${local} += 1 go to GCs0\n}`)
+                lines.push('  region {', `    initial state ${name}c is GCAP${local}(o)`, '  }')
+            }
+            const target = this.genericChildren.find(g => g.params.length === 1 && g.params[0] === 'int')
+            if (scope.ints.length && target && r.chance(0.04)) {
+                // The parameter handed on in generic arguments: KIELER does not replace it there.
+                lines.push('  region {', `    initial state ${name}f is ${target.name}<${scope.ints[0]}>(p, q, o${scope.signals.length ? ', T0' : ''})`, '  }')
+            }
+            // Now and then the chart writes its value parameter: a crash when it stands for a literal.
+            if (scope.ints.length && r.chance(0.05)) lines.push(`  region {`, `    initial state ${name}v`, `    if p do ${scope.ints[0]} += 1 go to ${name}v`, '  }')
+            lines.push('}')
+            this.children.push(lines.join('\n'))
+            this.genericChildren.push({ name, params })
+            if (chart) {
+                this.helper('GW0', 'scchart GW0 {\n  output int o = 0\n  initial state GWs0\n  do o += 1 go to GWs0\n}')
+                this.helper('GW1', 'scchart GW1 extends GW0 {\n  region GW1R {\n    initial state GWs1\n    do o += 2 go to GWs1\n  }\n}')
+            }
+        }
+        const child = r.pick(this.genericChildren)
+        const args = child.params.map(k => {
+            // A wrong or unusable argument now and then (both tools must reject it).
+            if (r.chance(0.012)) return r.pick(['"txt"', 'true', '1.5', 'int', 'q9'])
+            switch (k) {
+                case 'int': return r.pick(['1', '2', '3', '2', 'n', 'n', ...(this.on('forRegions') ? ['arr[1]'] : []), ...(s.conc ? [] : [r.pick(s.outs)]), 'KG'])
+                case 'bool': return r.pick(['true', 'false', r.pick(s.bools.filter(b => !/^B\d/.test(b)))])
+                case 'prim': return r.pick(['int', 'int', 'float'])
+                default: return r.pick(['GW0', 'GW1', 'GW1'])
+            }
+        })
+        const [p, q] = [r.pick(s.bools), r.pick(s.bools)]
+        const o = r.pick(s.outs.length ? s.outs : ['x'])
+        const sig = this.on('signals') ? `, ${r.pick(s.signals.length ? s.signals : ['S'])}` : ''
+        const generics = r.chance(0.012) ? '' : `<${args.join(', ')}>`
+        return `${child.name}${generics}(${p}, ${q}, ${o}${sig})`
+    }
+
     /** A generated chart to reference (`C0(a, b, x)`); returns the call. */
     reference(s: Scope): string {
         const r = this.rng
+        if (this.on('generics') && r.chance(0.75)) return this.genericReference(s)
         if (!this.childNames.length || (this.childNames.length < 2 && r.chance(0.4))) {
             const name = `C${this.childNames.length}`
             this.childNames.push(name)
@@ -489,6 +590,27 @@ class Generator {
             const ann = r.chance(0.5) ? [r.pick(['@DeviationOutput', '@deviationoutput', '@NoSleep', '@IntegerClockType'])] : []
             this.children.push([...ann, `scchart FB${index} {`, r.pick(TIMED_CLOCKS).replace(' t = 0', ' bc = 0'), '  region {', '    initial state FBs0',
                 `    if bc >= ${r.pick([100, 300])} go to FBs1`, '    state FBs1', '    if bc >= 600 do bc = 0 go to FBs0', '  }', '}'].join('\n'))
+        }
+        // The `generics` profile: a base chart with a value parameter, with or without bindings.
+        let base: 'plain' | 'bound' | undefined
+        if (this.on('generics')) {
+            lines.push('  const int KG = 2', '  output int gx = 0, gy = 0, gz = 0')
+            if (r.chance(0.3)) {
+                base = r.chance(0.7) ? 'plain' : 'bound'
+                const arg = r.pick(['1', '2', '3', 'n', 'KG'])
+                // (A wrong argument, or a parameter list that leaves the output open, now and then.)
+                lines[0] = base === 'plain'
+                    ? `scchart F${index} extends GB<${r.chance(0.04) ? 'true' : arg}> {`
+                    : `scchart F${index} extends GBB<${arg}>(${r.chance(0.08) ? 'a' : 'a, gy'}) {`
+                if (base === 'plain') {
+                    this.helper('GB', ['scchart GB<M is int> {', '  output int gb = 0, gq = 0', '  region GBR {', '    initial state GBs0', `    if gb < M + ${r.pick([2, 5])} do gb += M go to GBs0`,
+                        '    if gb > 20 go to GBs1', '    state GBs1', '    do gb = 0 go to GBs0', '  }',
+                        '  region GBQ {', '    initial state GBq0', '    if gb > 3 do gq += 1 go to GBq0', '  }', '}'].join('\n'))
+                } else {
+                    this.helper('GBB', ['scchart GBB<M is int> {', '  input bool gp', '  output int gout = 0', '  region GBR {', '    initial state GBs0', '    if gp do gout += M go to GBs0',
+                        '    if gout > 20 go to GBs1', '    state GBs1', '  }', '}'].join('\n'))
+                }
+            }
         }
         const signals = this.on('signals') ? ['S'] : []
         const valued = this.on('valued') ? ['V'] : []
@@ -563,6 +685,19 @@ class Generator {
             clock: this.on('clocks') ? 't' : undefined, sharedClock: shared, object: this.on('classes') ? 'cnt' : undefined,
             struct: this.on('structs') ? 'pt' : undefined, mode: this.on('enums') ? 'm' : undefined,
             rare: this.on('rare') ? rare : undefined, ode: this.on('timed') ? ['f', 'g'] : undefined, sched: this.on('schedules') ? 's' : undefined, nested: this.on('nested') || undefined,
+            genericRoot: this.on('generics') || undefined,
+        }
+        if (this.on('generics')) {
+            // Instances declared with `ref`, bound to an output of their own; the base chart's output is read here.
+            if (r.chance(0.35)) {
+                const call = this.genericReference({ ...scope, conc: true, outs: ['gx'] })
+                const at = call.indexOf('(')
+                const head = call.slice(0, at)
+                const lt = head.indexOf('<')
+                // The generic arguments after the chart or after the variable.
+                lines.push(lt < 0 ? `  ref ${head} gi${call.slice(at)}` : r.chance(0.5) ? `  ref ${head} gi${call.slice(at)}` : `  ref ${head.slice(0, lt)} gi${head.slice(lt)}${call.slice(at)}`)
+            }
+            if (base === 'plain') scope.ints.push('gb')
         }
         const roots = this.profile.roots ? r.pick(this.profile.roots) : this.on('concurrency') && r.chance(0.35) ? 2 : 1
         const rootDataflow = this.on('dataflow') && r.chance(0.6)
@@ -577,6 +712,9 @@ class Generator {
             lines.push(...sub.lines, '  }')
         }
         if (rootDataflow && !this.dataflowUsed) lines.push(...this.dataflow({ ...scope, conc: true }, '  '))
+        // A copy of the inherited region next to it.
+        // (GBR names the base chart's parameter, which a copy cannot bind: rejected, now and then.)
+        if (base === 'plain' && r.chance(0.3)) lines.push(`  region RQ is ${r.chance(0.1) ? 'GBR' : 'GBQ'}`)
         lines.push('}')
         return [lines.join('\n'), ...this.children].join('\n\n') + '\n'
     }

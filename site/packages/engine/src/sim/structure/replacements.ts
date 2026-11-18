@@ -92,6 +92,8 @@ export interface ReplaceOptions {
     literals: Set<CVar>
     /** Bindings already reported as unusable. */
     reported: Set<string>
+    /** Names whose assignment was reported: the target stays as it is and is no second error. */
+    failed: Set<CVar>
 }
 
 /** A variable KIELER declares with a VariableDeclaration: a literal bound to it becomes its initial value. */
@@ -214,6 +216,18 @@ export class Replacer {
                 const expr = f.expr ? this.expr(f.expr) : undefined
                 const ref = this.ref(f.ref, true)
                 if (ref.k !== 'ref') {
+                    this.options.failed.add(f.ref.v)
+                    const bound = this.replacements.peek(f.ref.v.name)
+                    if (bound?.k === 'lit' && bound.konst !== undefined) {
+                        // The name stands for a constant: KIELER's Const processor finds it on the left of an assignment.
+                        this.options.report({
+                            severity: 'error', code: 'bound-const-written', span: f.o.span ?? f.ref.span, related: this.options.owner ? [this.options.owner] : undefined,
+                            message: `\`${f.ref.v.name}\` stands for the constant \`${bound.konst}\` here, which cannot be assigned`,
+                            kieler: `Cannot replace left hand side of assignment by a value. (Trying to replace ${bound.konst} by ${describe(ref)})`,
+                            hint: `Binding is substitution: inside the copy \`${f.ref.v.name}\` is \`${bound.konst}\` itself. Pass a variable if the referenced chart writes it.`,
+                        })
+                        return { ...f, expr }
+                    }
                     // The target is replaced by the literal and KIELER casts it back to a reference.
                     this.options.report({
                         severity: 'error', code: 'kieler-crash', span: f.o.span ?? f.ref.span, related: this.options.owner ? [this.options.owner] : undefined,
@@ -284,7 +298,8 @@ export class Replacer {
         if (isValue(bound)) {
             // replaceReferenceWithLiteral: a declared variable keeps its name and starts with the value; anything
             // else (a generic parameter) is the value where it is named.
-            if (hasVariableDeclaration(r.v)) {
+            // (A constant's name is a reference to KIELER: plain substitution, the Const processor inlines it later.)
+            if (hasVariableDeclaration(r.v) && !(bound.k === 'lit' && bound.konst !== undefined)) {
                 if (!this.options.literals.has(r.v)) {
                     this.options.literals.add(r.v)
                     r.v.input = false
@@ -296,7 +311,7 @@ export class Replacer {
                 return plain
             }
             void target
-            return { ...copyExpr(bound), span: r.span }
+            return bound.k === 'lit' ? { k: 'lit', t: bound.t, v: bound.v, span: r.span } : { ...copyExpr(bound), span: r.span }
         }
         const key = `${r.v.uid}`
         if (!this.options.reported.has(key)) {

@@ -29,6 +29,8 @@ import { inheritedDeclarations, type CEquation } from '../lower'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { declaredVars, rewriteScope } from '../structure/rewrite'
 import { Replacements, Replacer, isValue } from '../structure/replacements'
+import { spreadInstanceArray } from '../structure/instanceArray'
+import { foldConstants } from '../fold'
 import { processDataflow } from './dataflow'
 import { inherit } from './inheritance'
 
@@ -76,10 +78,16 @@ export class Expansion {
     private readonly reported = new Set<string>()
     /** Interface declarations removed from their copy: a reference still naming one points out of the model. */
     private readonly removed = new Set<CVar>()
+    /** Names whose assignment was already reported (a written parameter that stands for a value). */
+    private readonly failed: Set<CVar>
+    /** The classes KIELER makes of declared instances (by declaration), and how many per chart. */
+    private readonly classNames = new Map<string, string>()
+    private readonly classCounts = new Map<string, number>()
 
     constructor(readonly ctx: PassContext) {
         this.index = ctx.shared.index as ModelIndex | undefined
         ctx.shared.instances = this.records
+        this.failed = (ctx.shared.failedVars ??= new Set<CVar>()) as Set<CVar>
     }
 
     run() {
@@ -95,7 +103,7 @@ export class Expansion {
 
     private replacer(replacements: Replacements, owner: string | undefined, expand: boolean): Replacer {
         return new Replacer(replacements, {
-            report: d => this.ctx.report(d), owner, literals: this.literals, reported: this.reported,
+            report: d => this.ctx.report(d), owner, literals: this.literals, reported: this.reported, failed: this.failed,
             ...(expand ? {
                 expand: (state: CState, r: Replacements) => this.expandState(state, r),
                 expandRegion: (region: CRegion, r: Replacements) => this.expandRegion(region, r),
@@ -255,7 +263,7 @@ export class Expansion {
                 if (!(s.ext.genericArgs as CGenericArg[] | undefined)?.length) s.ext.genericArgs = type.args.map(copyGenericArg)
                 else {
                     this.ctx.report({
-                        severity: 'error', code: 'generic-arguments-twice', span: call.span, related: s.origin ? [s.origin] : undefined,
+                        severity: 'error', code: 'generic-arguments-conflict', span: call.span, related: s.origin ? [s.origin] : undefined,
                         message: `\`${call.target}\` already comes with generic arguments (\`${type.text}\`), and \`${s.name}\` gives it some more`,
                         kieler: `Conflicting generic parameters passed to scope call in ${s.name} via generic type and in call.`,
                         hint: 'Give the generic arguments in one place: where the chart is passed as a type, or where it is used.',
@@ -274,7 +282,7 @@ export class Expansion {
                             if (!v.instance.generics?.length) v.instance = { ...v.instance, generics: type.args.map(copyGenericArg), declGenerics: true }
                             else {
                                 this.ctx.report({
-                                    severity: 'error', code: 'generic-arguments-twice', span: v.span, related: v.decl ? [v.decl] : undefined,
+                                    severity: 'error', code: 'generic-arguments-conflict', span: v.span, related: v.decl ? [v.decl] : undefined,
                                     message: `\`${type.name}\` already comes with generic arguments (\`${type.text}\`), and the declaration of \`${v.name}\` gives it some more`,
                                     kieler: `Conflicting generic parameters passed to reference declaration of ${v.name} via generic type and in declaration.`,
                                     hint: 'Give the generic arguments in one place: where the chart is passed as a type, or in the declaration.',
@@ -450,7 +458,7 @@ export class Expansion {
      */
     private stateAccess(flag: CVar, chart: State, owner: string, span: Span | undefined) {
         this.ctx.report({
-            severity: 'error', code: 'state-access', span, related: [owner],
+            severity: 'error', code: 'state-access-copy', span, related: [owner],
             message: `\`${chart.name}\` uses \`${flag.display ?? 'state(...)'}\` in a method, which does not work in a chart referenced with \`is\``,
             kieler: 'implicit declaration of function \u2018state\u2019 [-Wimplicit-function-declaration]\nCompiler did not return success (exit value != 0)',
             hint: `KIELER only translates \`state(...)\` in the chart it compiles and in instances declared with \`ref ${chart.name} x\`. Declare the instance with \`ref\`, or let the chart set a variable in the state's entry and exit actions.`,
@@ -566,7 +574,35 @@ export class Expansion {
                 // declarations go with their initial values: no entry actions here.)
                 if (!implicit) this.replacer(replacements, id, false).state(inst)
                 this.removeInterface(inst)
+                // KIELER makes a class of the instance, named after the chart with a number that makes it unique: one
+                // per declaration, or per variable when the variables have arguments of their own.
+                const key = v.instance.separate || !v.instance.group ? id : v.instance.group
+                let className = this.classNames.get(key)
+                if (!className) {
+                    const n = (this.classCounts.get(chart.name) ?? 0) + 1
+                    this.classCounts.set(chart.name, n)
+                    className = `${chart.name}${n}`
+                    this.classNames.set(key, className)
+                }
+                v.instance = { ...v.instance, className }
                 this.redirectMembers(v, prefix, inst)
+                // `ref C g[2]`: one set of regions and actions per element (KIELER's class is an array of objects).
+                const sizes = v.dims.map(d => {
+                    const n = foldConstants(copyExpr(d))
+                    return n.k === 'lit' && typeof n.v === 'number' ? n.v : undefined
+                })
+                let numbers: Map<object, number> | undefined
+                if (sizes.length) {
+                    if (sizes.some(n => n === undefined)) {
+                        this.ctx.report({
+                            severity: 'error', code: 'cardinality', span: v.span, related: [id],
+                            message: `The size of the array of instances \`${v.name}\` must be a number or a constant`,
+                            kieler: 'Can only handle reference arrays with constant cardinality',
+                            hint: `Write \`ref ${chart.name} ${v.name}[2]\`, or declare \`const int N = 2\` and use that.`,
+                        })
+                    } else numbers = spreadInstanceArray(v, inst, sizes as number[])
+                }
+                const many = (sizes as number[]).reduce((a, b) => a * (b ?? 1), 1) > 1
                 const target = isRegion(scope) ? scope.parent : scope
                 // The instance's locals become hidden members of the declaring state (in KIELER's data pool: members
                 // of an object named after the declaration, `"g": {"k": 0}`).
@@ -583,7 +619,7 @@ export class Expansion {
                     addVar(target, local)
                 }
                 for (const r of [...inst.regions]) {
-                    r.name = `${v.name}_${r.name ?? 'default'}`
+                    r.name = `${v.name}${numbers && many ? numbers.get(r) : ''}_${r.name ?? 'default'}`
                     r.parent = target
                     target.regions.push(r)
                 }
@@ -606,7 +642,7 @@ export class Expansion {
         let visit = (e: CExpr | undefined, span?: Span) => walkExpr(e, x => {
             if (x.k !== 'ref') return
             for (let r: CRef | undefined = x; r; r = r.sub) {
-                if ((r.v.declKind === 'generic' || this.removed.has(r.v)) && !lost.has(r.v)) lost.set(r.v, x.span ?? span)
+                if ((r.v.declKind === 'generic' || this.removed.has(r.v)) && !lost.has(r.v) && !this.failed.has(r.v)) lost.set(r.v, x.span ?? span)
             }
         })
         const statements = (list: CStmt[]) => {
@@ -722,6 +758,9 @@ export class Expansion {
             const all = inst.decls.filter(l => !l.member && l.name === name)
             return (args !== undefined ? all.find(l => l.method && l.method.params.filter(p => !p.tags.has('#self')).length === args) : undefined) ?? all[0]
         }
+        // A method of an element (`g[1].inc()`) takes the element's indices as its first (hidden) arguments.
+        const called = (e: Extract<CExpr, { k: 'call' }>, t: CRef): CExpr =>
+            (t.v.method && t.idx.length ? { ...e, args: [...t.idx, ...e.args], target: { ...t, idx: [] }, name: t.v.name } : { ...e, target: t, name: t.v.name })
         const member = (r: CRef, args?: number): CRef | undefined => {
             if (r.v !== v || !r.sub) return undefined
             const id = r.sub.v.decl
@@ -734,7 +773,7 @@ export class Expansion {
             node: e => {
                 if (e.k !== 'call' || !e.target) return undefined
                 const t = member(e.target, e.args.length)
-                return t ? { ...e, target: t, name: t.v.name } : undefined
+                return t ? called(e, t) : undefined
             },
         })
     }
@@ -773,7 +812,7 @@ function typeName(id: string): string {
 export function plainVariable(v: CVar, type: ValueType, report?: (d: Diagnostic) => void) {
     if (type === 'pure') {
         report?.({
-            severity: 'error', code: 'pure-variable', span: v.span, related: v.decl ? [v.decl] : undefined,
+            severity: 'error', code: 'generic-pure-type', span: v.span, related: v.decl ? [v.decl] : undefined,
             message: `\`${v.name}\` would be a variable of type pure: only signals can be pure`,
             kieler: `Cannot serialize simulation interface. Unsupported type: pure\nCannot serialize simulation interface. Unsupported type pure for variable ${v.name}`,
             hint: 'Give the type parameter `int`, `bool` or `float`: `pure` passes KIELER\'s check of the generic arguments, but its simulation cannot hold a pure variable.',

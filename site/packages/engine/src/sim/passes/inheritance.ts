@@ -81,7 +81,7 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
             // KIELER makes the flag of `state(S)` where S is written, in the base chart, which is not compiled.
             const flag = lowered.stateFlags[0]
             ctx.report({
-                severity: 'error', code: 'state-access', span: flag.span, related: state.origin ? [state.origin] : undefined,
+                severity: 'error', code: 'state-access-copy', span: flag.span, related: state.origin ? [state.origin] : undefined,
                 message: `The base chart \`${b.name}\` uses \`${flag.display ?? 'state(...)'}\` in a method, which does not work in a chart that inherits it`,
                 kieler: `The valued object reference points to a valued object (${flag.name}) that is not contained in the model!\nReferences objects are not contained in the resource!`,
                 hint: 'KIELER puts the flag behind `state(...)` into the base chart, and only the inheriting chart is compiled. Let the base chart set a variable in the state\'s entry and exit actions instead.',
@@ -386,6 +386,7 @@ function bindInherited(b: Binding) {
     }
     // Replace the bound names: every reference in the state (its members excepted), whatever scope it is written in.
     const reported = new Set<CVar>()
+    const failed = (ctx.shared.failedVars ??= new Set<CVar>()) as Set<CVar>
     const replaced = (r: CRef, target: boolean): CExpr | undefined => {
         let value = bindings.get(r.v)
         if (!value && upstream?.has(r.v.name) && !r.v.member) {
@@ -399,6 +400,17 @@ function bindInherited(b: Binding) {
             return { ...r, v: value.v, idx: [...value.idx.map(i => copyExpr(i)), ...r.idx], ...(sub ? { sub } : {}) }
         }
         if (isValue(value)) {
+            const konst = value.k === 'lit' ? value.konst : undefined
+            if (target) failed.add(r.v)
+            if (target && konst !== undefined && !reported.has(r.v)) {
+                reported.add(r.v)
+                ctx.report({
+                    severity: 'error', code: 'bound-const-written', span: r.span, related,
+                    message: `\`${r.v.name}\` stands for the constant \`${konst}\` here, which cannot be assigned`,
+                    kieler: `Cannot replace left hand side of assignment by a value. (Trying to replace ${konst} by a value)`,
+                    hint: `Through \`extends\` the name is \`${konst}\` itself. Bind a variable if the base chart writes it.`,
+                })
+            }
             if (target && !reported.has(r.v)) {
                 reported.add(r.v)
                 ctx.report({
@@ -408,7 +420,7 @@ function bindInherited(b: Binding) {
                     hint: 'A name bound to a value through `extends` is that value wherever the chart names it. Bind a variable instead if the chart writes it.',
                 })
             }
-            return target ? undefined : { ...copyExpr(value), span: r.span }
+            return target ? undefined : value.k === 'lit' ? { k: 'lit', t: value.t, v: value.v, span: r.span } : { ...copyExpr(value), span: r.span }
         }
         if (!reported.has(r.v)) {
             reported.add(r.v)
@@ -472,7 +484,7 @@ function bindInherited(b: Binding) {
                     if (!v.instance.generics?.length) v.instance = { ...v.instance, generics: type.args, declGenerics: true }
                     else {
                         ctx.report({
-                            severity: 'error', code: 'generic-arguments-twice', span: v.span, related,
+                            severity: 'error', code: 'generic-arguments-conflict', span: v.span, related,
                             message: `\`${type.name}\` already comes with generic arguments (\`${type.text}\`), and the declaration of \`${v.name}\` gives it some more`,
                             kieler: `Conflicting generic parameters passed to reference declaration of ${v.name} via generic type and in declaration.`,
                             hint: 'Give the generic arguments in one place: where the chart is passed as a type, or in the declaration.',

@@ -775,7 +775,7 @@ class Validator {
         if (target.kind !== 'state' || d.annotations.some(a => a.name === 'noBindingCheck')) return
         for (const vo of d.valuedObjects) {
             if (vo.genericArguments?.length && d.genericArguments?.length) {
-                this.add('error', 'generic-arguments-twice', vo.span, `\`${vo.name}\` has generic arguments of its own, and so has the declaration`, 'Cannot mix generic parameters in variables and declaration',
+                this.add('error', 'generic-arguments-twice', vo.genericArguments[0].span, `\`${vo.name}\` has generic arguments of its own, and so has the declaration`, 'Cannot mix generic parameters in variables and declaration',
                     `Write the arguments once: after the chart (\`ref ${d.referenceTarget}<...> ${vo.name}\`) for all variables, or after each variable (\`ref ${d.referenceTarget} ${vo.name}<...>\`).`)
             }
         }
