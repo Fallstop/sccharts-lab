@@ -1,5 +1,8 @@
-// KIELER's Dataflow processor, classic mode (sccharts/processors/dataflow/Dataflow.xtend, processDataflowRegionClassic),
-// called by the Reference processor. structure.md S-25 .. S-34.
+// KIELER's Dataflow processor (sccharts/processors/dataflow/Dataflow.xtend), called by the Reference processor.
+// structure.md S-25 .. S-34. It translates a region in one of two ways: its "OO" way as soon as anything in the region
+// calls a method (processRegionOO below, S-33a: the equations are immediate during actions of one state, chart
+// instances stay declarations that the Reference pass turns into objects), else its classic way
+// (processDataflowRegionClassic):
 //
 // A dataflow region becomes a control-flow region `__df_<name>` of its state with one state `__df_main`. Every
 // equation becomes a region of `__df_main`: `__df_<k>` -immediate/ x = e-> `__df_d<k>` -delayed-> `__df_<k>`, so it
@@ -9,7 +12,9 @@
 // tick later, S-34), bound to fresh locals `__df_g_X` for C's inputs and outputs, which `g.X` in the equations
 // becomes. A tuple `g = {a, _, c}` sets C's inputs in declaration order (`_` skips one); a vector assigned to an
 // array sets its elements. Equations ending with `;` (or `seq`) and the one after them form a sequence: their regions
-// get one schedule (KIELER's `schedule seq<n>` with increasing priorities), so they run in written order (S-27).
+// get one schedule (KIELER's `schedule seq<n>` with increasing priorities), so they run in written order (S-27). A
+// schedule written on the region goes to the new region; one written on an equation is lost here and kept by the OO
+// translation (S-27a).
 
 import type { State } from '../../types'
 import type { CEquation } from '../lower'

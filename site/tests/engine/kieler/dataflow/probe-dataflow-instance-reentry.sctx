@@ -1,0 +1,22 @@
+// A state with an OO instance left and entered again: the instance starts again, a port without an initial value at
+// 0.
+scchart DfInstanceReentry {
+  input int x
+  input bool r
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  initial state S {
+    ref Cnt17 g
+    dataflow {
+      g.a = twice(x)
+      o = g.s
+    }
+  } if r go to T
+  state T do m += 1 go to S
+}
+scchart Cnt17 {
+  input int a
+  output int s
+  int n = 0
+  initial state A do n += 1; s = a + 100 * n go to A
+}

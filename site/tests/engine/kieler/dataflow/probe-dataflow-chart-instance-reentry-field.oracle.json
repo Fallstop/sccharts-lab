@@ -1,0 +1,155 @@
+{
+  "hash": "6fe01f1281a0782a6c5f962a534046f2717e6a3b",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-chart-instance-reentry-field.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cnt1811.k": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt1811.n": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "r": false,
+        "x": 1,
+        "m": 0,
+        "o": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 3,
+        "m": 0,
+        "o": 1002
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 5,
+        "m": 1,
+        "o": 1002
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "r": true,
+        "x": 7,
+        "m": 1,
+        "o": 1002
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "x": 9,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 9,
+        "m": 2,
+        "o": 1002
+      },
+      "taken": [
+        0,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "x": 11
+      },
+      "values": {
+        "r": true,
+        "x": 11,
+        "m": 2,
+        "o": 1002
+      },
+      "taken": [
+        1,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

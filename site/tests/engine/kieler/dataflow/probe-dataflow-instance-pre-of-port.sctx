@@ -1,0 +1,19 @@
+// pre() of an instance's output feeds its own input (g.b = pre(g.s)), next to a method call.
+scchart DfInstancePreOfPort {
+  input int x
+  input bool r
+  output int o, p
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    g.b = pre(g.s)
+    o = g.s
+    p = pre(o)
+  }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

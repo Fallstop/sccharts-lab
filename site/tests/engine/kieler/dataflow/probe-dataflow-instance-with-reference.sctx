@@ -1,0 +1,24 @@
+// An OO instance of a chart that references another chart in a state of its own (state A is Two(i, i, mid)).
+scchart DfInstanceWithReference {
+  input int x
+  input bool r
+  output int o
+  ref Wrap4 g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.i = twice(x)
+    o = g.q
+  }
+}
+scchart Wrap4 {
+  input int i
+  output int q
+  int mid
+  region R1 { initial state A is Two(i, i, mid) }
+  region R2 { initial state B do q = mid + 1000 go to B }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

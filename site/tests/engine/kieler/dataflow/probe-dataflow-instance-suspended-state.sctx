@@ -1,0 +1,21 @@
+// An OO dataflow region with its instance in a suspended state: the equations and the instance stand still together.
+scchart DfInstanceSuspendedState {
+  input int x
+  input bool r
+  output int o
+  method int twice(int v) { return v * 2 }
+  initial state S {
+    ref Cnt2 g
+    suspend if r
+    dataflow {
+      g.a = twice(x)
+      o = g.s
+    }
+  }
+}
+scchart Cnt2 {
+  input int a
+  output int s
+  int n = 0
+  initial state A do n += 1; s = a + 100 * n go to A
+}

@@ -923,9 +923,14 @@ condition, the initial value of a declaration of the region), KIELER compiles **
 - In tick 1, a `dataflow once` region of this kind is a straight sequence of entry actions and so subject to B-34
   (KIELER runs the equations that read no input first).
 
+- With the rest of the language: a suspended or aborted state stops and restarts the equations and the instance
+  together (`-instance-suspended-state`, `-instance-aborted-state`, `-instance-beside-aborts`); an instance's chart
+  may reference other charts, have for-regions, a clock (the chart is then timed, the clock a field of the object)
+  or `pre` (`-instance-with-reference`, `-instance-with-for-region`, `-instance-with-clock`, `-instance-pre-of-port`);
+  equations may read signals and write inputs as in a classic region (`-oo-reads-signals`, `-oo-writes-input`).
 - Evidence: `tests/engine/kieler/dataflow/probe-dataflow-instance-*`, `-instances-*`, `-call-*`, `-class-*`,
-  `-oo-*`, `-struct-members`, `-chart-instance-*` (the last two outside dataflow: an array of chart instances and a
-  local signal).
+  `-oo-*`, `-struct-members`, `-chart-instance-*` (outside dataflow: an array of chart instances, a local signal, a
+  field at re-entry). 134 probes in all, 33 of them charts KIELER rejects.
 - Source: `processors/dataflow/Dataflow.xtend:113-119` (the choice), `:121-262` (`processDataflowRegionOO`: `:135`
   moves the declarations, `:160-167` the restart test, `:231-243` the call effect and its trigger),
   `processors/Reference.xtend:938-988` (`dataflowBinding`: explicit bindings only, `:959` the crash), `:1179-1193`
@@ -1837,6 +1842,11 @@ More, found with the dataflow probes (`tests/engine/kieler/dataflow/`):
   `-instances-nested-class-names`, `-instances-one-declaration-*`.
 - `ref Cnt c, d` with only one of them used in a dataflow region: the validator warns (`This reference declaration
   contains some valued objects that are used in dataflow regions and some not. ...`). `-instances-one-declaration-one-used`.
+- **Entered again.** An instance declared in a state starts again when the state is entered again (with or without
+  `history`), and its fields start again too: those with an initial value at that value, those without at 0 (KIELER's
+  implicit initialisation of the class's members), as a state's own locals do. For an OO dataflow instance (S-33a)
+  that includes the inputs and outputs it keeps. `-chart-instance-reentry-field`, `-instance-reentry`,
+  `-instance-reentry-port-initial-value`, `-instance-history-reentry`, `-instance-aborted-state`.
 - Instances inside instances: S-18a.
 
 - Evidence: `126-chart-class` (methods and a public field), `127`, `128`, `129`, `130-chart-class-inheritance`.

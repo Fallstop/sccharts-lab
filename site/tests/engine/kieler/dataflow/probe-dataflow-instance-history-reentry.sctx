@@ -1,0 +1,22 @@
+// A state with an OO instance left and entered again with history: the instance's fields start again from their
+// values, the output without an initial value from 0 (o = 0 in the tick of the entry).
+scchart DfInstanceHistoryReentry {
+  input int x
+  input bool r
+  output int o, m
+  method int twice(int v) { return v * 2 }
+  initial state S {
+    ref Cnt2 g
+    dataflow {
+      g.a = twice(x)
+      o = g.s
+    }
+  } if r go to T
+  state T do m += 1 go to S history
+}
+scchart Cnt2 {
+  input int a
+  output int s
+  int n = 0
+  initial state A do n += 1; s = a + 100 * n go to A
+}

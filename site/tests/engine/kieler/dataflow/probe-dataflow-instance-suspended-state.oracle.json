@@ -1,0 +1,119 @@
+{
+  "hash": "46c69e65d718b457153ee51dc0481a0ab2cdfc82",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-suspended-state.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Cnt211.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt211.n": {
+      "type": "int",
+      "properties": []
+    },
+    "Cnt211.s": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "r": false,
+        "x": 1,
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 3,
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 5,
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "r": true,
+        "x": 7,
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "x": 9,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 9,
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "x": 11
+      },
+      "values": {
+        "r": true,
+        "x": 11,
+        "o": 0
+      },
+      "terminated": false
+    }
+  ]
+}

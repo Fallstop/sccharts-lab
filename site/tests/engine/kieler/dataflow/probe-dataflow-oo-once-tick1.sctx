@@ -1,0 +1,13 @@
+// dataflow once with a single equation that calls a method, at the top of the chart: evaluated in tick 1 only.
+scchart DfOoOnceTick1 {
+  input int x
+  input bool r
+  output int o, p
+  method int twice(int v) { return v * 2 }
+  dataflow once {
+    o = twice(x)
+  }
+  dataflow {
+    p = o + x
+  }
+}

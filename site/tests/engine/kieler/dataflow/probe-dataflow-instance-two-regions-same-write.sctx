@@ -1,0 +1,15 @@
+// Two OO regions write the same value to one input of a shared instance: confluent, accepted.
+scchart DfInstanceTwoRegionsSameWrite {
+  input int x
+  input bool r
+  output int o
+  ref Two g
+  method int twice(int v) { return v * 2 }
+  dataflow D1 { g.a = twice(x) }
+  dataflow D2 { g.a = twice(x)  o = g.s }
+}
+scchart Two {
+  input int a, b
+  output int s
+  dataflow { s = a + b + 1 }
+}

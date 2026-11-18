@@ -1,0 +1,174 @@
+{
+  "hash": "4a82048765ee58f6598a72111854704d621fb7f8",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-with-for-region.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "unused variable ‘array’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "For51.i": {
+      "type": "int",
+      "properties": []
+    },
+    "For51.q": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "r": false,
+        "x": 1,
+        "o": 0,
+        "p": 0,
+        "g": {
+          "i": 2,
+          "q": [
+            0,
+            0
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 3,
+        "o": 6,
+        "p": 7,
+        "g": {
+          "i": 6,
+          "q": [
+            6,
+            7
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 5,
+        "o": 10,
+        "p": 11,
+        "g": {
+          "i": 10,
+          "q": [
+            10,
+            11
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "r": true,
+        "x": 7,
+        "o": 14,
+        "p": 15,
+        "g": {
+          "i": 14,
+          "q": [
+            14,
+            15
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "x": 9,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 9,
+        "o": 18,
+        "p": 19,
+        "g": {
+          "i": 18,
+          "q": [
+            18,
+            19
+          ]
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "x": 11
+      },
+      "values": {
+        "r": true,
+        "x": 11,
+        "o": 22,
+        "p": 23,
+        "g": {
+          "i": 22,
+          "q": [
+            22,
+            23
+          ]
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

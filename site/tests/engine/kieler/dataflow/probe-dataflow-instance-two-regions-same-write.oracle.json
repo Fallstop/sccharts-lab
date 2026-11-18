@@ -1,0 +1,154 @@
+{
+  "hash": "061156af0204a3b963a228af36963c5566d385fe",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-two-regions-same-write.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "r": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "Two1.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.b": {
+      "type": "int",
+      "properties": []
+    },
+    "Two1.s": {
+      "type": "int",
+      "properties": []
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1
+      },
+      "values": {
+        "r": false,
+        "x": 1,
+        "o": 3,
+        "g": {
+          "a": 2,
+          "b": 0,
+          "s": 3
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 3,
+        "o": 7,
+        "g": {
+          "a": 6,
+          "b": 0,
+          "s": 7
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 5,
+        "o": 11,
+        "g": {
+          "a": 10,
+          "b": 0,
+          "s": 11
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7
+      },
+      "values": {
+        "r": true,
+        "x": 7,
+        "o": 15,
+        "g": {
+          "a": 14,
+          "b": 0,
+          "s": 15
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 5,
+      "inputs": {
+        "x": 9,
+        "r": true
+      },
+      "values": {
+        "r": true,
+        "x": 9,
+        "o": 19,
+        "g": {
+          "a": 18,
+          "b": 0,
+          "s": 19
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 6,
+      "inputs": {
+        "x": 11
+      },
+      "values": {
+        "r": true,
+        "x": 11,
+        "o": 23,
+        "g": {
+          "a": 22,
+          "b": 0,
+          "s": 23
+        }
+      },
+      "terminated": false
+    }
+  ]
+}

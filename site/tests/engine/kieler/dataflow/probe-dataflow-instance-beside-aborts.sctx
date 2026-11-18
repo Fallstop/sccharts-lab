@@ -1,0 +1,22 @@
+// An OO instance of the chart next to a region with strong aborts: the instance runs on, its fields are in the pool.
+scchart DfInstanceBesideAborts {
+  input int x
+  input bool r
+  output int o, m
+  ref Cnt2 g
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    g.a = twice(x)
+    o = g.s
+  }
+  region R {
+    initial state S if r do m += 1 abort to T
+    state T do m += 10 go to S
+  }
+}
+scchart Cnt2 {
+  input int a
+  output int s
+  int n = 0
+  initial state A do n += 1; s = a + 100 * n go to A
+}

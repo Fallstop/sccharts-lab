@@ -31,7 +31,9 @@ function defaultFor(v: CVar): CExpr | undefined {
 function implicitInitialization(scope: Scope) {
     for (const v of scope.decls) {
         if (v.input || v.declKind) continue
-        if (v.init || v.name.startsWith('_')) continue
+        // (A field of a chart instance, `ref C g`, is `_g_n` here and `n` in the class KIELER makes of the instance.)
+        const name = v.member && v.member.of.declKind === 'reference' ? v.member.name : v.name
+        if (v.init || name.startsWith('_')) continue
         const init = defaultFor(v)
         if (!init) continue
         let value: CExpr = init

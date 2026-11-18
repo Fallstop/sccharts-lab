@@ -1,0 +1,13 @@
+// Signals read in an equation next to a method call: presence in a condition, val() as an argument.
+scchart DfOoReadsSignals {
+  input int x
+  input bool r
+  output int o
+  signal S
+  signal int V
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    o = (S ? 1 : 0) + twice(val(V))
+  }
+  region R { initial state A if r do S; V(x) go to A }
+}

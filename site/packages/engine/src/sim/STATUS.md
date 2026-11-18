@@ -278,7 +278,7 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
 KIELER translates a dataflow region in one of two ways (structure.md S-33a): the classic one (each equation a region,
 chart instances as hidden reference states) and, as soon as anything in the region calls a method, its "OO" one (the
 equations are immediate during actions of one state, chart instances stay objects). Both are ported now
-(passes/dataflow.ts, passes/reference.ts); 118 probes in `tests/engine/kieler/dataflow/` (85 accepted charts agreeing
+(passes/dataflow.ts, passes/reference.ts); 134 probes in `tests/engine/kieler/dataflow/` (101 accepted charts agreeing
 tick by tick, 33 rejected), all through `pnpm cgen:check` too.
 
 - **OO instances** (S-33a): `ref C g` named by an equation of such a region is an object in the pool with its
@@ -321,6 +321,11 @@ tick by tick, 33 rejected), all through `pnpm cgen:check` too.
   `CMethod.cls`, `CMethod.instance` (internal). New codes: `dataflow-instance-shared`,
   `dataflow-instance-port`, `reference-array-size` (errors), `reference-mixed-dataflow-use` (KIELER's validator
   warning for `ref C a, b` with only one used in dataflow).
+- **Entered again**: a chart instance declared in a state starts again with the state, and its fields without an
+  initial value start at 0 like any local (KIELER's implicit initialisation works on the class's member names; the
+  engine skipped them as generated `_g_n` names). An OO instance's ports likewise (`o = g.s` is 0 in the tick of the
+  entry, or the port's initial value). Probes `-instance-reentry*`, `-instance-history-reentry`,
+  `-chart-instance-reentry-field`.
 - **Kept methods of chart instances** (S-44f): a method of a `ref C g` instance that KIELER keeps as a C function
   (a loop, or a call: `g.get()` returning `t.get()` of an instance inside) reads the instance's fields through its
   own `self`, as a class's method does: no order with a concurrent write of the field, and the kept method of two
@@ -537,7 +542,8 @@ included) and structure recordings, every example in `src/examples`, and the pro
 | 11 (seed 111, polish, beginner, rare x 200) | 600 | 230 | 354 | 9 | 0 | 5 | 2, explained (below) |
 | 12 (seed 1, dataflowObjects x 200, the new profile) | 200 | 129 | 68 | 0 | 0 | 0 | 3, all fixed (below) |
 | 13 (seeds 2 and 3, dataflowObjects x 200 each) | 400 | 256 | 143 | 0 | 0 | 0 | 1, fixed (below) |
-| 14 (seeds 1, 2, 4, 5, dataflowObjects x 200 each, after the fixes) | 800 | 503 | 297 | 0 | 0 | 0 | 0 |
+| 14 (seeds 1 to 5, dataflowObjects x 200 each, after the fixes) | 1000 | 631 | 369 | 0 | 0 | 0 | 0 |
+| 15 (seeds 7 and 9, structure, dataflowControl, objects, nested, schedules, mix: 560 charts, regression) | 560 | 168 | 385 | 1 | 0 | 6 | 0 |
 
 Campaigns 12 to 14 use the profile `dataflowObjects` (tools/fuzz/README.md): dataflow regions with chart instances,
 calls and schedules next to control flow. Campaign 12's three: a binding on an instance of a classic region, which
@@ -545,8 +551,9 @@ KIELER refuses (2, fixed: `binding-error`, probes `dataflow/probe-dataflow-insta
 followed by `k.add(twice(n))`, on which KIELER's method inlining crashes (1, reduced with reduce.ts; fixed:
 `kieler-crash`, probes `-call-argument-call*`; the engine had rejected every call with a call in its argument, which
 hid it). Campaign 13's one: a `;` after a call written as an equation does not sequence it (fixed, probes
-`-call-semicolon-*`). `pnpm cgen:check --fuzz 300 --profiles dataflowObjects`: 190 charts compiled and compared, no
-mismatch.
+`-call-semicolon-*`). Campaign 15 runs the neighbouring profiles on the changed Reference, Dataflow and method
+inlining code: no disagreement. `pnpm cgen:check --fuzz 300 --profiles dataflowObjects`: 190 charts compiled and
+compared, no mismatch.
 
 Campaigns 8 to 11 (final polish): 8 runs the profiles `beginner` and `rare` on the engine with this round's changes
 (no disagreement in 440 charts; the five charts the engine flags as depending on KIELER's cure order were run 5 to 15

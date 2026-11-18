@@ -1,0 +1,12 @@
+// An equation of an OO region writes an input (x = twice(3)): the written value replaces the environment's in the
+// pool.
+scchart DfOoWritesInput {
+  input int x
+  input bool r
+  output int o
+  method int twice(int v) { return v * 2 }
+  dataflow {
+    x = twice(3)
+    o = x + 1
+  }
+}

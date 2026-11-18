@@ -1,0 +1,137 @@
+{
+  "hash": "a1a75bb07cf4a65e1e24c01317f270a14ea48d62",
+  "chart": "tests/engine/kieler/dataflow/probe-dataflow-instance-with-clock.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Potential instantaneous loop through the timed transitions on g, t.",
+    "ValuedObject with name _fn0_twice_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "deltaT": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated",
+        "input",
+        "dynamic-ticks"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "sleepT": {
+      "type": "float",
+      "properties": [
+        "output",
+        "sccharts-generated",
+        "dynamic-ticks"
+      ]
+    },
+    "Tick111.a": {
+      "type": "int",
+      "properties": []
+    },
+    "Tick111.s": {
+      "type": "int",
+      "properties": []
+    },
+    "Tick111.t": {
+      "type": "float",
+      "properties": [
+        "sccharts-generated"
+      ]
+    },
+    "g": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "x": 1,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "x": 1,
+        "o": 0,
+        "sleepT": 200,
+        "g": {
+          "a": 2,
+          "s": 0,
+          "t": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "x": 3,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "x": 3,
+        "o": 0,
+        "sleepT": 100,
+        "g": {
+          "a": 6,
+          "s": 0,
+          "t": 100
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "x": 5,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "x": 5,
+        "o": 10,
+        "sleepT": 200,
+        "g": {
+          "a": 10,
+          "s": 10,
+          "t": 0
+        }
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "x": 7,
+        "deltaT": 100
+      },
+      "values": {
+        "deltaT": 100,
+        "x": 7,
+        "o": 10,
+        "sleepT": 100,
+        "g": {
+          "a": 14,
+          "s": 10,
+          "t": 100
+        }
+      },
+      "terminated": false
+    }
+  ]
+}
