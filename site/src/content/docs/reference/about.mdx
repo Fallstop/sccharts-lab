@@ -80,12 +80,15 @@ So an example in the guide behaves as KIELER does. A chart you write yourself in
 
 ### What the engine does not run
 
-Two things are beyond the engine, and a chart that uses one shows a notice instead of the simulation
+A few things are beyond the engine, and a chart that uses one shows a notice instead of the simulation
 controls. Its diagram and code are still there, and SCCharts Lab and KIELER run it as usual:
 
 - **Host code**: C code in backticks, `extern` functions, and host classes and enums. Running them takes
   a C compiler, which a browser does not have. The playground's C code tab still gives their C, ready to
   build ([below](#the-c-code)).
+- **Results that depend on where the C compiler keeps a method's local arrays**: the distance between
+  two of them, their order, or such an array's address used as a number, and `print` of a whole float or
+  string array.
 - **An array of no instances of a chart whose regions use its fields** (`ref Counter c[0]`). KIELER still
   runs the regions, on memory behind the empty array.
 
