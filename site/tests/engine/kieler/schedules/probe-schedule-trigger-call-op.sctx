@@ -1,0 +1,9 @@
+// A scheduled trigger with a call inside an operator.
+scchart B43 {
+  output int o
+  int x
+  schedule s
+  method int get() { return x }
+  region R1 { initial state A if get() > 0 schedule s 0 do o = 1 go to B state B }
+  region R2 { initial state C do x = 2 schedule s 1 go to D state D }
+}

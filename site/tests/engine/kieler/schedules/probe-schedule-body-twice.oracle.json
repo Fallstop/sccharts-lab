@@ -1,0 +1,56 @@
+{
+  "hash": "38dc8d0b3d4e9b0480e5490ef6a829e1c9072071",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-body-twice.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 12
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 12
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

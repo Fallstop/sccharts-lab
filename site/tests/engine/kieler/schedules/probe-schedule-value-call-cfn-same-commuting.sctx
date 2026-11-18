@@ -1,0 +1,10 @@
+// Two scheduled assignments calling one C function that updates and returns a variable, at a commuting priority: still a circle through the variable.
+scchart E05 {
+  output int o
+  output int p
+  int n
+  schedule {commuting} s
+  method int next() { for (int i = 0; i < 1; i++) { n += 1 } return n }
+  region R1 { initial state A do o = next() schedule s 0 go to B state B }
+  region R2 { initial state C2 do p = next() schedule s 0 go to D state D }
+}

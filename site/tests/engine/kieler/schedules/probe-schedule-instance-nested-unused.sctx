@@ -1,0 +1,6 @@
+// A schedule in a nested class that nothing names.
+scchart D12 {
+  output int o
+  class Outer { class C { schedule s  int v = 0 } c } a
+  initial state A do o = 1 go to B state B
+}

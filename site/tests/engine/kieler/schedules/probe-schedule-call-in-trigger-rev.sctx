@@ -1,0 +1,9 @@
+// A scheduled trigger that calls a C function: accepted (a short method there is refused) (priorities the other way round).
+scchart B19 {
+  output int o
+  int x
+  schedule s
+  method bool pos() { return x > 0 }
+  region R1 { initial state A immediate if pos() schedule s 0 do o = 1 go to B state B }
+  region R2 { initial state C immediate do x = 2 schedule s 1 go to D state D }
+}

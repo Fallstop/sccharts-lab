@@ -1,0 +1,8 @@
+// Priority 1: the inlined += against = at priority 1.
+scchart B41 {
+  output int o
+  schedule {commuting, commuting} s
+  method void bump() { o += 1 }
+  region R1 { initial state A do bump() schedule s 1 go to B state B }
+  region R2 { initial state C do o = 2 schedule s 1 go to D state D }
+}

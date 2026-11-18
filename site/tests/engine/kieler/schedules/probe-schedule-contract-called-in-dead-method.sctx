@@ -1,0 +1,12 @@
+// A contract method called only from a chart method nobody calls: that counts as called.
+scchart H14 {
+  output int o
+  class C {
+    schedule s
+    int v = 0
+    void set(int x) schedule s 1 { v = x }
+    int get() schedule s 0 { return v }
+  } c
+  method void unused() { c.set(1) }
+  initial state A do o = c.get() go to B state B
+}

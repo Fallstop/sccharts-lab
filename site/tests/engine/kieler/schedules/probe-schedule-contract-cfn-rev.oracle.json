@@ -1,0 +1,83 @@
+{
+  "hash": "de29e1d3ba69ff7afd727b1acbc34848dc5dd98f",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-cfn-rev.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name x is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name set is contained in the model but not in VariableStore.",
+    "ValuedObject with name x is contained in the model but not in VariableStore.",
+    "ValuedObject with name get is contained in the model but not in VariableStore.",
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 5
+        }
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 5
+        }
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

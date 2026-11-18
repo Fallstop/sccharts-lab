@@ -1,0 +1,9 @@
+// A scheduled assignment whose value is a call of a C function: the schedule does not reach the reads inside the function.
+scchart B06 {
+  output int o
+  int x
+  schedule s
+  method int get() { int r = 0; for (int i = 0; i < 2; i++) { r += x } return r }
+  region R1 { initial state A immediate do o = get() schedule s 0 go to B state B }
+  region R2 { initial state C immediate do x = 2 schedule s 1 go to D state D }
+}

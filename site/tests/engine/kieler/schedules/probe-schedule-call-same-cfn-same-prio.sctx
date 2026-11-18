@@ -1,0 +1,8 @@
+// Two scheduled calls of one C function at one priority: each reads and writes the function, a circle.
+scchart B32 {
+  output int o
+  schedule s
+  method void f(int a, int b) { for (int i = 0; i < 2; i++) { o = a + b } }
+  region R1 { initial state A do f(1, 0) schedule s 0 go to B state B }
+  region R2 { initial state C do f(2, 0) schedule s 0 go to D state D }
+}

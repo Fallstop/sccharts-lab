@@ -1,0 +1,9 @@
+// A C function (loop) that calls a short method with a scheduled assignment.
+scchart E31 {
+  output int o
+  schedule s
+  method void inner() { o += 1 schedule s 1 }
+  method void outer() { for (int i = 0; i < 2; i++) { inner() } }
+  region R1 { initial state A do outer() go to B state B }
+  region R2 { initial state C2 do o = 10 schedule s 0 go to D state D }
+}

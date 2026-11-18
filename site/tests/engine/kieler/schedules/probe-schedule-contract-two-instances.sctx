@@ -1,0 +1,13 @@
+// Contracts with two instances of one class: each instance has its own schedule.
+scchart C16 {
+  output int o
+  output int p
+  class C {
+    schedule s
+    int v = 0
+    void set(int x) schedule s 0 { v = x }
+    int get() schedule s 1 { return v }
+  } c, d
+  region R1 { initial state A do o = c.get(); p = d.get() go to B state B }
+  region R2 { initial state C2 do c.set(5); d.set(6) go to D state D }
+}

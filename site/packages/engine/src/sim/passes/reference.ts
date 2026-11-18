@@ -320,6 +320,14 @@ export class Expansion {
                 }
                 this.bind(instance)
                 this.redirectMembers(v, prefix, inst)
+                // The chart is the instance's class: its own schedules are a class's (passes/contracts.ts).
+                for (const local of inst.decls) {
+                    if (local.declKind === 'schedule' && local.scheduleOf === undefined) {
+                        local.scheduleOf = v.name
+                        local.display = `${v.name}.${local.name}`
+                    }
+                    if (local.method && !local.member) local.classInstance = v
+                }
                 const target = isRegion(scope) ? scope.parent : scope
                 // The instance's locals become hidden members of the declaring state (in KIELER's data pool: members
                 // of an object named after the declaration, `"g": {"k": 0}`).

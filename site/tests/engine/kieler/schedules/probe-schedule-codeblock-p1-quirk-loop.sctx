@@ -1,0 +1,7 @@
+// Priority 1 in a code block that is a C function (a loop): the calling effect is an assignment with =, so += inside and = outside commute.
+scchart A23 {
+  output int o
+  schedule {commuting, commuting} s
+  region R1 { initial state A immediate do { for (int i = 0; i < 1; i++) { o += 1 schedule s 1 } } go to B state B }
+  region R2 { initial state C immediate do o = 2 schedule s 1 go to D state D }
+}

@@ -1,0 +1,11 @@
+// Contract methods called one after the other in one region.
+scchart C20 {
+  output int o
+  class C {
+    schedule s
+    int v = 0
+    void set(int x) schedule s 1 { v = x }
+    int get() schedule s 0 { return v }
+  } c
+  initial state A do c.set(5); o = c.get() go to B state B
+}

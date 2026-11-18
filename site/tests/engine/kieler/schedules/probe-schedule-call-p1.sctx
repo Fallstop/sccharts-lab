@@ -1,0 +1,8 @@
+// Priority 1 quirk: a call (an assignment with =) whose body has += against += at priority 1.
+scchart B09 {
+  output int o
+  schedule {commuting, commuting} s
+  method void bump() { o += 1 }
+  region R1 { initial state A immediate do bump() schedule s 1 go to B state B }
+  region R2 { initial state C immediate do o += 2 schedule s 1 go to D state D }
+}

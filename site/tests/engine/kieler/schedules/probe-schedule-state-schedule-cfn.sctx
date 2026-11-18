@@ -1,0 +1,7 @@
+// A state's schedule on a code block that is a C function (a loop): the body is not ordered.
+scchart E26 {
+  output int o
+  schedule s
+  region R1 { initial state S schedule s 1 { initial state A do { for (int i = 0; i < 2; i++) { o = 1 } } go to B state B } }
+  region R2 { initial state C2 do o = 2 schedule s 0 go to D state D }
+}

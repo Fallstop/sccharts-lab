@@ -1,0 +1,11 @@
+// One argument on an instance's method: the clause is lost.
+scchart E28 {
+  output int o
+  schedule s
+  class C {
+    int v = 0
+    void set(int a) { v = a }
+  } c
+  region R1 { initial state A do c.set(5) schedule s 0 go to B state B }
+  region R2 { initial state C2 do c.v = 2 schedule s 1 go to D state D }
+}

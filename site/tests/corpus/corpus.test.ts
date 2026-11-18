@@ -29,7 +29,7 @@ const expectations: Record<string, Expectation> = { ...readExpectations('expecta
 /** Diagnostics the engine adds that KIELER's front end does not report. */
 const ENGINE_ONLY_WARNINGS = new Set(['swallowed-line', 'ternary-grouping'])
 /** Rejections KIELER makes while compiling, which the front end already reports (only allowed when KIELER's ok is false). */
-const COMPILE_LEVEL_ERRORS = new Set(['non-signal-emission', 'for-range', 'this-parameter', 'no-chart'])
+const COMPILE_LEVEL_ERRORS = new Set(['non-signal-emission', 'for-range', 'this-parameter', 'no-chart', 'contract-never-called', 'contract-sibling-call', 'schedule-nested-class', 'schedule-class-array', 'schedule-without-instance'])
 const SYNTAX_CODES = new Set(['parse', 'missing-semicolon'])
 /** Engine codes of KIELER's linking errors. */
 const LINKING_CODES = new Set(['unknown-variable', 'unknown-state', 'unknown-chart', 'unknown-region', 'unknown-binding', 'unknown-label', 'not-callable'])

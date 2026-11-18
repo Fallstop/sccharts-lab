@@ -616,7 +616,7 @@ class Resolver {
 
     /** Resolves an effect; returns a replacement when a valued emission is really a call. */
     private resolveEffect(e: Effect | SclStatement, scope: Scope): Effect | undefined {
-        if ('schedule' in e) this.resolveSchedule(e.schedule, scope)
+        if ('schedule' in e && e.kind !== 'emit') this.resolveSchedule(e.schedule, scope)
         switch (e.kind) {
             case 'assign':
                 this.resolveReference(e.target, scope, {})
@@ -636,10 +636,12 @@ class Resolver {
                         if (entry.decl.declKind === 'method') this.resolveReference(e.target, scope, { callable: !e.target.sub, args: 1 })
                         const call: Effect = { kind: 'call', name: referenceName(e.target), args: [e.value], target: e.target, span: e.span }
                         if (e.annotations) call.annotations = e.annotations
-                        if (e.schedule) call.schedule = e.schedule
+                        // The schedule clause is lost: KIELER builds the call from the emission's target and value only
+                        // (KEffectsEmissionReferenceCallConverter), so its names are never looked up either.
                         return call
                     }
                 }
+                this.resolveSchedule(e.schedule, scope)
                 return
             }
             case 'call':

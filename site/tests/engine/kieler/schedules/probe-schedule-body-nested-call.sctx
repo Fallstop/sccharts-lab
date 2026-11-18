@@ -1,0 +1,9 @@
+// A method calling a method with a scheduled assignment.
+scchart A06 {
+  output int o
+  schedule s
+  method void inner() { o = 1 schedule s 1 }
+  method void outer() { inner() }
+  region R1 { initial state A immediate do outer() go to B state B }
+  region R2 { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}

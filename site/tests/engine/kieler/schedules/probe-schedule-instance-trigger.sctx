@@ -1,0 +1,8 @@
+// The schedule of an instance on a trigger.
+scchart D03 {
+  output int o
+  int x
+  class C { schedule s  int v = 0 } c
+  region R1 { initial state A if x > 0 schedule c.s 0 do o = 1 go to B state B }
+  region R2 { initial state C2 do x = 2 schedule c.s 1 go to D state D }
+}

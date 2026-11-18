@@ -1,0 +1,12 @@
+// A class method's contract names a schedule declared outside the class.
+scchart C05 {
+  output int o
+  schedule s
+  class C {
+    int v = 0
+    void set(int x) schedule s 0 { v = x }
+    int get() schedule s 1 { return v }
+  } c
+  region R1 { initial state A do o = c.get() go to B state B }
+  region R2 { initial state C2 do c.set(5) go to D state D }
+}

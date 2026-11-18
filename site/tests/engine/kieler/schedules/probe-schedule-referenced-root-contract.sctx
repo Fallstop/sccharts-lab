@@ -1,0 +1,11 @@
+// A referenced chart whose method (not in a class) has a schedule and is called.
+scchart H08 {
+  output int o
+  initial state S is Sub(o)
+}
+scchart Sub {
+  output int r
+  schedule s
+  method void setIt() schedule s 1 { r = 1 }
+  initial state A do setIt() go to B state B
+}

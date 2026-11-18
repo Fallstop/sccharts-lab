@@ -1,0 +1,58 @@
+{
+  "hash": "e02207acb3dd2d860f4025b8c22dc864317e2413",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-body-loop-rev.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name setIt is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

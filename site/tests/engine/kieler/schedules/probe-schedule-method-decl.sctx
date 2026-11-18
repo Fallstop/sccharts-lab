@@ -1,0 +1,8 @@
+// A schedule on the declaration of a method that is not in a class: KIELER crashes.
+scchart SMethodDecl {
+  output int o
+  schedule s
+  method void setIt() schedule s 1 { o = 1 }
+  region R1 { initial state A immediate do setIt() go to B state B }
+  region R2 { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}

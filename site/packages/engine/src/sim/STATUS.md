@@ -248,7 +248,9 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   other), `val-cycle` (`val(V)` feeding an emission of V), `abort-trigger-cycle` (an abort out of a superstate whose
   trigger the inside writes, where KIELER cannot order them), `suspend-abort-cycle` (a strong abort out of a state
   with its own suspend), `period-abort-cycle` (a transition out of a state with a `period`), `abort-region-loop`,
-  `inline-loop` (`@inline` on a method with a loop), `count-delay-reset` (a count delay inside a state with a self-loop,
+  `inline-loop` (`@inline` on a method with a loop), `schedule-conflict` (written schedules order two effects through
+  a method they call or the object they call it on, at one priority or against another order: there is no variable to
+  name), `count-delay-reset` (a count delay inside a state with a self-loop,
   preemption.md P-36a: its own message, naming the count delay and the loop, and the counter by hand as the way out);
   `kieler-nondeterministic` (KIELER's verdict changes from run to run).
 - **KIELER's compiler and gcc** (error): `kieler-crash` (KIELER's internal errors, `The compiler failed during
@@ -263,13 +265,49 @@ verbatim; widgets that need KIELER's section can match `kieler` first, then the 
   `method-without-value`, `method-without-return`, `signal-member`, `unpack-instances`, `suspend-without-trigger`,
   `abort-region-order`, `abort-region-alone`, `binding-expression`, `recursive-reference`, `for-counter-assignment`,
   `for-counter-method`, `dataflow-for`, `unknown-type`, `shared-clock`, `clock-variable`, `clock-array`,
-  `timing-constraint`, `default-sleep`, `inheritance-conflict`, `module-call`.
+  `timing-constraint`, `default-sleep`, `inheritance-conflict`, `module-call`; written schedules (S-27a):
+  `schedule-nested-class`, `schedule-class-array`, `schedule-without-instance` (a clause in a class naming the class's
+  own schedule), `contract-never-called`, `contract-sibling-call`, `schedule-inlined-call` (`User schedules are not
+  supported in combination with method inlining!`), and `kieler-crash` for a contract outside a class.
 - **The guide's notes**: `unsupported` (info: the simulator cannot run it), `kieler-quirk` (info or warning),
   `kieler-bug` (warning), `kieler-divergence` (warning), `kieler-loop-warning` (info), `internal` (error: an engine
   bug).
 - **Runtime** (`TickResult.error.code`): `division-by-zero`, `division-overflow` (`-2147483648 / -1`),
   `index-out-of-range`, `runaway-loop`, `missing-return`, `float-modulo`, `array-assignment`, `unsupported`,
   `internal`.
+
+## Written schedules in bodies, on calls and of classes
+
+Structure.md S-27a has the rules; 163 probes recorded with KIELER (`tests/engine/kieler/schedules/`, 111 accepted,
+52 rejected), all agreeing, the generated C too. Fuzz profile `schedules` (extended with these forms), 400 charts,
+seed 1: 47 match, 347 rejected by both, 6 that KIELER never finishes compiling (charts with many contradicting
+schedules; the engine rejects all six), no disagreement.
+
+- **What runs now** (it was `unsupported`): `schedule s N` on the statements and `if` conditions of code blocks and
+  method bodies, on call effects, on the methods of a class (contracts) and the schedule of a class instance
+  (`schedule c.s 1`). Clauses on dataflow equations and dataflow regions stay `unsupported` (the dataflow workstream).
+- **How.** KIELER's `UserSchedule.transformContracts` is passes/contracts.ts (the contract of a method is copied onto
+  the effects and triggers that call it, marked with the method's name); a class's schedule is one variable per
+  instance (lower.ts classSchedule, KIELER's `C_c_s`); the inliner passes a calling effect's clauses to the copied
+  body's assignments (structure/methods.ts, KIELER's "Pass on scheduling directives"); deps.ts makes KIELER's accesses
+  per schedule: a contract's copy counts for the method it names or, once that call is copied into place, for every
+  access of the node, and each such access is registered for the object too (`only` accesses: a method, an instance);
+  a scheduled call effect writes what it calls; the accesses inside a C function keep the clauses written there and
+  never get the calling effect's.
+- **Quirks reproduced, each with probes.** A call with exactly one argument loses its clause (KIELER parses it as a
+  valued emission and rebuilds the call without it); a clause on a call of a C function orders nothing inside it; two
+  effects at one conflicting priority that only *read* one object or call one method are a circle; a contract method
+  nobody calls, a contract outside a class and a schedule in a nested class or an array of instances reject the
+  chart; a scheduled trigger must not call a short chart method.
+- **Two corrections to what ran before**, found on the way: the index of a scheduled assignment to a plain array is
+  read without the schedule (`o[i] = 7 schedule s 0`; `-index-read-schedule`), and a scheduled assignment whose value
+  is a call of a C function does not schedule the reads inside the function (`-call-value-loop`). The methods of a
+  chart used as a class read its variables through `self`, like a class's (`-chart-class-cfn`).
+- **Open.** Charts with host classes are not analysed (`unsupported`), so KIELER's default schedule of a host class is
+  only applied as far as the never-called rule goes (`-host-two-methods` is rejected); two concurrent calls of one
+  host method, which KIELER cannot schedule, are accepted (`-host-typedef-same-method`, skipped by the conformance
+  run). Contracts from `policy` regions (KIELER's static approximation of a policy automaton) are not modelled; a
+  policy that orders nothing behaves the same (`tests/corpus/probes/adv-policy.sctx`).
 
 ## Final polish (engine-5)
 
@@ -541,8 +579,8 @@ tick (57 runs; the @ClocksUseSD charts after this round's support).
 
 ## Not yet (charts get the `unsupported` info and cannot be simulated)
 
-Written schedules inside code blocks and methods, on calls, methods, equations and dataflow regions, and of class
-instances (structure.md S-27a; those on effects, triggers, states and regions run), `extends` with generic parameters,
+Written schedules on dataflow equations and dataflow regions (structure.md S-27a; every other place runs), `extends`
+with generic parameters,
 chart instances in dataflow regions that call methods, dataflow reference calls `A(x, y)`. Never (no C compiler in the browser): host code (backticks), `extern` functions, host
 classes and host enums; the info says "cannot run in the browser".
 

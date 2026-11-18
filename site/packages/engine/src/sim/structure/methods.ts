@@ -11,7 +11,7 @@
 import type { Diagnostic, Span } from '../../types'
 import { compileEffect, SimError, type Compiled, type ExprCompiler, type Runtime } from '../eval'
 import {
-    CVar, copyEffect, copyExpr, type CEffect, type CExpr, type CMethod, type CRef, type CStmt,
+    CVar, copyEffect, copyExpr, mapExpr, type CEffect, type CExpr, type CMethod, type CRef, type CStmt,
 } from '../model'
 import type { SCG, SNode } from '../scg'
 import { convert, ctypeOf, defaultValue, type CType, type RValue } from '../values'
@@ -274,6 +274,18 @@ export function inlineMethods(scg: SCG): Diagnostic[] {
                 continue
             }
             if (!isInlined(m)) continue
+            // A scheduled trigger: its schedule goes to the references of the trigger, and a call of a method by its
+            // name alone is one (a member call `c.get()` keeps it on `get`, where it is lost with the call).
+            if (node.kind === 'cond' && node.expr?.sched?.length && !call.target!.v.member && !call.target!.v.classInstance) {
+                // (The trigger's surface and depth copies both get here.)
+                if (!diagnostics.some(d => d.code === 'schedule-inlined-call' && d.span === call.span)) diagnostics.push({
+                    severity: 'error', code: 'schedule-inlined-call', span: call.span,
+                    message: `KIELER cannot compile a scheduled trigger that calls \`${call.name}\`, a short method it copies into place`,
+                    kieler: 'User schedules are not supported in combination with method inlining!',
+                    hint: `Store the result in a variable first (\`do t = ${call.name}()\`) and test \`t\` in the scheduled trigger, or write the schedule on the statements of \`${call.name}\`.`,
+                })
+                continue
+            }
             const problem = inline(scg, node, call, m, counter++)
             if (problem) diagnostics.push(problem)
         }
@@ -364,7 +376,14 @@ function inline(scg: SCG, node: SNode, call: Extract<CExpr, { k: 'call' }>, m: C
         made.push(n)
         return n
     }
-    const effect = (f: CEffect, span?: Span): CEffect => ({ ...rewriteEffect(copyEffect(f), rw), o: { ...origin, span: span ?? f.o.span, hidden: origin.hidden } })
+    // KIELER's "Pass on scheduling directives": the body's assignments keep their own schedules and get those of a
+    // calling assignment after them (a calling trigger passes none, and the body's conditions get none).
+    const passed = node.kind === 'assign' ? node.effect?.o.schedule ?? [] : []
+    const effect = (f: CEffect, span?: Span): CEffect => {
+        const copy = rewriteEffect(copyEffect(f), rw)
+        const schedule = [...(copy.o.schedule ?? []), ...passed]
+        return { ...copy, o: { ...origin, span: span ?? f.o.span, hidden: origin.hidden, schedule: schedule.length ? schedule : undefined } }
+    }
     const labelNode = new Map<string, SNode>()
     const gotos: { label: string; ends: End[]; span?: Span; at: number }[] = []
     const returned: End[] = []
@@ -428,7 +447,9 @@ function inline(scg: SCG, node: SNode, call: Extract<CExpr, { k: 'call' }>, m: C
     }
     if (!entered) first = after
     if (reads) {
-        const replacement: CExpr = returnVar ? { k: 'ref', v: returnVar, idx: [], span: call.span } : returnExpr ? { ...returnExpr, span: call.span } : { k: 'lit', t: 'int', v: 0 }
+        let replacement: CExpr = returnVar ? { k: 'ref', v: returnVar, idx: [], span: call.span } : returnExpr ? { ...returnExpr, span: call.span } : { k: 'lit', t: 'int', v: 0 }
+        // In a trigger, the trigger's schedule stayed on the call: what replaces it has none (deps.ts).
+        if (node.kind === 'cond') replacement = mapExpr(replacement, x => (x.k === 'ref' ? { ...x, inlined: true } : undefined))
         replaceCall(node, call, replacement)
     } else {
         // The call node goes.

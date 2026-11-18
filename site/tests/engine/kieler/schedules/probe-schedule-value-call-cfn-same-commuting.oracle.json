@@ -1,0 +1,19 @@
+{
+  "hash": "e1a7be9bf785f9823f34caea49726a137a785c9a",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-value-call-cfn-same-commuting.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g2b to _g7b",
+    "Can't schedule from _g7b to _g2b",
+    "Can't schedule from _g2b to _g3",
+    "Can't schedule from _g7b to _g8",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving p, o prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through o, p.",
+    "Potential instantaneous loop through o, p."
+  ],
+  "ticks": []
+}

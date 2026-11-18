@@ -1,0 +1,63 @@
+{
+  "hash": "7ddb1bd1d8a32eb0cbaa72ab8ea25ea6c5330fc7",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-call-if-rev.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 1,
+        "x": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

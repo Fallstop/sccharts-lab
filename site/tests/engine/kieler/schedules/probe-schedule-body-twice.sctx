@@ -1,0 +1,8 @@
+// A method with a scheduled assignment called twice in a row.
+scchart E29 {
+  output int o
+  schedule s
+  method void bump() { o += 1 schedule s 1 }
+  region R1 { initial state A do bump(); bump() go to B state B }
+  region R2 { initial state C2 do o = 10 schedule s 0 go to D state D }
+}

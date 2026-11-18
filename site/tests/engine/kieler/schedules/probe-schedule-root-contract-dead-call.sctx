@@ -1,0 +1,9 @@
+// A method outside a class with a schedule, called only from a state that is never entered.
+scchart F09 {
+  output int o
+  schedule s
+  method void setIt() schedule s 1 { o = 1 }
+  initial state A do o = 2 go to B
+  state B
+  state Dead do setIt() go to B
+}

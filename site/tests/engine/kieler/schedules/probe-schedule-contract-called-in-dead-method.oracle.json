@@ -1,0 +1,70 @@
+{
+  "hash": "2b372b98c48f6aa4472d7305739fda97e67cb10e",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-called-in-dead-method.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.v": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "v": 0
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

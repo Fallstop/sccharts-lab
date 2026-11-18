@@ -1,0 +1,6 @@
+// A clause in a code block naming a variable that is not a schedule.
+scchart H01 {
+  output int o
+  int s
+  initial state A do { o = 1 schedule s 0 } go to B state B
+}

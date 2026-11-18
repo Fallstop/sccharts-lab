@@ -1,0 +1,8 @@
+// Contradictory orders with a code block: a cycle.
+scchart A24 {
+  output int o
+  int x
+  schedule s, t
+  region R1 { initial state A immediate do { o = 1 schedule s 1; x = 1 schedule t 0 } go to B state B }
+  region R2 { initial state C immediate do { o = 2 schedule s 0; x = 2 schedule t 1 } go to D state D }
+}

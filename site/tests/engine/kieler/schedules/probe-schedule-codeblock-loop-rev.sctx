@@ -1,0 +1,7 @@
+// A schedule inside a loop of a code block (priorities the other way round).
+scchart A18 {
+  output int o
+  schedule s
+  region R1 { initial state A immediate do { for (int i = 0; i < 3; i++) { o += i schedule s 0 } } go to B state B }
+  region R2 { initial state C immediate do o = 10 schedule s 1 go to D state D }
+}

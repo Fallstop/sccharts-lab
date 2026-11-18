@@ -1,0 +1,14 @@
+// A contract and an explicit clause on a call with two arguments.
+scchart E27 {
+  output int o
+  schedule t
+  class C {
+    schedule s
+    int v = 0
+    void set2(int a, int b) schedule s 1 { v = a + b }
+    int get() schedule s 0 { return v }
+  } c
+  region R1 { initial state A do o = c.get() go to B state B }
+  region R2 { initial state C2 do c.set2(5, 0) schedule t 0 go to D state D }
+  region R3 { initial state E do c.v = 9 schedule t 1 go to F state F }
+}

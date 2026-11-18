@@ -25,7 +25,8 @@ export type Feature =
      *  chart's own `lag`, and `ode` actions on a float and an int. Implies clocks. Not in `mix`. */
     | 'timed'
     /** Written schedules: `schedule {conflicting, commuting} s` declarations and `schedule s N` clauses on
-     *  writes of w in concurrent regions (absolute writes too, which only the schedule orders). Not in `mix`. */
+     *  writes of w in concurrent regions (absolute writes too, which only the schedule orders), on calls, inside
+     *  method bodies and code blocks, the contracts of a class's methods and the schedule of its instance. Not in `mix`. */
     | 'schedules'
     /** Nested instances: a struct inside a struct (`ln.a.qx`), a class inside a class (`box.in.v`, a method of the
      *  inner one), an array of class instances with a method (`cells[1].inc()`, `cells[n % 2].v`), an array member of
@@ -166,6 +167,9 @@ class Generator {
     private readonly w: (k: keyof NonNullable<Profile['weights']>) => number
     private children: string[] = []
     private priority = 0
+    /** The `schedules` profile declared the class `Tk` with contract methods (instance `tk`), and a region that calls them all. */
+    private contracts = false
+    private contractRegion = false
     private childNames: string[] = []
 
     constructor(private readonly rng: Rng, readonly features: Set<Feature>, readonly profile: Profile) {
@@ -254,6 +258,21 @@ class Generator {
                 // Mostly a priority of its own (a total order KIELER accepts), now and then a shared one.
                 const k = r.chance(0.65) ? this.priority++ : r.int(0, 2)
                 opts.push(...[`w = ${r.pick(['1', '2', 'w + 1', 'n'].filter(v => v !== 'n' || s.ints.length))} schedule ${s.sched} ${k}`, `w += 1 schedule ${s.sched} ${k}`, `w = w * 2 schedule ${s.sched} ${k}`].flatMap(x => [x, x]))
+                // Clauses on calls (a short method, one with a single argument, which loses the clause, and a C
+                // function, whose body it does not reach), inside a method body and in code blocks (S-27a).
+                const own = () => (r.chance(0.65) ? this.priority++ : r.int(0, 2))
+                opts.push(
+                    `setW(${r.pick(['1', '2'])}, 0) schedule ${s.sched} ${own()}`,
+                    `{ w = 3 schedule ${s.sched} ${k}; }`, `{ if n > 1 schedule ${s.sched} ${k} { w += 1 schedule ${s.sched} ${k}; } }`,
+                    `{ for (int j = 0; j < 2; j++) { w += 1 schedule ${s.sched} ${k}; } }`)
+                // (These three write w outside the schedule's order, so they mostly conflict with a concurrent write.)
+                if (r.chance(0.25)) opts.push(r.pick([`setW1(2) schedule ${s.sched} ${own()}`, `loopW(1, 0) schedule ${s.sched} ${own()}`, 'inW()']))
+                // Contract methods of a class and the instance's own schedule.
+                if (this.contracts && (!s.conc || r.chance(0.25))) {
+                    opts.push('tk.put(2)', 'tk.add()', `tk.v = 2 schedule tk.q ${r.int(0, 2)}`)
+                    if (!s.conc) opts.push(`w = 1 schedule tk.q ${k}`)
+                    if (s.outs.length) opts.push(`${r.pick(s.outs)} = tk.get()`)
+                }
             }
             if (opts.length) out.push(r.pick(opts))
         }
@@ -527,6 +546,27 @@ class Generator {
             const protocols = Array.from({ length: r.int(0, 3) }, () => r.pick(['conflicting', 'commuting', 'conflicting']))
             const decl = r.chance(0.15) ? `"sch" global ${r.pick(['conflicting', 'commuting'])} ` : protocols.length ? `{${protocols.join(', ')}} ` : ''
             lines.push(`  schedule ${decl}s`, '  output int w = 0')
+            lines.push(
+                '  method void setW(int a, int b) {', '    w = a + b', '  }',
+                '  method void setW1(int a) {', '    w = a', '  }',
+                '  method void loopW(int a, int b) {', '    for (int j = 0; j < 2; j++) {', '      w = a + b;', '    }', '  }',
+                '  method void inW() {', `    w += 1 schedule s ${r.int(0, 3)}`, '  }')
+            // A class whose methods have contracts (priorities of the class's schedule), sometimes a C function.
+            this.contracts = r.chance(0.6)
+            if (this.contracts) {
+                // Mostly commuting priorities (two concurrent calls of one method are then fine) and a priority per method.
+                const list = r.chance(0.6) ? '{commuting, commuting, commuting} ' : r.chance(0.5) ? `{${Array.from({ length: r.int(1, 3) }, () => r.pick(['conflicting', 'commuting'])).join(', ')}} ` : ''
+                const add = r.chance(0.3) ? ['      for (int j = 0; j < 1; j++) {', '        v += 1;', '      }'] : ['      v += 1']
+                // (put 0, add 1, get 2 is the order the writes and reads of v have anyway.)
+                const order = r.chance(0.5) ? [0, 2, 1] : r.chance(0.6) ? r.pick([[0, 1, 2], [1, 0, 2], [2, 1, 0], [1, 2, 0], [2, 0, 1]]) : [r.int(0, 2), r.int(0, 2), r.int(0, 2)]
+                lines.push(
+                    '  class Tk {', `    schedule ${list}q`, '    int v = 0',
+                    `    void put(int a) schedule q ${order[0]} {`, '      v = a', '    }',
+                    `    int get() schedule q ${order[1]} {`, '      return v', '    }',
+                    `    void add() schedule q ${order[2]} {`, ...add, '    }', '  } tk')
+                // Every contract method has to be called somewhere: mostly a region of its own does.
+                this.contractRegion = r.chance(0.92)
+            }
         }
         if (this.on('nested')) {
             lines.push(
@@ -577,6 +617,9 @@ class Generator {
             lines.push(...sub.lines, '  }')
         }
         if (rootDataflow && !this.dataflowUsed) lines.push(...this.dataflow({ ...scope, conc: true }, '  '))
+        if (this.contracts && this.contractRegion) {
+            lines.push('  region RK {', '    initial state K0', '    do tk.put(n) go to K1', '    state K1', '    do z = tk.get() go to K2', '    state K2', '    do tk.add() go to K0', '  }')
+        }
         lines.push('}')
         return [lines.join('\n'), ...this.children].join('\n\n') + '\n'
     }

@@ -18,7 +18,7 @@ import { inlineMethods, isInlined } from './structure/methods'
 import { goBlock, goBlockDiagnostics, type GoBlock } from './goblock'
 import { stringConditions } from './stringConditions'
 import { formatExpression } from '../format'
-import { allActionSites, allScopes, allStates, effectExprs, readableName, walkExpr, type CEffect, type CExpr, type CState, type CStmt, type CVar } from './model'
+import { allActionSites, allScopes, allStates, effectExprs, readableName, walkExpr, type CEffect, type CExpr, type CState, type CStmt, CVar } from './model'
 
 export interface CompiledChart {
     /** KIELER accepts the chart (no error diagnostics). */
@@ -759,6 +759,26 @@ function cycleDiagnostic(cycle: SNode[], analysis: Analysis, index: ModelIndex |
             kieler,
             hint: 'Make one transition on the loop delayed (remove `immediate`): a tick must always end. KIELER rejects such a loop even if the triggers would stop it.',
             related: [...transitions, ...states].length ? [...transitions, ...states] : related,
+        }
+    }
+    // A schedule orders two effects through a method they call or the object they call it on (deps.ts `only`): there
+    // is no variable to name.
+    const through = deps.find(d => d.schedule && (d.a.only || d.b.only))
+    if (through) {
+        const v = through.v
+        const name = v.classInstance ? `${v.classInstance.name}.${v.decl?.slice(v.decl.lastIndexOf('$') + 1) ?? v.name}` : v.display ?? v.name
+        const what = v.method ? `the method \`${name}\`` : `the object \`${name}\``
+        const { group, from, to } = through.schedule!
+        const schedule = group instanceof CVar ? `\`${group.display ?? group.name}\`` : 'their schedule'
+        const rel = [nodeElement(through.from), nodeElement(through.to)].filter((x): x is string => !!x)
+        return {
+            severity: 'error', code: 'schedule-conflict', span: through.a.span ?? through.b.span, kieler, related: [...new Set([...rel, ...related])],
+            message: from === to
+                ? `Two concurrent effects use ${what} at the same priority (${from}) of the schedule ${schedule}, and KIELER cannot order them`
+                : `The schedule ${schedule} orders two concurrent effects that use ${what}, and that contradicts another order between them`,
+            hint: from === to
+                ? `KIELER orders the effects of one schedule by priority, and at one priority even two reads need an order unless the priority is commuting. Give the two effects different priorities, or declare the priority as commuting (\`schedule {commuting} ...\`).${from === 1 ? ' At priority 1 the two effects also have to use the same assignment operator (`=` with `=`, `+=` with `+=`).' : ''}`
+                : 'Follow the priorities of every schedule on the two effects, and what they read and write: one order has to hold for all of them. Change a priority, or remove one of the schedule clauses.',
         }
     }
     const conflict = visible.find(d => d.kind === 'write-write') ?? deps.find(d => d.kind === 'write-write')

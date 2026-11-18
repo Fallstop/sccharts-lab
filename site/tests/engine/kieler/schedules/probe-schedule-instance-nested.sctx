@@ -1,0 +1,7 @@
+// The schedule of an instance of a class inside a class: refused.
+scchart D07 {
+  output int o
+  class Outer { class C { schedule s  int v = 0 } c } a
+  region R1 { initial state A do o = 1 schedule a.c.s 1 go to B state B }
+  region R2 { initial state C2 do o = 2 schedule a.c.s 0 go to D state D }
+}

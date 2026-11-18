@@ -1,0 +1,9 @@
+// A scheduled assignment inside an @inline method.
+scchart A14 {
+  output int o
+  schedule s
+  @inline
+  method void setIt() { o = 1 schedule s 1 }
+  region R1 { initial state A immediate do setIt() go to B state B }
+  region R2 { initial state C immediate do o = 2 schedule s 0 go to D state D }
+}

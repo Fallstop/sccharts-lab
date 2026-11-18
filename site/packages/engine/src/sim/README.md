@@ -156,6 +156,10 @@ The structure passes (structure.md) are KIELER's processors too, so their quirks
   compileMethodCall), with the jumps KIELER's structured C code keeps: forward ones (a jump back ends the method). Their bodies' accesses count as the calling node's for the dependency
   analysis (deps.ts innerAccesses, KIELER's processInnerAccesses), with the calling node's operator deciding whether
   updates commute. Code effects are methods `_effect<n>` (lowered in place).
+- **Written schedules** (structure.md S-27a): clauses stay on effects, triggers and the statements of bodies; a class's
+  schedule is one variable per instance; passes/contracts.ts (KIELER's transformContracts) copies the contract of a
+  class method onto its calls; the inliner passes a calling effect's clauses to the copied body; deps.ts gives every
+  access the clauses of its place, as KIELER's dependency analysis does per schedule.
 - **Charts used as classes** (passes/reference.ts redirectMembers, structure.md S-65): `ref C c` without bindings
   expands an instance of C; `c.x` and `c.m()` in the declaring chart mean the instance's field and method; an
   instance without fields is `{}` in the pool. Inheritance (passes/inheritance.ts) renames inherited private and

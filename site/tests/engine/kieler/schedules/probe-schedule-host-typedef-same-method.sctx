@@ -1,0 +1,11 @@
+// A host class: KIELER orders its methods as declared, and two concurrent calls of one method are a circle.
+#hostcode "typedef struct { void (*start)(void); void (*stop)(void); } Thing;"
+scchart F15 {
+  output int o
+  host class "Thing" {
+    void start()
+    void stop()
+  } t
+  region R1 { initial state A do t.start() go to B state B do t.stop() go to A }
+  region R2 { initial state C do t.start() go to D state D do t.stop() go to C }
+}

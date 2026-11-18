@@ -1,0 +1,67 @@
+{
+  "hash": "bbad8e0102cd058d816847a98e0ec2fff108eaff",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-call-value-loop.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name r is contained in the model but not in VariableStore.",
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name get is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "x": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "x": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 4,
+        "x": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

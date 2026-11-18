@@ -1,0 +1,58 @@
+{
+  "hash": "8c2f1378ff2472723c5a167873b6c770d601b9d7",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-codeblock-p1-quirk-loop.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name i is contained in the model but not in VariableStore.",
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _effect0 is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 2
+      },
+      "taken": [
+        1,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 2
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -605,17 +605,112 @@ clause naming a variable that is not a schedule crashes the dependency analysis 
 - A vector assignment `x = {1, 2} schedule s 0` loses its schedule: KIELER's ArrayAssignment makes new element
   assignments (`probe-schedule-array-vector`, rejected as an unscheduled conflict).
 - `state S schedule s 0 { schedule s ... }` names the state's own `s` (`probe-schedule-state-local`).
+- **In code blocks and method bodies** a clause stands after an assignment, `x++`, `print(...)`, a call, and after an
+  `if` condition (`if x > 0 schedule s 1 { ... }`); not after `return`, `while (...)` or the block itself. The body's
+  statements keep their clauses whichever way KIELER compiles the body: copied into place (a short method or block),
+  its statements are nodes of the tick with their clauses; kept as a C function (a loop, a call, 28 statements or
+  more), its accesses count as the calling effect's, each with the clauses written inside
+  (`-method-body`, `-body-rev`, `-body-loop`, `-body-if`, `-body-nested-call`, `-codeblock-loop`, `-codeblock-goto`,
+  `-codeblock-in-action`, `-body-in-trigger`, `-cfn-calls-scheduled`, `-body-twice`). A method nobody calls is not
+  looked at (`-body-never-called`, also a clause naming a variable that is not a schedule: `-not-a-schedule-uncalled`
+  against `-not-a-schedule-block`).
+- **On a call effect** (`do f() schedule s 1`, also the clauses a state or region passes down):
+  - a short method: the clause goes to every assignment of the copied body, after the assignment's own clauses, and
+    not to the body's conditions (`-call`, `-call-rev`, `-call-if`, `-call-inlined-args`, `-call-p1-quirk`,
+    `-state-schedule-codeblock`);
+  - a C function: the clause does not reach the body, whose accesses stay in initialise-update-read (`-call-loop`,
+    `-state-schedule-cfn`, `-block-call-noparam-sched-cfn`: two writes conflict). The scheduled call itself reads and
+    writes the *method* (for `c.m()`: reads `m`, writes the instance `c`) in that schedule, so two scheduled calls of
+    one function are ordered by priority, and at one priority each reads what the other writes: a circle
+    (`-call-same-cfn`, `-call-same-cfn-rev`, `-call-same-cfn-same-prio`, `-call-two-cfn`, `-call-instance-writer`);
+  - **exactly one argument: the clause is lost.** `f(1) schedule s 1` parses as a valued emission, and the converter
+    that makes it a call again copies the target and the value only. The clause's names are never looked up
+    (`schedule nosuch 1` is accepted). Zero or two arguments keep it; so do calls in code blocks, and what a state
+    or region passes down (`-call-one-arg-inlined`, `-call-one-arg-unknown`, `-call-two-arg-unknown`,
+    `-one-arg-instance`, `-one-arg-entry`, `-region-schedule-one-arg`).
+- **A scheduled assignment whose value calls a C function** (`o = get() schedule s 0`) reads the method in that
+  schedule; the function's body does not get the clause (`-call-value-loop`). Two such effects are ordered through
+  the method, and at one conflicting priority two *reads* are a circle (`-readers-same-prio`, `-readers-diff-prio`,
+  `-readers-same-prio-commuting`, `-value-call-cfn-*`).
+- **A scheduled trigger that calls a short method of the chart** is refused: `User schedules are not supported in
+  combination with method inlining!` (the trigger's schedule is put on every reference of the trigger, and the call
+  is one). A C function is fine; a member call `c.get()` is fine too, because the schedule sits on `get` and is lost
+  when the call is replaced (`-call-in-trigger`, `-call-in-trigger-loop`, `-trigger-call-op`,
+  `-trigger-call-alone-cfn`).
+- **The index of a scheduled target** is read without the clause when the target is a plain array (`o[i] = 7 schedule
+  s 0` reads `i` in initialise-update-read) and with it when the target is a member (`c.arr[i] = 7 schedule s 0`)
+  (`-index-read-schedule`, `-member-index-schedule`).
+- **Schedules of classes.** A `schedule` declared in a class is one schedule per instance: KIELER moves it into the
+  chart as `<Class>_<instance>_<name>` (the warning then names `C_c_s`). `schedule c.s 1` names the instance's, on
+  anything a clause can stand on; two instances have two schedules (`-instance`, `-instance-nonmember`,
+  `-instance-two`, `-instance-trigger`, `-instance-state-region`, `-instance-codeblock`, `-instance-in-method`,
+  `-instance-in-cfn`, `-instance-commuting`, `-instance-conflict`, `-inherited-instance-clause`). Refused, used or
+  not: a schedule in a class inside a class (`Scheduling declarations in nested classes are not yet supported (s)`)
+  and in a class with an array of instances (`... with cardinalities are not yet supported (cs)`)
+  (`-instance-nested`, `-instance-nested-unused`, `-instance-array`, `-instance-array-unused`, `-contract-array`,
+  `-contract-nested`). KIELER looks two classes deep: a schedule further in stays one ordinary schedule
+  (`-three-levels`, `-clause-three-levels`). In an unpacked class (@UnpackClass) it is the chart's (`-unpack-instance-
+  clause`). A `private schedule` can only be named inside the class. Inside the class, a clause on a *statement*
+  naming the class's schedule is an error: `Referring to scheduling directive in classes without reference to
+  instance (c)` (`-contract-body-clause`).
+- **Contracts.** `void set(int x) schedule s 0 { ... }` in a class is the method's contract: the clause is copied
+  onto what calls the method, marked with the method's name. The copy goes on the effect around the call (also a
+  statement of a method body: `-contract-in-method-statement`), or on the trigger; a call in a condition or a
+  `return` of a method body gets none, so there the contract is ignored (`-contract-in-return`,
+  `-sibling-in-condition`). What a marked clause orders:
+  - the call was copied into place: every access of the copied statements and of the calling effect, *and the object
+    itself* for every member touched (KIELER registers the member's parent). So `c.set(5)` at priority 0 comes
+    before `o = c.get()` at 1 (`-class-methods`, `-class-methods-rev`, `-contract-sequential`,
+    `-contract-two-instances`, `-contract-in-state`, `-contract-during`, `-contract-exit-action`,
+    `-contract-inherited`, `-contract-referenced`, `-chart-as-class-contract`), two calls at one conflicting priority
+    are a circle even when both only read (`-contract-same-prio`, `-contract-for-region`; fine when commuting:
+    `-contract-same-prio-commuting`), and two methods that touch no member of the object are not ordered at all
+    (`-contract-other-var`). The conditions of the body are not scheduled (`-contract-cond-body`);
+  - the call stays (a C function): the method and the object, nothing inside the body (`-contract-cfn`,
+    `-contract-cfn-rev`, `-contract-trigger-cfn`, `-contract-trigger-alone-cfn`, `-chart-class-cfn`);
+  - in a trigger with a call copied into place the copy is lost for the call, but stays on the trigger's other
+    references (`-contract-trigger-op`, `-contract-trigger-alone`, `-contract-trigger-other-ref`), and it makes a
+    short chart method called in the same trigger an error (`-contract-trigger-root-call`).
+  - The priority 1 quirk works through the object: `o += c.get()` and `c.set(5)`, both contracts at priority 1,
+    conflict whatever the protocol (`-contract-p1-op`, `-contract-p1-same-op`, `-contract-p1`).
+  - A contract and other clauses add up; contradicting orders are a circle (`-contract-and-clause`,
+    `-contract-and-clause-call`, `-contract-cycle`, `-contract-and-instance-clause`).
+  - Rejected: a contract on a method that is not in a class, or naming a schedule declared outside the class, once
+    the method is called anywhere, reachable or not (`java.lang.NullPointerException ... getEnclosingClass(...) is
+    null`: `-method-decl`, `-contract-outside-schedule`, `-contract-unpack`, `-root-contract-dead-call`,
+    `-referenced-root-contract`; never called it is accepted: `-contract-noncalled-root`,
+    `-contract-outside-never-called`); a contract method that is never called (`Referring to scheduling directive in
+    classes without reference to instance (c)`: `-contract-never-called`, `-chart-class-never-called`; a call in a
+    method nobody calls counts: `-contract-called-in-dead-method`); a call by the method's name alone in a statement
+    of another method of the class (`-contract-sibling-call`); a contract method that KIELER copies into place as the
+    whole initial value of a local variable of a body (`User schedules are not supported in combination with method
+    inlining!`: `-contract-in-local-init`; a C function is fine: `-local-init-cfn`; the initial value of a state's
+    variable is an entry action by then and fine: `-contract-init-rev`, `-contract-init-alone`).
+- **Host classes** get a schedule of their own when a method has none and there is another method: one priority per
+  method, in the order declared. Every method then has a contract: a method that is never called is the error above
+  (`-host-two-methods`), and two concurrent calls of one method are a circle (`-host-typedef-same-method`).
+- Some charts with many contradicting schedules make KIELER's compiler never finish (found by the `schedules` fuzz
+  profile, seed 1; the engine rejects them).
 - Evidence: `tests/engine/kieler/schedules/probe-schedule-*` (commuting, conflicting, cycle, read-first, global,
   referenced-state, two-objects, trigger, trigger-ref, state-body, simple-state, region, during, entry, aborts,
-  emit, relative, instances, unknown, not-a-schedule), `tests/engine/kieler/parity/probe-user-schedule*`.
-- Source: `processors/UserSchedule.xtend:85-140, 463-494`, `SCGTransformation.xtend:632-657`,
-  `AbstractDependencyAnalysis.xtend:400-500` (processDependencies, accessType), `processors/Signal.xtend:233-309`.
+  emit, relative, instances, unknown, not-a-schedule, and the probes named above), `tests/engine/kieler/parity/
+  probe-user-schedule*`.
+- Source: `processors/UserSchedule.xtend:85-140, 141-400 (transformContracts), 463-494`,
+  `SCGTransformation.xtend:632-657`, `AbstractDependencyAnalysis.xtend:160-375` (the accesses per schedule, method
+  specific matches, artificial writers), `400-526` (processDependencies, accessType),
+  `MethodSpecificSchedulingDirectiveUtil.xtend`, `DependencyTransformationV2.xtend:178-232` (inner accesses),
+  `MethodProcessor.xtend:219, 288-300`, `SCLToSCGTransformation.xtend:484-493`,
+  `KEffectsEmissionReferenceCallConverter.xtend:62-112`, `processors/Signal.xtend:233-309`.
 - Teaching: rarely needed; data dependencies order most charts. Shows that "who goes first" is a compiler decision
-  the programmer can override.
-- Implementation: lowering keeps clauses on effects (`o.schedule`) and triggers (`sched`), states and regions
-  (`ext.userSchedule`); passes/userSchedule.ts spreads those of states and regions; deps.ts orders the accesses.
-  Not yet simulated (`unsupported`): clauses inside code blocks and methods, on calls, on methods, on equations
-  and dataflow regions, and schedules of class instances (`c.s 1`).
+  the programmer can override. A contract says it once, on the method, for every call.
+- Implementation: lowering keeps clauses on effects (`o.schedule`), triggers and `if` conditions (`sched`), states
+  and regions (`ext.userSchedule`) and method declarations (`CMethod.schedule`), and makes a class's schedule one
+  variable per instance (lower.ts classSchedule); passes/contracts.ts copies the contracts onto the calls, then
+  passes/userSchedule.ts spreads the clauses of states and regions; structure/methods.ts passes a calling effect's
+  clauses to the copied body; deps.ts gives every access the clauses of its place (`schedule`: method specific
+  matches, the object, the method a call names) and orders them. Not simulated (`unsupported`): clauses on equations
+  and dataflow regions. Open: charts with host classes are not analysed, so two concurrent calls of one host method
+  are not rejected.
 
 ### S-28 Delays: `->`, `fby`, `pre`, `sfby`
 

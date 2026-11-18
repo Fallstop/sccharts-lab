@@ -1,0 +1,9 @@
+// A scheduled call of a C function whose argument reads a variable.
+scchart B35 {
+  output int o
+  int x
+  schedule s
+  method void set2(int a, int b) { for (int i = 0; i < 2; i++) { o = a + b } }
+  region R1 { initial state A do set2(x, 0) schedule s 0 go to B state B }
+  region R2 { initial state C do x = 2 schedule s 1 go to D state D }
+}

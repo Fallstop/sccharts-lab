@@ -1,0 +1,49 @@
+{
+  "hash": "ab92f9037ecb7aa874debcb5ed8c9f4371b65c2a",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-contract-referenced.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name C_c_s is contained in the model but not in VariableStore.",
+    "ValuedObject with name _fn1__E16_local_c_set_x is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C1.v": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 0
+      },
+      "terminated": false
+    }
+  ]
+}

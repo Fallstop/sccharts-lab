@@ -1,0 +1,9 @@
+// The index of a scheduled member target: read through the member reference, so it is scheduled.
+scchart F21 {
+  output int o
+  int i = 0
+  schedule s
+  class C { int arr[2] } c
+  region R1 { initial state A do c.arr[i] = 7 schedule s 0 go to B state B do o = c.arr[0] go to B }
+  region R2 { initial state C2 do i = 1 schedule s 1 go to D state D }
+}

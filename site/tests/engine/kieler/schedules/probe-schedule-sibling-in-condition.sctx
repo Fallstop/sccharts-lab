@@ -1,0 +1,12 @@
+// A contract method called from a sibling's condition.
+scchart F10 {
+  output int o
+  class C {
+    schedule s
+    int v = 0
+    int get() schedule s 0 { return v }
+    void both(int x) { if get() == 0 { v = x } }
+  } c
+  region R1 { initial state A do o = c.get() go to B state B }
+  region R2 { initial state C2 do c.both(5) go to D state D }
+}

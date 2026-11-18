@@ -1,0 +1,7 @@
+// A schedule on a method outside a class that nobody calls.
+scchart C26 {
+  output int o
+  schedule s
+  method void setIt() schedule s 1 { o = 1 }
+  initial state A do o = 2 schedule s 0 go to B state B
+}

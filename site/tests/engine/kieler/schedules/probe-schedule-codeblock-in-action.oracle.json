@@ -1,0 +1,44 @@
+{
+  "hash": "7ae0ce5b0a34add271f99cb1a69c6e111f4945f3",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-codeblock-in-action.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 11
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 11
+      },
+      "terminated": false
+    }
+  ]
+}

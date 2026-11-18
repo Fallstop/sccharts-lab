@@ -82,7 +82,7 @@ class Lowering {
     readonly constScopes = new Set<Scope>()
     /** `state(S)` in method bodies: the flag of each state S (KIELER's MethodSignaling, attachStateFlags). */
     readonly stateFlags = new Map<string, CVar>()
-    /** User schedules where the simulator does not apply them yet (passes/userSchedule.ts reports them). */
+    /** User schedules where the simulator does not apply them yet: those of dataflow equations and regions. */
     readonly unsupportedSchedules: { what: string; span?: Span }[] = []
 
     constructor(readonly index: ModelIndex | undefined, private readonly inherited: ReadonlySet<string> = new Set()) {}
@@ -193,6 +193,11 @@ class Lowering {
         for (const m of d.members ?? []) {
             for (const mvo of m.valuedObjects) {
                 const nested = m.declKind === 'class' || m.declKind === 'struct'
+                if (m.declKind === 'schedule') {
+                    const schedule = this.classSchedule(scope, d, inst, m, mvo, depth)
+                    if (schedule) members.set(mvo.id, schedule)
+                    continue
+                }
                 if (!nested && m.declKind !== 'variable' && m.declKind !== 'method') continue
                 // The member's name in what it belongs to.
                 // `@UnpackRenaming "x"` on the member names it `<instance>x` (its own annotation before the declaration's).
@@ -230,6 +235,41 @@ class Lowering {
             }
         }
         this.instances.set(inst, { members, decl: d, owner })
+    }
+
+    /** Schedules declared more than two classes deep, by declaration: KIELER leaves them where they are. */
+    private readonly deepSchedules = new Map<string, CVar>()
+
+    /**
+     * A schedule declared in a class (UserSchedule.transformContracts, "Handle Class SDs"). KIELER moves the schedule
+     * of a class of the chart into the chart, one copy per instance (`C_c_s`), so `schedule c.s 1` and the contracts of
+     * the class's methods name that instance's schedule. It refuses one in a class inside a class, and does not look
+     * further in (getAllNestedValuedObjects: two levels): a schedule deeper than that stays one object for all
+     * instances. `depth` 0: the class is unpacked into the chart (@UnpackClass), where the schedule is the chart's.
+     */
+    private classSchedule(scope: Scope, d: Declaration, inst: CVar, m: Declaration, vo: Declaration['valuedObjects'][number], depth: number): CVar | undefined {
+        if (depth === 2) {
+            this.reports.push({
+                severity: 'error', code: 'schedule-nested-class', span: vo.nameSpan ?? vo.span,
+                message: `KIELER cannot compile the schedule \`${vo.name}\` because it is declared in a class inside a class`,
+                kieler: `Scheduling declarations in nested classes are not yet supported (${vo.name})`,
+                hint: `Declare \`schedule ${vo.name}\` in the outer class or in the chart.`,
+            })
+            return undefined
+        }
+        const shared = depth > 2 ? this.deepSchedules.get(vo.id) : undefined
+        if (shared) return shared
+        const v = new CVar(depth === 1 ? `${d.className ?? 'class'}_${inst.name}_${vo.name}` : depth === 0 ? `${inst.name}_${vo.name}` : vo.name, 'host')
+        v.declKind = 'schedule'
+        v.priorities = m.priorities ?? []
+        v.decl = vo.id
+        v.span = vo.nameSpan ?? vo.span
+        v.scope = scope
+        v.display = `${inst.display ?? inst.name}.${vo.name}`
+        if (depth === 1) v.scheduleOf = inst.name
+        if (depth > 2) this.deepSchedules.set(vo.id, v)
+        scope.decls.push(v)
+        return v
     }
 
     /**
@@ -346,6 +386,15 @@ class Lowering {
                     const inst = this.vars.get(vo.id)!
                     inst.dims = vo.cardinalities.map(c => this.expr(c))
                     this.initialiseInstance(inst)
+                    const schedule = vo.cardinalities.length ? [...(this.instances.get(inst)?.members.values() ?? [])].find(x => x.scheduleOf !== undefined) : undefined
+                    if (schedule) {
+                        this.reports.push({
+                            severity: 'error', code: 'schedule-class-array', span: vo.nameSpan ?? vo.span, related: schedule.decl ? [schedule.decl] : undefined,
+                            message: `KIELER cannot compile the schedule \`${schedule.display ?? schedule.name}\` of a class with an array of instances (\`${vo.name}\`)`,
+                            kieler: `Scheduling declarations in nested classes with cardinalities are not yet supported (${vo.name})`,
+                            hint: `Declare single instances (\`${d.className ?? 'C'} a, b\`), or declare the schedule in the chart.`,
+                        })
+                    }
                 }
             }
             for (const vo of d.valuedObjects) {
@@ -399,7 +448,8 @@ class Lowering {
     }
 
     private method(d: Declaration, hidden: CVar[] = []): CMethod {
-        this.schedule(d.schedule, 'schedules on methods')
+        const name = d.valuedObjects[0]?.name ?? ''
+        const contract = this.schedule(d.schedule, undefined, true)?.map(e => ({ ...e, method: name, span: e.span ?? d.schedule?.[0]?.span }))
         const params: CVar[] = [...hidden]
         const locals: CVar[] = []
         for (const p of d.parameters ?? []) this.frameVars([p], params)
@@ -409,29 +459,28 @@ class Lowering {
         const returnType: CMethod['returnType'] = !rt || rt === 'void' ? 'void'
             : (['bool', 'int', 'float', 'string', 'pure', 'host'] as const).find(t => t === rt) ?? 'host'
         const inline = d.annotations.some(a => a.name.toLowerCase() === 'inline')
-        return { params, locals, body, returnType, by, span: d.span, ...(inline ? { inline } : {}) }
+        return { params, locals, body, returnType, by, span: d.span, ...(inline ? { inline } : {}), ...(contract ? { schedule: contract } : {}) }
     }
 
     /** An SCL block: its declarations (initialisations become statements where they are written), then statements. */
     private block(declarations: Declaration[], statements: SclStatement[], locals: CVar[], by: string | undefined): CStmt[] {
         const out: CStmt[] = []
         for (const i of this.frameVars(declarations, locals)) {
-            out.push({ k: 'do', f: { k: 'assign', ref: { k: 'ref', v: i.v, idx: [], span: i.span }, op: '=', expr: i.init, o: { by, span: i.span, hidden: true } } })
+            out.push({ k: 'do', init: true, f: { k: 'assign', ref: { k: 'ref', v: i.v, idx: [], span: i.span }, op: '=', expr: i.init, o: { by, span: i.span, hidden: true } } })
         }
         for (const s of statements) out.push(...this.statement(s, locals, by))
         return out
     }
 
     private statement(s: SclStatement, locals: CVar[], by: string | undefined): CStmt[] {
-        const scheduled = ('schedule' in s && s.schedule) || (s.kind === 'if' && s.conditionSchedule)
-        if (scheduled) this.unsupportedSchedules.push({ what: 'schedules in code blocks and methods', span: scheduled[0].span })
         switch (s.kind) {
             case 'assign': case 'postfix': case 'call': case 'print': case 'randomize': case 'hostcode':
                 return [{ k: 'do', f: this.effect(s, by ?? '') }]
             case 'return': return [{ k: 'return', expr: s.expression ? this.expr(s.expression) : undefined, span: s.span }]
             case 'block': return this.block(s.declarations, s.statements, locals, by)
             case 'if': return [{
-                k: 'if', cond: this.expr(s.condition), span: s.span,
+                // `if x > 0 schedule s 1 { ... }`: the schedule stays on the condition, as on a trigger.
+                k: 'if', cond: this.trigger(s.condition, s.conditionSchedule), span: s.span,
                 then: this.block(s.declarations, s.statements, locals, by),
                 else: s.else ? this.block(s.else.declarations, s.else.statements, locals, by) : undefined,
             }]
@@ -848,21 +897,26 @@ class Lowering {
      * A call: a method of an element of an array of instances (`cs[i].inc()`) takes the element's indices as its first
      * (hidden) arguments.
      */
-    private call(name: string, args: CExpr[], target: CRef | undefined, from: { extern?: boolean; paramAccess?: unknown; span?: Span }): Extract<CExpr, { k: 'call' }> {
+    private call(name: string, args: CExpr[], target: CRef | undefined, from: { extern?: boolean; paramAccess?: unknown; span?: Span; target?: Reference }): Extract<CExpr, { k: 'call' }> {
         if (target && target.v.declKind === 'method' && target.v.member && target.idx.length) {
             args = [...target.idx, ...args]
             target = { ...target, idx: [] }
         }
-        return { k: 'call', name, args, extern: from.extern, target, paramAccess: from.paramAccess as never, span: from.span }
+        // A class's method called by its name alone, inside the class.
+        const bare = !!target?.v.member && target.v.declKind === 'method' && !!from.target && !from.target.sub
+        return { k: 'call', name, args, extern: from.extern, target, paramAccess: from.paramAccess as never, span: from.span, ...(bare ? { bare } : {}) }
     }
 
     // ----- effects -----
 
+    /** Clauses naming a class's schedule without an instance that were reported already (by where they are written). */
+    private readonly bareSchedules = new Set<number>()
+
     /**
-     * `schedule s 1`: the schedule variable and the priority. KIELER also lets a class instance's schedule be named
-     * (`c.s 1`) and attaches method schedules to calls; the simulator does not apply those yet.
+     * `schedule s 1`: the schedule object and the priority. `schedule c.s 1` names the schedule of the instance `c`
+     * (classSchedule). `contract`: the clause of a method declaration, which names its class's schedule directly.
      */
-    schedule(list: ScheduleRef[] | undefined, what?: string): SchedEntry[] | undefined {
+    schedule(list: ScheduleRef[] | undefined, what?: string, contract = false): SchedEntry[] | undefined {
         if (!list?.length) return undefined
         if (what) {
             this.unsupportedSchedules.push({ what, span: list[0].span })
@@ -870,14 +924,32 @@ class Lowering {
         }
         const out: SchedEntry[] = []
         for (const s of list) {
-            const v = s.ref.decl ? this.vars.get(s.ref.decl) : undefined
-            if (s.ref.sub) {
-                this.unsupportedSchedules.push({ what: `the schedule of an instance (\`${s.ref.name}.${s.ref.sub.name}\`)`, span: s.span })
+            let v = s.ref.decl ? this.vars.get(s.ref.decl) : undefined
+            for (let sub = s.ref.sub; sub && v; sub = sub.sub) v = sub.decl ? this.instances.get(v)?.members.get(sub.decl) : undefined
+            // Declared in a base chart: the Inheritance pass knows the base's copy (passes/userSchedule.ts drops what
+            // nothing redirects).
+            if (!v && s.ref.decl && this.inherited.has(s.ref.decl.split('/').pop()!)) {
+                const ref = this.ref(s.ref)
+                out.push({ group: ref.v, priority: s.priority, ref })
                 continue
             }
-            // Not resolved: the front end reports it. A variable that is not a schedule crashes KIELER's dependency
-            // analysis where it orders an access (passes/userSchedule.ts reports it).
+            // Not resolved: the front end reports it (or classSchedule did). A variable that is not a schedule crashes
+            // KIELER's dependency analysis where it orders an access (passes/userSchedule.ts reports it).
             if (!v) continue
+            if (!contract && !s.ref.sub && v.scheduleOf !== undefined) {
+                // Inside the class, in a statement: KIELER only rebinds a class's schedule where an instance is named.
+                const at = s.span?.start ?? -1
+                if (!this.bareSchedules.has(at)) {
+                    this.bareSchedules.add(at)
+                    this.reports.push({
+                        severity: 'error', code: 'schedule-without-instance', span: s.span, related: v.decl ? [v.decl] : undefined,
+                        message: `\`schedule ${s.ref.name} ${s.priority}\` inside the class names the class's own schedule, which KIELER cannot compile in a statement`,
+                        kieler: `Referring to scheduling directive in classes without reference to instance (${v.scheduleOf})`,
+                        hint: `Write the clause on the method's declaration (\`void m() schedule ${s.ref.name} ${s.priority} { ... }\`): it then applies to every call of the method. In a statement, use a schedule declared in the chart.`,
+                    })
+                }
+                continue
+            }
             out.push({ group: v, priority: s.priority, ...(v.declKind === 'schedule' ? {} : { span: s.span }) })
         }
         return out.length ? out : undefined
@@ -903,7 +975,7 @@ class Lowering {
 
     effect(f: Effect, by: string, owner?: Scope): CEffect {
         // An emission's schedule is lost: KIELER's Signal processor replaces the emission by new assignments.
-        const schedule = 'schedule' in f && f.kind !== 'emit' ? this.schedule(f.schedule, f.kind === 'call' ? 'schedules on calls' : undefined) : undefined
+        const schedule = 'schedule' in f && f.kind !== 'emit' ? this.schedule(f.schedule) : undefined
         const o: EffectOrigin = schedule ? { by, span: f.span, schedule } : { by, span: f.span }
         switch (f.kind) {
             case 'assign': return { k: 'assign', ref: this.target(f.target), op: f.operator, expr: this.expr(f.expression), o }
@@ -1131,7 +1203,7 @@ export function lowerChart(chart: State, index: ModelIndex | undefined, inherite
             // Not a rejection: KIELER runs this chart, only the guide's simulator cannot (yet).
             severity: 'info', code: 'unsupported', span: first.span,
             message: `The guide's simulator cannot run ${first.what} yet`,
-            hint: 'The simulator applies schedules on assignments, emissions, triggers, states and regions. The official KIELER tools can run this chart.',
+            hint: 'The simulator applies schedules everywhere else: on effects, triggers, states, regions, calls, methods and inside code blocks. The official KIELER tools can run this chart.',
         })
     }
 

@@ -1,0 +1,19 @@
+{
+  "hash": "30ca9e88d4039f87923a6b5438ea4a64c0fa7d1f",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-call-one-arg-inlined.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "Can't schedule from _g2b to _g7b",
+    "Can't schedule from _g7b to _g2b",
+    "Can't schedule from _g2b to _g3",
+    "Can't schedule from _g7b to _g8",
+    "The SCG is NOT asc-schedulable!",
+    "Circular dependency involving o prevents scheduling this tick."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through o.",
+    "Potential instantaneous loop through o."
+  ],
+  "ticks": []
+}

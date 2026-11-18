@@ -1,0 +1,9 @@
+// A scheduled call whose value is used: o = get2(x, 0) schedule s 0.
+scchart B42 {
+  output int o
+  int x
+  schedule s
+  method int get2(int a, int b) { if a > 0 { return 1 } return b }
+  region R1 { initial state A do o = get2(x, 0) schedule s 0 go to B state B }
+  region R2 { initial state C do x = 2 schedule s 1 go to D state D }
+}

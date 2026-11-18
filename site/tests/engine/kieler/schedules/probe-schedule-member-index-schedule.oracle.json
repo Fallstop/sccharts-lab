@@ -1,0 +1,92 @@
+{
+  "hash": "4f1639c72ce663424ff8a3ce223056812f576223",
+  "chart": "tests/engine/kieler/schedules/probe-schedule-member-index-schedule.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "C.arr": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "class",
+      "properties": []
+    },
+    "i": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "arr": [
+            0,
+            0
+          ]
+        },
+        "i": 0
+      },
+      "taken": [
+        0,
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "o": 0,
+        "c": {
+          "arr": [
+            7,
+            0
+          ]
+        },
+        "i": 1
+      },
+      "taken": [
+        1,
+        0,
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "o": 7,
+        "c": {
+          "arr": [
+            7,
+            0
+          ]
+        },
+        "i": 1
+      },
+      "taken": [
+        0,
+        1,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

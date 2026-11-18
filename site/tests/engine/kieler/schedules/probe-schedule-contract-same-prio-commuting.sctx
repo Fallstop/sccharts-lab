@@ -1,0 +1,11 @@
+// Two calls of one contract method from two regions, at a commuting priority.
+scchart C08 {
+  output int o
+  class C {
+    schedule {commuting} s
+    int v = 0
+    void set(int x) schedule s 0 { v = x }
+  } c
+  region R1 { initial state A do c.set(1) go to B state B }
+  region R2 { initial state C2 do c.set(5) go to D state D }
+}
