@@ -18,6 +18,7 @@ import {
     type CRegion, type CState,
 } from '../model'
 import type { Expansion, ReferenceCall } from './reference'
+import { allInherited } from './inheritance'
 
 const PREFIX = '__df_'
 
@@ -181,7 +182,7 @@ function processRegion(df: CRegion, expansion: Expansion) {
         const args: CArg[] = [...g.instance!.args]
         const own = new Map<string, CVar>()
         // Local versions of the instance's interface (inputs and outputs, in declaration order).
-        for (const d of chart ? interfaceOf(chart) : []) {
+        for (const d of chart ? interfaceOf(chart, name => expansion.findChart(name)) : []) {
             const local = new CVar(`${PREFIX}${g.name}_${d.name}`, d.type)
             local.signal = d.signal
             local.generated = true
@@ -196,7 +197,8 @@ function processRegion(df: CRegion, expansion: Expansion) {
             args.push({ expr: ref(local) })
         }
         locals.set(g, own)
-        const call: ReferenceCall = { target: g.instance!.target, args, span: g.span }
+        // (Dataflow.xtend: the reference takes the generic arguments of the variable, or of its declaration.)
+        const call: ReferenceCall = { target: g.instance!.target, args, span: g.span, ...(g.instance!.generics ? { generics: g.instance!.generics } : {}) }
         refState.ext.call = call
     })
 
@@ -212,7 +214,7 @@ function processRegion(df: CRegion, expansion: Expansion) {
             if (target.v.declKind === 'reference' && target.v.instance) {
                 const chart = expansion.findChart(target.v.instance.target)
                 let idx = 0
-                for (const input of chart ? interfaceOf(chart).filter(d => d.input) : []) {
+                for (const input of chart ? interfaceOf(chart, name => expansion.findChart(name)).filter(d => d.input) : []) {
                     if (values.length) {
                         const value = values.shift()!
                         if (value.k !== 'ignore') parts.push({ key: idx + k * 100, target: { k: 'ref', v: target.v, idx: [], sub: { k: 'ref', v: placeholder(input.name), idx: [] }, span: target.span }, op: eq.op, expr: value })
@@ -261,9 +263,10 @@ function processRegion(df: CRegion, expansion: Expansion) {
 }
 
 /** The interface of a chart as written: its inputs and outputs in declaration order. */
-function interfaceOf(chart: State): { name: string; type: CVar['type']; signal: boolean; input: boolean; dims: CExpr[] }[] {
+function interfaceOf(chart: State, find: (name: string) => State | undefined): { name: string; type: CVar['type']; signal: boolean; input: boolean; dims: CExpr[] }[] {
     const out: { name: string; type: CVar['type']; signal: boolean; input: boolean; dims: CExpr[] }[] = []
-    for (const d of chart.declarations) {
+    // (Dataflow.xtend: the chart's declarations, then all it inherits.)
+    for (const d of [chart, ...allInherited(chart, find)].flatMap(c => c.declarations)) {
         if (d.declKind !== 'variable' || !(d.input || d.output)) continue
         for (const vo of d.valuedObjects) {
             out.push({

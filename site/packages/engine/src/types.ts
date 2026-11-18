@@ -136,6 +136,8 @@ export interface State extends NodeBase {
     baseStates?: ScopeCall[]
     /** Generic parameter declarations `scchart X<T is int>`, kept as written. */
     genericParameters?: string[]
+    /** The same declarations, parsed (one per entry of `genericParameters`). */
+    genericParameterDeclarations?: GenericParameterDeclaration[]
     /** Span of just the state's name (for go-to-definition and renaming). */
     nameSpan: Span
     /** `policy` regions of a root state (kept apart from `regions`; they describe method call protocols). */
@@ -251,6 +253,13 @@ export interface ScopeCall extends NodeBase {
     /** Bindings in order. `binding` is set for explicit `x to y` bindings (the referenced chart's name). */
     parameters: ScopeParameter[]
     genericParameters?: string[]
+    /** The generic arguments `<4, int, Worker>`, parsed (one per entry of `genericParameters`). */
+    genericArguments?: GenericArgument[]
+    /**
+     * `state S is W(...)` where `W` is a generic type parameter of the chart (`<W is Worker>`): the parameter's valued
+     * object id, set by name resolution. The chart that takes its place is known when the chart is instantiated.
+     */
+    targetParameter?: string
     super?: boolean
     /** Span of the target name. */
     targetSpan?: Span
@@ -309,8 +318,14 @@ export interface Declaration extends NodeBase {
     referenceContainer?: string
     /** Span of the referenced type's name (`ref Chart x`, `primitive T x`). */
     referenceSpan?: Span
+    /** `primitive T x`, `ref W w`: the generic type parameter the type names (its valued object id), set by name resolution. */
+    referenceParameter?: string
+    /** `method primitive T f()`: the generic type parameter of the return type (its valued object id). */
+    returnParameter?: string
     /** `ref Chart<T> x`: generic arguments as written. */
     genericParameters?: string[]
+    /** The generic arguments, parsed (one per entry of `genericParameters`). */
+    genericArguments?: GenericArgument[]
     /** Class, struct and enum: the type name (`class Counter {...} c` -> 'Counter'); also kept on host classes. */
     className?: string
     /** `host class ...`, `host enum ...` */
@@ -346,9 +361,47 @@ export interface ValuedObject extends NodeBase {
     /** `ref Chart c(x to y)`: bindings of a reference valued object. */
     parameters?: ScopeParameter[]
     genericParameters?: string[]
+    /** `ref Chart x<4>`: the generic arguments, parsed (one per entry of `genericParameters`). */
+    genericArguments?: GenericArgument[]
     annotations?: Annotation[]
     /** Span of just the name. */
     nameSpan?: Span
+}
+
+/**
+ * A generic parameter of a chart: `scchart C<N is int, T is primitive, W is Worker, V is ref Worker, X>`.
+ * `N` is a value parameter (a name the chart uses like a variable), `T` a primitive type parameter (`primitive T x`),
+ * `W` and `X` chart type parameters (`state S is W(...)`, `ref W w`), `V` an instance parameter (`V.method()`).
+ */
+export interface GenericParameterDeclaration extends NodeBase {
+    kind: 'genericParameter'
+    /** The parameter as a valued object: references to it inside the chart resolve to its id. */
+    valuedObject: ValuedObject
+    /** `is int`, `is bool`, ... (a value parameter) or `is primitive` (a primitive type parameter). */
+    valueType?: ValueType | 'primitive'
+    /** `is Chart` or `is ref Chart`: the chart's name. */
+    typeName?: string
+    typeSpan?: Span
+    /** `is ref Chart`: the argument is an instance (`ref Chart x`) instead of a chart. */
+    reference?: boolean
+    annotations: Annotation[]
+}
+
+/** A generic argument: `<4>`, `<int>`, `<Worker>`, `<Box<4>>`, `<x>`, `<a[1]>`. */
+export interface GenericArgument extends NodeBase {
+    kind: 'genericArgument'
+    /** As written. */
+    text: string
+    /** A value type: `<int>`. */
+    valueType?: ValueType
+    /** A literal, or a reference to a variable or to a generic parameter of the chart around it. */
+    expression?: Expression
+    /**
+     * A chart by name (`Worker`, `Box<4>`). A bare name is parsed as both a type and a reference; name resolution
+     * keeps the one it is.
+     */
+    typeName?: string
+    typeArguments?: GenericArgument[]
 }
 
 // ----- Expressions -----

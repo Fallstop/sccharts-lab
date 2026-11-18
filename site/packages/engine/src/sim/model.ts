@@ -61,8 +61,19 @@ export class CVar {
     method?: CMethod
     /** A member of a class or struct instance (lower.ts declareMembers): the instance and the member's name. */
     member?: { of: CVar; name: string }
-    /** `ref Chart x(args)` (declKind 'reference'): the chart it instantiates (structure.md S-18, S-33). */
-    instance?: { target: string; args: CArg[] }
+    /**
+     * `ref Chart x(args)` (declKind 'reference'): the chart it instantiates (structure.md S-18, S-33), with its
+     * generic arguments (`ref Chart<4> x`: `declGenerics`, the declaration's; `ref Chart x<4>`: the variable's own).
+     * `typeParam`: the chart is a generic type parameter of the chart around it (`ref W w`), by its declaration id.
+     */
+    instance?: { target: string; args: CArg[]; generics?: CGenericArg[]; declGenerics?: boolean; typeParam?: string }
+    /**
+     * A generic parameter of a chart (declKind 'generic', structure.md S-73): kept apart from the chart's
+     * declarations until the Reference pass binds it. `type`: the chart a type or instance parameter names.
+     */
+    generic?: { kind: 'type' | 'primitive' | 'value' | 'reference'; type?: string }
+    /** `primitive T x` (declKind 'primitive'): the generic type parameter that gives the variable its type. */
+    typeParam?: string
     /** A declaration of a state inside a for-region copy (passes/forRegion.ts): the source region and the counter's
      *  value in that copy. */
     forCopy?: { region: string; counter: string; value: number }
@@ -193,6 +204,12 @@ export interface CArg {
     span?: Span
 }
 
+/** A generic argument (`<4>`, `<int>`, `<Worker>`, `<Box<2>>`, `<x>`), lowered where it is written. */
+export type CGenericArg = { text: string; span?: Span } & (
+    | { k: 'type'; type: ValueType }
+    | { k: 'chart'; name: string; args: CGenericArg[] }
+    | { k: 'expr'; expr: CExpr })
+
 /** A method's signature and body. Parameters and locals are variables of no scope (method frames). */
 export interface CMethod {
     params: CVar[]
@@ -201,6 +218,8 @@ export interface CMethod {
     body: CStmt[]
     /** Return type as written ('void' when there is none). */
     returnType: ValueType | 'void'
+    /** `method primitive T f()`: the generic type parameter that gives the return type. */
+    returnParam?: string
     /** The source element the body comes from (method declaration or code effect's action/transition). */
     by?: string
     /** `@inline`: KIELER inlines every call of it, whatever its size (SCGAnnotations.ANNOTATION_METHOD_INLINING). */

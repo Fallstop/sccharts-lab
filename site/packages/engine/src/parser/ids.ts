@@ -4,7 +4,7 @@
 //   state       <parentStateId>.<stateName>      (<regionId>.<stateName> when two regions of the parent hold a
 //                                                state of that name)
 //   transition  <sourceStateId>-><priority>      action      <stateId>!<kind><index among that kind>
-//   declaration <scopeId>$<valuedObjectName>
+//   declaration <scopeId>$<valuedObjectName>      generic parameter <chartId>$<name>
 //
 // Collisions the convention does not cover get a suffix: a second region with the same name uses its index, a
 // second state or valued object with the same name in the same scope gets #2, #3, ... The implicit state that
@@ -117,6 +117,8 @@ function assignState(state: State, id: string) {
     state.id = id
     const declUsed = new Map<string, number>()
     assignDeclarations(state.declarations, id, declUsed)
+    // Generic parameters after the declarations, so a declaration of the same name keeps the plain id.
+    for (const g of state.genericParameterDeclarations ?? []) g.valuedObject.id = unique(`${id}$${g.valuedObject.name}`, declUsed)
     assignActions(state.actions, id)
 
     // Region ids: the name, or the index (also for a repeated name).
