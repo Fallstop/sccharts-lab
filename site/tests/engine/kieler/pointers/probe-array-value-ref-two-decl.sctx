@@ -1,0 +1,3 @@
+// An array as a value, for-regions, references, inheritance: ref two decl. KIELER runs it: x is 0, 5, 5; a is [0,0],
+// [3,0], [3,0].
+scchart Main { ref C c int a[2] ref C d output int x initial state A do x = d.v - c.v; a[0] = a - c.v go to A } scchart C { int v[2] int u }

@@ -28,33 +28,6 @@ function cKeywordError(name: string): string {
     return `expected identifier or ‘(’ before ‘${name}’`
 }
 
-/**
- * The array whose address an expression is in C: the array's name with fewer indices than it has dimensions, also
- * with a number added or subtracted (pointer arithmetic).
- */
-function arrayAddress(e: CExpr): CRef | undefined {
-    if (e.k === 'ref') {
-        let r = e
-        // A member of an array of objects named without the array's index is gcc's other error (object-array-index).
-        let unindexed = !!r.unindexed
-        while (r.sub) { r = r.sub; unindexed ||= !!r.unindexed }
-        if (unindexed) return undefined
-        // (A member's dimensions include those of an array of instances it belongs to.)
-        return r.v.dims.length > r.idx.length && !r.v.method && r.v.declKind !== 'method' ? r : undefined
-    }
-    if (e.k === 'op' && (e.op === '+' || e.op === '-') && e.args.length === 2) {
-        const [a, b] = e.args.map(arrayAddress)
-        // (The difference of two addresses is a number.)
-        if (a && b) return undefined
-        return a ?? (e.op === '+' ? b : undefined)
-    }
-    return undefined
-}
-
-function cType(v: CVar): string {
-    return v.type === 'bool' ? 'char' : v.type === 'float' ? 'float' : v.type === 'string' ? 'char *' : 'int'
-}
-
 export function checkCodegen(root: CState): Diagnostic[] {
     const out: Diagnostic[] = []
     const seen = new Set<string>()
@@ -128,26 +101,6 @@ export function checkCodegen(root: CState): Diagnostic[] {
     out.push(...cNames(root))
     for (const d of cText(root)) add(d)
 
-    // A method's array parameter is a single int in KIELER's C code (`int p`): a method the chart calls whose body
-    // subscripts one does not compile. Never called, or given an array it does not subscript, it compiles (probes
-    // tests/engine/kieler/codegen/probe-method-array-param*).
-    for (const m of reachingC(root).called) {
-        const method = m.method!
-        const arrays = new Set(method.params.filter(p => p.dims.length))
-        if (!arrays.size) continue
-        let subscripted: CVar | undefined
-        for (const e of bodyExprs(method.body)) walkExpr(e, x => { if (!subscripted && x.k === 'ref' && arrays.has(x.v) && x.idx.length) subscripted = x.v })
-        if (!subscripted) continue
-        const name = m.member ? m.member.name : m.name
-        add({
-            severity: 'error', code: 'method-array-parameter', span: subscripted.span ?? m.span,
-            message: `KIELER's C code for the method \`${name}\` does not compile: its parameter \`${subscripted.name}\` is an array, which KIELER's C declares as a single int`,
-            kieler: `subscripted value is neither array nor pointer nor vector\n${GCC_FAILED}`,
-            hint: `Give \`${name}\` the elements it needs as separate parameters, or let it read the chart's array directly instead of a parameter.`,
-            related: m.decl ? [m.decl] : undefined,
-        })
-    }
-
     // A method with parameters and an empty body: KIELER's C code still refers to the first parameter as a member of
     // its tick data (probes structure/probe-empty-method-*).
     for (const scope of allScopes(root)) {
@@ -220,24 +173,6 @@ export function checkCodegen(root: CState): Diagnostic[] {
                         message: `\`${v.display ?? v.name}\` is an array of a chart instance that a dataflow region wires: KIELER makes a single variable of it, which cannot take a vector`,
                         kieler: `expected expression before \u2018{\u2019 token\n${GCC_FAILED}`,
                         hint: SCALAR_PORT_HINT,
-                    })
-                }
-                // A whole array where a number is assigned: its address in C, which gcc does not convert.
-                const whole = f.expr && v.dims.length <= target.idx.length && (v.type === 'int' || v.type === 'bool') ? arrayAddress(f.expr) : undefined
-                if (whole) {
-                    add({
-                        severity: 'error', code: 'array-as-value', span: whole.span ?? f.o.span, related,
-                        message: `\`${whole.v.display ?? whole.v.name}\` is an array: it cannot be used as a single value`,
-                        kieler: `assignment to \u2018${v.type === 'bool' ? 'char' : 'int'}\u2019 from \u2018${cType(whole.v)} *\u2019 makes integer from pointer without a cast [-Wint-conversion]\n${GCC_FAILED}`,
-                        hint: `Name the element you mean (\`${whole.v.name}[0]\`). In KIELER's C code the array's name alone is its address.`,
-                    })
-                }
-                if (v.dims.length > target.idx.length && f.expr && f.expr.k !== 'vector') {
-                    add({
-                        severity: 'error', code: 'array-assignment', span: f.o.span, related,
-                        message: `\`${v.display ?? v.name}\` is an array: it cannot be assigned as a whole`,
-                        kieler: `assignment to expression with array type\n${GCC_FAILED}`,
-                        hint: `Assign the elements one by one (\`${v.name}[0] = ...\`, \`${v.name}[1] = ...\`) or with a vector, \`${v.name} = {...}\`.`,
                     })
                 }
                 if (f.expr?.k === 'ignore') {
@@ -722,7 +657,8 @@ function isString(e: CExpr): boolean {
     if (e.k === 'ref') {
         let r = e
         while (r.sub) r = r.sub
-        return r.v.type === 'string'
+        // (A string array without all its indices is an array: pointerCheck.ts.)
+        return r.v.type === 'string' && r.idx.length >= r.v.dims.length
     }
     return false
 }

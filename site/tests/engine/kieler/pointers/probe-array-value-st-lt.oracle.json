@@ -1,0 +1,118 @@
+{
+  "hash": "cbcc41ccdf97c2c4ac0d81d764e85f4c80b7d2ab",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-st-lt.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "S.a": {
+      "type": "int",
+      "properties": []
+    },
+    "S.p": {
+      "type": "int",
+      "properties": []
+    },
+    "S.q": {
+      "type": "float",
+      "properties": []
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "s": {
+      "type": "struct",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "a": [
+          0,
+          0
+        ],
+        "s": {
+          "a": [
+            0,
+            0
+          ],
+          "p": 0,
+          "q": [
+            0,
+            0
+          ]
+        }
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 1,
+        "a": [
+          0,
+          0
+        ],
+        "s": {
+          "a": [
+            0,
+            0
+          ],
+          "p": 0,
+          "q": [
+            0,
+            0
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 1,
+        "a": [
+          0,
+          0
+        ],
+        "s": {
+          "a": [
+            0,
+            0
+          ],
+          "p": 0,
+          "q": [
+            0,
+            0
+          ]
+        }
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

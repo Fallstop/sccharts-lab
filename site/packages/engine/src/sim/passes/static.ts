@@ -23,6 +23,8 @@ export const staticPass: Pass = {
                 v.name = `${hierarchicalName(state, '_')}_${v.name}`
                 v.static = false
                 v.generated = false
+                // (KIELER's struct has it after the chart's own variables and the taken counters: codegen/layout.ts.)
+                v.tags.add('#static')
                 addVar(root, v)
             }
             for (const v of state.decls.filter(x => x.global && !x.declKind)) {

@@ -1,0 +1,3 @@
+// An array as a value, in code KIELER has none for: `p = q` (a whole array assigned, which gcc rejects) on a transition
+// of a state nothing leads to. KIELER runs the chart: z is 0, 2, 4. Found by the pointers fuzz profile (seed 2).
+scchart Main { input int n int p[2] = {4, 7} int q[2] int m[2][3] output int z initial state S if n > 1 do z += m[1] - m[0] go to S state S2 immediate if n > 0 do p = q go to S }

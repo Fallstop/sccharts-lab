@@ -1,0 +1,162 @@
+{
+  "hash": "95c51a78a393695d7fe7fc84403f8c6de6f8b4a4",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-inex-cond.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "z": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "k": {
+      "type": "int",
+      "properties": []
+    },
+    "m": {
+      "type": "int",
+      "properties": []
+    },
+    "n": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "x": 0,
+        "z": 0,
+        "k": 0,
+        "m": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "n": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "x": 0,
+        "z": 0,
+        "k": 0,
+        "m": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "n": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "x": 2,
+        "z": -2,
+        "k": 0,
+        "m": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "n": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

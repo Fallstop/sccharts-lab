@@ -1,0 +1,2 @@
+// An array as a value, for-regions, references, inheritance: local init. KIELER runs it: x is 0, 4, 4.
+scchart Main { int a[2] output int x initial state A { int l[2] = {1,2} int k[2] = {3,4} initial state I do x = k - l + l[1] go to I } }

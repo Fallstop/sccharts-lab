@@ -1,0 +1,2 @@
+// An array as a value, three dimensions and offsets: m plus eq row. KIELER runs it: x is 0, 1, 1.
+scchart Main { int m[2][2] output int x initial state A do x = (m + 1) == m[1] go to A }

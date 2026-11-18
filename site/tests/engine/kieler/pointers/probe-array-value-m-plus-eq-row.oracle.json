@@ -1,0 +1,87 @@
+{
+  "hash": "fd87f6a37904f028402d07b4f07a8e016917d239",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-m-plus-eq-row.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "m": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "m": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 1,
+        "m": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 1,
+        "m": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

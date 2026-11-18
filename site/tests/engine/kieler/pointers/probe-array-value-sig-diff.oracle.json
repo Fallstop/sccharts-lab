@@ -1,0 +1,117 @@
+{
+  "hash": "9ea7652528cfb9c50148cdf0c82708dbb4a0bd82",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-sig-diff.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "S": {
+      "type": "bool",
+      "properties": [
+        "signal"
+      ]
+    },
+    "S_curval": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_curval"
+      ]
+    },
+    "S_val": {
+      "type": "int",
+      "properties": [
+        "sccharts-generated",
+        "signal-value",
+        "_val"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "S": false,
+        "S_curval": 0,
+        "S_val": 0,
+        "a": [
+          4,
+          7
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "S": true,
+        "S_curval": -2,
+        "S_val": -2,
+        "a": [
+          4,
+          7
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1,
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "S": false,
+        "S_curval": -2,
+        "S_val": -2,
+        "a": [
+          4,
+          7
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0,
+        0
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -147,6 +147,7 @@ returns the first error as its `error`.
 | --- | --- | --- |
 | `strict?` | `boolean` | `step()` throws on a name that is not an input of the chart, with the input it most likely meant. Off by default, as KIELER's simulation takes any name. |
 | `seed?` | `number \| ((call: SeedCall) => number \| undefined)` | What `randomize()` seeds the random numbers with: one number for every call, or a function asked for each call (`undefined` leaves that call to the default). Default: the clock in whole seconds, as KIELER's `srand(time(NULL))`. A seed is C's `unsigned int`: its low 32 bits. A tick run again after `rewind()` gets the seeds it had, without asking again; `reset()` forgets them. |
+| `address?` | `number` | Where KIELER's struct of the chart's variables lies in memory, for the few charts that make a number of an array's address (the warning `c-address-value`). KIELER's simulation has another address at every start; the default is the one without the system's address randomisation. |
 
 ### `SeedCall`
 

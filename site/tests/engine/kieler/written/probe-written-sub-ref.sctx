@@ -1,0 +1,2 @@
+// A sum or difference as KIELER writes it into C, sub ref. KIELER runs it: x is 0, 8, 7.
+scchart Main { input int i output int x initial state A is Sub(i, x) } scchart Sub { input int p output int o initial state A do o = 10 - (p - 2) go to A }

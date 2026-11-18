@@ -1,0 +1,2 @@
+// An array as a value, locals of inner states: loc region. KIELER runs it: x is 0, 4, 4.
+scchart Main { int a[2] output int x region R1 { int l[2] initial state A do x = l - a go to A } }

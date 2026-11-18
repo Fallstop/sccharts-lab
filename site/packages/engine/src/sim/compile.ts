@@ -16,6 +16,8 @@ import { conditionalWithoutElse, checkCodegen, preOfValue } from './codegen'
 import { removeSuperfluousForks } from './sfr'
 import { constantIndexWarnings } from './memory'
 import { droppedIndexDiagnostics, guardCondition } from './guardIndices'
+import { pointerProblems, pointerProblemsOfModel } from './pointerCheck'
+import { writtenDiagnostics } from './written'
 import { inlineMethods, isInlined } from './structure/methods'
 import { goBlock, goBlockDiagnostics, type GoBlock } from './goblock'
 import { stringConditions } from './stringConditions'
@@ -106,6 +108,8 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     if (unsupported) {
         // What gcc is known to reject still rejects the chart, host code or not (S-72).
         diagnostics.push(...checkCodegen(lowered.root))
+        const explained = new Set(diagnostics.filter(d => d.severity === 'error').map(d => d.kieler?.split('\n')[0]))
+        diagnostics.push(...pointerProblemsOfModel(lowered.root).filter(d => d.severity !== 'error' || !explained.has(d.kieler?.split('\n')[0])))
         const scg: SCG = { nodes: [], threads: [], root: undefined as never, stateNodes: new Map(), problems: [], seq: 0 }
         const analysis: Analysis = { pathTypes: new Map(), loops: [], cured: [], joins: new Map(), cycles: [], order: [], deps: [], lostTerminations: [], ambiguous: false, decisions: [], curedAt: [], preemption: new Map() }
         if (index) for (const d of diagnostics) if (!d.span) d.span = locate(d.related, index)
@@ -163,6 +167,12 @@ export function compileChart(chart: State, index: ModelIndex | undefined, option
     diagnostics.push(...preOfValue(scg.nodes, functions))
     diagnostics.push(...conditionKeepsResult(scg))
     diagnostics.push(...stringConditions(scg))
+    // Sums and differences KIELER's C code reads differently from the chart (written.ts).
+    diagnostics.push(...writtenDiagnostics({ nodes: scg.nodes, functions }))
+    // An array where KIELER's C code needs a number, and the operators C has no pointer form of (pointers.ts).
+    // (A check with a cause of its own may have named gcc's error already: a wired array port, a bound vector.)
+    const explained = new Set(diagnostics.filter(d => d.severity === 'error').map(d => d.kieler?.split('\n')[0]))
+    diagnostics.push(...pointerProblems({ nodes: scg.nodes, functions, root: lowered.root, writtenInputs: writtenInputs(scg) }).filter(d => d.severity !== 'error' || !explained.has(d.kieler?.split('\n')[0])))
     diagnostics.push(...droppedIndices(scg, lowered.root.name))
     diagnostics.push(...orderDependentUpdates(scg))
     // (The GO block is read off the schedule: its diagnostics keep this place.)
@@ -425,6 +435,18 @@ function orderDependentUpdates(scg: SCG): Diagnostic[] {
             hint: `The guide's simulation runs the two in the order it computes for KIELER's scheduler, which can differ from KIELER's in such a case. ${own ? `Write the else part (\`${plain} ${f.op} (c) ? e : 0\`) so that the update does not read ${name}.` : `Write the else part of the conditional so that KIELER's C code does not read ${name}.`}`,
         })
         break
+    }
+    return out
+}
+
+/** The inputs the chart writes (KIELER's copy propagation keeps the guard of a condition that reads one). */
+function writtenInputs(scg: SCG): Set<CVar> {
+    const out = new Set<CVar>()
+    for (const n of scg.nodes) {
+        if (n.effect?.k !== 'assign') continue
+        let r = n.effect.ref
+        while (r.sub) r = r.sub
+        if (r.v.input) out.add(r.v)
     }
     return out
 }

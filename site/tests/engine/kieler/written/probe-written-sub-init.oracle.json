@@ -1,0 +1,57 @@
+{
+  "hash": "c8bb29350bcb7319495efa8337140a2113dc34f5",
+  "chart": "tests/engine/kieler/written/probe-written-sub-init.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "x": 4
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "x": 4
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "x": 4
+      },
+      "terminated": false
+    }
+  ]
+}

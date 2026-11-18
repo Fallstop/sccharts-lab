@@ -1,0 +1,149 @@
+{
+  "hash": "70092c93b50268d269d9e464cedef9ca97b7f579",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-cm-array-inst.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name s is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name self is contained in the model but not in VariableStore.",
+    "ValuedObject with name g is contained in the model but not in VariableStore.",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.p": {
+      "type": "int",
+      "properties": []
+    },
+    "K.q": {
+      "type": "int",
+      "properties": []
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "ks": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "x": 0,
+        "a": [
+          0,
+          0
+        ],
+        "ks": [
+          {
+            "p": 0,
+            "q": [
+              0,
+              0
+            ]
+          },
+          {
+            "p": 0,
+            "q": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "x": 1,
+        "a": [
+          0,
+          0
+        ],
+        "ks": [
+          {
+            "p": 0,
+            "q": [
+              0,
+              0
+            ]
+          },
+          {
+            "p": 0,
+            "q": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "x": 1,
+        "a": [
+          0,
+          0
+        ],
+        "ks": [
+          {
+            "p": 0,
+            "q": [
+              0,
+              0
+            ]
+          },
+          {
+            "p": 0,
+            "q": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+// An array as a value, compound: `y += a`. KIELER rejects it: assignment to ‘char’ from ‘int *’ makes integer from
+// pointer without a cast [-Wint-conversion].
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y initial state A do y += a go to A }

@@ -1,0 +1,80 @@
+{
+  "hash": "f3ffeac6ce9aff04c40ae69c037eefbff091edfc",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-hs-lt.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]"
+  ],
+  "interface": {
+    "s": {
+      "type": "string",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "s": "hi"
+      },
+      "values": {
+        "s": "hi",
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "s": "hi",
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "s": "hi",
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

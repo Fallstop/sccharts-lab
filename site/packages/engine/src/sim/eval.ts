@@ -13,6 +13,12 @@ import type { Memory } from './memory'
 import { newRandState, random, seedRandState, type RandState } from './random'
 import { compileMethodCall } from './structure/methods'
 import {
+    AddressError, binaryRule, CHAR, constantPointer, DEFAULT_ADDRESS, DOUBLE, elementType, FLOAT, INT, isPtr, LONG, longOperation,
+    referenceType, sizeOf, stackAddress, stringAddress, type CTy, type Typed,
+} from './pointers'
+import type { Place } from './structLayout'
+import { additiveChain, countedDown, isAdditive, productOperands } from './written'
+import {
     convert, doubleToInt, INT_MIN, isCString, literalString, printfValue, toChar,
     type CString, type CType, type RValue,
 } from './values'
@@ -55,6 +61,11 @@ export interface EvalContext {
     memory?: Memory
     /** The members of a class or struct instance (variables and nested instances), for `a.q = a.p`. */
     members?(v: CVar): CVar[]
+    /** Where a variable lies in KIELER's struct (structLayout.ts), for the address of an array (pointers.ts);
+     *  undefined for what is not in the struct (the locals of a method KIELER keeps as a C function). */
+    place?(v: CVar): Place | undefined
+    /** The address of KIELER's struct (SimulationOptions.address). */
+    address?: number
 }
 
 /** An index outside its array, as the flat (row-major) element number C computes from it: C reads or writes whatever
@@ -66,6 +77,15 @@ export class Far {
 export interface Compiled {
     fn: Fn
     type: EType
+    /**
+     * The C type where it is not one of `type`'s numbers (pointers.ts): a pointer (an array without all its indices;
+     * `fn` gives its address, a number) or a long (the difference of two pointers).
+     */
+    c?: CTy
+    /** A long's exact value (`fn` gives it as a double, which is all a comparison or a float needs). */
+    big?: (rt: Runtime) => bigint
+    /** A pointer gcc knows when it compiles the code (pointers.ts constantPointer). */
+    konst?: boolean
 }
 
 const truthy = (v: RValue): boolean => (typeof v === 'number' ? v !== 0 : v !== null)
@@ -149,7 +169,11 @@ export class ExprCompiler {
             }
             case 'null': return { fn: () => null, type: 'null' }
             case 'ref': return this.read(e)
-            case 'op': return this.op(e.op, e.args, e.span)
+            case 'op':
+                // A sum, a difference or a product as C reads KIELER's text of it (written.ts).
+                if (isAdditive(e)) return this.additive(e)
+                if (e.op === '*' && e.args.some(a => a.k === 'op' && a.op === '*')) return this.op('*', productOperands(e), e.span)
+                return this.op(e.op, e.args, e.span)
             case 'random': return { fn: rt => random(rt.rand), type: 'f32' }
             case 'vector': {
                 const parts = e.values.map(v => this.compile(v))
@@ -183,6 +207,9 @@ export class ExprCompiler {
         const info = this.ctx.info(r.v)
         const slot = info.slot
         const type: EType = info.type
+        // An array without all its indices is its address in KIELER's C code (pointers.ts).
+        const pointer = r.idx.length < info.dims.length && !this.scalars.has(r.v) ? referenceType(r).typed?.t : undefined
+        if (pointer) return this.address(r, info, pointer)
         if (!r.idx.length) return { fn: rt => rt.vals[slot], type }
         const index = this.indexer(r, info)
         const memory = this.ctx.memory
@@ -197,6 +224,36 @@ export class ExprCompiler {
                 return v
             },
             type,
+        }
+    }
+
+    /**
+     * The parameters of the methods KIELER keeps as C functions: single values in C (`int p`), whatever dimensions
+     * the chart declares them with (structure/methods.ts fills it).
+     */
+    readonly scalars = new Set<CVar>()
+
+    /** The address of an array, or of a row of it: the struct's address, the member's offset and the indices' steps. */
+    private address(r: CRef, info: VarInfo, c: CTy): Compiled {
+        const place = this.ctx.place?.(r.v)
+        const element = sizeOf(elementType(r.v)!)
+        // (Not in the struct: a local array of a C function, on the stack.)
+        const start = place ? (this.ctx.address ?? DEFAULT_ADDRESS) + place.offset : stackAddress(info.slot)
+        const strides = place?.strides ?? info.dims.map((_, k) => element * info.dims.slice(k + 1).reduce((a, b) => a * b, 1))
+        const parts = r.idx.map(i => this.compile(i))
+        const konst = constantPointer(r)
+        if (!parts.length) return { fn: () => start, type: 'int', c, konst }
+        return {
+            fn: rt => {
+                let at = start
+                for (let k = 0; k < parts.length; k++) {
+                    let i = parts[k].fn(rt) as number
+                    if (parts[k].type === 'float' || parts[k].type === 'f32') i = doubleToInt(i)
+                    at += i * strides[k]
+                }
+                return at
+            },
+            type: 'int', c, konst,
         }
     }
 
@@ -243,6 +300,8 @@ export class ExprCompiler {
 
     private op(o: string, args: CExpr[], span?: Span): Compiled {
         const c = args.map(a => this.compile(a))
+        // An operand is a pointer or a long: C's rules for them (pointers.ts).
+        if (c.some(x => x.c)) return this.pointerOp(o, c, args, span)
         // KIELER's operator expressions are n-ary (`a + b + c`, `a && b && c`): fold them from the left.
         if (c.length > 2 && o !== '?:') {
             let acc = this.binary(o, c[0], c[1], span, this.divisorName(args[1]), constantInt(args[1]))
@@ -251,6 +310,106 @@ export class ExprCompiler {
         }
         if (c.length === 2 && o !== '?:') return this.binary(o, c[0], c[1], span, this.divisorName(args[1]), constantInt(args[1]))
         return this.unary(o, c, span)
+    }
+
+    /**
+     * A sum, a difference or a negation, term by term as C reads the text KIELER writes (written.ts): parentheses
+     * KIELER leaves out regroup it, and two minus signs in front of a variable are C's `--`.
+     */
+    private additive(e: Extract<CExpr, { k: 'op' }>): Compiled {
+        const { terms } = additiveChain(e)
+        const span = e.span
+        const parts = terms.map(t => {
+            if (t.signs >= 2) return this.countDown(t.atom, t.signs, span)
+            const c = this.compile(t.atom)
+            if (!t.signs) return c
+            return c.c ? this.pointerOp('neg', [c], [t.atom], span) : this.unary('neg', [c], span)
+        })
+        let acc = parts[0]
+        for (let i = 1; i < parts.length; i++) {
+            const o = terms[i].minus ? '-' : '+'
+            const known = terms[i].signs ? undefined : constantInt(terms[i].atom)
+            acc = acc.c || parts[i].c
+                ? this.pointerBinary(o, acc, parts[i], span, undefined, known)
+                : this.binary(o, acc, parts[i], span, undefined, known)
+        }
+        return acc
+    }
+
+    /** `--x`: the variable loses 1 and the expression is its new value. */
+    private countDown(atom: CExpr, signs: number, span?: Span): Compiled {
+        if (signs > 2 || !countedDown(atom)) {
+            // (The chart is rejected at compile time: written.ts.)
+            return { fn: () => { throw new SimError('KIELER\'s C code does not compile: lvalue required as decrement operand', span, 'internal') }, type: 'int' }
+        }
+        const run = compileEffect({ k: 'assign', ref: atom, op: '--', o: { hidden: true, span } }, this)
+        let r = atom
+        while (r.sub) r = r.sub
+        return { fn: rt => run(rt, [])!.value, type: this.ctx.info(r.v).type }
+    }
+
+    /** An operator with a pointer or a long among its operands, by C's rules (pointers.ts binaryRule). */
+    private pointerOp(o: string, c: Compiled[], args: CExpr[], span?: Span): Compiled {
+        if (o === '?:') {
+            const [cond, then, other] = c
+            const out = this.unary(o, c, span)
+            const branches = other ? [then, other] : [then]
+            const pointer = branches.find(x => x.c && isPtr(x.c))
+            if (pointer) return { ...out, type: 'int', c: pointer.c, konst: branches.every(x => x.konst) }
+            if (other && branches.some(x => x.c) && branches.every(x => x.c || x.type === 'int' || x.type === 'bool')) {
+                const [a, b] = [exact(then), exact(other)]
+                return { ...out, c: LONG, big: rt => (truthy(cond.fn(rt)) ? a(rt) : b(rt)) }
+            }
+            return out
+        }
+        if (c.length === 1) {
+            const [a] = c
+            if ((o === 'neg' || o === '~') && a.c?.k === 'long') {
+                const x = exact(a)
+                const value = o === 'neg' ? (rt: Runtime) => BigInt.asIntN(64, -x(rt)) : (rt: Runtime) => ~x(rt)
+                return { fn: rt => Number(value(rt)), type: 'int', c: LONG, big: value }
+            }
+            return this.unary(o, c, span)
+        }
+        let acc = c[0]
+        for (let i = 1; i < c.length; i++) acc = this.pointerBinary(o, acc, c[i], span, this.divisorName(args[i]), constantInt(args[i]))
+        return acc
+    }
+
+    private pointerBinary(o: string, a: Compiled, b: Compiled, span?: Span, divisor?: string, known?: number): Compiled {
+        const rule = binaryRule(o, typedOf(a), typedOf(b))
+        // (The chart is rejected at compile time: pointerCheck.ts.)
+        if ('error' in rule) return { fn: () => { throw new SimError(`KIELER's C code does not compile: ${rule.error}`, span, 'internal') }, type: 'int' }
+        const c = isPtr(rule.t.t) || rule.t.t.k === 'long' ? rule.t.t : undefined
+        if (rule.run) {
+            const run = rule.run
+            const base = this.ctx.address ?? DEFAULT_ADDRESS
+            const folded = !!a.konst && !!b.konst
+            const [x, y] = [addressOf(a), addressOf(b)]
+            const value = (rt: Runtime): number | bigint => {
+                try {
+                    return run(x(rt), y(rt), base, folded)
+                } catch (e) {
+                    if (e instanceof AddressError) throw unknownAddress(e.message, span)
+                    throw e
+                }
+            }
+            if (c?.k === 'long') return { fn: rt => Number(value(rt)), type: 'int', c, big: rt => BigInt(value(rt)) }
+            // (A pointer moved by a literal 0 is still one gcc knows: pointers.ts constantPointer.)
+            return { fn: rt => value(rt) as number, type: 'int', c, konst: known === 0 && !!a.konst && (o === '+' || o === '-') }
+        }
+        if (rule.long) {
+            const [x, y] = [exact(a), exact(b)]
+            const value = (rt: Runtime): bigint => {
+                const r = longOperation(o, x(rt), y(rt))
+                if (r === 'zero') throw divisionByZero(span, divisor)
+                if (r === 'overflow') throw overflowTrap(span)
+                return r
+            }
+            return { fn: rt => Number(value(rt)), type: 'int', c: LONG, big: value }
+        }
+        // A long beside a float, in a comparison or under && and ||: a number like any other.
+        return this.binary(o, plain(a), plain(b), span, divisor, known)
     }
 
     /** The divisor as the chart writes it (`b`, `b - 1`, `pre(n)`), for a division's hint; undefined when the guide
@@ -365,6 +524,51 @@ export class ExprCompiler {
     }
 }
 
+/** The C type of a compiled expression, for the rules of pointers.ts. */
+function typedOf(x: Compiled): Typed {
+    if (x.c) return { t: x.c }
+    switch (x.type) {
+        case 'float': return { t: DOUBLE }
+        case 'f32': return { t: FLOAT }
+        case 'bool': return { t: CHAR }
+        case 'string': return { t: { k: 'ptr', to: CHAR }, str: true }
+        case 'null': return { t: { k: 'ptr', to: { k: 'void' } }, zero: true }
+        default: return { t: INT }
+    }
+}
+
+/** An operand as the number C computes with: an address for a string. */
+function addressOf(x: Compiled): (rt: Runtime) => number {
+    return rt => {
+        const v = x.fn(rt)
+        return typeof v === 'number' ? v : v === null ? 0 : isCString(v) ? stringAddress(v.id) : 0
+    }
+}
+
+/** A long or int operand's exact value. */
+function exact(x: Compiled): (rt: Runtime) => bigint {
+    return x.big ?? (rt => BigInt(Math.trunc(num(x.fn(rt)))))
+}
+
+/** A long as a plain number (the double C converts it to beside a float). */
+const plain = (x: Compiled): Compiled => (x.c?.k === 'long' ? { fn: x.fn, type: 'int' } : x)
+
+/** The low 32 bits of a pointer or a long, as the int a cast or a `%d` makes of it. */
+export function lowInt(x: Compiled, base: number, span?: Span): Fn {
+    if (x.big) { const value = x.big; return rt => Number(BigInt.asIntN(32, value(rt))) }
+    return rt => {
+        const v = x.fn(rt) as number
+        // Only the struct's address is known (SimulationOptions.address).
+        if (v !== 0 && Math.abs(v - base) >= 2 ** 19) throw unknownAddress('the address of something outside the chart\'s variables as a number', span)
+        return Number(BigInt.asIntN(32, BigInt(Math.trunc(v))))
+    }
+}
+
+function unknownAddress(what: string, span?: Span): SimError {
+    return new SimError(`The simulator cannot compute ${what}`, span, 'unsupported',
+        'KIELER\'s C code computes it from where the program\'s memory happens to lie, which changes from one start of the simulation to the next.')
+}
+
 function sameValue(a: RValue, b: RValue): boolean {
     if (a === null || b === null) return a === b || (a === 0 && b === null) || (a === null && b === 0)
     if (isCString(a) && isCString(b)) return a.id === b.id
@@ -462,7 +666,12 @@ export function compileEffect(f: CEffect, ec: ExprCompiler): EffectFn {
     switch (f.k) {
         case 'assign': return compileAssign(f, ec)
         case 'print': {
-            const parts = f.args.map(a => ({ c: ec.compile(a), format: printFormat(a) }))
+            const base = ec.ctx.address ?? DEFAULT_ADDRESS
+            const parts = f.args.map(a => {
+                const c = ec.compile(a)
+                // printf takes an int from where a pointer or a long was passed: its low 32 bits.
+                return { c: c.c ? { fn: lowInt(c, base, f.o.span), type: 'int' as const } : c, format: printFormat(a) }
+            })
             return (rt, printed) => {
                 printed.push(parts.map(p => printfValue(p.c.fn(rt), p.format)).join(' '))
                 return undefined
@@ -619,9 +828,17 @@ function compileAssign(f: Extract<CEffect, { k: 'assign' }>, ec: ExprCompiler): 
         return () => { throw new SimError(`${ec.ctx.label(vref)} is an array: assign its elements (KIELER's C code cannot assign whole arrays)`, span, 'array-assignment') }
     }
     // A conditional without an else part keeps the target: KIELER generates `x = c ? e : x` (ExprCompiler.selves).
-    const rhs = ec.withSelf({ fn: rt => get(rt, index?.(rt)), type: ttype }, () => ec.compile(rhsExpr))
+    const compiled = ec.withSelf({ fn: rt => get(rt, index?.(rt)), type: ttype }, () => ec.compile(rhsExpr))
+    const cast = ttype === 'int' && isFloatExpression(rhsExpr)
+    // A long keeps its low bits in an int or a char; KIELER's `(int)` cast makes a number of a pointer (its address).
+    const narrowed = compiled.c && (ttype === 'int' || ttype === 'bool') && (compiled.big || cast)
+    if (narrowed && compiled.big && f.op !== '=') return compoundLong(f.op, compiled.big, ttype, f.o.span, ec.divisorName(rhsExpr), rt => {
+        const path = index?.(rt)
+        return { old: get(rt, path) as number, store: value => { set(rt, path, value); return { v: vref, value, index: shown(path) } } }
+    })
+    const rhs: Compiled = narrowed ? { fn: lowInt(compiled, ec.ctx.address ?? DEFAULT_ADDRESS, f.o.span), type: 'int' } : compiled
     const rtype: CType = rhs.type === 'f32' ? 'float' : rhs.type
-    const castRhs = ttype === 'int' && isFloatExpression(rhsExpr)
+    const castRhs = cast && !narrowed
     const rhsFn: Fn = rhs.fn
     const rhsInt = (rt: Runtime) => {
         const v = rhsFn(rt)
@@ -659,6 +876,29 @@ function compileAssign(f: Extract<CEffect, { k: 'assign' }>, ec: ExprCompiler): 
         }
         set(rt, path, value)
         return { v: vref, value, index: shown(path) }
+    }
+}
+
+/** `x op= e` with a long `e` (a difference of pointers) and an int or char `x`: C computes in long and keeps the low bits. */
+function compoundLong(
+    o: string, rhs: (rt: Runtime) => bigint, ttype: CType, span: Span | undefined, divisor: string | undefined,
+    target: (rt: Runtime) => { old: number; store: (value: number) => Write },
+): EffectFn {
+    const narrow = (v: bigint) => Number(BigInt.asIntN(ttype === 'bool' ? 8 : 32, v))
+    return rt => {
+        const { old, store } = target(rt)
+        const x = BigInt(old)
+        const y = rhs(rt)
+        if (o === 'min=' || o === 'max=') return store(narrow((o === 'min=' ? x < y : x > y) ? x : y))
+        // A shift's type is its left operand's: an int.
+        if (o === '<<=' || o === '>>=' || o === '>>>=') {
+            const count = Number(y & 31n)
+            return store(narrow(BigInt(o === '<<=' ? old << count : o === '>>=' ? old >> count : old >>> count)))
+        }
+        const r = longOperation(o.slice(0, -1), x, y)
+        if (r === 'zero') throw divisionByZero(span, divisor)
+        if (r === 'overflow') throw overflowTrap(span)
+        return store(narrow(r))
     }
 }
 

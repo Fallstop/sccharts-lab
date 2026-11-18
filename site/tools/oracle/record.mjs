@@ -88,7 +88,8 @@ try {
             fs.writeFileSync(job.out, JSON.stringify(result, null, 2) + '\n')
         }
         // Also for a recording made earlier: a search for seeds that failed is tried again.
-        if (result?.ok && result.ticks?.some(t => t.clock)) reseeded.push(job.chart)
+        // (And for a chart with arrays: one that makes a number of an array's address gets the address of the run.)
+        if (result?.ok && (result.ticks?.some(t => t.clock) || /\w\s*\[/.test(job.model))) reseeded.push(job.chart)
         const expect = job.scenario.expect ?? 'ok'
         let problem
         if (expect === 'ok' && !result.ok) problem = `expected to compile, KIELER rejects it: ${result.errors.join(' | ').slice(0, 400)}`

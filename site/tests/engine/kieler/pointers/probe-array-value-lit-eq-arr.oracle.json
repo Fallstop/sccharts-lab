@@ -1,0 +1,70 @@
+{
+  "hash": "98d7df171d2143f7eabbbc54a9a0711c4eead29b",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-lit-eq-arr.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]",
+    "comparison with string literal results in unspecified behavior [-Waddress]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

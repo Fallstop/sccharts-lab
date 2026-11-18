@@ -1,0 +1,165 @@
+{
+  "hash": "f30f76040e5d0dc5583fd3328940c588eb5157c2",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-ob-dyn.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "K.a": {
+      "type": "int",
+      "properties": []
+    },
+    "K.p": {
+      "type": "int",
+      "properties": []
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "q": {
+      "type": "class",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "x": 0,
+        "a": [
+          0,
+          0
+        ],
+        "q": [
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          }
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "x": 3,
+        "a": [
+          0,
+          0
+        ],
+        "q": [
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "x": 6,
+        "a": [
+          0,
+          0
+        ],
+        "q": [
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          },
+          {
+            "a": [
+              0,
+              0
+            ],
+            "p": 0
+          }
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

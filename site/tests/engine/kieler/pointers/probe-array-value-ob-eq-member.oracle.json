@@ -1,0 +1,22 @@
+{
+  "hash": "1633e5f02ed9f9db29bd60bae358ea765e61b242",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-ob-eq-member.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:93 Referencing class/struct types is not supported. Please specify a member."
+  ],
+  "warnings": [
+    "comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]",
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 93
+    }
+  ],
+  "ticks": []
+}

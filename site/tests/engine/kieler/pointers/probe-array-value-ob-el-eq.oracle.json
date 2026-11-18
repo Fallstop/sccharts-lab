@@ -1,0 +1,30 @@
+{
+  "hash": "5255be7d1f3108eb2a3e66b37ce4e8a030491a1c",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-ob-el-eq.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:93 Referencing class/struct types is not supported. Please specify a member.",
+    "3:101 Referencing class/struct types is not supported. Please specify a member.",
+    "invalid operands to binary == (have ‘Main_K’ and ‘Main_K’)",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 93
+    },
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 101
+    }
+  ],
+  "ticks": []
+}

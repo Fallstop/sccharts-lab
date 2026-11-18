@@ -1,0 +1,3 @@
+// An array as a value, `signal int S initial state A do S(a); x = val(S) go to A`. KIELER rejects it: assignment to
+// ‘int’ from ‘int *’ makes integer from pointer without a cast [-Wint-conversion].
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y signal int S initial state A do S(a); x = val(S) go to A }

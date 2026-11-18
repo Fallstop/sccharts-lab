@@ -1,0 +1,98 @@
+{
+  "hash": "7e583069ec1993becafe733b0e03013e39808e37",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-null-cond.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "c": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "x": 0,
+        "a": [
+          0,
+          0
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": false
+      },
+      "values": {
+        "b": false,
+        "x": 0,
+        "a": [
+          0,
+          0
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": true
+      },
+      "values": {
+        "b": true,
+        "x": 1,
+        "a": [
+          0,
+          0
+        ],
+        "c": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

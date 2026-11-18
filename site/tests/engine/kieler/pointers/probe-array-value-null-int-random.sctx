@@ -1,0 +1,3 @@
+// An array as a value, null: null int random. KIELER rejects it: assignment to ‘int’ from ‘void *’ makes integer from
+// pointer without a cast [-Wint-conversion].
+scchart Main { output int x output float f initial state A do x = null; f = random() go to A }

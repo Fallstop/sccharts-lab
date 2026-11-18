@@ -1,0 +1,69 @@
+{
+  "hash": "210a4489b9d2a953da2b5f752ada671d69a53b50",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-null-eq-arr.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "the comparison will always evaluate as ‘false’ for the address of ‘a’ will never be NULL [-Waddress]"
+  ],
+  "interface": {
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "x": 0,
+        "a": [
+          0,
+          0
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

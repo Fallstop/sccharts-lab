@@ -1,0 +1,2 @@
+// An array as a value, input arrays as triggers: in trig during. KIELER runs it: x is 0, 1, 2.
+scchart Main { input int ia[2] output int x initial state A { during if ia do x += 1 } }

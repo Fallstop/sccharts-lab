@@ -1,0 +1,15 @@
+{
+  "hash": "8f6a85cf1e399796cd5b0bb808b76178601f15db",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-count-ptr.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "assignment to ‘char’ from ‘int *’ makes integer from pointer without a cast [-Wint-conversion]",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "Potential instantaneous loop through x.",
+    "the comparison will always evaluate as ‘true’ for the address of ‘a’ will never be NULL [-Waddress]"
+  ],
+  "ticks": []
+}

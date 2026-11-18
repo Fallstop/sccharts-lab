@@ -56,11 +56,15 @@ export function toChar(x: number, fromFloat = false): number {
 
 /** Converts a value of static type `from` for storage in a variable of type `to` (C assignment conversion). */
 export function convert(v: RValue, from: CType, to: CType): RValue {
+    // `null` is 0 where KIELER's C code assigns it to a number (its header defines NULL as 0).
+    if (v === null && to !== 'string' && to !== 'null') return 0
     if (typeof v !== 'number') return v
     switch (to) {
         case 'int': return from === 'float' ? doubleToInt(v) : v | 0
         case 'bool': return toChar(v, from === 'float')
         case 'float': return v
+        // Only the null pointer constant 0 compiles as a string's value (sim/pointers.ts).
+        case 'string': return null
         default: return v
     }
 }

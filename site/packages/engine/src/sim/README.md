@@ -14,12 +14,14 @@ compile() (../index.ts)
                     KIELER's MethodSignaling for `state(S)` in methods and StaticAccess for `scchart(C).X`
     passes/         KIELER's processors in KIELER's order (passes/index.ts): Signal, Pre, During, ..., Abort,
                     Initialization, Entry, Connector, Array Assignment
-    codegen.ts      what gcc would reject in KIELER's generated C (>>>, val(pre(V)), b = a, C keywords, primed
+    codegen.ts      what gcc would reject in KIELER's generated C (>>>, val(pre(V)), C keywords, primed
                     and `^` names, ...)
     scg.ts          core chart -> SCG (Trigger/Effect, Surface/Depth with its depth transition optimisation,
                     SCGTransformation in one step), with KIELER's node order and control-flow creation order
     abortRegions.ts KIELER's SCGAbortRegionProcessor (sequential preemptive forks, par-or joins) and its checks
     sfr.ts          KIELER's superfluous thread and fork removal (and the crashes it causes)
+    pointerCheck.ts what gcc rejects where an array stands for a value (pointers.ts: C's typing), on the graph
+                    after the Methods processor; written.ts: sums and differences as KIELER's C text has them
     goblock.ts      tick 1's GO block (read off the schedule, after the analysis): KIELER's GO-init behaviour for
                     inputs, B-34 warnings, randomize()
     deps.ts         KIELER's dependency analysis (absolute/relative writes, reads, confluence, commutation,
@@ -29,7 +31,8 @@ compile() (../index.ts)
                     scheduling blocks and their order)
 createSimulation() (index.ts)
   exec.ts           netlist-style tick over the schedule; inputs, pool, TickResult, runtime errors
-  eval.ts           expressions and effects with C semantics (values.ts, random.ts)
+  eval.ts           expressions and effects with C semantics (values.ts, random.ts); an array without all its
+                    indices is its address (pointers.ts, structLayout.ts)
   reasons.ts        what a trigger read when it was checked (the log's check/take/suspend reasons)
   tracker.ts        the source-level configuration (active/entered/exited) driven by the take marks
 describeTick()      describe.ts
@@ -229,6 +232,13 @@ The structure passes (structure.md) are KIELER's processors too, so their quirks
 - **Memory.** An index outside its array reads or writes what lies there in KIELER's struct of the chart's
   variables (memory.ts, basics.md B-28): the top-level declarations in written order, byte by byte; beyond the part
   the guide can lay out, a runtime error.
+- **Arrays as values.** An array named without all its indices is its address in KIELER's C code (basics.md B-28a):
+  pointers.ts has C's types, gcc's rule for each operator and assignment (the result type or gcc's error text) and
+  the values, for the static check (pointerCheck.ts) and for eval.ts alike. An address is a number: where KIELER's
+  struct lies (`SimulationOptions.address`) plus the variable's offset in the whole struct (structLayout.ts, the C
+  generator's layout). A difference of two pointers is a long, kept exactly (`Compiled.big`).
+- **Sums and differences.** Read as the terms C reads from the text KIELER writes (written.ts, B-24a): KIELER leaves
+  out the parentheses of a difference inside a difference, and two minus signs are C's `--`.
 - **Inputs.** Persist (B-9); KIELER's GO-init moves tick-1 assignments of inputs that read no input before the
   first inputs (B-7; goblock.ts). The GO block is what KIELER's code has under its first `if (_GO)` (basics.md
   B-34): the root entry's block, the blocks whose only live predecessor has the guard `_GO` too (a thread's entry,
@@ -344,6 +354,8 @@ KIELER recording in `tests/engine/kieler/` (part of the conformance run, area `k
 | `deps.ts`, `analysis.ts` | dependencies, loops, curing, synchronizers, acceptance, schedule |
 | `exec.ts`, `eval.ts`, `values.ts`, `random.ts` | running ticks |
 | `memory.ts` | KIELER's struct layout, for indices outside an array (and the warnings for constant ones) |
+| `pointers.ts`, `pointerCheck.ts`, `structLayout.ts` | C's typing of arrays used as values: types, gcc's rules and values; the static check; every variable's place in KIELER's whole struct |
+| `written.ts` | sums and differences as KIELER writes them into C (parentheses it leaves out, `--`) |
 | `guardIndices.ts` | the indices KIELER's C code drops in conditions (its sequentializer defect) |
 | `reasons.ts` | the values a trigger read when it was checked (log reasons, describeTick) |
 | `abortRegions.ts` | abort regions on the SCG (KIELER's SCGAbortRegionProcessor) |

@@ -10,7 +10,8 @@ import type { JoinInfo } from './analysis'
 import type { SNode, Thread } from './scg'
 import { compileEffect, ExprCompiler, SimError, type EffectFn, type Fn, type Runtime, type VarInfo } from './eval'
 import { Memory } from './memory'
-import { addressOf, guardCondition, withAddresses } from './guardIndices'
+import { guardCondition } from './guardIndices'
+import { structPlaces } from './structLayout'
 import { threadNodes } from './analysis'
 import { allScopes, walkExpr, type CExpr, type CRef, type CTransition, type CVar } from './model'
 import { cloneRandState, newRandState } from './random'
@@ -233,7 +234,8 @@ export class ExecutableChart {
     private readonly presence = new Map<string, CVar>()
     private readonly plain = new Map<string, CVar>()
 
-    constructor(readonly compiled: CompiledChart, readonly iface: VariableInfo[]) {
+    /** `address`: where KIELER's struct lies (SimulationOptions.address). */
+    constructor(readonly compiled: CompiledChart, readonly iface: VariableInfo[], address?: number) {
         // Variables: everything declared anywhere in the core chart.
         let slot = 0
         for (const scope of allScopes(compiled.core)) {
@@ -260,7 +262,10 @@ export class ExecutableChart {
             return v && info ? { v, slot: info.slot, dims: info.dims } : undefined
         }, padding, compiled.lowered.takenOrder.length)
         this.padding = { slot: padding, size: memory.size }
-        const ec = new ExprCompiler({ info: ensure, label: v => v.display ?? v.name, memory, members: v => [...this.slots.keys()].filter(m => m.member?.of === v) })
+        // Where the variables lie in KIELER's whole struct, for the address of an array (laid out on first use).
+        let places: ReturnType<typeof structPlaces> | undefined
+        const place = (v: CVar) => (places ??= structPlaces(compiled, compiled.analysis.order)).place(v)
+        const ec = new ExprCompiler({ info: ensure, label: v => v.display ?? v.name, memory, members: v => [...this.slots.keys()].filter(m => m.member?.of === v), place, address })
         // The source triggers, for the values a check read (reasons.ts).
         const sources = sourceElements(compiled.chart, compiled.shared.index as ModelIndex | undefined)
         const probe = (core: CExpr | undefined, trigger: Expression | undefined) => {
@@ -335,7 +340,7 @@ export class ExecutableChart {
                 case 'cond': {
                     // KIELER's C code drops some indices of a condition (guardIndices.ts): the array's address instead.
                     const guard = guardCondition(n.expr!)
-                    const condition = guard ? withAddresses(guard, v => addressOf(v, ensure(v).slot)) : n.expr!
+                    const condition = guard?.expr ?? n.expr!
                     // KIELER's guard `_c<g> = condition` is a char that keeps its value between ticks: a conditional
                     // without an else part (`c ? a` in a trigger) gives that value when `c` is false (ExprCompiler.selves).
                     if (hasConditionalWithoutElse(condition)) {

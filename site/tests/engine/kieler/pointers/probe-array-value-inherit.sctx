@@ -1,0 +1,2 @@
+// An array as a value, for-regions, references, inheritance: inherit. KIELER runs it: x is 0, 2, 2.
+scchart Main extends Base { int a[2] output int x initial state A do x = a - ba go to A } scchart Base { int k int ba[2] }

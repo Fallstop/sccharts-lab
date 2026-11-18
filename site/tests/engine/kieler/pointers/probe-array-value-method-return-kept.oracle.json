@@ -1,0 +1,18 @@
+{
+  "hash": "88b116ffd6a9085e4d4c88723d62bd7135c6baab",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-method-return-kept.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "returning ‘int *’ from a function with return type ‘int’ makes integer from pointer without a cast [-Wint-conversion]",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name n is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name get is contained in the model but not in VariableStore.",
+    "ValuedObject with name n is contained in the model but not in VariableStore."
+  ],
+  "ticks": []
+}

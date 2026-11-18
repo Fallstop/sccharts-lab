@@ -1,0 +1,4 @@
+// An array as a value, kept methods: casts: `method int g(string p) { int r = 0 for (int j = 0; j < 2; j++) { r += 1
+// } return r } initial state A do x = g(a) go to A`. KIELER rejects it: passing argument 2 of ‘Main_g’ from
+// incompatible pointer type [-Wincompatible-pointer-types].
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y method int g(string p) { int r = 0 for (int j = 0; j < 2; j++) { r += 1 } return r } initial state A do x = g(a) go to A }

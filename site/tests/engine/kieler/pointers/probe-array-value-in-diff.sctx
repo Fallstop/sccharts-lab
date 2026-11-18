@@ -1,0 +1,2 @@
+// An array as a value, input arrays as triggers: in diff. KIELER runs it: x is 0, 2, 2.
+scchart Main { input int ia[2] input int ib[2] output int x initial state A do x = ib - ia go to A }

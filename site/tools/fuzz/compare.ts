@@ -149,6 +149,52 @@ export function resolveSeeds(model: string, inputs: Record<string, Value>[], rec
     return Array.from({ length: rec.ticks.length }, (_, i) => (chosen[i]?.length ? chosen[i] : undefined))
 }
 
+/**
+ * Where KIELER's struct lay in a recorded run of a chart that makes a number of an address (the engine's
+ * `c-address-value` warning: a float array assigned to an int): the address changes with every start of KIELER's
+ * simulation, and only its low 32 bits show. Found from the first values that differ when the engine runs with the
+ * low bits 0; null when the chart shows no address in its values (a printed one is not recorded), undefined when no
+ * address gives the recording (the engine differs from KIELER in something else too).
+ */
+export function resolveAddress(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>, seed?: (call: { tick: number; index: number }) => number | undefined): number | null | undefined {
+    const result = compile(model, { files })
+    if (!rec.ok || !result.ok || !result.diagnostics.some(d => d.code === 'c-address-value')) return null
+    const zero = 0x555500000000
+    /** The numbers that differ (KIELER's, the engine's) up to the first tick that differs, and whether the run is the
+     *  recorded one. */
+    const run = (address: number): { pairs: [number, number][]; same: boolean } => {
+        const sim = createSimulation(result, { address, seed })
+        const pairs: [number, number][] = []
+        let other = false
+        const visit = (k: PoolValue | undefined, e: PoolValue | undefined) => {
+            if (typeof k === 'number' && typeof e === 'number') { if (k !== e) pairs.push([k, e]) }
+            else if (Array.isArray(k) && Array.isArray(e) && k.length === e.length) k.forEach((x, i) => visit(x, e[i]))
+            else if (k && e && typeof k === 'object' && typeof e === 'object' && !Array.isArray(k) && !Array.isArray(e)) for (const key of Object.keys(k)) visit(k[key], (e as Record<string, PoolValue>)[key])
+            else if (!same(k, e)) other = true
+        }
+        for (let i = 0; i < rec.ticks.length && !other && !pairs.length; i++) {
+            const actual = sim.step(inputs[i] ?? {})
+            if (actual.error) { other = true; break }
+            for (const [key, value] of Object.entries(rec.ticks[i].values)) visit(value, actual.pool[key])
+            if (rec.ticks[i].taken && !same(sim.takenCounts(actual), rec.ticks[i].taken)) other = true
+        }
+        return { pairs, same: !other && !pairs.length }
+    }
+    const first = run(zero)
+    if (first.same) return null
+    // A value is the address plus or minus something the engine knows (the first tick that shows it tells).
+    for (const [k, e] of first.pairs.slice(0, 4)) {
+        for (const low of [(k - e) >>> 0, (e - k) >>> 0]) {
+            if (run(zero + low).same) return zero + low
+        }
+    }
+    // The address shows in nothing but the path taken (a trigger compares it): one of each sign and size.
+    for (const low of [0x80000000, 0x40000000, 0xc0000000, 0x10000000, 0xf0000000, 0x7fffff00]) {
+        if (run(zero + low).same) return zero + low
+    }
+    return undefined
+}
+
 export function compareWithOracle(model: string, inputs: Record<string, Value>[], rec: OracleResult, files?: Record<string, string>): Outcome {
     let result
     try {
@@ -175,7 +221,9 @@ export function compareWithOracle(model: string, inputs: Record<string, Value>[]
     try {
         // KIELER seeded each randomize() with its clock: the engine gets the seconds that give KIELER's run, if any do.
         const seeds = rec.ticks.some(t => t.clock) && /\brandomize\b/.test([model, ...Object.values(files ?? {})].join('\n')) ? resolveSeeds(model, inputs, rec, files) : undefined
-        sim = createSimulation(result, seeds ? { seed: replaySeeds(seeds.map(s => ({ seeds: s }))) } : {})
+        const seed = seeds ? replaySeeds(seeds.map(s => ({ seeds: s }))) : undefined
+        // A chart that shows an address: the one KIELER's struct had in the recorded run.
+        sim = createSimulation(result, { seed, address: resolveAddress(model, inputs, rec, files, seed) ?? undefined })
     } catch (e) {
         return { kind: 'engine-crash', detail: `createSimulation threw: ${(e as Error).message}` }
     }

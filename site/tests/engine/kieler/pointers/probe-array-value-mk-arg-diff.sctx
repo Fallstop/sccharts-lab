@@ -1,0 +1,3 @@
+// An array as a value, methods, kept (a loop): `method int g(int n) { int r = 0 for (int j = 0; j < 2; j++) { r += n
+// } return r } initial state A do x = g(a - c) go to A`. KIELER runs it: x is 0, -4, -4.
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y method int g(int n) { int r = 0 for (int j = 0; j < 2; j++) { r += n } return r } initial state A do x = g(a - c) go to A }

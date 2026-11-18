@@ -1,0 +1,4 @@
+// An array as a value, `method int sum(int p[2]) { int t = 0; for (int j = 0; j < 2; j++) { t += p[j] } return t }
+// initial state A do x = sum(a) go to A`. KIELER rejects it: subscripted value is neither array nor pointer nor
+// vector.
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y method int sum(int p[2]) { int t = 0; for (int j = 0; j < 2; j++) { t += p[j] } return t } initial state A do x = sum(a) go to A }

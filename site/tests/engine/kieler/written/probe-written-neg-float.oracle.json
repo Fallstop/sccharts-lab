@@ -1,0 +1,202 @@
+{
+  "hash": "07065e0f7396ba32286efc252f3c436175d916ba",
+  "chart": "tests/engine/kieler/written/probe-written-neg-float.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 2,
+      "message": "This assignment reads f, so the compiler treats it as an update of f (a relative write, as in the deprecated old SC syntax).\nThis expression has no infix assignment form. If you mean an update, write one, e.g. f += 1.\nIt only matters when another region also writes f in the same tick: this assignment then runs after that write instead of conflicting with it.",
+      "line": 2,
+      "column": 187
+    }
+  ],
+  "interface": {
+    "b": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "f": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "y": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "a": {
+      "type": "int",
+      "properties": []
+    },
+    "ba": {
+      "type": "bool",
+      "properties": []
+    },
+    "c": {
+      "type": "int",
+      "properties": []
+    },
+    "fa": {
+      "type": "float",
+      "properties": []
+    },
+    "m": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "b": true,
+        "i": 1
+      },
+      "values": {
+        "b": true,
+        "i": 1,
+        "f": 0,
+        "x": 0,
+        "y": false,
+        "a": [
+          4,
+          7
+        ],
+        "ba": [
+          false,
+          false
+        ],
+        "c": [
+          4,
+          7
+        ],
+        "fa": [
+          0,
+          0
+        ],
+        "m": [
+          [
+            4,
+            7
+          ],
+          [
+            8,
+            1
+          ]
+        ]
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "b": false,
+        "i": 0
+      },
+      "values": {
+        "b": false,
+        "i": 0,
+        "f": -1.5,
+        "x": 0,
+        "y": false,
+        "a": [
+          4,
+          7
+        ],
+        "ba": [
+          false,
+          false
+        ],
+        "c": [
+          4,
+          7
+        ],
+        "fa": [
+          0,
+          0
+        ],
+        "m": [
+          [
+            4,
+            7
+          ],
+          [
+            8,
+            1
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "b": true,
+        "i": 1
+      },
+      "values": {
+        "b": true,
+        "i": 1,
+        "f": 0,
+        "x": 0,
+        "y": false,
+        "a": [
+          4,
+          7
+        ],
+        "ba": [
+          false,
+          false
+        ],
+        "c": [
+          4,
+          7
+        ],
+        "fa": [
+          0,
+          0
+        ],
+        "m": [
+          [
+            4,
+            7
+          ],
+          [
+            8,
+            1
+          ]
+        ]
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

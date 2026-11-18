@@ -1,0 +1,3 @@
+// An array as a value, strings: sa from. KIELER rejects it: assignment to ‘char *’ from incompatible pointer type
+// ‘char **’ [-Wincompatible-pointer-types].
+scchart Main { string s string sa[2] = {"a","b"} output int x initial state A do s = sa go to A }

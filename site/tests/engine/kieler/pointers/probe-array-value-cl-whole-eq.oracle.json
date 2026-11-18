@@ -1,0 +1,28 @@
+{
+  "hash": "04abbd0e1ddcabf2333fd90ab4bcdeaf5b9b86d6",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-cl-whole-eq.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:99 Referencing class/struct types is not supported. Please specify a member.",
+    "3:104 Referencing class/struct types is not supported. Please specify a member.",
+    "invalid operands to binary == (have ‘Main_K’ and ‘Main_K’)",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 99
+    },
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 104
+    }
+  ],
+  "ticks": []
+}

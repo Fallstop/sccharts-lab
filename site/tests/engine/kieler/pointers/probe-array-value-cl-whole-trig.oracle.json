@@ -1,0 +1,21 @@
+{
+  "hash": "ea852d3130f4fd28ba7a1eace7422ef5984e8cda",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-cl-whole-trig.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:108 Referencing class/struct types is not supported. Please specify a member.",
+    "used struct type value where scalar is required",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 108
+    }
+  ],
+  "ticks": []
+}

@@ -1,0 +1,23 @@
+{
+  "hash": "cc2636192e342eeb742a9eed0b19b2f53c28ab69",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-ob-el-int.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:93 Referencing class/struct types is not supported. Please specify a member.",
+    "incompatible types when assigning to type ‘int’ from type ‘Main_K’",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "unused variable ‘obj’ [-Wunused-variable]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 93
+    }
+  ],
+  "ticks": []
+}

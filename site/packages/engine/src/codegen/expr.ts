@@ -5,6 +5,7 @@
 // precedence, with the extra ones gcc's -Wparentheses asks for.
 
 import { isFloatExpression } from '../sim/eval'
+import { additiveChain, isAdditive, productOperands } from '../sim/written'
 import type { CEffect, CExpr, CRef, CVar } from '../sim/model'
 
 export interface ExprEnv {
@@ -103,7 +104,11 @@ export function expr(e: CExpr, env: ExprEnv): Out {
             env.usesNull = true
             return atom('NULL')
         case 'ref': return atom(ref(e, env))
-        case 'op': return op(e.op, e.args, env)
+        case 'op':
+            // A sum, a difference or a product without the parentheses KIELER leaves out (sim/written.ts).
+            if (isAdditive(e)) return additive(e, env)
+            if (e.op === '*' && e.args.some(a => a.k === 'op' && a.op === '*')) return op('*', productOperands(e), env)
+            return op(e.op, e.args, env)
         case 'random':
             env.includes.add('<stdlib.h>')
             return atom('((float) rand() / RAND_MAX)')
@@ -132,6 +137,20 @@ export function ref(r: CRef, env: ExprEnv): string {
     for (; k < idx.length; k++) s += `[${idx[k]}]`
     if (r.sub) env.fail(`the member access ${r.v.name}.${r.sub.v.name}`)
     return s
+}
+
+/** A sum, a difference or a negation as KIELER writes it: term by term, `--x` where two minus signs meet. */
+function additive(e: Extract<CExpr, { k: 'op' }>, env: ExprEnv): Out {
+    const { terms } = additiveChain(e)
+    const text = terms.map((t, i) => {
+        const a = expr(t.atom, env)
+        // An operand that is itself a sum or difference stands in parentheses; so does anything looser.
+        const atomic = a.prec >= UNARY || (a.prec > PREC['+'] && !t.signs) || (a.prec === PREC['*'] && t.signs > 0 && t.atom.k === 'op' && t.atom.op === '*')
+        const inner = atomic && !(t.signs && a.text.startsWith('-')) ? a.text : wrap(a)
+        return `${i ? (t.minus ? ' - ' : ' + ') : ''}${'-'.repeat(t.signs)}${inner}`
+    }).join('')
+    if (terms.length === 1) return { text, prec: terms[0].signs ? UNARY : expr(terms[0].atom, env).prec }
+    return { text, prec: PREC['+'], op: terms.some(t => t.minus) ? '-' : '+' }
 }
 
 function call(e: Extract<CExpr, { k: 'call' }>, env: ExprEnv): string {

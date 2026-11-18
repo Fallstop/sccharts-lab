@@ -1,0 +1,66 @@
+{
+  "hash": "ce2d92d671cf9c4c8418bfbfb842c739ad525ded",
+  "chart": "tests/engine/kieler/written/probe-written-sub-const.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 0
+      },
+      "values": {
+        "i": 0,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "x": 4
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

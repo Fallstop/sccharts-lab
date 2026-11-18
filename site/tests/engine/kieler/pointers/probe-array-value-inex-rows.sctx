@@ -1,0 +1,3 @@
+// An array as a value, inexact differences: inex rows. KIELER runs it: x is 0, 6, 6; z is 0, -1431655761,
+// -1431655759.
+scchart Main { input int i int t[2][2][3] int k int u[2][2][3] output int x output int z initial state A do x = u[1] - t[0]; z = u[i] - t[0] go to A }

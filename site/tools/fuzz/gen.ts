@@ -108,6 +108,8 @@ export const PROFILES: Record<string, Profile> = {
     timed: { features: ['hierarchy', 'data', 'immediate', 'joins', 'clocks', 'timed', 'actions'], optional: ['concurrency', 'aborts', 'count', 'suspend', 'references', 'signals', 'history'], optionalRate: 0.25, maxDepth: 1 },
     // A template of its own (preBodiesChart): pre(...) in the bodies of methods and code blocks.
     preBodies: { features: [...BASE, 'pre', 'classes', 'code'] },
+    // A template of its own (pointersChart): arrays named without their indices, C's pointers in KIELER's code.
+    pointers: { features: [...BASE, 'classes'] },
 }
 
 /** Clock declarations of the timed profile: @Logical / @Passive count on the declaration (any case), not on the variable. */
@@ -1286,6 +1288,103 @@ function preBodiesChart(r: Rng, index: number): string {
     return charts.join('\n\n') + '\n'
 }
 
+/**
+ * The `pointers` profile's chart: arrays used as values (sim/pointers.ts). An array named without all its indices is
+ * its address in KIELER's C code, so the chart computes with addresses: differences and comparisons of arrays, rows,
+ * members of a class and of a chart instance and locals of a state, a pointer moved by a number, pointers as
+ * conditions and in conditionals, differences in long arithmetic, in effects and triggers of two concurrent regions,
+ * in short methods (whose array parameter is the argument) and one KIELER keeps as a C function. Two matrices with
+ * something odd between them give differences that are not whole rows. Now and then a form gcc rejects (an array
+ * assigned, added, negated, as an index, in a conditional with a number), a float array cast to an int (which shows
+ * the struct's address: the comparison finds it, compare.ts resolveAddress), and a difference in a difference or
+ * under a minus sign, whose parentheses KIELER leaves out (sim/written.ts). A third of the values are random
+ * expressions built by C's types (pointers to ints, pointers to rows, ints) up to three operators deep.
+ */
+function pointersChart(r: Rng, index: number): string {
+    const lines = [`scchart P${index} {`, '  input bool a, b, c, d', '  input int n', '  output int x = 0, y = 0, z = 0, w = 0', '  output float f = 0', '  output bool t = false']
+    const gap = r.chance(0.5)
+    const cls = r.chance(0.35)
+    const inst = r.chance(0.3)
+    const local = r.chance(0.3)
+    const short = r.chance(0.4)
+    const kept = r.chance(0.35)
+    lines.push('  int p[2] = {4, 7}', '  int q[3]')
+    if (r.chance(0.3)) lines.push('  bool e0')
+    lines.push('  int m[2][3]')
+    if (gap) lines.push(r.pick(['  int k0', '  bool k0', '  int k0[3]']))
+    lines.push('  int mm[2][3]', '  float fa[2]', '  bool ba[3]')
+    if (cls) lines.push('  class K { int u  int r[2]  int s[2] } k')
+    if (inst) lines.push(`  ref PG${index} g`)
+    if (short) lines.push('  method int dist() { return q - p }', '  method int first(int v[2]) { return v[0] }', '  method int same(int v[2], int u[2]) { return v == u }')
+    if (kept) lines.push(`  method int walk() { int s = 0 for (int j = 0; j < 2; j++) { ${r.pick(['s += (q - p) + (p == q)', 'if (p) { s += q - p }', 's += m[j] - m[0]', 's = s + (p < q)'])} } return s }`)
+    // What computes: an int from addresses.
+    const good = (): string => {
+        const all = ['q - p', 'p - q', '(p + n) - p', '(p + 1) - p', 'm[1] - m[0]', 'm[n % 2] - m[0]', 'mm - m', 'm - mm', '(mm + n) - m', 'mm[1] - m[0]', 'mm[n % 2] - m[1]',
+            '(fa + 1) - fa', '(ba + 2) - ba', 'p == q', 'p != q', 'p < q', 'p > q', 'p <= p', 'm[0] == m[1]', 'm == m[0]', '(m + 1) == m[1]', 'p == 0', 'p != 0', 'p < n', 'p > n - 2', 'n < p', '!p',
+            'p && a', 'p || b', '(a ? p : q) == p', '(b ? p : 0) == q', '(q - p) * n', '(q - p) / 2', '(q - p) % 2', '(q - p) << 2', '~(q - p)', 'p == fa', 'ba == p', '(p + 2) == q',
+            'q[q - p - 2]', 'q - p - n', 'n + (q - p)', '(p == q) + (p != q)', '(mm - m) * 3', '(q - p) * 1000000000 * 4 / 1000', '(q - p) > 1.5',
+            // Sums and differences as KIELER writes them.
+            '10 - (n - 2)', '-(n - 1)', 'n - (x - 1)', '20 - (n + 2 - 1)', '-(n - 2) * 3', '5 - -n', '30 - (n - (2 - 1))']
+        if (cls) all.push('k.s - k.r', 'k.r - p', 'k.r == p', '(k.r + 2) == k.s')
+        if (inst) all.push('g.h - g.v', 'g.v == p', 'g.v - p', 'g.h > g.v')
+        if (short) all.push('dist()', 'first(p)', 'first(m[1])', 'same(p, q)', 'same(p, p)')
+        if (kept) all.push('walk()')
+        return r.pick(all)
+    }
+    // Random expressions over addresses, built by C's types: a pointer to an int, a pointer to a row, an int. Now and
+    // then an operand of the wrong kind, which gcc mostly refuses.
+    const element = (depth: number): string => {
+        if (depth <= 0 || r.chance(0.45)) return r.pick(['p', 'q', 'm[0]', 'm[1]', 'mm[0]', 'm[n % 2]', 'mm[1]', ...(cls ? ['k.r', 'k.s'] : []), ...(inst ? ['g.v', 'g.h'] : [])])
+        return r.pick([`(${element(depth - 1)} + ${int(depth - 1)})`, `(${element(depth - 1)} - ${int(depth - 1)})`, `(${int(depth - 1)} + ${element(depth - 1)})`,
+            `(${r.pick(['a', 'b', 'c', 'n > 1'])} ? ${element(depth - 1)} : ${element(depth - 1)})`])
+    }
+    const row = (depth: number): string => (depth <= 0 || r.chance(0.6) ? r.pick(['m', 'mm']) : `(${row(depth - 1)} ${r.pick(['+', '-'])} ${int(depth - 1)})`)
+    const int = (depth: number): string => {
+        if (depth <= 0 || r.chance(0.3)) return r.pick(['n', 'x', '1', '2', '0', 'n - 1', 'q[1]'])
+        const wrong = r.chance(0.04)
+        const [u, v] = [wrong ? row(depth - 1) : element(depth - 1), element(depth - 1)]
+        return r.pick([`(${u} - ${v})`, `(${u} ${r.pick(['==', '!=', '<', '<=', '>', '>='])} ${v})`, `(${row(depth - 1)} - ${row(depth - 1)})`, `(${row(depth - 1)} ${r.pick(['==', '<', '>'])} ${row(depth - 1)})`,
+            `(${v} ${r.pick(['==', '!=', '<', '>'])} ${int(depth - 1)})`, `(${int(depth - 1)} ${r.pick(['+', '-', '*', '-'])} ${int(depth - 1)})`, `(!${v})`, `-(${int(depth - 1)})`,
+            `(${v} ${r.pick(['&&', '||'])} ${int(depth - 1)})`, `(${int(depth - 1)} ${r.pick(['/', '%'])} ${r.pick(['2', '3', '(n + 1)'])})`, `(${u} - ${v}) ${r.pick(['*', '<<', '&', '|'])} ${r.pick(['2', 'n', '3'])}`])
+    }
+    // What gcc refuses.
+    const bad = (): string => r.pick(['p', 'p + q', 'p * 2', '-p', '~p', 'p % 2', 'p & 1', '1 - p', 'a ? p : n', 'a ? p : fa', 'q[p]', 'm - m[0]', 'p - fa', 'p + 1.5', 'p == 1.5', 'p + 1', 'm[1]',
+        'ba - p', '-(q - p)', '0 - (q - p)', '- -5', '- -(n + 1)', ...(short ? ['first(n)', 'first(m)'] : [])])
+    const value = () => (r.chance(0.06) ? bad() : r.chance(0.35) ? int(r.pick([1, 2, 2, 3])) : good())
+    // The effects of the first region write x, y, f and t, those of the second z and w: no conflict between them.
+    const effect = (first: boolean): string => {
+        const [u, v] = first ? ['x', 'y'] : ['z', 'w']
+        const all = [`${u} = ${value()}`, `${u} = ${value()}`, `${v} = ${value()}`, `${u} = ${good()}; ${v} = ${good()}`, `${u} += ${r.pick(['q - p', 'p == q', 'm[1] - m[0]', '1'])}`,
+            `${v} ${r.pick(['min=', 'max=', '-=', '*='])} ${r.pick(['q - p', 'mm - m', 'p != q'])}`, `${u} = n`, `${v} += 1`, `q[${r.pick(['0', '1', 'n % 3', 'q - p - 2'])}] = ${r.pick(['n', 'q - p', '3'])}`]
+        if (first) all.push(`f = ${r.pick(['q - p', '(q - p) / 4.0', 'p == q', '(mm - m) / 2'])}`, `t = ${r.pick(['p == q', 'q - p', 'p != q', '(q - p) * 128', 'p && a'])}`)
+        if (first && r.chance(0.3)) all.push(`print(${r.pick(['q - p', 'p == q', 'x'])})`)
+        // A float array where an int is assigned: KIELER's `(int)` cast makes a number of the address.
+        if (r.chance(0.08)) all.push(`${u} = ${r.pick(['fa', 'fa + 1', 'b ? fa : fa'])}`, `${u} += fa`)
+        if (r.chance(0.04)) all.push(r.pick(['f = fa', 't = p', 'p = q', 'p++', `${u} = k0`]))
+        return r.pick(all)
+    }
+    const trigger = () => r.pick(['a', 'b', 'c', 'd', 'n > 1', 'a', 'b', 'p && a', 'q - p', 'p == q', 'p != q', 'a && p < q', 'm[n % 2] - m[0]', '!p || c', '(q - p) * n', 'n - (x - 1) > 0',
+        ...(r.chance(0.08) ? ['p', 'm[1]', 'a ? p : q'] : [])])
+    const go = (first: boolean, to: string, always = false) => `    ${r.chance(0.15) ? 'immediate ' : ''}${always && r.chance(0.3) ? '' : `if ${trigger()} `}do ${effect(first)} go to ${to}`
+    if (r.chance(0.15)) lines.push(`  during do w ${r.pick(['+= q - p', '= p == q', 'max= mm - m'])}`)
+    const second = r.chance(0.5)
+    lines.push('  region R1 {')
+    if (local) lines.push('    initial state A {', '      int l[2]', `      ${r.pick(['entry', 'during'])} do y = ${r.pick(['l - p', 'l == p', '(l + 1) - l', 'l > q'])}`, '    }')
+    else lines.push(...(r.chance(0.2) ? ['    initial state A {', `      entry do ${effect(true)}`, '    }'] : ['    initial state A']))
+    lines.push(go(true, 'B'))
+    lines.push('    state B', go(true, 'A', true))
+    if (r.chance(0.3)) lines.push(go(true, 'C'), '    state C', go(true, r.pick(['A', 'C']), true))
+    lines.push('  }')
+    if (second) {
+        lines.push('  region R2 {', '    initial state S', go(false, r.pick(['S', 'S2'])))
+        lines.push('    state S2', go(false, 'S', true), '  }')
+    }
+    lines.push('}')
+    const charts = [lines.join('\n')]
+    if (inst) charts.push([`scchart PG${index} {`, '  int v[2]', '  int e', '  int h[2]', '}'].join('\n'))
+    return charts.join('\n\n') + '\n'
+}
+
 export function generate(seed: number, profileName: string, index: number, ticks = 14): Job {
     const profile = PROFILES[profileName] ?? PROFILES.mix
     const rng = new Rng(seed * 7919 + index * 104729 + 17)
@@ -1294,6 +1393,6 @@ export function generate(seed: number, profileName: string, index: number, ticks
     if (features.has('valued')) features.add('signals')
     if (features.has('timed')) features.add('clocks')
     const g = new Generator(rng, features, profile)
-    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : profileName === 'dataflowObjects' ? dataflowObjectsChart(rng, index) : profileName === 'random' ? randomChart(rng, index) : profileName === 'preBodies' ? preBodiesChart(rng, index) : g.chart(index)
+    const model = profileName === 'reincarnation' ? reincarnationChart(rng, index) : profileName === 'dataflowObjects' ? dataflowObjectsChart(rng, index) : profileName === 'random' ? randomChart(rng, index) : profileName === 'preBodies' ? preBodiesChart(rng, index) : profileName === 'pointers' ? pointersChart(rng, index) : g.chart(index)
     return { name: `${profileName}-${seed}-${index}`, model, inputs: inputsFor(rng, ticks, features.has('clocks')), profile: profileName, features: [...features].sort() }
 }

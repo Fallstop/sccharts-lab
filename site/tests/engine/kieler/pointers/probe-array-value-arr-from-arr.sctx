@@ -1,0 +1,2 @@
+// An array as a value, targets: `a = c`. KIELER rejects it: assignment to expression with array type.
+scchart Main { input bool b input int i int a[2] = {4,7} int c[2] = {4,7} int m[2][2] = {{4,7},{8,1}} float fa[2] bool ba[2] output int x output float f output bool y initial state A do a = c go to A }

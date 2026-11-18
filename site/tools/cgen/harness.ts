@@ -209,12 +209,13 @@ export function harness(gen: GeneratedC, ticks: Record<string, Value>[], seeds: 
     for (const [name, node] of objects) {
         lines.push(`  { if (!first) putchar(','); first = 0; fputs(${cString(JSON.stringify(name) + ':')}, stdout);`, `    ${printNode(node, 0, []).join(' ')}`, '  }')
     }
-    if (gen.takenTransitions) {
-        const n = Math.max(1, gen.takenTransitions.length)
+    if (gen.takenTransitions?.length) {
+        const n = gen.takenTransitions.length
         lines.push(`  if (!first) { putchar(','); } first = 0; fputs("\\"#taken\\":[", stdout); for (int i = 0; i < ${n}; i++) { printf(i ? ",%d" : "%d", d._taken_transitions[i]); } putchar(']');`)
     }
     lines.push('  if (!first) { putchar(\',\'); } printf("\\"#term\\":%d", d._TERM ? 1 : 0);', '  putchar(\'}\');', '}', '')
-    lines.push('int main(void) {', '  setvbuf(stdout, NULL, _IONBF, 0);', `  ${gen.names.reset}(&d);`)
+    // Where the struct lies: a chart that makes a number of an array's address shows it (sim/pointers.ts).
+    lines.push('int main(void) {', '  setvbuf(stdout, NULL, _IONBF, 0);', '  printf("@@ADDRESS %llu\\n", (unsigned long long)&d);', `  ${gen.names.reset}(&d);`)
     ticks.forEach((given, i) => {
         lines.push(`  /* tick ${i + 1} */`)
         for (const s of inputCode(gen, given)) lines.push(`  ${s}`)
@@ -234,8 +235,11 @@ export interface HarnessTick {
 }
 
 /** Reads the harness's output: the ticks that finished, and whether the program died in the tick after them. */
-export function parseOutput(stdout: string): { ticks: HarnessTick[]; diedIn?: number } {
+export function parseOutput(stdout: string): { ticks: HarnessTick[]; diedIn?: number; address?: number } {
     const ticks: HarnessTick[] = []
+    const where = /^@@ADDRESS (\d+)\n/.exec(stdout)
+    const address = where ? Number(where[1]) : undefined
+    if (where) stdout = stdout.slice(where[0].length)
     // What reset() printed (KIELER moves tick 1's prints there) belongs to tick 1.
     const early = stdout.slice(0, Math.max(0, stdout.indexOf('\n@@BEGIN 1\n')))
     const re = /\n@@BEGIN (\d+)\n([\s\S]*?)\n@@END \1 (.*)\n/g
@@ -254,5 +258,5 @@ export function parseOutput(stdout: string): { ticks: HarnessTick[]; diedIn?: nu
     }
     const rest = stdout.slice(last)
     const begun = /\n@@BEGIN (\d+)\n/.exec(rest)
-    return { ticks, diedIn: begun ? Number(begun[1]) : undefined }
+    return { ticks, diedIn: begun ? Number(begun[1]) : undefined, address }
 }

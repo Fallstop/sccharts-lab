@@ -1,0 +1,2 @@
+// An array as a value, inexact differences: inex pow2. KIELER runs it: x is 0, 2, 3; z is 0, -3, -4.
+scchart Main { input int i int m[2][2] int k int n[2][2] output int x output int z initial state A do x = (n + i) - m; z = m - (n + i) go to A }

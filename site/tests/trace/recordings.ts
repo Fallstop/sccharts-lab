@@ -15,6 +15,8 @@ export const site = path.resolve(here, '../..')
 
 export interface Scenario {
     ticks: { inputs?: Record<string, Value>; seeds?: number[] }[]
+    /** Where KIELER's struct lay in the recorded run, for a chart that shows an address (tools/oracle/seeds.ts). */
+    address?: number
     system?: string
     imports?: string[]
     needs?: string[]

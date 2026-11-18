@@ -33,17 +33,24 @@ const LOOP_LIMIT = 1_000_000
 type Flow = { ret: RValue } | { goto: string; span?: Span } | { end: true } | undefined
 type Step = (rt: Runtime) => Flow
 
-const compiling = new WeakMap<CMethod, { body?: Step }>()
+/** The compiled bodies, per expression compiler (a simulation's context: its slots, its struct's address). */
+const compiling = new WeakMap<ExprCompiler, WeakMap<CMethod, { body?: Step }>>()
 
 const methodType = (m: CMethod): CType => (m.returnType === 'void' ? 'int' : ctypeOf(m.returnType))
 
 /** A call of a method: evaluates the arguments, binds the parameters, runs the body, gives the return value. */
 export function compileMethodCall(ec: ExprCompiler, call: Extract<CExpr, { k: 'call' }>, m: CMethod): Compiled {
     const args = call.args.map(a => ec.compile(a))
+    // A C function's parameter is a single value (`int p`), also where the chart declares an array (sim/pointers.ts).
+    for (const p of m.params) ec.scalars.add(p)
+    // (The body is compiled on first use: its locals get their slots now, with the chart's variables.)
+    for (const v of m.locals) ec.ctx.info(v)
     const params = m.params.map(p => ({ slot: ec.ctx.info(p).slot, type: ec.ctx.info(p).type }))
     const type = methodType(m)
-    let cell = compiling.get(m)
-    if (!cell) compiling.set(m, (cell = {}))
+    let bodies = compiling.get(ec)
+    if (!bodies) compiling.set(ec, (bodies = new WeakMap()))
+    let cell = bodies.get(m)
+    if (!cell) bodies.set(m, (cell = {}))
     const holder = cell
     const span = call.span
     const name = call.name

@@ -1,0 +1,21 @@
+{
+  "hash": "6c65e1eebbbe63bfcad3f5088fe68bc296ec943d",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-cl-whole-not.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:100 Referencing class/struct types is not supported. Please specify a member.",
+    "wrong type argument to unary exclamation mark",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Referencing class/struct types is not supported. Please specify a member.",
+      "line": 3,
+      "column": 100
+    }
+  ],
+  "ticks": []
+}

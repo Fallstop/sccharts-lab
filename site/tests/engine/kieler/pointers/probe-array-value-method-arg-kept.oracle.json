@@ -1,0 +1,18 @@
+{
+  "hash": "0587a5fdc8deefb6c614dd92048cf45720a86917",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-method-arg-kept.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "passing argument 2 of ‘Main_get’ makes integer from pointer without a cast [-Wint-conversion]",
+    "Compiler did not return success (exit value != 0)\nEither the source code cannot be compiled or the gcc command is not available on PATH.\nPlease check the KiCo log for further details."
+  ],
+  "warnings": [
+    "ValuedObject with name n is contained in the model but not in VariableStore.",
+    "ValuedObject with name j is contained in the model but not in VariableStore.",
+    "ValuedObject with name return is contained in the model but not in VariableStore.",
+    "ValuedObject with name get is contained in the model but not in VariableStore.",
+    "ValuedObject with name n is contained in the model but not in VariableStore."
+  ],
+  "ticks": []
+}

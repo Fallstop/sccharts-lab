@@ -1,0 +1,2 @@
+// An array as a value, strings: sa el. KIELER runs it: x is 0, 1, 1.
+scchart Main { string s string sa[2] = {"a","b"} output int x initial state A do s = sa[1] ; x = s == sa[1] go to A }

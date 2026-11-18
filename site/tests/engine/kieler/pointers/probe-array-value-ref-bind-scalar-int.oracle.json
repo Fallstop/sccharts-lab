@@ -1,0 +1,23 @@
+{
+  "hash": "a34b2d1ebb319c08ddf1dac2d3b5ad0685d10422",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-ref-bind-scalar-int.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:74 The referencing binding is erroneous!\nIt is not possible to bind array a to scalar p!",
+    "There are binding errors in a referenced state!\nIt is not possible to bind array a to scalar p!",
+    "The valued object reference points to a valued object (p) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nIt is not possible to bind array a to scalar p!",
+      "line": 3,
+      "column": 74,
+      "code": "The referencing binding is erroneous!\nIt is not possible to bind array a to scalar p!"
+    }
+  ],
+  "ticks": []
+}

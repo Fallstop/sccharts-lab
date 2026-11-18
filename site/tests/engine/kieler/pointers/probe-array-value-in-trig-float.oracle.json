@@ -1,0 +1,22 @@
+{
+  "hash": "98cb45add0e02d88d5906a6a231ce42358ad1fe4",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-in-trig-float.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "3:66 Float tests must have a comparison operator!"
+  ],
+  "warnings": [
+    "the comparison will always evaluate as ‘true’ for the address of ‘ia’ will never be NULL [-Waddress]",
+    "the comparison will always evaluate as ‘true’ for the address of ‘ia’ will never be NULL [-Waddress]"
+  ],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Float tests must have a comparison operator!",
+      "line": 3,
+      "column": 66
+    }
+  ],
+  "ticks": []
+}

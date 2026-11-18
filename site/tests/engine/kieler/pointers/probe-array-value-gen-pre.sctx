@@ -1,0 +1,2 @@
+// An array as a value, locals of inner states: gen pre. KIELER runs it: w is 0, 0, 11; x is 0, 11, 11.
+scchart Main { int a[2] output int x output int w int z[2] initial state A do x = pre(z) - a ; w = pre(x) go to A }

@@ -1,0 +1,90 @@
+{
+  "hash": "680846db13e996cd2cbdca237ace710fe357ce05",
+  "chart": "tests/engine/kieler/pointers/probe-array-value-in-trig-row.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "the comparison will always evaluate as ‘true’ for the address of ‘im’ will never be NULL [-Waddress]",
+    "the comparison will always evaluate as ‘true’ for the address of ‘im’ will never be NULL [-Waddress]"
+  ],
+  "interface": {
+    "im": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "x": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "im": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "im": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "im": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

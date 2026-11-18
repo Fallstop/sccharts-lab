@@ -1,0 +1,4 @@
+// An array as a value: a float array added to an int (`x += fa`: KIELER's `(int)` cast makes a number of the array's
+// address), and a trigger that compares the result. Which way the chart goes depends on where KIELER's struct lies in
+// that run: the recording is one run, and its scenario has the address. Found by the pointers fuzz profile (seed 1).
+scchart Main { input int n float fa[2] output int x = 0 output int y = 0 initial state A immediate if n - x > 0 do x = 1; y += 1 go to B state B do x += fa go to A }

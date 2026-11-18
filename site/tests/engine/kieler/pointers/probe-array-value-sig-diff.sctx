@@ -1,0 +1,3 @@
+// An array as a value, signals: sig diff. KIELER runs it: S is false, true, false; S_curval is 0, -2, -2; S_val is 0,
+// -2, -2.
+scchart Main { int a[2] = {4,7} int c[2] signal int S output int x initial state A do S(a - c) go to B state B if S do x = val(S) go to A }
