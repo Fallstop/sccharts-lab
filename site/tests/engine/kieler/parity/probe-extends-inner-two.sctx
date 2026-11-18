@@ -1,0 +1,14 @@
+// Two inner states extend the same chart: each has its own copy.
+scchart I11 {
+  output int p, q
+  region R1 { initial state T extends I11B(p) { } }
+  region R2 { initial state U extends I11B(q) { } }
+}
+scchart I11B {
+  output int o
+  int k = 1
+  region R {
+    initial state S
+    do o += k; k += 1 go to S
+  }
+}

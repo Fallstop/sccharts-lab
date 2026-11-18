@@ -1,0 +1,11 @@
+// A value parameter in entry and during actions.
+scchart X37 {
+  output int p
+  initial state S is X37G<2>(p)
+}
+scchart X37G<N is int> {
+  output int o = 0
+  entry do o = N
+  during if o < N * 3 do o += N
+  initial state A
+}

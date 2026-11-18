@@ -1,0 +1,52 @@
+{
+  "hash": "3862c0b3d40d2dfb5c019f3d3282554b53fa669b",
+  "chart": "tests/engine/kieler/parity/probe-extends-inner-in-declared.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "Explicit binding in inheritance hierachy (o -> ValuedObjectReferenceImpl@43c577c6 o) was overridden by a higher level one (o -> ValuedObjectReferenceImpl@5a719006 p)."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {},
+      "values": {
+        "p": 3
+      },
+      "terminated": false
+    }
+  ]
+}

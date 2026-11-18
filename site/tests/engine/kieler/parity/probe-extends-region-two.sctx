@@ -1,0 +1,13 @@
+// Two copies of an inherited region next to the inherited one.
+scchart R06 extends R06B {
+  region Q1 is R
+  region Q2 is R
+}
+scchart R06B {
+  output int o
+  int k = 1
+  region R {
+    initial state S
+    do o += k go to S
+  }
+}

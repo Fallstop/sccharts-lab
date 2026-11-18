@@ -1,0 +1,17 @@
+// A chart that does not extend Worker given for <W is Worker>.
+scchart B04b {
+  output int p
+  initial state S is B04bH<B04bX>(p)
+}
+scchart B04bH<W is B04bW> {
+  output int q
+  initial state S is W(q)
+}
+scchart B04bW {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart B04bX {
+  output int o = 0
+  initial state A do o += 2 go to A
+}

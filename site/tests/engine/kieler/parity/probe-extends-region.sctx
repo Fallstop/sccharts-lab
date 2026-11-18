@@ -1,0 +1,11 @@
+// region Q is R copies the inherited region R: it runs twice, as R and as Q.
+scchart R01 extends R01B {
+  region Q is R
+}
+scchart R01B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

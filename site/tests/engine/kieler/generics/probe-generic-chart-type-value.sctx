@@ -1,0 +1,13 @@
+// A number given for a chart type parameter.
+scchart B04d {
+  output int p
+  initial state S is B04dH<3>(p)
+}
+scchart B04dH<W is B04dW> {
+  output int q
+  initial state S is W(q)
+}
+scchart B04dW {
+  output int o = 0
+  initial state A do o += 1 go to A
+}

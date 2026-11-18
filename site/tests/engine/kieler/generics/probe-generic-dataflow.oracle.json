@@ -1,0 +1,57 @@
+{
+  "hash": "ac0ce2778b773d06f7a3720e799732e75e96c76d",
+  "chart": "tests/engine/kieler/generics/probe-generic-dataflow.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 2
+      },
+      "values": {
+        "i": 2,
+        "p": 4
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 3,
+        "p": 10
+      },
+      "terminated": false
+    }
+  ]
+}

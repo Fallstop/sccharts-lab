@@ -1,0 +1,11 @@
+// A method with generic return and parameter types (method primitive T inc(primitive T v)) in a referenced generic
+// chart.
+scchart C12b {
+  output int p
+  initial state S is C12bG<int>(p)
+}
+scchart C12bG<T is primitive> {
+  output int o = 0
+  method primitive T inc(primitive T v) { return v + 1 }
+  initial state A do o = inc(o) go to A
+}

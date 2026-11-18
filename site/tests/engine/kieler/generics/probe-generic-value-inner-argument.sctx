@@ -1,0 +1,14 @@
+// A value parameter passed as an argument of a reference inside the generic chart (state T is Inner(N, o)).
+scchart A10d {
+  output int p
+  initial state S is A10dG<3>(p)
+}
+scchart A10dG<N is int> {
+  output int o = 0
+  initial state T is A10dI(N, o)
+}
+scchart A10dI {
+  input int x
+  output int y
+  initial state A do y += x go to A
+}

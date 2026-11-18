@@ -1,0 +1,10 @@
+// Two paths to Base<3> without a declaration to clash: "Conflicting generic parameters", even with equal arguments.
+scchart H11 extends H11L, H11R {
+  output int k = 0
+  region Own { initial state A do k += scale() go to A }
+}
+scchart H11L extends H11B<3> { }
+scchart H11R extends H11B<3> { }
+scchart H11B<N is int> {
+  method int scale() { return N }
+}

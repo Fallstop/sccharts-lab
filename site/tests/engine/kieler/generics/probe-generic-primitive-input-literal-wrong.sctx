@@ -1,0 +1,11 @@
+// The same with a literal of another type: "Type of literal value bool does not match generic type argument int for
+// T".
+scchart B02c {
+  output int p
+  initial state S is B02cG<int>(true, p)
+}
+scchart B02cG<T is primitive> {
+  input primitive T x
+  output int y
+  initial state A do y += 1 go to A
+}

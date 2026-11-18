@@ -1,0 +1,16 @@
+// <W is Worker> with state S is W(q): the state is an instance of the chart given for W.
+scchart GRefChart {
+  output int p
+  initial state S is GHolder<GWorker2>(p)
+}
+scchart GHolder<W is GWorker> {
+  output int q
+  initial state S is W(q)
+}
+scchart GWorker {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart GWorker2 extends GWorker {
+  region R2 { initial state B do o += 10 go to B }
+}

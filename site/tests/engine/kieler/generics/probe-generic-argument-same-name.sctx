@@ -1,0 +1,11 @@
+// The generic argument is a variable with the parameter's name (C<N>).
+scchart X07b {
+  output int p
+  int N = 7
+  initial state S is X07bO<N>(p)
+}
+scchart X07bO<N is int> {
+  output int o = 0
+  int k = N
+  initial state A do o += N + k go to A
+}

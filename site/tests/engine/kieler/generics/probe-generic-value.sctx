@@ -1,0 +1,9 @@
+// state S is C<4>(p): the value parameter N is 4 wherever C names it.
+scchart GRefValue {
+  output int p
+  initial state S is GInner<4>(p)
+}
+scchart GInner<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

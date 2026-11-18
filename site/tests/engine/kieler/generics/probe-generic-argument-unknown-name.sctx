@@ -1,0 +1,9 @@
+// An unknown name as a generic argument.
+scchart G10 {
+  output int p
+  initial state S is G10G<zzz>(p)
+}
+scchart G10G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

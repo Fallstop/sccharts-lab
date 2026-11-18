@@ -1,0 +1,11 @@
+// A value parameter in a method of a class in a referenced generic chart: not replaced.
+scchart G19b {
+  output int p
+  initial state S is G19bO<3>(p)
+}
+scchart G19bO<N is int> {
+  output int o = 0
+  class C { int v = 0
+    void add() { v += N } } c
+  initial state A do c.add(); o = c.v go to A
+}

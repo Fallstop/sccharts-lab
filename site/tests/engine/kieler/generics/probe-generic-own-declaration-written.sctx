@@ -1,0 +1,10 @@
+// The generic chart's own variable of the parameter's name starts with the argument and can be written.
+scchart G08 {
+  output int p
+  initial state S is G08G<3>(p)
+}
+scchart G08G<N is int> {
+  output int o = 0
+  int N = 50
+  initial state A do o += N; N += 1 go to A
+}

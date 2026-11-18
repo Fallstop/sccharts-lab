@@ -1,0 +1,9 @@
+// An override of a generic method with the concrete types (override method int inc(int v)).
+scchart C13 extends C13B<int> {
+  output int p = 0
+  override method int inc(int v) { return v + 5 }
+  initial state A do p = inc(p) go to A
+}
+scchart C13B<T is primitive> {
+  method primitive T inc(primitive T v) { return v + 1 }
+}

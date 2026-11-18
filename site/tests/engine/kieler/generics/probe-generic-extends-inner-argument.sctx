@@ -1,0 +1,12 @@
+// The generic base chart passes its parameter to a reference inside it.
+scchart X33 extends X33B<3> {
+}
+scchart X33B<N is int> {
+  output int o = 0
+  initial state T is X33I(N, o)
+}
+scchart X33I {
+  input int x
+  output int y
+  initial state A do y += x go to A
+}

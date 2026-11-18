@@ -1,0 +1,14 @@
+// state(R.B) in a method of a chart referenced with "is": gcc refuses KIELER's code.
+scchart H01 {
+  output int p
+  initial state S is H01G(p)
+}
+scchart H01G {
+  output int o = 0
+  method bool inB() { return state(R.B) }
+  region R {
+    initial state A do o += 1 go to B
+    state B do o += 100 go to A
+  }
+  region Watch { initial state W if inB() do o += 1000 go to W }
+}

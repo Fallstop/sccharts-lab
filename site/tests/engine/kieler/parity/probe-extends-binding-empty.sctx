@@ -1,0 +1,8 @@
+// extends Base() binds nothing: the chart inherits the interface.
+scchart E04 extends E04B() {
+}
+scchart E04B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

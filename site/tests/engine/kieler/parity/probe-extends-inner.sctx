@@ -1,0 +1,14 @@
+// An inner state extends a chart: it gets the chart's variable and region.
+scchart I01 {
+  output int o
+  initial state T extends I01B {
+    during do o = k
+  }
+}
+scchart I01B {
+  int k = 0
+  region R {
+    initial state S
+    do k += 1 go to S
+  }
+}

@@ -1,0 +1,9 @@
+// extends Base<int> with <T is primitive>: the declarations of type T are plain int variables, no longer inputs and
+// outputs (the environment's i is ignored).
+scchart GExtType extends GBaseT<int> {
+}
+scchart GBaseT<T is primitive> {
+  input primitive T x
+  output primitive T y
+  initial state A do y = x go to A
+}

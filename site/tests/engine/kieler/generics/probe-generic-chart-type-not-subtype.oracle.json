@@ -1,0 +1,24 @@
+{
+  "hash": "78087128ee966caecddfea513bdeddc0a7ba87fd",
+  "chart": "tests/engine/kieler/generics/probe-generic-chart-type-not-subtype.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "4:22 The referencing binding is erroneous!\nState B04bX in generic parameter for W in not a subtype of B04bW.",
+    "There are binding errors in a referenced state!\nState B04bX in generic parameter for W in not a subtype of B04bW.",
+    "Invalid reference W! Only States/Regions can be instantiated.",
+    "Invalid reference W! Only States/Regions can be instantiated.",
+    "Invalid reference W! Only States/Regions can be instantiated."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nState B04bX in generic parameter for W in not a subtype of B04bW.",
+      "line": 4,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nState B04bX in generic parameter for W in not a subtype of B04bW."
+    }
+  ],
+  "ticks": []
+}

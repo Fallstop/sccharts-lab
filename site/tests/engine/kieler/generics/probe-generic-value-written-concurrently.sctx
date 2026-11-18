@@ -1,0 +1,11 @@
+// The generic argument is written from the instance's own output in a concurrent region: a causality cycle.
+scchart X39 {
+  output int p
+  output int k = 0
+  region R1 { initial state S is X39G<k>(p) }
+  region R2 { initial state B do k = p + 1 go to B }
+}
+scchart X39G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

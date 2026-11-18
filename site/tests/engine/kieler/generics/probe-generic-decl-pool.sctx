@@ -1,0 +1,12 @@
+// Two declared instances with locals: the locals stay out of the data pool.
+scchart D11 {
+  output int p
+  ref D11G<2> g
+  ref D11G<3> h
+  dataflow { p = g.o + h.o }
+}
+scchart D11G<N is int> {
+  output int o = 0
+  int k = N
+  initial state A do o += k go to A
+}

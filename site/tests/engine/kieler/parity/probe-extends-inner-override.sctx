@@ -1,0 +1,16 @@
+// An inner state overrides an inherited region.
+scchart I07 {
+  output int p
+  initial state T extends I07B(p) {
+    override region R {
+      initial state X do p += 5 go to X
+    }
+  }
+}
+scchart I07B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

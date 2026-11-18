@@ -1,0 +1,28 @@
+{
+  "hash": "ede0dbc5b8cbab9d9b4c4775d1f012c1adf6b089",
+  "chart": "tests/engine/kieler/parity/probe-extends-region-clash.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "2:21 There is a name clash between regions IDs in inheritance hierarchy. Region with name R is declared multiple times (H10L, H10R).",
+    "2:27 There is a name clash between regions IDs in inheritance hierarchy. Region with name R is declared multiple times (H10L, H10R).",
+    "Region R exists more than once along the inheritance hierarchy.",
+    "Region R exists more than once along the inheritance hierarchy."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "There is a name clash between regions IDs in inheritance hierarchy. Region with name R is declared multiple times (H10L, H10R).",
+      "line": 2,
+      "column": 21
+    },
+    {
+      "severity": 1,
+      "message": "There is a name clash between regions IDs in inheritance hierarchy. Region with name R is declared multiple times (H10L, H10R).",
+      "line": 2,
+      "column": 27
+    }
+  ],
+  "ticks": []
+}

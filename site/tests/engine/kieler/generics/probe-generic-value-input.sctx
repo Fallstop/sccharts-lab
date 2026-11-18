@@ -1,0 +1,10 @@
+// C<i> with an input as the generic argument: N is the input itself, so the value follows it tick by tick.
+scchart GRefVar {
+  input int i
+  output int p
+  initial state S is GInnerR<i>(p)
+}
+scchart GInnerR<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

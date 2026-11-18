@@ -1,0 +1,17 @@
+// A subtype with an output of its own given for <W is Worker>: refused, the interfaces must be the same.
+scchart B04c {
+  output int p
+  initial state S is B04cH<B04cX>(p)
+}
+scchart B04cH<W is B04cW> {
+  output int q
+  initial state S is W(q)
+}
+scchart B04cW {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart B04cX extends B04cW {
+  output int o2 = 0
+  region R2 { initial state B do o2 += 2 go to B }
+}

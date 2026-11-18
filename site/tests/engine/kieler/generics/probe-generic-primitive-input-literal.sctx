@@ -1,0 +1,10 @@
+// An input of a generic type bound to a literal of the type given for T: accepted.
+scchart B02b {
+  output int p
+  initial state S is B02bG<int>(5, p)
+}
+scchart B02bG<T is primitive> {
+  input primitive T x
+  output int y
+  initial state A do y += x go to A
+}

@@ -1,0 +1,11 @@
+// extends Base(i, p) binds every input and output of the base chart to the chart's own: the base's x and o are gone
+// from the pool.
+scchart E01 extends E01B(i, p) {
+  input int i
+  output int p
+}
+scchart E01B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

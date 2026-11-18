@@ -1,0 +1,11 @@
+// An enum declared in a referenced chart.
+scchart Y01 {
+  output int p
+  initial state S is Y01I(p)
+}
+scchart Y01I {
+  enum Color { RED, GREEN, BLUE }
+  output int o = 0
+  ref Color c = Color.GREEN
+  initial state A do o += c; c = Color.BLUE go to A
+}

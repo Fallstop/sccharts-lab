@@ -1,0 +1,15 @@
+// The same with ref W w in the base chart: that is replaced.
+scchart C11b extends C11bB<C11bW2> {
+}
+scchart C11bB<W is C11bW> {
+  output int q
+  ref W w
+  dataflow { q = w.o }
+}
+scchart C11bW {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart C11bW2 extends C11bW {
+  region R2 { initial state B do o += 10 go to B }
+}

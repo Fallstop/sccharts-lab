@@ -1,0 +1,15 @@
+// Four value parameters with literals: the string literal is refused ("cannot take literal of type UNKNOWN").
+scchart A01 {
+  output bool b
+  output int i
+  output float f
+  output string s
+  initial state S is A01G<true, 3, 1.5, "hi">(b, i, f, s)
+}
+scchart A01G<B is bool, I is int, F is float, S is string> {
+  output bool b
+  output int i
+  output float f
+  output string s
+  initial state A do b = B; i += I; f += F; s = S go to A
+}

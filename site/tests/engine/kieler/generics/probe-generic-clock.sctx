@@ -1,0 +1,11 @@
+// <C is clock> given a clock: the instance reads the clock of the referencing chart, which KIELER refuses for
+// clocks.
+scchart X23 {
+  output int p
+  clock c
+  initial state S is X23H<c>(p)
+}
+scchart X23H<C is clock> {
+  output int q
+  initial state A if C >= 0 do q += 1 go to A
+}

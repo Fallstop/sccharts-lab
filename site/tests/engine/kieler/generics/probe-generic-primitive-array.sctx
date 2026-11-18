@@ -1,0 +1,10 @@
+// An array of a generic type.
+scchart G33 {
+  output int p
+  initial state S is G33G<int>(p)
+}
+scchart G33G<T is primitive> {
+  output int o = 0
+  primitive T x[2] = {1, 2}
+  initial state A do o += x[0] + x[1]; x[1] += 1 go to A
+}

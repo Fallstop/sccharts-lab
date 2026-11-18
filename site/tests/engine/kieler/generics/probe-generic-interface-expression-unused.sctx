@@ -1,0 +1,11 @@
+// An expression bound to an input the generic chart never reads.
+scchart G36 {
+  output int p
+  int a = 1
+  initial state S is G36G<3>(a + 1, p)
+}
+scchart G36G<N is int> {
+  input int x
+  output int o = 0
+  initial state A do o += N go to A
+}

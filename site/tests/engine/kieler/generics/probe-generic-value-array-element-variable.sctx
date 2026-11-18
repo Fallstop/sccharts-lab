@@ -1,0 +1,11 @@
+// An array element with a variable index as the generic argument: read anew in every tick.
+scchart X17 {
+  input int i
+  int a[2] = {5, 7}
+  output int p
+  initial state S is X17G<a[i]>(p)
+}
+scchart X17G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,9 @@
+// An output of a generic type bound to a variable: refused.
+scchart B02 {
+  output int p
+  initial state S is B02G<int>(p)
+}
+scchart B02G<T is primitive> {
+  output primitive T y
+  initial state A do y += 1 go to A
+}

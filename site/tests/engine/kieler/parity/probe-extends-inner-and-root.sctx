@@ -1,0 +1,16 @@
+// The chart and an inner state both extend a chart with an output o: the inner state's o is its own, hidden
+// variable.
+scchart I17 extends I17A {
+  initial state T extends I17B {
+  }
+}
+scchart I17A {
+  output int o
+}
+scchart I17B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

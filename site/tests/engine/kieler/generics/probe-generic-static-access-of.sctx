@@ -1,0 +1,10 @@
+// scchart(G).K reads a constant of a generic chart.
+scchart X19 {
+  output int p
+  initial state A do p += scchart(X19G).K go to A
+}
+scchart X19G<N is int> {
+  const int K = 6
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,14 @@
+// A generic chart hands its parameter on in the generic arguments of a reference (state T is Inner<N>(o)): KIELER
+// does not replace it there.
+scchart A16 {
+  output int p
+  initial state S is A16O<3>(p)
+}
+scchart A16O<N is int> {
+  output int o
+  initial state T is A16I<N>(o)
+}
+scchart A16I<M is int> {
+  output int o = 0
+  initial state A do o += M go to A
+}

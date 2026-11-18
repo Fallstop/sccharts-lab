@@ -1,0 +1,11 @@
+// override region R is super.R.
+scchart R05 extends R05B {
+  override region R is super.R
+}
+scchart R05B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

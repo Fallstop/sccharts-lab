@@ -1,0 +1,23 @@
+{
+  "hash": "af7681029ac8829442fc752a3466965e7e6db425",
+  "chart": "tests/engine/kieler/generics/probe-generic-value-member.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "6:22 The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take valued object declared with type class.",
+    "There are binding errors in a referenced state!\nType mismatch! Generic parameter N of type int cannot take valued object declared with type class.",
+    "The valued object reference points to a valued object (N) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take valued object declared with type class.",
+      "line": 6,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take valued object declared with type class."
+    }
+  ],
+  "ticks": []
+}

@@ -1,0 +1,11 @@
+// An inner state binds a literal to the base chart's input.
+scchart I09 {
+  output int p
+  initial state T extends I09B(5, p) {
+  }
+}
+scchart I09B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

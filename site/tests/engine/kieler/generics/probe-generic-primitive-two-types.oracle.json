@@ -1,0 +1,51 @@
+{
+  "hash": "497398c576e92178caacac17747df3af1aae5c09",
+  "chart": "tests/engine/kieler/generics/probe-generic-primitive-two-types.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "p": {
+      "type": "bool",
+      "properties": [
+        "output"
+      ]
+    },
+    "q": {
+      "type": "float",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": false,
+        "q": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": true,
+        "q": 1.5
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": false,
+        "q": 2.5
+      },
+      "terminated": false
+    }
+  ]
+}

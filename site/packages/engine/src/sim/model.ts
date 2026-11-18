@@ -205,7 +205,12 @@ export interface CArg {
 }
 
 /** A generic argument (`<4>`, `<int>`, `<Worker>`, `<Box<2>>`, `<x>`), lowered where it is written. */
-export type CGenericArg = { text: string; span?: Span } & (
+export type CGenericArg = {
+    text: string
+    span?: Span
+    /** Written as a name (a variable, a constant): KIELER still has the name where an int literal is asked for. */
+    named?: boolean
+} & (
     | { k: 'type'; type: ValueType }
     | { k: 'chart'; name: string; args: CGenericArg[] }
     | { k: 'expr'; expr: CExpr })

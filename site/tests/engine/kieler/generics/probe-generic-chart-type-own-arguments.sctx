@@ -1,0 +1,13 @@
+// The chart given for W is itself generic and gets its argument where W is used (state S is W<5>(q)).
+scchart B06c {
+  output int p
+  initial state S is B06cH<B06cBox>(p)
+}
+scchart B06cH<W is B06cBox> {
+  output int q
+  initial state S is W<5>(q)
+}
+scchart B06cBox<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

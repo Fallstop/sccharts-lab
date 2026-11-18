@@ -1,0 +1,17 @@
+// One generic chart instantiated with two different charts.
+scchart B13 {
+  output int p, q
+  region R1 { initial state S is B13H<B13W>(p) }
+  region R2 { initial state S is B13H<B13W2>(q) }
+}
+scchart B13H<W is B13W> {
+  output int q
+  initial state S is W(q)
+}
+scchart B13W {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart B13W2 extends B13W {
+  region R2 { initial state B do o += 10 go to B }
+}

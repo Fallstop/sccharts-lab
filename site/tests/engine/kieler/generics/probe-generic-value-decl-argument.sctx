@@ -1,0 +1,14 @@
+// A value parameter as an argument of a ref declaration inside the generic chart.
+scchart X11 {
+  output int p
+  initial state S is X11O<3>(p)
+}
+scchart X11O<N is int> {
+  output int o
+  ref X11I g(N, o)
+}
+scchart X11I {
+  input int x
+  output int y = 0
+  initial state A do y += x go to A
+}

@@ -1,0 +1,8 @@
+// extends Base(x, o) with the names it would inherit from this very base: unknown there.
+scchart E05 extends E05B(x, o) {
+}
+scchart E05B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

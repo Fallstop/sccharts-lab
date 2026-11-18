@@ -17,7 +17,7 @@
 // references these create), then the chart's dataflow regions, then `ref` declarations, then the references the
 // dataflow regions created.
 
-import type { ScopeCall, Span, State, ValueType } from '../../types'
+import type { Diagnostic, ScopeCall, Span, State, ValueType } from '../../types'
 import type { ModelIndex } from '../../parser/resolve'
 import { interfaceOf, sourceId } from '../../parser/generics'
 import type { Pass, PassContext } from './context'
@@ -25,7 +25,7 @@ import {
     addVar, allContainedStates, allRegions, allScopes, copyExpr, createEntryAction, effectExprs, isRegion, ref, sameExpr, setSource,
     setTarget, walkExpr, type CArg, type CExpr, type CGenericArg, type CRef, type CRegion, type CState, type CStmt, type CVar, type Scope,
 } from '../model'
-import type { CEquation } from '../lower'
+import { inheritedDeclarations, type CEquation } from '../lower'
 import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { declaredVars, rewriteScope } from '../structure/rewrite'
 import { Replacements, Replacer, isValue } from '../structure/replacements'
@@ -281,10 +281,10 @@ export class Expansion {
                                 })
                             }
                         }
-                    } else if (type?.k === 'type') plainVariable(v, type.type)
+                    } else if (type?.k === 'type') plainVariable(v, type.type, d => this.ctx.report(d))
                 } else if (v.typeParam) {
                     const type = types.get(typeName(v.typeParam))
-                    if (type?.k === 'type') plainVariable(v, type.type)
+                    if (type?.k === 'type') plainVariable(v, type.type, d => this.ctx.report(d))
                 }
                 const m = v.method
                 if (!m || v.member) continue
@@ -305,7 +305,7 @@ export class Expansion {
                 for (const p of m.params) {
                     if (!p.typeParam) continue
                     const type = types.get(typeName(p.typeParam))
-                    if (type?.k === 'type') plainVariable(p, type.type)
+                    if (type?.k === 'type') plainVariable(p, type.type, d => this.ctx.report(d))
                     else {
                         this.ctx.report({
                             severity: 'error', code: 'generic-method-type', span: p.span ?? m.span, related: v.decl ? [v.decl] : undefined,
@@ -404,6 +404,7 @@ export class Expansion {
         const lowered = lowerInstance(chart, this.index, prefix, this.local(chart) ? undefined : call.span)
         for (const d of lowered.reports) this.ctx.report(d)
         const inst = lowered.root
+        if (lowered.stateFlags.length) this.stateAccess(lowered.stateFlags[0], chart, id, call.span)
         // Inheritance of the copy, with what is bound further out (the bindings of this reference come after).
         if (inst.ext.baseStates) inherit(this.ctx, inst, chart, name => this.findChart(name), replacements)
         const bindings = this.interfaceBindings(chart, call.args, s, replacements, id, call.span)
@@ -440,6 +441,20 @@ export class Expansion {
         } finally {
             this.stack.pop()
         }
+    }
+
+    /**
+     * `state(S)` in a method of a chart referenced with `is`: KIELER's MethodSignaling makes the flag for the chart it
+     * compiles and for the instances of `ref` declarations, not for a copy made for a referencing state, so the C code
+     * still has the access (structure.md S-69).
+     */
+    private stateAccess(flag: CVar, chart: State, owner: string, span: Span | undefined) {
+        this.ctx.report({
+            severity: 'error', code: 'state-access', span, related: [owner],
+            message: `\`${chart.name}\` uses \`${flag.display ?? 'state(...)'}\` in a method, which does not work in a chart referenced with \`is\``,
+            kieler: 'implicit declaration of function \u2018state\u2019 [-Wimplicit-function-declaration]\nCompiler did not return success (exit value != 0)',
+            hint: `KIELER only translates \`state(...)\` in the chart it compiles and in instances declared with \`ref ${chart.name} x\`. Declare the instance with \`ref\`, or let the chart set a variable in the state's entry and exit actions.`,
+        })
     }
 
     /** KIELER's resolveNameClashes: a copied declaration whose name is declared around the reference is renamed `_x_`. */
@@ -585,9 +600,10 @@ export class Expansion {
      */
     private validate(root: CState) {
         const lost = new Map<CVar, Span | undefined>()
+        let preOfValue: Span | undefined | null = null
         // (The Inheritance pass removes the declarations `extends Base(...)` binds.)
         for (const v of (this.ctx.shared.removedVars as Set<CVar> | undefined) ?? []) this.removed.add(v)
-        const visit = (e: CExpr | undefined, span?: Span) => walkExpr(e, x => {
+        let visit = (e: CExpr | undefined, span?: Span) => walkExpr(e, x => {
             if (x.k !== 'ref') return
             for (let r: CRef | undefined = x; r; r = r.sub) {
                 if ((r.v.declKind === 'generic' || this.removed.has(r.v)) && !lost.has(r.v)) lost.set(r.v, x.span ?? span)
@@ -611,6 +627,23 @@ export class Expansion {
                 if (g.k === 'expr') visit(g.expr, g.span)
                 else if (g.k === 'chart') generic(g.args)
             }
+        }
+        // A state inside a copy made for `is` keeps its `extends`: KIELER inherits for the copy itself only, so what
+        // the state takes from its base charts is not there.
+        const inheritedIds = new Set<string>()
+        for (const s of allContainedStates(root)) {
+            if (s.ext.baseStates === undefined) continue
+            const source = this.sourceState(s)
+            if (source) for (const id of inheritedDeclarations(source, this.index)) inheritedIds.add(id)
+        }
+        const visitPlain = visit
+        visit = (e: CExpr | undefined, span?: Span) => {
+            visitPlain(e, span)
+            walkExpr(e, x => {
+                if (x.k === 'ref' && x.v.declKind === 'unresolved' && x.v.decl && inheritedIds.has(sourceId(x.v.decl)) && !lost.has(x.v)) lost.set(x.v, x.span ?? span)
+                // `pre(N)` with a value for N: KIELER's Pre processor makes a register of the number, and gcc refuses it.
+                if (x.k === 'op' && x.op === 'pre' && x.args[0] && isValue(x.args[0]) && !preOfValue) preOfValue = x.span ?? span ?? root.out[0]?.span
+            })
         }
         for (const scope of allScopes(root)) {
             for (const v of scope.decls) {
@@ -641,7 +674,24 @@ export class Expansion {
                 }
             }
         }
+        if (preOfValue !== null) {
+            this.ctx.report({
+                severity: 'error', code: 'generic-pre', span: preOfValue,
+                message: '`pre(...)` of a generic parameter that was given a value does not work in KIELER',
+                kieler: 'expected identifier or \u2018(\u2019 before numeric constant\nCompiler did not return success (exit value != 0)',
+                hint: 'The parameter is the value itself where the chart names it, and `pre` needs a variable. Pass a variable (`<x>`), or copy the parameter into a variable of the chart.',
+            })
+        }
         for (const [v, span] of lost) {
+            if (v.declKind === 'unresolved') {
+                this.ctx.report({
+                    severity: 'error', code: 'unbound-reference', span: span ?? v.span, related: v.decl ? [v.decl] : undefined,
+                    message: `\`${v.name}\` comes from a base chart of a state inside a chart referenced with \`is\`, and KIELER does not inherit there`,
+                    kieler: `The valued object reference points to a valued object (${v.name}) that is not contained in the model!\nReferences objects are not contained in the resource!`,
+                    hint: 'KIELER applies `extends` to the chart it compiles, to the states inside it and to instances declared with `ref`, but not to the states inside a chart it copies for `state S is C`. Declare the instance with `ref`, or let the referenced chart itself extend the base chart.',
+                })
+                continue
+            }
             const parameter = v.declKind === 'generic'
             this.ctx.report({
                 severity: 'error', code: 'unbound-reference', span: span ?? v.span, related: v.decl ? [v.decl] : undefined,
@@ -665,9 +715,17 @@ export class Expansion {
         const byDecl = new Map<string, CVar>()
         for (const local of inst.decls) if (local.decl?.startsWith(prefix)) byDecl.set(local.decl.split(REFERENCE_SEPARATOR).pop()!, local)
         if (!byDecl.size) return
-        const member = (r: CRef): CRef | undefined => {
+        // The member as name resolution found it, or (KIELER's fixMemberAssociation) the instance's member of that
+        // name: a method by its number of parameters. The instance may be of another chart than the one the member
+        // was resolved in: a subtype given for a chart type parameter, or the instance behind `V is ref C`.
+        const named = (name: string, args?: number): CVar | undefined => {
+            const all = inst.decls.filter(l => !l.member && l.name === name)
+            return (args !== undefined ? all.find(l => l.method && l.method.params.filter(p => !p.tags.has('#self')).length === args) : undefined) ?? all[0]
+        }
+        const member = (r: CRef, args?: number): CRef | undefined => {
             if (r.v !== v || !r.sub) return undefined
-            const m = r.sub.v.decl ? byDecl.get(r.sub.v.decl) : undefined
+            const id = r.sub.v.decl
+            const m = (id ? byDecl.get(id) ?? byDecl.get(sourceId(id)) : undefined) ?? (r.sub.v.declKind === 'unresolved' ? named(r.sub.v.name, args) : undefined)
             return m ? { ...r.sub, v: m, idx: [...r.idx, ...r.sub.idx] } : undefined
         }
         rewriteScope(this.ctx.root, {
@@ -675,7 +733,7 @@ export class Expansion {
             target: r => member(r),
             node: e => {
                 if (e.k !== 'call' || !e.target) return undefined
-                const t = member(e.target)
+                const t = member(e.target, e.args.length)
                 return t ? { ...e, target: t, name: t.v.name } : undefined
             },
         })
@@ -712,7 +770,15 @@ function typeName(id: string): string {
 }
 
 /** KIELER's createVariableDeclaration(type) for a declaration of a generic type: a plain variable, no longer an input or output. */
-export function plainVariable(v: CVar, type: ValueType) {
+export function plainVariable(v: CVar, type: ValueType, report?: (d: Diagnostic) => void) {
+    if (type === 'pure') {
+        report?.({
+            severity: 'error', code: 'pure-variable', span: v.span, related: v.decl ? [v.decl] : undefined,
+            message: `\`${v.name}\` would be a variable of type pure: only signals can be pure`,
+            kieler: `Cannot serialize simulation interface. Unsupported type: pure\nCannot serialize simulation interface. Unsupported type pure for variable ${v.name}`,
+            hint: 'Give the type parameter `int`, `bool` or `float`: `pure` passes KIELER\'s check of the generic arguments, but its simulation cannot hold a pure variable.',
+        })
+    }
     v.type = type
     v.declKind = undefined
     v.typeParam = undefined

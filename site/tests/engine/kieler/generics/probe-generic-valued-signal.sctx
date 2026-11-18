@@ -1,0 +1,10 @@
+// <V is int> given a valued signal, emitted with a value by the generic chart.
+scchart X13 {
+  output signal int s
+  output int o
+  region R1 { initial state S is X13G<s> }
+  region R2 { initial state B if s do o += val(s) go to B }
+}
+scchart X13G<V is int> {
+  initial state A do V(4) go to A
+}

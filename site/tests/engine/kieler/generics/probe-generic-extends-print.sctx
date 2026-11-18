@@ -1,0 +1,7 @@
+// Through extends, a parameter in print is replaced.
+scchart G20 extends G20B<3> {
+}
+scchart G20B<N is int> {
+  output int o = 0
+  initial state A do o += N; print("v", N) go to A
+}

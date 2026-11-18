@@ -1,0 +1,9 @@
+// A float literal for an int parameter.
+scchart A13b {
+  output int p
+  initial state S is A13bG<1.5>(p)
+}
+scchart A13bG<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,10 @@
+// ref T x with a parameter without "is" given int: x is an int variable.
+scchart B11 {
+  output int p
+  initial state S is B11G<int>(p)
+}
+scchart B11G<T> {
+  output int o = 0
+  ref T x
+  initial state A do x += 2; o += x go to A
+}

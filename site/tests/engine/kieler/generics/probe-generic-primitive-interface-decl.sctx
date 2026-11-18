@@ -1,0 +1,11 @@
+// The interface of generic type bound in a ref declaration: refused as for a referencing state.
+scchart B02d {
+  input int i
+  output int p
+  ref B02dG<int> g(i, p)
+}
+scchart B02dG<T is primitive> {
+  input primitive T x
+  output primitive T y
+  initial state A do y = x go to A
+}

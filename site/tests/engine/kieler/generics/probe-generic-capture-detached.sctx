@@ -1,0 +1,16 @@
+// As probe-generic-capture, with a variable N in the simulated chart as well: the nested chart's local is still
+// taken for the parameter.
+scchart X07 {
+  output int p
+  int N = 7
+  initial state S is X07O<3>(p)
+}
+scchart X07O<N is int> {
+  output int o
+  initial state T is X07I(o)
+}
+scchart X07I {
+  output int o = 0
+  int N = 100
+  initial state A do o += N go to A
+}

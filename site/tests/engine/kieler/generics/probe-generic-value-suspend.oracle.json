@@ -1,0 +1,68 @@
+{
+  "hash": "674f1a07b7c859dfd39dcd0f855c8c64d7b8f707",
+  "chart": "tests/engine/kieler/generics/probe-generic-value-suspend.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "s": {
+      "type": "bool",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "s": false
+      },
+      "values": {
+        "s": false,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "s": true
+      },
+      "values": {
+        "s": true,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "s": false
+      },
+      "values": {
+        "s": false,
+        "p": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 4,
+      "inputs": {
+        "s": false
+      },
+      "values": {
+        "s": false,
+        "p": 4
+      },
+      "terminated": false
+    }
+  ]
+}

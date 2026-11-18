@@ -1,0 +1,15 @@
+// A referenced chart that extends Base(i, p): only its own inputs and outputs are bound by the reference.
+scchart E07 {
+  input int i
+  output int p
+  initial state S is E07X
+}
+scchart E07X extends E07B(i, p) {
+  input int i
+  output int p
+}
+scchart E07B {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

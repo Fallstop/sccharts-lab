@@ -1,0 +1,11 @@
+// Generic arguments after the chart and after a variable: "Cannot mix generic parameters in variables and
+// declaration".
+scchart D01 {
+  output int p, q
+  ref D01G<2> g<7>, h
+  dataflow { p = g.o  q = h.o }
+}
+scchart D01G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

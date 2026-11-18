@@ -1,0 +1,10 @@
+// A value for a primitive type parameter.
+scchart B09 {
+  output int p
+  initial state S is B09G<3>(p)
+}
+scchart B09G<T is primitive> {
+  output int o = 0
+  primitive T x
+  initial state A do o += 1 go to A
+}

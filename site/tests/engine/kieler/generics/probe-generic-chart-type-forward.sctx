@@ -1,0 +1,21 @@
+// A chart type parameter handed on to another generic chart: KIELER puts no chart in its place ("Invalid reference
+// V!").
+scchart G01 {
+  output int p
+  initial state S is G01O<G01W2>(p)
+}
+scchart G01O<W is G01W> {
+  output int o
+  initial state T is G01I<W>(o)
+}
+scchart G01I<V is G01W> {
+  output int o
+  initial state U is V(o)
+}
+scchart G01W {
+  output int o = 0
+  initial state A do o += 1 go to A
+}
+scchart G01W2 extends G01W {
+  region R2 { initial state B do o += 10 go to B }
+}

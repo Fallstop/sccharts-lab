@@ -1,0 +1,9 @@
+// ref C<2> g(p): generic argument and binding.
+scchart D02 {
+  output int p
+  ref D02G<2> g(p)
+}
+scchart D02G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,11 @@
+// A generic chart hands its value parameter on to its base chart (scchart Mid<M is int> extends Base<M>).
+scchart GExtFwd {
+  output int p
+  initial state S is GMid<7>(p)
+}
+scchart GMid<M is int> extends GBaseF<M> {
+}
+scchart GBaseF<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

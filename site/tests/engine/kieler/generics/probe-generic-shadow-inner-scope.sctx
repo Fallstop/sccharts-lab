@@ -1,0 +1,13 @@
+// An inner state of the generic chart declares a variable with the parameter's name: inside it the name means the
+// variable.
+scchart A17c {
+  output int p
+  initial state S is A17cO<3>(p)
+}
+scchart A17cO<N is int> {
+  output int o = 0
+  initial state T {
+    int N = 100
+    initial state X do o += N go to X
+  }
+}

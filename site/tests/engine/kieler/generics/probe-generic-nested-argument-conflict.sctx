@@ -1,0 +1,13 @@
+// W comes with a generic argument and state S is W<5> gives another.
+scchart X25b {
+  output int p
+  initial state S is X25bH<X25bBox<4> >(p)
+}
+scchart X25bH<W is X25bBox> {
+  output int q
+  initial state S is W<5>(q)
+}
+scchart X25bBox<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

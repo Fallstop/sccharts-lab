@@ -1,0 +1,11 @@
+// ref X g(p) where X extends a generic chart.
+scchart X30 {
+  output int p
+  ref X30X g(p)
+}
+scchart X30X extends X30B<6> {
+}
+scchart X30B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

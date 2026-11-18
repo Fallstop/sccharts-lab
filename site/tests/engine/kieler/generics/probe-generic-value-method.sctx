@@ -1,0 +1,10 @@
+// A value parameter in a method body of the generic chart.
+scchart A10e {
+  output int p
+  initial state S is A10eG<3>(p)
+}
+scchart A10eG<N is int> {
+  output int o = 0
+  method int twice() { return 2 * N }
+  initial state A do o += twice() go to A
+}

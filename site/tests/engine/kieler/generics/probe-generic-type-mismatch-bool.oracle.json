@@ -1,0 +1,23 @@
+{
+  "hash": "e090a18118a5bfdf21fffe6fe1467bc720b7ff18",
+  "chart": "tests/engine/kieler/generics/probe-generic-type-mismatch-bool.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "4:22 The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take literal of type bool.",
+    "There are binding errors in a referenced state!\nType mismatch! Generic parameter N of type int cannot take literal of type bool.",
+    "The valued object reference points to a valued object (N) that is not contained in the model!",
+    "References objects are not contained in the resource!"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take literal of type bool.",
+      "line": 4,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nType mismatch! Generic parameter N of type int cannot take literal of type bool."
+    }
+  ],
+  "ticks": []
+}

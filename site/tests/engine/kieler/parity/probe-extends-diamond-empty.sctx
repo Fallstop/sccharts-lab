@@ -1,0 +1,10 @@
+// A base chart without variables, reached along two paths: inherited once.
+scchart H08 extends H08L, H08R {
+  output int k = 0
+  region Own { initial state A do k += 1 go to A }
+}
+scchart H08L extends H08B { }
+scchart H08R extends H08B { }
+scchart H08B {
+  region R { initial state A go to B  state B }
+}

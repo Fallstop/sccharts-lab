@@ -1,0 +1,10 @@
+// A generic chart used as a class with a field and a region: the field is in the pool under the instance.
+scchart X41 {
+  output int p
+  ref X41G<5> g
+  initial state A do p = g.n go to A
+}
+scchart X41G<N is int> {
+  int n = N
+  region R { initial state A do n += N go to A }
+}

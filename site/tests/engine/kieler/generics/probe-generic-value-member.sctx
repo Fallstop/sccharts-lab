@@ -1,0 +1,11 @@
+// A member of a class instance as the generic argument: refused, KIELER looks at the type of the instance
+// ("declared with type class").
+scchart A07b {
+  class C { int x = 4 } c
+  output int p
+  initial state S is A07bG<c.x>(p)
+}
+scchart A07bG<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

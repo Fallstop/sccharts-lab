@@ -1,0 +1,13 @@
+// An inner state extends a chart and binds its output (state T extends B(p)).
+scchart I02 {
+  output int p
+  initial state T extends I02B(p) {
+  }
+}
+scchart I02B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

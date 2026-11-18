@@ -1,0 +1,27 @@
+{
+  "hash": "66d27bc8c06e90b9c6efb7e87e014fcee4e74c52",
+  "chart": "tests/engine/kieler/generics/probe-generic-extends-diamond.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "2:21 There is a name clash between declared valued object in inheritance hierarchy. Valued object with name o is declared multiple times (C05B, C05B).",
+    "2:27 There is a name clash between declared valued object in inheritance hierarchy. Valued object with name o is declared multiple times (C05B, C05B).",
+    "Conflicting generic parameters. Binding Paramter N of C05B was already set to de.cau.cs.kieler.kexpressions.impl.IntValueImpl@7de27b4e (value: 3) and cannot be set to de.cau.cs.kieler.kexpressions.impl.IntValueImpl@28ddbc01 (value: 3)"
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "There is a name clash between declared valued object in inheritance hierarchy. Valued object with name o is declared multiple times (C05B, C05B).",
+      "line": 2,
+      "column": 21
+    },
+    {
+      "severity": 1,
+      "message": "There is a name clash between declared valued object in inheritance hierarchy. Valued object with name o is declared multiple times (C05B, C05B).",
+      "line": 2,
+      "column": 27
+    }
+  ],
+  "ticks": []
+}

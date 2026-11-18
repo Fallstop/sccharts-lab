@@ -1,0 +1,10 @@
+// <P is pure> given a signal that the generic chart emits.
+scchart A26 {
+  output signal g
+  output int o
+  region R1 { initial state S is A26G<g> }
+  region R2 { initial state B if g do o += 1 go to B }
+}
+scchart A26G<P is pure> {
+  initial state A do P go to A
+}

@@ -1,0 +1,10 @@
+// An array element as the generic argument (C<a[1]>).
+scchart A07 {
+  int a[2] = {5, 7}
+  output int p
+  initial state S is A07G<a[1]>(p)
+}
+scchart A07G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,12 @@
+// A primitive type parameter handed on to the base chart: refused.
+scchart C10b {
+  output int p
+  initial state S is C10bM<int>(p)
+}
+scchart C10bM<U is primitive> extends C10bB<U> {
+  output int p = 0
+  region R2 { initial state B do x += 1; p = x go to B }
+}
+scchart C10bB<T is primitive> {
+  primitive T x = 3
+}

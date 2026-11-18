@@ -1,0 +1,9 @@
+// region Q is R for a region of the same chart: only inherited regions can be named.
+scchart R08 {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+  region Q is R
+}

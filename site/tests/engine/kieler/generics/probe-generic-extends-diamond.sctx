@@ -1,0 +1,9 @@
+// Two base charts that both extend Base<3>: rejected.
+scchart C05 extends C05L, C05R {
+}
+scchart C05L extends C05B<3> { }
+scchart C05R extends C05B<3> { }
+scchart C05B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

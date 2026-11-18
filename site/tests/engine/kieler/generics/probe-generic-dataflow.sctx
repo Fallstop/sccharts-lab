@@ -1,0 +1,12 @@
+// An instance of a generic chart wired in a dataflow region.
+scchart D08 {
+  input int i
+  output int p
+  ref D08G<2> g
+  dataflow { g = {i}  p = g.o }
+}
+scchart D08G<N is int> {
+  input int x
+  output int o = 0
+  initial state A do o += N * x go to A
+}

@@ -1,0 +1,7 @@
+// extends Base without arguments for a generic base chart: the parameter stays unbound.
+scchart C02 extends C02B {
+}
+scchart C02B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

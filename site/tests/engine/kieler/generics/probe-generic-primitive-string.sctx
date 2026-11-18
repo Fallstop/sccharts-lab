@@ -1,0 +1,10 @@
+// <T is primitive> given string: "cannot accept type string".
+scchart B01string {
+  output int p
+  initial state S is B01Gstring<string>(p)
+}
+scchart B01Gstring<T is primitive> {
+  output int o = 0
+  primitive T x
+  initial state A do o += 1; x = x go to A
+}

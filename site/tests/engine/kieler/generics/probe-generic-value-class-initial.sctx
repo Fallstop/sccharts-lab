@@ -1,0 +1,10 @@
+// A value parameter in the initial value of a class member: not replaced.
+scchart X08b {
+  output int p
+  initial state S is X08bO<3>(p)
+}
+scchart X08bO<N is int> {
+  output int o = 0
+  class C { int v = N } c
+  initial state A do o += c.v go to A
+}

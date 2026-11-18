@@ -1,0 +1,14 @@
+// An inner state of a generic chart extends a base chart with the chart's parameter (state T extends Base<K>(o)).
+scchart X32 {
+  output int p
+  ref X32M g<4>(p)
+}
+scchart X32M<K is int> {
+  output int o
+  initial state T extends X32B<K>(o) {
+  }
+}
+scchart X32B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

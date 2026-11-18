@@ -1,0 +1,58 @@
+{
+  "hash": "b744ecd2dd05936902236631215c2e948ebc74c0",
+  "chart": "tests/engine/kieler/generics/probe-generic-value-local-concurrent.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    },
+    "k": {
+      "type": "int",
+      "properties": []
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0,
+        "k": 1
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 2,
+        "k": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 5,
+        "k": 3
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

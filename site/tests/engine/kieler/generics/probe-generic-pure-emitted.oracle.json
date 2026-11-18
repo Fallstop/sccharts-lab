@@ -1,0 +1,61 @@
+{
+  "hash": "e29a6cfe834a5f082a733f6b767263fe47ee494b",
+  "chart": "tests/engine/kieler/generics/probe-generic-pure-emitted.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "g": {
+      "type": "bool",
+      "properties": [
+        "output",
+        "signal"
+      ]
+    },
+    "o": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "g": false,
+        "o": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "g": true,
+        "o": 1
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "g": true,
+        "o": 2
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

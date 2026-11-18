@@ -1,0 +1,53 @@
+{
+  "hash": "468c29ab7c2c2a25080ad775c12ce302b8945c33",
+  "chart": "tests/engine/kieler/generics/probe-generic-extends-override-concrete.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "ValuedObject with name _fn0_inc_v is contained in the model but not in VariableStore."
+  ],
+  "interface": {
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {},
+      "values": {
+        "p": 0
+      },
+      "taken": [
+        0
+      ],
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {},
+      "values": {
+        "p": 5
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {},
+      "values": {
+        "p": 10
+      },
+      "taken": [
+        1
+      ],
+      "terminated": false
+    }
+  ]
+}

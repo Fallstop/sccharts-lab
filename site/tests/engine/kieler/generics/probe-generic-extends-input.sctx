@@ -1,0 +1,8 @@
+// extends Base<i> with an input of the extending chart.
+scchart C06 extends C06B<i> {
+  input int i
+}
+scchart C06B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

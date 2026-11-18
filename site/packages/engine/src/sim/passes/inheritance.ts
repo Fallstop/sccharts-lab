@@ -18,7 +18,7 @@
 
 import type { Diagnostic, ScopeCall, Span, State } from '../../types'
 import type { ModelIndex } from '../../parser/resolve'
-import { genericBindings, interfaceOf } from '../../parser/generics'
+import { genericBindings, interfaceOf, visibleInheritedRegions } from '../../parser/generics'
 import type { PassContext } from './context'
 import {
     allContainedStates, allRegions, allScopes, copyExpr, mapExpr, walkExpr, type CArg, type CExpr, type CGenericArg, type CRef, type CRegion,
@@ -28,6 +28,7 @@ import { lowerInstance, REFERENCE_SEPARATOR } from '../structure/instance'
 import { inheritedDeclarations } from '../lower'
 import { rewriteScope } from '../structure/rewrite'
 import { expressionClass, isValue, type Replacements } from '../structure/replacements'
+import { plainVariable } from './reference'
 
 interface Base {
     chart: State
@@ -53,20 +54,7 @@ export function allInherited(chart: State, find: (name: string) => State | undef
 
 /** KIELER's getAllVisibleInheritedRegions: base regions (depth first) not hidden by an override region above them. */
 export function visibleRegions(chart: State, find: (name: string) => State | undefined): { base: State; region: string }[] {
-    const out: { base: State; region: string }[] = []
-    const visit = (s: State, hidden: Set<string>, path: State[]) => {
-        if (s !== chart) {
-            for (const r of s.regions) if (!r.name || !hidden.has(r.name)) out.push({ base: s, region: r.id })
-        }
-        const next = new Set(hidden)
-        for (const r of s.regions) if (r.name && r.override) next.add(r.name)
-        for (const b of s.baseStates ?? []) {
-            const target = find(b.target)
-            if (target && !path.includes(target)) visit(target, next, [...path, target])
-        }
-    }
-    visit(chart, new Set(), [chart])
-    return out.filter((x, i) => out.findIndex(y => y.region === x.region) === i)
+    return visibleInheritedRegions(chart, find).map(x => ({ base: x.base, region: x.region.id }))
 }
 
 /**
@@ -89,6 +77,16 @@ export function inherit(ctx: PassContext, state: CState, chart: State, find: (na
         const prefix = `${state.origin ?? state.about ?? state.name}${REFERENCE_SEPARATOR}`
         const lowered = lowerInstance(b, index, prefix, undefined, replaced)
         for (const [inst, members] of lowered.instances) instances.set(inst, members)
+        if (lowered.stateFlags.length) {
+            // KIELER makes the flag of `state(S)` where S is written, in the base chart, which is not compiled.
+            const flag = lowered.stateFlags[0]
+            ctx.report({
+                severity: 'error', code: 'state-access', span: flag.span, related: state.origin ? [state.origin] : undefined,
+                message: `The base chart \`${b.name}\` uses \`${flag.display ?? 'state(...)'}\` in a method, which does not work in a chart that inherits it`,
+                kieler: `The valued object reference points to a valued object (${flag.name}) that is not contained in the model!\nReferences objects are not contained in the resource!`,
+                hint: 'KIELER puts the flag behind `state(...)` into the base chart, and only the inheriting chart is compiled. Let the base chart set a variable in the state\'s entry and exit actions instead.',
+            })
+        }
         return { chart: b, prefix, root: lowered.root, reports: lowered.reports }
     })
     if (!bases.length) return true
@@ -261,6 +259,8 @@ function bindInherited(b: Binding) {
     const related = state.origin ? [state.origin] : undefined
     const bindings = new Map<CVar, CExpr>()
     const types = new Map<CVar, CGenericArg>()
+    /** Generic parameters given a name instead of a literal (as written). */
+    const named = new Map<CVar, string>()
     // Bound upstream: the names on the replacement stack that the state declares (itself or by inheritance).
     if (upstream) {
         for (const name of upstream.names()) {
@@ -362,9 +362,26 @@ function bindInherited(b: Binding) {
                         replacement = next
                     }
                     if (bindings.has(g)) conflict(ctx, 'Binding Paramter', g, target, call, related)
-                    else bindings.set(g, replacement)
+                    else {
+                        bindings.set(g, replacement)
+                        if (arg.named) named.set(g, arg.text)
+                    }
                 }
             }
+        }
+    }
+    // A for-region range must be an int literal when KIELER's For processor runs: a generic parameter given a
+    // literal is one by then, one given a name (a variable, also a constant) is still the name.
+    for (const region of allRegions(state)) {
+        for (const bound of [region.ext.forFrom, region.ext.forTo] as (CExpr | undefined)[]) {
+            const name = bound?.k === 'ref' ? named.get(bound.v) : undefined
+            if (name === undefined) continue
+            ctx.report({
+                severity: 'error', code: 'for-range', span: bound?.span, related: region.origin ? [region.origin] : undefined,
+                message: `The end of a for range must be a number: the generic parameter stands for \`${name}\` here`,
+                kieler: `The for-region range ends at ${name}, which is not an integer literal.`,
+                hint: 'Give the generic parameter a number written out (`extends Base<3>`): KIELER copies the region before it knows the value of a constant or variable.',
+            })
         }
     }
     // Replace the bound names: every reference in the state (its members excepted), whatever scope it is written in.
@@ -462,13 +479,13 @@ function bindInherited(b: Binding) {
                         })
                     }
                 }
-            } else if (type?.k === 'type') plain(v, type.type)
-        } else if (v.typeParam && type?.k === 'type') plain(v, type.type)
+            } else if (type?.k === 'type') plainVariable(v, type.type, d => ctx.report(d))
+        } else if (v.typeParam && type?.k === 'type') plainVariable(v, type.type, d => ctx.report(d))
         const m = v.method
         if (!m) continue
         for (const p of m.params) {
             const t = typeOf(p.typeParam)
-            if (t?.k === 'type') plain(p, t.type)
+            if (t?.k === 'type') plainVariable(p, t.type, d => ctx.report(d))
         }
         const t = typeOf(m.returnParam)
         if (t?.k === 'type') {
@@ -476,17 +493,6 @@ function bindInherited(b: Binding) {
             delete m.returnParam
         }
     }
-}
-
-/** KIELER's createVariableDeclaration(type): a plain variable of the type, no longer an input or output. */
-function plain(v: CVar, type: CVar['type']) {
-    v.type = type
-    v.declKind = undefined
-    v.typeParam = undefined
-    v.instance = undefined
-    v.input = false
-    v.output = false
-    v.const = false
 }
 
 function conflict(ctx: PassContext, what: string, g: CVar, target: Base, call: ScopeCall, related: string[] | undefined) {

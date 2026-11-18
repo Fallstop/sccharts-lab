@@ -1,0 +1,8 @@
+// A base chart's method with generic return and parameter types, called by the chart that extends Base<int>.
+scchart C12 extends C12B<int> {
+  output int p = 0
+  initial state A do p = inc(p) go to A
+}
+scchart C12B<T is primitive> {
+  method primitive T inc(primitive T v) { return v + 1 }
+}

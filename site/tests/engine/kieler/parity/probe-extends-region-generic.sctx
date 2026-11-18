@@ -1,0 +1,11 @@
+// region Q is R where R uses the base chart's generic parameter: nothing to bind it to.
+scchart R09 extends R09B<3> {
+  region Q is R
+}
+scchart R09B<N is int> {
+  output int o
+  region R {
+    initial state S
+    do o += N go to S
+  }
+}

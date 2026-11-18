@@ -1,0 +1,5 @@
+// A generic chart as the first chart of the file: "A root SCChart cannot have unbound generic parameters."
+scchart A14<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

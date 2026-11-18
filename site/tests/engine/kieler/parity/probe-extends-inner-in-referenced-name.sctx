@@ -1,0 +1,18 @@
+// The same, naming a variable of the base chart: it points out of the model.
+scchart G02b {
+  output int p
+  initial state S is G02bM(p)
+}
+scchart G02bM {
+  output int o
+  initial state T extends G02bB {
+    during do o = k
+  }
+}
+scchart G02bB {
+  int k = 0
+  region R {
+    initial state S
+    do k += 1 go to S
+  }
+}

@@ -1,0 +1,11 @@
+// An input of a referenced chart in print: KIELER does not replace it there.
+scchart X04 {
+  output int p
+  int a = 3
+  initial state S is X04O(a, p)
+}
+scchart X04O {
+  input int x
+  output int o = 0
+  initial state A do o += x; print("v", x) go to A
+}

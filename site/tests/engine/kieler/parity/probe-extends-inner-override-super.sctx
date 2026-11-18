@@ -1,0 +1,19 @@
+// An inner state overrides an inherited region and runs the base version inside (region is super.R).
+scchart I08 {
+  output int p
+  initial state T extends I08B(p) {
+    override region R {
+      initial state X {
+        region is super.R
+      }
+      do p += 5 go to X
+    }
+  }
+}
+scchart I08B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

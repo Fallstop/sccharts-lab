@@ -1,0 +1,10 @@
+// A type (int) for a value parameter: "Expressions as generic parameters are currently not allowed
+// (ValueTypeReferenceImpl)."
+scchart A13d {
+  output int p
+  initial state S is A13dG<int>(p)
+}
+scchart A13dG<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

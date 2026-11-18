@@ -1,0 +1,12 @@
+// An input of a referenced chart as the end of a for-region range: not replaced there.
+scchart X03 {
+  output int p
+  initial state S is X03O(2, p)
+}
+scchart X03O {
+  input int x
+  output int o = 0
+  region R for i : 0 to x {
+    initial state A do o += i + 1 go to A
+  }
+}

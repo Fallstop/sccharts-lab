@@ -1,0 +1,18 @@
+// An inner state with a base chart, inside a chart referenced with "is": KIELER does not inherit there, the binding
+// points out of the model.
+scchart I12 {
+  output int p
+  initial state S is I12M(p)
+}
+scchart I12M {
+  output int o
+  initial state T extends I12B(o) {
+  }
+}
+scchart I12B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

@@ -1,0 +1,8 @@
+// extends Base<int>: the extending chart uses the base chart's variable of generic type.
+scchart C10 extends C10B<int> {
+  output int p = 0
+  region R2 { initial state B do x += 1; p = x go to B }
+}
+scchart C10B<T is primitive> {
+  primitive T x = 3
+}

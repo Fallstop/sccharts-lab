@@ -1,0 +1,8 @@
+// The first chart of the file is generic and hands its parameter to its base chart: a root chart cannot have
+// generic parameters.
+scchart C01<M is int> extends C01B<M> {
+}
+scchart C01B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

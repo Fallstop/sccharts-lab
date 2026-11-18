@@ -1,0 +1,57 @@
+{
+  "hash": "f9749dcc40ed9267a581b0432404ac29913821f9",
+  "chart": "tests/engine/kieler/generics/probe-generic-value-pre-variable.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 2
+      },
+      "values": {
+        "i": 2,
+        "p": 1
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 3,
+        "p": 2
+      },
+      "terminated": false
+    }
+  ]
+}

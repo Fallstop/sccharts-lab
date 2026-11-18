@@ -1,0 +1,9 @@
+// A generic argument for a chart without generic parameters.
+scchart A12b {
+  output int p
+  initial state S is A12bG<1>(p)
+}
+scchart A12bG {
+  output int o = 0
+  initial state A do o += 1 go to A
+}

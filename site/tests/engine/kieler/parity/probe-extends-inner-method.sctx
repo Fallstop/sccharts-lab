@@ -1,0 +1,11 @@
+// An inner state inherits a method and calls it.
+scchart I13 {
+  output int p
+  initial state T extends I13B {
+    during do bump(); p = n
+  }
+}
+scchart I13B {
+  int n = 0
+  method void bump() { n += 2 }
+}

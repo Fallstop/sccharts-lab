@@ -1,0 +1,10 @@
+// extends Base(i) binds the input and leaves the output o open: KIELER's compiler crashes (NullPointerException in
+// Inheritance.replaceVOR).
+scchart GExtBinding extends GBaseB(i) {
+  input int i
+}
+scchart GBaseB {
+  input int x
+  output int o = 0
+  initial state A do o += x go to A
+}

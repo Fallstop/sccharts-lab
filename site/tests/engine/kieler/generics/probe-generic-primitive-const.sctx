@@ -1,0 +1,10 @@
+// A constant of a generic type.
+scchart G34 {
+  output int p
+  initial state S is G34G<int>(p)
+}
+scchart G34G<T is primitive> {
+  output int o = 0
+  const primitive T K = 4
+  initial state A do o += K go to A
+}

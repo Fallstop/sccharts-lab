@@ -1,0 +1,9 @@
+// An int literal for a float parameter: refused, the types must be equal.
+scchart A21 {
+  output float p
+  initial state S is A21G<3>(p)
+}
+scchart A21G<F is float> {
+  output float o = 0
+  initial state A do o += F go to A
+}

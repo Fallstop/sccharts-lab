@@ -50,6 +50,8 @@ export interface LowerResult {
     reports: Diagnostic[]
     /** The members of every class and struct instance, by the member's declaration id (passes/inheritance.ts). */
     instances: Map<CVar, Map<string, CVar>>
+    /** The flags of `state(S)` in method bodies (KIELER's MethodSignaling only makes them for the chart it compiles). */
+    stateFlags: CVar[]
 }
 
 class Lowering {
@@ -387,7 +389,7 @@ class Lowering {
         return (list ?? []).map((a): CGenericArg => {
             const at = { text: a.text, span: a.span }
             if (a.valueType) return { ...at, k: 'type', type: a.valueType }
-            if (a.expression) return { ...at, k: 'expr', expr: a.expression.kind === 'ref' ? this.ref(a.expression) : this.expr(a.expression) }
+            if (a.expression) return { ...at, k: 'expr', expr: this.expr(a.expression), ...(a.expression.kind === 'ref' ? { named: true } : {}) }
             return { ...at, k: 'chart', name: a.typeName ?? '', args: this.genericArgs(a.typeArguments) }
         })
     }
@@ -1054,6 +1056,8 @@ class Lowering {
                 cr.ext.forFrom = this.expr(r.forLoop.from)
                 if (r.forLoop.to) cr.ext.forTo = this.expr(r.forLoop.to)
             }
+            // `region Q is R(args)`: the arguments, lowered in the state around the region.
+            if (r.reference?.parameters.length) cr.ext.args = this.args(r.reference.parameters)
             if (r.regionType === 'dataflow') {
                 // Equations, lowered like effects (passes/dataflow.ts turns them into control flow, structure.md S-25).
                 for (const eq of r.equations) this.schedule(eq.schedule, 'schedules on equations')
@@ -1186,7 +1190,7 @@ export function lowerChart(chart: State, index: ModelIndex | undefined, inherite
         })
     }
 
-    return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports, instances: l.instanceMembers() }
+    return { root, vars: l.vars, states: l.states, regions: l.regions, takenOrder, problems: l.problems, reports: l.reports, instances: l.instanceMembers(), stateFlags: [...l.stateFlags.values()] }
 }
 
 function markActions(scope: Scope) {

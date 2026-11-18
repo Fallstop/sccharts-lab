@@ -1,0 +1,9 @@
+// An int literal for an int parameter.
+scchart B00int0 {
+  output int p
+  initial state S is B00Gint0<0>(p)
+}
+scchart B00Gint0<V is int> {
+  output int o
+  initial state A do o = V go to A
+}

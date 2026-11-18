@@ -1,0 +1,10 @@
+// extends Base<K> with a constant K: the range still is the name when the for-region is copied.
+scchart H06 extends H06B<K> {
+  const int K = 2
+}
+scchart H06B<N is int> {
+  output int o = 0
+  region R for i2 : 0 to N {
+    initial state A do o += i2 + 1 go to A
+  }
+}

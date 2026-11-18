@@ -1,0 +1,9 @@
+// A base chart with a variable, reached along two paths: a name clash.
+scchart H07 extends H07L, H07R {
+}
+scchart H07L extends H07B { }
+scchart H07R extends H07B { }
+scchart H07B {
+  output int k = 0
+  region R { initial state A do k += 1 go to A }
+}

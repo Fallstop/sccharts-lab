@@ -1,0 +1,10 @@
+// pre(N) with a variable for N.
+scchart A10c {
+  input int i
+  output int p
+  initial state S is A10cG<i>(p)
+}
+scchart A10cG<N is int> {
+  output int o = 0
+  initial state A do o = pre(N) go to A
+}

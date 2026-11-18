@@ -1,0 +1,13 @@
+// An input of a referenced chart in a method of a class: not replaced.
+scchart G19c {
+  output int p
+  int a = 3
+  initial state S is G19cO(a, p)
+}
+scchart G19cO {
+  input int x
+  output int o = 0
+  class C { int v = 0
+    void add() { v += x } } c
+  initial state A do c.add(); o = c.v go to A
+}

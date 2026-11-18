@@ -1,0 +1,17 @@
+// Two charts with a primitive type parameter, one given bool and one float.
+scchart G32 {
+  output bool p
+  output float q
+  region R1 { initial state S is G32G<bool>(p) }
+  region R2 { initial state S is G32F<float>(q) }
+}
+scchart G32G<T is primitive> {
+  output bool o
+  primitive T x = true
+  initial state A do o = x; x = !x go to A
+}
+scchart G32F<T is primitive> {
+  output float o
+  primitive T x = 1.5
+  initial state A do o = x; x += 1 go to A
+}

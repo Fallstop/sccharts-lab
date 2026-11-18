@@ -1,0 +1,11 @@
+// Two instances of one generic chart with different arguments, each with its own locals.
+scchart A15 {
+  output int p, q
+  region R1 { initial state S is A15G<2>(p) }
+  region R2 { initial state S is A15G<5>(q) }
+}
+scchart A15G<N is int> {
+  output int o = 0
+  int k = N
+  initial state A do o += k; k += N go to A
+}

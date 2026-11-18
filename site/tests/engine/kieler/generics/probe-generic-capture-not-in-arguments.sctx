@@ -1,0 +1,17 @@
+// A chart that is not generic names an enclosing chart's parameter in generic arguments: unknown there.
+scchart G38 {
+  output int p
+  initial state S is G38O<3>(p)
+}
+scchart G38O<N is int> {
+  output int o
+  initial state T is G38M(o)
+}
+scchart G38M {
+  output int o
+  initial state U is G38I<N>(o)
+}
+scchart G38I<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

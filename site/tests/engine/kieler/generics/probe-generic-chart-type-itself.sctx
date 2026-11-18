@@ -1,0 +1,13 @@
+// The parameter's own chart given for <W is Worker>.
+scchart B04 {
+  output int p
+  initial state S is B04H<B04W>(p)
+}
+scchart B04H<W is B04W> {
+  output int q
+  initial state S is W(q)
+}
+scchart B04W {
+  output int o = 0
+  initial state A do o += 1 go to A
+}

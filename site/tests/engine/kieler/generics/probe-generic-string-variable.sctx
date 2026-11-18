@@ -1,0 +1,10 @@
+// A string variable for a string parameter works.
+scchart B00sv {
+  string s = "hi"
+  output string p
+  initial state S is B00svG<s>(p)
+}
+scchart B00svG<V is string> {
+  output string o
+  initial state A do o = V go to A
+}

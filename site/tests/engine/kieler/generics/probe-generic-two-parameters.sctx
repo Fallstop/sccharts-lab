@@ -1,0 +1,10 @@
+// Two value parameters, bound by position.
+scchart A19 {
+  input int i
+  output int p
+  initial state S is A19G<i, 10>(p)
+}
+scchart A19G<N is int, M is int> {
+  output int o = 0
+  initial state A do o += N * 100 + M go to A
+}

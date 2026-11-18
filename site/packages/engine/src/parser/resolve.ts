@@ -186,7 +186,14 @@ class Resolver {
         if (parent) this.index.parentRegion.set(state, parent)
         if (!this.index.incoming.has(state)) this.index.incoming.set(state, [])
         this.registerDeclarations(state.declarations, state)
-        for (const g of state.genericParameterDeclarations ?? []) this.index.vos.set(g.valuedObject.id, { vo: g.valuedObject, owner: state, generic: g })
+        for (const g of state.genericParameterDeclarations ?? []) {
+            this.index.vos.set(g.valuedObject.id, { vo: g.valuedObject, owner: state, generic: g })
+            // `<W is Chart>`: only a chart can be named (SCTXScopeProvider.getScopeForGenericParameterDeclaration).
+            if (!external && g.typeName !== undefined && !this.chartsByName.has(g.typeName)) {
+                this.unresolved('NamedObject', g.typeName, g.typeSpan ?? g.span, `There is no scchart called \`${g.typeName}\``,
+                    `After \`is\` comes a value type (\`int\`, \`bool\`, ...), \`primitive\`, or the name of a chart. ${this.chartHint(g.typeName)}`, 'unknown-chart')
+            }
+        }
         for (const d of state.lateDeclarations ?? []) for (const vo of d.valuedObjects) if (!this.declaredLate.has(vo.name)) this.declaredLate.set(vo.name, { owner: state, line: d.span.line })
         for (const r of state.regions) {
             this.index.regions.set(r.id, r)
@@ -514,7 +521,9 @@ class Resolver {
                 const r = this.index.parentRegion.get(holder)
                 holder = r ? this.index.parentState.get(r) : undefined
             }
-            const inherited = holder ? this.allInherited(holder).flatMap(s => s.regions) : []
+            // Without `super.`, a region the state overrides itself is hidden (getAllVisibleInheritedRegions).
+            const overridden = new Set(region.reference.super || !holder ? [] : holder.regions.filter(r => r.override && r.name).map(r => r.name))
+            const inherited = holder ? this.allInherited(holder).flatMap(s => s.regions).filter(r => !overridden.has(r.name)) : []
             const target = inherited.find(r => r.name === region.reference!.target)
             if (!target) {
                 this.unresolved('NamedObject', region.reference.target, region.reference.targetSpan ?? region.reference.span, `There is no inherited region called \`${region.reference.target}\``,

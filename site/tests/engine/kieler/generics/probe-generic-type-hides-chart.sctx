@@ -1,0 +1,17 @@
+// A chart type parameter W and a chart called W: state S is W means the parameter.
+scchart X21 {
+  output int p
+  initial state S is X21H<X21V>(p)
+}
+scchart X21H<W is X21V> {
+  output int q
+  initial state S is W(q)
+}
+scchart W {
+  output int o = 0
+  initial state A do o += 50 go to A
+}
+scchart X21V {
+  output int o = 0
+  initial state A do o += 1 go to A
+}

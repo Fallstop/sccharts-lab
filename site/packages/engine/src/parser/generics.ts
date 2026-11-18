@@ -3,7 +3,7 @@
 // Used by the validation (references and `ref` declarations of every chart of the file) and by the Inheritance
 // pass (`extends Base<...>`, which KIELER only checks when it compiles the chart).
 
-import type { Declaration, Expression, GenericArgument, GenericParameterDeclaration, ScopeParameter, State, ValuedObject } from '../types'
+import type { Declaration, Expression, GenericArgument, GenericParameterDeclaration, Region, ScopeParameter, State, ValuedObject } from '../types'
 import { genericKind, type ModelIndex, type VOEntry } from './resolve'
 
 /** A declaration id as name resolution knows it: the id inside a copy of a chart is `<instance>/<id>`. */
@@ -35,6 +35,27 @@ export function allInheritedStates(state: State, index: ModelIndex): State[] {
 }
 
 const isPrivate = (d: Declaration) => d.access === 'private'
+
+/**
+ * KIELER's getAllVisibleInheritedRegions: the regions of the base charts (depth first), without those an
+ * `override region` of a chart further down (or of the chart itself) hides.
+ */
+export function visibleInheritedRegions(chart: State, find: (name: string) => State | undefined): { base: State; region: Region }[] {
+    const out: { base: State; region: Region }[] = []
+    const visit = (s: State, hidden: Set<string>, path: State[]) => {
+        if (s !== chart) {
+            for (const r of s.regions) if (!r.name || !hidden.has(r.name)) out.push({ base: s, region: r })
+        }
+        const next = new Set(hidden)
+        for (const r of s.regions) if (r.name && r.override) next.add(r.name)
+        for (const b of s.baseStates ?? []) {
+            const target = find(b.target)
+            if (target && !path.includes(target)) visit(target, next, [...path, target])
+        }
+    }
+    visit(chart, new Set(), [chart])
+    return out.filter((x, i) => out.findIndex(y => y.region === x.region) === i)
+}
 
 /** KIELER's getAllInheritedStateReferencesHierachically: the state's own base references, then theirs, level by level. */
 export function inheritedReferences(state: State, index: ModelIndex): { ref: NonNullable<State['baseStates']>[number]; holder: State; target: State }[] {

@@ -1,0 +1,11 @@
+// A generic parameter and an input of one name: the name means the parameter.
+scchart G37 {
+  output int p
+  int a = 100
+  initial state S is G37G<3>(a, p)
+}
+scchart G37G<N is int> {
+  input int N
+  output int o = 0
+  initial state A do o += N go to A
+}

@@ -1,0 +1,10 @@
+// primitive N x where N is a value parameter (N is int): N is no type.
+scchart B10 {
+  output int p
+  initial state S is B10G<3>(p)
+}
+scchart B10G<N is int> {
+  output int o = 0
+  primitive N x
+  initial state A do o += 1 go to A
+}

@@ -1,0 +1,16 @@
+// region is R inside the override of R: the overridden region is not visible without super.
+scchart R04 extends R04B {
+  override region R {
+    initial state X {
+      region is R
+    }
+    do o += 5 go to X
+  }
+}
+scchart R04B {
+  output int o
+  region R {
+    initial state S
+    do o += 1 go to S
+  }
+}

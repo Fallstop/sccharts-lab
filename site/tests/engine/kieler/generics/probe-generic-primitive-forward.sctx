@@ -1,0 +1,15 @@
+// A primitive type parameter handed on to another generic chart: refused, it must be bound to a concrete primitive
+// type.
+scchart B08 {
+  output int p
+  initial state S is B08M<int>(p)
+}
+scchart B08M<T is primitive> {
+  output int o
+  initial state S is B08I<T>(o)
+}
+scchart B08I<U is primitive> {
+  output int o = 0
+  primitive U x = 1
+  initial state A do o += x go to A
+}

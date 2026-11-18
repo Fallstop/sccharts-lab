@@ -1,0 +1,57 @@
+{
+  "hash": "9f6f6e302ab989913db06d9fc45d1206a213da5c",
+  "chart": "tests/engine/kieler/generics/probe-generic-decl-input.sctx",
+  "system": "netlist",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "interface": {
+    "i": {
+      "type": "int",
+      "properties": [
+        "input"
+      ]
+    },
+    "p": {
+      "type": "int",
+      "properties": [
+        "output"
+      ]
+    }
+  },
+  "ticks": [
+    {
+      "step": 1,
+      "inputs": {
+        "i": 1
+      },
+      "values": {
+        "i": 1,
+        "p": 0
+      },
+      "terminated": false
+    },
+    {
+      "step": 2,
+      "inputs": {
+        "i": 2
+      },
+      "values": {
+        "i": 2,
+        "p": 2
+      },
+      "terminated": false
+    },
+    {
+      "step": 3,
+      "inputs": {
+        "i": 3
+      },
+      "values": {
+        "i": 3,
+        "p": 5
+      },
+      "terminated": false
+    }
+  ]
+}

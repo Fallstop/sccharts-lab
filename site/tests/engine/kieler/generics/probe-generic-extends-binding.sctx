@@ -1,0 +1,8 @@
+// extends Base<3>(p): generic argument and binding together.
+scchart E06 extends E06B<3>(p) {
+  output int p
+}
+scchart E06B<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

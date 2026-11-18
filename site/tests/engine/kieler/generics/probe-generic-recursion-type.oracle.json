@@ -1,0 +1,21 @@
+{
+  "hash": "9f125101e42953251e7d4aeaa897eb8a15862201",
+  "chart": "tests/engine/kieler/generics/probe-generic-recursion-type.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "9:14 The referencing binding is erroneous!\nGeneric parameter T with primitive type restriction must be bound to a concrete primitive type, not ValuedObjectReferenceImpl.",
+    "Recursive reference: chart B14R uses itself (B14R -> B14R)."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nGeneric parameter T with primitive type restriction must be bound to a concrete primitive type, not ValuedObjectReferenceImpl.",
+      "line": 9,
+      "column": 14,
+      "code": "The referencing binding is erroneous!\nGeneric parameter T with primitive type restriction must be bound to a concrete primitive type, not ValuedObjectReferenceImpl."
+    }
+  ],
+  "ticks": []
+}

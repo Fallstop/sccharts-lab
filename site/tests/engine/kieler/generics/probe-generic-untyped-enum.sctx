@@ -1,0 +1,10 @@
+// An enum given for a parameter without "is" that the chart never uses.
+scchart B07 {
+  enum Color { RED, GREEN }
+  output int p
+  initial state S is B07H<Color>(p)
+}
+scchart B07H<E> {
+  output int q
+  initial state A do q += 1 go to A
+}

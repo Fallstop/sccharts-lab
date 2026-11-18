@@ -1,0 +1,36 @@
+{
+  "hash": "f4464201c269697b9433f240264bff277f2e1ddf",
+  "chart": "tests/engine/kieler/generics/probe-generic-argument-unknown-name.sctx",
+  "system": "netlist",
+  "ok": false,
+  "errors": [
+    "4:22 The referencing binding is erroneous!\nExpressions as generic parameters are currently not allowed (GenericTypeReferenceImpl).",
+    "4:27 The required feature 'type' of 'de.cau.cs.kieler.kexpressions.impl.GenericTypeReferenceImpl@4a2f04d3{file:///tmp/sccharts-oracle-uWnO0G/m6/probe-generic-argument-unknown-name.sctx#//@rootStates.0/@regions.0/@states.0/@reference/@genericParameters.0/@expression}' must be set",
+    "Couldn't resolve reference to NamedObject 'zzz'."
+  ],
+  "warnings": [],
+  "diagnostics": [
+    {
+      "severity": 1,
+      "message": "Couldn't resolve reference to NamedObject 'zzz'.",
+      "line": 4,
+      "column": 27,
+      "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking"
+    },
+    {
+      "severity": 1,
+      "message": "The referencing binding is erroneous!\nExpressions as generic parameters are currently not allowed (GenericTypeReferenceImpl).",
+      "line": 4,
+      "column": 22,
+      "code": "The referencing binding is erroneous!\nExpressions as generic parameters are currently not allowed (GenericTypeReferenceImpl)."
+    },
+    {
+      "severity": 1,
+      "message": "The required feature 'type' of 'de.cau.cs.kieler.kexpressions.impl.GenericTypeReferenceImpl@4a2f04d3{file:///tmp/sccharts-oracle-uWnO0G/m6/probe-generic-argument-unknown-name.sctx#//@rootStates.0/@regions.0/@states.0/@reference/@genericParameters.0/@expression}' must be set",
+      "line": 4,
+      "column": 27,
+      "code": "org.eclipse.emf.ecore.1"
+    }
+  ],
+  "ticks": []
+}

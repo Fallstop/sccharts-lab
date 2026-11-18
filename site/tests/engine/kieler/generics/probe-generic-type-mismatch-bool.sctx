@@ -1,0 +1,9 @@
+// A bool literal for an int parameter.
+scchart A13 {
+  output int p
+  initial state S is A13G<true>(p)
+}
+scchart A13G<N is int> {
+  output int o = 0
+  initial state A do o += N go to A
+}

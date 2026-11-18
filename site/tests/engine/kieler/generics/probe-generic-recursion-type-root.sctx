@@ -1,0 +1,10 @@
+// The simulated chart reaches itself through a chart type argument.
+scchart B15 {
+  output int p
+  initial state A do p += 1 go to B
+  state B is B15R<B15>(p)
+}
+scchart B15R<W is B15> {
+  output int o = 0
+  initial state S is W(o)
+}
